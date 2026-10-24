@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { burst, floatText, hitstop } from './fx'
+import { burst, floatText, hitstop, startIFrameBlink } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { calcScore, saveScore } from './score'
 import { bindFootBody } from './footBody'
@@ -22,10 +22,16 @@ import {
   BOY_SPEED,
   GIRL_SPEED,
   JUMP_V,
+  COYOTE_MS,
   JUMP_BUF_MS,
   HURT_LOCK_MS,
+  HURT_IFRAME_MS,
+  HITFREEZE_MS,
+  HIT_SHAKE_MS,
+  HIT_SHAKE_INTENSITY,
   FALL_Y,
   COINS_START,
+  canStartJump,
   resolveStick,
   snapToGroundPlane,
   applyDamage,
@@ -37,6 +43,13 @@ import {
   EntityManager,
   DebugOverlay,
 } from './engine'
+import {
+  createRound1Tilemap,
+  hitBreakable,
+  type Breakable,
+  type LevelMapHandle,
+  type LootKind,
+} from './levelMap'
 
 export { GROUND_Y }
 
@@ -85,7 +98,11 @@ export class GameScene extends Phaser.Scene {
   private honeys!: Phaser.Physics.Arcade.Group
   private pots!: Phaser.Physics.Arcade.Group
   private coinPickups!: Phaser.Physics.Arcade.Group
+  private honeyPickups!: Phaser.Physics.Arcade.Group
   private goal!: Phaser.Physics.Arcade.Sprite
+  private levelMap: LevelMapHandle | null = null
+  private solidsLayer: Phaser.Tilemaps.TilemapLayer | null = null
+  private camTarget!: Phaser.GameObjects.Zone
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private keyW!: Phaser.Input.Keyboard.Key
   private keyA!: Phaser.Input.Keyboard.Key
@@ -166,6 +183,7 @@ export class GameScene extends Phaser.Scene {
     this.buildLevel()
     this.spawnCast()
     this.wirePhysics()
+    this.setupCameraFollow()
     this.bindKeys()
     this.debugOverlay = new DebugOverlay(this)
     this.physics.world.drawDebug = this.physicsDebug
@@ -173,6 +191,29 @@ export class GameScene extends Phaser.Scene {
     this.showIntro()
     this.emitHealth()
     this.emitScore()
+    this.events.once('shutdown', this.onSceneShutdown, this)
+  }
+
+  private setupCameraFollow() {
+    this.camTarget = this.add.zone((this.boy.x + this.girl.x) / 2, WORLD_H / 2, 1, 1)
+    this.cameras.main.startFollow(this.camTarget, true, 0.1, 0.1)
+    this.cameras.main.setDeadzone(110, 56)
+  }
+
+  private updateCameraFollow() {
+    if (!this.camTarget || !this.boy || !this.girl) return
+    const midX = (this.boy.x + this.girl.x) / 2
+    this.camTarget.setPosition(Phaser.Math.Clamp(midX, 480, WORLD_W - 480), WORLD_H / 2)
+  }
+
+  private onSceneShutdown() {
+    if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
+    this.time.removeAllEvents()
+    this.tweens.killAll()
+    this.input.keyboard?.removeAllListeners()
+    this.input.removeAllListeners()
+    this.entities.destroy()
+    this.debugOverlay?.destroy()
   }
 
   private launchUi() {
@@ -313,8 +354,7 @@ export class GameScene extends Phaser.Scene {
       this.emitScore('關底・醃鮭魚武者！合力奪回春蜜')
     }
 
-    const mid = (this.boy.x + this.girl.x) / 2
-    this.cameras.main.centerOn(Phaser.Math.Clamp(mid, 480, WORLD_W - 480), WORLD_H / 2)
+    this.updateCameraFollow()
 
     const pct = Math.min(100, Math.floor((Math.max(this.boy.x, this.girl.x) / (WORLD_W - 160)) * 100))
     const sec = ((this.time.now - this.startedAt) / 1000).toFixed(0)
@@ -445,70 +485,48 @@ export class GameScene extends Phaser.Scene {
   ) {
     const body = h.body as Phaser.Physics.Arcade.Body
     resolveStick(body)
-
-    // Infinite-jump root cause: after setVelocityY(JUMP), body can still report
-    // blocked.down while overlapping the tile; refreshing coyote from that sticky
-    // contact re-armed mid-air jumps. Spec: jump ONLY when blocked.down ||
-    // touching.down AND not ascending (vy >= 0).
-    const floorContact = body.blocked.down || body.touching.down
-    const grounded = floorContact && body.velocity.y >= 0
-
+    const grounded = canStartJump(body)
     if (grounded) {
+      h.coyote = COYOTE_MS
       h.jumpConsumed = false
       h.jumpCut = false
-      h.coyote = 0
     } else {
       h.coyote = Math.max(0, h.coyote - dt)
     }
-
     if (jumpJust) h.jumpBuf = JUMP_BUF_MS
     else h.jumpBuf = Math.max(0, h.jumpBuf - dt)
 
     if (h.hurtLock > 0 || h.hp <= 0 || !h.alive) {
-      if (h.hurtLock > 0 && grounded) {
-        h.setVelocityX(body.velocity.x * 0.82)
-      }
+      if (h.hurtLock > 0 && grounded) h.setVelocityX(body.velocity.x * 0.82)
       this.applyHeroPose(h, grounded, 0)
       return
     }
 
-    const dtSec = dt / 1000
-    let target = 0
-    if (left) target -= speed
-    if (right) target += speed
-    const accel = grounded ? 3200 : 1760
-    const friction = 4200
-    let vx = body.velocity.x
-    if (target !== 0) {
-      const step = accel * dtSec
-      if (vx < target) vx = Math.min(target, vx + step)
-      else if (vx > target) vx = Math.max(target, vx - step)
-      h.facing = target > 0 ? 1 : -1
+    let vx = 0
+    if (left) vx -= speed
+    if (right) vx += speed
+    h.setVelocityX(vx)
+    if (vx !== 0) {
+      h.facing = vx > 0 ? 1 : -1
       h.setFlipX(h.facing < 0)
     } else if (grounded) {
-      const damp = friction * dtSec
-      if (Math.abs(vx) <= damp) vx = 0
-      else vx -= Math.sign(vx) * damp
+      h.setVelocityX(body.velocity.x * 0.55)
     }
-    vx = Phaser.Math.Clamp(vx, -speed, speed)
-    h.setVelocityX(vx)
 
-    if (h.jumpBuf > 0 && !h.jumpConsumed && grounded) {
+    if (h.jumpBuf > 0 && !h.jumpConsumed && (grounded || h.coyote > 0)) {
       h.setVelocityY(JUMP_V)
       h.jumpBuf = 0
+      h.coyote = 0
       h.jumpConsumed = true
       h.jumpCut = false
       SFX.jump()
     }
-
     if (!jumpHeld && body.velocity.y < -120 && !h.jumpCut) {
       h.setVelocityY(body.velocity.y * 0.55)
       h.jumpCut = true
     }
-
     if (!h.wasGrounded && grounded) burst(this, h.x, h.y + 4, 0xcbb896, 3)
     h.wasGrounded = grounded
-
     if (h.atkCd <= 0 && attackJust) doAttack()
     this.applyHeroPose(h, grounded, vx)
   }
@@ -606,6 +624,7 @@ export class GameScene extends Phaser.Scene {
     shot.setScale(1.5).setDepth(11).setFlipX(h.facing < 0)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * 560)
+    this.smashBreakablesInFront(h)
     this.entities.add(shot, 'projectile')
     this.time.delayedCall(850, () => shot.destroy())
   }
@@ -627,6 +646,13 @@ export class GameScene extends Phaser.Scene {
       if (Math.sign(dx) === h.facing && Math.abs(dx) < 84 && Math.abs(e.y - h.y) < 56) {
         this.damageEnemy(e, 2, h.facing)
       }
+    })
+    this.smashBreakablesInFront(h)
+  }
+
+  private smashBreakablesInFront(h: Hero) {
+    this.pots?.getChildren?.().forEach((o) => {
+      if (hitBreakable(h, o)) this.breakPot(o as Breakable)
     })
   }
 
@@ -671,8 +697,8 @@ export class GameScene extends Phaser.Scene {
     burst(this, e.x, e.y - 20, 0xffe8a0, 8)
     floatText(this, e.x, e.y - 40, '！')
     SFX.hit()
-    hitstop(this, 28)
-    this.cameras.main.shake(30, 0.0022)
+    hitstop(this, HITFREEZE_MS)
+    this.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
     if (e.hp <= 0) {
       e.state = 'die'
       e.poseAngle = dir * 85
@@ -681,7 +707,10 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       burst(this, e.x, e.y - 16, 0xff6688, 12)
       e.setVelocity(dir * 80, -120)
-      this.time.delayedCall(320, () => {
+      const cx = e.x
+      const cy = e.y - 28
+      this.time.delayedCall(280, () => {
+        this.spawnCoin(cx, cy)
         e.label?.destroy()
         e.disableBody(true, true)
       })
@@ -704,13 +733,14 @@ export class GameScene extends Phaser.Scene {
       now: this.time.now,
     })
     applyHurtPose(h, -away)
+    startIFrameBlink(h, this, HURT_IFRAME_MS)
     this.time.delayedCall(160, () => {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
     SFX.hurt()
     burst(this, h.x, h.y - 24, 0xff4466, 8)
     floatText(this, h.x, h.y - 40, '-1', '#ff6677')
-    this.cameras.main.shake(40, 0.003)
+    this.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
     // Primary bugfix: knockOut must run when HP hits 0 (old guard was `hp <= 0 → return`).
@@ -718,23 +748,21 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spike(h: Hero) {
+    this.hazardHit(h, { knockX: h.facing * -180, knockY: -480, label: '尖刺' })
+  }
+  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string } = { knockX: 0, knockY: -480 }) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    const hpLeft = applyDamage(h, {
-      amount: 1,
-      knockbackX: h.facing * -180,
-      knockbackY: -480,
-      iframeMs: 1000,
-      now: this.time.now,
-    })
+    const hpLeft = applyDamage(h, { amount: 1, knockbackX: opts.knockX, knockbackY: opts.knockY, iframeMs: HURT_IFRAME_MS, now: this.time.now })
     applyHurtPose(h, -h.facing)
-    SFX.spike()
-    this.cameras.main.shake(50, 0.0035)
+    startIFrameBlink(h, this, HURT_IFRAME_MS)
+    SFX.spike(); burst(this, h.x, h.y - 16, 0xff6633, 10)
+    if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
+    this.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
     if (h.role === 'girl') this.summonBearAssist()
-    this.refreshHearts()
+    this.refreshHearts?.()
     if (hpLeft <= 0) this.knockOut(h)
   }
-
   private checkFall() {
     for (const h of [this.boy, this.girl]) {
       if (h.y > FALL_Y) {
@@ -749,6 +777,7 @@ export class GameScene extends Phaser.Scene {
         snapToGroundPlane(h, Math.max(80, h.x - 80), GROUND_Y)
         h.setVelocity(0, -200)
         applyHurtPose(h, -h.facing)
+    startIFrameBlink(h, this, HURT_IFRAME_MS)
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
@@ -882,6 +911,9 @@ export class GameScene extends Phaser.Scene {
     this.hazards = this.physics.add.staticGroup()
     this.pots = this.physics.add.group()
     this.coinPickups = this.physics.add.group()
+    this.honeyPickups = this.physics.add.group()
+    this.levelMap = createRound1Tilemap(this, this.pots, this.hazards)
+    this.solidsLayer = (this.levelMap?.solids as Phaser.Tilemaps.TilemapLayer | null) ?? null
 
     const banks: Array<[number, number]> = [
       [0, 480], [560, 280], [960, 300], [1400, 340],
@@ -974,7 +1006,16 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.boy, this.ground)
     this.physics.add.collider(this.girl, this.ground)
     this.physics.add.collider(this.enemies, this.ground)
+    if (this.solidsLayer) {
+      this.physics.add.collider(this.boy, this.solidsLayer)
+      this.physics.add.collider(this.girl, this.solidsLayer)
+      this.physics.add.collider(this.enemies, this.solidsLayer)
+    }
 
+    this.physics.add.overlap(this.shots, this.pots, (shot, pot) => {
+      ;(shot as Phaser.Physics.Arcade.Sprite).destroy()
+      this.breakPot(pot as Breakable)
+    })
     this.physics.add.overlap(this.shots, this.enemies, (shot, enemy) => {
       const s = shot as Phaser.Physics.Arcade.Sprite
       const e = enemy as Creep
@@ -993,10 +1034,17 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.girl, this.enemies, (_g, e) => this.hurtHero(this.girl, e as Creep))
     this.physics.add.overlap(this.boy, this.hazards, () => this.spike(this.boy))
     this.physics.add.overlap(this.girl, this.hazards, () => this.spike(this.girl))
-    this.physics.add.overlap(this.boy, this.pots, (_b, p) => this.takeHoney(p as Phaser.Physics.Arcade.Sprite))
-    this.physics.add.overlap(this.girl, this.pots, (_g, p) => this.takeHoney(p as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.hazards, (_b, hz) => {
+      const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
+      if (kind === 'lava') this.hazardHit(this.boy, { knockX: this.boy.facing * -220, knockY: -520, label: '熔岩' })
+      else this.spike(this.boy)
+    })
+    // (hazards also wired below if duplicated — dedupe later)
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.girl, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
+
+    this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.girl, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
   }
 
 
@@ -1039,13 +1087,27 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  private takeHoney(pot: Phaser.Physics.Arcade.Sprite) {
+  private breakPot(pot: Breakable) {
     if (!pot.active) return
+    const loot: LootKind = pot.loot ?? (pot.breakKind === 'chest' ? 'coin' : 'honey')
+    const x = pot.x, y = pot.y
     pot.disableBody(true, true)
+    SFX.kill(); burst(this, x, y, 0xffc050, 16)
+    floatText(this, x, y - 18, pot.breakKind === 'chest' ? '寶箱破！' : '壺破！', '#ffe8a0')
+    if (loot === 'honey') {
+      this.honeyGot = Math.min(3, this.honeyGot + 1)
+      floatText(this, x, y - 36, '春蜜＋１', '#ffcc44')
+    } else {
+      this.spawnCoin?.(x, y - 10)
+    }
+  }
+
+  private takeHoneyPickup(item: Phaser.Physics.Arcade.Sprite) {
+    if (!item.active) return
+    item.disableBody(true, true)
     this.honeyGot = Math.min(3, this.honeyGot + 1)
-    SFX.kill()
-    burst(this, pot.x, pot.y, 0xffc050, 12)
-    floatText(this, pot.x, pot.y - 18, '春蜜＋１', '#ffcc44')
+    SFX.kill(); burst(this, item.x, item.y, 0xffc050, 12)
+    floatText(this, item.x, item.y - 18, '春蜜＋１', '#ffcc44')
   }
 
   private takeCoin(coin: Phaser.Physics.Arcade.Sprite) {

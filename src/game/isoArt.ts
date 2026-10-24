@@ -210,7 +210,16 @@ export function registerIsoArt(scene: Phaser.Scene) {
   })
 
   // electric fan 3D
-  paint(scene, 'fan3d', 28, 28, (set) => {
+  
+  paint(scene, 'chest3d', 32, 28, (set) => {
+    rect(set, 2, 24, 28, 3, [20, 16, 18], 110)
+    rect(set, 4, 12, 24, 14, [160, 100, 48])
+    rect(set, 4, 12, 24, 3, [200, 140, 70])
+    rect(set, 3, 6, 26, 8, [180, 120, 55])
+    rect(set, 14, 14, 4, 5, [220, 180, 60])
+  })
+
+paint(scene, 'fan3d', 28, 28, (set) => {
     rect(set, 6, 24, 16, 3, [20, 16, 18], 100)
     rect(set, 11, 14, 6, 12, [70, 80, 100])
     rect(set, 12, 14, 2, 12, [120, 140, 170])

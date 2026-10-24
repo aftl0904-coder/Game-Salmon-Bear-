@@ -4,6 +4,7 @@ import { registerWorldArt } from './worldArt'
 import { registerHoneyArt } from './honeyArt'
 import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
+import { preloadRound1Map } from './levelMap'
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
 export class BootScene extends Phaser.Scene {
@@ -52,6 +53,7 @@ export class BootScene extends Phaser.Scene {
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')
+    preloadRound1Map(this)
   }
 
   create() {

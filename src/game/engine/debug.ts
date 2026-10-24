@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { isGrounded } from './collision'
-import type { Creep } from '../enemyAi'
+import { enemyFsmLabel, type Creep } from '../enemyAi'
 
 type DebugHero = Phaser.Physics.Arcade.Sprite & {
   pose?: string
@@ -112,7 +112,7 @@ export class DebugOverlay {
       this.label(
         e.x,
         e.y - 58,
-        `${e.kind}/${e.species} ${e.state}\nhp${e.hp}/${e.maxHp} v=(${vx.toFixed(0)},${vy.toFixed(0)})`,
+        `${e.kind}/${e.species} ${enemyFsmLabel(e)}/${e.state}\nhp${e.hp}/${e.maxHp} v=(${vx.toFixed(0)},${vy.toFixed(0)})`,
         '#ffe08a',
       )
     }

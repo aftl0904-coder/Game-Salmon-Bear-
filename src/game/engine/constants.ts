@@ -10,12 +10,24 @@ export const MAX_HP = 10
 export const BOY_SPEED = 275
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 export const JUMP_V = -780
-export const COYOTE_MS = 110
-export const JUMP_BUF_MS = 120
+/** Coyote time after leaving floor (~100ms). */
+export const COYOTE_MS = 100
+/** Jump input buffer (~100ms). */
+export const JUMP_BUF_MS = 100
 export const HURT_LOCK_MS = 260
-export const HURT_IFRAME_MS = 900
+/** Player hurt i-frames (1.5s blink). */
+export const HURT_IFRAME_MS = 1500
 export const FALL_Y = 530
 export const COINS_START = 5
 
 /** Minimum platform height above ground to avoid body jam in narrow gaps. */
 export const MIN_PLATFORM_CLEARANCE = 64
+
+export const RUN_ACCEL = 2600
+export const RUN_FRICTION = 2200
+export const AIR_ACCEL_MUL = 0.7
+
+/** Combat juice. */
+export const HITFREEZE_MS = 50
+export const HIT_SHAKE_MS = 100
+export const HIT_SHAKE_INTENSITY = 0.01
