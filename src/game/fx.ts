@@ -59,11 +59,12 @@ export function floatText(
   y: number,
   msg: string,
   color = '#ff3333',
+  opts: { size?: number; rise?: number; dur?: number } = {},
 ) {
   const t = scene.add
     .text(x, y, msg, {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '20px',
+      fontSize: `${opts.size ?? 20}px`,
       color,
       stroke: '#fff8e8',
       strokeThickness: 4,
@@ -72,11 +73,18 @@ export function floatText(
     .setDepth(16)
   scene.tweens.add({
     targets: t,
-    y: y - 36,
+    y: y - (opts.rise ?? 36),
     alpha: 0,
-    duration: 450,
+    scale: 1.15,
+    duration: opts.dur ?? 450,
     onComplete: () => t.destroy(),
   })
+  return t
+}
+
+/** Arcade score pop — big gold numbers. */
+export function scorePop(scene: Phaser.Scene, x: number, y: number, pts: number) {
+  return floatText(scene, x, y - 8, `＋${pts}`, '#ffe08a', { size: 26, rise: 52, dur: 620 })
 }
 
 /** Pause physics on solid hits (hit freeze). */
@@ -89,7 +97,16 @@ export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
 
 export type JuiceKind = 'damage' | 'heavy' | 'land' | 'run' | 'break' | 'hit'
 
-/** Game-feel facade: camera shake, hit freeze, dust, debris. */
+type HitTarget = Phaser.GameObjects.Sprite & {
+  setTint?: (c: number) => unknown
+  clearTint?: () => unknown
+  setAngle?: (a: number) => unknown
+  setScale?: (x: number, y?: number) => unknown
+  scaleX?: number
+  scaleY?: number
+}
+
+/** Game-feel facade: camera shake, hit freeze, white flash, knockback lean. */
 export class JuiceManager {
   private runDustCd = 0
   private scene: Phaser.Scene
@@ -110,19 +127,62 @@ export class JuiceManager {
     hitstop(this.scene, ms)
   }
 
-  /** Every solid hit: freeze + shake + particles + impact ring. */
-  solidHit(x: number, y: number, heavy = false) {
+  /** Screen white flash — Goemon one-blade hit read. */
+  whiteFlash(heavy = false) {
+    this.scene.cameras.main.flash(heavy ? 90 : 55, 255, 255, 255, false, undefined, heavy ? 0.55 : 0.4)
+  }
+
+  /**
+   * Knockback lean on the struck body (enemy or pot stand-in).
+   * Same visual language for player hits AND pot smash.
+   */
+  knockLean(target: HitTarget | undefined, dir: number, heavy = false) {
+    if (!target?.active) return
+    const baseX = Math.abs(target.scaleX ?? 1)
+    const baseY = Math.abs(target.scaleY ?? 1)
+    const lean = dir * (heavy ? 34 : 24)
+    target.setTint?.(0xffffff)
+    target.setAngle?.(lean)
+    target.setScale?.(baseX * (heavy ? 1.2 : 1.12), baseY * (heavy ? 0.76 : 0.84))
+    this.scene.tweens.killTweensOf(target)
+    this.scene.tweens.add({
+      targets: target,
+      angle: 0,
+      scaleX: baseX,
+      scaleY: baseY,
+      duration: 160,
+      ease: 'Back.out',
+    })
+    this.scene.time.delayedCall(80, () => {
+      if (target.active) target.clearTint?.()
+    })
+  }
+
+  /**
+   * Unified solid-hit language (hits + pot smash):
+   * short hitstop + camera shake + white flash + particles + ring (+ optional lean).
+   */
+  solidHit(
+    x: number,
+    y: number,
+    heavy = false,
+    target?: HitTarget,
+    dir: number = 1,
+  ) {
     if (heavy) {
       this.freeze(HEAVY_HITFREEZE_MS)
       this.shakeHeavy()
       burst(this.scene, x, y, 0xffe8a0, 14)
-      burst(this.scene, x, y - 8, 0xffaa66, 8)
+      burst(this.scene, x, y - 8, 0xffffff, 6)
     } else {
       this.freeze(HITFREEZE_MS)
       this.shakeDamage()
       burst(this.scene, x, y, 0xffe8a0, 12)
+      burst(this.scene, x, y - 6, 0xffffff, 5)
     }
+    this.whiteFlash(heavy)
     impactRing(this.scene, x, y - 12, heavy ? 0xffcc66 : 0xffe8a0, 10)
+    this.knockLean(target, dir, heavy)
   }
 
   landDust(x: number, y: number) {
@@ -196,8 +256,7 @@ export class JuiceManager {
         break
       case 'break':
         this.breakDebris(x, y)
-        this.freeze(HITFREEZE_MS)
-        this.shakeDamage()
+        this.solidHit(x, y, false)
         break
     }
   }

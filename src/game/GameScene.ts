@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { burst, floatText, impactRing, startIFrameBlink, JuiceManager } from './fx'
+import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { calcScore, saveScore } from './score'
 import {
@@ -23,6 +23,10 @@ import {
   HURT_IFRAME_MS,
   FALL_Y,
   COINS_START,
+  SCORE_HIT,
+  SCORE_KILL,
+  SCORE_BOSS_KILL,
+  SCORE_BREAK,
   snapToGroundPlane,
   applyDamage,
   applyHurtPose,
@@ -111,10 +115,13 @@ export class GameScene extends Phaser.Scene {
   private honeyGot = 0
   private petJetting = false
   private scorePts = 0
+  private killBonus = 0
   private deaths = 0
   coinStock = COINS_START
   private prevLeadX = 0
   private checkpointX = 110
+  /** Stage beat index: 0 flat → 1 platforms → 2 ambush → 3 altar */
+  private stageBeat = 0
   private water!: Phaser.GameObjects.TileSprite
   private clouds!: Phaser.GameObjects.TileSprite
   private mountFar!: Phaser.GameObjects.TileSprite
@@ -141,10 +148,12 @@ export class GameScene extends Phaser.Scene {
     this.honeyGot = 0
     this.petJetting = false
     this.scorePts = 0
+    this.killBonus = 0
     this.deaths = 0
     this.coinStock = COINS_START
     this.prevLeadX = 260
     this.checkpointX = 250
+    this.stageBeat = 0
     this.startedAt = this.time.now
     this.entities.clear()
     // Scene instances survive restart — reset debug before any frame can
@@ -348,6 +357,8 @@ export class GameScene extends Phaser.Scene {
     this.boyGoal = !!this.physics.overlap(this.boy, this.goal)
     this.girlGoal = !!this.physics.overlap(this.girl, this.goal)
 
+    this.tickStageBeats()
+
     // Altar climax: 2–3 barrel ambushers wake with clear telegraph before boss.
     if (!this.altarAmbushOn && Math.max(this.boy.x, this.girl.x) > WORLD_W - 980) {
       this.triggerAltarAmbush()
@@ -379,13 +390,45 @@ export class GameScene extends Phaser.Scene {
   }
 
   private liveScore() {
-    return calcScore({
-      timeSec: (this.time.now - this.startedAt) / 1000,
-      honey: this.honeyGot,
-      hpBoy: Math.max(0, this.boy.hp),
-      hpGirl: Math.max(0, this.girl.hp),
-      deaths: this.deaths,
-    })
+    return (
+      calcScore({
+        timeSec: (this.time.now - this.startedAt) / 1000,
+        honey: this.honeyGot,
+        hpBoy: Math.max(0, this.boy.hp),
+        hpGirl: Math.max(0, this.girl.hp),
+        deaths: this.deaths,
+      }) + this.killBonus
+    )
+  }
+
+  /** flat → platforms → ambush → altar — one readable story beat each. */
+  private tickStageBeats() {
+    const lead = Math.max(this.boy.x, this.girl.x)
+    const beats: Array<{ x: number; title: string }> = [
+      { x: 720, title: '木橋・平台帶' },
+      { x: 1680, title: '伏兵出現！' },
+      { x: 2880, title: '祭壇前方・決戰' },
+    ]
+    const next = this.stageBeat
+    if (next < beats.length && lead >= beats[next].x) {
+      this.stageBeat = next + 1
+      const b = beats[next]
+      SFX.boss()
+      this.cameras.main.flash(120, 255, 220, 140)
+      floatText(this, this.cameras.main.scrollX + 480, 100, b.title, '#ffe08a', {
+        size: 28,
+        rise: 24,
+        dur: 900,
+      })
+      this.emitScore(b.title)
+    }
+  }
+
+  private addScorePop(x: number, y: number, pts: number) {
+    this.killBonus += pts
+    scorePop(this, x, y, pts)
+    this.scorePts = this.liveScore()
+    this.emitScore()
   }
 
   private updateCheckpoint() {
@@ -688,15 +731,19 @@ export class GameScene extends Phaser.Scene {
   private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number) {
     const pe = e as PatrolEnemy
     if (pe.isDead || pe.fsm === 'DEAD') return
+    const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
-    floatText(this, pe.x, pe.y - 40, dmg >= 2 ? '重擊！' : '！')
+    floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
     SFX.hit()
-    // Every solid hit: readable freeze + shake + particles (console-level juice).
-    this.juice.solidHit(pe.x, pe.y - 18, dmg >= 2 || pe.kind === 'boss')
+    // Goemon one-blade: hitstop + shake + white flash + knockback lean
+    this.juice.solidHit(pe.x, pe.y - 18, heavy, pe, dir)
+    this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
     if (result.killed) {
       SFX.kill()
       burst(this, pe.x, pe.y - 16, 0xff6688, 14)
       impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
+      const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
+      this.addScorePop(pe.x, pe.y - 72, bonus)
       if (pe.kind === 'boss') this.emitScore('武者倒下！兩人一起站上祭壇')
     }
   }
@@ -954,6 +1001,27 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(8)
+
+    // Readable stage-beat signs (~3 min pacing: flat → platforms → ambush → altar)
+    const signs: Array<[number, string]> = [
+      [180, '平地・溪流'],
+      [780, '平台帶'],
+      [1750, '伏兵區'],
+      [3000, '祭壇前'],
+    ]
+    for (const [sx, label] of signs) {
+      this.add
+        .text(sx, GROUND_Y - 110, label, {
+          fontFamily: 'Noto Sans TC, sans-serif',
+          fontSize: '13px',
+          color: '#3a2818',
+          backgroundColor: '#f0e0b8cc',
+          padding: { x: 8, y: 3 },
+        })
+        .setOrigin(0.5)
+        .setDepth(5)
+        .setAlpha(0.9)
+    }
   }
 
   private spawnCoin(x: number, y: number) {
@@ -1120,14 +1188,18 @@ export class GameScene extends Phaser.Scene {
     if (!pot.active) return
     const loot: LootKind = pot.loot ?? (pot.breakKind === 'chest' ? 'coin' : 'honey')
     const x = pot.x, y = pot.y
-    pot.disableBody(true, true)
+    const facing = Math.sign(this.boy.x - x) || 1
     SFX.kill()
-    // Smash juice: freeze + shake + debris + impact ring (console-readable)
+    // Same hit language as enemy smash: freeze + shake + white flash + lean
     const debrisColor = pot.breakKind === 'chest' ? 0xc48a48 : 0xffc050
+    this.juice.solidHit(x, y, false, pot as Phaser.Physics.Arcade.Sprite, -facing)
     this.juice.breakDebris(x, y, debrisColor)
-    this.juice.solidHit(x, y, false)
     impactRing(this, x, y, debrisColor, 12)
     floatText(this, x, y - 18, pot.breakKind === 'chest' ? '寶箱破！' : '壺破！', '#ffe8a0')
+    this.addScorePop(x, y - 48, SCORE_BREAK)
+    this.time.delayedCall(70, () => {
+      if (pot.active) pot.disableBody(true, true)
+    })
     if (loot === 'honey') {
       this.honeyGot = Math.min(3, this.honeyGot + 1)
       floatText(this, x, y - 36, '春蜜＋１', '#ffcc44')
@@ -1182,8 +1254,23 @@ export class GameScene extends Phaser.Scene {
     this.boy.setVelocity(0, 0)
     this.girl.setVelocity(0, 0)
     SFX.win()
-    this.cameras.main.flash(280, 255, 230, 160)
-    EventBus.emit(GameEvents.GAME_OVER, { active: true, message: msg, canContinue: false, win: true })
+    // Clear fanfare — multi-flash + ring of sparks
+    this.cameras.main.flash(320, 255, 230, 160)
+    this.time.delayedCall(180, () => this.cameras.main.flash(200, 255, 255, 200))
+    this.time.delayedCall(360, () => this.cameras.main.shake(200, 0.012))
+    burst(this, this.goal.x, this.goal.y - 40, 0xffe08a, 20)
+    impactRing(this, this.goal.x, this.goal.y - 40, 0xffe08a, 18)
+    floatText(this, this.cameras.main.scrollX + 480, 140, 'STAGE CLEAR', '#ffe08a', {
+      size: 36,
+      rise: 20,
+      dur: 1400,
+    })
+    EventBus.emit(GameEvents.GAME_OVER, {
+      active: true,
+      message: `◆ 通關 ◆\n${msg}`,
+      canContinue: false,
+      win: true,
+    })
   }
 
   private lose(msg: string) {
@@ -1194,7 +1281,9 @@ export class GameScene extends Phaser.Scene {
       this.awaitingContinue = true
       this.boy.awaitingContinue = true
       this.girl.awaitingContinue = true
-      const msgText = `${msg}\n\n投幣續關（剩餘 ${this.coinStock}）\n按 Enter／空白鍵／Ｃ　投幣\n按Ｒ鍵回選單`
+      const msgText =
+        `${msg}\n\n◆ 投幣續關 ◆\n剩餘幣 ×${this.coinStock}\n` +
+        `按 Enter／空白／Ｃ　投幣\n按Ｒ　回選單`
       EventBus.emit(GameEvents.GAME_OVER, {
         active: true,
         message: msgText,
@@ -1207,7 +1296,7 @@ export class GameScene extends Phaser.Scene {
       this.girl.awaitingContinue = false
       EventBus.emit(GameEvents.GAME_OVER, {
         active: true,
-        message: `${msg}\n幣已用盡\n按Ｒ鍵回選單`,
+        message: `${msg}\n◆ 幣已用盡 ◆\n按Ｒ鍵回選單`,
         canContinue: false,
         win: false,
       })
@@ -1322,10 +1411,10 @@ export class GameScene extends Phaser.Scene {
         if (!e.active || e.fsm === 'DEAD' || e.fsm === 'HURT') return
         e.setFsm('ATTACK')
         e.atkPhase = 'windup'
-        e.windup = 300
+        e.windup = 320
         e.hitThis = false
         e.setVelocityX(0)
-        e.setTint(0xff2222)
+        e.setTint(0xff1111)
         impactRing(this, e.x, e.y - 18, 0xff4422, 12)
       })
     })

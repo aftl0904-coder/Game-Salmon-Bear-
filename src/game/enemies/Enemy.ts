@@ -61,15 +61,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   receiveHit(dmg: number, dir: number): EnemyHitResult {
     if (this.fsm === 'DEAD') return { killed: false, hp: this.hp }
     this.hp -= dmg
-    this.setVelocityX(dir * 260)
-    this.setVelocityY(-220)
+    // Goemon knockback lean — heavier push + white flash pose
+    this.setVelocityX(dir * (dmg >= 2 ? 340 : 280))
+    this.setVelocityY(dmg >= 2 ? -280 : -230)
     this.setTint(0xffffff)
-    this.poseAngle = dir * -28
+    this.poseAngle = dir * (dmg >= 2 ? -38 : -30)
+    this.setAngle(this.poseAngle)
+    this.setScale(this.baseScale * 1.16, this.baseScale * 0.82)
     this.think = this.hurtMs
     this.hitThis = false
     this.setFsm('HURT')
     const tintRestore = this.defaultTint()
-    this.scene.time.delayedCall(70, () => {
+    this.scene.time.delayedCall(90, () => {
       if (!this.active || this.fsm === 'DEAD') return
       this.clearTint()
       if (tintRestore !== undefined) this.setTint(tintRestore)

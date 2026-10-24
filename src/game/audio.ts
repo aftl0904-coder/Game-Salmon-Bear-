@@ -91,9 +91,14 @@ export const SFX = {
     tone(150, 0.2, 'square', 0.1)
   },
   win: () => {
-    ;[523, 659, 784, 1046].forEach((f, i) => {
-      setTimeout(() => tone(f, 0.16, 'triangle', 0.14), i * 90)
+    // Clear fanfare — rising arcade jingle
+    ;[392, 523, 659, 784, 1046, 1318].forEach((f, i) => {
+      setTimeout(() => tone(f, 0.18, i % 2 ? 'triangle' : 'square', 0.16), i * 85)
     })
+    setTimeout(() => {
+      tone(1568, 0.35, 'triangle', 0.14)
+      noise(0.08, 0.06)
+    }, 520)
   },
   lose: () => tone(220, 0.35, 'sawtooth', 0.16, 80),
   step: () => noise(0.025, 0.035),
@@ -102,8 +107,10 @@ export const SFX = {
     tone(1320, 0.1, 'triangle', 0.09)
   },
   continue: () => {
-    tone(392, 0.08, 'square', 0.12)
-    tone(523, 0.12, 'triangle', 0.11)
+    // Punchy insert-coin sting
+    tone(523, 0.07, 'square', 0.14)
+    tone(784, 0.1, 'triangle', 0.13)
+    setTimeout(() => tone(1046, 0.14, 'square', 0.12), 90)
   },
 }
 

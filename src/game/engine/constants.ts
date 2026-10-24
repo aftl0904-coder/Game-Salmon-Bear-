@@ -27,10 +27,18 @@ export const RUN_ACCEL = 2600
 export const RUN_FRICTION = 2200
 export const AIR_ACCEL_MUL = 0.7
 
-/** Combat juice — solid hits must read as console-level freeze+shake. */
-export const HITFREEZE_MS = 85
-export const HIT_SHAKE_MS = 150
-export const HIT_SHAKE_INTENSITY = 0.018
-export const HEAVY_HITFREEZE_MS = 110
-export const HEAVY_HIT_SHAKE_MS = 180
-export const HEAVY_HIT_SHAKE_INTENSITY = 0.024
+/** Goemon one-blade juice — short freeze + shake + white flash. */
+export const HITFREEZE_MS = 70
+export const HIT_SHAKE_MS = 120
+export const HIT_SHAKE_INTENSITY = 0.02
+export const HEAVY_HITFREEZE_MS = 95
+export const HEAVY_HIT_SHAKE_MS = 160
+export const HEAVY_HIT_SHAKE_INTENSITY = 0.028
+/** Enemy attack telegraph floor (fair, readable). */
+export const WINDUP_FLOOR_MS = 260
+export const WINDUP_ALTAR_MS = 300
+/** Arcade score pops. */
+export const SCORE_HIT = 50
+export const SCORE_KILL = 150
+export const SCORE_BOSS_KILL = 800
+export const SCORE_BREAK = 80

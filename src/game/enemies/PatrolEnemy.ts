@@ -190,13 +190,14 @@ export class PatrolEnemy extends Enemy {
     ) {
       this.setFsm('ATTACK')
       this.atkPhase = 'pause'
+      // Charge pause = readable red telegraph before lunge (≥260ms).
       this.think = Math.max(
-        this.altarAmbush ? 260 : 200,
-        220 + (this.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0),
+        this.altarAmbush ? 300 : 260,
+        260 + (this.kind === 'boss' ? 80 : 0),
       )
       this.hitThis = false
       this.setVelocityX(0)
-      this.setTint(0xff2222)
+      this.setTint(0xff1111)
       this.hooks.floatBang?.(
         this.x,
         this.y - 36,
@@ -294,12 +295,12 @@ export class PatrolEnemy extends Enemy {
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // Red telegraph ≥220ms (≥280ms altar ambush) before lunge.
-    const floor = this.altarAmbush ? 280 : 220
+    // Fair telegraph: red + pause ≥260ms (altar ≥300ms) before lunge.
+    const floor = this.altarAmbush ? 300 : 260
     this.windup = Math.max(floor, ms)
     this.hitThis = false
     this.setVelocityX(0)
-    this.setTint(0xff2222)
+    this.setTint(0xff1111)
     this.hooks.floatBang?.(
       this.x,
       this.y - 36,
@@ -458,8 +459,11 @@ export class PatrolEnemy extends Enemy {
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      this.setAngle(0)
-      this.setScale(this.baseScale * 1.12, this.baseScale * 0.86)
+      // Pull-back lean — telegraph "about to lunge"
+      const lean = -this.patrolDir * 8
+      this.setAngle(lean)
+      this.setScale(this.baseScale * 1.16, this.baseScale * 0.82)
+      this.setTint(0xff1111)
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {

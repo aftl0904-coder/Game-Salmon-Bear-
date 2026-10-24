@@ -116,9 +116,9 @@ export function defaultSpecies(kind: EnemyKind): EnemySpecies {
 
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
-    // Slightly wider detect so opening fight engages in ~2–3s / ~180–250px.
+    // Opening fight ~180–250px; windup ≥260ms fair telegraph.
     hp: 2, spd: 62, patrolSpd: 48, aggro: 280, detect: 340, melee: 50,
-    windupMs: 360, recoverMs: 340, atkCdMs: 1050, scale: 1.75, tint: 0x88aacc,
+    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 1.75, tint: 0x88aacc,
     label: '路障', chargePrefer: false, hopChance: 0.012,
   },
   chaser: {
@@ -128,22 +128,22 @@ export const KIND_STATS: Record<EnemyKind, KindStats> = {
   },
   ambusher: {
     hp: 2, spd: 95, patrolSpd: 22, aggro: 180, detect: 280, melee: 56,
-    windupMs: 260, recoverMs: 340, atkCdMs: 1000, scale: 1.7, tint: 0xaa88ff,
+    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 1.7, tint: 0xaa88ff,
     label: '伏兵', chargePrefer: false, hopChance: 0.008,
   },
   guardian: {
     hp: 3, spd: 78, patrolSpd: 48, aggro: 300, detect: 360, melee: 52,
-    windupMs: 340, recoverMs: 320, atkCdMs: 1000, scale: 1.8, tint: 0xffcc44,
+    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 1.8, tint: 0xffcc44,
     label: '守蜜', chargePrefer: false, hopChance: 0.015,
   },
   interrupter: {
     hp: 3, spd: 100, patrolSpd: 58, aggro: 420, detect: 480, melee: 56,
-    windupMs: 320, recoverMs: 240, atkCdMs: 820, scale: 1.9, tint: 0xff6644,
+    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 1.9, tint: 0xff6644,
     label: '精銳', chargePrefer: true, hopChance: 0.02,
   },
   boss: {
     hp: 12, spd: 95, patrolSpd: 48, aggro: 520, detect: 600, melee: 70,
-    windupMs: 360, recoverMs: 300, atkCdMs: 900, scale: 2.55, tint: 0xffaa77,
+    windupMs: 320, recoverMs: 300, atkCdMs: 900, scale: 2.55, tint: 0xffaa77,
     label: '武者', chargePrefer: true, hopChance: 0.018,
   },
 }
@@ -413,7 +413,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   // 木桶武者：hop-lunge windup; 醃魚雜兵：chase into melee
   if (dist < melee && e.atkCd <= 0 && (e.state === 'chase' || e.state === 'detect')) {
     e.state = 'windup'
-    e.windup = Math.max(200, st.windupMs * mul.windup * (sp.style === 'hop' ? 0.85 : 1))
+    e.windup = Math.max(260, st.windupMs * mul.windup * (sp.style === 'hop' ? 0.9 : 1))
     e.hitThis = false
     e.setVelocityX(0)
     e.setTint(0xff3333)

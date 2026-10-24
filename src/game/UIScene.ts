@@ -74,11 +74,13 @@ export class UIScene extends Phaser.Scene {
     this.banner = this.add
       .text(480, 270, '', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '24px',
-        color: '#f7e7c0',
-        backgroundColor: '#1a1020ee',
-        padding: { x: 20, y: 14 },
+        fontSize: '26px',
+        color: '#ffe8b0',
+        backgroundColor: '#120818f2',
+        padding: { x: 28, y: 18 },
         align: 'center',
+        stroke: '#c48a28',
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
@@ -149,10 +151,53 @@ export class UIScene extends Phaser.Scene {
 
 
   private onGameOver(p: GameEventMap['GAME_OVER']) {
+    this.tweens.killTweensOf(this.banner)
     if (!p.active) {
-      this.banner.setVisible(false)
+      this.banner.setVisible(false).setScale(1).setAlpha(1)
       return
     }
-    this.banner.setText(p.message ?? '').setVisible(true)
+    // Punchier arcade banner — win gold / continue insert-coin pulse
+    if (p.win) {
+      this.banner.setStyle({
+        fontSize: '28px',
+        color: '#fff4c8',
+        backgroundColor: '#1a2810f5',
+        stroke: '#e8c040',
+        strokeThickness: 4,
+      })
+    } else if (p.canContinue) {
+      this.banner.setStyle({
+        fontSize: '26px',
+        color: '#ffe08a',
+        backgroundColor: '#280810f5',
+        stroke: '#ff6644',
+        strokeThickness: 4,
+      })
+    } else {
+      this.banner.setStyle({
+        fontSize: '26px',
+        color: '#f7e7c0',
+        backgroundColor: '#120818f2',
+        stroke: '#886040',
+        strokeThickness: 3,
+      })
+    }
+    this.banner.setText(p.message ?? '').setVisible(true).setScale(0.86).setAlpha(1)
+    this.tweens.add({
+      targets: this.banner,
+      scale: 1,
+      duration: 180,
+      ease: 'Back.out',
+    })
+    if (p.canContinue && !p.win) {
+      this.tweens.add({
+        targets: this.banner,
+        alpha: 0.72,
+        duration: 420,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+    }
   }
 }
