@@ -18,6 +18,14 @@ export class UIScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text
   private hudInfo!: Phaser.GameObjects.Text
   private maxHp = 10
+  private targetHpL = 10
+  private targetHpR = 10
+  private dispHpL = 10
+  private dispHpR = 10
+  private targetScore = 0
+  private dispScore = 0
+  private barL!: Phaser.GameObjects.Rectangle
+  private barR!: Phaser.GameObjects.Rectangle
 
   /** Public for smoke / GameScene continueBox alias. */
   banner!: Phaser.GameObjects.Text
@@ -47,6 +55,12 @@ export class UIScene extends Phaser.Scene {
     this.coinText = hud.coinText
     this.scoreText = hud.scoreText
     this.maxHp = hud.maxHp
+    this.add.rectangle(118, 42, 110, 5, 0x2a1810, 0.85).setOrigin(0.5).setScrollFactor(0).setDepth(40)
+    this.barL = this.add.rectangle(63, 42, 110, 5, 0xe07a4f, 1).setOrigin(0, 0.5).setScrollFactor(0).setDepth(41)
+    this.add.rectangle(846, 42, 110, 5, 0x2a1810, 0.85).setOrigin(0.5).setScrollFactor(0).setDepth(40)
+    this.barR = this.add.rectangle(791, 42, 110, 5, 0xe89ab8, 1).setOrigin(0, 0.5).setScrollFactor(0).setDepth(41)
+    this.targetHpL = this.dispHpL = this.maxHp
+    this.targetHpR = this.dispHpR = this.maxHp
 
     this.banner = this.add
       .text(480, 270, '', {
@@ -80,6 +94,27 @@ export class UIScene extends Phaser.Scene {
     this.events.once('destroy', this.unbind, this)
   }
 
+  update(_t: number, dt: number) {
+    const drain = Math.min(1, (dt / 1000) * 8)
+    const recover = Math.min(1, (dt / 1000) * 6)
+    const sk = Math.min(1, (dt / 1000) * 4)
+    this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)
+    this.dispHpR += (this.targetHpR - this.dispHpR) * (this.targetHpR < this.dispHpR ? drain : recover)
+    if (this.targetScore > this.dispScore) {
+      this.dispScore += Math.max(1, (this.targetScore - this.dispScore) * sk)
+      if (this.dispScore > this.targetScore - 0.5) this.dispScore = this.targetScore
+    } else this.dispScore += (this.targetScore - this.dispScore) * sk
+    const full = this.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
+    const empty = this.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
+    for (let i = 0; i < this.maxHp; i++) {
+      this.heartsL[i]?.setTexture(i < Math.round(this.dispHpL) ? full : empty)
+      this.heartsR[i]?.setTexture(i < Math.round(this.dispHpR) ? full : empty)
+    }
+    this.barL.width = Math.max(0, (this.dispHpL / this.maxHp) * 110)
+    this.barR.width = Math.max(0, (this.dispHpR / this.maxHp) * 110)
+    this.scoreText?.setText(`得分 ${Math.round(this.dispScore)}`)
+  }
+
   private unbind() {
     EventBus.off(GameEvents.PLAYER_HEALTH_CHANGED, this.onHealth, this)
     EventBus.off(GameEvents.SCORE_UPDATED, this.onScore, this)
@@ -87,29 +122,22 @@ export class UIScene extends Phaser.Scene {
   }
 
   private onHealth(p: GameEventMap['PLAYER_HEALTH_CHANGED']) {
-    const full = this.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
-    const empty = this.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
-    const max = this.maxHp
-
     if (isAggregateHealth(p)) {
-      for (let i = 0; i < max; i++) {
-        this.heartsL[i]?.setTexture(i < p.boyHp ? full : empty)
-        this.heartsR[i]?.setTexture(i < p.girlHp ? full : empty)
-      }
+      this.targetHpL = p.boyHp
+      this.targetHpR = p.girlHp
       return
     }
-
-    const hearts = p.role === 'boy' ? this.heartsL : this.heartsR
-    for (let i = 0; i < max; i++) {
-      hearts[i]?.setTexture(i < p.hp ? full : empty)
-    }
+    if (p.role === 'boy') this.targetHpL = p.hp
+    else this.targetHpR = p.hp
   }
 
   private onScore(p: GameEventMap['SCORE_UPDATED']) {
-    this.scoreText?.setText(`得分 ${p.score}`)
+    this.targetScore = p.score
+    if (p.instant) this.dispScore = p.score
     if (p.coins !== undefined) this.coinText?.setText(`×${p.coins}`)
     if (p.info !== undefined) this.hudInfo?.setText(p.info)
   }
+
 
   private onGameOver(p: GameEventMap['GAME_OVER']) {
     if (!p.active) {
