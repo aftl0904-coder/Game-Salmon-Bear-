@@ -77,6 +77,7 @@ export class DebugOverlay {
     enemies: Creep[]
     pet?: Phaser.Physics.Arcade.Sprite
   }) {
+    if (!this.gfx?.active) return
     this.gfx.clear()
     this.clearLabels()
     if (!this.enabled) return

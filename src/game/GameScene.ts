@@ -145,6 +145,9 @@ export class GameScene extends Phaser.Scene {
     this.checkpointX = 110
     this.startedAt = this.time.now
     this.entities.clear()
+    // Scene instances survive restart — reset debug before any frame can
+    // hit World.postUpdate with a destroyed/null debugGraphic.
+    this.resetPhysicsDebug(false)
 
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H)
@@ -161,7 +164,6 @@ export class GameScene extends Phaser.Scene {
     this.bindKeys()
     this.debugOverlay = new DebugOverlay(this)
     this.juice = new JuiceManager(this)
-    this.physics.world.drawDebug = this.physicsDebug
     this.launchUi()
     this.showIntro()
     this.emitHealth()
@@ -182,6 +184,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private onSceneShutdown() {
+    // Must clear drawDebug before Phaser destroys the Graphics — otherwise
+    // World.postUpdate still calls debugGraphic.clear() on undefined.
+    this.resetPhysicsDebug(false)
     if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
     this.time.removeAllEvents()
     this.tweens.killAll()
@@ -189,6 +194,47 @@ export class GameScene extends Phaser.Scene {
     this.input.removeAllListeners()
     this.entities.destroy()
     this.debugOverlay?.destroy()
+  }
+
+  /**
+   * Keep Arcade World.drawDebug in sync with a live debugGraphic.
+   * Phaser World.postUpdate does `this.debugGraphic.clear()` with no null check
+   * whenever drawDebug is true — a stale flag after scene restart soft-crashes play.
+   */
+  private resetPhysicsDebug(on: boolean) {
+    this.physicsDebug = on
+    // Shutdown can run after Arcade World is already destroyed.
+    const world = this.physics?.world
+    if (!world) return
+    world.defaults.debugShowBody = on
+    world.defaults.debugShowVelocity = on
+    if (on) {
+      if (!world.debugGraphic || !world.debugGraphic.active) {
+        world.createDebugGraphic()
+      } else {
+        world.debugGraphic.setVisible(true)
+      }
+      world.drawDebug = true
+      for (const body of world.bodies) {
+        body.debugShowBody = true
+        body.debugShowVelocity = true
+      }
+      for (const body of world.staticBodies) {
+        body.debugShowBody = true
+      }
+    } else {
+      // Disable flag first so postUpdate cannot race a destroyed graphic.
+      world.drawDebug = false
+      const g = world.debugGraphic
+      if (g) {
+        try {
+          if (g.active) g.clear()
+          g.setVisible(false)
+        } catch {
+          /* graphic already torn down with the scene display list */
+        }
+      }
+    }
   }
 
   private launchUi() {
@@ -229,28 +275,7 @@ export class GameScene extends Phaser.Scene {
 
   /** Toggle Arcade Physics body/velocity debug in real time (~ / F2). */
   private togglePhysicsDebug() {
-    this.physicsDebug = !this.physicsDebug
-    const world = this.physics.world
-    world.drawDebug = this.physicsDebug
-    world.defaults.debugShowBody = this.physicsDebug
-    world.defaults.debugShowVelocity = this.physicsDebug
-    if (this.physicsDebug) {
-      if (!world.debugGraphic || !world.debugGraphic.active) {
-        world.createDebugGraphic()
-      } else {
-        world.debugGraphic.setVisible(true)
-      }
-    } else if (world.debugGraphic) {
-      world.debugGraphic?.clear()
-      world.debugGraphic.setVisible(false)
-    }
-    for (const body of world.bodies) {
-      body.debugShowBody = this.physicsDebug
-      body.debugShowVelocity = this.physicsDebug
-    }
-    for (const body of world.staticBodies) {
-      body.debugShowBody = this.physicsDebug
-    }
+    this.resetPhysicsDebug(!this.physicsDebug)
   }
 
   playHurtPose(h: Hero, dir: number = -1) {
@@ -268,10 +293,7 @@ export class GameScene extends Phaser.Scene {
   update(_t: number, dt: number) {
     if (Phaser.Input.Keyboard.JustDown(this.keyDebug)) {
       const on = this.debugOverlay.toggle()
-      this.physics.world.drawDebug = on
-      this.physicsDebug = on
-      if (!on) this.physics.world.debugGraphic?.clear()
-      else if (!this.physics.world.debugGraphic) this.physics.world.createDebugGraphic()
+      this.resetPhysicsDebug(on)
     }
     if (
       Phaser.Input.Keyboard.JustDown(this.keyPhysicsDebug) ||
@@ -627,7 +649,10 @@ export class GameScene extends Phaser.Scene {
     this.petJetting = true
     SFX.hit()
     floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
-    this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
+    this.tweens.add({
+      targets: this.pet, scaleX: 0.95, scaleY: 0.85, yoyo: true, duration: 90,
+      onComplete: () => { if (this.pet?.active) this.pet.setScale(0.75) },
+    })
     this.honeyJet(this.girl.facing)
     this.time.delayedCall(520, () => {
       this.petJetting = false
