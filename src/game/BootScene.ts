@@ -5,7 +5,7 @@ import { registerHoneyArt } from './honeyArt'
 import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 
-/** Loading — bake textures then logo (Goemon packaging chrome) */
+/** Boot — asset preload + stage config into registry, then logo splash. */
 export class BootScene extends Phaser.Scene {
   constructor() {
     super('boot')
@@ -60,6 +60,17 @@ export class BootScene extends Phaser.Scene {
     registerHoneyArt(this)
     registerIsoArt(this)
     registerUiArt(this)
+
+    this.registry.set('gameConfig', {
+      round: 1,
+      stageId: 'creek-path',
+      stageTitle: '第一關・溪流小路',
+      stageSub: '奪回春蜜',
+      cast: ['倫寶', '琪寶寶', '噗噗'] as const,
+      maxHp: 10,
+      coinsStart: 5,
+    })
+
     this.scene.start('logo')
   }
 }
