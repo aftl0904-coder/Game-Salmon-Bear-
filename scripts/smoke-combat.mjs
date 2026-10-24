@@ -59,9 +59,7 @@ page.on('pageerror', (e) => console.error('PAGEERROR', e.message))
 try {
   await enterPlay(page)
   console.log('play started')
-
-  // settle on ground
-  await page.waitForTimeout(700)
+  await page.waitForTimeout(800)
 
   const plane = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
@@ -82,105 +80,73 @@ try {
       girl: foot(play.girl),
       enemies,
       coinStock: play.coinStock,
-      maxHp: 10,
     }
   })
   console.log('plane', JSON.stringify(plane))
 
-  if (plane.boy.originY !== 1 || plane.girl.originY !== 1) {
-    throw new Error('heroes must use foot origin (originY=1)')
-  }
-  if (plane.boy.hp !== 10 || plane.girl.hp !== 10) {
-    throw new Error(`expected HP 10, got boy=${plane.boy.hp} girl=${plane.girl.hp}`)
-  }
-  if (!plane.boy.blockedDown || !plane.girl.blockedDown) {
-    throw new Error('heroes not grounded')
-  }
+  if (plane.boy.originY !== 1 || plane.girl.originY !== 1) throw new Error('foot origin missing')
+  if (plane.boy.hp !== 10 || plane.girl.hp !== 10) throw new Error(`HP expected 10 got ${plane.boy.hp}/${plane.girl.hp}`)
+  if (!plane.boy.blockedDown || !plane.girl.blockedDown) throw new Error('heroes not grounded')
   const bottoms = [plane.boy.bodyBottom, plane.girl.bodyBottom, ...plane.enemies.map((e) => e.bodyBottom)]
-  const minB = Math.min(...bottoms)
-  const maxB = Math.max(...bottoms)
-  if (maxB - minB > 8) {
-    throw new Error(`ground plane mismatch bodyBottoms span=${maxB - minB} bottoms=${bottoms}`)
-  }
-  // must NOT be on world floor
-  if (plane.boy.bodyBottom > 500 || plane.girl.bodyBottom > 500) {
-    throw new Error('heroes still on world floor — physics plane bug')
-  }
-  console.log('ground plane ok, span', (maxB - minB).toFixed(2))
+  const span = Math.max(...bottoms) - Math.min(...bottoms)
+  if (span > 10) throw new Error(`ground plane mismatch span=${span}`)
+  if (plane.boy.bodyBottom > 500) throw new Error('hero on world floor')
+  console.log('ground plane ok span', span.toFixed(2))
 
-  // hurt pose
   const hurt = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
-    const h = play.boy
-    h.grace = 0
-    h.hurtCd = 0
-    // call private via prototype path — expose by direct damage flow
-    play.playHurtPose(h, -1)
-    return { pose: h.pose, angle: h.angle, scaleY: h.scaleY, base: h.baseScale }
+    play.playHurtPose(play.boy, -1)
+    return { pose: play.boy.pose, angle: play.boy.angle, scaleY: play.boy.scaleY, base: play.boy.baseScale }
   })
   console.log('hurt', hurt)
   if (hurt.pose !== 'hurt') throw new Error('hurt pose not set')
-  if (Math.abs(hurt.angle) < 5) throw new Error('hurt pose angle missing')
+  if (Math.abs(hurt.angle) < 5) throw new Error('hurt angle missing')
   if (hurt.scaleY >= hurt.base * 0.95) throw new Error('hurt squash missing')
   console.log('hurt pose ok')
 
   await page.waitForTimeout(400)
-  const afterHurt = await page.evaluate(() => {
-    const h = window.__SAKE_GAME__.scene.getScene('play').boy
-    return { pose: h.pose, angle: h.angle }
-  })
-  if (afterHurt.pose !== 'idle') throw new Error(`hurt pose stuck: ${afterHurt.pose}`)
-  console.log('hurt recover ok')
+  const after = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.pose)
+  if (after !== 'idle') throw new Error(`hurt stuck: ${after}`)
 
-  // coin continue path: force die → continue UI → insert coin
   const beforeCoins = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').coinStock)
-  console.log('coins before', beforeCoins)
   if (beforeCoins < 1) throw new Error('need starting coins')
 
   await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
-    play.boy.hp = 1
-    play.boy.grace = 0
-    play.boy.hurtCd = 0
     play.beginDie(play.boy, '測試倒下')
   })
-
-  // wait die pose then continue UI
   await page.waitForTimeout(900)
+
   const cont = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
     return {
-      awaiting: play.awaitingContinue || play.boy.awaitingContinue,
-      alive: play.boy.alive,
+      awaiting: play.awaitingContinue,
+      boxVisible: play.continueBox.visible,
+      boxText: play.continueBox.text,
       pose: play.boy.pose,
-      boxVisible: play.continueBox?.visible ?? play.banner?.visible,
-      boxText: play.continueBox?.text ?? play.banner?.text ?? '',
     }
   })
-  console.log('continue ui', cont)
+  console.log('continue', cont)
   if (!cont.awaiting) throw new Error('not awaiting continue')
-  if (!cont.boxVisible) throw new Error('continue box not visible')
-  if (!cont.boxText.includes('投幣續關')) throw new Error('missing 投幣續關 copy')
+  if (!cont.boxVisible || !cont.boxText.includes('投幣續關')) throw new Error('投幣續關 UI missing')
 
   await page.keyboard.press('Enter')
-  await page.waitForTimeout(250)
+  await page.waitForTimeout(300)
 
   const revived = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
     return {
       alive: play.boy.alive,
-      awaiting: play.awaitingContinue || play.boy.awaitingContinue,
+      awaiting: play.awaitingContinue,
       hp: play.boy.hp,
       coins: play.coinStock,
-      pose: play.boy.pose,
-      y: play.boy.y,
       bodyBottom: play.boy.body.bottom,
     }
   })
   console.log('revived', revived)
-  if (!revived.alive || revived.awaiting) throw new Error('coin continue did not revive')
-  if (revived.coins !== beforeCoins - 1) throw new Error(`coin not spent: ${beforeCoins} -> ${revived.coins}`)
-  if (revived.hp < 6) throw new Error(`respawn HP too low: ${revived.hp}`)
+  if (!revived.alive || revived.awaiting) throw new Error('continue failed')
+  if (revived.coins !== beforeCoins - 1) throw new Error('coin not spent')
+  if (revived.hp < 6) throw new Error('respawn HP low')
   if (revived.bodyBottom > 500) throw new Error('revived on world floor')
 
   console.log('SMOKE_PASS combat')

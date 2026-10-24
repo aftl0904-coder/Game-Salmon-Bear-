@@ -7,7 +7,10 @@ import { bindFootBody } from './footBody'
 import {
   type Creep,
   type EnemyKind,
+  type EnemySpecies,
   KIND_STATS,
+  SPECIES_STATS,
+  defaultSpecies,
   enemyCanHurt,
   tickEnemy,
 } from './enemyAi'
@@ -19,7 +22,7 @@ export const GROUND_Y = 400
 const MAX_HP = 10
 const BOY_SPEED = 275
 const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
-const JUMP_V = -700
+const JUMP_V = -780
 const COYOTE_MS = 110
 const JUMP_BUF_MS = 120
 const HURT_LOCK_MS = 260
@@ -48,8 +51,9 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 
 /**
  * Round 1 — 溪流小路
- * Goemon-feel movement + enemy AI; HP10; hurt/die poses; 投幣續關
- * P1 倫寶 / P2 琪寶寶 / AI 噗噗
+ * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
+ * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * 噗噗：AI only，始終跟隨琪寶寶；受傷時噴蜂蜜噴流
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -89,6 +93,7 @@ export class PlayScene extends Phaser.Scene {
   private heartsL: Phaser.GameObjects.Image[] = []
   private heartsR: Phaser.GameObjects.Image[] = []
   private coinText!: Phaser.GameObjects.Text
+  private scoreText!: Phaser.GameObjects.Text
   private hudInfo!: Phaser.GameObjects.Text
   private banner!: Phaser.GameObjects.Text
   continueBox!: Phaser.GameObjects.Text
@@ -136,7 +141,7 @@ export class PlayScene extends Phaser.Scene {
 
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H)
-    this.cameras.main.fadeIn(350, 20, 40, 60)
+    this.cameras.main.fadeIn(350, 40, 100, 140)
 
     unlockAudio()
     startBgm()
@@ -238,9 +243,11 @@ export class PlayScene extends Phaser.Scene {
 
     const pct = Math.min(100, Math.floor((Math.max(this.boy.x, this.girl.x) / (WORLD_W - 160)) * 100))
     const sec = ((this.time.now - this.startedAt) / 1000).toFixed(0)
+    this.scorePts = this.liveScore()
     this.hudInfo.setText(
-      `${this.mode === '1p' ? '單人' : '雙人'}　進度 ${pct}%　${sec}秒　春蜜 ${this.honeyGot}/3　分數 ${this.liveScore()}`,
+      `${this.mode === '1p' ? '單人' : '雙人'}　進度 ${pct}%　${sec}秒　春蜜 ${this.honeyGot}/3`,
     )
+    this.scoreText?.setText(`得分 ${this.scorePts}`)
     this.refreshHearts()
     this.checkWin()
   }
@@ -648,19 +655,33 @@ export class PlayScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
+  /** Pooh AI: always trail Ki Bobo (never player-controlled) */
   private updatePet() {
-    // 噗噗 always follows 琪寶寶 on the shared floor
-    const targetX = this.girl.x - this.girl.facing * 42
-    const targetY = this.girl.y
-    this.pet.x = Phaser.Math.Linear(this.pet.x, targetX, this.petJetting ? 0.35 : 0.18)
-    this.pet.y = Phaser.Math.Linear(this.pet.y, targetY, 0.22)
-    this.pet.setFlipX(this.girl.facing < 0)
+    const g = this.girl
+    const followX = g.x - g.facing * 52
+    const followY = g.y
+    const dx = followX - this.pet.x
+    const dy = followY - this.pet.y
+    const speed = this.petJetting ? 220 : 340
+    const dist = Math.hypot(dx, dy)
+    if (dist > 6) {
+      const nx = dx / dist
+      const ny = dy / dist
+      const step = Math.min(dist, (speed * this.game.loop.delta) / 1000)
+      this.pet.setPosition(this.pet.x + nx * step, this.pet.y + ny * step)
+    } else {
+      this.pet.setPosition(followX, followY)
+    }
     this.pet.setVelocity(0, 0)
-    this.petShadow.setPosition(this.pet.x, this.pet.y + 4)
+    this.pet.setFlipX(g.facing < 0)
+    this.pet.setVisible(true)
+    this.pet.setActive(true)
+    this.pet.setDepth(g.depth - 0.1)
   }
 
   private syncFx() {
     this.boyShadow.setPosition(this.boy.x, this.boy.y + 4)
+    this.petShadow.setPosition(this.pet.x, this.pet.y + 42)
     this.girlShadow.setPosition(this.girl.x, this.girl.y + 4)
     this.fan.setPosition(this.girl.x - this.girl.facing * 28, this.girl.y - 36)
     this.fan.setFlipX(this.girl.facing < 0)
@@ -677,16 +698,16 @@ export class PlayScene extends Phaser.Scene {
 
   private drawWorld() {
     const g = this.add.graphics().setDepth(-45)
-    g.fillStyle(0x6eb8e0, 1)
+    g.fillStyle(0x7ec8f0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
-    g.fillStyle(0xa8d4f0, 1)
-    g.fillRect(0, 0, WORLD_W, 130)
-    g.fillStyle(0xffe6c0, 0.35)
-    g.fillRect(0, 180, WORLD_W, 160)
-    g.fillStyle(0xfff3c8, 0.45)
-    g.fillCircle(140, 64, 64)
+    g.fillStyle(0xb8e4ff, 1)
+    g.fillRect(0, 0, WORLD_W, 140)
+    g.fillStyle(0xffe8b0, 0.45)
+    g.fillRect(0, 170, WORLD_W, 180)
+    g.fillStyle(0xfff6d0, 0.55)
+    g.fillCircle(160, 70, 70)
     g.fillStyle(0xffe08a, 1)
-    g.fillCircle(140, 64, 24)
+    g.fillCircle(160, 70, 28)
 
     this.clouds = this.add.tileSprite(480, 58, 960, 56, 'bg-cloud').setScrollFactor(0).setDepth(-40).setAlpha(0.8)
     this.mountFar = this.add.tileSprite(480, 250, 960, 80, 'bg-mount-far').setScrollFactor(0).setDepth(-35).setAlpha(0.9)
@@ -694,17 +715,21 @@ export class PlayScene extends Phaser.Scene {
 
     for (let x = 160; x < WORLD_W; x += 260) {
       this.add.image(x + 8, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.55).setScale(1.1, 0.8)
-      this.add.image(x, GROUND_Y - 36, 'prop-tree3d').setDepth(3).setScale(1.15)
+      this.add.image(x, GROUND_Y, 'prop-tree3d').setOrigin(0.5, 1).setDepth(3).setScale(1.2)
     }
     for (let x = 400; x < WORLD_W; x += 700) {
       this.add.image(x + 30, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.5).setScale(1.6, 0.7)
-      this.add.image(x, GROUND_Y - 40, 'prop-torii').setDepth(3).setScale(1.05)
-      this.add.image(x + 120, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.45).setScale(1.2, 0.7)
-      this.add.image(x + 120, GROUND_Y - 28, 'prop-house3d').setDepth(3).setScale(1.1)
+      this.add.image(x, GROUND_Y, 'prop-torii').setOrigin(0.5, 1).setDepth(3).setScale(1.1)
+      this.add.image(x + 130, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.45).setScale(1.3, 0.7)
+      this.add.image(x + 130, GROUND_Y, 'prop-house3d').setOrigin(0.5, 1).setDepth(3).setScale(1.2)
+      if (x + 280 < WORLD_W) {
+        this.add.image(x + 280, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.4).setScale(1.1, 0.65)
+        this.add.image(x + 280, GROUND_Y, 'prop-house3d').setOrigin(0.5, 1).setDepth(3).setScale(1.0).setFlipX(true)
+      }
     }
-    for (let x = 80; x < WORLD_W; x += 190) {
+    for (let x = 80; x < WORLD_W; x += 180) {
       this.add.image(x, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.35).setScale(0.55, 0.55)
-      this.add.image(x, GROUND_Y - 16, 'prop-lantern3d').setDepth(3.5).setScale(1.15)
+      this.add.image(x, GROUND_Y, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(3.5).setScale(1.2)
     }
 
     this.water = this.add.tileSprite(480, 518, 960, 48, 'water-deep').setScrollFactor(0).setDepth(1)
@@ -843,19 +868,21 @@ export class PlayScene extends Phaser.Scene {
     this.heartsR = hud.heartsR
     this.hudInfo = hud.info
     this.coinText = hud.coinText
+    this.scoreText = hud.scoreText
     this.refreshCoins()
   }
 
   private showIntro() {
     const box = this.add
       .text(
-        480, 200,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n噗噗跟隨　｜　生命１０　受傷－１　投幣可續關\n角色與敵人同地面　可重疊\n\n按空白鍵或點擊畫面開始',
+        480,
+        200,
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n生命１０　投幣可續關\n琪寶寶受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
           color: '#f7e7c0',
-          backgroundColor: '#1a1020ee',
+          backgroundColor: '#4a2a18ee',
           padding: { x: 16, y: 12 },
           align: 'center',
         },
@@ -874,8 +901,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：倫寶ＪＫＵＩ｜琪寶寶同行｜投幣續關｜Ｒ回選單'
-          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜投幣續關｜Ｒ回選單',
+          ? '單人：倫寶ＪＫＵＩ｜琪寶寶＋噗噗同行｜Ｒ回選單'
+          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜噗噗跟隨｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
@@ -1061,22 +1088,33 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private placeEnemies() {
-    this.mkEnemy(620, GROUND_Y, 'blocker')
-    this.mkEnemy(1500, GROUND_Y, 'blocker')
-    this.mkEnemy(1050, GROUND_Y, 'chaser')
-    this.mkEnemy(1980, GROUND_Y, 'chaser')
-    this.mkEnemy(740, 200, 'ambusher')
-    this.mkEnemy(1750, 210, 'ambusher')
-    this.mkEnemy(1180, GROUND_Y, 'guardian', 1200)
-    this.mkEnemy(2080, GROUND_Y, 'guardian', 2050)
-    this.mkEnemy(2960, GROUND_Y, 'guardian', 3000)
-    this.mkEnemy(2680, GROUND_Y, 'interrupter')
+    // Round 1: 2 visual species — 醃魚雜兵 (fish chase) + 木桶武者 (barrel hop/lunge)
+    this.mkEnemy(620, GROUND_Y, 'blocker', undefined, 'fish')
+    this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish')
+    this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish')
+    this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish')
+    this.mkEnemy(740, 200, 'ambusher', undefined, 'barrel')
+    this.mkEnemy(1750, 210, 'ambusher', undefined, 'barrel')
+    this.mkEnemy(1180, GROUND_Y, 'guardian', 1200, 'barrel')
+    this.mkEnemy(2080, GROUND_Y, 'guardian', 2050, 'fish')
+    this.mkEnemy(2960, GROUND_Y, 'guardian', 3000, 'barrel')
+    this.mkEnemy(2680, GROUND_Y, 'interrupter', undefined, 'barrel')
   }
 
-  private mkEnemy(x: number, y: number, kind: EnemyKind, guardX?: number) {
+  private mkEnemy(
+    x: number,
+    y: number,
+    kind: EnemyKind,
+    guardX?: number,
+    species?: EnemySpecies,
+  ) {
     const st = KIND_STATS[kind]
-    const e = this.enemies.create(x, y, 'art-enemy') as Creep
+    const spKey = species ?? defaultSpecies(kind)
+    const sp = SPECIES_STATS[spKey]
+    const tex = this.textures.exists(sp.tex) ? sp.tex : 'art-enemy'
+    const e = this.enemies.create(x, y, tex) as Creep
     e.kind = kind
+    e.species = spKey
     e.hp = st.hp
     e.maxHp = st.hp
     e.windup = 0
@@ -1095,21 +1133,25 @@ export class PlayScene extends Phaser.Scene {
     e.hopCd = Phaser.Math.Between(200, 600)
     e.chargeDir = 1
     e.phase = 1
-    e.baseScale = st.scale
+    e.baseScale = st.scale * sp.scaleMul
     e.poseAngle = 0
     e.boss = kind === 'boss'
     e.elite = kind === 'interrupter'
     e.setCollideWorldBounds(true)
     e.setDepth(6)
-    e.setScale(st.scale)
-    if (st.tint) e.setTint(st.tint)
-    bindFootBody(e, { bodyW: 20, bodyH: 22 })
+    e.setScale(e.baseScale)
+    if (spKey === 'fish' && st.tint) e.setTint(st.tint)
+    bindFootBody(e, {
+      bodyW: spKey === 'barrel' ? 22 : 20,
+      bodyH: spKey === 'barrel' ? 28 : 22,
+    })
+    const labelText = kind === 'boss' ? st.label : sp.label
     e.label = this.add
-      .text(x, y - 44, st.label, {
+      .text(x, y - 44, labelText, {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: kind === 'boss' ? '14px' : '11px',
         color: '#fff4e0',
-        backgroundColor: '#301820cc',
+        backgroundColor: spKey === 'barrel' ? '#3a2818cc' : '#301820cc',
         padding: { x: 4, y: 1 },
       })
       .setOrigin(0.5)
