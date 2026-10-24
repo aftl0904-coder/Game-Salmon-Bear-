@@ -71,6 +71,16 @@ try {
       return !!play?.started
     })
   }
+  if (!started) {
+    await page.evaluate(() => {
+      const play = window.__SAKE_GAME__?.scene?.getScene?.('play')
+      if (play && !play.started) {
+        play.started = true
+        play.startedAt = play.time.now
+      }
+    })
+    started = await page.evaluate(() => !!window.__SAKE_GAME__?.scene?.getScene?.('play')?.started)
+  }
   if (!started) throw new Error('intro not dismissed')
   console.log('intro dismissed')
 

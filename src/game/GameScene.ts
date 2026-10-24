@@ -122,7 +122,7 @@ export class GameScene extends Phaser.Scene {
   private keyDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebugAlt!: Phaser.Input.Keyboard.Key
-  private physicsDebug = true
+  private physicsDebug = false
   /** Synced from UIScene for smoke / continue path. */
   banner!: Phaser.GameObjects.Text
   continueBox!: Phaser.GameObjects.Text
@@ -265,7 +265,7 @@ export class GameScene extends Phaser.Scene {
         world.debugGraphic.setVisible(true)
       }
     } else if (world.debugGraphic) {
-      world.debugGraphic.clear()
+      world.debugGraphic?.clear()
       world.debugGraphic.setVisible(false)
     }
     for (const body of world.bodies) {
@@ -1047,6 +1047,11 @@ export class GameScene extends Phaser.Scene {
       const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
       if (kind === 'lava') this.hazardHit(this.boy, { knockX: this.boy.facing * -220, knockY: -520, label: '熔岩' })
       else this.spike(this.boy)
+    })
+    this.physics.add.overlap(this.girl, this.hazards, (_g, hz) => {
+      const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
+      if (kind === 'lava') this.hazardHit(this.girl, { knockX: this.girl.facing * -220, knockY: -520, label: '熔岩' })
+      else this.spike(this.girl)
     })
     // (hazards also wired below if duplicated — dedupe later)
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
