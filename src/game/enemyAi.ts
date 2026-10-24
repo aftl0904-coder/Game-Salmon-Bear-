@@ -116,8 +116,9 @@ export function defaultSpecies(kind: EnemyKind): EnemySpecies {
 
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
-    hp: 2, spd: 58, patrolSpd: 46, aggro: 240, detect: 300, melee: 50,
-    windupMs: 380, recoverMs: 360, atkCdMs: 1100, scale: 1.75, tint: 0x88aacc,
+    // Slightly wider detect so opening fight engages in ~2–3s / ~180–250px.
+    hp: 2, spd: 62, patrolSpd: 48, aggro: 280, detect: 340, melee: 50,
+    windupMs: 360, recoverMs: 340, atkCdMs: 1050, scale: 1.75, tint: 0x88aacc,
     label: '路障', chargePrefer: false, hopChance: 0.012,
   },
   chaser: {
@@ -215,7 +216,7 @@ export type AiCtx = {
   girl: HeroRef
   leadX: number
   prevLeadX: number
-  floatBang: (x: number, y: number) => void
+  floatBang: (x: number, y: number, msg?: string) => void
 }
 
 function applyPose(e: Creep) {

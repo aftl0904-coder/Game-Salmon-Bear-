@@ -7,8 +7,9 @@ export type EnemyHitResult = { killed: boolean; hp: number }
 export type EnemySpawnCoin = (x: number, y: number) => void
 export type EnemyHooks = {
   spawnCoin?: EnemySpawnCoin
-  floatBang?: (x: number, y: number) => void
+  floatBang?: (x: number, y: number, msg?: string) => void
   spawnProjectile?: (e: Enemy, dir: 1 | -1) => void
+  telegraph?: (e: Enemy, kind: 'windup' | 'ambush') => void
 }
 
 /**
@@ -33,6 +34,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   label?: Phaser.GameObjects.Text
   hooks: EnemyHooks = {}
   groundGroup: Phaser.Physics.Arcade.StaticGroup | null = null
+  /** Opening blocker: auto-aggro when heroes enter radius. */
+  earlyAggro = false
+  /** Altar climax ambusher: longer red telegraph + ambush shout. */
+  altarAmbush = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
     super(scene, x, y, texture)

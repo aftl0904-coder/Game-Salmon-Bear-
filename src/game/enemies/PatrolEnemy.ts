@@ -191,13 +191,32 @@ export class PatrolEnemy extends Enemy {
       this.setFsm('ATTACK')
       this.atkPhase = 'pause'
       this.think = Math.max(
-        200,
+        this.altarAmbush ? 260 : 200,
         220 + (this.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0),
       )
       this.hitThis = false
       this.setVelocityX(0)
-      this.setTint(0xff3333)
-      this.hooks.floatBang?.(this.x, this.y - 36)
+      this.setTint(0xff2222)
+      this.hooks.floatBang?.(
+        this.x,
+        this.y - 36,
+        this.altarAmbush ? '伏兵！' : '！',
+      )
+      this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
+      this.applyPose()
+      return
+    }
+
+    // Opening auto-aggro: first confrontation without a long walk-to-combat.
+    if (
+      this.earlyAggro &&
+      this.fsm === 'PATROL' &&
+      dist < Math.max(detectR, aggro + 40)
+    ) {
+      this.hooks.floatBang?.(this.x, this.y - 36, '！')
+      this.think = 120
+      this.setFsm('CHASE')
+      this.setVelocityX(0)
       this.applyPose()
       return
     }
@@ -275,12 +294,18 @@ export class PatrolEnemy extends Enemy {
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // Red telegraph ≥200ms before lunge (F1 still shows ATTACK/windup).
-    this.windup = Math.max(200, ms)
+    // Red telegraph ≥220ms (≥280ms altar ambush) before lunge.
+    const floor = this.altarAmbush ? 280 : 220
+    this.windup = Math.max(floor, ms)
     this.hitThis = false
     this.setVelocityX(0)
-    this.setTint(0xff3333)
-    this.hooks.floatBang?.(this.x, this.y - 36)
+    this.setTint(0xff2222)
+    this.hooks.floatBang?.(
+      this.x,
+      this.y - 36,
+      this.altarAmbush ? '伏兵！' : '！',
+    )
+    this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
   }
 

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { burst, floatText, hitstop, startIFrameBlink, JuiceManager } from './fx'
+import { burst, floatText, impactRing, startIFrameBlink, JuiceManager } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { calcScore, saveScore } from './score'
 import {
@@ -107,6 +107,7 @@ export class GameScene extends Phaser.Scene {
   private boyGoal = false
   private girlGoal = false
   private bossOn = false
+  private altarAmbushOn = false
   private honeyGot = 0
   private petJetting = false
   private scorePts = 0
@@ -134,6 +135,7 @@ export class GameScene extends Phaser.Scene {
     this.awaitingContinue = false
     this.started = false
     this.bossOn = false
+    this.altarAmbushOn = false
     this.boyGoal = false
     this.girlGoal = false
     this.honeyGot = 0
@@ -345,6 +347,11 @@ export class GameScene extends Phaser.Scene {
 
     this.boyGoal = !!this.physics.overlap(this.boy, this.goal)
     this.girlGoal = !!this.physics.overlap(this.girl, this.goal)
+
+    // Altar climax: 2–3 barrel ambushers wake with clear telegraph before boss.
+    if (!this.altarAmbushOn && Math.max(this.boy.x, this.girl.x) > WORLD_W - 980) {
+      this.triggerAltarAmbush()
+    }
 
     if (!this.bossOn && Math.max(this.boy.x, this.girl.x) > WORLD_W - 780) {
       this.bossOn = true
@@ -682,14 +689,14 @@ export class GameScene extends Phaser.Scene {
     const pe = e as PatrolEnemy
     if (pe.isDead || pe.fsm === 'DEAD') return
     const result = pe.receiveHit(dmg, dir)
-    burst(this, pe.x, pe.y - 20, 0xffe8a0, 8)
-    floatText(this, pe.x, pe.y - 40, '！')
+    floatText(this, pe.x, pe.y - 40, dmg >= 2 ? '重擊！' : '！')
     SFX.hit()
-    if (dmg >= 2 || pe.kind === 'boss') this.juice.play('heavy', pe.x, pe.y)
-    else { hitstop(this, 50); this.cameras.main.shake(100, 0.01) }
+    // Every solid hit: readable freeze + shake + particles (console-level juice).
+    this.juice.solidHit(pe.x, pe.y - 18, dmg >= 2 || pe.kind === 'boss')
     if (result.killed) {
       SFX.kill()
-      burst(this, pe.x, pe.y - 16, 0xff6688, 12)
+      burst(this, pe.x, pe.y - 16, 0xff6688, 14)
+      impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
       if (pe.kind === 'boss') this.emitScore('武者倒下！兩人一起站上祭壇')
     }
   }
@@ -793,7 +800,7 @@ export class GameScene extends Phaser.Scene {
         girl: this.girl,
         leadX,
         prevLeadX: this.prevLeadX,
-        floatBang: (x, y) => floatText(this, x, y, '！', '#ff3333'),
+        floatBang: (x, y, msg) => floatText(this, x, y, msg ?? '！', '#ff3333'),
       })
     })
     this.prevLeadX = leadX
@@ -958,7 +965,7 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCast() {
     const grace = this.time.now + 1400
-    // Spawn 前移 — first blocker sits ~250px ahead so opening has contact.
+    // Spawn 前移 — first blocker ~180–220px ahead so opening fight lands in ~2–3s.
     this.boy = Player.spawn(this, 250, GROUND_Y, {
       role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1.85, speed: BOY_SPEED,
     })
@@ -1115,10 +1122,11 @@ export class GameScene extends Phaser.Scene {
     const x = pot.x, y = pot.y
     pot.disableBody(true, true)
     SFX.kill()
-    // Smash juice: hitfreeze 50ms + shake + debris
-    hitstop(this, 50)
-    this.cameras.main.shake(100, 0.01)
-    this.juice.breakDebris(x, y, pot.breakKind === 'chest' ? 0xc48a48 : 0xffc050)
+    // Smash juice: freeze + shake + debris + impact ring (console-readable)
+    const debrisColor = pot.breakKind === 'chest' ? 0xc48a48 : 0xffc050
+    this.juice.breakDebris(x, y, debrisColor)
+    this.juice.solidHit(x, y, false)
+    impactRing(this, x, y, debrisColor, 12)
     floatText(this, x, y - 18, pot.breakKind === 'chest' ? '寶箱破！' : '壺破！', '#ffe8a0')
     if (loot === 'honey') {
       this.honeyGot = Math.min(3, this.honeyGot + 1)
@@ -1273,8 +1281,11 @@ export class GameScene extends Phaser.Scene {
 
   private placeEnemies() {
     // Round 1: 2 visual species — 醃魚雜兵 (fish chase) + 木桶武者 (barrel hop/lunge)
-    // Opening density: blocker within ~200–350px of spawn (250 → ~500).
-    this.mkEnemy(500, GROUND_Y, 'blocker', undefined, 'fish')
+    // Opening: first confrontation ~180–220px / ~2–3s (spawn 250 → blocker ~450).
+    const opener = this.mkEnemy(450, GROUND_Y, 'blocker', undefined, 'fish')
+    opener.earlyAggro = true
+    opener.detectRadius = 360
+    opener.aggroRadius = 300
     this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish')
     this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish')
     this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish')
@@ -1284,9 +1295,40 @@ export class GameScene extends Phaser.Scene {
     this.mkEnemy(2080, GROUND_Y, 'guardian', 2050, 'fish')
     this.mkEnemy(2960, GROUND_Y, 'guardian', 3000, 'barrel')
     this.mkEnemy(2680, GROUND_Y, 'interrupter', undefined, 'barrel')
-    // 关末小高潮：祭壇／春蜜前 1–2 木桶 ambusher（平台 + 地面）
-    this.mkEnemy(2920, 210, 'ambusher', undefined, 'barrel')
-    this.mkEnemy(3480, GROUND_Y, 'ambusher', undefined, 'barrel')
+    // 關末高潮：祭壇前 3 木桶伏兵（平台 + 兩側地面）+ triggerAltarAmbush telegraph
+    const a1 = this.mkEnemy(2920, 210, 'ambusher', undefined, 'barrel')
+    const a2 = this.mkEnemy(3320, GROUND_Y, 'ambusher', undefined, 'barrel')
+    const a3 = this.mkEnemy(3520, GROUND_Y, 'ambusher', undefined, 'barrel')
+    for (const a of [a1, a2, a3]) a.altarAmbush = true
+  }
+
+  /** Wake altar-front barrel ambushers with clear red telegraph. */
+  private triggerAltarAmbush() {
+    this.altarAmbushOn = true
+    SFX.boss()
+    this.cameras.main.flash(160, 255, 120, 80)
+    this.emitScore('祭壇伏兵！木桶武者突襲')
+    floatText(this, this.cameras.main.scrollX + 480, 120, '祭壇伏兵！', '#ff6644')
+    this.enemies.getChildren().forEach((o) => {
+      const e = o as PatrolEnemy
+      if (!e.active || !e.altarAmbush || e.fsm === 'DEAD') return
+      e.setTint(0xff2222)
+      impactRing(this, e.x, e.y - 20, 0xff5533, 16)
+      floatText(this, e.x, e.y - 48, '伏兵！', '#ff4422')
+      e.setFsm('CHASE')
+      e.think = 160
+      // Force a readable windup telegraph before the first lunge.
+      this.time.delayedCall(180 + Math.random() * 120, () => {
+        if (!e.active || e.fsm === 'DEAD' || e.fsm === 'HURT') return
+        e.setFsm('ATTACK')
+        e.atkPhase = 'windup'
+        e.windup = 300
+        e.hitThis = false
+        e.setVelocityX(0)
+        e.setTint(0xff2222)
+        impactRing(this, e.x, e.y - 18, 0xff4422, 12)
+      })
+    })
   }
 
   private mkEnemy(
@@ -1302,7 +1344,16 @@ export class GameScene extends Phaser.Scene {
       ground: this.ground,
       hooks: {
         spawnCoin: (cx, cy) => this.spawnCoin(cx, cy),
-        floatBang: (bx, by) => floatText(this, bx, by, '！', '#ff3333'),
+        floatBang: (bx, by, msg) => floatText(this, bx, by, msg ?? '！', '#ff3333'),
+        telegraph: (en, kindT) => {
+          impactRing(
+            this,
+            en.x,
+            en.y - 18,
+            kindT === 'ambush' ? 0xff4422 : 0xffaa66,
+            kindT === 'ambush' ? 14 : 10,
+          )
+        },
       },
     })
     this.entities.add(e, 'enemy')

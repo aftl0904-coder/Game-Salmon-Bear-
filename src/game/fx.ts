@@ -1,4 +1,12 @@
 import type Phaser from 'phaser'
+import {
+  HITFREEZE_MS,
+  HIT_SHAKE_MS,
+  HIT_SHAKE_INTENSITY,
+  HEAVY_HITFREEZE_MS,
+  HEAVY_HIT_SHAKE_MS,
+  HEAVY_HIT_SHAKE_INTENSITY,
+} from './engine/constants'
 
 export function burst(
   scene: Phaser.Scene,
@@ -9,20 +17,40 @@ export function burst(
 ) {
   for (let i = 0; i < count; i++) {
     const a = (Math.PI * 2 * i) / count + Math.random() * 0.4
-    const sp = 60 + Math.random() * 120
+    const sp = 70 + Math.random() * 140
     const p = scene.add
-      .circle(x, y, 2 + Math.random() * 3, color, 0.95)
+      .circle(x, y, 2.5 + Math.random() * 3.5, color, 0.95)
       .setDepth(15)
     scene.tweens.add({
       targets: p,
       x: x + Math.cos(a) * sp,
-      y: y + Math.sin(a) * sp - 30,
+      y: y + Math.sin(a) * sp - 34,
       alpha: 0,
-      scale: 0.2,
-      duration: 280 + Math.random() * 180,
+      scale: 0.15,
+      duration: 300 + Math.random() * 200,
       onComplete: () => p.destroy(),
     })
   }
+}
+
+/** Expanding impact ring — readable smash / lunge telegraph. */
+export function impactRing(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  color = 0xffe8a0,
+  startR = 8,
+) {
+  const ring = scene.add.circle(x, y, startR, color, 0).setDepth(14)
+  ring.setStrokeStyle(3, color, 0.95)
+  scene.tweens.add({
+    targets: ring,
+    scale: 3.2,
+    alpha: 0,
+    duration: 220,
+    ease: 'Cubic.out',
+    onComplete: () => ring.destroy(),
+  })
 }
 
 export function floatText(
@@ -51,15 +79,15 @@ export function floatText(
   })
 }
 
-/** Pause physics ~50ms on heavy hits (hit freeze). */
-export function hitstop(scene: Phaser.Scene, ms = 50) {
+/** Pause physics on solid hits (hit freeze). */
+export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
   scene.physics.world.pause()
   scene.time.delayedCall(ms, () => {
     if (scene.sys.isActive()) scene.physics.world.resume()
   })
 }
 
-export type JuiceKind = 'damage' | 'heavy' | 'land' | 'run' | 'break'
+export type JuiceKind = 'damage' | 'heavy' | 'land' | 'run' | 'break' | 'hit'
 
 /** Game-feel facade: camera shake, hit freeze, dust, debris. */
 export class JuiceManager {
@@ -71,15 +99,30 @@ export class JuiceManager {
   }
 
   shakeDamage() {
-    this.scene.cameras.main.shake(100, 0.01)
+    this.scene.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
   }
 
   shakeHeavy() {
-    this.scene.cameras.main.shake(100, 0.01)
+    this.scene.cameras.main.shake(HEAVY_HIT_SHAKE_MS, HEAVY_HIT_SHAKE_INTENSITY)
   }
 
-  freeze(ms = 50) {
+  freeze(ms = HITFREEZE_MS) {
     hitstop(this.scene, ms)
+  }
+
+  /** Every solid hit: freeze + shake + particles + impact ring. */
+  solidHit(x: number, y: number, heavy = false) {
+    if (heavy) {
+      this.freeze(HEAVY_HITFREEZE_MS)
+      this.shakeHeavy()
+      burst(this.scene, x, y, 0xffe8a0, 14)
+      burst(this.scene, x, y - 8, 0xffaa66, 8)
+    } else {
+      this.freeze(HITFREEZE_MS)
+      this.shakeDamage()
+      burst(this.scene, x, y, 0xffe8a0, 12)
+    }
+    impactRing(this.scene, x, y - 12, heavy ? 0xffcc66 : 0xffe8a0, 10)
   }
 
   landDust(x: number, y: number) {
@@ -137,12 +180,13 @@ export class JuiceManager {
     switch (kind) {
       case 'damage':
         this.shakeDamage()
-        burst(this.scene, x, y, 0xff4466, 8)
+        burst(this.scene, x, y, 0xff4466, 10)
         break
       case 'heavy':
-        this.shakeHeavy()
-        this.freeze(50)
-        burst(this.scene, x, y, 0xffe8a0, 10)
+        this.solidHit(x, y, true)
+        break
+      case 'hit':
+        this.solidHit(x, y, false)
         break
       case 'land':
         this.landDust(x, y)
@@ -152,6 +196,8 @@ export class JuiceManager {
         break
       case 'break':
         this.breakDebris(x, y)
+        this.freeze(HITFREEZE_MS)
+        this.shakeDamage()
         break
     }
   }

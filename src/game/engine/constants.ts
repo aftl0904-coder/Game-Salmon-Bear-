@@ -27,7 +27,10 @@ export const RUN_ACCEL = 2600
 export const RUN_FRICTION = 2200
 export const AIR_ACCEL_MUL = 0.7
 
-/** Combat juice. */
-export const HITFREEZE_MS = 50
-export const HIT_SHAKE_MS = 100
-export const HIT_SHAKE_INTENSITY = 0.01
+/** Combat juice — solid hits must read as console-level freeze+shake. */
+export const HITFREEZE_MS = 85
+export const HIT_SHAKE_MS = 150
+export const HIT_SHAKE_INTENSITY = 0.018
+export const HEAVY_HITFREEZE_MS = 110
+export const HEAVY_HIT_SHAKE_MS = 180
+export const HEAVY_HIT_SHAKE_INTENSITY = 0.024
