@@ -68,7 +68,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     const items = [
-      { mode: '1p' as Mode, text: '１Ｐ　單人（熊女自動同行）' },
+      { mode: '1p' as Mode, text: '１Ｐ　單人（奇波波＋噗噗同行）' },
       { mode: '2p' as Mode, text: '２Ｐ　雙人鍵盤同行同行' },
     ]
     this.modes = items.map((i) => i.mode)
@@ -133,7 +133,7 @@ export class MenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 36,
-        '上下選擇　空白／Enter 開始\n鮭男：移動＋ＪＫＵＩ射擊　｜　熊女：方向鍵＋數字鍵１２４５',
+        '上下選擇　空白／Enter 開始\n倫博：ＷＡＳＤ＋ＪＫＵＩ　｜　奇波波：方向鍵＋數字鍵１２４５　｜　噗噗：ＡＩ跟隨',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '12px',

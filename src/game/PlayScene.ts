@@ -51,9 +51,9 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 
 /**
  * Round 1 — 溪流小路
- * P1 鮭男：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 熊女：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 笑臉熊：AI only，始終跟隨熊女；受傷時噴蜂蜜噴流
+ * P1 倫博：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
+ * P2 奇波波：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * 噗噗（Pooh）：AI only，始終跟隨奇波波；受傷時噴蜂蜜噴流
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -173,13 +173,15 @@ export class PlayScene extends Phaser.Scene {
   playHurtPose(h: Hero, dir: number = -1) {
     h.pose = 'hurt'
     h.hurtLock = HURT_LOCK_MS
-    h.hurtCd = 500
+    h.hurtCd = HURT_LOCK_MS + 80
     h.facing = dir < 0 ? -1 : 1
     h.setFlipX(h.facing < 0)
     h.setTint(0xff4444)
     h.setAngle(h.facing * -22)
     h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
-    this.time.delayedCall(HURT_LOCK_MS + 40, () => {
+    this.time.delayedCall(HURT_LOCK_MS + 80, () => {
+      h.hurtLock = 0
+      h.hurtCd = 0
       if (h.pose === 'hurt') {
         h.pose = 'idle'
         h.clearTint()
@@ -507,7 +509,7 @@ export class PlayScene extends Phaser.Scene {
     if (this.petJetting || this.girl.hp <= 0) return
     this.petJetting = true
     SFX.hit()
-    floatText(this, this.pet.x, this.pet.y - 50, '笑臉熊！', '#ffcc44')
+    floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
     this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
     this.honeyJet(this.girl.facing)
     this.time.delayedCall(520, () => {
@@ -634,7 +636,7 @@ export class PlayScene extends Phaser.Scene {
       ease: 'Cubic.in',
       onComplete: () => {
         h.setVelocity(0, 0)
-        this.lose(h.role === 'boy' ? '鮭男倒下了…' : '熊女倒下了…')
+        this.lose(h.role === 'boy' ? '倫博倒下了…' : '奇波波倒下了…')
       },
     })
     this.refreshHearts()
@@ -655,7 +657,7 @@ export class PlayScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** 笑臉熊 AI: always trail 熊女 (never player-controlled) */
+  /** 噗噗 AI: always trail 奇波波 (never player-controlled) */
   private updatePet() {
     const g = this.girl
     const followX = g.x - g.facing * 52
@@ -877,7 +879,7 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜\n鮭男・鮭魚槍　｜　熊女・電風扇×１.５速\n笑臉熊（ＡＩ）始終跟隨熊女\n熊女受傷 → 笑臉熊噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n倫博・鮭魚槍　｜　奇波波・電風扇×１.５速\n噗噗（ＡＩ）始終跟隨奇波波\n奇波波受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -901,8 +903,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：鮭男ＪＫＵＩ｜熊女＋笑臉熊同行｜Ｒ回選單'
-          : '雙人：鮭男ＪＫＵＩ　熊女數字鍵｜笑臉熊跟隨｜Ｒ回選單',
+          ? '單人：倫博ＪＫＵＩ｜奇波波＋噗噗同行｜Ｒ回選單'
+          : '雙人：倫博ＪＫＵＩ　奇波波數字鍵｜噗噗跟隨｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
