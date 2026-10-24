@@ -40,7 +40,7 @@ export function buildStageHud(
   root.add(p1box)
   const p1face = scene.add.image(28, 28, 'art-salmon').setScale(0.72)
   root.add(p1face)
-  const p1label = scene.add.text(52, 8, '1P 鮭男', {
+  const p1label = scene.add.text(52, 8, '1P 倫寶', {
     fontFamily: 'Noto Sans TC, sans-serif',
     fontSize: '13px',
     color: '#9fd4ff',
@@ -59,7 +59,7 @@ export function buildStageHud(
   const p2face = scene.add.image(932, 28, 'art-girl').setScale(0.7)
   root.add(p2face)
   const p2label = scene.add
-    .text(908, 8, '2P 熊女', {
+    .text(908, 8, '2P 奇寶寶', {
       fontFamily: 'Noto Sans TC, sans-serif',
       fontSize: '13px',
       color: '#ffb0d0',

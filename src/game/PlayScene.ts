@@ -31,9 +31,9 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 
 /**
  * Round 1 — 溪流小路
- * P1 鮭男：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 熊女：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 角色可重疊；熊女受傷時笑臉熊從畫面外衝入噴蜜
+ * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
+ * P2 奇寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * 角色可重疊；奇寶寶受傷時噗噗（Pooh）從畫面外衝入噴蜜
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -438,7 +438,7 @@ export class PlayScene extends Phaser.Scene {
     floatText(this, h.x, h.y - 28, `-${dmg}`, '#ff6677')
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '鮭男倒下了…' : '熊女倒下了…')
+    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '奇寶寶倒下了…')
   }
 
   private spike(h: Hero) {
@@ -450,7 +450,7 @@ export class PlayScene extends Phaser.Scene {
     SFX.spike()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '鮭男倒下了…' : '熊女倒下了…')
+    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '奇寶寶倒下了…')
   }
 
   private checkFall() {
@@ -464,7 +464,7 @@ export class PlayScene extends Phaser.Scene {
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
-        if (h.hp <= 0) this.lose(h.role === 'boy' ? '鮭男掉進溪谷…' : '熊女掉進溪谷…')
+        if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶掉進溪谷…' : '奇寶寶掉進溪谷…')
       }
     }
   }
@@ -705,7 +705,7 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         210,
-        '第１關・奪回春蜜\n鮭男・鮭魚槍　｜　熊女・電風扇×１.５速\n熊女受傷 → 笑臉熊從畫面外衝入噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　奇寶寶・電風扇×１.５速\n奇寶寶受傷 → 噗噗（Pooh）從畫面外衝入噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -729,8 +729,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：鮭男射擊Ｊ／Ｋ／Ｕ／Ｉ｜熊女同行｜Ｒ回選單'
-          : '雙人：鮭男ＪＫＵＩ　熊女數字鍵１２４５　｜　Ｒ回選單',
+          ? '單人：倫寶射擊Ｊ／Ｋ／Ｕ／Ｉ｜奇寶寶同行｜Ｒ回選單'
+          : '雙人：倫寶ＪＫＵＩ　奇寶寶數字鍵１２４５　｜　Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
