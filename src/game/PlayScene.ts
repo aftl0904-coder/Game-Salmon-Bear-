@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { registerAllSprites } from './pixelArt'
 
 type Fighter = Phaser.Physics.Arcade.Sprite & {
   hp: number
@@ -16,9 +17,9 @@ type Creep = Phaser.Physics.Arcade.Sprite & {
 }
 
 /**
- * 鮭鮭熊 — 約 30 秒可通關的雙人小關
- * P1 鮭男: WASD 移動 / 空白或 F 攻擊
- * P2 熊女: 方向鍵移動 / L 或 Enter 攻擊
+ * 鮭鮭熊 — 約 30 秒雙人小關
+ * P1 鮭男: WASD / F・空白
+ * P2 熊女(笑臉熊): ←→↑ / L・Enter
  */
 export class PlayScene extends Phaser.Scene {
   private salmon!: Fighter
@@ -29,14 +30,12 @@ export class PlayScene extends Phaser.Scene {
   private keys!: {
     w: Phaser.Input.Keyboard.Key
     a: Phaser.Input.Keyboard.Key
-    s: Phaser.Input.Keyboard.Key
     d: Phaser.Input.Keyboard.Key
     f: Phaser.Input.Keyboard.Key
     space: Phaser.Input.Keyboard.Key
     left: Phaser.Input.Keyboard.Key
     right: Phaser.Input.Keyboard.Key
     up: Phaser.Input.Keyboard.Key
-    down: Phaser.Input.Keyboard.Key
     l: Phaser.Input.Keyboard.Key
     enter: Phaser.Input.Keyboard.Key
     r: Phaser.Input.Keyboard.Key
@@ -53,15 +52,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   preload() {
-    // solid pixel blocks
-    this.makeBlock('px-salmon', 28, 36, 0xe07a4f)
-    this.makeBlock('px-bear', 34, 40, 0xb07a3a)
-    this.makeBlock('px-enemy', 30, 30, 0x6b3a4a)
-    this.makeBlock('px-ground', 48, 48, 0x6b4a2e)
-    this.makeBlock('px-grass', 48, 12, 0x4d8a4a)
-    this.makeBlock('px-goal', 24, 64, 0xd4a017)
-    this.makeBlock('px-hit', 18, 10, 0xffe8a0)
-    this.makeBlock('px-water', 22, 14, 0x3a9ad9)
+    registerAllSprites(this)
   }
 
   create() {
@@ -69,46 +60,56 @@ export class PlayScene extends Phaser.Scene {
     this.salmonAtGoal = false
     this.bearAtGoal = false
     this.startedAt = this.time.now
-    this.cameras.main.setBackgroundColor('#6eb7d6')
 
-    // sky wash
-    this.add.rectangle(480, 270, 960, 540, 0x6eb7d6).setDepth(-10)
-    this.add.rectangle(480, 420, 960, 240, 0xf2d7a4, 0.35).setDepth(-9)
+    this.drawBackdrop()
 
     this.ground = this.physics.add.staticGroup()
-    // floor
-    for (let x = 24; x < 960; x += 48) {
-      const tile = this.ground.create(x, 516, 'px-ground') as Phaser.Physics.Arcade.Sprite
+    for (let x = 16; x < 960; x += 32) {
+      const tile = this.ground.create(x, 524, 'til-ground') as Phaser.Physics.Arcade.Sprite
       tile.refreshBody()
-      this.add.image(x, 486, 'px-grass').setDepth(1)
     }
-    // platforms
-    this.plat(180, 380, 3)
-    this.plat(420, 300, 2)
-    this.plat(680, 360, 3)
-    this.plat(820, 260, 2)
+    // wooden platforms like concept riverside bridges
+    this.platWood(160, 400, 4)
+    this.platWood(400, 320, 3)
+    this.platWood(620, 380, 4)
+    this.platWood(780, 280, 3)
+    this.platStone(300, 460, 2)
 
-    this.salmon = this.spawnFighter(80, 430, 'px-salmon', 'salmon')
-    this.bear = this.spawnFighter(140, 430, 'px-bear', 'bear')
-
-    this.goal = this.physics.add.sprite(900, 220, 'px-goal')
-    this.goal.setImmovable(true)
-    ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    // shallow river strip
     this.add
-      .text(900, 170, '祭壇', {
+      .rectangle(480, 500, 960, 18, 0x3a8ec0, 0.55)
+      .setDepth(2)
+    for (let x = 40; x < 920; x += 70) {
+      this.add
+        .ellipse(x, 498, 28, 8, 0xa8d8f0, 0.45)
+        .setDepth(3)
+    }
+
+    this.salmon = this.spawnFighter(70, 440, 'spr-salmon', 'salmon')
+    this.bear = this.spawnFighter(130, 430, 'spr-bear', 'bear')
+
+    this.goal = this.physics.add.sprite(900, 220, 'til-goal')
+    this.goal.setImmovable(true)
+    this.goal.setScale(1.4)
+    ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    ;(this.goal.body as Phaser.Physics.Arcade.Body).setSize(24, 36)
+    ;(this.goal.body as Phaser.Physics.Arcade.Body).setOffset(6, 30)
+    this.add
+      .text(900, 155, '祭壇', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '14px',
+        fontSize: '13px',
         color: '#2a1a10',
         backgroundColor: '#f3e6c8',
-        padding: { x: 4, y: 2 },
+        padding: { x: 5, y: 2 },
       })
       .setOrigin(0.5)
+      .setDepth(8)
 
     this.enemies = this.physics.add.group()
-    this.spawnEnemy(320, 450)
-    this.spawnEnemy(560, 450)
-    this.spawnEnemy(700, 320)
-    this.spawnEnemy(820, 220)
+    this.spawnEnemy(300, 450)
+    this.spawnEnemy(520, 450)
+    this.spawnEnemy(660, 340)
+    this.spawnEnemy(800, 240)
 
     this.physics.add.collider(this.salmon, this.ground)
     this.physics.add.collider(this.bear, this.ground)
@@ -123,7 +124,6 @@ export class PlayScene extends Phaser.Scene {
       this.bearAtGoal = true
       this.checkWin()
     })
-
     this.physics.add.overlap(this.salmon, this.enemies, (_s, e) => {
       this.hurtPlayer(this.salmon, e as Creep)
     })
@@ -135,51 +135,50 @@ export class PlayScene extends Phaser.Scene {
     this.keys = {
       w: kb.addKey(Phaser.Input.Keyboard.KeyCodes.W),
       a: kb.addKey(Phaser.Input.Keyboard.KeyCodes.A),
-      s: kb.addKey(Phaser.Input.Keyboard.KeyCodes.S),
       d: kb.addKey(Phaser.Input.Keyboard.KeyCodes.D),
       f: kb.addKey(Phaser.Input.Keyboard.KeyCodes.F),
       space: kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE),
       left: kb.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
       right: kb.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
       up: kb.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-      down: kb.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
       l: kb.addKey(Phaser.Input.Keyboard.KeyCodes.L),
       enter: kb.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER),
       r: kb.addKey(Phaser.Input.Keyboard.KeyCodes.R),
     }
 
+    // stage name like concept banner
     this.add
-      .text(480, 18, '鮭鮭熊 — 雙人小關（約 30 秒）', {
+      .text(480, 16, '第一關・溪流小路', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '20px',
+        fontSize: '18px',
         color: '#2a1a10',
         backgroundColor: '#f3e6c8',
-        padding: { x: 10, y: 4 },
+        padding: { x: 14, y: 5 },
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(20)
 
     this.hud = this.add
-      .text(16, 48, '', {
+      .text(14, 44, '', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '15px',
+        fontSize: '14px',
         color: '#2a1a10',
-        backgroundColor: '#f3e6c8cc',
+        backgroundColor: '#f3e6c8dd',
         padding: { x: 8, y: 6 },
-        lineSpacing: 4,
+        lineSpacing: 5,
       })
       .setScrollFactor(0)
       .setDepth(20)
 
     this.add
       .text(
-        16,
-        500,
-        'P1 鮭男 WASD+F/空白　｜　P2 熊女 ←→↑ + L/Enter　｜　兩人到祭壇　｜　R 重來',
+        14,
+        508,
+        'P1 鮭男 WASD+F/空白　｜　P2 笑臉熊 ←→↑ + L/Enter　｜　兩人到祭壇　｜　R 重來',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '12px',
+          fontSize: '11px',
           color: '#f3e6c8',
           backgroundColor: '#2a1a10aa',
           padding: { x: 8, y: 4 },
@@ -191,10 +190,10 @@ export class PlayScene extends Phaser.Scene {
     this.banner = this.add
       .text(480, 270, '', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '36px',
+        fontSize: '32px',
         color: '#f3e6c8',
         backgroundColor: '#2a1a10cc',
-        padding: { x: 20, y: 12 },
+        padding: { x: 22, y: 14 },
         align: 'center',
       })
       .setOrigin(0.5)
@@ -218,7 +217,7 @@ export class PlayScene extends Phaser.Scene {
       this.keys.w,
       this.keys.f,
       this.keys.space,
-      220,
+      230,
     )
     this.controlFighter(
       this.bear,
@@ -227,7 +226,7 @@ export class PlayScene extends Phaser.Scene {
       this.keys.up,
       this.keys.l,
       this.keys.enter,
-      180,
+      185,
     )
 
     this.enemies.getChildren().forEach((obj) => {
@@ -235,7 +234,6 @@ export class PlayScene extends Phaser.Scene {
       if (!e.active) return
       e.attackCd = Math.max(0, e.attackCd - dt)
       e.windup = Math.max(0, e.windup - dt)
-      // slow patrol toward nearest player
       const target =
         Phaser.Math.Distance.Between(e.x, e.y, this.salmon.x, this.salmon.y) <
         Phaser.Math.Distance.Between(e.x, e.y, this.bear.x, this.bear.y)
@@ -245,13 +243,11 @@ export class PlayScene extends Phaser.Scene {
       e.setVelocityX(dir * 55)
       e.setFlipX(dir < 0)
       if (e.windup <= 0 && e.attackCd <= 0) {
-        // telegraph then bite window via tint
         e.setTint(0xff6666)
         e.windup = 420
         e.attackCd = 1400
         this.time.delayedCall(280, () => {
-          if (!e.active) return
-          e.clearTint()
+          if (e.active) e.clearTint()
         })
       }
     })
@@ -261,11 +257,58 @@ export class PlayScene extends Phaser.Scene {
     this.salmon.hurtCd = Math.max(0, this.salmon.hurtCd - dt)
     this.bear.hurtCd = Math.max(0, this.bear.hurtCd - dt)
 
-    // goal flags reset if leave
     if (!this.physics.overlap(this.salmon, this.goal)) this.salmonAtGoal = false
     if (!this.physics.overlap(this.bear, this.goal)) this.bearAtGoal = false
 
     this.refreshHud()
+  }
+
+  private drawBackdrop() {
+    const g = this.add.graphics().setDepth(-10)
+    // sky gradient bands
+    g.fillStyle(0x6eb7d6, 1)
+    g.fillRect(0, 0, 960, 540)
+    g.fillStyle(0x8ec8e0, 1)
+    g.fillRect(0, 0, 960, 120)
+    g.fillStyle(0xf2d7a4, 0.45)
+    g.fillRect(0, 300, 960, 220)
+
+    // distant mountains
+    g.fillStyle(0x7aa8b8, 1)
+    g.fillTriangle(0, 320, 180, 160, 360, 320)
+    g.fillTriangle(280, 320, 480, 140, 700, 320)
+    g.fillTriangle(600, 320, 820, 180, 980, 320)
+    g.fillStyle(0x9bc4c8, 1)
+    g.fillTriangle(120, 320, 260, 200, 400, 320)
+    g.fillTriangle(500, 320, 640, 190, 780, 320)
+
+    // town silhouettes left
+    g.fillStyle(0xc9a06a, 1)
+    g.fillRect(40, 260, 36, 60)
+    g.fillRect(90, 240, 40, 80)
+    g.fillTriangle(40, 260, 58, 230, 76, 260)
+    g.fillTriangle(90, 240, 110, 205, 130, 240)
+    g.fillStyle(0xc45c48, 1)
+    g.fillRect(200, 250, 10, 70)
+    g.fillRect(250, 250, 10, 70)
+    g.fillRect(195, 245, 70, 10)
+
+    // trees
+    for (const [tx, ty] of [
+      [520, 300],
+      [560, 310],
+      [50, 310],
+    ] as const) {
+      g.fillStyle(0x6b4a2e, 1)
+      g.fillRect(tx, ty, 8, 28)
+      g.fillStyle(0x3d7a45, 1)
+      g.fillCircle(tx + 4, ty - 4, 16)
+    }
+
+    // leaping salmon accents in sky/river vibe
+    g.fillStyle(0xe07a4f, 0.7)
+    g.fillEllipse(360, 470, 18, 8)
+    g.fillEllipse(700, 485, 16, 7)
   }
 
   private controlFighter(
@@ -285,7 +328,7 @@ export class PlayScene extends Phaser.Scene {
     if (vx !== 0) f.facing = vx > 0 ? 1 : -1
     f.setFlipX(f.facing < 0)
 
-    if ((jump.isDown || Phaser.Input.Keyboard.JustDown(jump)) && body.blocked.down) {
+    if (Phaser.Input.Keyboard.JustDown(jump) && body.blocked.down) {
       f.setVelocityY(f.role === 'bear' ? -520 : -560)
     }
 
@@ -299,24 +342,35 @@ export class PlayScene extends Phaser.Scene {
 
   private doAttack(f: Fighter) {
     f.attackCd = f.role === 'salmon' ? 380 : 520
-    const reach = f.role === 'salmon' ? 54 : 42
+    const reach = f.role === 'salmon' ? 56 : 44
     const dmg = f.role === 'salmon' ? 1 : 2
-    const key = f.role === 'salmon' ? 'px-water' : 'px-hit'
-    const fx = this.add.image(f.x + f.facing * reach, f.y - 4, key).setDepth(5)
+    const key = f.role === 'salmon' ? 'fx-water' : 'fx-hit'
+    const fx = this.add.image(f.x + f.facing * reach, f.y - 2, key).setDepth(5)
     this.tweens.add({
       targets: fx,
       alpha: 0,
-      x: fx.x + f.facing * 20,
+      x: fx.x + f.facing * 22,
       duration: 180,
       onComplete: () => fx.destroy(),
     })
+
+    // kind bear bounce when attacking
+    if (f.role === 'bear') {
+      this.tweens.add({
+        targets: f,
+        scaleY: 1.85,
+        scaleX: 2.1,
+        yoyo: true,
+        duration: 80,
+      })
+    }
 
     this.enemies.getChildren().forEach((obj) => {
       const e = obj as Creep
       if (!e.active) return
       const dx = e.x - f.x
       const dy = Math.abs(e.y - f.y)
-      if (Math.sign(dx) === f.facing && Math.abs(dx) < reach + 20 && dy < 36) {
+      if (Math.sign(dx) === f.facing && Math.abs(dx) < reach + 22 && dy < 40) {
         e.hp -= dmg
         e.setVelocityX(f.facing * 220)
         e.setVelocityY(-180)
@@ -324,16 +378,13 @@ export class PlayScene extends Phaser.Scene {
         this.time.delayedCall(80, () => {
           if (e.active) e.clearTint()
         })
-        if (e.hp <= 0) {
-          e.disableBody(true, true)
-        }
+        if (e.hp <= 0) e.disableBody(true, true)
       }
     })
   }
 
   private hurtPlayer(f: Fighter, e: Creep) {
     if (this.ended || f.hurtCd > 0 || e.windup > 200) return
-    // only hurt during bite window after telegraph started
     if (e.attackCd > 1000) {
       f.hp -= 1
       f.hurtCd = 900
@@ -342,7 +393,7 @@ export class PlayScene extends Phaser.Scene {
       f.setTint(0xff4444)
       this.time.delayedCall(120, () => f.clearTint())
       this.refreshHud()
-      if (f.hp <= 0) this.lose(f.role === 'salmon' ? '鮭男倒下了…' : '熊女倒下了…')
+      if (f.hp <= 0) this.lose(f.role === 'salmon' ? '鮭男倒下了…' : '笑臉熊倒下了…')
     }
   }
 
@@ -373,7 +424,7 @@ export class PlayScene extends Phaser.Scene {
     const bGoal = this.bearAtGoal ? ' ✓' : ''
     this.hud.setText(
       `P1 鮭男 ${hearts(this.salmon.hp, this.salmon.maxHp)}${sGoal}\n` +
-        `P2 熊女 ${hearts(this.bear.hp, this.bear.maxHp)}${bGoal}\n` +
+        `P2 笑臉熊 ${hearts(this.bear.hp, this.bear.maxHp)}${bGoal}\n` +
         `目標：兩人一起站上祭壇`,
     )
   }
@@ -389,39 +440,56 @@ export class PlayScene extends Phaser.Scene {
     s.setCollideWorldBounds(true)
     s.setBounce(0)
     s.setDragX(1200)
+    s.setDepth(6)
+    s.setScale(2)
     const body = s.body as Phaser.Physics.Arcade.Body
-    body.setSize(role === 'bear' ? 28 : 22, role === 'bear' ? 34 : 30)
+    if (role === 'bear') {
+      body.setSize(22, 30)
+      body.setOffset(9, 10)
+      // idle friendly bob
+      this.tweens.add({
+        targets: s,
+        scaleY: 2.06,
+        scaleX: 1.96,
+        yoyo: true,
+        repeat: -1,
+        duration: 700,
+        ease: 'Sine.easeInOut',
+      })
+    } else {
+      body.setSize(16, 28)
+      body.setOffset(6, 8)
+    }
     return s
   }
 
   private spawnEnemy(x: number, y: number) {
-    const e = this.enemies.create(x, y, 'px-enemy') as Creep
+    const e = this.enemies.create(x, y, 'spr-enemy') as Creep
     e.hp = 3
     e.windup = 0
     e.attackCd = Phaser.Math.Between(400, 900)
     e.setCollideWorldBounds(true)
     e.setBounce(0)
+    e.setDepth(5)
+    e.setScale(2)
     const body = e.body as Phaser.Physics.Arcade.Body
-    body.setSize(26, 26)
+    body.setSize(18, 18)
+    body.setOffset(5, 5)
   }
 
-  private plat(x: number, y: number, count: number) {
+  private platWood(x: number, y: number, count: number) {
     for (let i = 0; i < count; i++) {
-      const px = x + i * 48
-      const tile = this.ground.create(px, y, 'px-ground') as Phaser.Physics.Arcade.Sprite
+      const px = x + i * 32
+      const tile = this.ground.create(px, y, 'til-wood') as Phaser.Physics.Arcade.Sprite
       tile.refreshBody()
-      this.add.image(px, y - 30, 'px-grass').setDepth(1)
     }
   }
 
-  private makeBlock(key: string, w: number, h: number, color: number) {
-    const g = this.make.graphics({ x: 0, y: 0 })
-    g.fillStyle(color, 1)
-    g.fillRect(0, 0, w, h)
-    // pixel edge
-    g.lineStyle(2, 0x1a1010, 0.85)
-    g.strokeRect(1, 1, w - 2, h - 2)
-    g.generateTexture(key, w, h)
-    g.destroy()
+  private platStone(x: number, y: number, count: number) {
+    for (let i = 0; i < count; i++) {
+      const px = x + i * 32
+      const tile = this.ground.create(px, y, 'til-stone') as Phaser.Physics.Arcade.Sprite
+      tile.refreshBody()
+    }
   }
 }
