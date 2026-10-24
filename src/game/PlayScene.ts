@@ -18,6 +18,8 @@ const GROUND_Y = 400
 const MAX_HP = 3
 const BOY_SPEED = 230
 const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
+/** Goemon-feel jump: snappy high arc; still fair for mid/high platforms (g=1500 → ~203px) */
+const JUMP_V = -780
 const FALL_Y = 530
 
 type Hero = Phaser.Physics.Arcade.Sprite & {
@@ -32,8 +34,8 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 /**
  * Round 1 — 溪流小路
  * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 奇寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 角色可重疊；奇寶寶受傷時噗噗（Pooh）從畫面外衝入噴蜜
+ * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * 角色可重疊；琪寶寶受傷時噗噗（Pooh）從畫面外衝入噴蜜
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -270,7 +272,7 @@ export class PlayScene extends Phaser.Scene {
       h.setFlipX(h.facing < 0)
     }
     if (this.p1JumpJust() && body.blocked.down) {
-      h.setVelocityY(-640)
+      h.setVelocityY(JUMP_V)
       SFX.jump()
     }
     if (h.atkCd <= 0 && this.p1AttackJust()) this.fireSalmon(h)
@@ -288,7 +290,7 @@ export class PlayScene extends Phaser.Scene {
       h.setFlipX(h.facing < 0)
     }
     if (this.p2JumpJust() && body.blocked.down) {
-      h.setVelocityY(-620)
+      h.setVelocityY(JUMP_V)
       SFX.jump()
     }
     if (h.atkCd <= 0 && this.p2AttackJust()) this.fanSlash(h)
@@ -304,7 +306,7 @@ export class PlayScene extends Phaser.Scene {
       g.setFlipX(g.facing < 0)
     } else g.setVelocityX(0)
     const body = g.body as Phaser.Physics.Arcade.Body
-    if (body.blocked.down && this.boy.y < g.y - 40) g.setVelocityY(-620)
+    if (body.blocked.down && this.boy.y < g.y - 40) g.setVelocityY(JUMP_V)
     if (g.atkCd <= 0) {
       const near = this.enemies.getChildren().some((o) => {
         const e = o as Creep
@@ -438,7 +440,7 @@ export class PlayScene extends Phaser.Scene {
     floatText(this, h.x, h.y - 28, `-${dmg}`, '#ff6677')
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '奇寶寶倒下了…')
+    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
   }
 
   private spike(h: Hero) {
@@ -450,7 +452,7 @@ export class PlayScene extends Phaser.Scene {
     SFX.spike()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '奇寶寶倒下了…')
+    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
   }
 
   private checkFall() {
@@ -464,7 +466,7 @@ export class PlayScene extends Phaser.Scene {
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
-        if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶掉進溪谷…' : '奇寶寶掉進溪谷…')
+        if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶掉進溪谷…' : '琪寶寶掉進溪谷…')
       }
     }
   }
@@ -705,7 +707,7 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         210,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　奇寶寶・電風扇×１.５速\n奇寶寶受傷 → 噗噗（Pooh）從畫面外衝入噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n琪寶寶受傷 → 噗噗（Pooh）從畫面外衝入噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -729,8 +731,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：倫寶射擊Ｊ／Ｋ／Ｕ／Ｉ｜奇寶寶同行｜Ｒ回選單'
-          : '雙人：倫寶ＪＫＵＩ　奇寶寶數字鍵１２４５　｜　Ｒ回選單',
+          ? '單人：倫寶射擊Ｊ／Ｋ／Ｕ／Ｉ｜琪寶寶同行｜Ｒ回選單'
+          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵１２４５　｜　Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {

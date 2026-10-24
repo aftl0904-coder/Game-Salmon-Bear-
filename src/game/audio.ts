@@ -97,6 +97,14 @@ export const SFX = {
   },
   lose: () => tone(220, 0.35, 'sawtooth', 0.16, 80),
   step: () => noise(0.025, 0.035),
+  coin: () => {
+    tone(880, 0.06, 'square', 0.1)
+    tone(1320, 0.1, 'triangle', 0.09)
+  },
+  continue: () => {
+    tone(392, 0.08, 'square', 0.12)
+    tone(523, 0.12, 'triangle', 0.11)
+  },
 }
 
 /** Simple 4-bar riverside chiptune loop */

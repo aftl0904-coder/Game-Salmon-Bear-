@@ -233,4 +233,21 @@ export function registerTiles(scene: Phaser.Scene) {
     rect(set, 2, 5, 10, 5, c)
     rect(set, 4, 9, 6, 2, c)
   })
+
+  // arcade coin (投幣續關)
+  paint(scene, 'coin', 14, 14, (set) => {
+    circ(set, 7, 7, 6, [240, 190, 60])
+    circ(set, 7, 7, 5, [255, 220, 90])
+    circ(set, 7, 7, 3, [210, 150, 40])
+    rect(set, 6, 4, 2, 6, [255, 240, 160])
+  })
+
+  // compact HP pip for 10-unit bar
+  paint(scene, 'pip-full', 8, 10, (set) => {
+    rect(set, 1, 1, 6, 8, [230, 64, 72])
+    rect(set, 2, 2, 2, 2, [255, 190, 190])
+  })
+  paint(scene, 'pip-empty', 8, 10, (set) => {
+    rect(set, 1, 1, 6, 8, [42, 30, 28])
+  })
 }

@@ -1,22 +1,28 @@
 import Phaser from 'phaser'
 
-/** Existence objective for every foe: 阻止玩家完成任務（奪回春蜜／抵達祭壇） */
+/** Existence objective: 阻止玩家奪回春蜜／抵達祭壇 */
 export type EnemyKind =
-  | 'blocker' // 路障：卡在右進路、切斷推進
-  | 'chaser' // 追擊：發現就咬住不放
-  | 'ambusher' // 平台伏兵：靜候→突襲下跳／撲擊
-  | 'guardian' // 蜜罐守護：守住春蜜罐
-  | 'interrupter' // 精銳干擾：玩家前進時施壓打斷節奏
-  | 'boss' // 關底武者：多階段
+  | 'blocker'
+  | 'chaser'
+  | 'ambusher'
+  | 'guardian'
+  | 'interrupter'
+  | 'boss'
 
+/** Goemon cadence: patrol → detect → chase/hop → windup → lunge/charge → recover */
 export type EnemyState =
   | 'patrol'
   | 'detect'
   | 'chase'
+  | 'hop'
+  | 'pause'
+  | 'charge'
   | 'windup'
   | 'attack'
   | 'recover'
   | 'retreat'
+  | 'hurt'
+  | 'die'
 
 export type Creep = Phaser.Physics.Arcade.Sprite & {
   kind: EnemyKind
@@ -34,7 +40,11 @@ export type Creep = Phaser.Physics.Arcade.Sprite & {
   guardX: number
   think: number
   detectT: number
+  hopCd: number
+  chargeDir: 1 | -1
   phase: 1 | 2 | 3
+  baseScale: number
+  poseAngle: number
   label?: Phaser.GameObjects.Text
   boss?: boolean
   elite?: boolean
@@ -55,100 +65,46 @@ type KindStats = {
   scale: number
   tint?: number
   label: string
+  chargePrefer: boolean
+  hopChance: number
 }
 
-/** Tuned easier than classic 吞食天地 — telegraphs are readable */
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
-    hp: 2,
-    spd: 42,
-    patrolSpd: 28,
-    aggro: 220,
-    detect: 300,
-    melee: 46,
-    windupMs: 520,
-    recoverMs: 480,
-    atkCdMs: 1400,
-    scale: 1.75,
-    tint: 0x88aacc,
-    label: '路障',
+    hp: 2, spd: 58, patrolSpd: 46, aggro: 240, detect: 300, melee: 50,
+    windupMs: 380, recoverMs: 360, atkCdMs: 1100, scale: 1.75, tint: 0x88aacc,
+    label: '路障', chargePrefer: false, hopChance: 0.012,
   },
   chaser: {
-    hp: 2,
-    spd: 78,
-    patrolSpd: 36,
-    aggro: 340,
-    detect: 400,
-    melee: 48,
-    windupMs: 400,
-    recoverMs: 360,
-    atkCdMs: 1100,
-    scale: 1.65,
-    tint: 0xff9977,
-    label: '追擊',
+    hp: 2, spd: 110, patrolSpd: 52, aggro: 380, detect: 420, melee: 52,
+    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 1.65, tint: 0xff9977,
+    label: '追擊', chargePrefer: true, hopChance: 0.022,
   },
   ambusher: {
-    hp: 2,
-    spd: 70,
-    patrolSpd: 18,
-    aggro: 160,
-    detect: 260,
-    melee: 52,
-    windupMs: 360,
-    recoverMs: 420,
-    atkCdMs: 1200,
-    scale: 1.7,
-    tint: 0xaa88ff,
-    label: '伏兵',
+    hp: 2, spd: 95, patrolSpd: 22, aggro: 180, detect: 280, melee: 56,
+    windupMs: 260, recoverMs: 340, atkCdMs: 1000, scale: 1.7, tint: 0xaa88ff,
+    label: '伏兵', chargePrefer: false, hopChance: 0.008,
   },
   guardian: {
-    hp: 3,
-    spd: 55,
-    patrolSpd: 32,
-    aggro: 280,
-    detect: 340,
-    melee: 50,
-    windupMs: 480,
-    recoverMs: 400,
-    atkCdMs: 1250,
-    scale: 1.8,
-    tint: 0xffcc44,
-    label: '守蜜',
+    hp: 3, spd: 78, patrolSpd: 48, aggro: 300, detect: 360, melee: 52,
+    windupMs: 340, recoverMs: 320, atkCdMs: 1000, scale: 1.8, tint: 0xffcc44,
+    label: '守蜜', chargePrefer: false, hopChance: 0.015,
   },
   interrupter: {
-    hp: 3,
-    spd: 68,
-    patrolSpd: 40,
-    aggro: 380,
-    detect: 460,
-    melee: 54,
-    windupMs: 560,
-    recoverMs: 300,
-    atkCdMs: 1000,
-    scale: 1.9,
-    tint: 0xff6644,
-    label: '精銳',
+    hp: 3, spd: 100, patrolSpd: 58, aggro: 420, detect: 480, melee: 56,
+    windupMs: 320, recoverMs: 240, atkCdMs: 820, scale: 1.9, tint: 0xff6644,
+    label: '精銳', chargePrefer: true, hopChance: 0.02,
   },
   boss: {
-    hp: 9,
-    spd: 72,
-    patrolSpd: 34,
-    aggro: 480,
-    detect: 560,
-    melee: 66,
-    windupMs: 520,
-    recoverMs: 380,
-    atkCdMs: 1100,
-    scale: 2.55,
-    tint: 0xffaa77,
-    label: '武者',
+    hp: 12, spd: 95, patrolSpd: 48, aggro: 520, detect: 600, melee: 70,
+    windupMs: 360, recoverMs: 300, atkCdMs: 900, scale: 2.55, tint: 0xffaa77,
+    label: '武者', chargePrefer: true, hopChance: 0.018,
   },
 }
 
 export function pickTarget(e: Creep, boy: HeroRef, girl: HeroRef): HeroRef {
   const db = Phaser.Math.Distance.Between(e.x, e.y, boy.x, boy.y)
   const dg = Phaser.Math.Distance.Between(e.x, e.y, girl.x, girl.y)
-  // Prefer the lead (rightmost) when close — cut off progress
   if (Math.abs(db - dg) < 40) return boy.x >= girl.x ? boy : girl
   return db < dg ? boy : girl
 }
@@ -159,40 +115,27 @@ function syncBossPhase(e: Creep) {
   e.phase = r > 0.66 ? 1 : r > 0.33 ? 2 : 3
 }
 
-function phaseMul(e: Creep): { spd: number; windup: number; aggro: number } {
+function phaseMul(e: Creep) {
   if (e.kind !== 'boss') return { spd: 1, windup: 1, aggro: 1 }
-  if (e.phase === 1) return { spd: 0.85, windup: 1.15, aggro: 0.9 }
-  if (e.phase === 2) return { spd: 1.15, windup: 0.9, aggro: 1.1 }
-  return { spd: 1.4, windup: 0.7, aggro: 1.25 }
+  if (e.phase === 1) return { spd: 0.9, windup: 1.1, aggro: 0.95 }
+  if (e.phase === 2) return { spd: 1.2, windup: 0.85, aggro: 1.15 }
+  return { spd: 1.45, windup: 0.65, aggro: 1.3 }
 }
 
-/** Desired X this tick based on kind objective */
-function desireX(
-  e: Creep,
-  target: HeroRef,
-  leadX: number,
-  advancing: boolean,
-): number {
+function desireX(e: Creep, target: HeroRef, leadX: number, advancing: boolean): number {
   switch (e.kind) {
     case 'blocker':
-      // Stand slightly ahead of the lead player to cut rightward progress
       return Math.max(e.homeX - 40, Math.min(leadX + 90, e.homeX + 220))
     case 'chaser':
       return target.x
     case 'ambusher':
-      // Stay near perch until close, then dive toward target X
       if (e.state === 'patrol' || e.state === 'detect') return e.homeX
       return target.x
     case 'guardian':
-      // Orbit honey pot; only leave briefly to swat intruders
-      if (Phaser.Math.Distance.Between(target.x, target.y, e.guardX, e.homeY) < 160) {
-        return target.x
-      }
+      if (Phaser.Math.Distance.Between(target.x, target.y, e.guardX, e.homeY) < 160) return target.x
       return e.guardX
     case 'interrupter':
-      // When players advance right, cut in front; otherwise pressure nearest
-      if (advancing) return leadX + 70
-      return target.x
+      return advancing ? leadX + 70 : target.x
     case 'boss':
       if (e.phase === 3 && e.state === 'retreat') return e.x + (target.x < e.x ? 120 : -120)
       return target.x
@@ -208,8 +151,45 @@ export type AiCtx = {
   floatBang: (x: number, y: number) => void
 }
 
+function applyPose(e: Creep) {
+  if (e.state === 'die') {
+    e.setAngle(e.poseAngle)
+    e.setScale(e.baseScale * 1.05, e.baseScale * 0.72)
+    return
+  }
+  if (e.state === 'hurt') {
+    e.setAngle(e.poseAngle)
+    e.setScale(e.baseScale * 1.08, e.baseScale * 0.88)
+    return
+  }
+  if (e.state === 'windup' || e.state === 'pause') {
+    e.setAngle(0)
+    e.setScale(e.baseScale * 1.12, e.baseScale * 0.86)
+    return
+  }
+  if (e.state === 'charge' || e.state === 'attack' || e.state === 'hop') {
+    e.setAngle(e.chargeDir * 10)
+    e.setScale(e.baseScale * 0.92, e.baseScale * 1.1)
+    return
+  }
+  const vx = Math.abs((e.body as Phaser.Physics.Arcade.Body)?.velocity.x ?? 0)
+  if (vx > 8) {
+    const t = performance.now() * 0.012
+    e.setAngle(Math.sin(t) * 5 * e.patrolDir)
+    e.setScale(e.baseScale * (1 + Math.sin(t) * 0.03), e.baseScale * (1 - Math.sin(t) * 0.04))
+  } else {
+    e.setAngle(0)
+    e.setScale(e.baseScale)
+  }
+}
+
 export function tickEnemy(e: Creep, ctx: AiCtx) {
   if (!e.active) return
+  if (e.state === 'die') {
+    applyPose(e)
+    return
+  }
+
   const st = KIND_STATS[e.kind]
   syncBossPhase(e)
   const mul = phaseMul(e)
@@ -218,6 +198,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   e.atkCd = Math.max(0, e.atkCd - ctx.dt)
   e.windup = Math.max(0, e.windup - ctx.dt)
   e.detectT = Math.max(0, e.detectT - ctx.dt)
+  e.hopCd = Math.max(0, e.hopCd - ctx.dt)
 
   const target = pickTarget(e, ctx.boy, ctx.girl)
   const dist = Phaser.Math.Distance.Between(e.x, e.y, target.x, target.y)
@@ -227,6 +208,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   const melee = st.melee
   const spd = st.spd * mul.spd
   const patrolSpd = st.patrolSpd * mul.spd
+  const body = e.body as Phaser.Physics.Arcade.Body
 
   if (e.label?.active) {
     e.label.setPosition(e.x, e.y - (e.kind === 'boss' ? 56 : 40))
@@ -235,49 +217,64 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     }
   }
 
-  // ——— recover / retreat ———
+  if (e.state === 'hurt') {
+    applyPose(e)
+    if (e.think <= 0) {
+      e.clearTint()
+      if (st.tint) e.setTint(st.tint)
+      e.state = dist < aggro ? 'chase' : 'patrol'
+      e.poseAngle = 0
+    }
+    return
+  }
+
   if (e.state === 'recover') {
     e.setVelocityX(0)
+    applyPose(e)
     if (e.think <= 0) {
       if (e.kind === 'boss' && e.phase === 3) {
         e.state = 'retreat'
-        e.think = 380
-      } else if (e.kind === 'ambusher') {
-        e.state = 'patrol'
-      } else {
-        e.state = dist < aggro ? 'chase' : 'patrol'
-      }
+        e.think = 320
+      } else if (e.kind === 'ambusher') e.state = 'patrol'
+      else e.state = dist < aggro ? 'chase' : 'patrol'
     }
     return
   }
 
   if (e.state === 'retreat') {
     const away = (Math.sign(e.x - target.x) || 1) as 1 | -1
-    e.setVelocityX(away * spd * 1.1)
+    e.setVelocityX(away * spd * 1.15)
     e.setFlipX(away > 0)
-    if (e.think <= 0) {
-      e.state = 'chase'
-    }
+    applyPose(e)
+    if (e.think <= 0) e.state = 'chase'
     return
   }
 
-  // ——— windup telegraph → attack window ———
-  if (e.state === 'windup') {
+  if (e.state === 'hop') {
+    applyPose(e)
+    if (e.think <= 0) e.state = dist < aggro ? 'chase' : 'patrol'
+    return
+  }
+
+  if (e.state === 'pause') {
     e.setVelocityX(0)
-    e.setTint(0xff5555)
-    if (e.windup <= 0) {
-      e.state = 'attack'
+    e.setTint(0xff4444)
+    applyPose(e)
+    if (e.think <= 0) {
+      e.state = 'charge'
+      e.think = 280
       e.hitThis = false
-      e.think = 220
-      // short lunge toward target
-      const dir = (Math.sign(target.x - e.x) || 1) as 1 | -1
-      e.setVelocityX(dir * spd * 1.6)
-      e.setFlipX(dir > 0)
+      e.chargeDir = (Math.sign(target.x - e.x) || 1) as 1 | -1
+      e.setVelocityX(e.chargeDir * spd * 2.35)
+      e.setVelocityY(-160)
+      e.setFlipX(e.chargeDir > 0)
+      ctx.floatBang(e.x, e.y - 36)
     }
     return
   }
 
-  if (e.state === 'attack') {
+  if (e.state === 'charge') {
+    applyPose(e)
     if (e.think <= 0) {
       e.clearTint()
       if (st.tint) e.setTint(st.tint)
@@ -289,7 +286,36 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     return
   }
 
-  // ——— engage: melee windup ———
+  if (e.state === 'windup') {
+    e.setVelocityX(0)
+    e.setTint(0xff5555)
+    applyPose(e)
+    if (e.windup <= 0) {
+      e.state = 'attack'
+      e.hitThis = false
+      e.think = 200
+      const dir = (Math.sign(target.x - e.x) || 1) as 1 | -1
+      e.chargeDir = dir
+      e.setVelocityX(dir * spd * 1.85)
+      e.setVelocityY(-220)
+      e.setFlipX(dir > 0)
+    }
+    return
+  }
+
+  if (e.state === 'attack') {
+    applyPose(e)
+    if (e.think <= 0) {
+      e.clearTint()
+      if (st.tint) e.setTint(st.tint)
+      e.state = 'recover'
+      e.think = st.recoverMs
+      e.atkCd = st.atkCdMs
+      e.setVelocityX(0)
+    }
+    return
+  }
+
   if (dist < melee && e.atkCd <= 0 && (e.state === 'chase' || e.state === 'detect')) {
     e.state = 'windup'
     e.windup = st.windupMs * mul.windup
@@ -297,20 +323,39 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     e.setVelocityX(0)
     e.setTint(0xff5555)
     ctx.floatBang(e.x, e.y - 36)
+    applyPose(e)
     return
   }
 
-  // ——— detect → chase ———
+  if (
+    st.chargePrefer &&
+    e.atkCd <= 0 &&
+    e.state === 'chase' &&
+    dist > melee + 20 &&
+    dist < melee + 140
+  ) {
+    e.state = 'pause'
+    e.think = 220 + (e.kind === 'boss' ? 80 : 0)
+    e.hitThis = false
+    e.setVelocityX(0)
+    e.setTint(0xff4444)
+    ctx.floatBang(e.x, e.y - 36)
+    applyPose(e)
+    return
+  }
+
   if (e.state === 'patrol' && dist < detectR) {
     e.state = 'detect'
-    e.detectT = 280
+    e.detectT = 180
     e.setVelocityX(0)
     ctx.floatBang(e.x, e.y - 36)
+    applyPose(e)
     return
   }
 
   if (e.state === 'detect') {
     e.setVelocityX(0)
+    applyPose(e)
     if (e.detectT <= 0) e.state = 'chase'
     return
   }
@@ -319,60 +364,61 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     if (e.state !== 'chase' && dist < aggro) e.state = 'chase'
   }
 
+  if (
+    (e.state === 'chase' || e.state === 'patrol') &&
+    e.hopCd <= 0 &&
+    body.blocked.down &&
+    Math.random() < st.hopChance
+  ) {
+    e.state = 'hop'
+    e.think = 220
+    e.hopCd = 700 + Math.random() * 900
+    const dir = (Math.sign(target.x - e.x) || e.patrolDir) as 1 | -1
+    e.chargeDir = dir
+    e.setVelocityY(-280 - Math.random() * 80)
+    e.setVelocityX(dir * spd * 1.1)
+    e.setFlipX(dir > 0)
+    applyPose(e)
+    return
+  }
+
   if (e.state === 'chase') {
     if (dist > aggro * 1.35 && e.kind !== 'chaser' && e.kind !== 'boss') {
       e.state = 'patrol'
     } else {
       const goal = desireX(e, target, ctx.leadX, advancing)
       const dir = (Math.sign(goal - e.x) || 1) as 1 | -1
-      // Ambusher: hop down when player is below
-      if (e.kind === 'ambusher' && target.y > e.y + 30) {
-        const body = e.body as Phaser.Physics.Arcade.Body
-        if (body.blocked.down) e.setVelocityY(-120)
-      }
-      // Interrupter boosts when player is advancing
-      const boost = e.kind === 'interrupter' && advancing ? 1.25 : 1
+      if (e.kind === 'ambusher' && target.y > e.y + 30 && body.blocked.down) e.setVelocityY(-280)
+      const boost = e.kind === 'interrupter' && advancing ? 1.3 : 1
       e.setVelocityX(dir * spd * boost)
       e.setFlipX(dir > 0)
+      e.patrolDir = dir
+      applyPose(e)
       return
     }
   }
 
-  // ——— patrol / kind-specific idle motion ———
   e.state = 'patrol'
   if (e.kind === 'blocker') {
     const goal = desireX(e, target, ctx.leadX, advancing)
     const dir = (Math.sign(goal - e.x) || e.patrolDir) as 1 | -1
     e.setVelocityX(dir * patrolSpd)
     e.setFlipX(dir > 0)
+    e.patrolDir = dir
+    applyPose(e)
     return
   }
-  if (e.kind === 'guardian') {
-    if (e.x < e.patrolMin) e.patrolDir = 1
-    if (e.x > e.patrolMax) e.patrolDir = -1
-    e.setVelocityX(e.patrolDir * patrolSpd)
-    e.setFlipX(e.patrolDir > 0)
-    return
-  }
-  if (e.kind === 'ambusher') {
-    // creep slowly on platform perch
-    if (e.x < e.patrolMin) e.patrolDir = 1
-    if (e.x > e.patrolMax) e.patrolDir = -1
-    e.setVelocityX(e.patrolDir * patrolSpd * 0.6)
-    e.setFlipX(e.patrolDir > 0)
-    return
-  }
-
   if (e.x < e.patrolMin) e.patrolDir = 1
   if (e.x > e.patrolMax) e.patrolDir = -1
-  e.setVelocityX(e.patrolDir * patrolSpd)
+  const slow = e.kind === 'ambusher' ? 0.7 : 1
+  e.setVelocityX(e.patrolDir * patrolSpd * slow)
   e.setFlipX(e.patrolDir > 0)
+  applyPose(e)
 }
 
-/** Hurt only connects during attack window (after telegraph) — forgiving */
 export function enemyCanHurt(e: Creep): boolean {
-  if (e.state === 'attack' && !e.hitThis) return true
-  // legacy brief window at end of windup for readability
-  if (e.state === 'windup' && e.windup <= 80 && !e.hitThis) return true
+  if (e.state === 'die' || e.state === 'hurt') return false
+  if ((e.state === 'attack' || e.state === 'charge') && !e.hitThis) return true
+  if (e.state === 'windup' && e.windup <= 60 && !e.hitThis) return true
   return false
 }
