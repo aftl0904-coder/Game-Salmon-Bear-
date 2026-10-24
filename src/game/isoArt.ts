@@ -186,6 +186,16 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 2, 24, 24, 3, [30, 30, 40], 150)
   })
 
+  paint(scene, 'crate3d', 28, 28, (set) => {
+    rect(set, 3, 25, 22, 3, [20, 14, 12], 120)
+    rect(set, 4, 6, 20, 20, [168, 110, 58])
+    rect(set, 5, 7, 3, 18, [210, 160, 90])
+    rect(set, 4, 6, 20, 3, [200, 150, 85])
+    rect(set, 4, 14, 20, 2, [110, 70, 36])
+    rect(set, 13, 6, 2, 20, [110, 70, 36])
+    rect(set, 6, 8, 2, 2, [255, 220, 150])
+  })
+
   // 3D honey pot
   paint(scene, 'pot3d', 28, 32, (set) => {
     rect(set, 4, 28, 20, 3, [20, 16, 18], 110)

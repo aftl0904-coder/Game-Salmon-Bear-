@@ -7,12 +7,10 @@ import {
   type Creep,
   type EnemyKind,
   type EnemySpecies,
-  KIND_STATS,
-  SPECIES_STATS,
-  defaultSpecies,
   enemyCanHurt,
   tickEnemy,
 } from './enemyAi'
+import { PatrolEnemy } from './enemies'
 import { EventBus, GameEvents } from './EventBus'
 import {
   WORLD_W,
@@ -26,7 +24,6 @@ import {
   JUMP_BUF_MS,
   HURT_LOCK_MS,
   HURT_IFRAME_MS,
-  HITFREEZE_MS,
   HIT_SHAKE_MS,
   HIT_SHAKE_INTENSITY,
   FALL_Y,
@@ -94,6 +91,8 @@ export class GameScene extends Phaser.Scene {
   private ground!: Phaser.Physics.Arcade.StaticGroup
   private hazards!: Phaser.Physics.Arcade.StaticGroup
   private enemies!: Phaser.Physics.Arcade.Group
+  /** Player melee attack hitboxes (overlap ↔ enemies). Solids use collider. */
+  private attackHitboxes!: Phaser.Physics.Arcade.Group
   private shots!: Phaser.Physics.Arcade.Group
   private honeys!: Phaser.Physics.Arcade.Group
   private pots!: Phaser.Physics.Arcade.Group
@@ -613,6 +612,16 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+
+  /** Melee/range smash for pots & chests in facing cone. */
+  private smashBreakablesInFront(h: Hero) {
+    this.pots.getChildren().forEach((o) => {
+      const pot = o as Breakable
+      if (!pot.active) return
+      if (hitBreakable(h, pot)) this.breakPot(pot)
+    })
+  }
+
   private fireSalmon(h: Hero) {
     h.atkCd = 200
     SFX.swing()
@@ -639,20 +648,27 @@ export class GameScene extends Phaser.Scene {
       targets: h, scaleX: h.baseScale * 1.14, scaleY: h.baseScale * 0.88,
       angle: h.facing * 10, yoyo: true, duration: 80,
     })
-    this.enemies.getChildren().forEach((o) => {
-      const e = o as Creep
-      if (!e.active) return
-      const dx = e.x - h.x
-      if (Math.sign(dx) === h.facing && Math.abs(dx) < 84 && Math.abs(e.y - h.y) < 56) {
-        this.damageEnemy(e, 2, h.facing)
-      }
-    })
+    this.spawnAttackHitbox(h, 2, 84, 56, 130)
     this.smashBreakablesInFront(h)
   }
 
-  private smashBreakablesInFront(h: Hero) {
-    this.pots?.getChildren?.().forEach((o) => {
-      if (hitBreakable(h, o)) this.breakPot(o as Breakable)
+  /** Melee attack hitbox — overlap with enemies (not a solid collider). */
+  private spawnAttackHitbox(h: Hero, dmg: number, w: number, ht: number, lifeMs: number) {
+    const key = this.textures.exists('fx-salmon-shot') ? 'fx-salmon-shot' : 'coin'
+    const box = this.attackHitboxes.create(
+      h.x + h.facing * (w * 0.45),
+      h.y - 28,
+      key,
+    ) as Phaser.Physics.Arcade.Sprite
+    box.setAlpha(0).setDepth(12)
+    const body = box.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(w, ht)
+    box.setData('dmg', dmg)
+    box.setData('dir', h.facing)
+    box.setData('hitSet', new Set<string>())
+    this.time.delayedCall(lifeMs, () => {
+      if (box.active) box.destroy()
     })
   }
 
@@ -679,52 +695,29 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(700, () => jet.destroy())
   }
 
-  private damageEnemy(e: Creep, dmg: number, dir: number) {
-    if (e.state === 'die') return
-    e.hp -= dmg
-    e.setVelocityX(dir * 260)
-    e.setVelocityY(-220)
-    e.setTint(0xffffff)
-    e.state = 'hurt'
-    e.think = 280
-    e.poseAngle = dir * -28
-    const tint = KIND_STATS[e.kind].tint
-    this.time.delayedCall(70, () => {
-      if (!e.active || e.state === 'die') return
-      e.clearTint()
-      if (tint) e.setTint(tint)
-    })
-    burst(this, e.x, e.y - 20, 0xffe8a0, 8)
-    floatText(this, e.x, e.y - 40, '！')
+  private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number) {
+    const pe = e as PatrolEnemy
+    if (pe.isDead || pe.fsm === 'DEAD') return
+    const result = pe.receiveHit(dmg, dir)
+    burst(this, pe.x, pe.y - 20, 0xffe8a0, 8)
+    floatText(this, pe.x, pe.y - 40, '！')
     SFX.hit()
-    hitstop(this, HITFREEZE_MS)
-    this.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
-    if (e.hp <= 0) {
-      e.state = 'die'
-      e.poseAngle = dir * 85
-      e.setAngle(e.poseAngle)
-      e.setTint(0x884444)
+    hitstop(this, 28)
+    this.cameras.main.shake(30, 0.0022)
+    if (result.killed) {
       SFX.kill()
-      burst(this, e.x, e.y - 16, 0xff6688, 12)
-      e.setVelocity(dir * 80, -120)
-      const cx = e.x
-      const cy = e.y - 28
-      this.time.delayedCall(280, () => {
-        this.spawnCoin(cx, cy)
-        e.label?.destroy()
-        e.disableBody(true, true)
-      })
-      if (e.kind === 'boss') this.emitScore('武者倒下！兩人一起站上祭壇')
+      burst(this, pe.x, pe.y - 16, 0xff6688, 12)
+      if (pe.kind === 'boss') this.emitScore('武者倒下！兩人一起站上祭壇')
     }
   }
 
-  private hurtHero(h: Hero, e: Creep) {
+  private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    if (!enemyCanHurt(e)) return
-    // Attack frames latch hitThis; body-bump uses contactCd (ticked in AI).
-    if (e.state === 'attack' || e.state === 'charge' || e.state === 'windup') e.hitThis = true
-    else e.contactCd = 700
+    if (!enemyCanHurt(e as Creep)) return
+    const pe = e as PatrolEnemy
+    if (pe.fsm === 'ATTACK') pe.hitThis = true
+    else pe.contactCd = 700
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     const hpLeft = applyDamage(h, {
       amount: 1,
@@ -733,7 +726,7 @@ export class GameScene extends Phaser.Scene {
       now: this.time.now,
     })
     applyHurtPose(h, -away)
-    startIFrameBlink(h, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
     this.time.delayedCall(160, () => {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
@@ -755,7 +748,7 @@ export class GameScene extends Phaser.Scene {
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, { amount: 1, knockbackX: opts.knockX, knockbackY: opts.knockY, iframeMs: HURT_IFRAME_MS, now: this.time.now })
     applyHurtPose(h, -h.facing)
-    startIFrameBlink(h, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
     SFX.spike(); burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
     this.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
@@ -777,7 +770,7 @@ export class GameScene extends Phaser.Scene {
         snapToGroundPlane(h, Math.max(80, h.x - 80), GROUND_Y)
         h.setVelocity(0, -200)
         applyHurtPose(h, -h.facing)
-    startIFrameBlink(h, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
@@ -999,6 +992,7 @@ export class GameScene extends Phaser.Scene {
 
   private wirePhysics() {
     this.enemies = this.physics.add.group()
+    this.attackHitboxes = this.physics.add.group()
     this.shots = this.physics.add.group()
     this.honeys = this.physics.add.group()
     this.placeEnemies()
@@ -1016,22 +1010,37 @@ export class GameScene extends Phaser.Scene {
       ;(shot as Phaser.Physics.Arcade.Sprite).destroy()
       this.breakPot(pot as Breakable)
     })
+    // Hitboxes → overlap
+    this.physics.add.overlap(this.attackHitboxes, this.enemies, (hit, enemy) => {
+      const box = hit as Phaser.Physics.Arcade.Sprite
+      const e = enemy as PatrolEnemy
+      if (!e.active || e.isDead) return
+      const hitSet = (box.getData('hitSet') as Set<string> | undefined) ?? new Set<string>()
+      box.setData('hitSet', hitSet)
+      const key = (e as { entityId?: string }).entityId ?? `${e.x.toFixed(0)}:${e.y.toFixed(0)}`
+      if (hitSet.has(key)) return
+      hitSet.add(key)
+      const dmg = (box.getData('dmg') as number) || 1
+      const dir = (box.getData('dir') as number) || 1
+      this.damageEnemy(e, dmg, dir)
+    })
     this.physics.add.overlap(this.shots, this.enemies, (shot, enemy) => {
       const s = shot as Phaser.Physics.Arcade.Sprite
-      const e = enemy as Creep
-      if (!e.active || e.state === 'die') return
+      const e = enemy as PatrolEnemy
+      if (!e.active || e.isDead) return
       s.destroy()
       this.damageEnemy(e, 1, Math.sign(e.x - this.boy.x) || 1)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
       const j = jet as Phaser.Physics.Arcade.Sprite
-      const e = enemy as Creep
-      if (!e.active || e.state === 'die') return
+      const e = enemy as PatrolEnemy
+      if (!e.active || e.isDead) return
       j.destroy()
       this.damageEnemy(e, 3, Math.sign(e.x - this.girl.x) || 1)
     })
-    this.physics.add.overlap(this.boy, this.enemies, (_b, e) => this.hurtHero(this.boy, e as Creep))
-    this.physics.add.overlap(this.girl, this.enemies, (_g, e) => this.hurtHero(this.girl, e as Creep))
+    // Enemy body ↔ player hurtbox
+    this.physics.add.overlap(this.boy, this.enemies, (_b, e) => this.hurtHero(this.boy, e as PatrolEnemy))
+    this.physics.add.overlap(this.girl, this.enemies, (_g, e) => this.hurtHero(this.girl, e as PatrolEnemy))
     this.physics.add.overlap(this.boy, this.hazards, () => this.spike(this.boy))
     this.physics.add.overlap(this.girl, this.hazards, () => this.spike(this.girl))
     this.physics.add.overlap(this.boy, this.hazards, (_b, hz) => {
@@ -1294,57 +1303,17 @@ export class GameScene extends Phaser.Scene {
     kind: EnemyKind,
     guardX?: number,
     species?: EnemySpecies,
-  ) {
-    const st = KIND_STATS[kind]
-    const spKey = species ?? defaultSpecies(kind)
-    const sp = SPECIES_STATS[spKey]
-    const tex = this.textures.exists(sp.tex) ? sp.tex : 'art-enemy'
-    const e = this.enemies.create(x, y, tex) as Creep
-    e.kind = kind
-    e.species = spKey
-    e.hp = st.hp
-    e.maxHp = st.hp
-    e.windup = 0
-    e.atkCd = Phaser.Math.Between(300, 800)
-    e.hitThis = false
-    e.contactCd = 0
-    e.state = 'patrol'
-    e.patrolDir = Math.random() > 0.5 ? 1 : -1
-    const span = kind === 'guardian' ? 90 : kind === 'ambusher' ? 48 : 70
-    e.patrolMin = x - span
-    e.patrolMax = x + span
-    e.homeX = x
-    e.homeY = y
-    e.guardX = guardX ?? x
-    e.think = 0
-    e.detectT = 0
-    e.hopCd = Phaser.Math.Between(200, 600)
-    e.chargeDir = 1
-    e.phase = 1
-    e.baseScale = st.scale * sp.scaleMul
-    e.poseAngle = 0
-    e.boss = kind === 'boss'
-    e.elite = kind === 'interrupter'
-    e.setCollideWorldBounds(true)
-    e.setDepth(6)
-    e.setScale(e.baseScale)
-    if (spKey === 'fish' && st.tint) e.setTint(st.tint)
-    bindFootBody(e, {
-      bodyW: spKey === 'barrel' ? 22 : 20,
-      bodyH: spKey === 'barrel' ? 28 : 22,
+  ): PatrolEnemy {
+    const e = PatrolEnemy.spawn(this, this.enemies, x, y, kind, {
+      guardX,
+      species,
+      ground: this.ground,
+      hooks: {
+        spawnCoin: (cx, cy) => this.spawnCoin(cx, cy),
+        floatBang: (bx, by) => floatText(this, bx, by, '！', '#ff3333'),
+      },
     })
     this.entities.add(e, 'enemy')
-    const labelText = kind === 'boss' ? st.label : sp.label
-    e.label = this.add
-      .text(x, y - 44, labelText, {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: kind === 'boss' ? '14px' : '11px',
-        color: '#fff4e0',
-        backgroundColor: spKey === 'barrel' ? '#3a2818cc' : '#301820cc',
-        padding: { x: 4, y: 1 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12)
     return e
   }
 

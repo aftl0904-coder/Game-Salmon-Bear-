@@ -65,8 +65,12 @@ export class EntityManager {
   /** Sync enemy list from a Phaser group (after spawn / death cull). */
   syncEnemiesFromGroup(group: Phaser.Physics.Arcade.Group) {
     this.enemies = group.getChildren().filter((o) => {
-      const e = o as Creep
-      return e.active && e.state !== 'die'
+      const e = o as Creep & { fsm?: string; isDead?: boolean }
+      if (!e.active) return false
+      if (e.isDead) return false
+      if (e.fsm === 'DEAD') return false
+      if (e.state === 'die') return false
+      return true
     }) as ManagedSprite[]
   }
 
