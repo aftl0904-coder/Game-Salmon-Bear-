@@ -9,6 +9,12 @@ export type EnemyKind =
   | 'interrupter'
   | 'boss'
 
+/**
+ * Round-1 visual species (must be visually distinct — not only tinted fish):
+ * fish = 醃魚雜兵 chase/patrol；barrel = 木桶武者 hop/lunge
+ */
+export type EnemySpecies = 'fish' | 'barrel'
+
 /** Goemon cadence: patrol → detect → chase/hop → windup → lunge/charge → recover */
 export type EnemyState =
   | 'patrol'
@@ -26,6 +32,7 @@ export type EnemyState =
 
 export type Creep = Phaser.Physics.Arcade.Sprite & {
   kind: EnemyKind
+  species: EnemySpecies
   hp: number
   maxHp: number
   windup: number
@@ -69,6 +76,42 @@ type KindStats = {
   hopChance: number
 }
 
+type SpeciesStats = {
+  tex: string
+  label: string
+  style: 'chase' | 'hop'
+  hopMul: number
+  chargePrefer: boolean
+  scaleMul: number
+}
+
+/** Two visually distinct Round-1 forms */
+export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
+  fish: {
+    tex: 'art-enemy',
+    label: '醃魚雜兵',
+    style: 'chase',
+    hopMul: 1,
+    chargePrefer: false,
+    scaleMul: 1,
+  },
+  barrel: {
+    tex: 'art-enemy-barrel',
+    label: '木桶武者',
+    style: 'hop',
+    hopMul: 3.2,
+    chargePrefer: true,
+    scaleMul: 1.06,
+  },
+}
+
+/** Default species per AI role — Round 1 mix of fish + barrel */
+export function defaultSpecies(kind: EnemyKind): EnemySpecies {
+  if (kind === 'boss') return 'fish'
+  if (kind === 'ambusher' || kind === 'interrupter' || kind === 'guardian') return 'barrel'
+  return 'fish' // blocker / chaser
+}
+
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
     hp: 2, spd: 58, patrolSpd: 46, aggro: 240, detect: 300, melee: 50,
@@ -100,6 +143,24 @@ export const KIND_STATS: Record<EnemyKind, KindStats> = {
     windupMs: 360, recoverMs: 300, atkCdMs: 900, scale: 2.55, tint: 0xffaa77,
     label: '武者', chargePrefer: true, hopChance: 0.018,
   },
+}
+
+function speciesOf(e: Creep): SpeciesStats {
+  return SPECIES_STATS[e.species ?? 'fish']
+}
+
+function effectiveStats(e: Creep): KindStats {
+  const st = KIND_STATS[e.kind]
+  const sp = speciesOf(e)
+  return {
+    ...st,
+    // barrel keeps natural wood colors; fish keep role tint accents
+    tint: e.species === 'fish' ? st.tint : undefined,
+    scale: st.scale * sp.scaleMul,
+    hopChance: st.hopChance * sp.hopMul,
+    chargePrefer: st.chargePrefer || sp.chargePrefer,
+    label: sp.label,
+  }
 }
 
 export function pickTarget(e: Creep, boy: HeroRef, girl: HeroRef): HeroRef {
@@ -190,7 +251,9 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     return
   }
 
-  const st = KIND_STATS[e.kind]
+  if (!e.species) e.species = defaultSpecies(e.kind)
+  const st = effectiveStats(e)
+  const sp = speciesOf(e)
   syncBossPhase(e)
   const mul = phaseMul(e)
 
@@ -198,7 +261,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   e.atkCd = Math.max(0, e.atkCd - ctx.dt)
   e.windup = Math.max(0, e.windup - ctx.dt)
   e.detectT = Math.max(0, e.detectT - ctx.dt)
-  e.hopCd = Math.max(0, e.hopCd - ctx.dt)
+  e.hopCd = Math.max(0, (e.hopCd ?? 0) - ctx.dt)
 
   const target = pickTarget(e, ctx.boy, ctx.girl)
   const dist = Phaser.Math.Distance.Between(e.x, e.y, target.x, target.y)
@@ -214,6 +277,8 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     e.label.setPosition(e.x, e.y - (e.kind === 'boss' ? 56 : 40))
     if (e.kind === 'boss') {
       e.label.setText(e.phase === 1 ? '武者・壹' : e.phase === 2 ? '武者・貳' : '武者・參')
+    } else {
+      e.label.setText(sp.label)
     }
   }
 
@@ -266,7 +331,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
       e.hitThis = false
       e.chargeDir = (Math.sign(target.x - e.x) || 1) as 1 | -1
       e.setVelocityX(e.chargeDir * spd * 2.35)
-      e.setVelocityY(-160)
+      e.setVelocityY(sp.style === 'hop' ? -220 : -160)
       e.setFlipX(e.chargeDir > 0)
       ctx.floatBang(e.x, e.y - 36)
     }
@@ -296,8 +361,8 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
       e.think = 200
       const dir = (Math.sign(target.x - e.x) || 1) as 1 | -1
       e.chargeDir = dir
-      e.setVelocityX(dir * spd * 1.85)
-      e.setVelocityY(-220)
+      e.setVelocityX(dir * spd * (sp.style === 'hop' ? 2.05 : 1.85))
+      e.setVelocityY(sp.style === 'hop' ? -300 : -220)
       e.setFlipX(dir > 0)
     }
     return
@@ -316,9 +381,10 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     return
   }
 
+  // 木桶武者：hop-lunge windup; 醃魚雜兵：chase into melee
   if (dist < melee && e.atkCd <= 0 && (e.state === 'chase' || e.state === 'detect')) {
     e.state = 'windup'
-    e.windup = st.windupMs * mul.windup
+    e.windup = st.windupMs * mul.windup * (sp.style === 'hop' ? 0.85 : 1)
     e.hitThis = false
     e.setVelocityX(0)
     e.setTint(0xff5555)
@@ -332,10 +398,10 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     e.atkCd <= 0 &&
     e.state === 'chase' &&
     dist > melee + 20 &&
-    dist < melee + 140
+    dist < melee + (sp.style === 'hop' ? 170 : 140)
   ) {
     e.state = 'pause'
-    e.think = 220 + (e.kind === 'boss' ? 80 : 0)
+    e.think = 220 + (e.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0)
     e.hitThis = false
     e.setVelocityX(0)
     e.setTint(0xff4444)
@@ -364,31 +430,37 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     if (e.state !== 'chase' && dist < aggro) e.state = 'chase'
   }
 
+  // 木桶 hops often; 醃魚 mostly patrol/chase walks
   if (
     (e.state === 'chase' || e.state === 'patrol') &&
-    e.hopCd <= 0 &&
+    (e.hopCd ?? 0) <= 0 &&
     body.blocked.down &&
     Math.random() < st.hopChance
   ) {
     e.state = 'hop'
-    e.think = 220
-    e.hopCd = 700 + Math.random() * 900
+    e.think = sp.style === 'hop' ? 260 : 220
+    e.hopCd = (sp.style === 'hop' ? 420 : 700) + Math.random() * (sp.style === 'hop' ? 520 : 900)
     const dir = (Math.sign(target.x - e.x) || e.patrolDir) as 1 | -1
     e.chargeDir = dir
-    e.setVelocityY(-280 - Math.random() * 80)
-    e.setVelocityX(dir * spd * 1.1)
+    e.setVelocityY(sp.style === 'hop' ? -360 - Math.random() * 100 : -280 - Math.random() * 80)
+    e.setVelocityX(dir * spd * (sp.style === 'hop' ? 1.35 : 1.1))
     e.setFlipX(dir > 0)
     applyPose(e)
     return
   }
 
   if (e.state === 'chase') {
-    if (dist > aggro * 1.35 && e.kind !== 'chaser' && e.kind !== 'boss') {
+    const dropMul = sp.style === 'chase' ? 1.5 : 1.2
+    if (dist > aggro * dropMul && e.kind !== 'chaser' && e.kind !== 'boss') {
       e.state = 'patrol'
     } else {
       const goal = desireX(e, target, ctx.leadX, advancing)
       const dir = (Math.sign(goal - e.x) || 1) as 1 | -1
       if (e.kind === 'ambusher' && target.y > e.y + 30 && body.blocked.down) e.setVelocityY(-280)
+      if (sp.style === 'hop' && body.blocked.down && (e.hopCd ?? 0) <= 0 && Math.random() < 0.04) {
+        e.setVelocityY(-220)
+        e.hopCd = 280
+      }
       const boost = e.kind === 'interrupter' && advancing ? 1.3 : 1
       e.setVelocityX(dir * spd * boost)
       e.setFlipX(dir > 0)

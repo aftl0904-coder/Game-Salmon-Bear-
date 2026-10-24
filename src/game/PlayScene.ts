@@ -3,6 +3,7 @@ import { burst, floatText, hitstop } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { buildStageHud } from './hud'
 import { calcScore, saveScore } from './score'
+import { bindFootBody } from './footBody'
 import {
   type Creep,
   type EnemyKind,
@@ -13,35 +14,49 @@ import {
 
 const WORLD_W = 3800
 const WORLD_H = 540
-/** Main walkable bank — raised so cast is not jammed at the bottom */
-const GROUND_Y = 400
-const MAX_HP = 3
-const BOY_SPEED = 230
+/** Shared walk surface — heroes & enemies (Goemon co-op floor) */
+export const GROUND_Y = 400
+const MAX_HP = 10
+const BOY_SPEED = 275
 const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
-/** Goemon-feel jump: snappy high arc; still fair for mid/high platforms (g=1500 → ~203px) */
-const JUMP_V = -780
+const JUMP_V = -700
+const COYOTE_MS = 110
+const JUMP_BUF_MS = 120
+const HURT_LOCK_MS = 260
 const FALL_Y = 530
+const COINS_START = 5
+
+type HeroPose = 'idle' | 'run' | 'jump' | 'hurt' | 'die'
 
 type Hero = Phaser.Physics.Arcade.Sprite & {
   hp: number
   facing: 1 | -1
   atkCd: number
   hurtCd: number
+  hurtLock: number
   grace: number
   role: 'boy' | 'girl'
+  baseScale: number
+  coyote: number
+  jumpBuf: number
+  walkPhase: number
+  wasGrounded: boolean
+  pose: HeroPose
+  alive: boolean
+  awaitingContinue?: boolean
 }
 
 /**
  * Round 1 — 溪流小路
- * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 角色可重疊；琪寶寶受傷時噗噗（Pooh）從畫面外衝入噴蜜
+ * Goemon-feel movement + enemy AI; HP10; hurt/die poses; 投幣續關
+ * P1 倫寶 / P2 琪寶寶 / AI 噗噗
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
   private boy!: Hero
   private girl!: Hero
   private pet!: Phaser.Physics.Arcade.Sprite
+  private petShadow!: Phaser.GameObjects.Image
   private fan!: Phaser.GameObjects.Image
   private fanGlow!: Phaser.GameObjects.Arc
   private boyShadow!: Phaser.GameObjects.Image
@@ -52,6 +67,7 @@ export class PlayScene extends Phaser.Scene {
   private shots!: Phaser.Physics.Arcade.Group
   private honeys!: Phaser.Physics.Arcade.Group
   private pots!: Phaser.Physics.Arcade.Group
+  private coinPickups!: Phaser.Physics.Arcade.Group
   private goal!: Phaser.Physics.Arcade.Sprite
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private keyW!: Phaser.Input.Keyboard.Key
@@ -67,20 +83,29 @@ export class PlayScene extends Phaser.Scene {
   private keyNP4!: Phaser.Input.Keyboard.Key
   private keyNP5!: Phaser.Input.Keyboard.Key
   private keyR!: Phaser.Input.Keyboard.Key
+  private keyEnter!: Phaser.Input.Keyboard.Key
+  private keySpace!: Phaser.Input.Keyboard.Key
+  private keyC!: Phaser.Input.Keyboard.Key
   private heartsL: Phaser.GameObjects.Image[] = []
   private heartsR: Phaser.GameObjects.Image[] = []
+  private coinText!: Phaser.GameObjects.Text
   private hudInfo!: Phaser.GameObjects.Text
   private banner!: Phaser.GameObjects.Text
+  continueBox!: Phaser.GameObjects.Text
   private ended = false
+  awaitingContinue = false
   private started = false
   private startedAt = 0
   private boyGoal = false
   private girlGoal = false
   private bossOn = false
   private honeyGot = 0
-  private petActive = false
+  private petJetting = false
   private scorePts = 0
+  private deaths = 0
+  coinStock = COINS_START
   private prevLeadX = 0
+  private checkpointX = 110
   private water!: Phaser.GameObjects.TileSprite
   private clouds!: Phaser.GameObjects.TileSprite
   private mountFar!: Phaser.GameObjects.TileSprite
@@ -93,14 +118,18 @@ export class PlayScene extends Phaser.Scene {
   create() {
     this.mode = (this.registry.get('playMode') as '1p' | '2p') || '2p'
     this.ended = false
+    this.awaitingContinue = false
     this.started = false
     this.bossOn = false
     this.boyGoal = false
     this.girlGoal = false
     this.honeyGot = 0
-    this.petActive = false
+    this.petJetting = false
     this.scorePts = 0
+    this.deaths = 0
+    this.coinStock = COINS_START
     this.prevLeadX = 120
+    this.checkpointX = 110
     this.startedAt = this.time.now
     this.heartsL = []
     this.heartsR = []
@@ -123,7 +152,7 @@ export class PlayScene extends Phaser.Scene {
     this.banner = this.add
       .text(480, 270, '', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '26px',
+        fontSize: '24px',
         color: '#f7e7c0',
         backgroundColor: '#1a1020ee',
         padding: { x: 20, y: 14 },
@@ -133,38 +162,73 @@ export class PlayScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(50)
       .setVisible(false)
+    this.continueBox = this.banner
+  }
+
+  playHurtPose(h: Hero, dir: number = -1) {
+    h.pose = 'hurt'
+    h.hurtLock = HURT_LOCK_MS
+    h.hurtCd = 500
+    h.facing = dir < 0 ? -1 : 1
+    h.setFlipX(h.facing < 0)
+    h.setTint(0xff4444)
+    h.setAngle(h.facing * -22)
+    h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
+    this.time.delayedCall(HURT_LOCK_MS + 40, () => {
+      if (h.pose === 'hurt') {
+        h.pose = 'idle'
+        h.clearTint()
+        h.setAngle(0)
+        h.setScale(h.baseScale)
+      }
+    })
+  }
+
+  beginDie(h: Hero, msg: string) {
+    h.alive = false
+    h.pose = 'die'
+    h.hp = 0
+    h.setVelocity(h.facing * -40, -80)
+    h.setAngle(h.facing * 90)
+    h.setTint(0x884444)
+    this.refreshHearts()
+    this.lose(msg)
   }
 
   update(_t: number, dt: number) {
     if (this.ended) {
-      if (Phaser.Input.Keyboard.JustDown(this.keyR)) this.scene.start('menu')
+      if (this.awaitingContinue && this.coinJust()) this.insertCoinContinue()
+      else if (Phaser.Input.Keyboard.JustDown(this.keyR)) this.scene.start('menu')
       return
     }
     if (!this.started) return
 
     if (Phaser.Input.Keyboard.JustDown(this.keyR)) this.scene.restart()
 
-    this.moveBoy()
-    if (this.mode === '2p') this.moveGirl()
-    else this.aiGirl()
+    this.moveBoy(dt)
+    if (this.mode === '2p') this.moveGirl(dt)
+    else this.aiGirl(dt)
 
     this.updatePet()
     this.updateEnemies(dt)
     this.syncFx()
     this.animateBg()
     this.checkFall()
+    this.updateCheckpoint()
 
     this.boy.atkCd = Math.max(0, this.boy.atkCd - dt)
     this.girl.atkCd = Math.max(0, this.girl.atkCd - dt)
     this.boy.hurtCd = Math.max(0, this.boy.hurtCd - dt)
     this.girl.hurtCd = Math.max(0, this.girl.hurtCd - dt)
+    this.boy.hurtLock = Math.max(0, this.boy.hurtLock - dt)
+    this.girl.hurtLock = Math.max(0, this.girl.hurtLock - dt)
 
     this.boyGoal = !!this.physics.overlap(this.boy, this.goal)
     this.girlGoal = !!this.physics.overlap(this.girl, this.goal)
 
     if (!this.bossOn && Math.max(this.boy.x, this.girl.x) > WORLD_W - 780) {
       this.bossOn = true
-      this.spawnBoss(WORLD_W - 420, GROUND_Y - 52)
+      this.spawnBoss(WORLD_W - 420, GROUND_Y)
       SFX.boss()
       this.hudInfo.setText('關底・醃鮭魚武者！合力奪回春蜜')
     }
@@ -182,17 +246,28 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private liveScore() {
-    const timeSec = (this.time.now - this.startedAt) / 1000
     return calcScore({
-      timeSec,
+      timeSec: (this.time.now - this.startedAt) / 1000,
       honey: this.honeyGot,
       hpBoy: Math.max(0, this.boy.hp),
       hpGirl: Math.max(0, this.girl.hp),
-      deaths: 0,
+      deaths: this.deaths,
     })
   }
 
-  // ——— input ———
+  private updateCheckpoint() {
+    const lead = Math.max(this.boy.x, this.girl.x)
+    if (lead > this.checkpointX + 200) this.checkpointX = lead
+  }
+
+  private coinJust() {
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
+      Phaser.Input.Keyboard.JustDown(this.keySpace) ||
+      Phaser.Input.Keyboard.JustDown(this.keyC)
+    )
+  }
+
   private bindKeys() {
     const kb = this.input.keyboard!
     this.input.keyboard!.addCapture([
@@ -215,6 +290,7 @@ export class PlayScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.R,
       Phaser.Input.Keyboard.KeyCodes.ENTER,
       Phaser.Input.Keyboard.KeyCodes.SPACE,
+      Phaser.Input.Keyboard.KeyCodes.C,
     ])
     this.cursors = kb.createCursorKeys()
     this.keyW = kb.addKey(Phaser.Input.Keyboard.KeyCodes.W, true)
@@ -230,83 +306,153 @@ export class PlayScene extends Phaser.Scene {
     this.keyNP4 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FOUR, true)
     this.keyNP5 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE, true)
     this.keyR = kb.addKey(Phaser.Input.Keyboard.KeyCodes.R, true)
+    this.keyEnter = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER, true)
+    this.keySpace = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true)
+    this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
     void this.keyS
   }
 
-  private p1AttackJust(): boolean {
+  private p1AttackJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyJ) ||
       Phaser.Input.Keyboard.JustDown(this.keyU) ||
       Phaser.Input.Keyboard.JustDown(this.keyI)
     )
   }
-
-  private p1JumpJust(): boolean {
+  private p1JumpJust() {
     return Phaser.Input.Keyboard.JustDown(this.keyW) || Phaser.Input.Keyboard.JustDown(this.keyK)
   }
-
-  private p2AttackJust(): boolean {
+  private p1JumpHeld() {
+    return this.keyW.isDown || this.keyK.isDown
+  }
+  private p2AttackJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyNP1) ||
       Phaser.Input.Keyboard.JustDown(this.keyNP4) ||
       Phaser.Input.Keyboard.JustDown(this.keyNP5)
     )
   }
+  private p2JumpJust() {
+    return Phaser.Input.Keyboard.JustDown(this.cursors.up!) || Phaser.Input.Keyboard.JustDown(this.keyNP2)
+  }
+  private p2JumpHeld() {
+    return !!(this.cursors.up?.isDown || this.keyNP2.isDown)
+  }
 
-  private p2JumpJust(): boolean {
-    return (
-      Phaser.Input.Keyboard.JustDown(this.cursors.up!) ||
-      Phaser.Input.Keyboard.JustDown(this.keyNP2)
+  private steerHero(
+    h: Hero,
+    dt: number,
+    left: boolean,
+    right: boolean,
+    jumpJust: boolean,
+    jumpHeld: boolean,
+    speed: number,
+    attackJust: boolean,
+    doAttack: () => void,
+  ) {
+    const body = h.body as Phaser.Physics.Arcade.Body
+    const grounded = body.blocked.down || body.touching.down
+
+    if (grounded) h.coyote = COYOTE_MS
+    else h.coyote = Math.max(0, h.coyote - dt)
+
+    if (jumpJust) h.jumpBuf = JUMP_BUF_MS
+    else h.jumpBuf = Math.max(0, h.jumpBuf - dt)
+
+    if (h.hurtLock > 0 || h.pose === 'die' || !h.alive) {
+      this.applyHeroPose(h, grounded, 0)
+      return
+    }
+
+    let vx = 0
+    if (left) vx -= speed
+    if (right) vx += speed
+    h.setVelocityX(vx)
+    if (vx !== 0) {
+      h.facing = vx > 0 ? 1 : -1
+      h.setFlipX(h.facing < 0)
+    }
+
+    if (h.jumpBuf > 0 && h.coyote > 0) {
+      h.setVelocityY(JUMP_V)
+      h.jumpBuf = 0
+      h.coyote = 0
+      SFX.jump()
+    }
+
+    if (!jumpHeld && body.velocity.y < -120) h.setVelocityY(body.velocity.y * 0.55)
+
+    if (!h.wasGrounded && grounded) burst(this, h.x, h.y + 4, 0xcbb896, 3)
+    h.wasGrounded = grounded
+
+    if (h.atkCd <= 0 && attackJust) doAttack()
+    this.applyHeroPose(h, grounded, vx)
+  }
+
+  private applyHeroPose(h: Hero, grounded: boolean, vx: number) {
+    if (h.pose === 'die') {
+      h.setAngle(h.facing * 90)
+      h.setScale(h.baseScale * 1.05, h.baseScale * 0.7)
+      return
+    }
+    if (h.pose === 'hurt' || h.hurtLock > 0) {
+      h.pose = 'hurt'
+      h.setAngle(h.facing * -22)
+      h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
+      if (h.hurtLock <= 0 && h.hurtCd < 700) {
+        h.pose = grounded ? 'idle' : 'jump'
+        h.clearTint()
+      }
+      return
+    }
+    if (!grounded) {
+      h.pose = 'jump'
+      h.setScale(h.baseScale * 0.94, h.baseScale * 1.08)
+      h.setAngle(h.facing * -8)
+      return
+    }
+    if (Math.abs(vx) > 12) {
+      h.pose = 'run'
+      h.walkPhase += Math.abs(vx) * 0.0005
+      const bob = Math.sin(h.walkPhase) * 0.05
+      h.setScale(h.baseScale * (1 + bob * 0.35), h.baseScale * (1 - bob))
+      h.setAngle(Math.sin(h.walkPhase) * 5 * h.facing)
+      return
+    }
+    h.pose = 'idle'
+    const breathe = Math.sin(this.time.now / 380) * 0.02
+    h.setScale(h.baseScale * (1 + breathe), h.baseScale * (1 - breathe))
+    h.setAngle(0)
+  }
+
+  private moveBoy(dt: number) {
+    this.steerHero(
+      this.boy, dt, this.keyA.isDown, this.keyD.isDown,
+      this.p1JumpJust(), this.p1JumpHeld(), BOY_SPEED,
+      this.p1AttackJust(), () => this.fireSalmon(this.boy),
     )
   }
 
-  private moveBoy() {
-    const h = this.boy
-    const body = h.body as Phaser.Physics.Arcade.Body
-    let vx = 0
-    if (this.keyA.isDown) vx -= BOY_SPEED
-    if (this.keyD.isDown) vx += BOY_SPEED
-    h.setVelocityX(vx)
-    if (vx !== 0) {
-      h.facing = vx > 0 ? 1 : -1
-      h.setFlipX(h.facing < 0)
-    }
-    if (this.p1JumpJust() && body.blocked.down) {
-      h.setVelocityY(JUMP_V)
-      SFX.jump()
-    }
-    if (h.atkCd <= 0 && this.p1AttackJust()) this.fireSalmon(h)
+  private moveGirl(dt: number) {
+    this.steerHero(
+      this.girl, dt, !!this.cursors.left?.isDown, !!this.cursors.right?.isDown,
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED,
+      this.p2AttackJust(), () => this.fanSlash(this.girl),
+    )
   }
 
-  private moveGirl() {
-    const h = this.girl
-    const body = h.body as Phaser.Physics.Arcade.Body
-    let vx = 0
-    if (this.cursors.left?.isDown) vx -= GIRL_SPEED
-    if (this.cursors.right?.isDown) vx += GIRL_SPEED
-    h.setVelocityX(vx)
-    if (vx !== 0) {
-      h.facing = vx > 0 ? 1 : -1
-      h.setFlipX(h.facing < 0)
-    }
-    if (this.p2JumpJust() && body.blocked.down) {
-      h.setVelocityY(JUMP_V)
-      SFX.jump()
-    }
-    if (h.atkCd <= 0 && this.p2AttackJust()) this.fanSlash(h)
-  }
-
-  private aiGirl() {
+  private aiGirl(dt: number) {
     const g = this.girl
-    const target = this.boy.x - 56
-    const dx = target - g.x
-    if (Math.abs(dx) > 20) {
-      g.setVelocityX(Math.sign(dx) * GIRL_SPEED * 0.9)
-      g.facing = (Math.sign(dx) || 1) as 1 | -1
-      g.setFlipX(g.facing < 0)
-    } else g.setVelocityX(0)
+    if (g.hurtLock > 0 || g.pose === 'die' || !g.alive) {
+      this.applyHeroPose(g, true, 0)
+      return
+    }
+    const dx = this.boy.x - 56 - g.x
     const body = g.body as Phaser.Physics.Arcade.Body
-    if (body.blocked.down && this.boy.y < g.y - 40) g.setVelocityY(JUMP_V)
+    const wantJump = body.blocked.down && this.boy.y < g.y - 40
+    this.steerHero(
+      g, dt, dx < -20, dx > 20, wantJump, wantJump, GIRL_SPEED * 0.9, false, () => {},
+    )
     if (g.atkCd <= 0) {
       const near = this.enemies.getChildren().some((o) => {
         const e = o as Creep
@@ -316,80 +462,55 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
-  // ——— combat ———
   private fireSalmon(h: Hero) {
-    h.atkCd = 280
+    h.atkCd = 200
     SFX.swing()
-    const shot = this.shots.create(
-      h.x + h.facing * 32,
-      h.y - 8,
-      'fx-salmon-shot',
-    ) as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.5)
-    shot.setDepth(11)
-    shot.setFlipX(h.facing < 0)
-    const b = shot.body as Phaser.Physics.Arcade.Body
-    b.allowGravity = false
-    shot.setVelocityX(h.facing * 540)
-    this.time.delayedCall(900, () => shot.destroy())
+    this.tweens.add({
+      targets: h, scaleX: h.baseScale * 1.12, scaleY: h.baseScale * 0.9,
+      angle: h.facing * 6, yoyo: true, duration: 70,
+    })
+    const shot = this.shots.create(h.x + h.facing * 32, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
+    shot.setScale(1.5).setDepth(11).setFlipX(h.facing < 0)
+    ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    shot.setVelocityX(h.facing * 560)
+    this.time.delayedCall(850, () => shot.destroy())
   }
 
   private fanSlash(h: Hero) {
-    h.atkCd = 340
+    h.atkCd = 240
     SFX.swing()
-    burst(this, h.x + h.facing * 44, h.y, 0xffc0d0, 8)
+    burst(this, h.x + h.facing * 44, h.y - 28, 0xffc0d0, 8)
     this.fanGlow.setAlpha(0.6)
-    this.tweens.add({ targets: this.fanGlow, alpha: 0.15, duration: 180 })
+    this.tweens.add({ targets: this.fanGlow, alpha: 0.15, duration: 160 })
+    this.tweens.add({
+      targets: h, scaleX: h.baseScale * 1.14, scaleY: h.baseScale * 0.88,
+      angle: h.facing * 10, yoyo: true, duration: 80,
+    })
     this.enemies.getChildren().forEach((o) => {
       const e = o as Creep
       if (!e.active) return
       const dx = e.x - h.x
-      if (Math.sign(dx) === h.facing && Math.abs(dx) < 80 && Math.abs(e.y - h.y) < 52) {
+      if (Math.sign(dx) === h.facing && Math.abs(dx) < 84 && Math.abs(e.y - h.y) < 56) {
         this.damageEnemy(e, 2, h.facing)
       }
     })
   }
 
   private summonBearAssist() {
-    if (this.petActive) return
-    this.petActive = true
-    const cam = this.cameras.main
-    const fromLeft = this.girl.facing > 0
-    const startX = fromLeft ? cam.scrollX - 90 : cam.scrollX + cam.width + 90
-    this.pet.setPosition(startX, this.girl.y)
-    this.pet.setVisible(true)
-    this.pet.setActive(true)
-    this.pet.setFlipX(!fromLeft)
+    if (this.petJetting || this.girl.pose === 'die') return
+    this.petJetting = true
     SFX.hit()
-    floatText(this, this.girl.x, this.girl.y - 50, '熊來了！', '#ffcc44')
-
-    this.tweens.add({
-      targets: this.pet,
-      x: this.girl.x - this.girl.facing * 40,
-      duration: 280,
-      ease: 'Cubic.out',
-      onComplete: () => {
-        this.honeyJet(this.girl.facing)
-        this.time.delayedCall(480, () => {
-          const leaveX = fromLeft ? cam.scrollX + cam.width + 110 : cam.scrollX - 110
-          this.tweens.add({
-            targets: this.pet,
-            x: leaveX,
-            duration: 380,
-            onComplete: () => {
-              this.pet.setVisible(false)
-              this.petActive = false
-            },
-          })
-        })
-      },
+    floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
+    this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
+    this.honeyJet(this.girl.facing)
+    this.time.delayedCall(520, () => {
+      this.petJetting = false
     })
   }
 
   private honeyJet(dir: number) {
-    const jet = this.honeys.create(this.pet.x + dir * 16, this.pet.y, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.55)
-    jet.setDepth(11)
+    const jet = this.honeys.create(this.pet.x + dir * 16, this.pet.y - 20, 'fx-honey') as Phaser.Physics.Arcade.Sprite
+    jet.setScale(1.55).setDepth(11)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     jet.setVelocityX(dir * 480)
     burst(this, this.pet.x, this.pet.y, 0xffc050, 14)
@@ -398,85 +519,124 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private damageEnemy(e: Creep, dmg: number, dir: number) {
+    if (e.state === 'die') return
     e.hp -= dmg
-    e.setVelocityX(dir * 220)
-    e.setVelocityY(-180)
+    e.setVelocityX(dir * 260)
+    e.setVelocityY(-220)
     e.setTint(0xffffff)
-    e.state = 'recover'
-    e.think = 320
+    e.state = 'hurt'
+    e.think = 280
+    e.poseAngle = dir * -28
     const tint = KIND_STATS[e.kind].tint
     this.time.delayedCall(70, () => {
-      if (!e.active) return
+      if (!e.active || e.state === 'die') return
       e.clearTint()
       if (tint) e.setTint(tint)
     })
-    burst(this, e.x, e.y, 0xffe8a0, 8)
-    floatText(this, e.x, e.y - 28, '！')
+    burst(this, e.x, e.y - 20, 0xffe8a0, 8)
+    floatText(this, e.x, e.y - 40, '！')
     SFX.hit()
-    hitstop(this, 30)
-    this.cameras.main.shake(35, 0.0025)
+    hitstop(this, 28)
+    this.cameras.main.shake(30, 0.0022)
     if (e.hp <= 0) {
+      e.state = 'die'
+      e.poseAngle = dir * 85
+      e.setAngle(e.poseAngle)
+      e.setTint(0x884444)
       SFX.kill()
-      burst(this, e.x, e.y, 0xff6688, 12)
-      e.label?.destroy()
-      e.disableBody(true, true)
+      burst(this, e.x, e.y - 16, 0xff6688, 12)
+      e.setVelocity(dir * 80, -120)
+      this.time.delayedCall(320, () => {
+        e.label?.destroy()
+        e.disableBody(true, true)
+      })
       if (e.kind === 'boss') this.hudInfo.setText('武者倒下！兩人一起站上祭壇')
     }
   }
 
   private hurtHero(h: Hero, e: Creep) {
-    if (this.ended || !this.started || this.time.now < h.grace || h.hurtCd > 0) return
+    if (this.ended || !this.started || this.time.now < h.grace || h.hurtCd > 0 || !h.alive) return
     if (!enemyCanHurt(e)) return
     e.hitThis = true
-    const dmg = 1
-    h.hp -= dmg
-    h.hurtCd = 1100
-    h.setVelocityX((Math.sign(h.x - e.x) || -1) * 280)
-    h.setVelocityY(-260)
+    h.hp -= 1
+    h.hurtCd = 900
+    h.hurtLock = HURT_LOCK_MS
+    h.pose = 'hurt'
+    const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
+    h.setVelocityX(away * 340)
+    h.setVelocityY(-320)
     h.setTint(0xff4444)
-    this.time.delayedCall(140, () => h.clearTint())
+    this.time.delayedCall(160, () => {
+      if (h.pose !== 'die') h.clearTint()
+    })
     SFX.hurt()
-    burst(this, h.x, h.y, 0xff4466, 8)
-    floatText(this, h.x, h.y - 28, `-${dmg}`, '#ff6677')
+    burst(this, h.x, h.y - 24, 0xff4466, 8)
+    floatText(this, h.x, h.y - 40, '-1', '#ff6677')
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
+    if (h.hp <= 0) this.knockOut(h)
   }
 
   private spike(h: Hero) {
-    if (this.ended || !this.started || h.hurtCd > 0 || this.time.now < h.grace) return
+    if (this.ended || !this.started || h.hurtCd > 0 || this.time.now < h.grace || !h.alive) return
     h.hp -= 1
-    h.hurtCd = 1200
-    h.setVelocityY(-460)
-    h.setVelocityX(h.facing * -160)
+    h.hurtCd = 1000
+    h.hurtLock = HURT_LOCK_MS
+    h.pose = 'hurt'
+    h.setVelocityY(-480)
+    h.setVelocityX(h.facing * -180)
+    h.setTint(0xff4444)
     SFX.spike()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
+    if (h.hp <= 0) this.knockOut(h)
   }
 
   private checkFall() {
     for (const h of [this.boy, this.girl]) {
       if (h.y > FALL_Y) {
-        if (this.ended || !this.started || h.hurtCd > 0) continue
+        if (this.ended || !this.started || h.hurtCd > 0 || !h.alive) continue
         h.hp -= 1
         h.hurtCd = 900
-        h.setPosition(Math.max(80, h.x - 80), GROUND_Y - 80)
+        h.hurtLock = HURT_LOCK_MS
+        h.pose = 'hurt'
+        h.setPosition(Math.max(80, h.x - 80), GROUND_Y)
         h.setVelocity(0, -200)
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
-        if (h.hp <= 0) this.lose(h.role === 'boy' ? '倫寶掉進溪谷…' : '琪寶寶掉進溪谷…')
+        if (h.hp <= 0) this.knockOut(h)
       }
     }
   }
 
-  // ——— enemy AI: per-kind objectives, shared state machine ———
+  private knockOut(h: Hero) {
+    if (h.pose === 'die' || !h.alive) return
+    h.alive = false
+    h.pose = 'die'
+    h.hp = 0
+    h.hurtLock = 9999
+    h.setVelocity(h.facing * -60, -140)
+    h.setTint(0x884444)
+    this.tweens.add({
+      targets: h,
+      angle: h.facing * 95,
+      scaleX: h.baseScale * 1.15,
+      scaleY: h.baseScale * 0.45,
+      duration: 520,
+      ease: 'Cubic.in',
+      onComplete: () => {
+        h.setVelocity(0, 0)
+        this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
+      },
+    })
+    this.refreshHearts()
+  }
+
   private updateEnemies(dt: number) {
     const leadX = Math.max(this.boy.x, this.girl.x)
     this.enemies.getChildren().forEach((o) => {
-      const e = o as Creep
-      tickEnemy(e, {
+      tickEnemy(o as Creep, {
         dt,
         boy: this.boy,
         girl: this.girl,
@@ -489,13 +649,20 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private updatePet() {
-    if (!this.petActive) this.pet.setVelocity(0, 0)
+    // 噗噗 always follows 琪寶寶 on the shared floor
+    const targetX = this.girl.x - this.girl.facing * 42
+    const targetY = this.girl.y
+    this.pet.x = Phaser.Math.Linear(this.pet.x, targetX, this.petJetting ? 0.35 : 0.18)
+    this.pet.y = Phaser.Math.Linear(this.pet.y, targetY, 0.22)
+    this.pet.setFlipX(this.girl.facing < 0)
+    this.pet.setVelocity(0, 0)
+    this.petShadow.setPosition(this.pet.x, this.pet.y + 4)
   }
 
   private syncFx() {
-    this.boyShadow.setPosition(this.boy.x, this.boy.y + 42)
-    this.girlShadow.setPosition(this.girl.x, this.girl.y + 42)
-    this.fan.setPosition(this.girl.x - this.girl.facing * 28, this.girl.y - 10)
+    this.boyShadow.setPosition(this.boy.x, this.boy.y + 4)
+    this.girlShadow.setPosition(this.girl.x, this.girl.y + 4)
+    this.fan.setPosition(this.girl.x - this.girl.facing * 28, this.girl.y - 36)
     this.fan.setFlipX(this.girl.facing < 0)
     this.fanGlow.setPosition(this.fan.x, this.fan.y)
   }
@@ -508,7 +675,6 @@ export class PlayScene extends Phaser.Scene {
     if (this.mountNear) this.mountNear.tilePositionX = sx * 0.28
   }
 
-  // ——— world ———
   private drawWorld() {
     const g = this.add.graphics().setDepth(-45)
     g.fillStyle(0x6eb8e0, 1)
@@ -522,24 +688,10 @@ export class PlayScene extends Phaser.Scene {
     g.fillStyle(0xffe08a, 1)
     g.fillCircle(140, 64, 24)
 
-    this.clouds = this.add
-      .tileSprite(480, 58, 960, 56, 'bg-cloud')
-      .setScrollFactor(0)
-      .setDepth(-40)
-      .setAlpha(0.8)
+    this.clouds = this.add.tileSprite(480, 58, 960, 56, 'bg-cloud').setScrollFactor(0).setDepth(-40).setAlpha(0.8)
+    this.mountFar = this.add.tileSprite(480, 250, 960, 80, 'bg-mount-far').setScrollFactor(0).setDepth(-35).setAlpha(0.9)
+    this.mountNear = this.add.tileSprite(480, 310, 960, 70, 'bg-mount-near').setScrollFactor(0).setDepth(-30)
 
-    this.mountFar = this.add
-      .tileSprite(480, 250, 960, 80, 'bg-mount-far')
-      .setScrollFactor(0)
-      .setDepth(-35)
-      .setAlpha(0.9)
-
-    this.mountNear = this.add
-      .tileSprite(480, 310, 960, 70, 'bg-mount-near')
-      .setScrollFactor(0)
-      .setDepth(-30)
-
-    // faux-3D riverside props with contact shadows
     for (let x = 160; x < WORLD_W; x += 260) {
       this.add.image(x + 8, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.55).setScale(1.1, 0.8)
       this.add.image(x, GROUND_Y - 36, 'prop-tree3d').setDepth(3).setScale(1.15)
@@ -555,10 +707,7 @@ export class PlayScene extends Phaser.Scene {
       this.add.image(x, GROUND_Y - 16, 'prop-lantern3d').setDepth(3.5).setScale(1.15)
     }
 
-    this.water = this.add
-      .tileSprite(480, 518, 960, 48, 'water-deep')
-      .setScrollFactor(0)
-      .setDepth(1)
+    this.water = this.add.tileSprite(480, 518, 960, 48, 'water-deep').setScrollFactor(0).setDepth(1)
     if (this.textures.exists('water-foam')) {
       this.add.tileSprite(480, 496, 960, 12, 'water-foam').setScrollFactor(0).setDepth(2).setAlpha(0.85)
     }
@@ -568,21 +717,14 @@ export class PlayScene extends Phaser.Scene {
     this.ground = this.physics.add.staticGroup()
     this.hazards = this.physics.add.staticGroup()
     this.pots = this.physics.add.group()
+    this.coinPickups = this.physics.add.group()
 
-    // multi-tier banks — ground raised, gaps = death pits
     const banks: Array<[number, number]> = [
-      [0, 480],
-      [560, 280],
-      [960, 300],
-      [1400, 340],
-      [1880, 280],
-      [2300, 320],
-      [2760, 300],
-      [3200, 600],
+      [0, 480], [560, 280], [960, 300], [1400, 340],
+      [1880, 280], [2300, 320], [2760, 300], [3200, 600],
     ]
     for (const [x, w] of banks) this.bank(x, GROUND_Y, w)
 
-    // mid platforms (vertical play space)
     this.woodPlat(420, 300, 3)
     this.woodPlat(720, 240, 3)
     this.woodPlat(1100, 280, 3)
@@ -594,8 +736,6 @@ export class PlayScene extends Phaser.Scene {
     this.stonePlat(900, 160, 2)
     this.stonePlat(1900, 150, 2)
     this.stonePlat(2600, 170, 2)
-
-    // bridges over pits (fewer spikes — easier)
     this.woodPlat(500, GROUND_Y - 8, 2)
     this.woodPlat(860, GROUND_Y - 8, 2)
     this.woodPlat(1820, GROUND_Y - 8, 3)
@@ -606,20 +746,20 @@ export class PlayScene extends Phaser.Scene {
     this.spikes(2700, 3)
 
     for (const x of [320, 1200, 2050, 3000]) {
-      const pot = this.pots.create(x, GROUND_Y - 52, 'pot3d') as Phaser.Physics.Arcade.Sprite
-      pot.setScale(1.45)
-      pot.setDepth(4)
+      const pot = this.pots.create(x, GROUND_Y - 40, 'pot3d') as Phaser.Physics.Arcade.Sprite
+      pot.setScale(1.45).setDepth(4)
       ;(pot.body as Phaser.Physics.Arcade.Body).allowGravity = false
       this.tweens.add({ targets: pot, y: pot.y - 6, yoyo: true, repeat: -1, duration: 700 })
+      this.spawnCoin(x + 60, GROUND_Y - 40)
     }
+    this.spawnCoin(760, 240 - 36)
+    this.spawnCoin(1720, 250 - 36)
 
-    this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 70, 'goal3d')
-    this.goal.setImmovable(true)
-    this.goal.setScale(1.35)
-    this.goal.setDepth(4)
+    this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
+    this.goal.setImmovable(true).setScale(1.35).setDepth(4)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
-      .text(WORLD_W - 140, GROUND_Y - 150, '祭壇・春蜜', {
+      .text(WORLD_W - 140, GROUND_Y - 130, '祭壇・春蜜', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '14px',
         color: '#2a1a10',
@@ -630,32 +770,33 @@ export class PlayScene extends Phaser.Scene {
       .setDepth(8)
   }
 
+  private spawnCoin(x: number, y: number) {
+    const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
+    c.setScale(1.55).setDepth(5)
+    ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
+  }
+
   private spawnCast() {
     const grace = this.time.now + 1400
-    this.boy = this.mkHero(110, GROUND_Y - 48, 'art-salmon', 'boy', grace, 1.85)
-    this.girl = this.mkHero(190, GROUND_Y - 48, 'art-girl', 'girl', grace, 1.8)
+    this.boy = this.mkHero(110, GROUND_Y, 'art-salmon', 'boy', grace, 1.85)
+    this.girl = this.mkHero(190, GROUND_Y, 'art-girl', 'girl', grace, 1.8)
 
-    this.pet = this.physics.add.sprite(-220, GROUND_Y - 44, 'art-bear')
-    this.pet.setScale(1.7)
-    this.pet.setDepth(9)
-    this.pet.setVisible(false)
+    this.pet = this.physics.add.sprite(148, GROUND_Y, 'art-bear')
+    this.pet.setOrigin(0.5, 1)
+    this.pet.setScale(1.7).setDepth(9).setVisible(true)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
 
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(190, GROUND_Y - 56, fanKey).setDepth(10).setScale(1.55)
-    this.fanGlow = this.add.circle(190, GROUND_Y - 56, 15, 0x88ddff, 0.2).setDepth(9)
-    this.tweens.add({
-      targets: this.fan,
-      angle: { from: -28, to: 28 },
-      duration: 80,
-      yoyo: true,
-      repeat: -1,
-    })
+    this.fan = this.add.image(190, GROUND_Y - 36, fanKey).setDepth(10).setScale(1.55)
+    this.fanGlow = this.add.circle(190, GROUND_Y - 36, 15, 0x88ddff, 0.2).setDepth(9)
+    this.tweens.add({ targets: this.fan, angle: { from: -28, to: 28 }, duration: 80, yoyo: true, repeat: -1 })
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.boyShadow = this.add.image(110, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.2, 0.75)
     this.girlShadow = this.add.image(190, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.15, 0.75)
+    this.petShadow = this.add.image(148, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.45).setScale(1.0, 0.65)
   }
 
   private wirePhysics() {
@@ -667,19 +808,18 @@ export class PlayScene extends Phaser.Scene {
     this.physics.add.collider(this.boy, this.ground)
     this.physics.add.collider(this.girl, this.ground)
     this.physics.add.collider(this.enemies, this.ground)
-    // NO boy↔girl collider — characters may overlap
 
     this.physics.add.overlap(this.shots, this.enemies, (shot, enemy) => {
       const s = shot as Phaser.Physics.Arcade.Sprite
       const e = enemy as Creep
-      if (!e.active) return
+      if (!e.active || e.state === 'die') return
       s.destroy()
       this.damageEnemy(e, 1, Math.sign(e.x - this.boy.x) || 1)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
       const j = jet as Phaser.Physics.Arcade.Sprite
       const e = enemy as Creep
-      if (!e.active) return
+      if (!e.active || e.state === 'die') return
       j.destroy()
       this.damageEnemy(e, 3, Math.sign(e.x - this.girl.x) || 1)
     })
@@ -689,6 +829,8 @@ export class PlayScene extends Phaser.Scene {
     this.physics.add.overlap(this.girl, this.hazards, () => this.spike(this.girl))
     this.physics.add.overlap(this.boy, this.pots, (_b, p) => this.takeHoney(p as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.girl, this.pots, (_g, p) => this.takeHoney(p as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.girl, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
   }
 
   private buildHud() {
@@ -700,14 +842,15 @@ export class PlayScene extends Phaser.Scene {
     this.heartsL = hud.heartsL
     this.heartsR = hud.heartsR
     this.hudInfo = hud.info
+    this.coinText = hud.coinText
+    this.refreshCoins()
   }
 
   private showIntro() {
     const box = this.add
       .text(
-        480,
-        210,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n琪寶寶受傷 → 噗噗（Pooh）從畫面外衝入噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        480, 200,
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n噗噗跟隨　｜　生命１０　受傷－１　投幣可續關\n角色與敵人同地面　可重疊\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -731,8 +874,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：倫寶射擊Ｊ／Ｋ／Ｕ／Ｉ｜琪寶寶同行｜Ｒ回選單'
-          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵１２４５　｜　Ｒ回選單',
+          ? '單人：倫寶ＪＫＵＩ｜琪寶寶同行｜投幣續關｜Ｒ回選單'
+          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜投幣續關｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
@@ -750,6 +893,16 @@ export class PlayScene extends Phaser.Scene {
     floatText(this, pot.x, pot.y - 18, '春蜜＋１', '#ffcc44')
   }
 
+  private takeCoin(coin: Phaser.Physics.Arcade.Sprite) {
+    if (!coin.active) return
+    coin.disableBody(true, true)
+    this.coinStock += 1
+    SFX.coin()
+    burst(this, coin.x, coin.y, 0xffe08a, 8)
+    floatText(this, coin.x, coin.y - 16, '金幣＋１', '#ffe08a')
+    this.refreshCoins()
+  }
+
   private checkWin() {
     if (this.ended || !this.started) return
     if (this.bossOn) {
@@ -762,19 +915,9 @@ export class PlayScene extends Phaser.Scene {
     if (this.boyGoal && this.girlGoal) {
       const timeSec = (this.time.now - this.startedAt) / 1000
       this.scorePts = calcScore({
-        timeSec,
-        honey: this.honeyGot,
-        hpBoy: this.boy.hp,
-        hpGirl: this.girl.hp,
-        deaths: 0,
+        timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl.hp, deaths: this.deaths,
       })
-      saveScore({
-        score: this.scorePts,
-        timeSec,
-        honey: this.honeyGot,
-        mode: this.mode,
-        at: Date.now(),
-      })
+      saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
       this.win(
         `春蜜奪回！\n溪流小路　通關\n${timeSec.toFixed(1)}秒　蜜罐 ${this.honeyGot}/3\n得分 ${this.scorePts}\n按Ｒ鍵回選單`,
       )
@@ -783,6 +926,7 @@ export class PlayScene extends Phaser.Scene {
 
   private win(msg: string) {
     this.ended = true
+    this.awaitingContinue = false
     this.boy.setVelocity(0, 0)
     this.girl.setVelocity(0, 0)
     SFX.win()
@@ -792,24 +936,71 @@ export class PlayScene extends Phaser.Scene {
 
   private lose(msg: string) {
     this.ended = true
+    this.deaths += 1
     SFX.lose()
-    this.banner.setText(`${msg}\n按Ｒ鍵回選單`).setVisible(true)
+    if (this.coinStock > 0) {
+      this.awaitingContinue = true
+      this.boy.awaitingContinue = true
+      this.girl.awaitingContinue = true
+      this.banner
+        .setText(`${msg}\n\n投幣續關（剩餘 ${this.coinStock}）\n按 Enter／空白鍵／Ｃ　投幣\n按Ｒ鍵回選單`)
+        .setVisible(true)
+    } else {
+      this.awaitingContinue = false
+      this.boy.awaitingContinue = false
+      this.girl.awaitingContinue = false
+      this.banner.setText(`${msg}\n幣已用盡\n按Ｒ鍵回選單`).setVisible(true)
+    }
+  }
+
+  private insertCoinContinue() {
+    if (!this.awaitingContinue || this.coinStock <= 0) return
+    this.coinStock -= 1
+    this.refreshCoins()
+    SFX.coin()
+    SFX.continue()
+    this.awaitingContinue = false
+    this.ended = false
+    this.banner.setVisible(false)
+
+    const cx = Phaser.Math.Clamp(this.checkpointX - 40, 100, WORLD_W - 200)
+    for (const h of [this.boy, this.girl]) {
+      h.hp = MAX_HP
+      h.pose = 'idle'
+      h.alive = true
+      h.awaitingContinue = false
+      h.hurtCd = 0
+      h.hurtLock = 0
+      h.grace = this.time.now + 2000
+      h.clearTint()
+      h.setAngle(0)
+      h.setScale(h.baseScale)
+      h.setPosition(cx + (h.role === 'girl' ? 60 : 0), GROUND_Y)
+      h.setVelocity(0, 0)
+      h.setActive(true)
+      h.setVisible(true)
+    }
+    this.refreshHearts()
+    floatText(this, this.boy.x, this.boy.y - 50, '續關！', '#ffe08a')
+    this.hudInfo.setText('投幣續關！短暫無敵　繼續奪蜜')
+    this.cameras.main.flash(200, 255, 220, 100)
+  }
+
+  private refreshCoins() {
+    this.coinText?.setText(`×${this.coinStock}`)
   }
 
   private refreshHearts() {
+    const full = this.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
+    const empty = this.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
     for (let i = 0; i < MAX_HP; i++) {
-      this.heartsL[i]?.setTexture(i < this.boy.hp ? 'heart-full' : 'heart-empty')
-      this.heartsR[i]?.setTexture(i < this.girl.hp ? 'heart-full' : 'heart-empty')
+      this.heartsL[i]?.setTexture(i < this.boy.hp ? full : empty)
+      this.heartsR[i]?.setTexture(i < this.girl.hp ? full : empty)
     }
   }
 
   private mkHero(
-    x: number,
-    y: number,
-    tex: string,
-    role: 'boy' | 'girl',
-    grace: number,
-    scale: number,
+    x: number, y: number, tex: string, role: 'boy' | 'girl', grace: number, scale: number,
   ): Hero {
     const s = this.physics.add.sprite(x, y, tex) as Hero
     s.role = role
@@ -817,66 +1008,69 @@ export class PlayScene extends Phaser.Scene {
     s.facing = 1
     s.atkCd = 0
     s.hurtCd = 0
+    s.hurtLock = 0
     s.grace = grace
+    s.baseScale = scale
+    s.coyote = 0
+    s.jumpBuf = 0
+    s.walkPhase = 0
+    s.wasGrounded = true
+    s.pose = 'idle'
+    s.alive = true
+    s.awaitingContinue = false
     s.setCollideWorldBounds(true)
-    s.setDragX(900)
+    s.setDragX(1400)
+    s.setMaxVelocity(role === 'girl' ? GIRL_SPEED + 40 : BOY_SPEED + 40, 1200)
     s.setDepth(8)
     s.setScale(scale)
-    const body = s.body as Phaser.Physics.Arcade.Body
-    body.setSize(22, 36)
-    body.setOffset(role === 'girl' ? 20 : 24, role === 'girl' ? 28 : 26)
+    bindFootBody(s, { bodyW: 22, bodyH: 36 })
     return s
   }
 
-  private bank(x: number, y: number, w: number) {
+  private placeSurfaceTile(x: number, surfaceY: number, tex: string) {
+    const t = this.ground.create(x, surfaceY, tex) as Phaser.Physics.Arcade.Sprite
+    t.setOrigin(0.5, 0)
+    t.refreshBody()
+    t.setDepth(3)
+    return t
+  }
+
+  private bank(x: number, surfaceY: number, w: number) {
     const tex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    for (let i = x; i < x + w; i += 36) {
-      const t = this.ground.create(i + 18, y, tex) as Phaser.Physics.Arcade.Sprite
-      t.refreshBody()
-      t.setDepth(3)
-    }
+    for (let i = x; i < x + w; i += 36) this.placeSurfaceTile(i + 18, surfaceY, tex)
   }
 
-  private woodPlat(x: number, y: number, n: number) {
+  private woodPlat(x: number, surfaceY: number, n: number) {
     const tex = this.textures.exists('blk-wood') ? 'blk-wood' : 'til-wood'
-    for (let i = 0; i < n; i++) {
-      const t = this.ground.create(x + i * 36 + 18, y, tex) as Phaser.Physics.Arcade.Sprite
-      t.refreshBody()
-      t.setDepth(3)
-    }
+    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * 36 + 18, surfaceY, tex)
   }
 
-  private stonePlat(x: number, y: number, n: number) {
+  private stonePlat(x: number, surfaceY: number, n: number) {
     const tex = this.textures.exists('blk-stone') ? 'blk-stone' : 'til-wood'
-    for (let i = 0; i < n; i++) {
-      const t = this.ground.create(x + i * 34 + 17, y, tex) as Phaser.Physics.Arcade.Sprite
-      t.refreshBody()
-      t.setDepth(3)
-    }
+    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * 34 + 17, surfaceY, tex)
   }
 
   private spikes(x: number, n: number) {
     const tex = this.textures.exists('blk-spike') ? 'blk-spike' : 'til-spike'
     for (let i = 0; i < n; i++) {
-      const s = this.hazards.create(x + i * 26 + 12, GROUND_Y + 22, tex) as Phaser.Physics.Arcade.Sprite
+      const s = this.hazards.create(x + i * 26 + 12, GROUND_Y + 8, tex) as Phaser.Physics.Arcade.Sprite
+      s.setOrigin(0.5, 0)
       s.refreshBody()
       s.setDepth(2)
     }
   }
 
   private placeEnemies() {
-    // Distinct roles — each exists to 阻止玩家完成任務（奪回春蜜／祭壇）
-    // Density kept moderate (easier than 吞食天地); telegraphs are long
-    this.mkEnemy(620, GROUND_Y - 44, 'blocker')
-    this.mkEnemy(1500, GROUND_Y - 44, 'blocker')
-    this.mkEnemy(1050, GROUND_Y - 44, 'chaser')
-    this.mkEnemy(1980, GROUND_Y - 44, 'chaser')
+    this.mkEnemy(620, GROUND_Y, 'blocker')
+    this.mkEnemy(1500, GROUND_Y, 'blocker')
+    this.mkEnemy(1050, GROUND_Y, 'chaser')
+    this.mkEnemy(1980, GROUND_Y, 'chaser')
     this.mkEnemy(740, 200, 'ambusher')
     this.mkEnemy(1750, 210, 'ambusher')
-    this.mkEnemy(1180, GROUND_Y - 44, 'guardian', 1200)
-    this.mkEnemy(2080, GROUND_Y - 44, 'guardian', 2050)
-    this.mkEnemy(2960, GROUND_Y - 44, 'guardian', 3000)
-    this.mkEnemy(2680, GROUND_Y - 44, 'interrupter')
+    this.mkEnemy(1180, GROUND_Y, 'guardian', 1200)
+    this.mkEnemy(2080, GROUND_Y, 'guardian', 2050)
+    this.mkEnemy(2960, GROUND_Y, 'guardian', 3000)
+    this.mkEnemy(2680, GROUND_Y, 'interrupter')
   }
 
   private mkEnemy(x: number, y: number, kind: EnemyKind, guardX?: number) {
@@ -886,7 +1080,7 @@ export class PlayScene extends Phaser.Scene {
     e.hp = st.hp
     e.maxHp = st.hp
     e.windup = 0
-    e.atkCd = Phaser.Math.Between(400, 1000)
+    e.atkCd = Phaser.Math.Between(300, 800)
     e.hitThis = false
     e.state = 'patrol'
     e.patrolDir = Math.random() > 0.5 ? 1 : -1
@@ -898,16 +1092,20 @@ export class PlayScene extends Phaser.Scene {
     e.guardX = guardX ?? x
     e.think = 0
     e.detectT = 0
+    e.hopCd = Phaser.Math.Between(200, 600)
+    e.chargeDir = 1
     e.phase = 1
+    e.baseScale = st.scale
+    e.poseAngle = 0
     e.boss = kind === 'boss'
     e.elite = kind === 'interrupter'
     e.setCollideWorldBounds(true)
     e.setDepth(6)
     e.setScale(st.scale)
     if (st.tint) e.setTint(st.tint)
-    ;(e.body as Phaser.Physics.Arcade.Body).setSize(20, 20)
+    bindFootBody(e, { bodyW: 20, bodyH: 22 })
     e.label = this.add
-      .text(x, y - 40, st.label, {
+      .text(x, y - 44, st.label, {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: kind === 'boss' ? '14px' : '11px',
         color: '#fff4e0',
