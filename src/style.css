@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;700&display=swap');
+
+:root {
+  color-scheme: dark;
+  --bg-deep: #1a1420;
+  --bg-glow: #3a2a1a;
+  --frame: #c9a46a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(ellipse at 50% 20%, #4a3020 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-glow), var(--bg-deep));
+  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  color: #f3e6c8;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 12px;
+}
+
+#game-root {
+  width: min(960px, 100vw - 16px);
+  aspect-ratio: 960 / 540;
+  border: 3px solid var(--frame);
+  box-shadow:
+    0 0 0 2px #5a3a1a,
+    0 18px 40px rgba(0, 0, 0, 0.55);
+  background: #000;
+  overflow: hidden;
+}
+
+#game-root canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
