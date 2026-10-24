@@ -151,11 +151,13 @@ try {
 
   const cont = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
+    const box = play.continueBox || play.banner
     return {
       awaiting: play.awaitingContinue,
-      boxVisible: play.continueBox.visible,
-      boxText: play.continueBox.text,
+      boxVisible: !!box?.visible,
+      boxText: box?.text || '',
       pose: play.boy.pose,
+      ended: play.ended,
     }
   })
   console.log('continue', cont)
