@@ -408,8 +408,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         return
       }
     }
-    // Attack squash owns scale briefly.
-    if (this.atkCd > 120) {
+    // Attack pose — 倫寶 salmon lean / 琪寶寶 fan squash (visible whole atkCd).
+    if (this.atkCd > 80 || this.isMeleeActive()) {
+      if (this.role === 'boy') {
+        this.setScale(this.baseScale * 1.1, this.baseScale * 0.9)
+        this.setAngle(this.facing * 12)
+      } else {
+        this.setScale(this.baseScale * 1.12, this.baseScale * 0.88)
+        this.setAngle(this.facing * 10)
+      }
       if (!grounded) this.pose = 'jump'
       else if (Math.abs(vx) > 12) this.pose = 'run'
       else this.pose = 'idle'

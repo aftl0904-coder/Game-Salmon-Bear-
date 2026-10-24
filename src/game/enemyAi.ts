@@ -412,10 +412,10 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   // 木桶武者：hop-lunge windup; 醃魚雜兵：chase into melee
   if (dist < melee && e.atkCd <= 0 && (e.state === 'chase' || e.state === 'detect')) {
     e.state = 'windup'
-    e.windup = st.windupMs * mul.windup * (sp.style === 'hop' ? 0.85 : 1)
+    e.windup = Math.max(200, st.windupMs * mul.windup * (sp.style === 'hop' ? 0.85 : 1))
     e.hitThis = false
     e.setVelocityX(0)
-    e.setTint(0xff5555)
+    e.setTint(0xff3333)
     ctx.floatBang(e.x, e.y - 36)
     applyPose(e)
     return
@@ -429,10 +429,10 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     dist < melee + (sp.style === 'hop' ? 170 : 140)
   ) {
     e.state = 'pause'
-    e.think = 220 + (e.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0)
+    e.think = Math.max(200, 220 + (e.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0))
     e.hitThis = false
     e.setVelocityX(0)
-    e.setTint(0xff4444)
+    e.setTint(0xff3333)
     ctx.floatBang(e.x, e.y - 36)
     applyPose(e)
     return

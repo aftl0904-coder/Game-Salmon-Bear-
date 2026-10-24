@@ -141,8 +141,8 @@ export class GameScene extends Phaser.Scene {
     this.scorePts = 0
     this.deaths = 0
     this.coinStock = COINS_START
-    this.prevLeadX = 120
-    this.checkpointX = 110
+    this.prevLeadX = 260
+    this.checkpointX = 250
     this.startedAt = this.time.now
     this.entities.clear()
     // Scene instances survive restart — reset debug before any frame can
@@ -172,6 +172,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupCameraFollow() {
+    // Round-1 feel: soft follow lerp 0.1 + world bounds (tightens near altar too).
+    this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.camTarget = this.add.zone((this.boy.x + this.girl.x) / 2, WORLD_H / 2, 1, 1)
     this.cameras.main.startFollow(this.camTarget, true, 0.1, 0.1)
     this.cameras.main.setDeadzone(110, 56)
@@ -594,13 +596,22 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fireSalmon(h: Hero) {
-    h.atkCd = 200
+    h.atkCd = 220
+    h.pose = 'idle'
     SFX.swing()
+    // Clear 倫寶 salmon-gun attack pose (lean + recoil) — owned for ~atkCd window.
+    h.setScale(h.baseScale * 1.14, h.baseScale * 0.88)
+    h.setAngle(h.facing * 14)
+    this.tweens.killTweensOf(h)
     this.tweens.add({
-      targets: h, scaleX: h.baseScale * 1.12, scaleY: h.baseScale * 0.9,
-      angle: h.facing * 6, yoyo: true, duration: 70,
+      targets: h,
+      scaleX: h.baseScale * 0.96,
+      scaleY: h.baseScale * 1.06,
+      angle: h.facing * -6,
+      duration: 110,
+      yoyo: true,
     })
-    const shot = this.shots.create(h.x + h.facing * 32, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
+    const shot = this.shots.create(h.x + h.facing * 36, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.5).setDepth(11).setFlipX(h.facing < 0)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * 560)
@@ -649,10 +660,7 @@ export class GameScene extends Phaser.Scene {
     this.petJetting = true
     SFX.hit()
     floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
-    this.tweens.add({
-      targets: this.pet, scaleX: 0.95, scaleY: 0.85, yoyo: true, duration: 90,
-      onComplete: () => { if (this.pet?.active) this.pet.setScale(0.75) },
-    })
+    this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
     this.honeyJet(this.girl.facing)
     this.time.delayedCall(520, () => {
       this.petJetting = false
@@ -794,8 +802,9 @@ export class GameScene extends Phaser.Scene {
   /** 噗噗 AI: always trail 琪寶寶 (never player-controlled) */
   private updatePet() {
     const g = this.girl
-    const followX = g.x - g.facing * 52
-    const followY = g.y
+    // Trail behind 琪寶寶 (opposite of facing) so heroes stay readable.
+    const followX = g.x - g.facing * 58
+    const followY = g.y + 2
     const dx = followX - this.pet.x
     const dy = followY - this.pet.y
     const speed = this.petJetting ? 220 : 340
@@ -810,6 +819,8 @@ export class GameScene extends Phaser.Scene {
     }
     this.pet.setVelocity(0, 0)
     this.pet.setFlipX(g.facing < 0)
+    this.pet.setScale(0.75)
+    this.pet.setAlpha(this.petJetting ? 1 : 0.85)
     this.pet.setVisible(true)
     this.pet.setActive(true)
     this.pet.setDepth(g.depth - 0.1)
@@ -910,9 +921,12 @@ export class GameScene extends Phaser.Scene {
     this.spikes(1840, 3)
     this.spikes(2700, 3)
 
-    for (const x of [320, 1200, 2050, 3000]) {
+    // First pot near spawn so early smash juice lands in the opening seconds.
+    for (const x of [380, 1200, 2050, 3000]) {
       const pot = this.pots.create(x, GROUND_Y - 40, 'pot3d') as Phaser.Physics.Arcade.Sprite
       pot.setScale(1.45).setDepth(4)
+      ;(pot as Breakable).breakKind = 'pot'
+      ;(pot as Breakable).loot = 'coin'
       ;(pot.body as Phaser.Physics.Arcade.Body).allowGravity = false
       this.tweens.add({ targets: pot, y: pot.y - 6, yoyo: true, repeat: -1, duration: 700 })
       this.spawnCoin(x + 60, GROUND_Y - 40)
@@ -944,31 +958,33 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCast() {
     const grace = this.time.now + 1400
-    this.boy = Player.spawn(this, 110, GROUND_Y, {
+    // Spawn 前移 — first blocker sits ~250px ahead so opening has contact.
+    this.boy = Player.spawn(this, 250, GROUND_Y, {
       role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1.85, speed: BOY_SPEED,
     })
-    this.girl = Player.spawn(this, 190, GROUND_Y, {
+    this.girl = Player.spawn(this, 330, GROUND_Y, {
       role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1.8, speed: GIRL_SPEED,
     })
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
 
-    this.pet = this.physics.add.sprite(140, GROUND_Y, 'art-bear')
+    this.pet = this.physics.add.sprite(280, GROUND_Y, 'art-bear')
     this.pet.setOrigin(0.5, 1)
-    this.pet.setScale(1.7).setDepth(9).setVisible(true)
+    // 同屏可读：略缩小 + 半透明，跟在琪寶寶身后
+    this.pet.setScale(0.75).setAlpha(0.85).setDepth(7).setVisible(true)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.entities.add(this.pet, 'pet')
 
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(190, GROUND_Y - 36, fanKey).setDepth(10).setScale(1.55)
-    this.fanGlow = this.add.circle(190, GROUND_Y - 36, 15, 0x88ddff, 0.2).setDepth(9)
+    this.fan = this.add.image(330, GROUND_Y - 36, fanKey).setDepth(10).setScale(1.55)
+    this.fanGlow = this.add.circle(330, GROUND_Y - 36, 15, 0x88ddff, 0.2).setDepth(9)
     this.tweens.add({ targets: this.fan, angle: { from: -28, to: 28 }, duration: 80, yoyo: true, repeat: -1 })
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.boyShadow = this.add.image(110, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.2, 0.75)
-    this.girlShadow = this.add.image(190, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.15, 0.75)
-    this.petShadow = this.add.image(148, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.45).setScale(1.0, 0.65)
+    this.boyShadow = this.add.image(250, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.2, 0.75)
+    this.girlShadow = this.add.image(330, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.15, 0.75)
+    this.petShadow = this.add.image(280, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.35).setScale(0.55, 0.45)
   }
 
   private wirePhysics() {
@@ -1099,6 +1115,9 @@ export class GameScene extends Phaser.Scene {
     const x = pot.x, y = pot.y
     pot.disableBody(true, true)
     SFX.kill()
+    // Smash juice: hitfreeze 50ms + shake + debris
+    hitstop(this, 50)
+    this.cameras.main.shake(100, 0.01)
     this.juice.breakDebris(x, y, pot.breakKind === 'chest' ? 0xc48a48 : 0xffc050)
     floatText(this, x, y - 18, pot.breakKind === 'chest' ? '寶箱破！' : '壺破！', '#ffe8a0')
     if (loot === 'honey') {
@@ -1106,6 +1125,7 @@ export class GameScene extends Phaser.Scene {
       floatText(this, x, y - 36, '春蜜＋１', '#ffcc44')
     } else {
       this.spawnCoin?.(x, y - 10)
+      floatText(this, x, y - 36, '＋1幣', '#ffe08a')
     }
   }
 
@@ -1123,7 +1143,7 @@ export class GameScene extends Phaser.Scene {
     this.coinStock += 1
     SFX.coin()
     burst(this, coin.x, coin.y, 0xffe08a, 8)
-    floatText(this, coin.x, coin.y - 16, '金幣＋１', '#ffe08a')
+    floatText(this, coin.x, coin.y - 16, '＋1幣', '#ffe08a')
     this.refreshCoins()
   }
 
@@ -1253,7 +1273,8 @@ export class GameScene extends Phaser.Scene {
 
   private placeEnemies() {
     // Round 1: 2 visual species — 醃魚雜兵 (fish chase) + 木桶武者 (barrel hop/lunge)
-    this.mkEnemy(620, GROUND_Y, 'blocker', undefined, 'fish')
+    // Opening density: blocker within ~200–350px of spawn (250 → ~500).
+    this.mkEnemy(500, GROUND_Y, 'blocker', undefined, 'fish')
     this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish')
     this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish')
     this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish')
@@ -1263,6 +1284,9 @@ export class GameScene extends Phaser.Scene {
     this.mkEnemy(2080, GROUND_Y, 'guardian', 2050, 'fish')
     this.mkEnemy(2960, GROUND_Y, 'guardian', 3000, 'barrel')
     this.mkEnemy(2680, GROUND_Y, 'interrupter', undefined, 'barrel')
+    // 关末小高潮：祭壇／春蜜前 1–2 木桶 ambusher（平台 + 地面）
+    this.mkEnemy(2920, 210, 'ambusher', undefined, 'barrel')
+    this.mkEnemy(3480, GROUND_Y, 'ambusher', undefined, 'barrel')
   }
 
   private mkEnemy(

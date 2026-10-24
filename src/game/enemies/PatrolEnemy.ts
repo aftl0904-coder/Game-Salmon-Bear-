@@ -190,10 +190,13 @@ export class PatrolEnemy extends Enemy {
     ) {
       this.setFsm('ATTACK')
       this.atkPhase = 'pause'
-      this.think = 220 + (this.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0)
+      this.think = Math.max(
+        200,
+        220 + (this.kind === 'boss' ? 80 : 0) - (sp.style === 'hop' ? 40 : 0),
+      )
       this.hitThis = false
       this.setVelocityX(0)
-      this.setTint(0xff4444)
+      this.setTint(0xff3333)
       this.hooks.floatBang?.(this.x, this.y - 36)
       this.applyPose()
       return
@@ -272,10 +275,11 @@ export class PatrolEnemy extends Enemy {
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    this.windup = ms
+    // Red telegraph ≥200ms before lunge (F1 still shows ATTACK/windup).
+    this.windup = Math.max(200, ms)
     this.hitThis = false
     this.setVelocityX(0)
-    this.setTint(0xff5555)
+    this.setTint(0xff3333)
     this.hooks.floatBang?.(this.x, this.y - 36)
     this.applyPose()
   }
@@ -335,7 +339,7 @@ export class PatrolEnemy extends Enemy {
     }
     if (this.atkPhase === 'windup') {
       this.setVelocityX(0)
-      this.setTint(0xff5555)
+      this.setTint(0xff3333)
       this.applyPose()
       if (this.windup <= 0) {
         this.atkPhase = 'strike'
