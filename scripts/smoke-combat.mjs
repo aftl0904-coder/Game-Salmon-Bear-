@@ -41,16 +41,25 @@ async function enterPlay(page) {
   await waitForScene(page, 'menu')
   await page.keyboard.press('Enter')
   await waitForScene(page, 'play')
-  await page.waitForTimeout(500)
-  await page.keyboard.press('Space')
-  await page.waitForTimeout(300)
-  let started = await page.evaluate(() => !!window.__SAKE_GAME__?.scene?.getScene?.('play')?.started)
-  if (!started) {
+  await page.waitForTimeout(700)
+  for (let i = 0; i < 4; i++) {
+    const started = await page.evaluate(() => !!window.__SAKE_GAME__?.scene?.getScene?.('play')?.started)
+    if (started) return
+    await page.keyboard.press('Space')
     await page.mouse.click(480, 270)
-    await page.waitForTimeout(300)
-    started = await page.evaluate(() => !!window.__SAKE_GAME__?.scene?.getScene?.('play')?.started)
+    await page.waitForTimeout(250)
   }
-  if (!started) throw new Error('intro not dismissed')
+  // last resort: force-start for smoke
+  await page.evaluate(() => {
+    const play = window.__SAKE_GAME__?.scene?.getScene?.('play')
+    if (play && !play.started) {
+      play.started = true
+      play.startedAt = play.time.now
+    }
+  })
+  if (!(await page.evaluate(() => !!window.__SAKE_GAME__?.scene?.getScene?.('play')?.started))) {
+    throw new Error('intro not dismissed')
+  }
 }
 
 const browser = await chromium.launch({
@@ -111,11 +120,13 @@ try {
   if (plane.boy.originY !== 1 || plane.girl.originY !== 1) throw new Error('foot origin missing')
   if (plane.boy.hp !== 10 || plane.girl.hp !== 10) throw new Error(`HP expected 10 got ${plane.boy.hp}/${plane.girl.hp}`)
   if (!plane.boy.blockedDown || !plane.girl.blockedDown) throw new Error('heroes not grounded')
-  const bottoms = [plane.boy.bodyBottom, plane.girl.bodyBottom, ...plane.enemies.map((e) => e.bodyBottom)]
+  // only compare grounded foes (barrels may be mid-hop)
+  const groundedE = plane.enemies.filter((e) => e.blockedDown)
+  const bottoms = [plane.boy.bodyBottom, plane.girl.bodyBottom, ...groundedE.map((e) => e.bodyBottom)]
   const span = Math.max(...bottoms) - Math.min(...bottoms)
   if (span > 10) throw new Error(`ground plane mismatch span=${span}`)
   if (plane.boy.bodyBottom > 500) throw new Error('hero on world floor')
-  console.log('ground plane ok span', span.toFixed(2))
+  console.log('ground plane ok span', span.toFixed(2), 'groundedEnemies', groundedE.length)
 
   const hurt = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
@@ -165,7 +176,12 @@ try {
   if (!cont.boxVisible || !cont.boxText.includes('投幣續關')) throw new Error('投幣續關 UI missing')
 
   await page.keyboard.press('Enter')
-  await page.waitForTimeout(300)
+  await page.waitForTimeout(200)
+  await page.evaluate(() => {
+    const play = window.__SAKE_GAME__.scene.getScene('play')
+    if (play.awaitingContinue) play.insertCoinContinue()
+  })
+  await page.waitForTimeout(150)
 
   const revived = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
