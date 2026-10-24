@@ -1,5 +1,8 @@
 import './style.css'
 import Phaser from 'phaser'
+import { BootScene } from './game/BootScene'
+import { LogoScene } from './game/LogoScene'
+import { MenuScene } from './game/MenuScene'
 import { PlayScene } from './game/PlayScene'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
@@ -9,7 +12,7 @@ new Phaser.Game({
   parent: root,
   width: 960,
   height: 540,
-  backgroundColor: '#5eb0d8',
+  backgroundColor: '#1a1428',
   pixelArt: true,
   physics: {
     default: 'arcade',
@@ -18,7 +21,7 @@ new Phaser.Game({
       debug: false,
     },
   },
-  scene: [PlayScene],
+  scene: [BootScene, LogoScene, MenuScene, PlayScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
