@@ -143,7 +143,8 @@ export class PatrolEnemy extends Enemy {
     const melee = st.melee
     const spd = st.spd * mul.spd
     const patrolSpd = st.patrolSpd * mul.spd
-    const body = this.body as Phaser.Physics.Arcade.Body
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (!body) return
 
     if (this.label?.active) {
       this.label.setPosition(this.x, this.y - (this.kind === 'boss' ? 56 : 40))
