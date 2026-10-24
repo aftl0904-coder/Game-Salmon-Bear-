@@ -39,123 +39,171 @@ function rect(
   for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) set(xx, yy, c)
 }
 
-/** SNES-like tiles matching concept riverside */
+function circ(
+  set: (x: number, y: number, c: RGB, a?: number) => void,
+  cx: number,
+  cy: number,
+  r: number,
+  c: RGB,
+) {
+  for (let y = -r; y <= r; y++) {
+    for (let x = -r; x <= r; x++) {
+      if (x * x + y * y <= r * r) set(cx + x, cy + y, c)
+    }
+  }
+}
+
+/** Richer SNES riverside tiles */
 export function registerTiles(scene: Phaser.Scene) {
-  const dirt: RGB = [120, 78, 48]
-  const dirtD: RGB = [88, 54, 32]
-  const grass: RGB = [78, 168, 78]
-  const grassL: RGB = [120, 200, 100]
-  const rock: RGB = [110, 108, 100]
-  const rockL: RGB = [150, 148, 140]
-  const wood: RGB = [168, 110, 58]
-  const woodD: RGB = [120, 74, 36]
-  const spike: RGB = [210, 220, 230]
-  const spikeD: RGB = [120, 130, 140]
-  const water: RGB = [70, 160, 210]
-  const waterL: RGB = [150, 210, 240]
-  const gold: RGB = [230, 180, 60]
-  const goldL: RGB = [255, 230, 120]
-  const red: RGB = [200, 70, 55]
-  const parchment: RGB = [236, 214, 160]
+  const dirt: RGB = [132, 86, 52]
+  const dirtD: RGB = [92, 56, 34]
+  const dirtL: RGB = [158, 110, 70]
+  const grass: RGB = [72, 176, 82]
+  const grassD: RGB = [48, 130, 60]
+  const grassL: RGB = [130, 214, 110]
+  const rock: RGB = [118, 116, 108]
+  const rockL: RGB = [158, 156, 148]
+  const rockD: RGB = [78, 76, 70]
+  const wood: RGB = [178, 118, 62]
+  const woodD: RGB = [124, 78, 38]
+  const woodL: RGB = [210, 160, 100]
+  const spike: RGB = [230, 236, 242]
+  const spikeD: RGB = [140, 150, 160]
+  const water: RGB = [56, 152, 210]
+  const waterL: RGB = [160, 220, 245]
+  const waterD: RGB = [30, 100, 160]
+  const gold: RGB = [236, 186, 58]
+  const goldL: RGB = [255, 236, 140]
+  const red: RGB = [210, 64, 52]
+  const redD: RGB = [150, 36, 36]
+  const parchment: RGB = [242, 220, 168]
   const ink: RGB = [50, 30, 18]
-  const flowerW: RGB = [250, 250, 250]
-  const flowerP: RGB = [255, 170, 190]
-  const hit: RGB = [255, 245, 220]
-  const spray: RGB = [120, 200, 245]
+  const flowerW: RGB = [255, 252, 245]
+  const flowerP: RGB = [255, 160, 190]
+  const hit: RGB = [255, 248, 220]
+  const spray: RGB = [130, 210, 250]
 
   paint(scene, 'til-grass', 32, 48, (set) => {
-    rect(set, 0, 10, 32, 38, dirt)
-    for (let i = 0; i < 32; i += 5) rect(set, i, 14, 2, 30, dirtD)
-    rect(set, 0, 0, 32, 12, grass)
-    for (let x = 1; x < 32; x += 3) set(x, 2, grassL)
-    // flowers
-    set(6, 4, flowerW)
-    set(7, 4, flowerW)
-    set(18, 3, flowerP)
-    set(24, 5, flowerW)
-    // rocky underside
+    rect(set, 0, 12, 32, 28, dirt)
+    for (let i = 0; i < 32; i += 4) rect(set, i, 16, 2, 22, dirtD)
+    rect(set, 6, 20, 8, 6, dirtL)
+    rect(set, 0, 0, 32, 14, grass)
+    rect(set, 0, 10, 32, 4, grassD)
+    for (let x = 0; x < 32; x += 2) {
+      set(x, 1, grassL)
+      set(x + 1, 3, grassL)
+    }
+    // tufts
+    set(4, 0, grassD)
+    set(5, 0, grass)
+    set(12, 0, grassD)
+    set(20, 0, grassD)
+    set(27, 0, grassD)
+    set(8, 4, flowerW)
+    set(9, 4, flowerW)
+    set(8, 5, flowerP)
+    set(22, 3, flowerW)
+    set(16, 5, flowerP)
     rect(set, 0, 40, 32, 8, rock)
-    rect(set, 4, 42, 10, 4, rockL)
+    rect(set, 2, 42, 12, 4, rockL)
+    rect(set, 18, 43, 10, 3, rockD)
   })
 
   paint(scene, 'til-wood', 32, 16, (set) => {
     rect(set, 0, 0, 32, 16, wood)
-    rect(set, 0, 0, 32, 3, woodD)
+    rect(set, 0, 0, 32, 3, woodL)
     rect(set, 0, 13, 32, 3, woodD)
-    for (let x = 6; x < 32; x += 10) rect(set, x, 0, 2, 16, woodD)
+    for (let x = 5; x < 32; x += 9) rect(set, x, 0, 2, 16, woodD)
+    set(10, 7, woodL)
+    set(20, 8, woodL)
   })
 
-  paint(scene, 'til-spike', 24, 28, (set) => {
+  paint(scene, 'til-spike', 24, 30, (set) => {
     for (let i = 0; i < 3; i++) {
       const ox = i * 8
-      for (let y = 0; y < 24; y++) {
-        const half = Math.max(0, 3 - Math.floor(y / 7))
-        rect(set, ox + 3 - half, y, 1 + half * 2, 1, y < 4 ? spike : spikeD)
+      for (let y = 0; y < 26; y++) {
+        const half = Math.max(0, 3 - Math.floor(y / 6))
+        rect(set, ox + 3 - half, y, 1 + half * 2, 1, y < 5 ? spike : spikeD)
       }
+      set(ox + 3, 1, [255, 255, 255])
     }
   })
 
-  paint(scene, 'til-water', 32, 16, (set) => {
-    rect(set, 0, 4, 32, 12, water)
-    for (let x = 0; x < 32; x += 4) set(x, 6, waterL)
-    for (let x = 2; x < 32; x += 5) set(x, 10, waterL)
+  paint(scene, 'til-water', 32, 20, (set) => {
+    rect(set, 0, 0, 32, 20, waterD)
+    rect(set, 0, 2, 32, 14, water)
+    for (let x = 0; x < 32; x += 3) set(x, 4, waterL)
+    for (let x = 1; x < 32; x += 4) set(x, 8, waterL)
+    for (let x = 2; x < 32; x += 5) set(x, 12, [200, 240, 255])
   })
 
-  paint(scene, 'til-goal', 40, 80, (set) => {
-    rect(set, 6, 24, 8, 56, red)
-    rect(set, 26, 24, 8, 56, red)
-    rect(set, 2, 18, 36, 10, red)
-    rect(set, 0, 12, 40, 8, red)
-    rect(set, 14, 32, 12, 32, gold)
-    rect(set, 16, 34, 8, 10, goldL)
+  paint(scene, 'til-goal', 44, 88, (set) => {
+    rect(set, 6, 28, 8, 60, red)
+    rect(set, 30, 28, 8, 60, red)
+    rect(set, 8, 30, 4, 10, redD)
+    rect(set, 2, 20, 40, 12, red)
+    rect(set, 0, 12, 44, 10, red)
+    rect(set, 0, 12, 44, 3, [255, 140, 120])
+    rect(set, 15, 36, 14, 36, gold)
+    rect(set, 17, 38, 10, 10, goldL)
+    circ(set, 22, 28, 5, goldL)
+    circ(set, 22, 26, 2, [255, 255, 220])
   })
 
-  paint(scene, 'ui-scroll', 280, 36, (set) => {
-    rect(set, 16, 4, 248, 28, parchment)
-    rect(set, 16, 4, 248, 3, [200, 170, 110])
-    rect(set, 16, 29, 248, 3, [200, 170, 110])
-    // wood knobs
-    rect(set, 0, 0, 18, 36, [140, 90, 40])
-    rect(set, 262, 0, 18, 36, [140, 90, 40])
-    for (let x = 30; x < 250; x += 8) set(x, 32, [90, 160, 200])
-    // faint ink line
-    rect(set, 40, 18, 200, 1, ink)
+  paint(scene, 'ui-scroll', 300, 40, (set) => {
+    rect(set, 18, 5, 264, 30, parchment)
+    rect(set, 18, 5, 264, 3, [210, 180, 120])
+    rect(set, 18, 32, 264, 3, [200, 165, 105])
+    rect(set, 0, 0, 20, 40, [148, 96, 44])
+    rect(set, 280, 0, 20, 40, [148, 96, 44])
+    rect(set, 2, 2, 16, 36, [120, 74, 32])
+    rect(set, 282, 2, 16, 36, [120, 74, 32])
+    for (let x = 36; x < 270; x += 7) set(x, 35, [80, 150, 200])
   })
 
-  paint(scene, 'fx-hit', 28, 16, (set) => {
-    rect(set, 4, 2, 20, 12, hit)
-    rect(set, 0, 6, 28, 4, [255, 255, 255])
+  paint(scene, 'fx-hit', 32, 18, (set) => {
+    rect(set, 6, 2, 20, 14, hit)
+    rect(set, 0, 6, 32, 6, [255, 255, 255])
+    set(4, 4, [255, 220, 120])
+    set(28, 10, [255, 220, 120])
   })
 
-  paint(scene, 'fx-salmon', 36, 18, (set) => {
-    rect(set, 2, 4, 10, 8, [240, 130, 80])
-    rect(set, 12, 3, 10, 10, [255, 170, 110])
-    rect(set, 22, 5, 10, 8, [240, 130, 80])
-    rect(set, 0, 8, 36, 4, spray)
+  paint(scene, 'fx-salmon', 40, 20, (set) => {
+    rect(set, 2, 5, 11, 9, [240, 120, 70])
+    rect(set, 13, 3, 12, 12, [255, 170, 110])
+    rect(set, 25, 5, 11, 9, [240, 120, 70])
+    rect(set, 0, 9, 40, 5, spray)
+    set(16, 6, [255, 240, 200])
   })
 
-  paint(scene, 'sign-salmon', 48, 56, (set) => {
-    rect(set, 22, 20, 6, 36, woodD)
-    rect(set, 4, 4, 40, 24, wood)
-    rect(set, 8, 8, 14, 8, [240, 130, 80])
-    rect(set, 24, 10, 16, 4, ink)
-    rect(set, 24, 16, 12, 3, ink)
+  paint(scene, 'sign-salmon', 52, 60, (set) => {
+    rect(set, 24, 22, 6, 38, woodD)
+    rect(set, 4, 4, 44, 26, wood)
+    rect(set, 6, 6, 40, 3, woodL)
+    rect(set, 8, 10, 16, 10, [240, 130, 80])
+    set(20, 12, [255, 200, 150])
+    rect(set, 28, 12, 16, 4, ink)
+    rect(set, 28, 18, 12, 3, ink)
   })
 
   paint(scene, 'heart-full', 14, 12, (set) => {
-    const c: RGB = [220, 50, 60]
+    const c: RGB = [230, 48, 64]
     rect(set, 1, 2, 5, 5, c)
     rect(set, 8, 2, 5, 5, c)
     rect(set, 2, 5, 10, 5, c)
     rect(set, 4, 9, 6, 2, c)
-    set(3, 3, [255, 180, 180])
+    set(3, 3, [255, 190, 190])
   })
 
   paint(scene, 'heart-empty', 14, 12, (set) => {
-    const c: RGB = [40, 30, 25]
+    const c: RGB = [45, 32, 28]
     rect(set, 1, 2, 5, 5, c)
     rect(set, 8, 2, 5, 5, c)
     rect(set, 2, 5, 10, 5, c)
     rect(set, 4, 9, 6, 2, c)
+  })
+
+  paint(scene, 'px-white', 4, 4, (set) => {
+    rect(set, 0, 0, 4, 4, [255, 255, 255])
   })
 }
