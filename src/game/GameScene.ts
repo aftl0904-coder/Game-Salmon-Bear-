@@ -203,7 +203,9 @@ export class GameScene extends Phaser.Scene {
    */
   private resetPhysicsDebug(on: boolean) {
     this.physicsDebug = on
-    const world = this.physics.world
+    // Shutdown can run after Arcade World is already destroyed.
+    const world = this.physics?.world
+    if (!world) return
     world.defaults.debugShowBody = on
     world.defaults.debugShowVelocity = on
     if (on) {
@@ -647,7 +649,10 @@ export class GameScene extends Phaser.Scene {
     this.petJetting = true
     SFX.hit()
     floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
-    this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
+    this.tweens.add({
+      targets: this.pet, scaleX: 0.95, scaleY: 0.85, yoyo: true, duration: 90,
+      onComplete: () => { if (this.pet?.active) this.pet.setScale(0.75) },
+    })
     this.honeyJet(this.girl.facing)
     this.time.delayedCall(520, () => {
       this.petJetting = false
