@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { registerTiles } from './tiles'
+import { registerWorldArt } from './worldArt'
 import { burst, floatText, hitstop } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 
@@ -20,6 +21,8 @@ type Fighter = Phaser.Physics.Arcade.Sprite & {
   walkPhase: number
   wasGrounded: boolean
   stepAcc: number
+  shadow: Phaser.GameObjects.Image
+  animLockUntil: number
 }
 
 type Creep = Phaser.Physics.Arcade.Sprite & {
@@ -57,7 +60,13 @@ export class PlayScene extends Phaser.Scene {
   private bearAtGoal = false
   private bossSpawned = false
   private progressText!: Phaser.GameObjects.Text
-  private waterSparkles: Phaser.GameObjects.Arc[] = []
+  private waterDeep!: Phaser.GameObjects.TileSprite
+  private waterMid!: Phaser.GameObjects.TileSprite
+  private waterFoam!: Phaser.GameObjects.TileSprite
+  private mountFar!: Phaser.GameObjects.TileSprite
+  private mountNear!: Phaser.GameObjects.TileSprite
+  private cloudLayer!: Phaser.GameObjects.TileSprite
+  private girlShadow!: Phaser.GameObjects.Image
   private audioReady = false
   private girlWalk = 0
 
@@ -67,6 +76,7 @@ export class PlayScene extends Phaser.Scene {
 
   preload() {
     registerTiles(this)
+    registerWorldArt(this)
     this.load.image('art-salmon', '/art/salmon-boy.png')
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
@@ -81,7 +91,6 @@ export class PlayScene extends Phaser.Scene {
     this.startedAt = this.time.now
     this.heartImgsL = []
     this.heartImgsR = []
-    this.waterSparkles = []
     this.audioReady = false
     this.girlWalk = 0
 
@@ -107,6 +116,11 @@ export class PlayScene extends Phaser.Scene {
     this.salmon = this.spawnFighter(90, GROUND_Y - 40, 'art-salmon', 'salmon', grace)
     this.bear = this.spawnFighter(160, GROUND_Y - 40, 'art-bear', 'bear', grace)
 
+    this.girlShadow = this.add
+      .image(130, GROUND_Y + 18, 'shadow-blob')
+      .setDepth(5)
+      .setAlpha(0.55)
+      .setScale(0.85, 0.7)
     this.girl = this.add.image(130, GROUND_Y - 40, 'art-girl').setDepth(7).setScale(1.2)
 
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 78, 'til-goal')
@@ -116,12 +130,17 @@ export class PlayScene extends Phaser.Scene {
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     ;(this.goal.body as Phaser.Physics.Arcade.Body).setSize(22, 36)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).setOffset(10, 42)
+    // stable soft glow (no alpha flicker)
+    const goalGlow = this.add
+      .circle(WORLD_W - 140, GROUND_Y - 50, 28, 0xffe08a, 0.12)
+      .setDepth(3)
     this.tweens.add({
-      targets: this.goal,
-      alpha: 0.82,
+      targets: goalGlow,
+      scale: 1.15,
       yoyo: true,
       repeat: -1,
-      duration: 700,
+      duration: 1200,
+      ease: 'Sine.easeInOut',
     })
     this.add
       .text(WORLD_W - 140, GROUND_Y - 165, '祭壇', {
@@ -223,15 +242,17 @@ export class PlayScene extends Phaser.Scene {
     const gx = this.bear.x - this.bear.facing * 30
     this.girl.x = Phaser.Math.Linear(this.girl.x, gx, 0.22)
     const girlMoving = Math.abs(this.bear.body!.velocity.x) > 20
-    if (girlMoving) this.girlWalk += dt * 0.018
-    const girlBob = girlMoving ? Math.sin(this.girlWalk) * 3 : Math.sin(this.time.now / 400) * 1.2
+    if (girlMoving) this.girlWalk += dt * 0.014
+    const girlBob = girlMoving ? Math.sin(this.girlWalk) * 2 : 0
     this.girl.y = this.bear.y - 8 + girlBob
     this.girl.setFlipX(this.bear.facing < 0)
-    this.girl.setDepth(this.bear.depth - 1)
-    this.girl.setScale(
-      1.2 * (girlMoving ? 1 + Math.sin(this.girlWalk) * 0.03 : 1),
-      1.2 * (girlMoving ? 1 - Math.sin(this.girlWalk) * 0.04 : 1),
-    )
+    this.girl.setDepth(7)
+    this.girl.setScale(1.2)
+    this.girlShadow.setPosition(this.girl.x, this.girl.y + 34)
+    this.girlShadow.setVisible(Math.abs(this.bear.body!.velocity.y) < 40)
+
+    this.placeShadow(this.salmon)
+    this.placeShadow(this.bear)
 
     const midX = (this.salmon.x + this.bear.x) / 2
     this.cameras.main.centerOn(
@@ -272,11 +293,26 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private animateDecor(_dt: number) {
-    for (const s of this.waterSparkles) {
-      s.x += 0.35
-      if (s.x > WORLD_W) s.x = 0
-      s.alpha = 0.35 + Math.sin(this.time.now / 200 + s.x) * 0.25
-    }
+    // smooth scroll — constant speeds, no alpha flicker
+    this.waterDeep.tilePositionX += 0.22
+    this.waterMid.tilePositionX += 0.55
+    this.waterFoam.tilePositionX += 0.9
+    this.cloudLayer.tilePositionX += 0.06
+    // slight parallax vs camera
+    const camX = this.cameras.main.scrollX
+    this.mountFar.tilePositionX = camX * 0.15
+    this.mountNear.tilePositionX = camX * 0.35
+  }
+
+  private placeShadow(f: Fighter) {
+    const body = f.body as Phaser.Physics.Arcade.Body
+    const airborne = !body.blocked.down
+    f.shadow.setPosition(f.x, f.y + (f.role === 'bear' ? 38 : 36))
+    f.shadow.setVisible(true)
+    // stable size; only shrink a little when airborne (no flicker)
+    const sc = airborne ? 0.55 : f.role === 'bear' ? 1.05 : 0.9
+    f.shadow.setScale(sc, airborne ? 0.45 : 0.65)
+    f.shadow.setAlpha(airborne ? 0.28 : 0.5)
   }
 
   private buildHud() {
@@ -361,76 +397,81 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private drawBackdrop() {
-    const g = this.add.graphics().setDepth(-25)
-    // sky wash — warmer, prettier
-    g.fillStyle(0x4aa3d4, 1)
-    g.fillRect(0, 0, WORLD_W, WORLD_H)
-    g.fillStyle(0x7ec8ea, 1)
-    g.fillRect(0, 0, WORLD_W, 160)
-    g.fillStyle(0xffe2b0, 0.35)
-    g.fillRect(0, 200, WORLD_W, 180)
+    // --- layer -40: sky ---
+    const sky = this.add.graphics().setDepth(-40)
+    sky.fillGradientStyle(0x6eb8e0, 0x6eb8e0, 0xb8daf0, 0xb8daf0, 1)
+    sky.fillRect(0, 0, WORLD_W, 280)
+    sky.fillStyle(0xffe6b8, 0.4)
+    sky.fillRect(0, 220, WORLD_W, 160)
+    sky.fillStyle(0xd8f0a8, 0.25)
+    sky.fillRect(0, 320, WORLD_W, 100)
 
-    // sun glow
-    g.fillStyle(0xfff0c0, 0.55)
-    g.fillCircle(180, 90, 48)
-    g.fillStyle(0xffe08a, 0.35)
-    g.fillCircle(180, 90, 78)
+    // sun (stable, no flicker)
+    sky.fillStyle(0xfff3c8, 0.5)
+    sky.fillCircle(160, 78, 70)
+    sky.fillStyle(0xffe89a, 0.85)
+    sky.fillCircle(160, 78, 36)
+    sky.fillStyle(0xfffaf0, 1)
+    sky.fillCircle(160, 78, 18)
 
-    for (let x = 60; x < WORLD_W; x += 260) {
-      g.fillStyle(0xffffff, 0.92)
-      g.fillEllipse(x, 55 + (x % 70), 78, 30)
-      g.fillEllipse(x + 44, 48, 56, 24)
-      g.fillEllipse(x + 20, 62, 40, 18)
+    // --- layer -35: far mountains (scroll parallax) ---
+    this.mountFar = this.add
+      .tileSprite(WORLD_W / 2, 300, WORLD_W, 80, 'bg-mount-far')
+      .setDepth(-35)
+      .setAlpha(0.85)
+
+    // --- layer -32: clouds ---
+    this.cloudLayer = this.add
+      .tileSprite(WORLD_W / 2, 70, WORLD_W, 56, 'bg-cloud')
+      .setDepth(-32)
+      .setAlpha(0.75)
+
+    // --- layer -28: near hills ---
+    this.mountNear = this.add
+      .tileSprite(WORLD_W / 2, 360, WORLD_W, 70, 'bg-mount-near')
+      .setDepth(-28)
+
+    // --- layer -22: mid props (shrines, houses) ---
+    const mid = this.add.graphics().setDepth(-22)
+    for (let x = 320; x < WORLD_W; x += 780) {
+      mid.fillStyle(0xb85040, 1)
+      mid.fillRect(x, 268, 9, 72)
+      mid.fillRect(x + 50, 268, 9, 72)
+      mid.fillRect(x - 8, 262, 76, 11)
+      mid.fillRect(x - 12, 256, 84, 8)
+      mid.fillStyle(0xd8a878, 1)
+      mid.fillRect(x + 90, 290, 34, 52)
+      mid.fillStyle(0xc07040, 1)
+      mid.fillTriangle(x + 90, 290, x + 107, 262, x + 124, 290)
+      // window
+      mid.fillStyle(0xffe8a0, 0.7)
+      mid.fillRect(x + 100, 308, 10, 10)
+      // tree cluster
+      mid.fillStyle(0x5a3a20, 1)
+      mid.fillRect(x + 160, 310, 7, 30)
+      mid.fillStyle(0x3d8a48, 1)
+      mid.fillCircle(x + 163, 300, 16)
+      mid.fillStyle(0x62b860, 1)
+      mid.fillCircle(x + 170, 294, 11)
     }
 
-    // layered hills
-    for (let x = 0; x < WORLD_W; x += 200) {
-      g.fillStyle(0x5e9a68, 1)
-      g.fillEllipse(x + 100, 350, 280, 130)
-      g.fillStyle(0x7fbf74, 1)
-      g.fillEllipse(x + 40, 370, 190, 95)
-      g.fillStyle(0x9ed68a, 0.9)
-      g.fillEllipse(x + 160, 385, 140, 70)
-    }
+    // soft mist — fixed alpha (was flickering like a shadow)
+    this.add
+      .rectangle(WORLD_W / 2, 420, WORLD_W, 36, 0xffffff, 0.06)
+      .setDepth(-12)
 
-    // distant shrine silhouettes
-    for (let x = 400; x < WORLD_W; x += 900) {
-      g.fillStyle(0xc45c48, 0.85)
-      g.fillRect(x, 280, 10, 70)
-      g.fillRect(x + 48, 280, 10, 70)
-      g.fillRect(x - 6, 274, 70, 10)
-      g.fillStyle(0xd4a06a, 0.7)
-      g.fillRect(x + 80, 300, 28, 50)
-      g.fillTriangle(x + 80, 300, x + 94, 275, x + 108, 300)
-    }
-
-    // river
-    g.fillStyle(0x2f88c0, 1)
-    g.fillRect(0, 478, WORLD_W, 62)
-    g.fillStyle(0x6ec0e8, 0.45)
-    for (let x = 0; x < WORLD_W; x += 40) {
-      g.fillEllipse(x + 16, 498, 34, 9)
-    }
-
-    // floating mist band
-    const mist = this.add
-      .rectangle(WORLD_W / 2, 430, WORLD_W, 40, 0xffffff, 0.08)
-      .setDepth(-5)
-    this.tweens.add({
-      targets: mist,
-      alpha: 0.14,
-      yoyo: true,
-      repeat: -1,
-      duration: 2200,
-      ease: 'Sine.easeInOut',
-    })
-
-    for (let x = 20; x < WORLD_W; x += 70) {
-      const s = this.add
-        .circle(x, 492 + (x % 11), 2 + (x % 3), 0xffffff, 0.5)
-        .setDepth(2)
-      this.waterSparkles.push(s)
-    }
+    // --- water stack ---
+    this.waterDeep = this.add
+      .tileSprite(WORLD_W / 2, 508, WORLD_W, 48, 'water-deep')
+      .setDepth(0)
+    this.waterMid = this.add
+      .tileSprite(WORLD_W / 2, 498, WORLD_W, 28, 'water-mid')
+      .setDepth(1)
+      .setAlpha(0.9)
+    this.waterFoam = this.add
+      .tileSprite(WORLD_W / 2, 484, WORLD_W, 12, 'water-foam')
+      .setDepth(2)
+      .setAlpha(0.85)
   }
 
   private buildLevel() {
@@ -480,22 +521,48 @@ export class PlayScene extends Phaser.Scene {
     this.spikePit(3380, 7)
     this.spikePit(3840, 7)
 
-    this.add.image(260, GROUND_Y - 54, 'sign-salmon').setDepth(3).setScale(1.5)
+    this.add.image(260, GROUND_Y - 54, 'sign-salmon').setDepth(4).setScale(1.5)
 
-    for (let x = 0; x < WORLD_W; x += 32) {
-      this.add.image(x + 16, 510, 'til-water').setDepth(1).setAlpha(0.9)
+    // mid-layer bushes / rocks on banks
+    for (let x = 60; x < WORLD_W; x += 140) {
+      if ((x / 140) % 3 !== 1) {
+        this.add
+          .image(x, GROUND_Y - 22, 'prop-bush')
+          .setDepth(3.5)
+          .setScale(1.1 + ((x / 140) % 2) * 0.15)
+          .setFlipX(x % 280 > 140)
+      }
+      if ((x / 140) % 4 === 0) {
+        this.add
+          .image(x + 40, GROUND_Y + 8, 'fg-rock')
+          .setDepth(2.5)
+          .setScale(1.2)
+          .setAlpha(0.95)
+      }
     }
 
-    // decorative bushes
-    const g = this.add.graphics().setDepth(3)
-    for (let x = 80; x < WORLD_W; x += 180) {
-      if (x % 360 < 200) {
-        g.fillStyle(0x3d8a4a, 1)
-        g.fillCircle(x, GROUND_Y - 28, 14)
-        g.fillCircle(x + 10, GROUND_Y - 34, 12)
-        g.fillStyle(0x62b56a, 1)
-        g.fillCircle(x + 4, GROUND_Y - 36, 9)
-      }
+    // foreground reeds (in front of characters a bit — depth 10)
+    for (let x = 100; x < WORLD_W; x += 220) {
+      this.add
+        .image(x, GROUND_Y + 22, 'fg-reed')
+        .setDepth(10)
+        .setScale(1.3)
+        .setAlpha(0.92)
+      this.add
+        .image(x + 18, GROUND_Y + 26, 'fg-reed')
+        .setDepth(10)
+        .setScale(1.1)
+        .setFlipX(true)
+        .setAlpha(0.85)
+    }
+
+    // bank edge foam hint where grass meets water
+    for (let x = 0; x < WORLD_W; x += 64) {
+      this.add
+        .image(x + 32, GROUND_Y + 22, 'water-foam')
+        .setDepth(2.2)
+        .setAlpha(0.35)
+        .setScale(1, 0.6)
     }
   }
 
@@ -605,26 +672,26 @@ export class PlayScene extends Phaser.Scene {
     }
     f.wasGrounded = grounded
 
-    // walk / air pose
-    if (grounded && Math.abs(vx) > 10) {
-      f.walkPhase += Math.abs(vx) * 0.00055
-      f.stepAcc += Math.abs(vx) * 0.02
-      if (f.stepAcc > 28) {
+    // calm motion: fixed scale (no flickering shadow), tiny Y bob only
+    const animLocked = this.time.now < f.animLockUntil
+    if (!animLocked) {
+      f.setScale(f.baseScale)
+      if (grounded && Math.abs(vx) > 10) {
+        f.walkPhase += Math.abs(vx) * 0.0005
+        f.stepAcc += Math.abs(vx) * 0.02
+        if (f.stepAcc > 28) {
+          f.stepAcc = 0
+          SFX.step()
+        }
+        // offset via angle only 1° — almost invisible, avoids shadow wobble
+        f.setAngle(Math.sin(f.walkPhase) * 1.2 * f.facing)
+      } else if (!grounded) {
+        f.setAngle(f.facing * -4)
         f.stepAcc = 0
-        SFX.step()
+      } else {
+        f.setAngle(0)
+        f.stepAcc = 0
       }
-      const bob = Math.sin(f.walkPhase) * 0.06
-      f.setScale(f.baseScale * (1 + bob * 0.4), f.baseScale * (1 - bob))
-      f.setAngle(Math.sin(f.walkPhase) * 4 * f.facing)
-    } else if (!grounded) {
-      f.setScale(f.baseScale * 0.95, f.baseScale * 1.08)
-      f.setAngle(f.facing * -6)
-    } else {
-      // idle breathe
-      const breathe = Math.sin(this.time.now / 380) * 0.025
-      f.setScale(f.baseScale * (1 + breathe), f.baseScale * (1 - breathe))
-      f.setAngle(0)
-      f.stepAcc = 0
     }
 
     if (Phaser.Input.Keyboard.JustDown(jump) && grounded) {
@@ -656,13 +723,17 @@ export class PlayScene extends Phaser.Scene {
       onComplete: () => fx.destroy(),
     })
 
+    f.animLockUntil = this.time.now + 120
     this.tweens.add({
       targets: f,
-      scaleY: f.baseScale * 0.88,
-      scaleX: f.baseScale * 1.14,
-      angle: f.facing * 8,
+      scaleY: f.baseScale * 0.92,
+      scaleX: f.baseScale * 1.08,
+      angle: f.facing * 5,
       yoyo: true,
       duration: 90,
+      onComplete: () => {
+        if (f.active) f.setScale(f.baseScale)
+      },
     })
 
     let hitAny = false
@@ -790,6 +861,12 @@ export class PlayScene extends Phaser.Scene {
     s.walkPhase = 0
     s.wasGrounded = true
     s.stepAcc = 0
+    s.animLockUntil = 0
+    s.shadow = this.add
+      .image(x, y + 36, 'shadow-blob')
+      .setDepth(5)
+      .setAlpha(0.5)
+      .setScale(role === 'bear' ? 1.05 : 0.9, 0.65)
     s.setCollideWorldBounds(true)
     s.setBounce(0)
     s.setDragX(1500)
