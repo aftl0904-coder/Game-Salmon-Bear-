@@ -1,1 +1,2 @@
-/** Compat alias — Round 1 gameplay lives in GameScene (scene key still 'play'). */\nexport { GameScene as PlayScene, GROUND_Y } from './GameScene'\n
+/** Compat alias — Round 1 gameplay lives in GameScene (scene key still 'play'). */
+export { GameScene as PlayScene, GROUND_Y } from './GameScene'
