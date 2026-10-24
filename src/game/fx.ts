@@ -158,7 +158,11 @@ export class JuiceManager {
 }
 
 /** Brief alpha blink during invulnerability frames. */
-export function startIFrameBlink(target: Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, scene: Phaser.Scene, ms = 900) {
+export function startIFrameBlink(
+  target: Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject,
+  scene: Phaser.Scene,
+  ms = 900,
+) {
   scene.tweens.add({
     targets: target,
     alpha: 0.35,
@@ -166,7 +170,7 @@ export function startIFrameBlink(target: Phaser.GameObjects.Components.Alpha & P
     yoyo: true,
     repeat: Math.max(1, Math.floor(ms / 120)),
     onComplete: () => {
-      if ('setAlpha' in target) (target as Phaser.GameObjects.Components.Alpha).setAlpha(1)
+      target.setAlpha(1)
     },
   })
 }

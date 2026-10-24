@@ -1,0 +1,457 @@
+import Phaser from 'phaser'
+import { bindFootBody } from './footBody'
+import {
+  AIR_ACCEL_MUL,
+  BOY_SPEED,
+  COYOTE_MS,
+  GIRL_SPEED,
+  HURT_IFRAME_MS,
+  HURT_LOCK_MS,
+  JUMP_BUF_MS,
+  JUMP_V,
+  MAX_HP,
+  RUN_ACCEL,
+  RUN_FRICTION,
+  resolveStick,
+  canStartJump,
+} from './engine'
+import { EventBus, GameEvents } from './EventBus'
+
+export type HeroPose = 'idle' | 'run' | 'jump' | 'hurt' | 'die'
+export type PlayerRole = 'boy' | 'girl'
+
+export type PlayerConfig = {
+  role: PlayerRole
+  texture: string
+  /** Move speed; girl defaults to 1.5× boy. */
+  speed?: number
+  scale?: number
+  bodyW?: number
+  bodyH?: number
+  graceUntil?: number
+}
+
+/** Hurtbox (player body) debug — blue. Attack hitbox — green. */
+export const HURTBOX_DEBUG = 0x4488ff
+export const HITBOX_DEBUG = 0x44ff66
+
+const MELEE_MS = 150
+const MELEE_W = 36
+const MELEE_H = 40
+const MELEE_OFFSET_X = 34
+const MELEE_OFFSET_Y = -28
+
+/**
+ * Arcade player (倫寶 / 琪寶寶):
+ * accel/decel run, coyote ~100ms + jump buffer ~100ms, variable jump,
+ * melee hitbox 150ms, i-frames 1.5s with alpha flash.
+ *
+ * Jump only when `blocked.down`/`touching.down` (vy≥0 sticky-safe) OR coyote.
+ */
+export class Player extends Phaser.Physics.Arcade.Sprite {
+  hp = MAX_HP
+  facing: 1 | -1 = 1
+  atkCd = 0
+  hurtCd = 0
+  hurtLock = 0
+  grace = 0
+  role: PlayerRole = 'boy'
+  baseScale = 1.8
+  coyote = 0
+  jumpBuf = 0
+  /** Latched after jump until true landing (prevents sticky mid-air re-arm). */
+  jumpConsumed = false
+  walkPhase = 0
+  wasGrounded = true
+  pose: HeroPose = 'idle'
+  alive = true
+  awaitingContinue = false
+  moveSpeed = BOY_SPEED
+
+  /** Active melee probe (disabled when idle). */
+  attackHitbox!: Phaser.Physics.Arcade.Image
+  private attackUntil = 0
+  private flashTween?: Phaser.Tweens.Tween
+  private justLanded = false
+
+  static preloadHitboxTexture(scene: Phaser.Scene) {
+    if (scene.textures.exists('__atk-hitbox')) return
+    const g = scene.make.graphics({ x: 0, y: 0 })
+    g.fillStyle(0xffffff, 1)
+    g.fillRect(0, 0, MELEE_W, MELEE_H)
+    g.generateTexture('__atk-hitbox', MELEE_W, MELEE_H)
+    g.destroy()
+  }
+
+  static spawn(scene: Phaser.Scene, x: number, y: number, cfg: PlayerConfig): Player {
+    Player.preloadHitboxTexture(scene)
+    const p = new Player(scene, x, y, cfg.texture)
+    scene.add.existing(p)
+    scene.physics.add.existing(p)
+    p.initFromConfig(cfg)
+    return p
+  }
+
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
+    super(scene, x, y, texture)
+  }
+
+  private initFromConfig(cfg: PlayerConfig) {
+    this.role = cfg.role
+    this.hp = MAX_HP
+    this.facing = 1
+    this.atkCd = 0
+    this.hurtCd = 0
+    this.hurtLock = 0
+    this.grace = cfg.graceUntil ?? 0
+    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 1.8 : 1.85)
+    this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
+    this.coyote = 0
+    this.jumpBuf = 0
+    this.jumpConsumed = false
+    this.walkPhase = 0
+    this.wasGrounded = true
+    this.pose = 'idle'
+    this.alive = true
+    this.awaitingContinue = false
+    this.justLanded = false
+
+    this.setCollideWorldBounds(true)
+    this.setDragX(0)
+    this.setMaxVelocity(this.moveSpeed + 60, 1200)
+    this.setDepth(8)
+    this.setScale(this.baseScale)
+    bindFootBody(this, {
+      bodyW: cfg.bodyW ?? 22,
+      bodyH: cfg.bodyH ?? 36,
+    })
+
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.debugBodyColor = HURTBOX_DEBUG
+
+    this.attackHitbox = this.scene.physics.add.image(this.x, this.y, '__atk-hitbox')
+    this.attackHitbox.setVisible(false)
+    this.attackHitbox.setActive(false)
+    this.attackHitbox.setDepth(12)
+    const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
+    hb.allowGravity = false
+    hb.setAllowGravity(false)
+    hb.debugBodyColor = HITBOX_DEBUG
+    this.attackHitbox.disableBody(true, true)
+  }
+
+  get justLandedFlag() {
+    return this.justLanded
+  }
+
+  clearJustLanded() {
+    this.justLanded = false
+  }
+
+  isMeleeActive() {
+    return this.attackUntil > 0 && this.attackHitbox.active
+  }
+
+  /**
+   * Per-frame steer: accel/decel, coyote (~100ms), jump buffer (~100ms),
+   * variable jump (cut vy on early release).
+   */
+  updatePlayer(
+    dt: number,
+    opts: {
+      left: boolean
+      right: boolean
+      jumpJust: boolean
+      jumpHeld: boolean
+      attackJust: boolean
+      onAttack?: () => void
+      onJump?: () => void
+      now?: number
+    },
+  ) {
+    this.justLanded = false
+    const body = this.body as Phaser.Physics.Arcade.Body
+    resolveStick(body)
+
+    const grounded = canStartJump(body)
+    if (grounded) {
+      this.coyote = COYOTE_MS
+      this.jumpConsumed = false
+    } else {
+      this.coyote = Math.max(0, this.coyote - dt)
+    }
+
+    if (opts.jumpJust) this.jumpBuf = JUMP_BUF_MS
+    else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
+
+    this.atkCd = Math.max(0, this.atkCd - dt)
+    this.hurtCd = Math.max(0, this.hurtCd - dt)
+    this.hurtLock = Math.max(0, this.hurtLock - dt)
+    this.tickIFrameFlash(opts.now ?? this.scene.time.now)
+    this.syncAttackHitbox(opts.now ?? this.scene.time.now)
+
+    if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
+      if (this.hurtLock > 0 && grounded) {
+        this.setVelocityX(body.velocity.x * 0.82)
+      }
+      this.applyPose(grounded, 0)
+      return
+    }
+
+    const dtSec = dt / 1000
+    let target = 0
+    if (opts.left) target -= this.moveSpeed
+    if (opts.right) target += this.moveSpeed
+
+    const accel = grounded ? RUN_ACCEL : RUN_ACCEL * AIR_ACCEL_MUL
+    let vx = body.velocity.x
+    if (target !== 0) {
+      const step = accel * dtSec
+      if (vx < target) vx = Math.min(target, vx + step)
+      else if (vx > target) vx = Math.max(target, vx - step)
+      this.facing = target > 0 ? 1 : -1
+      this.setFlipX(this.facing < 0)
+    } else if (grounded) {
+      const damp = RUN_FRICTION * dtSec
+      if (Math.abs(vx) <= damp) vx = 0
+      else vx -= Math.sign(vx) * damp
+    }
+    vx = Phaser.Math.Clamp(vx, -this.moveSpeed, this.moveSpeed)
+    this.setVelocityX(vx)
+
+    // Jump: blocked.down / touching.down (sticky-safe) OR remaining coyote.
+    const canJump = !this.jumpConsumed && (canStartJump(body) || this.coyote > 0)
+    if (this.jumpBuf > 0 && canJump) {
+      this.setVelocityY(JUMP_V)
+      this.jumpBuf = 0
+      this.coyote = 0
+      this.jumpConsumed = true
+      opts.onJump?.()
+    }
+
+    // Variable jump — early release cuts ascent.
+    if (!opts.jumpHeld && body.velocity.y < -120) {
+      this.setVelocityY(body.velocity.y * 0.55)
+    }
+
+    if (!this.wasGrounded && grounded) this.justLanded = true
+    this.wasGrounded = grounded
+
+    if (this.atkCd <= 0 && opts.attackJust) {
+      this.startMelee(opts.now ?? this.scene.time.now)
+      opts.onAttack?.()
+    }
+
+    this.applyPose(grounded, vx)
+  }
+
+  /** Spawn offset hitbox in front; active MELEE_MS then disable. */
+  startMelee(now = this.scene.time.now) {
+    this.atkCd = Math.max(this.atkCd, MELEE_MS + 40)
+    this.attackUntil = now + MELEE_MS
+    const x = this.x + this.facing * MELEE_OFFSET_X
+    const y = this.y + MELEE_OFFSET_Y
+    this.attackHitbox.enableBody(true, x, y, true, true)
+    this.attackHitbox.setActive(true)
+    this.attackHitbox.setVisible(false)
+    this.attackHitbox.setAlpha(0.001)
+    const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
+    hb.setSize(MELEE_W, MELEE_H)
+    hb.debugBodyColor = HITBOX_DEBUG
+    hb.velocity.set(0, 0)
+  }
+
+  private syncAttackHitbox(now: number) {
+    if (this.attackUntil <= 0) return
+    if (now >= this.attackUntil) {
+      this.attackUntil = 0
+      this.attackHitbox.disableBody(true, true)
+      this.attackHitbox.setActive(false)
+      return
+    }
+    const x = this.x + this.facing * MELEE_OFFSET_X
+    const y = this.y + MELEE_OFFSET_Y
+    this.attackHitbox.setPosition(x, y)
+  }
+
+  /** Apply damage + 1.5s i-frames with alpha flash. Returns remaining HP. */
+  takeDamage(opts: {
+    amount?: number
+    knockbackX?: number
+    knockbackY?: number
+    iframeMs?: number
+    lockMs?: number
+    now?: number
+  }): number {
+    const now = opts.now ?? this.scene.time.now
+    if (!this.canTakeDamage(now)) return this.hp
+    const prev = this.hp
+    const amount = opts.amount ?? 1
+    this.hp = Math.max(0, this.hp - amount)
+    this.hurtCd = opts.iframeMs ?? HURT_IFRAME_MS
+    this.hurtLock = opts.lockMs ?? HURT_LOCK_MS
+    this.pose = 'hurt'
+    if (opts.knockbackX !== undefined) this.setVelocityX(opts.knockbackX)
+    if (opts.knockbackY !== undefined) this.setVelocityY(opts.knockbackY)
+    this.setTint(0xff4444)
+    this.beginIFrameFlash()
+    EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
+      role: this.role,
+      hp: this.hp,
+      maxHp: MAX_HP,
+      prevHp: prev,
+    })
+    return this.hp
+  }
+
+  canTakeDamage(now = this.scene.time.now): boolean {
+    if (!this.alive || this.hp <= 0 || this.pose === 'die') return false
+    if (now < this.grace) return false
+    if (this.hurtCd > 0) return false
+    return true
+  }
+
+  applyHurtPose(dir: number = -1) {
+    this.pose = 'hurt'
+    this.hurtLock = Math.max(this.hurtLock, HURT_LOCK_MS)
+    this.facing = dir < 0 ? -1 : 1
+    this.setFlipX(this.facing < 0)
+    this.setTint(0xff4444)
+    this.setAngle(this.facing * -22)
+    this.setScale(this.baseScale * 1.1, this.baseScale * 0.86)
+  }
+
+  beginDeath() {
+    const prev = this.hp
+    this.alive = false
+    this.pose = 'die'
+    this.hp = 0
+    this.hurtLock = 99999
+    this.stopIFrameFlash()
+    this.setAlpha(1)
+    this.setVelocity(this.facing * -60, -140)
+    this.setTint(0x884444)
+    this.setAngle(this.facing * 90)
+    this.setScale(this.baseScale * 1.05, this.baseScale * 0.7)
+    this.attackHitbox.disableBody(true, true)
+    EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
+      role: this.role,
+      hp: 0,
+      maxHp: MAX_HP,
+      prevHp: prev,
+    })
+  }
+
+  revive(x: number, y: number, now = this.scene.time.now, graceMs = 2000) {
+    this.hp = MAX_HP
+    this.pose = 'idle'
+    this.alive = true
+    this.awaitingContinue = false
+    this.hurtCd = 0
+    this.hurtLock = 0
+    this.jumpConsumed = false
+    this.grace = now + graceMs
+    this.stopIFrameFlash()
+    this.clearTint()
+    this.setAlpha(1)
+    this.setAngle(0)
+    this.setScale(this.baseScale)
+    this.setPosition(x, y)
+    this.setVelocity(0, 0)
+    this.setActive(true)
+    this.setVisible(true)
+    EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
+      role: this.role,
+      hp: this.hp,
+      maxHp: MAX_HP,
+    })
+  }
+
+  private beginIFrameFlash() {
+    this.stopIFrameFlash()
+    this.flashTween = this.scene.tweens.add({
+      targets: this,
+      alpha: { from: 1, to: 0.35 },
+      duration: 90,
+      yoyo: true,
+      repeat: -1,
+    })
+  }
+
+  private tickIFrameFlash(now: number) {
+    if (this.hurtCd <= 0 && now >= this.grace) {
+      if (this.flashTween) this.stopIFrameFlash()
+      if (this.alpha < 1 && this.alive && this.pose !== 'die') this.setAlpha(1)
+    }
+  }
+
+  private stopIFrameFlash() {
+    this.flashTween?.stop()
+    this.flashTween = undefined
+    if (this.alive) this.setAlpha(1)
+  }
+
+  private applyPose(grounded: boolean, vx: number) {
+    if (this.hp <= 0 || this.pose === 'die') {
+      this.setAngle(this.facing * 90)
+      this.setScale(this.baseScale * 1.05, this.baseScale * 0.7)
+      return
+    }
+    if (this.pose === 'hurt' || this.hurtLock > 0) {
+      if (this.hurtLock <= 0) {
+        this.pose = grounded ? 'idle' : 'jump'
+        this.clearTint()
+      } else {
+        this.pose = 'hurt'
+        this.setAngle(this.facing * -22)
+        this.setScale(this.baseScale * 1.1, this.baseScale * 0.86)
+        return
+      }
+    }
+    // Attack squash owns scale briefly.
+    if (this.atkCd > 120) {
+      if (!grounded) this.pose = 'jump'
+      else if (Math.abs(vx) > 12) this.pose = 'run'
+      else this.pose = 'idle'
+      return
+    }
+    if (!grounded) {
+      this.pose = 'jump'
+      this.setScale(this.baseScale * 0.94, this.baseScale * 1.08)
+      this.setAngle(this.facing * -8)
+      return
+    }
+    if (Math.abs(vx) > 12) {
+      this.pose = 'run'
+      this.walkPhase += Math.abs(vx) * 0.0005
+      const bob = Math.sin(this.walkPhase) * 0.05
+      this.setScale(this.baseScale * (1 + bob * 0.35), this.baseScale * (1 - bob))
+      this.setAngle(Math.sin(this.walkPhase) * 5 * this.facing)
+      return
+    }
+    this.pose = 'idle'
+    const breathe = Math.sin(this.scene.time.now / 380) * 0.02
+    this.setScale(this.baseScale * (1 + breathe), this.baseScale * (1 - breathe))
+    this.setAngle(0)
+  }
+
+  /** Draw hurtbox (blue) + attack hitbox (green) when arcade / overlay debug is on. */
+  drawDebug(gfx: Phaser.GameObjects.Graphics) {
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (body) {
+      gfx.lineStyle(2, HURTBOX_DEBUG, 0.9)
+      gfx.strokeRect(body.x, body.y, body.width, body.height)
+    }
+    if (this.isMeleeActive()) {
+      const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
+      gfx.lineStyle(2, HITBOX_DEBUG, 0.95)
+      gfx.strokeRect(hb.x, hb.y, hb.width, hb.height)
+    }
+  }
+
+  destroy(fromScene?: boolean) {
+    this.stopIFrameFlash()
+    this.attackHitbox?.destroy()
+    super.destroy(fromScene)
+  }
+}
