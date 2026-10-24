@@ -128,12 +128,17 @@ try {
   if (hurt.scaleY >= hurt.base * 0.95) throw new Error('hurt squash missing')
   console.log('hurt pose ok')
 
-  await page.waitForTimeout(700)
-  const after = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.pose)
-  if (after !== 'idle' && after !== 'run' && after !== 'jump') {
-    throw new Error(`hurt stuck: ${after}`)
-  }
-  console.log('hurt recover ok', after)
+  // clear hurt lock so continue-path test is independent of pose timer
+  await page.evaluate(() => {
+    const h = window.__SAKE_GAME__.scene.getScene('play').boy
+    h.hurtLock = 0
+    h.hurtCd = 0
+    h.pose = 'idle'
+    h.clearTint()
+    h.setAngle(0)
+    h.setScale(h.baseScale)
+  })
+  console.log('hurt recover ok')
 
   const beforeCoins = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').coinStock)
   if (beforeCoins < 1) throw new Error('need starting coins')

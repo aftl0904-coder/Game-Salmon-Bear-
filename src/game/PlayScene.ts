@@ -51,9 +51,9 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 
 /**
  * Round 1 — 溪流小路
- * P1 倫博：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 奇波波：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 噗噗（Pooh）：AI only，始終跟隨奇波波；受傷時噴蜂蜜噴流
+ * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
+ * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * 噗噗（Pooh）：AI only，始終跟隨琪寶寶；受傷時噴蜂蜜噴流
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -405,14 +405,16 @@ export class PlayScene extends Phaser.Scene {
       return
     }
     if (h.pose === 'hurt' || h.hurtLock > 0) {
-      h.pose = 'hurt'
-      h.setAngle(h.facing * -22)
-      h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
-      if (h.hurtLock <= 0 && h.hurtCd < 700) {
+      if (h.hurtLock <= 0) {
         h.pose = grounded ? 'idle' : 'jump'
         h.clearTint()
+        // fall through to idle/run/jump posing below
+      } else {
+        h.pose = 'hurt'
+        h.setAngle(h.facing * -22)
+        h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
+        return
       }
-      return
     }
     if (!grounded) {
       h.pose = 'jump'
@@ -636,7 +638,7 @@ export class PlayScene extends Phaser.Scene {
       ease: 'Cubic.in',
       onComplete: () => {
         h.setVelocity(0, 0)
-        this.lose(h.role === 'boy' ? '倫博倒下了…' : '奇波波倒下了…')
+        this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
       },
     })
     this.refreshHearts()
@@ -657,7 +659,7 @@ export class PlayScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** 噗噗 AI: always trail 奇波波 (never player-controlled) */
+  /** 噗噗 AI: always trail 琪寶寶 (never player-controlled) */
   private updatePet() {
     const g = this.girl
     const followX = g.x - g.facing * 52
@@ -879,7 +881,7 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜\n倫博・鮭魚槍　｜　奇波波・電風扇×１.５速\n噗噗（ＡＩ）始終跟隨奇波波\n奇波波受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n噗噗（ＡＩ）始終跟隨琪寶寶\n琪寶寶受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -903,8 +905,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：倫博ＪＫＵＩ｜奇波波＋噗噗同行｜Ｒ回選單'
-          : '雙人：倫博ＪＫＵＩ　奇波波數字鍵｜噗噗跟隨｜Ｒ回選單',
+          ? '單人：倫寶ＪＫＵＩ｜琪寶寶＋噗噗同行｜Ｒ回選單'
+          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜噗噗跟隨｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
