@@ -693,7 +693,9 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     if (!enemyCanHurt(e)) return
-    e.hitThis = true
+    // Attack frames latch hitThis; body-bump uses contactCd (ticked in AI).
+    if (e.state === 'attack' || e.state === 'charge' || e.state === 'windup') e.hitThis = true
+    else e.contactCd = 700
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     const hpLeft = applyDamage(h, {
       amount: 1,
@@ -1160,6 +1162,8 @@ export class GameScene extends Phaser.Scene {
     s.baseScale = scale
     s.coyote = 0
     s.jumpBuf = 0
+    s.jumpConsumed = false
+    s.jumpCut = false
     s.walkPhase = 0
     s.wasGrounded = true
     s.pose = 'idle'
@@ -1241,6 +1245,7 @@ export class GameScene extends Phaser.Scene {
     e.windup = 0
     e.atkCd = Phaser.Math.Between(300, 800)
     e.hitThis = false
+    e.contactCd = 0
     e.state = 'patrol'
     e.patrolDir = Math.random() > 0.5 ? 1 : -1
     const span = kind === 'guardian' ? 90 : kind === 'ambusher' ? 48 : 70
