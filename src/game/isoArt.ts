@@ -242,4 +242,43 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 18, 36, 12, 24, [236, 186, 58])
     rect(set, 19, 37, 10, 6, [255, 236, 140])
   })
+
+  // 木桶武者 — Round-1 type B (hop/lunge); silhouette distinct from fish
+  paint(scene, 'art-enemy-barrel', 40, 48, (set) => {
+    rect(set, 6, 44, 28, 3, [20, 14, 18], 120)
+    rect(set, 10, 36, 6, 10, [70, 48, 32])
+    rect(set, 24, 36, 6, 10, [70, 48, 32])
+    rect(set, 10, 44, 6, 2, [40, 28, 20])
+    rect(set, 24, 44, 6, 2, [40, 28, 20])
+    for (let y = 10; y < 38; y++) {
+      for (let x = 6; x < 34; x++) {
+        const nx = (x - 20) / 13
+        const ny = (y - 24) / 15
+        if (nx * nx + ny * ny < 1) {
+          const lit = 1.05 - nx * 0.35
+          set(x, y, [
+            Math.min(255, Math.floor(168 * lit)),
+            Math.min(255, Math.floor(108 * lit)),
+            Math.min(255, Math.floor(58 * lit)),
+          ])
+        }
+      }
+    }
+    rect(set, 7, 14, 26, 2, [90, 70, 48])
+    rect(set, 7, 24, 26, 2, [90, 70, 48])
+    rect(set, 8, 33, 24, 2, [90, 70, 48])
+    rect(set, 14, 16, 12, 10, [255, 220, 170])
+    rect(set, 15, 17, 10, 8, [255, 236, 200])
+    rect(set, 16, 19, 3, 3, [40, 24, 20])
+    rect(set, 22, 19, 3, 3, [40, 24, 20])
+    set(17, 19, [255, 80, 60])
+    set(23, 19, [255, 80, 60])
+    rect(set, 17, 24, 6, 2, [120, 50, 40])
+    rect(set, 2, 22, 6, 5, [200, 150, 100])
+    rect(set, 32, 22, 6, 5, [200, 150, 100])
+    rect(set, 1, 20, 4, 4, [180, 120, 80])
+    rect(set, 35, 20, 4, 4, [180, 120, 80])
+    rect(set, 12, 8, 16, 4, [210, 150, 90])
+    rect(set, 14, 7, 12, 2, [240, 190, 120])
+  })
 }

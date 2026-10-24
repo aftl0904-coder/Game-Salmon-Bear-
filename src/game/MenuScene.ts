@@ -133,7 +133,7 @@ export class MenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 36,
-        '上下選擇　空白／Enter 開始\n倫寶：移動＋ＪＫＵＩ射擊　｜　琪寶寶：方向鍵＋數字鍵１２４５',
+        '上下選擇　空白／Enter 開始\n倫寶：ＷＡＳＤ＋ＪＫＵＩ　｜　琪寶寶：方向鍵＋數字鍵１２４５　｜　噗噗：ＡＩ跟隨',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '12px',
