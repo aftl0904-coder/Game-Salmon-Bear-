@@ -57,7 +57,7 @@ export function buildStageHud(
   }
   root.add(scene.add.image(30, 28, 'art-salmon').setScale(0.62))
   root.add(
-    scene.add.text(58, 4, '1P 倫寶', {
+    scene.add.text(58, 4, '1P 倫博', {
       fontFamily: 'Noto Sans TC, sans-serif',
       fontSize: '12px',
       color: '#fff4d0',
@@ -81,7 +81,7 @@ export function buildStageHud(
   root.add(scene.add.image(930, 28, 'art-girl').setScale(0.58))
   root.add(
     scene.add
-      .text(902, 4, '2P 琪寶寶', {
+      .text(902, 4, '2P 奇波波', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '12px',
         color: '#fff0f6',
