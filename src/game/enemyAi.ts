@@ -38,6 +38,8 @@ export type Creep = Phaser.Physics.Arcade.Sprite & {
   windup: number
   atkCd: number
   hitThis: boolean
+  /** Body-bump iframe (ms). Separate from attack-frame hitThis latch. */
+  contactCd: number
   state: EnemyState
   patrolDir: 1 | -1
   patrolMin: number
@@ -163,7 +165,11 @@ function effectiveStats(e: Creep): KindStats {
   }
 }
 
-export function pickTarget(e: Creep, boy: HeroRef, girl: HeroRef): HeroRef {
+export function pickTarget(
+  e: { x: number; y: number },
+  boy: HeroRef,
+  girl: HeroRef,
+): HeroRef {
   const db = Phaser.Math.Distance.Between(e.x, e.y, boy.x, boy.y)
   const dg = Phaser.Math.Distance.Between(e.x, e.y, girl.x, girl.y)
   if (Math.abs(db - dg) < 40) return boy.x >= girl.x ? boy : girl
@@ -245,6 +251,26 @@ function applyPose(e: Creep) {
 }
 
 export function tickEnemy(e: Creep, ctx: AiCtx) {
+  // Expandable FSM path (PatrolEnemy / Enemy subclass)
+  const fsmEnemy = e as Creep & {
+    fsm?: string
+    tick?: (dt: number, c: {
+      boy: HeroRef
+      girl: HeroRef
+      leadX: number
+      prevLeadX: number
+    }) => void
+  }
+  if (fsmEnemy.fsm && typeof fsmEnemy.tick === 'function') {
+    fsmEnemy.tick(ctx.dt, {
+      boy: ctx.boy,
+      girl: ctx.girl,
+      leadX: ctx.leadX,
+      prevLeadX: ctx.prevLeadX,
+    })
+    return
+  }
+
   if (!e.active) return
   if (e.state === 'die') {
     applyPose(e)
@@ -262,6 +288,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   e.windup = Math.max(0, e.windup - ctx.dt)
   e.detectT = Math.max(0, e.detectT - ctx.dt)
   e.hopCd = Math.max(0, (e.hopCd ?? 0) - ctx.dt)
+  e.contactCd = Math.max(0, (e.contactCd ?? 0) - ctx.dt)
 
   const target = pickTarget(e, ctx.boy, ctx.girl)
   const dist = Phaser.Math.Distance.Between(e.x, e.y, target.x, target.y)
@@ -491,14 +518,18 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
 
 /**
  * Hitbox active windows:
- * - lunge / charge / late windup = dedicated attack frames
- * - chase / patrol / hop body bump = Goemon-style contact damage (once per hitThis)
+ * - lunge / charge / late windup = dedicated attack frames (hitThis latch → recover clears)
+ * - chase / patrol / hop body bump = contact damage gated by contactCd (not permanent hitThis)
+ * Prefers Enemy.canHurtPlayer() when the expandable FSM class is in use.
  */
 export function enemyCanHurt(e: Creep): boolean {
+  const withFsm = e as Creep & { canHurtPlayer?: () => boolean }
+  if (typeof withFsm.canHurtPlayer === 'function') return withFsm.canHurtPlayer()
   if (!e.active || e.state === 'die' || e.state === 'hurt' || e.state === 'recover') return false
-  if (e.hitThis) return false
-  if (e.state === 'attack' || e.state === 'charge') return true
-  if (e.state === 'windup' && e.windup <= 60) return true
-  if (e.state === 'chase' || e.state === 'patrol' || e.state === 'hop' || e.state === 'detect') return true
+  if (e.state === 'attack' || e.state === 'charge') return !e.hitThis
+  if (e.state === 'windup' && e.windup <= 60) return !e.hitThis
+  if (e.state === 'chase' || e.state === 'patrol' || e.state === 'hop' || e.state === 'detect') {
+    return (e.contactCd ?? 0) <= 0
+  }
   return false
 }

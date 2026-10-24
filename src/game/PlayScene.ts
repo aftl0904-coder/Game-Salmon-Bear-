@@ -55,6 +55,8 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
   baseScale: number
   coyote: number
   jumpBuf: number
+  /** Latched after one variable-jump cut this ascent. */
+  jumpCut: boolean
   walkPhase: number
   wasGrounded: boolean
   pose: HeroPose
@@ -392,8 +394,12 @@ export class PlayScene extends Phaser.Scene {
     const grounded = isGrounded(body)
     resolveStick(body)
 
-    if (grounded) h.coyote = COYOTE_MS
-    else h.coyote = Math.max(0, h.coyote - dt)
+    if (grounded) {
+      h.coyote = COYOTE_MS
+      h.jumpCut = false
+    } else {
+      h.coyote = Math.max(0, h.coyote - dt)
+    }
 
     if (jumpJust) h.jumpBuf = JUMP_BUF_MS
     else h.jumpBuf = Math.max(0, h.jumpBuf - dt)
@@ -424,11 +430,15 @@ export class PlayScene extends Phaser.Scene {
       h.setVelocityY(JUMP_V)
       h.jumpBuf = 0
       h.coyote = 0
+      h.jumpCut = false
       SFX.jump()
     }
 
-    // Variable jump height (release early → cut ascent).
-    if (!jumpHeld && body.velocity.y < -120) h.setVelocityY(body.velocity.y * 0.55)
+    // Variable jump: cut ascent once on release — never every frame (~200px→~33px crush).
+    if (!jumpHeld && body.velocity.y < -120 && !h.jumpCut) {
+      h.setVelocityY(body.velocity.y * 0.55)
+      h.jumpCut = true
+    }
 
     if (!h.wasGrounded && grounded) burst(this, h.x, h.y + 4, 0xcbb896, 3)
     h.wasGrounded = grounded
@@ -617,7 +627,9 @@ export class PlayScene extends Phaser.Scene {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     if (!enemyCanHurt(e)) return
-    e.hitThis = true
+    // Attack frames latch hitThis; body-bump uses contactCd (ticked in AI).
+    if (e.state === 'attack' || e.state === 'charge' || e.state === 'windup') e.hitThis = true
+    else e.contactCd = 700
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     const hpLeft = applyDamage(h, {
       amount: 1,
@@ -1093,6 +1105,7 @@ export class PlayScene extends Phaser.Scene {
     s.baseScale = scale
     s.coyote = 0
     s.jumpBuf = 0
+    s.jumpCut = false
     s.walkPhase = 0
     s.wasGrounded = true
     s.pose = 'idle'
@@ -1174,6 +1187,7 @@ export class PlayScene extends Phaser.Scene {
     e.windup = 0
     e.atkCd = Phaser.Math.Between(300, 800)
     e.hitThis = false
+    e.contactCd = 0
     e.state = 'patrol'
     e.patrolDir = Math.random() > 0.5 ? 1 : -1
     const span = kind === 'guardian' ? 90 : kind === 'ambusher' ? 48 : 70
