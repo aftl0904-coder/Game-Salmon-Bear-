@@ -65,14 +65,21 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     rect(set, 4, 26, 20, 4, [140, 80, 30])
   })
 
-  paint(scene, 'prop-fan', 22, 28, (set) => {
-    // paper fan — Sailor/TwinBee cute prop
-    for (let i = 0; i < 7; i++) {
-      const c: RGB = i % 2 === 0 ? [255, 140, 170] : [255, 230, 240]
-      rect(set, 4 + i, 4 + i, 2, 18 - i * 2, c)
+  paint(scene, 'prop-fan', 24, 28, (set) => {
+    // electric fan on girl's back (cyan blades + motor)
+    rect(set, 9, 18, 6, 8, [70, 80, 95])
+    rect(set, 10, 10, 4, 10, [90, 100, 120])
+    // hub
+    rect(set, 10, 8, 4, 4, [200, 220, 240])
+    // blades
+    for (let i = 0; i < 6; i++) {
+      const c: RGB = i % 2 === 0 ? [120, 220, 255] : [200, 245, 255]
+      rect(set, 2 + i * 3, 2 + (i % 3), 3, 10 - (i % 3), c)
     }
-    rect(set, 2, 20, 16, 4, [120, 70, 40])
-    rect(set, 8, 22, 4, 6, [90, 50, 30])
+    // electric spark dots
+    set(4, 4, [255, 255, 180])
+    set(18, 6, [180, 255, 255])
+    set(12, 2, [255, 255, 220])
   })
 
   paint(scene, 'shadow-blob', 48, 16, (set) => {

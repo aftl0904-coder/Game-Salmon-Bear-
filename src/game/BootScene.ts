@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { registerTiles } from './tiles'
 import { registerWorldArt } from './worldArt'
 import { registerHoneyArt } from './honeyArt'
+import { registerIsoArt } from './isoArt'
 
 /** Loading page — bake textures then go to logo */
 export class BootScene extends Phaser.Scene {
@@ -35,7 +36,6 @@ export class BootScene extends Phaser.Scene {
       bar.width = Math.max(4, 316 * p)
     })
 
-    // character art
     this.load.image('art-salmon', '/art/salmon-boy.png')
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
@@ -50,6 +50,7 @@ export class BootScene extends Phaser.Scene {
     registerTiles(this)
     registerWorldArt(this)
     registerHoneyArt(this)
+    registerIsoArt(this)
     this.scene.start('logo')
   }
 }

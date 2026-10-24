@@ -7,7 +7,7 @@ import { PlayScene } from './game/PlayScene'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
 
-new Phaser.Game({
+const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: root,
   width: 960,
@@ -27,3 +27,6 @@ new Phaser.Game({
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
 })
+
+// for automated / home-gamer playtests
+;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game

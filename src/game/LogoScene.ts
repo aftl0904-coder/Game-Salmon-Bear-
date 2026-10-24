@@ -40,7 +40,7 @@ export class LogoScene extends Phaser.Scene {
       .setAlpha(0)
 
     const sub = this.add
-      .text(width / 2, height / 2 - 40, 'SAKE · KUMA', {
+      .text(width / 2, height / 2 - 40, '鮭之力・蜜之心', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '18px',
         color: '#f3e6c8',
