@@ -297,6 +297,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     e.setVelocityX(0)
     applyPose(e)
     if (e.think <= 0) {
+      e.hitThis = false
       if (e.kind === 'boss' && e.phase === 3) {
         e.state = 'retreat'
         e.think = 320
@@ -488,9 +489,16 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   applyPose(e)
 }
 
+/**
+ * Hitbox active windows:
+ * - lunge / charge / late windup = dedicated attack frames
+ * - chase / patrol / hop body bump = Goemon-style contact damage (once per hitThis)
+ */
 export function enemyCanHurt(e: Creep): boolean {
-  if (e.state === 'die' || e.state === 'hurt') return false
-  if ((e.state === 'attack' || e.state === 'charge') && !e.hitThis) return true
-  if (e.state === 'windup' && e.windup <= 60 && !e.hitThis) return true
+  if (!e.active || e.state === 'die' || e.state === 'hurt' || e.state === 'recover') return false
+  if (e.hitThis) return false
+  if (e.state === 'attack' || e.state === 'charge') return true
+  if (e.state === 'windup' && e.windup <= 60) return true
+  if (e.state === 'chase' || e.state === 'patrol' || e.state === 'hop' || e.state === 'detect') return true
   return false
 }
