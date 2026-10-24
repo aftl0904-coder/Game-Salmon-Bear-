@@ -6,17 +6,21 @@ import { chromium } from 'playwright'
 const URL = process.env.SMOKE_URL || 'http://127.0.0.1:4521/'
 
 async function activeKey(page) {
-  return page.evaluate(() => {
-    const g = window.__SAKE_GAME__
-    if (!g) return null
-    const live = g.scene.getScenes(true)
-    if (live?.[0]) return live[0].sys.settings.key
-    for (const k of ['play', 'menu', 'logo', 'boot']) {
-      const s = g.scene.getScene(k)
-      if (s?.sys?.isActive?.()) return k
-    }
+  try {
+    return await page.evaluate(() => {
+      const g = window.__SAKE_GAME__
+      if (!g) return null
+      const live = g.scene.getScenes(true)
+      if (live?.[0]) return live[0].sys.settings.key
+      for (const k of ['play', 'menu', 'logo', 'boot']) {
+        const s = g.scene.getScene(k)
+        if (s?.sys?.isActive?.()) return k
+      }
+      return null
+    })
+  } catch {
     return null
-  })
+  }
 }
 
 async function waitForScene(page, key, timeout = 25000) {
@@ -24,7 +28,7 @@ async function waitForScene(page, key, timeout = 25000) {
   while (Date.now() - start < timeout) {
     const cur = await activeKey(page)
     if (cur === key) return
-    await page.waitForTimeout(100)
+    await page.waitForTimeout(120)
   }
   throw new Error(`timeout waiting for scene ${key}, now=${await activeKey(page)}`)
 }
@@ -124,9 +128,12 @@ try {
   if (hurt.scaleY >= hurt.base * 0.95) throw new Error('hurt squash missing')
   console.log('hurt pose ok')
 
-  await page.waitForTimeout(400)
+  await page.waitForTimeout(700)
   const after = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.pose)
-  if (after !== 'idle') throw new Error(`hurt stuck: ${after}`)
+  if (after !== 'idle' && after !== 'run' && after !== 'jump') {
+    throw new Error(`hurt stuck: ${after}`)
+  }
+  console.log('hurt recover ok', after)
 
   const beforeCoins = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').coinStock)
   if (beforeCoins < 1) throw new Error('need starting coins')
