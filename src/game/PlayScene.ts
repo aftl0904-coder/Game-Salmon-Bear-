@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { registerTiles } from './tiles'
 import { burst, floatText, hitstop } from './fx'
+import { SFX, startBgm, unlockAudio } from './audio'
 
 const WORLD_W = 4600
 const WORLD_H = 540
@@ -16,6 +17,9 @@ type Fighter = Phaser.Physics.Arcade.Sprite & {
   role: 'salmon' | 'bear'
   graceUntil: number
   baseScale: number
+  walkPhase: number
+  wasGrounded: boolean
+  stepAcc: number
 }
 
 type Creep = Phaser.Physics.Arcade.Sprite & {
@@ -54,6 +58,8 @@ export class PlayScene extends Phaser.Scene {
   private bossSpawned = false
   private progressText!: Phaser.GameObjects.Text
   private waterSparkles: Phaser.GameObjects.Arc[] = []
+  private audioReady = false
+  private girlWalk = 0
 
   constructor() {
     super('play')
@@ -76,10 +82,22 @@ export class PlayScene extends Phaser.Scene {
     this.heartImgsL = []
     this.heartImgsR = []
     this.waterSparkles = []
+    this.audioReady = false
+    this.girlWalk = 0
 
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H)
     this.cameras.main.fadeIn(500, 20, 40, 70)
+
+    // browser needs a gesture before audio
+    const armAudio = () => {
+      if (this.audioReady) return
+      this.audioReady = true
+      unlockAudio()
+      startBgm()
+    }
+    this.input.keyboard?.on('keydown', armAudio)
+    this.input.on('pointerdown', armAudio)
 
     this.drawBackdrop()
     this.buildLevel()
@@ -90,15 +108,6 @@ export class PlayScene extends Phaser.Scene {
     this.bear = this.spawnFighter(160, GROUND_Y - 40, 'art-bear', 'bear', grace)
 
     this.girl = this.add.image(130, GROUND_Y - 40, 'art-girl').setDepth(7).setScale(1.2)
-    this.tweens.add({
-      targets: this.bear,
-      scaleY: this.bear.baseScale * 1.05,
-      scaleX: this.bear.baseScale * 0.97,
-      yoyo: true,
-      repeat: -1,
-      duration: 700,
-      ease: 'Sine.easeInOut',
-    })
 
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 78, 'til-goal')
     this.goal.setImmovable(true)
@@ -180,7 +189,7 @@ export class PlayScene extends Phaser.Scene {
       .setDepth(40)
       .setVisible(false)
 
-    this.hint.setText('困難模式：血少、怪密、刺狠　｜　兩人合作到祭壇　｜　R 重來')
+    this.hint.setText('按任意鍵開始（音樂）　｜　HARD　｜　兩人到祭壇　｜　R 重來')
 
     this.refreshHud()
   }
@@ -213,9 +222,16 @@ export class PlayScene extends Phaser.Scene {
 
     const gx = this.bear.x - this.bear.facing * 30
     this.girl.x = Phaser.Math.Linear(this.girl.x, gx, 0.22)
-    this.girl.y = this.bear.y - 8
+    const girlMoving = Math.abs(this.bear.body!.velocity.x) > 20
+    if (girlMoving) this.girlWalk += dt * 0.018
+    const girlBob = girlMoving ? Math.sin(this.girlWalk) * 3 : Math.sin(this.time.now / 400) * 1.2
+    this.girl.y = this.bear.y - 8 + girlBob
     this.girl.setFlipX(this.bear.facing < 0)
     this.girl.setDepth(this.bear.depth - 1)
+    this.girl.setScale(
+      1.2 * (girlMoving ? 1 + Math.sin(this.girlWalk) * 0.03 : 1),
+      1.2 * (girlMoving ? 1 - Math.sin(this.girlWalk) * 0.04 : 1),
+    )
 
     const midX = (this.salmon.x + this.bear.x) / 2
     this.cameras.main.centerOn(
@@ -237,6 +253,7 @@ export class PlayScene extends Phaser.Scene {
     if (!this.bossSpawned && Math.max(this.salmon.x, this.bear.x) > WORLD_W - 980) {
       this.bossSpawned = true
       this.spawnBoss(WORLD_W - 560, GROUND_Y - 55)
+      SFX.boss()
       this.hint.setText('關底・醃鮭魚武者！看紅光再閃——別硬鋼')
       this.cameras.main.flash(180, 180, 40, 40)
       this.time.delayedCall(4500, () => {
@@ -581,9 +598,39 @@ export class PlayScene extends Phaser.Scene {
     if (vx !== 0) f.facing = vx > 0 ? 1 : -1
     f.setFlipX(f.facing < 0)
 
-    if (Phaser.Input.Keyboard.JustDown(jump) && body.blocked.down) {
+    const grounded = body.blocked.down
+    if (!f.wasGrounded && grounded) {
+      SFX.land()
+      burst(this, f.x, f.y + 22, 0xcbb896, 3)
+    }
+    f.wasGrounded = grounded
+
+    // walk / air pose
+    if (grounded && Math.abs(vx) > 10) {
+      f.walkPhase += Math.abs(vx) * 0.00055
+      f.stepAcc += Math.abs(vx) * 0.02
+      if (f.stepAcc > 28) {
+        f.stepAcc = 0
+        SFX.step()
+      }
+      const bob = Math.sin(f.walkPhase) * 0.06
+      f.setScale(f.baseScale * (1 + bob * 0.4), f.baseScale * (1 - bob))
+      f.setAngle(Math.sin(f.walkPhase) * 4 * f.facing)
+    } else if (!grounded) {
+      f.setScale(f.baseScale * 0.95, f.baseScale * 1.08)
+      f.setAngle(f.facing * -6)
+    } else {
+      // idle breathe
+      const breathe = Math.sin(this.time.now / 380) * 0.025
+      f.setScale(f.baseScale * (1 + breathe), f.baseScale * (1 - breathe))
+      f.setAngle(0)
+      f.stepAcc = 0
+    }
+
+    if (Phaser.Input.Keyboard.JustDown(jump) && grounded) {
       f.setVelocityY(f.role === 'bear' ? -575 : -615)
       burst(this, f.x, f.y + 20, 0xd4b896, 4)
+      SFX.jump()
     }
 
     if (
@@ -599,6 +646,7 @@ export class PlayScene extends Phaser.Scene {
     const reach = f.role === 'salmon' ? 74 : 58
     const dmg = f.role === 'salmon' ? 1 : 2
     const key = f.role === 'salmon' ? 'fx-salmon' : 'fx-hit'
+    SFX.swing()
     const fx = this.add.image(f.x + f.facing * reach, f.y - 4, key).setDepth(9)
     this.tweens.add({
       targets: fx,
@@ -608,15 +656,14 @@ export class PlayScene extends Phaser.Scene {
       onComplete: () => fx.destroy(),
     })
 
-    if (f.role === 'bear') {
-      this.tweens.add({
-        targets: f,
-        scaleY: f.baseScale * 0.9,
-        scaleX: f.baseScale * 1.12,
-        yoyo: true,
-        duration: 90,
-      })
-    }
+    this.tweens.add({
+      targets: f,
+      scaleY: f.baseScale * 0.88,
+      scaleX: f.baseScale * 1.14,
+      angle: f.facing * 8,
+      yoyo: true,
+      duration: 90,
+    })
 
     let hitAny = false
     this.enemies.getChildren().forEach((obj) => {
@@ -635,8 +682,10 @@ export class PlayScene extends Phaser.Scene {
         })
         burst(this, e.x, e.y, f.role === 'salmon' ? 0xff9a60 : 0xfff2c0, 10)
         floatText(this, e.x, e.y - 36, '！')
+        SFX.hit()
         if (e.hp <= 0) {
           burst(this, e.x, e.y, 0xff6688, 14)
+          SFX.kill()
           e.disableBody(true, true)
           if (e.isBoss) {
             this.hint.setText('武者倒下！兩人一起站上祭壇')
@@ -668,6 +717,7 @@ export class PlayScene extends Phaser.Scene {
     this.time.delayedCall(150, () => f.clearTint())
     burst(this, f.x, f.y, 0xff4466, 8)
     floatText(this, f.x, f.y - 30, `-${dmg}`, '#ff6677')
+    SFX.hurt()
     this.cameras.main.shake(100, 0.01)
     this.refreshHud()
     if (f.hp <= 0) this.lose(f.role === 'salmon' ? '鮭男倒下了…' : '熊女倒下了…')
@@ -683,6 +733,7 @@ export class PlayScene extends Phaser.Scene {
     this.time.delayedCall(150, () => f.clearTint())
     burst(this, f.x, f.y + 10, 0xddeeff, 10)
     floatText(this, f.x, f.y - 28, '-2', '#aaccff')
+    SFX.spike()
     this.cameras.main.shake(120, 0.012)
     this.refreshHud()
     if (f.hp <= 0) this.lose(f.role === 'salmon' ? '鮭男倒下了…' : '熊女倒下了…')
@@ -708,12 +759,14 @@ export class PlayScene extends Phaser.Scene {
     this.ended = true
     this.salmon.setVelocity(0, 0)
     this.bear.setVelocity(0, 0)
+    SFX.win()
     this.cameras.main.flash(300, 255, 240, 180)
     this.banner.setText(msg).setVisible(true)
   }
 
   private lose(msg: string) {
     this.ended = true
+    SFX.lose()
     this.cameras.main.shake(200, 0.02)
     this.banner.setText(`${msg}\n按 R 重來`).setVisible(true)
   }
@@ -734,6 +787,9 @@ export class PlayScene extends Phaser.Scene {
     s.hurtCd = 0
     s.graceUntil = graceUntil
     s.baseScale = role === 'bear' ? 1.42 : 1.38
+    s.walkPhase = 0
+    s.wasGrounded = true
+    s.stepAcc = 0
     s.setCollideWorldBounds(true)
     s.setBounce(0)
     s.setDragX(1500)
