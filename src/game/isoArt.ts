@@ -152,20 +152,16 @@ export function registerIsoArt(scene: Phaser.Scene) {
   // 3D house
   paint(scene, 'prop-house3d', 56, 56, (set) => {
     rect(set, 8, 50, 40, 5, [20, 16, 18], 120)
-    // side wall
-    rect(set, 36, 22, 14, 30, [160, 110, 70])
-    // front
-    rect(set, 8, 24, 30, 28, [210, 160, 100])
-    rect(set, 8, 24, 30, 3, [240, 200, 140])
-    // roof prism
+    rect(set, 36, 22, 14, 30, [190, 130, 80])
+    rect(set, 8, 24, 30, 28, [245, 195, 130])
+    rect(set, 8, 24, 30, 3, [255, 230, 180])
     for (let i = 0; i < 16; i++) {
-      rect(set, 6 + i, 22 - i, 34 - i * 2, 2, i < 4 ? [240, 120, 70] : [190, 80, 50])
+      rect(set, 6 + i, 22 - i, 34 - i * 2, 2, i < 4 ? [255, 140, 80] : [210, 70, 48])
     }
-    // window lit
-    rect(set, 16, 34, 10, 10, [255, 230, 140])
-    rect(set, 17, 35, 8, 8, [255, 250, 200])
-    // door
-    rect(set, 28, 38, 8, 14, [100, 60, 30])
+    rect(set, 10, 40, 12, 12, [220, 50, 48])
+    rect(set, 16, 34, 10, 10, [255, 240, 160])
+    rect(set, 17, 35, 8, 8, [255, 252, 210])
+    rect(set, 28, 38, 8, 14, [110, 65, 32])
   })
 
   // 3D lantern

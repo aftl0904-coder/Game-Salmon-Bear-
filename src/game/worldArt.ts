@@ -64,16 +64,16 @@ export function registerWorldArt(scene: Phaser.Scene) {
     for (let y = 0; y < h; y++) {
       const t = y / h
       const c: RGB = [
-        Math.floor(28 + t * 20),
-        Math.floor(90 + t * 40),
-        Math.floor(150 + t * 30),
+        Math.floor(40 + t * 30),
+        Math.floor(140 + t * 45),
+        Math.floor(210 + t * 20),
       ]
       rect(set, 0, y, w, 1, c)
     }
     for (let x = 0; x < w; x += 8) {
-      set(x, 10, [40, 120, 180])
-      set(x + 3, 22, [50, 140, 200])
-      set(x + 5, 34, [35, 110, 170])
+      set(x, 10, [80, 190, 240])
+      set(x + 3, 22, [100, 210, 255])
+      set(x + 5, 34, [60, 170, 230])
     }
   })
 
@@ -103,7 +103,7 @@ export function registerWorldArt(scene: Phaser.Scene) {
   // far mountain band (tileable-ish)
   paint(scene, 'bg-mount-far', 160, 80, (set, w, h) => {
     for (let y = 0; y < h; y++) {
-      const c: RGB = [90 + y, 140 + Math.floor(y * 0.4), 150 + Math.floor(y * 0.2)]
+      const c: RGB = [110 + y, 170 + Math.floor(y * 0.35), 160 + Math.floor(y * 0.15)]
       rect(set, 0, y, w, 1, c)
     }
     // peaks
@@ -111,7 +111,7 @@ export function registerWorldArt(scene: Phaser.Scene) {
       const px = 20 + i * 40
       for (let y = 0; y < 50; y++) {
         const half = Math.max(0, 18 - Math.floor(y / 2.2))
-        rect(set, px - half, 55 - y, half * 2, 1, [70, 120, 130])
+        rect(set, px - half, 55 - y, half * 2, 1, [90, 150, 120])
       }
       // snow tip
       rect(set, px - 4, 8, 8, 4, [220, 235, 240])
@@ -120,14 +120,14 @@ export function registerWorldArt(scene: Phaser.Scene) {
 
   paint(scene, 'bg-mount-near', 128, 70, (set, w, h) => {
     for (let y = 0; y < h; y++) {
-      rect(set, 0, y, w, 1, [70 + y, 150 + Math.floor(y * 0.3), 90 + Math.floor(y * 0.2)])
+      rect(set, 0, y, w, 1, [90 + y, 180 + Math.floor(y * 0.25), 100 + Math.floor(y * 0.15)])
     }
     for (let i = 0; i < 3; i++) {
       const px = 24 + i * 42
       for (let y = 0; y < 45; y++) {
         const half = Math.max(0, 16 - Math.floor(y / 2.5))
-        rect(set, px - half, 60 - y, half * 2, 1, [55, 130, 70])
-        if (y > 20 && y % 3 === 0) rect(set, px - half + 2, 60 - y, 3, 1, [90, 170, 95])
+        rect(set, px - half, 60 - y, half * 2, 1, [70, 170, 80])
+        if (y > 20 && y % 3 === 0) rect(set, px - half + 2, 60 - y, 3, 1, [130, 210, 110])
       }
     }
   })
