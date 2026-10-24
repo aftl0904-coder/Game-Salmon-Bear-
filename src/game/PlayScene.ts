@@ -51,8 +51,8 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
 
 /**
  * Round 1 — 溪流小路
- * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
- * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
+ * P1 鮭男：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
+ * P2 熊女：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
  * 笑臉熊：AI only，始終跟隨熊女；受傷時噴蜂蜜噴流
  */
 export class PlayScene extends Phaser.Scene {
@@ -634,7 +634,7 @@ export class PlayScene extends Phaser.Scene {
       ease: 'Cubic.in',
       onComplete: () => {
         h.setVelocity(0, 0)
-        this.lose(h.role === 'boy' ? '倫寶倒下了…' : '琪寶寶倒下了…')
+        this.lose(h.role === 'boy' ? '鮭男倒下了…' : '熊女倒下了…')
       },
     })
     this.refreshHearts()
@@ -877,13 +877,7 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜
-倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速
-生命１０　投幣可續關
-琪寶寶受傷 → 噗噗噴蜜
-角色可重疊、互不推擠
-
-按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n鮭男・鮭魚槍　｜　熊女・電風扇×１.５速\n生命１０　投幣可續關\n熊女受傷 → 笑臉熊噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
