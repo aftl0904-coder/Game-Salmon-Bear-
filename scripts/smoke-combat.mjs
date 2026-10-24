@@ -74,15 +74,35 @@ try {
         pose: s.pose,
       }
     }
-    const enemies = play.enemies.getChildren().filter((e) => e.active).slice(0, 4).map(foot)
+    const all = play.enemies.getChildren().filter((e) => e.active)
+    const enemies = all.slice(0, 4).map(foot)
+    const species = [...new Set(all.map((e) => e.species).filter(Boolean))]
+    const textures = [...new Set(all.map((e) => e.texture?.key).filter(Boolean))]
+    const labels = [...new Set(all.map((e) => e.label?.text).filter(Boolean))]
     return {
       boy: foot(play.boy),
       girl: foot(play.girl),
       enemies,
       coinStock: play.coinStock,
+      species,
+      textures,
+      labels,
+      hasBarrelTex: !!play.textures.exists('art-enemy-barrel'),
     }
   })
   console.log('plane', JSON.stringify(plane))
+
+  if (!plane.hasBarrelTex) throw new Error('missing art-enemy-barrel texture')
+  if (!plane.species.includes('fish') || !plane.species.includes('barrel')) {
+    throw new Error(`need fish+barrel species, got ${JSON.stringify(plane.species)}`)
+  }
+  if (!plane.textures.includes('art-enemy') || !plane.textures.includes('art-enemy-barrel')) {
+    throw new Error(`need two enemy textures, got ${JSON.stringify(plane.textures)}`)
+  }
+  if (!plane.labels.some((t) => t.includes('醃魚')) || !plane.labels.some((t) => t.includes('木桶'))) {
+    throw new Error(`need 繁中 labels 醃魚/木桶, got ${JSON.stringify(plane.labels)}`)
+  }
+  console.log('two enemy types ok', plane.species, plane.textures)
 
   if (plane.boy.originY !== 1 || plane.girl.originY !== 1) throw new Error('foot origin missing')
   if (plane.boy.hp !== 10 || plane.girl.hp !== 10) throw new Error(`HP expected 10 got ${plane.boy.hp}/${plane.girl.hp}`)

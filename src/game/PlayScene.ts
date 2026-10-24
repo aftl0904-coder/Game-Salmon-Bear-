@@ -53,7 +53,7 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
  * Round 1 — 溪流小路
  * P1 倫寶：WASD + J/K/U/I（Ａ／Ｂ／Ｘ／Ｙ）
  * P2 琪寶寶：方向鍵 + 數字鍵 1/2/4/5（Ａ／Ｂ／Ｘ／Ｙ）
- * 噗噗：AI only，始終跟隨琪寶寶；受傷時噴蜂蜜噴流
+ * 笑臉熊：AI only，始終跟隨熊女；受傷時噴蜂蜜噴流
  */
 export class PlayScene extends Phaser.Scene {
   private mode: '1p' | '2p' = '2p'
@@ -504,10 +504,10 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private summonBearAssist() {
-    if (this.petJetting || this.girl.pose === 'die') return
+    if (this.petJetting || this.girl.hp <= 0) return
     this.petJetting = true
     SFX.hit()
-    floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
+    floatText(this, this.pet.x, this.pet.y - 50, '笑臉熊！', '#ffcc44')
     this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
     this.honeyJet(this.girl.facing)
     this.time.delayedCall(520, () => {
@@ -655,7 +655,7 @@ export class PlayScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** Pooh AI: always trail Ki Bobo (never player-controlled) */
+  /** 笑臉熊 AI: always trail 熊女 (never player-controlled) */
   private updatePet() {
     const g = this.girl
     const followX = g.x - g.facing * 52
@@ -877,7 +877,13 @@ export class PlayScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n生命１０　投幣可續關\n琪寶寶受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜
+倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速
+生命１０　投幣可續關
+琪寶寶受傷 → 噗噗噴蜜
+角色可重疊、互不推擠
+
+按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -901,8 +907,8 @@ export class PlayScene extends Phaser.Scene {
       box.destroy()
       this.hudInfo.setText(
         this.mode === '1p'
-          ? '單人：倫寶ＪＫＵＩ｜琪寶寶＋噗噗同行｜Ｒ回選單'
-          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜噗噗跟隨｜Ｒ回選單',
+          ? '單人：鮭男ＪＫＵＩ｜熊女＋笑臉熊同行｜Ｒ回選單'
+          : '雙人：鮭男ＪＫＵＩ　熊女數字鍵｜笑臉熊跟隨｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
@@ -1093,8 +1099,8 @@ export class PlayScene extends Phaser.Scene {
     this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish')
     this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish')
     this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish')
-    this.mkEnemy(740, 200, 'ambusher', undefined, 'barrel')
-    this.mkEnemy(1750, 210, 'ambusher', undefined, 'barrel')
+    this.mkEnemy(740, 240, 'ambusher', undefined, 'barrel')
+    this.mkEnemy(1750, 250, 'ambusher', undefined, 'barrel')
     this.mkEnemy(1180, GROUND_Y, 'guardian', 1200, 'barrel')
     this.mkEnemy(2080, GROUND_Y, 'guardian', 2050, 'fish')
     this.mkEnemy(2960, GROUND_Y, 'guardian', 3000, 'barrel')
