@@ -48,7 +48,7 @@ export function buildStageHud(
   root.add(p1label)
   const heartsL: Phaser.GameObjects.Image[] = []
   for (let i = 0; i < 3; i++) {
-    const h = scene.add.image(60 + i * 18, 34, 'heart-full').setScale(1.05)
+    const h = scene.add.image(58 + i * 17, 34, 'heart-full').setScale(1.0)
     heartsL.push(h)
     root.add(h)
   }
@@ -68,7 +68,7 @@ export function buildStageHud(
   root.add(p2label)
   const heartsR: Phaser.GameObjects.Image[] = []
   for (let i = 0; i < 3; i++) {
-    const h = scene.add.image(820 + i * 18, 34, 'heart-full').setScale(1.05)
+    const h = scene.add.image(818 + i * 17, 34, 'heart-full').setScale(1.0)
     heartsR.push(h)
     root.add(h)
   }

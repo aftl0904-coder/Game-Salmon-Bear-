@@ -3,6 +3,13 @@ import { burst, floatText, hitstop } from './fx'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { buildStageHud } from './hud'
 import { calcScore, saveScore } from './score'
+import {
+  type Creep,
+  type EnemyKind,
+  KIND_STATS,
+  enemyCanHurt,
+  tickEnemy,
+} from './enemyAi'
 
 const WORLD_W = 3800
 const WORLD_H = 540
@@ -20,20 +27,6 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
   hurtCd: number
   grace: number
   role: 'boy' | 'girl'
-}
-
-type Creep = Phaser.Physics.Arcade.Sprite & {
-  hp: number
-  windup: number
-  atkCd: number
-  hitThis: boolean
-  state: 'patrol' | 'chase' | 'windup' | 'recover'
-  patrolDir: 1 | -1
-  patrolMin: number
-  patrolMax: number
-  boss?: boolean
-  elite?: boolean
-  think: number
 }
 
 /**
@@ -85,6 +78,7 @@ export class PlayScene extends Phaser.Scene {
   private honeyGot = 0
   private petActive = false
   private scorePts = 0
+  private prevLeadX = 0
   private water!: Phaser.GameObjects.TileSprite
   private clouds!: Phaser.GameObjects.TileSprite
   private mountFar!: Phaser.GameObjects.TileSprite
@@ -104,6 +98,7 @@ export class PlayScene extends Phaser.Scene {
     this.honeyGot = 0
     this.petActive = false
     this.scorePts = 0
+    this.prevLeadX = 120
     this.startedAt = this.time.now
     this.heartsL = []
     this.heartsR = []
@@ -407,7 +402,12 @@ export class PlayScene extends Phaser.Scene {
     e.setTint(0xffffff)
     e.state = 'recover'
     e.think = 320
-    this.time.delayedCall(70, () => e.active && e.clearTint())
+    const tint = KIND_STATS[e.kind].tint
+    this.time.delayedCall(70, () => {
+      if (!e.active) return
+      e.clearTint()
+      if (tint) e.setTint(tint)
+    })
     burst(this, e.x, e.y, 0xffe8a0, 8)
     floatText(this, e.x, e.y - 28, '！')
     SFX.hit()
@@ -416,17 +416,17 @@ export class PlayScene extends Phaser.Scene {
     if (e.hp <= 0) {
       SFX.kill()
       burst(this, e.x, e.y, 0xff6688, 12)
+      e.label?.destroy()
       e.disableBody(true, true)
-      if (e.boss) this.hudInfo.setText('武者倒下！兩人一起站上祭壇')
+      if (e.kind === 'boss') this.hudInfo.setText('武者倒下！兩人一起站上祭壇')
     }
   }
 
   private hurtHero(h: Hero, e: Creep) {
     if (this.ended || !this.started || this.time.now < h.grace || h.hurtCd > 0) return
-    if (e.state !== 'windup' || e.hitThis) return
-    if (e.windup > 240) return
+    if (!enemyCanHurt(e)) return
     e.hitThis = true
-    const dmg = e.boss ? 1 : 1
+    const dmg = 1
     h.hp -= dmg
     h.hurtCd = 1100
     h.setVelocityX((Math.sign(h.x - e.x) || -1) * 280)
@@ -469,66 +469,21 @@ export class PlayScene extends Phaser.Scene {
     }
   }
 
-  // ——— enemy AI (forgiving) ———
+  // ——— enemy AI: per-kind objectives, shared state machine ———
   private updateEnemies(dt: number) {
+    const leadX = Math.max(this.boy.x, this.girl.x)
     this.enemies.getChildren().forEach((o) => {
       const e = o as Creep
-      if (!e.active) return
-      e.think = Math.max(0, e.think - dt)
-      e.atkCd = Math.max(0, e.atkCd - dt)
-      e.windup = Math.max(0, e.windup - dt)
-
-      const target =
-        Phaser.Math.Distance.Between(e.x, e.y, this.boy.x, this.boy.y) <
-        Phaser.Math.Distance.Between(e.x, e.y, this.girl.x, this.girl.y)
-          ? this.boy
-          : this.girl
-      const dist = Phaser.Math.Distance.Between(e.x, e.y, target.x, target.y)
-      const dir = (Math.sign(target.x - e.x) || 1) as 1 | -1
-      const aggro = e.boss ? 460 : e.elite ? 340 : 280
-      const melee = e.boss ? 64 : 48
-      const spd = e.boss ? 78 : e.elite ? 62 : 48
-
-      if (e.state === 'recover') {
-        e.setVelocityX(0)
-        if (e.think <= 0) e.state = 'chase'
-        return
-      }
-
-      if (e.state === 'windup') {
-        e.setVelocityX(0)
-        e.setTint(0xff5555)
-        if (e.windup <= 0) {
-          e.clearTint()
-          e.state = 'recover'
-          e.think = 420
-          e.atkCd = e.boss ? 1200 : 1300
-        }
-        return
-      }
-
-      if (dist < melee && e.atkCd <= 0) {
-        e.state = 'windup'
-        e.windup = 480
-        e.hitThis = false
-        e.setVelocityX(0)
-        e.setTint(0xff5555)
-        floatText(this, e.x, e.y - 36, '！', '#ff3333')
-        return
-      }
-
-      if (dist < aggro) {
-        e.state = 'chase'
-        e.setVelocityX(dir * spd)
-        e.setFlipX(dir > 0)
-      } else {
-        e.state = 'patrol'
-        if (e.x < e.patrolMin) e.patrolDir = 1
-        if (e.x > e.patrolMax) e.patrolDir = -1
-        e.setVelocityX(e.patrolDir * spd * 0.4)
-        e.setFlipX(e.patrolDir > 0)
-      }
+      tickEnemy(e, {
+        dt,
+        boy: this.boy,
+        girl: this.girl,
+        leadX,
+        prevLeadX: this.prevLeadX,
+        floatBang: (x, y) => floatText(this, x, y, '！', '#ff3333'),
+      })
     })
+    this.prevLeadX = leadX
   }
 
   private updatePet() {
@@ -840,7 +795,7 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private refreshHearts() {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < MAX_HP; i++) {
       this.heartsL[i]?.setTexture(i < this.boy.hp ? 'heart-full' : 'heart-empty')
       this.heartsR[i]?.setTexture(i < this.girl.hp ? 'heart-full' : 'heart-empty')
     }
@@ -908,46 +863,65 @@ export class PlayScene extends Phaser.Scene {
   }
 
   private placeEnemies() {
-    // fewer / slower pack — easier than prior pass
-    const spots = [640, 1050, 1520, 2000, 2450, 2950]
-    for (const x of spots) this.mkEnemy(x, GROUND_Y - 44, false, false)
-    this.mkEnemy(1750, 210, false, true)
-    this.mkEnemy(740, 200, false, false)
+    // Distinct roles — each exists to 阻止玩家完成任務（奪回春蜜／祭壇）
+    // Density kept moderate (easier than 吞食天地); telegraphs are long
+    this.mkEnemy(620, GROUND_Y - 44, 'blocker')
+    this.mkEnemy(1500, GROUND_Y - 44, 'blocker')
+    this.mkEnemy(1050, GROUND_Y - 44, 'chaser')
+    this.mkEnemy(1980, GROUND_Y - 44, 'chaser')
+    this.mkEnemy(740, 200, 'ambusher')
+    this.mkEnemy(1750, 210, 'ambusher')
+    this.mkEnemy(1180, GROUND_Y - 44, 'guardian', 1200)
+    this.mkEnemy(2080, GROUND_Y - 44, 'guardian', 2050)
+    this.mkEnemy(2960, GROUND_Y - 44, 'guardian', 3000)
+    this.mkEnemy(2680, GROUND_Y - 44, 'interrupter')
   }
 
-  private mkEnemy(x: number, y: number, boss: boolean, elite: boolean) {
+  private mkEnemy(x: number, y: number, kind: EnemyKind, guardX?: number) {
+    const st = KIND_STATS[kind]
     const e = this.enemies.create(x, y, 'art-enemy') as Creep
-    e.hp = boss ? 8 : elite ? 3 : 2
+    e.kind = kind
+    e.hp = st.hp
+    e.maxHp = st.hp
     e.windup = 0
-    e.atkCd = Phaser.Math.Between(500, 1100)
+    e.atkCd = Phaser.Math.Between(400, 1000)
     e.hitThis = false
     e.state = 'patrol'
     e.patrolDir = Math.random() > 0.5 ? 1 : -1
-    e.patrolMin = x - 60
-    e.patrolMax = x + 60
+    const span = kind === 'guardian' ? 90 : kind === 'ambusher' ? 48 : 70
+    e.patrolMin = x - span
+    e.patrolMax = x + span
+    e.homeX = x
+    e.homeY = y
+    e.guardX = guardX ?? x
     e.think = 0
-    e.boss = boss
-    e.elite = elite
+    e.detectT = 0
+    e.phase = 1
+    e.boss = kind === 'boss'
+    e.elite = kind === 'interrupter'
     e.setCollideWorldBounds(true)
     e.setDepth(6)
-    e.setScale(boss ? 2.5 : elite ? 1.85 : 1.7)
-    if (elite && !boss) e.setTint(0xff8866)
-    if (boss) e.setTint(0xffaa77)
+    e.setScale(st.scale)
+    if (st.tint) e.setTint(st.tint)
     ;(e.body as Phaser.Physics.Arcade.Body).setSize(20, 20)
+    e.label = this.add
+      .text(x, y - 40, st.label, {
+        fontFamily: 'Noto Sans TC, sans-serif',
+        fontSize: kind === 'boss' ? '14px' : '11px',
+        color: '#fff4e0',
+        backgroundColor: '#301820cc',
+        padding: { x: 4, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(12)
     return e
   }
 
   private spawnBoss(x: number, y: number) {
-    this.mkEnemy(x, y, true, false)
-    this.add
-      .text(x, y - 88, '醃鮭魚武者', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '16px',
-        color: '#ffe8c8',
-        backgroundColor: '#701828',
-        padding: { x: 8, y: 4 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12)
+    const e = this.mkEnemy(x, y, 'boss')
+    if (e.label) {
+      e.label.setText('醃鮭魚武者・壹')
+      e.label.setStyle({ backgroundColor: '#701828', fontSize: '15px' })
+    }
   }
 }
