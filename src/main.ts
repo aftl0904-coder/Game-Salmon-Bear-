@@ -23,7 +23,7 @@ const game = new Phaser.Game({
     default: 'arcade',
     arcade: {
       gravity: { x: 0, y: 1500 },
-      debug: false,
+      debug: true,
       debugShowBody: true,
       debugShowVelocity: true,
     },

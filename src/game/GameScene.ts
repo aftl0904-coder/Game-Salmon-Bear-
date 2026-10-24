@@ -22,12 +22,10 @@ import {
   BOY_SPEED,
   GIRL_SPEED,
   JUMP_V,
-  COYOTE_MS,
   JUMP_BUF_MS,
   HURT_LOCK_MS,
   FALL_Y,
   COINS_START,
-  isGrounded,
   resolveStick,
   snapToGroundPlane,
   applyDamage,
@@ -55,6 +53,8 @@ type Hero = Phaser.Physics.Arcade.Sprite & {
   baseScale: number
   coyote: number
   jumpBuf: number
+  jumpConsumed: boolean
+  jumpCut: boolean
   walkPhase: number
   wasGrounded: boolean
   pose: HeroPose
@@ -106,13 +106,13 @@ export class GameScene extends Phaser.Scene {
   private keyDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebugAlt!: Phaser.Input.Keyboard.Key
-  private physicsDebug = false
+  private physicsDebug = true
   /** Synced from UIScene for smoke / continue path. */
   banner!: Phaser.GameObjects.Text
   continueBox!: Phaser.GameObjects.Text
   private ended = false
   awaitingContinue = false
-  private started = false
+  started = false
   private startedAt = 0
   private boyGoal = false
   private girlGoal = false
@@ -168,6 +168,7 @@ export class GameScene extends Phaser.Scene {
     this.wirePhysics()
     this.bindKeys()
     this.debugOverlay = new DebugOverlay(this)
+    this.physics.world.drawDebug = this.physicsDebug
     this.launchUi()
     this.showIntro()
     this.emitHealth()
@@ -250,7 +251,11 @@ export class GameScene extends Phaser.Scene {
 
   update(_t: number, dt: number) {
     if (Phaser.Input.Keyboard.JustDown(this.keyDebug)) {
-      this.debugOverlay.toggle()
+      const on = this.debugOverlay.toggle()
+      this.physics.world.drawDebug = on
+      this.physicsDebug = on
+      if (!on) this.physics.world.debugGraphic?.clear()
+      else if (!this.physics.world.debugGraphic) this.physics.world.createDebugGraphic()
     }
     if (
       Phaser.Input.Keyboard.JustDown(this.keyPhysicsDebug) ||
@@ -439,17 +444,27 @@ export class GameScene extends Phaser.Scene {
     doAttack: () => void,
   ) {
     const body = h.body as Phaser.Physics.Arcade.Body
-    const grounded = isGrounded(body)
     resolveStick(body)
 
-    if (grounded) h.coyote = COYOTE_MS
-    else h.coyote = Math.max(0, h.coyote - dt)
+    // Infinite-jump root cause: after setVelocityY(JUMP), body can still report
+    // blocked.down while overlapping the tile; refreshing coyote from that sticky
+    // contact re-armed mid-air jumps. Spec: jump ONLY when blocked.down ||
+    // touching.down AND not ascending (vy >= 0).
+    const floorContact = body.blocked.down || body.touching.down
+    const grounded = floorContact && body.velocity.y >= 0
+
+    if (grounded) {
+      h.jumpConsumed = false
+      h.jumpCut = false
+      h.coyote = 0
+    } else {
+      h.coyote = Math.max(0, h.coyote - dt)
+    }
 
     if (jumpJust) h.jumpBuf = JUMP_BUF_MS
     else h.jumpBuf = Math.max(0, h.jumpBuf - dt)
 
     if (h.hurtLock > 0 || h.hp <= 0 || !h.alive) {
-      // Keep knockback during hurt lock; damp only when grounded again.
       if (h.hurtLock > 0 && grounded) {
         h.setVelocityX(body.velocity.x * 0.82)
       }
@@ -457,28 +472,39 @@ export class GameScene extends Phaser.Scene {
       return
     }
 
-    let vx = 0
-    if (left) vx -= speed
-    if (right) vx += speed
-    // Goemon feel: snap run velocity while airborne retains jump arc.
-    h.setVelocityX(vx)
-    if (vx !== 0) {
-      h.facing = vx > 0 ? 1 : -1
+    const dtSec = dt / 1000
+    let target = 0
+    if (left) target -= speed
+    if (right) target += speed
+    const accel = grounded ? 3200 : 1760
+    const friction = 4200
+    let vx = body.velocity.x
+    if (target !== 0) {
+      const step = accel * dtSec
+      if (vx < target) vx = Math.min(target, vx + step)
+      else if (vx > target) vx = Math.max(target, vx - step)
+      h.facing = target > 0 ? 1 : -1
       h.setFlipX(h.facing < 0)
     } else if (grounded) {
-      // Ground idle damping so feet don't slide after release.
-      h.setVelocityX(body.velocity.x * 0.55)
+      const damp = friction * dtSec
+      if (Math.abs(vx) <= damp) vx = 0
+      else vx -= Math.sign(vx) * damp
     }
+    vx = Phaser.Math.Clamp(vx, -speed, speed)
+    h.setVelocityX(vx)
 
-    if (h.jumpBuf > 0 && h.coyote > 0) {
+    if (h.jumpBuf > 0 && !h.jumpConsumed && grounded) {
       h.setVelocityY(JUMP_V)
       h.jumpBuf = 0
-      h.coyote = 0
+      h.jumpConsumed = true
+      h.jumpCut = false
       SFX.jump()
     }
 
-    // Variable jump height (release early → cut ascent).
-    if (!jumpHeld && body.velocity.y < -120) h.setVelocityY(body.velocity.y * 0.55)
+    if (!jumpHeld && body.velocity.y < -120 && !h.jumpCut) {
+      h.setVelocityY(body.velocity.y * 0.55)
+      h.jumpCut = true
+    }
 
     if (!h.wasGrounded && grounded) burst(this, h.x, h.y + 4, 0xcbb896, 3)
     h.wasGrounded = grounded
@@ -1140,7 +1166,7 @@ export class GameScene extends Phaser.Scene {
     s.alive = true
     s.awaitingContinue = false
     s.setCollideWorldBounds(true)
-    s.setDragX(1400)
+    s.setDragX(0)
     s.setMaxVelocity(role === 'girl' ? GIRL_SPEED + 40 : BOY_SPEED + 40, 1200)
     s.setDepth(8)
     s.setScale(scale)
