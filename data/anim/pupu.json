@@ -1,0 +1,43 @@
+{
+ "frameWidth": 88,
+ "frameHeight": 73,
+ "anchorX": 44,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "walk": {
+   "start": 3,
+   "count": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "cute-pose": {
+   "start": 7,
+   "count": 3,
+   "fps": 6,
+   "loop": false
+  },
+  "tackle": {
+   "start": 10,
+   "count": 4,
+   "fps": 14,
+   "loop": false
+  },
+  "hollow-idle": {
+   "start": 14,
+   "count": 3,
+   "fps": 4,
+   "loop": true
+  },
+  "wake-up": {
+   "start": 17,
+   "count": 5,
+   "fps": 6,
+   "loop": false
+  }
+ }
+}

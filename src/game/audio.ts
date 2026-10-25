@@ -247,6 +247,24 @@ export const SFX = {
   chain: () => {
     for (let i = 0; i < 4; i++) tone(1900 + i * 140, 0.025, 'square', 0.03, undefined, i * 0.05)
   },
+  /** Dialogue typewriter blip — each speaker has their own pitch. */
+  blip: (hz = 520) => tone(hz, 0.035, 'square', 0.035),
+  /** Horror sting: low detuned drone + high scrape (triangle shadow). */
+  dread: () => {
+    tone(55, 2.2, 'sawtooth', 0.07, 49)
+    tone(58, 2.2, 'sawtooth', 0.05, 52)
+    tone(1760, 1.4, 'sine', 0.02, 1650, 0.3)
+    noise(1.2, 0.04, 0.2, 300)
+  },
+  /** Gulp (噗噗 drinks honey). */
+  gulp: () => {
+    tone(180, 0.09, 'sine', 0.14, 320)
+    tone(200, 0.09, 'sine', 0.12, 360, 0.16)
+  },
+  /** Soft magical sparkle (real honey). */
+  sparkle: () => {
+    ;[1318, 1568, 1976, 2637].forEach((hz, i) => tone(hz, 0.16, 'sine', 0.05, undefined, i * 0.07))
+  },
   /** Crusher slams the floor. */
   slam: () => {
     noise(0.14, 0.2, 0, 500)
@@ -266,7 +284,7 @@ export const SFX = {
 //   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
 // Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-type SongId = 'title' | 'stage1' | 'ambush'
+export type SongId = 'title' | 'stage1' | 'ambush'
 type Song = {
   bpm: number
   chords: string[]

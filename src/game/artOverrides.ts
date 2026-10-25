@@ -15,6 +15,12 @@ export const ART_OVERRIDES: Record<string, string> = {
   // Breakable loot holders (stage1.json breakables).
   'prop-break-lantern': '/art/items/break-lantern.png',
   'prop-break-pot': '/art/items/break-pot.png',
+  // Cutscene props (data/story.json).
+  'cs-jar-fake': '/art/items/jar-fake.png',
+  'cs-jar-real': '/art/items/jar-real.png',
+  'cs-note': '/art/items/note.png',
+  'cs-picnic': '/art/items/picnic.png',
+  'cs-cart': '/art/items/coffee-cart.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {
