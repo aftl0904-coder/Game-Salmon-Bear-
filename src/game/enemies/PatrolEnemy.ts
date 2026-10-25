@@ -6,7 +6,7 @@ import {
 import { actorDepth } from '../engine/depth'
 import { enableActorSprite, WALK_FRAMES } from '../pixelSnap'
 import { freezeActors, isActorFrozen } from '../fx'
-import { ATTACK_COMMIT_FREEZE_MS, ACTOR_DISPLAY_SCALE } from '../engine/constants'
+import { ATTACK_COMMIT_FREEZE_MS, ACTOR_DISPLAY_SCALE, WEAPON_DISPLAY_SCALE } from '../engine/constants'
 import {
   type EnemyKind,
   type EnemySpecies,
@@ -509,18 +509,18 @@ export class PatrolEnemy extends Enemy {
       if (wind) {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
         w.setPosition(faceX, faceY)
-        w.setScale(1.35)
+        w.setScale(1.35 * WEAPON_DISPLAY_SCALE)
         w.setAngle(face * -55)
       } else if (strike) {
         if (this.scene.textures.exists('fx-elephant-trunk-1')) w.setTexture('fx-elephant-trunk-1')
         w.setPosition(faceX, faceY)
         // Long thrust from the face (reach handled by meleeRadius, not by moving sprite to ground).
-        w.setScale(1.55)
+        w.setScale(1.55 * WEAPON_DISPLAY_SCALE)
         w.setAngle(face * 8)
       } else {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
         w.setPosition(faceX, faceY + 2)
-        w.setScale(1.15)
+        w.setScale(1.15 * WEAPON_DISPLAY_SCALE)
         w.setAngle(face * 28)
       }
       w.setFlipX(this.flipX)
@@ -528,9 +528,11 @@ export class PatrolEnemy extends Enemy {
       return
     }
     const knife = (w.texture?.key || '').includes('knife')
-    const ox = strike ? (knife ? 38 : 34) : wind ? (knife ? 10 : 14) : 22
-    const oy = strike ? (knife ? -26 : -22) : wind ? -40 : -28
+    const bodyH = Math.max(20, this.displayHeight || 40)
+    const ox = strike ? (knife ? bodyH * 0.55 : bodyH * 0.5) : wind ? (knife ? bodyH * 0.15 : bodyH * 0.2) : bodyH * 0.32
+    const oy = strike ? (knife ? -bodyH * 0.38 : -bodyH * 0.32) : wind ? -bodyH * 0.58 : -bodyH * 0.4
     w.setPosition(this.x + face * ox, this.y + oy)
+    w.setScale(WEAPON_DISPLAY_SCALE * (strike ? 1.15 : wind ? 1.05 : 1))
     w.setFlipX(this.flipX)
     w.setAngle(strike ? face * (knife ? 5 : 25) : wind ? face * (knife ? -55 : -35) : face * -8)
     w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)

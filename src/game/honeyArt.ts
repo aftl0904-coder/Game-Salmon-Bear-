@@ -165,35 +165,126 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     set(7, 2, [220, 80, 60])
   })
 
-  // 榴槤陷阱 — 踩到拮腳 −1HP
-  paint(scene, 'hazard-durian', 28, 26, (set) => {
-    const ink: RGB = [18, 12, 10]
-    // oval body
-    for (let y = 6; y < 24; y++) {
-      for (let x = 4; x < 24; x++) {
-        const nx = (x - 14) / 10
-        const ny = (y - 15) / 9
+  /**
+   * 榴槤陷阱 — Flash / Facebook-game chunky cel:
+   * thick ink, large triangular spikes, base/shadow/highlight sheen.
+   */
+  paint(scene, 'hazard-durian', 42, 40, (set) => {
+    const ink: RGB = [16, 10, 8]
+    const shell: RGB = [92, 158, 52]
+    const shellL: RGB = [150, 220, 88]
+    const shellD: RGB = [52, 98, 30]
+    const spike: RGB = [120, 185, 62]
+    const spikeL: RGB = [198, 240, 120]
+    const spikeD: RGB = [62, 108, 34]
+    const tip: RGB = [255, 248, 170]
+    const stem: RGB = [130, 78, 38]
+    const stemL: RGB = [190, 130, 70]
+
+    // Body oval
+    for (let y = 13; y < 35; y++) {
+      for (let x = 7; x < 35; x++) {
+        const nx = (x - 21) / 13.5
+        const ny = (y - 24) / 11
         if (nx * nx + ny * ny <= 1) {
-          set(x, y, ink)
-          set(x, y, [70, 120, 45])
-          if (ny < -0.2) set(x, y, [95, 155, 55])
-          if (ny > 0.35) set(x, y, [45, 85, 30])
+          let c = shell
+          if (nx + ny < -0.4) c = shellL
+          if (ny > 0.4 || nx > 0.5) c = shellD
+          set(x, y, c)
         }
       }
     }
-    // thorns
-    const tips: Array<[number, number]> = [
-      [14, 2], [8, 5], [20, 5], [5, 12], [23, 12], [7, 20], [21, 20], [14, 24],
-      [11, 4], [17, 4], [4, 16], [24, 16],
-    ]
-    for (const [tx, ty] of tips) {
-      rect(set, tx - 1, ty - 1, 3, 3, ink)
-      set(tx, ty, [210, 200, 90])
-      set(tx, ty - 1, [240, 230, 140])
+    // Thick ink outline ring
+    for (let y = 11; y < 37; y++) {
+      for (let x = 5; x < 37; x++) {
+        const nx = (x - 21) / 14.8
+        const ny = (y - 24) / 12.5
+        const d = nx * nx + ny * ny
+        if (d <= 1.05 && d > 0.72) set(x, y, ink)
+      }
     }
-    // stem
-    rect(set, 13, 0, 3, 5, ink)
-    rect(set, 13, 1, 3, 3, [90, 55, 25])
+
+    /** Axis-aligned / diagonal chunky triangle spike. */
+    const spikeUp = (bx: number, by: number, h: number, w: number) => {
+      for (let i = 0; i <= h; i++) {
+        const half = Math.max(0, Math.floor((w / 2) * (1 - i / h)))
+        for (let o = -half; o <= half; o++) {
+          const edge = o === -half || o === half || i === 0
+          let c: RGB = edge ? ink : i < h * 0.3 ? spikeL : i > h * 0.7 ? spikeD : spike
+          if (half === 0) c = tip
+          set(bx + o, by - i, c)
+        }
+      }
+      set(bx, by - h, tip)
+    }
+    const spikeDown = (bx: number, by: number, h: number, w: number) => {
+      for (let i = 0; i <= h; i++) {
+        const half = Math.max(0, Math.floor((w / 2) * (1 - i / h)))
+        for (let o = -half; o <= half; o++) {
+          const edge = o === -half || o === half || i === 0
+          set(bx + o, by + i, edge || half === 0 ? (half === 0 ? tip : ink) : spikeD)
+        }
+      }
+    }
+    const spikeLeft = (bx: number, by: number, h: number, w: number) => {
+      for (let i = 0; i <= h; i++) {
+        const half = Math.max(0, Math.floor((w / 2) * (1 - i / h)))
+        for (let o = -half; o <= half; o++) {
+          const edge = o === -half || o === half
+          set(bx - i, by + o, edge || half === 0 ? (half === 0 ? tip : ink) : i < 2 ? spikeL : spike)
+        }
+      }
+    }
+    const spikeRight = (bx: number, by: number, h: number, w: number) => {
+      for (let i = 0; i <= h; i++) {
+        const half = Math.max(0, Math.floor((w / 2) * (1 - i / h)))
+        for (let o = -half; o <= half; o++) {
+          const edge = o === -half || o === half
+          set(bx + i, by + o, edge || half === 0 ? (half === 0 ? tip : ink) : i < 2 ? spikeL : spike)
+        }
+      }
+    }
+    const spikeDiag = (bx: number, by: number, len: number, sx: number, sy: number) => {
+      for (let i = 0; i <= len; i++) {
+        const t = i / len
+        const half = Math.max(0, Math.floor(2.5 * (1 - t)))
+        const cx = bx + sx * i
+        const cy = by + sy * i
+        for (let o = -half; o <= half; o++) {
+          set(cx + o, cy, ink)
+          set(cx, cy + o, ink)
+        }
+        const c: RGB = half === 0 ? tip : t < 0.3 ? spikeL : t > 0.65 ? spikeD : spike
+        set(cx, cy, c)
+        if (half > 0) {
+          set(cx - sx, cy, spikeL)
+          set(cx, cy - sy, spikeD)
+        }
+      }
+      set(bx + sx * len, by + sy * len, tip)
+    }
+
+    spikeUp(21, 14, 10, 8)
+    spikeDiag(13, 15, 7, -1, -1)
+    spikeDiag(29, 15, 7, 1, -1)
+    spikeLeft(10, 22, 8, 6)
+    spikeRight(32, 22, 8, 6)
+    spikeDiag(12, 30, 6, -1, 1)
+    spikeDiag(30, 30, 6, 1, 1)
+    spikeDown(21, 32, 6, 6)
+    spikeDiag(17, 17, 5, -1, -1)
+    spikeDiag(25, 17, 5, 1, -1)
+
+    // Plastic highlight sheen
+    rect(set, 13, 17, 6, 4, shellL)
+    set(14, 18, [230, 255, 170])
+    set(15, 17, [255, 255, 220])
+
+    // Stem
+    rect(set, 18, 2, 6, 9, ink)
+    rect(set, 19, 3, 4, 7, stem)
+    rect(set, 20, 4, 2, 4, stemL)
+    set(21, 2, tip)
   })
 
   paint(scene, 'shadow-blob', 48, 16, (set) => {

@@ -1,6 +1,6 @@
 /**
- * Self-made MIDI/chip WebAudio — Japanese riverside vibe (Goemon-ish),
- * SFX matched to on-screen meaning (no copyright assets).
+ * Warm riverside BGM + soft SFX (Flash / phone-game feel — not MIDI chip square).
+ * Original WebAudio composition; no copyright samples.
  */
 
 let ctx: AudioContext | null = null
@@ -33,7 +33,7 @@ export function setMuted(next: boolean) {
     /* ignore */
   }
   if (master) {
-    master.gain.value = muted ? 0 : 0.45
+    master.gain.value = muted ? 0 : 0.42
   }
   if (muted) stopBgm()
   else {
@@ -51,7 +51,7 @@ function ac(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext()
     master = ctx.createGain()
-    master.gain.value = muted ? 0 : 0.45
+    master.gain.value = muted ? 0 : 0.42
     master.connect(ctx.destination)
   }
   return ctx
@@ -66,8 +66,8 @@ function ensureRunning() {
 function tone(
   freq: number,
   dur: number,
-  type: OscillatorType = 'square',
-  vol = 0.28,
+  type: OscillatorType = 'sine',
+  vol = 0.22,
   slideTo?: number,
   delay = 0,
 ) {
@@ -82,15 +82,15 @@ function tone(
     o.frequency.exponentialRampToValueAtTime(Math.max(20, slideTo), t0 + dur)
   }
   g.gain.setValueAtTime(0.0001, t0)
-  g.gain.exponentialRampToValueAtTime(vol, t0 + 0.008)
+  g.gain.exponentialRampToValueAtTime(vol, t0 + 0.012)
   g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur)
   o.connect(g)
   g.connect(master!)
   o.start(t0)
-  o.stop(t0 + dur + 0.03)
+  o.stop(t0 + dur + 0.04)
 }
 
-function noise(dur: number, vol = 0.16, delay = 0, freq = 1400) {
+function noise(dur: number, vol = 0.12, delay = 0, freq = 1400) {
   if (muted) return
   const c = ensureRunning()
   const t0 = c.currentTime + delay
@@ -113,7 +113,7 @@ function noise(dur: number, vol = 0.16, delay = 0, freq = 1400) {
   src.stop(t0 + dur + 0.03)
 }
 
-/** Soft “voice-ish” formant blip — painful uh / die moan (chip, not sample). */
+/** Soft voice-ish formant — hurt / die (warm, not chip). */
 function voiceUh(kind: 'hurt' | 'die') {
   if (muted) return
   const c = ensureRunning()
@@ -121,34 +121,32 @@ function voiceUh(kind: 'hurt' | 'die') {
   const o = c.createOscillator()
   const o2 = c.createOscillator()
   const g = c.createGain()
-  o.type = 'sawtooth'
+  o.type = 'sine'
   o2.type = 'triangle'
   if (kind === 'hurt') {
-    // Short painful “uh!”
-    o.frequency.setValueAtTime(220, t0)
-    o.frequency.exponentialRampToValueAtTime(140, t0 + 0.18)
-    o2.frequency.setValueAtTime(440, t0)
-    o2.frequency.exponentialRampToValueAtTime(280, t0 + 0.18)
+    o.frequency.setValueAtTime(210, t0)
+    o.frequency.exponentialRampToValueAtTime(130, t0 + 0.2)
+    o2.frequency.setValueAtTime(420, t0)
+    o2.frequency.exponentialRampToValueAtTime(260, t0 + 0.2)
     g.gain.setValueAtTime(0.0001, t0)
-    g.gain.exponentialRampToValueAtTime(0.22, t0 + 0.02)
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.22)
+    g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.02)
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.24)
     o.start(t0)
     o2.start(t0)
-    o.stop(t0 + 0.25)
-    o2.stop(t0 + 0.25)
+    o.stop(t0 + 0.28)
+    o2.stop(t0 + 0.28)
   } else {
-    // Longer poor / sad die moan
-    o.frequency.setValueAtTime(180, t0)
-    o.frequency.exponentialRampToValueAtTime(70, t0 + 0.55)
-    o2.frequency.setValueAtTime(270, t0)
-    o2.frequency.exponentialRampToValueAtTime(90, t0 + 0.55)
+    o.frequency.setValueAtTime(170, t0)
+    o.frequency.exponentialRampToValueAtTime(65, t0 + 0.6)
+    o2.frequency.setValueAtTime(255, t0)
+    o2.frequency.exponentialRampToValueAtTime(85, t0 + 0.6)
     g.gain.setValueAtTime(0.0001, t0)
-    g.gain.exponentialRampToValueAtTime(0.2, t0 + 0.04)
-    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.65)
+    g.gain.exponentialRampToValueAtTime(0.16, t0 + 0.04)
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.7)
     o.start(t0)
     o2.start(t0)
-    o.stop(t0 + 0.7)
-    o2.stop(t0 + 0.7)
+    o.stop(t0 + 0.75)
+    o2.stop(t0 + 0.75)
   }
   o.connect(g)
   o2.connect(g)
@@ -156,93 +154,81 @@ function voiceUh(kind: 'hurt' | 'die') {
 }
 
 export const SFX = {
-  /** Jump whoosh — rising chip */
   jump: () => {
-    tone(480, 0.08, 'square', 0.2, 320)
-    tone(720, 0.05, 'triangle', 0.1)
+    tone(420, 0.1, 'triangle', 0.14, 280)
+    tone(640, 0.06, 'sine', 0.08)
   },
-  land: () => noise(0.05, 0.12, 0, 900),
-  /** Attack swing / gun fire — sharp whoosh into hit ready */
+  land: () => noise(0.05, 0.09, 0, 700),
   swing: () => {
-    noise(0.05, 0.14, 0, 2200)
-    tone(280, 0.07, 'sawtooth', 0.18, 90)
+    noise(0.05, 0.1, 0, 1600)
+    tone(260, 0.08, 'triangle', 0.12, 80)
   },
-  /** Solid hit — wooden/metal impact (hitting) */
   hit: () => {
-    noise(0.045, 0.22, 0, 800)
-    tone(180, 0.06, 'square', 0.28)
-    tone(90, 0.1, 'triangle', 0.16, 50)
-    tone(520, 0.04, 'square', 0.12)
+    noise(0.04, 0.16, 0, 700)
+    tone(170, 0.07, 'triangle', 0.2)
+    tone(90, 0.11, 'sine', 0.12, 50)
   },
-  /** Painful uh when hero is hurt */
   hurt: () => {
     voiceUh('hurt')
-    noise(0.06, 0.1, 0, 600)
+    noise(0.05, 0.08, 0, 500)
   },
-  /** Poor / sad die effect */
   die: () => {
     voiceUh('die')
-    tone(160, 0.35, 'triangle', 0.12, 55)
-    noise(0.12, 0.08, 0.1, 400)
+    tone(150, 0.4, 'sine', 0.1, 50)
+    noise(0.12, 0.06, 0.1, 350)
   },
   spike: () => {
-    noise(0.1, 0.16, 0, 700)
-    tone(100, 0.14, 'square', 0.18, 45)
+    noise(0.1, 0.12, 0, 600)
+    tone(95, 0.14, 'triangle', 0.14, 40)
   },
   kill: () => {
-    tone(660, 0.06, 'square', 0.18)
-    tone(990, 0.1, 'triangle', 0.14, 440)
+    tone(620, 0.07, 'sine', 0.12)
+    tone(930, 0.12, 'triangle', 0.1, 400)
   },
   boss: () => {
-    tone(110, 0.28, 'sawtooth', 0.24, 55)
-    tone(165, 0.22, 'square', 0.14)
+    tone(100, 0.3, 'triangle', 0.18, 50)
+    tone(150, 0.24, 'sine', 0.1)
   },
-  /**
-   * Stage clear — short congratulations fanfare (~3s), Japanese festival cadence.
-   * Duck BGM briefly while it plays.
-   */
   win: () => {
     const c = ensureRunning()
     fanfareUntil = c.currentTime + 3.2
-    // Congrats phrase (major pentatonic climb + resolve)
     const notes: Array<[number, number, number]> = [
-      [0.0, 523, 0.18],
-      [0.16, 659, 0.18],
-      [0.32, 784, 0.18],
-      [0.48, 1046, 0.28],
-      [0.85, 784, 0.14],
-      [1.0, 880, 0.14],
-      [1.15, 988, 0.14],
-      [1.35, 1175, 0.35],
-      [1.85, 1046, 0.2],
-      [2.1, 1318, 0.45],
-      [2.55, 1046, 0.5],
+      [0.0, 523, 0.2],
+      [0.18, 659, 0.2],
+      [0.36, 784, 0.2],
+      [0.54, 1046, 0.32],
+      [0.95, 784, 0.16],
+      [1.12, 880, 0.16],
+      [1.3, 988, 0.16],
+      [1.52, 1175, 0.38],
+      [2.0, 1046, 0.22],
+      [2.25, 1318, 0.5],
+      [2.7, 1046, 0.55],
     ]
     for (const [d, f, dur] of notes) {
-      tone(f, dur, 'square', 0.2, undefined, d)
-      tone(f * 1.5, dur * 0.9, 'triangle', 0.1, undefined, d)
+      tone(f, dur, 'sine', 0.14, undefined, d)
+      tone(f * 1.5, dur * 0.9, 'triangle', 0.07, undefined, d)
     }
-    noise(0.08, 0.08, 2.5, 2000)
+    noise(0.08, 0.05, 2.5, 1800)
   },
   lose: () => {
     SFX.die()
-    tone(200, 0.4, 'sawtooth', 0.12, 70)
+    tone(190, 0.45, 'triangle', 0.1, 65)
   },
-  step: () => noise(0.025, 0.05, 0, 1100),
+  step: () => noise(0.022, 0.035, 0, 900),
   coin: () => {
-    tone(988, 0.07, 'square', 0.16)
-    tone(1480, 0.12, 'triangle', 0.12)
+    tone(988, 0.08, 'sine', 0.12)
+    tone(1480, 0.14, 'triangle', 0.09)
   },
   continue: () => {
-    tone(523, 0.08, 'square', 0.18)
-    tone(784, 0.1, 'triangle', 0.16)
-    tone(1046, 0.16, 'square', 0.14, undefined, 0.09)
+    tone(523, 0.09, 'sine', 0.12)
+    tone(784, 0.12, 'triangle', 0.1)
+    tone(1046, 0.18, 'sine', 0.1, undefined, 0.1)
   },
 }
 
 /**
- * 熱血 chip BGM — denser notes, snare drive, bass + harmony + call-response.
- * Original chip composition (not a rip).
+ * Warm riverside pad BGM — soft sine/triangle, gentle pulse (phone/Flash vibe).
  */
 export function startBgm() {
   if (bgmPlaying || muted) return
@@ -250,119 +236,93 @@ export function startBgm() {
   bgmPlaying = true
   bgmNodes = []
 
-  const tempo = 148
+  const tempo = 92
   const beat = 60 / tempo
-  // Energetic minor/pentatonic rush — more notes per bar
+  // Pentatonic riverside melody — slower, airy
   const melody: Array<[number, number]> = [
-    [0, 523], [0.5, 587], [1, 698], [1.5, 784],
-    [2, 698], [2.5, 587], [3, 523], [3.5, 466],
-    [4, 523], [4.5, 698], [5, 784], [5.5, 880],
-    [6, 784], [6.5, 698], [7, 587], [7.5, 523],
-    [8, 659], [8.5, 784], [9, 880], [9.5, 988],
-    [10, 880], [10.5, 784], [11, 698], [11.5, 659],
-    [12, 523], [12.5, 587], [13, 698], [13.5, 784],
-    [14, 932], [14.5, 880], [15, 784], [15.5, 698],
+    [0, 392], [1.5, 440], [3, 523], [4.5, 494],
+    [6, 440], [7.5, 392], [9, 349], [10.5, 392],
+    [12, 440], [13.5, 523], [15, 587], [16.5, 523],
+    [18, 494], [19.5, 440], [21, 392], [22.5, 349],
   ]
-  const counter: Array<[number, number]> = [
-    [0, 392], [2, 349], [4, 440], [6, 392],
-    [8, 466], [10, 440], [12, 392], [14, 349],
-  ]
-  const bass = [130.81, 130.81, 146.83, 130.81, 174.61, 164.81, 146.83, 130.81] as const
-  // Held triad pads (root–third–fifth) so it isn't a bare monophonic line.
-  const chords: Array<[number, number, number, number]> = [
-    [0, 261.63, 329.63, 392.0],
-    [4, 220.0, 277.18, 329.63],
-    [8, 293.66, 349.23, 440.0],
-    [12, 246.94, 311.13, 369.99],
+  const bass = [98, 98, 110, 98, 130.81, 123.47, 110, 98] as const
+  const pads: Array<[number, number, number, number]> = [
+    [0, 196, 247, 294],
+    [8, 175, 220, 262],
+    [16, 220, 277, 330],
   ]
 
   const scheduleLoop = (startAt: number) => {
     if (!bgmPlaying || !master) return
-    const bar = beat * 16
+    const bar = beat * 24
     const duck = startAt < fanfareUntil
-    const melVol = duck ? 0.02 : 0.09
-    const bassVol = duck ? 0.02 : 0.07
-    const ctrVol = duck ? 0.01 : 0.05
-    const padVol = duck ? 0.008 : 0.035
+    const melVol = duck ? 0.015 : 0.055
+    const bassVol = duck ? 0.012 : 0.045
+    const padVol = duck ? 0.008 : 0.028
 
-    for (const [i, f] of melody) {
-      const t = startAt + i * beat
-      const o = c.createOscillator()
-      const g = c.createGain()
-      o.type = 'square'
-      o.frequency.value = f
-      g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(melVol, t + 0.012)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.45)
-      o.connect(g)
-      g.connect(master)
-      o.start(t)
-      o.stop(t + beat * 0.5)
-      bgmNodes.push(o, g)
-      const h = c.createOscillator()
-      const hg = c.createGain()
-      h.type = 'triangle'
-      h.frequency.value = f * 1.5
-      hg.gain.setValueAtTime(0.0001, t)
-      hg.gain.exponentialRampToValueAtTime(melVol * 0.35, t + 0.012)
-      hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.4)
-      h.connect(hg)
-      hg.connect(master)
-      h.start(t)
-      h.stop(t + beat * 0.45)
-      bgmNodes.push(h, hg)
-    }
-    for (const [i, r, third, fifth] of chords) {
+    for (const [i, r, third, fifth] of pads) {
       const t = startAt + i * beat
       for (const f of [r, third, fifth]) {
         const o = c.createOscillator()
         const g = c.createGain()
-        o.type = 'triangle'
+        o.type = 'sine'
         o.frequency.value = f
         g.gain.setValueAtTime(0.0001, t)
-        g.gain.exponentialRampToValueAtTime(padVol, t + 0.05)
-        g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 3.6)
+        g.gain.exponentialRampToValueAtTime(padVol, t + 0.2)
+        g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 7.5)
         o.connect(g)
         g.connect(master)
         o.start(t)
-        o.stop(t + beat * 3.8)
+        o.stop(t + beat * 8)
         bgmNodes.push(o, g)
       }
     }
-    for (const [i, f] of counter) {
+    for (const [i, f] of melody) {
       const t = startAt + i * beat
       const o = c.createOscillator()
       const g = c.createGain()
-      o.type = 'sawtooth'
+      o.type = 'triangle'
       o.frequency.value = f
       g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(ctrVol, t + 0.02)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.4)
+      g.gain.exponentialRampToValueAtTime(melVol, t + 0.04)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.2)
       o.connect(g)
       g.connect(master)
       o.start(t)
-      o.stop(t + beat * 1.5)
+      o.stop(t + beat * 1.35)
       bgmNodes.push(o, g)
+      const h = c.createOscillator()
+      const hg = c.createGain()
+      h.type = 'sine'
+      h.frequency.value = f * 2
+      hg.gain.setValueAtTime(0.0001, t)
+      hg.gain.exponentialRampToValueAtTime(melVol * 0.25, t + 0.05)
+      hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.9)
+      h.connect(hg)
+      hg.connect(master)
+      h.start(t)
+      h.stop(t + beat)
+      bgmNodes.push(h, hg)
     }
     for (let i = 0; i < bass.length; i++) {
-      const t = startAt + i * beat * 2
+      const t = startAt + i * beat * 3
       const o = c.createOscillator()
       const g = c.createGain()
-      o.type = 'square'
+      o.type = 'sine'
       o.frequency.value = bass[i]!
       g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(bassVol, t + 0.015)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.6)
+      g.gain.exponentialRampToValueAtTime(bassVol, t + 0.03)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 2.4)
       o.connect(g)
       g.connect(master)
       o.start(t)
-      o.stop(t + beat * 1.7)
+      o.stop(t + beat * 2.6)
       bgmNodes.push(o, g)
     }
-    // Kick + snare drive
-    for (let i = 0; i < 16; i++) {
+    // Soft shaker pulse (not snare kit)
+    for (let i = 0; i < 24; i += 2) {
       const t = startAt + i * beat
-      const n = Math.floor(c.sampleRate * (i % 2 === 0 ? 0.07 : 0.045))
+      const n = Math.floor(c.sampleRate * 0.04)
       const buf = c.createBuffer(1, n, c.sampleRate)
       const data = buf.getChannelData(0)
       for (let k = 0; k < n; k++) data[k] = (Math.random() * 2 - 1) * (1 - k / n)
@@ -370,15 +330,15 @@ export function startBgm() {
       src.buffer = buf
       const g = c.createGain()
       const f = c.createBiquadFilter()
-      f.type = i % 2 === 0 ? 'lowpass' : 'bandpass'
-      f.frequency.value = i % 2 === 0 ? (i % 4 === 0 ? 160 : 220) : 1800
-      g.gain.setValueAtTime(duck ? 0.03 : i % 2 === 0 ? 0.12 : 0.08, t)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + (i % 2 === 0 ? 0.09 : 0.06))
+      f.type = 'highpass'
+      f.frequency.value = i % 4 === 0 ? 900 : 1400
+      g.gain.setValueAtTime(duck ? 0.015 : i % 4 === 0 ? 0.04 : 0.025, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05)
       src.connect(f)
       f.connect(g)
       g.connect(master)
       src.start(t)
-      src.stop(t + 0.12)
+      src.stop(t + 0.08)
       bgmNodes.push(src, g)
     }
     const next = startAt + bar

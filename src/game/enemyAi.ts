@@ -276,7 +276,7 @@ export type AiCtx = {
 function applyPose(e: Creep) {
   // Texture-baked scale 1 + angle 0 — lean/rotation smears NEAREST mid-sprite.
   const lock = () => {
-    e.setScale(Math.round(e.baseScale) || 1)
+    e.setScale(e.baseScale || 1)
     e.setAngle(0)
   }
   if (e.state === 'die') {

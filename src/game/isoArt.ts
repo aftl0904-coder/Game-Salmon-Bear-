@@ -63,25 +63,29 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
-  // Seamless flat bank tile — wrap-safe L/R (no left-only highlight that reads as a seam).
+  // Seamless play-road tile — brown–yellow dirt so lanes read apart from pale BG.
   paint(scene, 'blk-grass', 32, 40, (set) => {
-    for (let y = 12; y < 36; y++) {
-      const t = (y - 12) / 24
-      rect(set, 0, y, 32, 1, shadeRGB([145, 95, 55], 1.05 - t * 0.35))
+    // Cliff / bank face under the road
+    for (let y = 14; y < 36; y++) {
+      const t = (y - 14) / 22
+      rect(set, 0, y, 32, 1, shadeRGB([128, 82, 42], 1.05 - t * 0.38))
     }
-    for (let y = 16; y < 34; y += 4) {
-      rect(set, 0, y, 32, 1, [100, 65, 38], 120)
+    for (let y = 18; y < 34; y += 4) {
+      rect(set, 0, y, 32, 1, [92, 58, 30], 130)
     }
+    // Road surface — warm brown-yellow packed earth
     for (let y = 4; y < 14; y++) {
       const t = (y - 4) / 10
-      rect(set, 0, y, 32, 1, shadeRGB([75, 175, 85], 1.15 - t * 0.4))
+      rect(set, 0, y, 32, 1, shadeRGB([198, 158, 72], 1.12 - t * 0.28))
     }
-    rect(set, 0, 4, 32, 3, [130, 210, 110])
-    rect(set, 0, 12, 32, 3, [42, 115, 50])
-    // Speckles inset from edges so abutting tiles don't invent a vertical joint.
-    set(8, 8, [255, 255, 255])
-    set(16, 7, [255, 160, 190])
-    set(24, 9, [255, 220, 80])
+    rect(set, 0, 4, 32, 2, [232, 196, 108])
+    rect(set, 0, 12, 32, 2, [148, 102, 48])
+    // Dust / pebble speckles (inset from edges)
+    set(7, 6, [240, 210, 130])
+    set(15, 8, [170, 120, 55])
+    set(22, 7, [255, 230, 150])
+    set(11, 10, [160, 110, 50])
+    set(26, 9, [220, 180, 90])
     rect(set, 0, 36, 32, 3, [32, 22, 14], 255)
     rect(set, 0, 38, 32, 1, [20, 14, 10], 255)
   })
@@ -656,39 +660,96 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(7, 5, fishD)
   })
 
-  // Pack3 A-03: ambient bees — thin outline, readable bee detail (no combat)
-  paint(scene, 'fx-ambient-bee', 16, 14, (set) => {
-    const ink: RGB = [40, 28, 16]
-    const gold: RGB = [250, 200, 50]
-    const goldD: RGB = [210, 150, 30]
-    const stripe: RGB = [36, 28, 18]
-    const wing: RGB = [210, 235, 255]
-    // thin body outline
-    rect(set, 5, 5, 7, 5, ink)
-    rect(set, 6, 6, 5, 3, gold)
-    set(7, 6, stripe)
-    set(9, 6, stripe)
-    set(7, 7, goldD)
-    set(8, 7, gold)
-    set(9, 7, goldD)
+  // Ambient bee — Flash/phone chunky cel (thick ink, highlight)
+  paint(scene, 'fx-ambient-bee', 18, 16, (set) => {
+    const ink: RGB = [24, 16, 10]
+    const gold: RGB = [255, 210, 55]
+    const goldL: RGB = [255, 240, 140]
+    const goldD: RGB = [200, 140, 30]
+    const stripe: RGB = [32, 24, 16]
+    const wing: RGB = [200, 230, 255]
+    const wingL: RGB = [240, 250, 255]
+    // body outline + fill
+    rect(set, 4, 5, 10, 7, ink)
+    rect(set, 5, 6, 8, 5, gold)
+    rect(set, 6, 6, 3, 2, goldL)
+    set(7, 7, stripe)
+    set(9, 7, stripe)
+    set(8, 8, goldD)
+    set(10, 8, goldD)
     // head
-    rect(set, 11, 5, 3, 3, ink)
-    set(12, 6, gold)
-    set(12, 5, [255, 250, 220])
-    // antennae (1px thin)
-    set(12, 3, ink)
-    set(13, 2, ink)
-    set(11, 3, ink)
+    rect(set, 12, 5, 5, 5, ink)
+    rect(set, 13, 6, 3, 3, gold)
+    set(14, 6, goldL)
+    set(14, 7, [255, 250, 220])
+    // antennae
+    set(14, 3, ink)
+    set(15, 2, ink)
+    set(13, 3, ink)
+    set(12, 2, ink)
+    // chunky wings
+    rect(set, 2, 3, 5, 4, ink)
+    rect(set, 3, 4, 3, 2, wing)
+    set(4, 4, wingL)
+    rect(set, 10, 3, 5, 4, ink)
+    rect(set, 11, 4, 3, 2, wing)
+    set(12, 4, wingL)
+    // stinger
+    set(4, 11, ink)
+    set(3, 12, ink)
+  })
+
+  // Ambient butterfly — chunky Flash wings
+  paint(scene, 'fx-ambient-butterfly', 22, 16, (set) => {
+    const ink: RGB = [40, 20, 50]
+    const wing: RGB = [255, 120, 180]
+    const wingL: RGB = [255, 200, 230]
+    const wingD: RGB = [190, 50, 120]
+    const body: RGB = [50, 32, 24]
+    // left upper
+    rect(set, 1, 2, 8, 6, ink)
+    rect(set, 2, 3, 6, 4, wing)
+    set(3, 3, wingL)
+    set(4, 4, wingD)
+    // left lower
+    rect(set, 2, 8, 7, 5, ink)
+    rect(set, 3, 9, 5, 3, wing)
+    set(4, 9, wingL)
+    // right upper
+    rect(set, 13, 2, 8, 6, ink)
+    rect(set, 14, 3, 6, 4, wing)
+    set(17, 3, wingL)
+    set(16, 4, wingD)
+    // right lower
+    rect(set, 13, 8, 7, 5, ink)
+    rect(set, 14, 9, 5, 3, wing)
+    set(16, 9, wingL)
+    // body
+    rect(set, 9, 3, 4, 10, ink)
+    rect(set, 10, 4, 2, 8, body)
     set(10, 2, ink)
-    // wings thin
-    set(4, 4, wing)
-    set(3, 3, wing)
-    set(5, 3, wing)
-    set(10, 4, wing)
-    set(11, 3, wing)
-    set(9, 3, wing)
-    // stinger tip
-    set(5, 9, ink)
+    set(11, 2, ink)
+    set(8, 1, ink)
+    set(13, 1, ink)
+  })
+
+  // Ambient bird — chunky V silhouette with cel body
+  paint(scene, 'fx-ambient-bird', 22, 12, (set) => {
+    const ink: RGB = [36, 32, 48]
+    const body: RGB = [110, 100, 125]
+    const bodyL: RGB = [160, 150, 175]
+    for (let i = 0; i < 8; i++) {
+      const y = 5 - Math.floor(i / 2)
+      rect(set, 2 + i, y, 2, 2, ink)
+      set(3 + i, y + 1, body)
+      rect(set, 18 - i, y, 2, 2, ink)
+      set(18 - i, y + 1, body)
+    }
+    rect(set, 8, 4, 6, 4, ink)
+    rect(set, 9, 5, 4, 2, body)
+    set(10, 5, bodyL)
+    set(11, 8, ink)
+    set(12, 9, ink)
   })
 
   paint(scene, 'art-enemy-barrel', 40, 48, (set) => {

@@ -498,9 +498,10 @@ export function setPixelPose(
 ) {
   const sx = opts.squashX ?? 1
   const sy = opts.squashY ?? 1
-  const qx = Math.round(baseScale * sx)
-  const qy = Math.round(baseScale * sy)
-  spr.setScale(qx === 0 ? 1 : qx, qy === 0 ? 1 : qy)
+  // Keep fractional display scales (heroes/enemies are ≪ 1 after size pack).
+  const qx = Math.max(0.05, baseScale * sx)
+  const qy = Math.max(0.05, baseScale * sy)
+  spr.setScale(qx, qy)
   spr.setAngle(0)
   void opts.angle
 }

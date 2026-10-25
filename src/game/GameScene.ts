@@ -68,10 +68,13 @@ import {
   HERO_SIZE_MUL,
   GIRL_SCALE_MUL,
   PET_HEIGHT_FRAC,
+  PROJ_DISPLAY_SCALE,
   BG_PALE_TINT,
   BG_MOUNT_TINT,
+  BG_MOUNT_ALPHA,
   BG_MID_TINT,
   BG_NEAR_TINT,
+  sx as stageX,
   clampLane,
   laneY,
   sameLane,
@@ -196,8 +199,8 @@ export class GameScene extends Phaser.Scene {
   /** Sparse parallax landmarks (not tiled mountain/village bands). */
   private bgClouds: Phaser.GameObjects.Image[] = []
   private bgMounts: Phaser.GameObjects.Image[] = []
-  /** Pack3 A-03: decorative bees — no physics / no damage. */
-  private ambientBees: Phaser.GameObjects.Image[] = []
+  /** Decorative sky critters (bees / butterflies / birds) — no physics / no damage. */
+  private ambientCritters: Phaser.GameObjects.Image[] = []
   /** Entity registry — players/enemies/projectiles live here, not in HUD. */
   private entities = new EntityManager()
   private debugOverlay!: DebugOverlay
@@ -233,7 +236,7 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('winScreenShown', false)
     this.registry.set('leavingToMenu', false)
     this.entities.clear()
-    this.ambientBees = []
+    this.ambientCritters = []
     this.specialCharges = 0
     // Scene instances survive restart — reset debug before any frame can
     // hit World.postUpdate with a destroyed/null debugGraphic.
@@ -563,7 +566,7 @@ export class GameScene extends Phaser.Scene {
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
     this.animateBg()
-    this.tickAmbientBees(dt)
+    this.tickAmbientCritters(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -944,7 +947,7 @@ export class GameScene extends Phaser.Scene {
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     const jet = this.honeys.create(h.x, h.y - 28, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.7).setDepth(actorDepth('shot', h.lane, h.y))
+    jet.setScale(1.7 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y))
     enableActorSprite(jet)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     const ang = Phaser.Math.Angle.Between(h.x, h.y - 28, best.x, best.y - 20)
@@ -993,11 +996,12 @@ export class GameScene extends Phaser.Scene {
     this.tweens.killTweensOf(h)
     h.setAngle(0)
     h.setScale(h.baseScale)
-    // Muzzle at torso — was y-88 (missed bottom-lane bodies).
-    const muzzleX = h.x + h.facing * 48
-    const muzzleY = h.y - 42
+    // Muzzle at torso — scaled to hero display size.
+    const hgt = Math.max(16, h.displayHeight || 32)
+    const muzzleX = h.x + h.facing * hgt * 0.55
+    const muzzleY = h.y - hgt * 0.55
     const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    shot.setScale(1.5 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
@@ -1432,9 +1436,9 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Pale opaque BG — colour-shift only (no transparency), so far objects look distant. */
-  private styleBgPale(img: Phaser.GameObjects.Image, tint: number = BG_MID_TINT) {
-    img.setAlpha(1).setTint(tint)
+  /** Pale BG — colour-shift; mountains may also use fog alpha for distance. */
+  private styleBgPale(img: Phaser.GameObjects.Image, tint: number = BG_MID_TINT, alpha = 1) {
+    img.setAlpha(alpha).setTint(tint)
   }
 
   /**
@@ -1481,54 +1485,106 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Sky bees: fly across the camera, leave, then a new one enters randomly. */
-  private spawnAmbientBees() {
-    this.ambientBees = []
-    if (!this.textures.exists('fx-ambient-bee')) return
-    for (let i = 0; i < 4; i++) this.spawnOneBee(true)
+  /**
+   * Sky critters: many bees + a few butterflies & birds.
+   * Decorative only — no physics / damage.
+   */
+  private spawnAmbientCritters() {
+    this.ambientCritters = []
+    // Bees dominate the sky traffic
+    for (let i = 0; i < 10; i++) this.spawnOneCritter('bee', true)
+    for (let i = 0; i < 3; i++) this.spawnOneCritter('butterfly', true)
+    for (let i = 0; i < 2; i++) this.spawnOneCritter('bird', true)
   }
 
-  private spawnOneBee(initial = false) {
-    if (!this.textures.exists('fx-ambient-bee')) return
+  private spawnOneCritter(kind: 'bee' | 'butterfly' | 'bird', initial = false) {
+    const key =
+      kind === 'butterfly'
+        ? 'fx-ambient-butterfly'
+        : kind === 'bird'
+          ? 'fx-ambient-bird'
+          : 'fx-ambient-bee'
+    if (!this.textures.exists(key)) {
+      if (kind !== 'bee' && this.textures.exists('fx-ambient-bee')) {
+        this.spawnOneCritter('bee', initial)
+      }
+      return
+    }
     const fromLeft = Math.random() < 0.5
-    const bee = this.add
-      .image(fromLeft ? -30 : 990, Phaser.Math.Between(28, 110), 'fx-ambient-bee')
+    const yMin = kind === 'bird' ? 18 : kind === 'butterfly' ? 40 : 28
+    const yMax = kind === 'bird' ? 70 : kind === 'butterfly' ? 130 : 120
+    const scale =
+      kind === 'bird'
+        ? Phaser.Math.FloatBetween(0.85, 1.25)
+        : kind === 'butterfly'
+          ? Phaser.Math.FloatBetween(1.0, 1.45)
+          : Phaser.Math.FloatBetween(1.15, 1.65)
+    const critter = this.add
+      .image(fromLeft ? -40 : 1000, Phaser.Math.Between(yMin, yMax), key)
       .setScrollFactor(0)
-      .setDepth(DEPTH.SKY + 2)
-      .setScale(Phaser.Math.FloatBetween(1.2, 1.7))
-      .setAlpha(1)
-      .setTint(BG_PALE_TINT)
-    const vx = fromLeft
-      ? Phaser.Math.FloatBetween(55, 95)
-      : -Phaser.Math.FloatBetween(55, 95)
-    bee.setData('vx', vx)
-    bee.setData('phase', Math.random() * Math.PI * 2)
-    bee.setData('amp', Phaser.Math.FloatBetween(6, 14))
-    bee.setData('baseY', bee.y)
-    bee.setData('life', initial ? Phaser.Math.Between(0, 4000) : 0)
-    enablePixelSprite(bee)
-    this.ambientBees.push(bee)
+      .setDepth(DEPTH.SKY + (kind === 'bird' ? 1 : 2))
+      .setScale(scale)
+      .setAlpha(kind === 'bird' ? 0.72 : 0.92)
+      .setTint(kind === 'bee' ? BG_PALE_TINT : 0xffffff)
+    const speed =
+      kind === 'bird'
+        ? Phaser.Math.FloatBetween(90, 140)
+        : kind === 'butterfly'
+          ? Phaser.Math.FloatBetween(35, 60)
+          : Phaser.Math.FloatBetween(55, 100)
+    const vx = fromLeft ? speed : -speed
+    critter.setData('kind', kind)
+    critter.setData('vx', vx)
+    critter.setData('phase', Math.random() * Math.PI * 2)
+    critter.setData(
+      'amp',
+      kind === 'bird'
+        ? Phaser.Math.FloatBetween(3, 8)
+        : kind === 'butterfly'
+          ? Phaser.Math.FloatBetween(10, 22)
+          : Phaser.Math.FloatBetween(6, 14),
+    )
+    critter.setData('baseY', critter.y)
+    critter.setData('wobble', kind === 'butterfly' ? 0.012 : kind === 'bird' ? 0.003 : 0.005)
+    enablePixelSprite(critter)
+    this.ambientCritters.push(critter)
   }
 
-  private tickAmbientBees(dt: number) {
+  private respawnAmbientKind(kind: 'bee' | 'butterfly' | 'bird') {
+    const delay =
+      kind === 'bee'
+        ? Phaser.Math.Between(200, 900)
+        : kind === 'butterfly'
+          ? Phaser.Math.Between(1200, 3200)
+          : Phaser.Math.Between(1800, 4500)
+    this.time.delayedCall(delay, () => {
+      if (!this.sys.isActive()) return
+      this.spawnOneCritter(kind, false)
+    })
+  }
+
+  private tickAmbientCritters(dt: number) {
     const t = this.time.now
-    for (let i = this.ambientBees.length - 1; i >= 0; i--) {
-      const bee = this.ambientBees[i]!
-      const vx = (bee.getData('vx') as number) || 60
-      const phase = (bee.getData('phase') as number) || 0
-      const amp = (bee.getData('amp') as number) || 8
-      const baseY = (bee.getData('baseY') as number) || bee.y
-      bee.x += (vx * dt) / 1000
-      bee.y = baseY + Math.sin(t * 0.005 + phase) * amp
-      bee.setFlipX(vx < 0)
-      // Fly away off the screen → despawn and spawn a fresh bee later.
-      if (bee.x < -60 || bee.x > 1020) {
-        bee.destroy()
-        this.ambientBees.splice(i, 1)
-        this.time.delayedCall(Phaser.Math.Between(400, 2200), () => {
-          if (!this.sys.isActive()) return
-          this.spawnOneBee(false)
-        })
+    for (let i = this.ambientCritters.length - 1; i >= 0; i--) {
+      const c = this.ambientCritters[i]!
+      const kind = (c.getData('kind') as 'bee' | 'butterfly' | 'bird') || 'bee'
+      const vx = (c.getData('vx') as number) || 60
+      const phase = (c.getData('phase') as number) || 0
+      const amp = (c.getData('amp') as number) || 8
+      const baseY = (c.getData('baseY') as number) || c.y
+      const wobble = (c.getData('wobble') as number) || 0.005
+      c.x += (vx * dt) / 1000
+      c.y = baseY + Math.sin(t * wobble + phase) * amp
+      c.setFlipX(vx < 0)
+      if (kind === 'butterfly') {
+        if (!c.getData('baseScale')) c.setData('baseScale', Math.abs(c.scaleX))
+        const flap = 1 + Math.sin(t * 0.018 + phase) * 0.1
+        c.setScale((c.getData('baseScale') as number) * flap)
+      }
+      if (c.x < -70 || c.x > 1040) {
+        c.destroy()
+        this.ambientCritters.splice(i, 1)
+        this.respawnAmbientKind(kind)
       }
     }
   }
@@ -1638,12 +1694,12 @@ export class GameScene extends Phaser.Scene {
       this.bgClouds.push(img)
     }
 
-    // Far mountains — modestly larger (~2.2×), pale fog so they sit far behind the road.
-    const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number }> = [
-      { key: 'lm-mount-2', x: 210, y: 278, s: 1.6 * 2.2, p: 0.05, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-1', x: 520, y: 288, s: 1.4 * 2.2, flip: true, p: 0.07, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-4', x: 820, y: 308, s: 1.5 * 2.2, p: 0.1, d: DEPTH.MOUNT_NEAR },
-      { key: 'lm-mount-3', x: 1120, y: 318, s: 1.3 * 2.2, flip: true, p: 0.12, d: DEPTH.MOUNT_NEAR },
+    // Far mountains — fog alpha + slow parallax so they read farther behind the road.
+    const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number; a: number }> = [
+      { key: 'lm-mount-2', x: 210, y: 268, s: 1.6 * 2.4, p: 0.02, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.85 },
+      { key: 'lm-mount-1', x: 520, y: 278, s: 1.4 * 2.4, flip: true, p: 0.03, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.9 },
+      { key: 'lm-mount-4', x: 820, y: 298, s: 1.5 * 2.3, p: 0.05, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA },
+      { key: 'lm-mount-3', x: 1120, y: 308, s: 1.3 * 2.3, flip: true, p: 0.06, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA * 1.05 },
     ]
     for (const m of mountSpecs) {
       if (!this.textures.exists(m.key)) continue
@@ -1654,33 +1710,32 @@ export class GameScene extends Phaser.Scene {
         .setDepth(m.d)
         .setScale(m.s)
         .setFlipX(!!m.flip)
-      this.styleBgPale(img, BG_MOUNT_TINT)
+      this.styleBgPale(img, BG_MOUNT_TINT, Math.min(0.55, m.a))
       img.setData('baseX', m.x)
       img.setData('parallax', m.p)
       enablePixelSprite(img)
       this.bgMounts.push(img)
     }
 
-    // Forest + cottages — restore original-ish scale; pale so the road reads clearly.
-    this.placeBgDecor(180, 'prop-tree3d', 1.1)
-    this.placeBgDecor(700, 'prop-tree3d', 1.0, true)
-    this.placeBgDecor(1400, 'prop-tree3d', 1.15)
-    this.placeBgDecor(1100, 'prop-house3d', 1.35)
-    this.placeBgDecor(2500, 'prop-tree3d', 1.05)
-    this.placeBgDecor(3800, 'prop-tree3d', 1.1, true)
-    this.placeBgDecor(5200, 'prop-house3d', 1.3)
-    this.placeBgDecor(6400, 'prop-tree3d', 1.2)
+    // Forest + cottages — positions scaled to shorter stage; pale vs brown-yellow road.
+    this.placeBgDecor(stageX(180), 'prop-tree3d', 1.1)
+    this.placeBgDecor(stageX(700), 'prop-tree3d', 1.0, true)
+    this.placeBgDecor(stageX(1400), 'prop-tree3d', 1.15)
+    this.placeBgDecor(stageX(1100), 'prop-house3d', 1.35)
+    this.placeBgDecor(stageX(2500), 'prop-tree3d', 1.05)
+    this.placeBgDecor(stageX(3800), 'prop-tree3d', 1.1, true)
+    this.placeBgDecor(stageX(5200), 'prop-house3d', 1.3)
+    this.placeBgDecor(stageX(6400), 'prop-tree3d', 1.2)
 
-    // Campsites — modest roadside props (not covering the path).
-    this.placeCampsite(520)
-    this.placeCampsite(2100)
-    this.placeCampsite(4200)
-    this.placeCampsite(6000)
+    this.placeCampsite(stageX(520))
+    this.placeCampsite(stageX(2100))
+    this.placeCampsite(stageX(4200))
+    this.placeCampsite(stageX(6000))
 
-    this.placeBgDecor(900, 'prop-owl', 1.15)
-    this.placeBgDecor(3400, 'prop-owl', 1.1, true)
+    this.placeBgDecor(stageX(900), 'prop-owl', 1.15)
+    this.placeBgDecor(stageX(3400), 'prop-owl', 1.1, true)
 
-    this.spawnAmbientBees()
+    this.spawnAmbientCritters()
     if (this.textures.exists('prop-torii')) {
       const arch = this.add
         .image(400, 300, 'prop-torii')
@@ -1716,14 +1771,14 @@ export class GameScene extends Phaser.Scene {
 
     this.layGroundRibbon(LANE_FLOOR_Y)
 
-    // Sparse spikes + 榴槤 traps（踩到 −1HP）+ honey jars along stage.
-    for (const x of [920, 2720, 4800]) {
+    // Sparse spikes + 榴槤 traps（踩到 −1HP）+ honey jars along shorter stage.
+    for (const x of [920, 2720, 4800].map(stageX)) {
       this.spikes(x, 3)
     }
-    for (const x of [1180, 2100, 3320, 4200, 5400, 6400]) {
+    for (const x of [1180, 2100, 3320, 4200, 5400, 6400].map(stageX)) {
       this.placeDurian(x)
     }
-    for (const x of [640, 1600, 2800, 4200, 5600, 6800]) {
+    for (const x of [640, 1600, 2800, 4200, 5600, 6800].map(stageX)) {
       this.spawnHoneyJar(x, laneY(LANE_DEFAULT) - 36)
     }
 
@@ -1989,7 +2044,7 @@ export class GameScene extends Phaser.Scene {
     const x = e.x + dir * 28
     const y = e.y - 36
     const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.4).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
+    shot.setScale(1.4 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
     enableActorSprite(shot)
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
@@ -2408,58 +2463,58 @@ export class GameScene extends Phaser.Scene {
    * unlockX = 玩家 leadX 達到才啟用（inactive 直到解鎖）。
    */
   private placeEnemies() {
-    // Wave 1 — elephant early; unlock after short walk. (+20% density vs prior pack)
+    // Wave 1 — elephant early; unlock after short walk. X scaled −25% stage.
     const w1 = [
-      this.mkEnemy(780, GROUND_Y, 'blocker', undefined, 'fish', 1),
-      this.mkEnemy(860, GROUND_Y, 'chaser', undefined, 'elephant', 3),
-      this.mkEnemy(940, GROUND_Y, 'chaser', undefined, 'fish', 0),
-      this.mkEnemy(1020, GROUND_Y, 'blocker', undefined, 'fish', 4),
-      this.mkEnemy(1100, GROUND_Y, 'chaser', undefined, 'elephant', 2),
-      this.mkEnemy(1180, GROUND_Y, 'chaser', undefined, 'fish', 3), // +20%
+      this.mkEnemy(stageX(780), GROUND_Y, 'blocker', undefined, 'fish', 1),
+      this.mkEnemy(stageX(860), GROUND_Y, 'chaser', undefined, 'elephant', 3),
+      this.mkEnemy(stageX(940), GROUND_Y, 'chaser', undefined, 'fish', 0),
+      this.mkEnemy(stageX(1020), GROUND_Y, 'blocker', undefined, 'fish', 4),
+      this.mkEnemy(stageX(1100), GROUND_Y, 'chaser', undefined, 'elephant', 2),
+      this.mkEnemy(stageX(1180), GROUND_Y, 'chaser', undefined, 'fish', 3),
     ]
-    for (const e of w1) this.deferEnemy(e, 620, 'wave1')
+    for (const e of w1) this.deferEnemy(e, stageX(620), 'wave1')
 
-    // Later waves — base list + ~20% extras mixed in.
     const later: Array<[number, EnemyKind, EnemySpecies | undefined, LaneId, number]> = [
       [1280, 'chaser', 'fish', 2, 1100],
       [1500, 'blocker', 'elephant', 4, 1100],
       [1180, 'ambusher', 'barrel', 0, 1100],
-      [1380, 'chaser', 'fish', 1, 1200], // +20%
+      [1380, 'chaser', 'fish', 1, 1200],
       [1750, 'ambusher', 'barrel', 0, 1550],
       [1980, 'chaser', 'elephant', 1, 1700],
       [2080, 'guardian', 'elephant', 2, 1850],
-      [2200, 'ambusher', 'barrel', 3, 1950], // +20%
+      [2200, 'ambusher', 'barrel', 3, 1950],
       [2400, 'interrupter', 'barrel', 1, 2100],
       [2680, 'guardian', 'elephant', 3, 2400],
-      [2900, 'chaser', 'fish', 4, 2600], // +20%
+      [2900, 'chaser', 'fish', 4, 2600],
       [3100, 'chaser', 'fish', 0, 2800],
       [3300, 'blocker', 'elephant', 2, 2900],
       [3500, 'ambusher', 'barrel', 4, 3100],
-      [3650, 'chaser', 'fish', 2, 3300], // +20%
+      [3650, 'chaser', 'fish', 2, 3300],
       [3800, 'chaser', 'elephant', 1, 3400],
       [4100, 'guardian', 'elephant', 3, 3700],
       [4400, 'interrupter', 'barrel', 0, 4000],
-      [4550, 'ambusher', 'barrel', 2, 4150], // +20%
+      [4550, 'ambusher', 'barrel', 2, 4150],
       [4700, 'chaser', 'fish', 2, 4300],
       [5000, 'blocker', 'elephant', 4, 4600],
       [5300, 'ambusher', 'barrel', 1, 4900],
-      [5450, 'chaser', 'fish', 0, 5050], // +20%
+      [5450, 'chaser', 'fish', 0, 5050],
       [5600, 'guardian', 'elephant', 2, 5200],
       [5900, 'chaser', 'fish', 3, 5500],
       [6200, 'blocker', 'elephant', 0, 5800],
     ]
     for (const [x, kind, sp, lane, unlock] of later) {
-      const e = this.mkEnemy(x, GROUND_Y, kind, kind === 'guardian' ? x : undefined, sp, lane)
-      this.deferEnemy(e, unlock, 'later')
+      const xx = stageX(x)
+      const e = this.mkEnemy(xx, GROUND_Y, kind, kind === 'guardian' ? xx : undefined, sp, lane)
+      this.deferEnemy(e, stageX(unlock), 'later')
     }
-    const a1 = this.mkEnemy(WORLD_W - 880, GROUND_Y, 'ambusher', undefined, 'barrel', 0)
-    const a2 = this.mkEnemy(WORLD_W - 480, GROUND_Y, 'ambusher', undefined, 'barrel', 1)
-    const a3 = this.mkEnemy(WORLD_W - 280, GROUND_Y, 'ambusher', undefined, 'barrel', 2)
-    const a4 = this.mkEnemy(WORLD_W - 680, GROUND_Y, 'ambusher', undefined, 'elephant', 4)
-    const a5 = this.mkEnemy(WORLD_W - 580, GROUND_Y, 'ambusher', undefined, 'fish', 3) // +20%
+    const a1 = this.mkEnemy(WORLD_W - stageX(880), GROUND_Y, 'ambusher', undefined, 'barrel', 0)
+    const a2 = this.mkEnemy(WORLD_W - stageX(480), GROUND_Y, 'ambusher', undefined, 'barrel', 1)
+    const a3 = this.mkEnemy(WORLD_W - stageX(280), GROUND_Y, 'ambusher', undefined, 'barrel', 2)
+    const a4 = this.mkEnemy(WORLD_W - stageX(680), GROUND_Y, 'ambusher', undefined, 'elephant', 4)
+    const a5 = this.mkEnemy(WORLD_W - stageX(580), GROUND_Y, 'ambusher', undefined, 'fish', 3)
     for (const a of [a1, a2, a3, a4, a5]) {
       a.altarAmbush = true
-      this.deferEnemy(a, WORLD_W - 1200, 'altar')
+      this.deferEnemy(a, WORLD_W - stageX(1200), 'altar')
     }
   }
 

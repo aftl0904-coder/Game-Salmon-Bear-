@@ -1,8 +1,16 @@
 /** Shared stage / physics constants — 超任 SNES weight (Goemon / classic platformer). */
 
-/** Doubled stage length (Pack polish — longer run, more enemies). */
-export const WORLD_W = 7600
+/**
+ * Stage length — previous 7600 shortened −25%.
+ * Spawn X positions should use `sx()` / STAGE_LEN_MUL.
+ */
+export const WORLD_W = 5700
 export const WORLD_H = 540
+/** Multiply legacy absolute stage X coords by this (WORLD_W / 7600). */
+export const STAGE_LEN_MUL = 0.75
+export function sx(x: number) {
+  return Math.round(x * STAGE_LEN_MUL)
+}
 
 /** Shared mid-lane walk surface (feet origin). Lowered for more playable ground (Pack3). */
 export const GROUND_Y = 428
@@ -12,21 +20,28 @@ export const MAX_HP = 6
 /** Combat: hits connect on same lane OR ±1 adjacent lane. */
 export const LANE_HIT_TOL = 1
 /**
- * Actors bake at 3× with LINEAR AA; display scale keeps on-screen size ≈ old 2× NEAREST.
+ * Actors bake at 3× with LINEAR AA; then −60% on-screen vs prior pack.
+ * Was 2/3; now (2/3)×0.4.
  */
-export const ACTOR_DISPLAY_SCALE = 2 / 3
+export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.4
 /**
- * Heroes are ~30% of the previous on-screen size (enemies keep ACTOR_DISPLAY_SCALE).
+ * Heroes are ~30% of the enemy on-screen size (after ACTOR_DISPLAY_SCALE).
  */
 export const HERO_SIZE_MUL = 0.3
 /** 琪寶寶 slightly smaller than 倫寶 after HERO_SIZE_MUL. */
 export const GIRL_SCALE_MUL = 0.92
 /** 噗噗 always ≈ half 琪寶寶 height. */
 export const PET_HEIGHT_FRAC = 0.5
+/** Projectiles / ammo display scale (−60% vs prior 1.0 pack). */
+export const PROJ_DISPLAY_SCALE = 0.4
+/** Held weapons (sword, trunk, clubs) (−60%). */
+export const WEAPON_DISPLAY_SCALE = 0.4
 /** Pale BG tint (opaque sprites — colour shift only, not transparency). */
 export const BG_PALE_TINT = 0xd8e6f0
-/** Pale green for distant mountains (opaque). */
-export const BG_MOUNT_TINT = 0xa8c9a0
+/** Washed fog green for distant mountains (paired with BG_MOUNT_ALPHA). */
+export const BG_MOUNT_TINT = 0xc5d8cc
+/** Mountain fog alpha — lower = farther / hazier. */
+export const BG_MOUNT_ALPHA = 0.38
 /** Mid BG trees/houses pale (opaque). */
 export const BG_MID_TINT = 0xc5d8c8
 /** Near roadside scenery pale (opaque). */
@@ -35,7 +50,8 @@ export const BG_NEAR_TINT = 0xd2e0d4
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */
 export const COINS_PER_HP = 10
-export const BOY_SPEED = 280
+/** Player move speed −20% vs prior 280. */
+export const BOY_SPEED = Math.round(280 * 0.8)
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（慢行進攻） */
 export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
@@ -133,19 +149,19 @@ export const SCORE_BOSS_KILL = 800
 export const SCORE_BREAK = 80
 
 /** 倫寶鮭魚槍最大飛行距離（px）— 遠程有上限，與琪寶寶劍近戰平衡 */
-export const SALMON_SHOT_RANGE = 260
+export const SALMON_SHOT_RANGE = Math.round(260 * STAGE_LEN_MUL)
 /** 鮭彈飛行速度（0.7× 原 520） */
 export const SALMON_SHOT_SPEED = Math.round(520 * 0.7)
 /**
- * 攻擊頻率：現有再 ×0.8 → CD ÷0.8
+ * 攻擊頻率 −20%：CD ÷0.8 again on top of prior pack.
  * 鮭魚槍基底：400/0.7；劍撃基底：220
  */
-export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8)
-export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8)
-/** 琪寶寶劍撃 hitbox 寬／高／持續 */
-export const SWORD_HIT_W = 120
+export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8 / 0.8)
+export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8 / 0.8)
+/** 琪寶寶劍撃 hitbox 寬／高／持續（−60% with weapon size） */
+export const SWORD_HIT_W = Math.round(120 * WEAPON_DISPLAY_SCALE)
 /** Tall for ±1 lane reach */
-export const SWORD_HIT_H = 96
+export const SWORD_HIT_H = Math.round(96 * WEAPON_DISPLAY_SCALE)
 export const SWORD_HIT_MS = 160
-/** 噗噗跟在琪寶寶身後的水平距離 */
-export const PET_FOLLOW_BEHIND = 78
+/** 噗噗跟在琪寶寶身後的水平距離（scales with tiny heroes） */
+export const PET_FOLLOW_BEHIND = Math.round(78 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL * 3)
