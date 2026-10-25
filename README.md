@@ -2,6 +2,8 @@
 
 超任風雙人過關。全故事五關（見 `STORY.md`）；**目前可玩第 1 關・溪流小路**。
 
+> **QA handoff:** engineer self-check until Visual / Feel / Fun each ≥7.5; overall ~8.0+ before user fine-feel. See [`QA_HANDOFF_GATE.md`](./QA_HANDOFF_GATE.md).
+
 角色：**倫寶（Lun Bo）**、**琪寶寶（Ki Bobo）**、守護靈 **噗噗（Pooh）**（AI，非玩家操控）。
 
 ## 流程
