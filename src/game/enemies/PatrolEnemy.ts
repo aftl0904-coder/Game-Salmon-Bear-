@@ -548,9 +548,16 @@ export class PatrolEnemy extends Enemy {
     super.die(dir)
   }
 
+  /** Public so GameScene can snap weapons on activate (deferred spawns). */
+  syncWeaponPublic() {
+    this.syncWeapon()
+  }
+
   private syncWeapon() {
     const w = this.weapon
-    if (!w || !w.active) return
+    if (!w) return
+    // Allow re-show after defer (setActive false on weapon)
+    if (!w.active) w.setActive(true)
     if (this.fsm === 'DEAD') {
       w.setVisible(false)
       return

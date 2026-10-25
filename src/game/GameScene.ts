@@ -2518,6 +2518,10 @@ export class GameScene extends Phaser.Scene {
     e.setData('wave', wave)
     e.setActive(false)
     e.setVisible(false)
+    e.setAlpha(1)
+    // Weapon is a separate Image — must hide with the body or it floats alone / looks "missing".
+    e.weapon?.setVisible(false)
+    e.weapon?.setActive(false)
     const body = e.body as Phaser.Physics.Arcade.Body
     body.enable = false
   }
@@ -2551,6 +2555,8 @@ export class GameScene extends Phaser.Scene {
       const e = o as PatrolEnemy
       return !e.active && e.getData('wave') === 'wave1' && e.fsm !== 'DEAD'
     })
+    // Don't soft-lock later waves forever if wave1 stalls off-screen — open after 12s.
+    const wave1GateOpen = !(wave1Alive || wave1Pending) || elapsed >= 12_000
     let stagger = 0
     this.enemies.getChildren().forEach((o) => {
       const e = o as PatrolEnemy
@@ -2558,21 +2564,36 @@ export class GameScene extends Phaser.Scene {
       const unlock = (e.getData('unlockX') as number) ?? 0
       const wave = e.getData('wave') as string
       if (lead < unlock) return
-      if (wave !== 'wave1' && (wave1Alive || wave1Pending)) return
+      if (wave !== 'wave1' && !wave1GateOpen) return
       // 開始 10 秒後：左右兩邊都可走入；之前淨係右邊。
       const fromLeft = allowLeft && stagger % 2 === 1
       const enterX = fromLeft
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
         : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 72)
       stagger += 1
-      e.setPosition(enterX, laneY(e.lane))
+      const enterY = laneY(e.lane)
+      e.setPosition(enterX, enterY)
       e.homeX = enterX
+      e.homeY = enterY
+      e.desiredLane = e.lane
+      e.laneSliding = false
       e.patrolMin = enterX - 40
       e.patrolMax = enterX + 40
       e.setActive(true)
       e.setVisible(true)
+      e.setAlpha(1)
+      e.clearTint()
+      const tint = e.species === 'fish' ? 0x88aacc : undefined
+      if (tint) e.setTint(tint)
+      e.setScale(e.baseScale || 1)
+      e.setDepth(actorDepth('enemy', e.lane, enterY))
+      e.weapon?.setVisible(true)
+      e.weapon?.setActive(true)
+      e.weapon?.setAlpha(1)
       const body = e.body as Phaser.Physics.Arcade.Body
       body.enable = true
+      body.allowGravity = false
+      body.velocity.y = 0
       e.earlyAggro = true
       e.detectRadius = 1200
       e.aggroRadius = 1200
@@ -2586,6 +2607,8 @@ export class GameScene extends Phaser.Scene {
         e.setVelocityX(-ENEMY_SPEED)
         e.patrolDir = -1
       }
+      // Pull weapon onto body immediately (was left at spawn X → "invisible" fights).
+      e.syncWeaponPublic()
       if (wave === 'wave1' && !this.registry.get('wave1Announced')) {
         this.registry.set('wave1Announced', true)
         floatText(this, cam.scrollX + 480, 120, '傀儡來襲！', '#ff6644')

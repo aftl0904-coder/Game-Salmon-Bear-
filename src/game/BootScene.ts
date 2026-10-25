@@ -19,6 +19,7 @@ import {
   setActorLinearFilter,
   WALK_FRAMES,
 } from './pixelSnap'
+import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
 
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
@@ -87,6 +88,7 @@ export class BootScene extends Phaser.Scene {
     this.bakeCastTextures()
     this.thickenPropOutlines()
     this.hardenSeamTiles()
+    this.auditObjectCatalog()
 
     this.registry.set('gameConfig', {
       round: 1,
@@ -231,6 +233,25 @@ export class BootScene extends Phaser.Scene {
     ]) {
       hardenTextureAlpha(this, key, 80)
       sealTextureSeamsX(this, key)
+    }
+  }
+
+  /**
+   * Object DB audit — warn if catalog textures/frames are missing after bake.
+   * Registry keeps a snapshot for debug / future tooling.
+   */
+  private auditObjectCatalog() {
+    const missing: string[] = []
+    for (const key of allCatalogTextureKeys()) {
+      if (!this.textures.exists(key)) missing.push(key)
+    }
+    this.registry.set('objectCatalog', {
+      count: OBJECT_CATALOG.length,
+      missing,
+      ids: OBJECT_CATALOG.map((e) => e.id),
+    })
+    if (missing.length) {
+      console.warn('[objectCatalog] missing textures after bake:', missing)
     }
   }
 }
