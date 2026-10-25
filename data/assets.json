@@ -1,0 +1,52 @@
+[
+  {
+    "id": "P-01",
+    "name": "倫寶",
+    "source": "salmon-boy.png",
+    "output": "salmon-boy.png",
+    "targetHeightPx": 72,
+    "colors": 64,
+    "license": "project-owned",
+    "note": "原創造型；來源現為 48px，升到 72px 後細節可能不足，待重畫"
+  },
+  {
+    "id": "P-02",
+    "name": "琪寶寶",
+    "source": "bear-girl.png",
+    "output": "bear-girl.png",
+    "targetHeightPx": 72,
+    "colors": 64,
+    "license": "project-owned",
+    "note": "原創造型；來源現為 48px，升到 72px 後細節可能不足，待重畫"
+  },
+  {
+    "id": "CP-01",
+    "name": "噗噗",
+    "source": "kind-bear.png",
+    "output": "kind-bear.png",
+    "targetHeightPx": 56,
+    "colors": 64,
+    "license": "project-owned",
+    "note": "原創夥伴；來源現為 40px，待重畫至 56px 細節"
+  },
+  {
+    "id": "E-fish",
+    "name": "鮭魚敵",
+    "source": "fish-enemy.png",
+    "output": "fish-enemy.png",
+    "targetHeightPx": 40,
+    "colors": 64,
+    "license": "project-owned",
+    "role": "enemy-small"
+  },
+  {
+    "id": "I-coin",
+    "name": "金幣",
+    "source": "coin.png",
+    "output": "coin.png",
+    "targetHeightPx": 24,
+    "colors": 32,
+    "license": "project-owned",
+    "role": "item"
+  }
+]

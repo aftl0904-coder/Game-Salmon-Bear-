@@ -40,12 +40,12 @@ export const LANE_HIT_TOL = 1
  * @see docs/bible/visual-style.md
  */
 export const ACTOR_DISPLAY_SCALE = 1
-/** Heroes match bible 48px — no extra shrink. */
+/** Heroes match bible 72px — no extra shrink. */
 export const HERO_SIZE_MUL = 1
-/** 琪寶寶 same target height as 倫寶 (48px). */
+/** 琪寶寶 same target height as 倫寶 (72px). */
 export const GIRL_SCALE_MUL = 1
-/** 噗噗 bible 40px / hero 48px. */
-export const PET_HEIGHT_FRAC = 40 / 48
+/** 噗噗 bible 56px / hero 72px. */
+export const PET_HEIGHT_FRAC = 56 / 72
 /** Projectiles / ammo — art already sized; keep native. */
 export const PROJ_DISPLAY_SCALE = 1
 /** Held weapons (sword, trunk, clubs). */
@@ -84,13 +84,13 @@ export const OUTLINE_WIDTH = 1
 export const OUTLINE_INK: [number, number, number] = [18, 14, 12]
 /** @deprecated soft AA removed in visual unify stage 3 */
 export const SOFT_AA_FACTOR = 1
-/** Bible target display heights (480×270). */
-export const TARGET_H_HERO = 48
-export const TARGET_H_PET = 40
-export const TARGET_H_ENEMY_S = 32
-export const TARGET_H_ENEMY_M = 48
-export const TARGET_H_ENEMY_L = 64
-export const TARGET_H_ITEM = 20
+/** Bible target display heights (640×360) — data/assets.json. */
+export const TARGET_H_HERO = 72
+export const TARGET_H_PET = 56
+export const TARGET_H_ENEMY_S = 40
+export const TARGET_H_ENEMY_M = 56
+export const TARGET_H_ENEMY_L = 72
+export const TARGET_H_ITEM = 24
 /** 每隔幾秒隨機定住一個敵人（ms 範圍） */
 export const ENEMY_STAGGER_EVERY_MIN_MS = 3000
 export const ENEMY_STAGGER_EVERY_MAX_MS = 4000

@@ -2,9 +2,9 @@
 
 > 資料圖鑑（terrain／hazards／enemies／camera／signs）：見 [`data-catalog.md`](./data-catalog.md) · 頁面 `/bible`。
 
-> 來源：code + `public/art/*` + `scripts/art-normalize/run.py`。  
-> **遊戲內部解像度 640×360**（`src/game/display.ts` · `GAME_W` / `GAME_H`）。`Scale.NONE`；CSS 縮放見 `main.ts`（待接 `fitCanvas`）。  
-> 比例表／art-normalize 目標高度（72／56／40…）緊接後續步驟；暫保留既有 sprite 高度。  
+> 來源：`art-src/` → `npm run art:normalize`（`scripts/art-normalize.mjs`）→ `public/art/` · 清單 `data/assets.json`。  
+> **遊戲內部解像度 640×360**（`src/game/display.ts`）。CSS：`fitCanvas`。整數 scale：`?debug=1`。  
+> 比例：主角 **72**／噗噗 **56**／小敵 **40**／中 **56**／重 **72**／物品 **20–28**。細節缺口見 [`art-detail-gaps.md`](./art-detail-gaps.md)。  
 
 ---
 
