@@ -486,5 +486,229 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Landing dust cloud 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/props/stage3/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage3/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/billboard-blank.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/billboard-blank.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/coffee-cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/coffee-cart.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/far-tree-trunks.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/far-tree-trunks.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/fence.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/fence.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/fern-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/fern-b.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/grass-a.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/grass-a.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/grass-c.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/grass-c.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/grass-ferns-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/grass-ferns-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/honey-pot-shards.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/honey-pot-shards.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/honey-pot.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/honey-pot.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/honey-tree.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/honey-tree.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/lantern-torn.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/lantern-torn.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/lantern.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/lantern.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/mushrooms.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/mushrooms.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/picnic-blanket.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/picnic-blanket.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/rock-a.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/rock-a.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/rock-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/rock-b.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/rock-c.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/rock-c.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/rocks-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/rocks-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/sign-billboard-altar-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/sign-billboard-altar-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/sign-post.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/sign-post.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/stone-altar.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/stone-altar.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/stump-a.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/stump-a.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage1/stump-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/stump-b.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage5/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage5/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage4/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage4/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage2/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage2/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
   }
 ]
