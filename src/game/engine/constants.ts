@@ -9,6 +9,8 @@ export const GROUND_Y = 400
 export const MAX_HP = 10
 export const BOY_SPEED = 280
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
+/** 敵人接近／追擊速度 = 倫寶 × 0.8（慢一截，但仍係走嚟打） */
+export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.8)
 
 /**
  * World Arcade gravity (px/s²).

@@ -458,10 +458,75 @@ export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) 
   }
 }
 
+
+/**
+ * Enemy walk + attack poses (scale 1 / angle 0).
+ * - run-0..3: footstep
+ * - atk-windup: lean back + raise arms (telegraph while still walking)
+ * - atk-strike: lunge forward
+ */
+export function registerEnemyCombatFrames(scene: TexScene, baseKey: string) {
+  registerWalkCycle(scene, baseKey, 4)
+  if (!scene.textures.exists(baseKey)) return
+  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const tmp = document.createElement('canvas')
+  tmp.width = w
+  tmp.height = h
+  const tctx = tmp.getContext('2d')!
+  tctx.imageSmoothingEnabled = false
+  tctx.drawImage(src as CanvasImageSource, 0, 0)
+  const base = tctx.getImageData(0, 0, w, h)
+
+  const bakeShift = (key: string, mode: 'windup' | 'strike') => {
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    const out = ctx.createImageData(w, h)
+    // clear
+    for (let i = 3; i < out.data.length; i += 4) out.data[i] = 0
+    const midY = Math.floor(h * 0.42)
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const si = (y * w + x) * 4
+        if (base.data[si + 3] < 160) continue
+        let dx = 0
+        let dy = 0
+        if (mode === 'windup') {
+          // Pull torso back, lift upper pixels (raise weapon / arms)
+          if (y < midY) { dx = -3; dy = -2 }
+          else { dx = -1 }
+        } else {
+          // Strike: whole body lunges forward; arms stretch
+          if (y < midY) { dx = 5; dy = 1 }
+          else { dx = 4 }
+        }
+        const xx = x + dx
+        const yy = y + dy
+        if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue
+        const di = (yy * w + xx) * 4
+        out.data[di] = base.data[si]
+        out.data[di + 1] = base.data[si + 1]
+        out.data[di + 2] = base.data[si + 2]
+        out.data[di + 3] = base.data[si + 3]
+      }
+    }
+    ctx.putImageData(out, 0, 0)
+    if (scene.textures.exists(key)) scene.textures.remove(key)
+    scene.textures.addCanvas(key, canvas)
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  }
+  bakeShift(`${baseKey}-atk-windup`, 'windup')
+  bakeShift(`${baseKey}-atk-strike`, 'strike')
+}
+
 export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, phase: number) {
   const base =
     (spr.getData('baseTex') as string | undefined) ||
-    spr.texture.key.replace(/-run-\d+$/, '')
+    spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
   const frame = Math.floor(phase) % 4
   const key = `${base}-run-${frame}`
   if (spr.scene.textures.exists(key) && spr.texture.key !== key) {
@@ -471,7 +536,7 @@ export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, ph
 }
 
 export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _tMs: number) {
-  const base = (spr.getData('baseTex') as string | undefined) || spr.texture.key.replace(/-run-\d+$/, '')
+  const base = (spr.getData('baseTex') as string | undefined) || spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
   if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
     spr.setTexture(base)
   }
@@ -481,7 +546,7 @@ export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _
 function restoreBaseTex(spr: Phaser.GameObjects.Sprite) {
   const base =
     (spr.getData('baseTex') as string | undefined) ||
-    spr.texture.key.replace(/-run-\d+$/, '')
+    spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
   if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
     spr.setTexture(base)
   }

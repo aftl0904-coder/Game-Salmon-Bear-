@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { ENEMY_SPEED } from './engine/constants'
 
 /** Existence objective: 三角組織傀儡 — 阻止玩家奪回蜂蜜／鮭魚／抵達祭壇 */
 export type EnemyKind =
@@ -115,38 +116,40 @@ export function defaultSpecies(kind: EnemyKind): EnemySpecies {
   return 'fish' // blocker / chaser
 }
 
+/** All kinds walk/chase at ~0.8× 倫寶 — no freeze-and-wait pacing. */
+const E_SPD = ENEMY_SPEED
+const E_PATROL = Math.round(ENEMY_SPEED * 0.85)
+
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
-    // Opening fight ~180–250px; windup ≥260ms fair telegraph.
-    hp: 2, spd: 62, patrolSpd: 48, aggro: 280, detect: 340, melee: 50,
-    // scale 1 — textures are 2× baked at boot (non-1 scale shears NEAREST quads).
-    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 1, tint: 0x88aacc,
-    label: '路障', chargePrefer: false, hopChance: 0.012,
+    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 50,
+    windupMs: 140, recoverMs: 180, atkCdMs: 700, scale: 1, tint: 0x88aacc,
+    label: '路障', chargePrefer: false, hopChance: 0,
   },
   chaser: {
-    hp: 2, spd: 110, patrolSpd: 52, aggro: 380, detect: 420, melee: 52,
-    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 1, tint: 0xff9977,
-    label: '追擊', chargePrefer: true, hopChance: 0.022,
+    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 980, detect: 1100, melee: 52,
+    windupMs: 120, recoverMs: 160, atkCdMs: 640, scale: 1, tint: 0xff9977,
+    label: '追擊', chargePrefer: false, hopChance: 0,
   },
   ambusher: {
-    hp: 2, spd: 95, patrolSpd: 22, aggro: 180, detect: 280, melee: 56,
-    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 1, tint: 0xaa88ff,
-    label: '伏兵', chargePrefer: false, hopChance: 0.008,
+    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 56,
+    windupMs: 140, recoverMs: 180, atkCdMs: 700, scale: 1, tint: 0xaa88ff,
+    label: '伏兵', chargePrefer: false, hopChance: 0,
   },
   guardian: {
-    hp: 3, spd: 78, patrolSpd: 48, aggro: 300, detect: 360, melee: 52,
-    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 1, tint: 0xffcc44,
-    label: '守蜜', chargePrefer: false, hopChance: 0.015,
+    hp: 3, spd: E_SPD, patrolSpd: E_PATROL, aggro: 920, detect: 1000, melee: 52,
+    windupMs: 140, recoverMs: 180, atkCdMs: 720, scale: 1, tint: 0xffcc44,
+    label: '守蜜', chargePrefer: false, hopChance: 0,
   },
   interrupter: {
-    hp: 3, spd: 100, patrolSpd: 58, aggro: 420, detect: 480, melee: 56,
-    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 1, tint: 0xff6644,
-    label: '精銳', chargePrefer: true, hopChance: 0.02,
+    hp: 3, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1000, detect: 1200, melee: 56,
+    windupMs: 120, recoverMs: 150, atkCdMs: 600, scale: 1, tint: 0xff6644,
+    label: '精銳', chargePrefer: false, hopChance: 0,
   },
   boss: {
-    hp: 12, spd: 95, patrolSpd: 48, aggro: 520, detect: 600, melee: 70,
-    windupMs: 320, recoverMs: 300, atkCdMs: 900, scale: 1, tint: 0xffaa77,
-    label: '武者', chargePrefer: true, hopChance: 0.018,
+    hp: 12, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1200, detect: 1400, melee: 70,
+    windupMs: 160, recoverMs: 200, atkCdMs: 700, scale: 1, tint: 0xffaa77,
+    label: '武者', chargePrefer: false, hopChance: 0,
   },
 }
 

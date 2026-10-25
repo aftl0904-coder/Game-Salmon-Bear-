@@ -13,6 +13,7 @@ import {
   fillInternalAlphaHoles,
   thickenSpriteOutline,
   registerWalkCycle,
+  registerEnemyCombatFrames,
 } from './pixelSnap'
 
 
@@ -134,6 +135,8 @@ export class BootScene extends Phaser.Scene {
     }
     registerWalkCycle(this, 'art-salmon', 4)
     registerWalkCycle(this, 'art-girl', 4)
+    registerEnemyCombatFrames(this, 'art-enemy')
+    registerEnemyCombatFrames(this, 'art-enemy-barrel')
   }
 
   /** Thicker SNES-style black borders on smashables / landmarks. */

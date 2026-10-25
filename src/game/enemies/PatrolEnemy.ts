@@ -4,7 +4,6 @@ import {
   LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
-import { WINDUP_ALTAR_MS, WINDUP_FLOOR_MS } from '../engine/constants'
 import { enablePixelSprite } from '../pixelSnap'
 import {
   type EnemyKind,
@@ -38,6 +37,7 @@ export class PatrolEnemy extends Enemy {
   elite = false
   atkPhase: AtkPhase = 'none'
   state: EnemyState = 'patrol'
+  walkPhase = 0
 
   static spawn(
     scene: Phaser.Scene,
@@ -87,6 +87,7 @@ export class PatrolEnemy extends Enemy {
     e.setDepth(actorDepth('enemy', lane, feetY))
     e.setScale(e.baseScale)
     enablePixelSprite(e)
+    e.setData('baseTex', tex)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     bindFootBody(e, {
       bodyW: spKey === 'barrel' ? 44 : 40,
@@ -143,12 +144,9 @@ export class PatrolEnemy extends Enemy {
     this.contactCd = Math.max(0, this.contactCd - dt)
     const target = pickTarget(this, ctx.boy, ctx.girl)
     const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y)
-    const advancing = ctx.leadX > ctx.prevLeadX + 0.4
     const aggro = st.aggro * mul.aggro
-    const detectR = st.detect * mul.aggro
     const melee = st.melee
     const spd = st.spd * mul.spd
-    const patrolSpd = st.patrolSpd * mul.spd
     const body = this.body as Phaser.Physics.Arcade.Body | null
     if (!body) return
 
@@ -161,7 +159,7 @@ export class PatrolEnemy extends Enemy {
         const t = this.defaultTint()
         if (t) this.setTint(t)
         this.poseAngle = 0
-        this.setFsm(dist < aggro ? 'CHASE' : 'PATROL')
+        this.setFsm('CHASE')
       }
       return
     }
@@ -176,191 +174,90 @@ export class PatrolEnemy extends Enemy {
       return
     }
 
-    if (
-      st.chargePrefer &&
-      this.atkCd <= 0 &&
-      this.fsm === 'CHASE' &&
-      dist > melee + 20 &&
-      dist < melee + (sp.style === 'hop' ? 170 : 140)
-    ) {
-      this.setFsm('ATTACK')
-      this.atkPhase = 'pause'
-      // Charge pause = readable red telegraph before lunge (≥260ms).
-      this.think = Math.max(
-        this.altarAmbush ? 300 : 260,
-        260 + (this.kind === 'boss' ? 80 : 0),
-      )
-      this.hitThis = false
-      this.setVelocityX(0)
-      this.setTint(0xff1111)
-      this.hooks.floatBang?.(
-        this.x,
-        this.y - 36,
-        this.altarAmbush ? '伏兵！' : '！',
-      )
-      this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
+    // Always chase once active — never idle/patrol freeze.
+    if (this.fsm !== 'CHASE') this.setFsm('CHASE')
+    {
+      const dx = target.x - this.x
+      const dir = (Math.sign(dx) || this.patrolDir) as 1 | -1
+      const arrive = Math.abs(dx) < 12
+      this.setVelocityX(arrive ? dir * spd * 0.45 : dir * spd)
+      this.setFlipX(dir < 0)
+      this.patrolDir = dir
+      this.walkPhase += arrive ? 0.08 : 0.14
       this.applyPose()
-      return
     }
-
-    // Spot player → walk in smoothly (no freeze / hop jam on lane floor).
-    if (
-      this.earlyAggro &&
-      this.fsm === 'PATROL' &&
-      dist < Math.max(detectR, aggro + 40)
-    ) {
-      this.hooks.floatBang?.(this.x, this.y - 36, '！')
-      this.setFsm('CHASE')
-    } else if (this.fsm === 'PATROL' && dist < detectR) {
-      this.hooks.floatBang?.(this.x, this.y - 36)
-      this.setFsm('CHASE')
-    } else if (this.fsm !== 'CHASE' && dist < aggro && this.kind === 'chaser') {
-      this.setFsm('CHASE')
-    }
-
-    if (this.fsm === 'CHASE') {
-      const dropMul = sp.style === 'chase' ? 1.5 : 1.2
-      if (dist > aggro * dropMul && this.kind !== 'chaser' && this.kind !== 'boss') {
-        this.setFsm('PATROL')
-      } else {
-        // Always close on the player — no home-X oscillation / wall-reverse jam.
-        const dx = target.x - this.x
-        const dir = (Math.sign(dx) || this.patrolDir) as 1 | -1
-        const arrive = Math.abs(dx) < 10
-        const boost = this.kind === 'interrupter' && advancing ? 1.25 : 1
-        this.setVelocityX(arrive ? dir * spd * 0.35 * boost : dir * spd * boost)
-        this.setFlipX(dir > 0)
-        this.patrolDir = dir
-        this.applyPose()
-        return
-      }
-    }
-
-    this.setFsm('PATROL')
-    // Lane walkers: skip cliff/wall reverse (no platforms) — smooth patrol only.
-    if (this.kind === 'blocker') {
-      const goal = this.desireX(target, ctx.leadX, advancing)
-      const dx = goal - this.x
-      this.patrolDir = (Math.abs(dx) < 8 ? this.patrolDir : (Math.sign(dx) || this.patrolDir)) as 1 | -1
-      this.setVelocityX(this.patrolDir * patrolSpd)
-      this.setFlipX(this.patrolDir > 0)
-      this.applyPose()
-      return
-    }
-    if (this.x < this.patrolMin) this.patrolDir = 1
-    if (this.x > this.patrolMax) this.patrolDir = -1
-    const slow = this.kind === 'ambusher' ? 0.7 : 1
-    this.setVelocityX(this.patrolDir * patrolSpd * slow)
-    this.setFlipX(this.patrolDir > 0)
-    this.applyPose()
   }
 
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // Fair telegraph: red + pause ≥260ms (altar ≥300ms) before lunge.
-    const floor = this.altarAmbush ? WINDUP_ALTAR_MS : WINDUP_FLOOR_MS
-    this.windup = Math.max(floor, ms)
+    // Short telegraph — keep walking in (no freeze).
+    this.windup = Math.min(160, Math.max(90, ms))
     this.hitThis = false
-    this.setVelocityX(0)
     this.setTint(0xff1111)
-    this.hooks.floatBang?.(
-      this.x,
-      this.y - 36,
-      this.altarAmbush ? '伏兵！' : '！',
-    )
     this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
   }
 
   private tickAttack(
     target: { x: number; y: number },
-    dist: number,
-    aggro: number,
+    _dist: number,
+    _aggro: number,
     spd: number,
     st: ReturnType<PatrolEnemy['effectiveStats']>,
-    sp: (typeof SPECIES_STATS)[EnemySpecies],
+    _sp: (typeof SPECIES_STATS)[EnemySpecies],
   ) {
+    const dir = (Math.sign(target.x - this.x) || this.patrolDir) as 1 | -1
+    const walkIn = (mul: number) => {
+      this.setVelocityX(dir * spd * mul)
+      this.setFlipX(dir < 0)
+      this.patrolDir = dir
+      this.walkPhase += 0.12 * mul
+    }
     if (this.atkPhase === 'recover') {
-      this.setVelocityX(0)
+      // Keep closing — no stand-still recover.
+      walkIn(0.7)
       this.applyPose()
       if (this.think <= 0) {
         this.hitThis = false
-        if (this.kind === 'boss' && this.phase === 3) {
-          const away = (Math.sign(this.x - target.x) || 1) as 1 | -1
-          this.setFsm('CHASE')
-          this.think = 320
-          this.setVelocityX(away * spd * 1.15)
-          this.setFlipX(away > 0)
-        } else if (this.kind === 'ambusher') this.setFsm('PATROL')
-        else this.setFsm(dist < aggro ? 'CHASE' : 'PATROL')
+        this.setFsm('CHASE')
       }
       return
     }
-    if (this.atkPhase === 'pause') {
-      this.setVelocityX(0)
-      this.setTint(0xff4444)
-      this.applyPose()
-      if (this.think <= 0) {
-        this.atkPhase = 'charge'
-        this.think = 280
-        this.hitThis = false
-        this.chargeDir = (Math.sign(target.x - this.x) || 1) as 1 | -1
-        this.setVelocityX(this.chargeDir * spd * 2.35)
-        this.setVelocityY(sp.style === 'hop' ? -290 : -210)
-        this.setFlipX(this.chargeDir > 0)
-        this.hooks.floatBang?.(this.x, this.y - 36)
-      }
-      return
-    }
-    if (this.atkPhase === 'charge') {
-      this.applyPose()
-      if (this.think <= 0) {
-        this.clearTint()
-        const t = this.defaultTint()
-        if (t) this.setTint(t)
-        this.atkPhase = 'recover'
-        this.think = st.recoverMs
-        this.atkCd = st.atkCdMs
-        this.setVelocityX(0)
-      }
-      return
+    // Legacy pause/charge → treat as strike while walking
+    if (this.atkPhase === 'pause' || this.atkPhase === 'charge') {
+      this.atkPhase = 'strike'
+      this.think = 180
+      this.hitThis = false
+      this.chargeDir = dir
     }
     if (this.atkPhase === 'windup') {
-      this.setVelocityX(0)
       this.setTint(0xff3333)
+      walkIn(0.85)
       this.applyPose()
       if (this.windup <= 0) {
         this.atkPhase = 'strike'
         this.hitThis = false
-        this.think = 200
-        const dir = (Math.sign(target.x - this.x) || 1) as 1 | -1
+        this.think = 180
         this.chargeDir = dir
-        if (this.attackMode === 'projectile') {
-          this.hooks.spawnProjectile?.(this, dir)
-          this.setVelocityX(0)
-        } else {
-          this.setVelocityX(dir * spd * (sp.style === 'hop' ? 2.05 : 1.85))
-          this.setVelocityY(sp.style === 'hop' ? -400 : -290)
-        }
-        this.setFlipX(dir > 0)
+        if (this.attackMode === 'projectile') this.hooks.spawnProjectile?.(this, dir)
       }
       return
     }
     if (this.atkPhase === 'strike') {
+      walkIn(1.35)
       this.applyPose()
       if (this.think <= 0) {
         this.clearTint()
         const t = this.defaultTint()
         if (t) this.setTint(t)
         this.atkPhase = 'recover'
-        this.think = st.recoverMs
+        this.think = Math.min(160, st.recoverMs)
         this.atkCd = st.atkCdMs
-        this.setVelocityX(0)
       }
       return
     }
-    this.setFsm(dist < aggro ? 'CHASE' : 'PATROL')
+    this.setFsm('CHASE')
   }
 
   private effectiveStats() {
@@ -389,27 +286,6 @@ export class PatrolEnemy extends Enemy {
     return { spd: 1.45, windup: 0.65, aggro: 1.3 }
   }
 
-  private desireX(target: { x: number; y: number }, leadX: number, advancing: boolean): number {
-    switch (this.kind) {
-      case 'blocker':
-        return Math.max(this.homeX - 40, Math.min(leadX + 90, this.homeX + 220))
-      case 'chaser':
-        return target.x
-      case 'ambusher':
-        return this.fsm === 'PATROL' ? this.homeX : target.x
-      case 'guardian':
-        if (Phaser.Math.Distance.Between(target.x, target.y, this.guardX, this.homeY) < 160) return target.x
-        return this.guardX
-      case 'interrupter':
-        return advancing ? leadX + 70 : target.x
-      case 'boss':
-        if (this.phase === 3 && this.think > 0 && this.fsm === 'CHASE') {
-          return this.x + (target.x < this.x ? 120 : -120)
-        }
-        return target.x
-    }
-  }
-
   private holdLaneFloor(body: Phaser.Physics.Arcade.Body) {
     if (!inLaneBand(this.homeY) && !inLaneBand(this.y)) return
     const target = laneY(this.lane)
@@ -434,28 +310,41 @@ export class PatrolEnemy extends Enemy {
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
   private applyPose() {
-    // Always scale 1 + angle 0 after texture bake — no lean/smear under NEAREST.
     const lock = () => {
       this.setScale(Math.round(this.baseScale) || 1)
       this.setAngle(0)
     }
-    if (this.fsm === 'DEAD') {
-      lock()
-      return
+    const base = (this.getData('baseTex') as string) || 'art-enemy'
+    const setTex = (key: string) => {
+      if (this.scene.textures.exists(key) && this.texture.key !== key) this.setTexture(key)
     }
-    if (this.fsm === 'HURT') {
+    if (this.fsm === 'DEAD' || this.fsm === 'HURT') {
+      setTex(base)
       lock()
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      lock()
+      setTex(`${base}-atk-windup`)
       this.setTint(0xff1111)
+      lock()
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
+      setTex(`${base}-atk-strike`)
       lock()
       return
     }
+    const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0)
+    if (vx > 20 && (this.fsm === 'CHASE' || this.fsm === 'PATROL' || this.atkPhase === 'recover')) {
+      if (this.atkPhase === 'none' || this.atkPhase === 'recover') {
+        this.walkPhase += 0.1
+      }
+      const frame = Math.floor(this.walkPhase) % 4
+      setTex(`${base}-run-${frame}`)
+      lock()
+      return
+    }
+    setTex(base)
     lock()
   }
 }

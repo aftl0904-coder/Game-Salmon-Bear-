@@ -40,6 +40,7 @@ import {
   SALMON_SHOT_RANGE,
   SALMON_SHOT_SPEED,
   SALMON_SHOT_COOLDOWN_MS,
+  ENEMY_SPEED,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -1675,7 +1676,8 @@ export class GameScene extends Phaser.Scene {
 
   private activateDeferredEnemies() {
     const lead = this.leadX()
-    // Gate wave2 until wave1 cleared (or player walked past far enough with empty field).
+    const cam = this.cameras.main
+    // Gate wave2 until wave1 cleared.
     const wave1Alive = this.enemies.getChildren().some((o) => {
       const e = o as PatrolEnemy
       return e.active && e.getData('wave') === 'wave1' && e.fsm !== 'DEAD'
@@ -1684,31 +1686,42 @@ export class GameScene extends Phaser.Scene {
       const e = o as PatrolEnemy
       return !e.active && e.getData('wave') === 'wave1' && e.fsm !== 'DEAD'
     })
+    let stagger = 0
     this.enemies.getChildren().forEach((o) => {
       const e = o as PatrolEnemy
       if (e.active || e.fsm === 'DEAD') return
       const unlock = (e.getData('unlockX') as number) ?? 0
       const wave = e.getData('wave') as string
       if (lead < unlock) return
-      // 清完第一波先解鎖右手邊後續怪
       if (wave !== 'wave1' && (wave1Alive || wave1Pending)) return
+      // 從畫面右邊外走入 — 唔憑空彈出。
+      const enterX = Math.min(
+        WORLD_W - 24,
+        cam.scrollX + cam.width + 48 + stagger * 72,
+      )
+      stagger += 1
+      e.setPosition(enterX, laneY(e.lane))
+      e.homeX = enterX
+      e.patrolMin = enterX - 40
+      e.patrolMax = enterX + 40
       e.setActive(true)
       e.setVisible(true)
       const body = e.body as Phaser.Physics.Arcade.Body
       body.enable = true
-      e.setFsm('PATROL')
-      if (wave === 'wave1') {
-        e.earlyAggro = true
-        e.detectRadius = 300
-        if (!this.registry.get('wave1Announced')) {
-          this.registry.set('wave1Announced', true)
-          floatText(this, e.x, e.y - 40, '傀儡來襲！', '#ff6644')
-        }
+      e.earlyAggro = true
+      e.detectRadius = 1200
+      e.aggroRadius = 1200
+      e.setFsm('CHASE')
+      e.setFlipX(true) // face left toward player
+      e.setVelocityX(-ENEMY_SPEED)
+      if (wave === 'wave1' && !this.registry.get('wave1Announced')) {
+        this.registry.set('wave1Announced', true)
+        floatText(this, cam.scrollX + 720, 120, '傀儡來襲！', '#ff6644')
       }
     })
   }
 
-  /** Wake altar-front barrel ambushers with clear red telegraph. */
+  /** Wake altar ambushers — they already enter from the right; just harden chase. */
   private triggerAltarAmbush() {
     this.altarAmbushOn = true
     SFX.boss()
@@ -1719,21 +1732,9 @@ export class GameScene extends Phaser.Scene {
       const e = o as PatrolEnemy
       if (!e.active || !e.altarAmbush || e.fsm === 'DEAD') return
       e.setTint(0xff2222)
-      impactRing(this, e.x, e.y - 20, 0xff5533, 16)
-      floatText(this, e.x, e.y - 48, '伏兵！', '#ff4422')
       e.setFsm('CHASE')
-      e.think = 160
-      // Force a readable windup telegraph before the first lunge.
-      this.time.delayedCall(180 + Math.random() * 120, () => {
-        if (!e.active || e.fsm === 'DEAD' || e.fsm === 'HURT') return
-        e.setFsm('ATTACK')
-        e.atkPhase = 'windup'
-        e.windup = 320
-        e.hitThis = false
-        e.setVelocityX(0)
-        e.setTint(0xff1111)
-        impactRing(this, e.x, e.y - 18, 0xff4422, 12)
-      })
+      e.setVelocityX(-ENEMY_SPEED)
+      impactRing(this, e.x, e.y - 20, 0xff5533, 16)
     })
   }
 
