@@ -203,8 +203,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.previewGirlShad = this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
     this.previewGirl = this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15)
     enableActorSprite(this.previewGirl)
-    this.previewBearShad = this.add.image(width - 220, ly + 8, shad).setDepth(6).setAlpha(0.5).setScale(0.9, 0.7)
-    this.previewBear = this.add.image(width - 220, ly + 6, 'art-bear').setDepth(7).setScale(1)
+    this.previewBearShad = this.add.image(width - 220, ly + 8, shad).setDepth(6).setAlpha(0.5).setScale(1.15, 0.75)
+    // 噗噗 Pooh-style — readable on menu
+    this.previewBear = this.add.image(width - 220, ly + 6, 'art-bear').setDepth(7).setScale(1.45)
     enableActorSprite(this.previewBear)
     this.previewGirl.setVisible(false)
     this.previewBear.setVisible(false)

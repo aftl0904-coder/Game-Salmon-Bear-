@@ -51,7 +51,8 @@ export class LogoScene extends Phaser.Scene {
     // Cast heroes are 2× baked — display ~1.2 equals old 2.4 on raw 72px art.
     enableActorSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(1.2))
     this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
-    enableActorSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
+    // 噗噗 — Pooh-style honey bear (center, hero of cover lineup)
+    enableActorSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.9))
     this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
     // Fan is baked onto art-girl's back — no floating prop.
     enableActorSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
