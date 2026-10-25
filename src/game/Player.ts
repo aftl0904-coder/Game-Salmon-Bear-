@@ -23,8 +23,10 @@ import {
   laneY,
   resolveStick,
   type LaneId,
+  fsmEnter,
+  fsmUpdate,
+  type PlayerFsm,
 } from './engine'
-import { FSM_TIMEOUT_MS, type PlayerFsm } from './engine/playerFsm'
 import { EventBus, GameEvents } from './EventBus'
 import {
   enablePixelSprite,
@@ -95,12 +97,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   attackHitbox!: Phaser.Physics.Arcade.Image
   private attackUntil = 0
   private flashTween?: Phaser.Tweens.Tween
-  private justLanded = false
+  justLanded = false
   /**
    * Buffered lane intent (−1 上 / +1 下). Survives laneCd so a tap during
    * cooldown is not eaten; cleared on apply.
    */
-  private laneBuf = 0
+  laneBuf = 0
   /**
    * After a step, ignore held input until release — one lane per press
    * (held S cannot skip 中 → 下).
@@ -108,8 +110,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private laneHeldLock = false
   /** Explicit FSM — JUMP/LANE_SWAP timeout-guarded (~800ms). */
   fsm: PlayerFsm = 'IDLE'
-  private fsmEnterAt = 0
-  private laneSwapUntil = 0
+  fsmEnterAt = 0
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
     if (scene.textures.exists('__atk-hitbox')) return
@@ -151,7 +152,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.walkPhase = 0
     this.wasGrounded = true
     this.pose = 'idle'
-    this.enterFsm('IDLE')
+    fsmEnter(this, 'IDLE', this.scene.time.now)
     this.alive = true
     this.awaitingContinue = false
     this.justLanded = false
@@ -162,7 +163,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.laneHeldLock = false
     this.fsm = 'IDLE'
     this.fsmEnterAt = 0
-    this.laneSwapUntil = 0
 
     this.setCollideWorldBounds(true)
     this.setDragX(0)
@@ -243,7 +243,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
       if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * 0.82)
       this.holdLaneFloor(body, dt)
-      this.tickFsmGuards(opts.now ?? this.scene.time.now, grounded, body, 0)
+      fsmUpdate(this, {
+      now: opts.now ?? this.scene.time.now,
+      grounded: grounded,
+      vx: 0,
+      body: body,
+      meleeActive: this.isMeleeActive(),
+      atkCd: this.atkCd,
+    })
       this.syncActorDepth()
       this.applyPose(grounded, 0)
       return
@@ -266,14 +273,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.laneBuf < 0 && this.lane > 0) {
         this.lane = clampLane(this.lane - 1)
         this.laneCd = LANE_SWITCH_MS
-        this.enterFsm('LANE_SWAP', nowLane)
-        this.laneSwapUntil = nowLane + FSM_TIMEOUT_MS
+        fsmEnter(this, 'LANE_SWAP', nowLane)
         opts.onLane?.(this.lane)
       } else if (this.laneBuf > 0 && this.lane < 2) {
         this.lane = clampLane(this.lane + 1)
         this.laneCd = LANE_SWITCH_MS
-        this.enterFsm('LANE_SWAP', nowLane)
-        this.laneSwapUntil = nowLane + FSM_TIMEOUT_MS
+        fsmEnter(this, 'LANE_SWAP', nowLane)
         opts.onLane?.(this.lane)
       }
       this.laneBuf = 0
@@ -304,7 +309,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.laneJumping = true
       this.setVelocityY(JUMP_V)
       this.jumpBuf = 0; this.coyote = 0; this.jumpConsumed = true
-      this.enterFsm('JUMP', opts.now ?? this.scene.time.now)
+      fsmEnter(this, 'JUMP', opts.now ?? this.scene.time.now)
       opts.onJump?.()
     }
     if (!opts.jumpHeld && body.velocity.y < -120) this.setVelocityY(body.velocity.y * 0.55)
@@ -314,10 +319,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const nowEnd = opts.now ?? this.scene.time.now
     if (this.atkCd <= 0 && opts.attackJust) {
       this.startMelee(nowEnd)
-      this.enterFsm('ATTACK', nowEnd)
+      fsmEnter(this, 'ATTACK', nowEnd)
       opts.onAttack?.()
     }
-    this.tickFsmGuards(nowEnd, grounded, body, vx)
+    fsmUpdate(this, {
+      now: nowEnd,
+      grounded: grounded,
+      vx: vx,
+      body: body,
+      meleeActive: this.isMeleeActive(),
+      atkCd: this.atkCd,
+    })
     this.syncActorDepth()
     this.applyPose(grounded, vx)
   }
@@ -405,7 +417,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = opts.iframeMs ?? HURT_IFRAME_MS
     this.hurtLock = opts.lockMs ?? HURT_LOCK_MS
     this.pose = 'hurt'
-    this.enterFsm('HURT')
+    fsmEnter(this, 'HURT', this.scene.time.now)
     if (opts.knockbackX !== undefined) this.setVelocityX(opts.knockbackX)
     if (opts.knockbackY !== undefined) this.setVelocityY(opts.knockbackY)
     this.setTint(0xff4444)
@@ -439,7 +451,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const prev = this.hp
     this.alive = false
     this.pose = 'die'
-    this.enterFsm('DIE')
+    fsmEnter(this, 'DIE', this.scene.time.now)
     this.hp = 0
     this.hurtLock = 99999
     this.stopIFrameFlash()
@@ -459,7 +471,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   revive(x: number, y: number, now = this.scene.time.now, graceMs = 2000) {
     this.hp = MAX_HP
     this.pose = 'idle'
-    this.enterFsm('IDLE')
+    fsmEnter(this, 'IDLE', this.scene.time.now)
     this.alive = true
     this.awaitingContinue = false
     this.hurtCd = 0
@@ -565,11 +577,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
 
-  private enterFsm(next: PlayerFsm, now = this.scene.time.now) {
-    if (this.fsm === next) return
-    this.fsm = next
-    this.fsmEnterAt = now
-  }
 
   private syncActorDepth() {
     this.setDepth(actorDepth('hero', this.lane, this.y))
@@ -580,66 +587,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * JUMP / LANE_SWAP timeout ~800ms → force IDLE + snap to lane floor.
    * Prevents soft-lock / frozen mid-air (never hang at bad Y).
    */
-  private tickFsmGuards(
-    now: number,
-    grounded: boolean,
-    body: Phaser.Physics.Arcade.Body,
-    vx: number,
-  ) {
-    if (this.hp <= 0 || !this.alive) {
-      this.enterFsm('DIE', now)
-      return
-    }
-    if (this.hurtLock > 0) {
-      this.enterFsm('HURT', now)
-      return
-    }
-    if (this.fsm === 'LANE_SWAP') {
-      const target = laneY(this.lane)
-      if (
-        Math.abs(this.y - target) < 2 ||
-        now >= this.laneSwapUntil ||
-        now - this.fsmEnterAt >= FSM_TIMEOUT_MS
-      ) {
-        this.setY(target)
-        body.velocity.y = 0
-        body.allowGravity = false
-        this.laneJumping = false
-        this.laneCd = 0
-        this.laneBuf = 0
-        this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
-      }
-      return
-    }
-    if (this.fsm === 'JUMP' || this.laneJumping) {
-      if (grounded && !this.laneJumping) {
-        this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
-        return
-      }
-      if (this.fsmEnterAt > 0 && now - this.fsmEnterAt >= FSM_TIMEOUT_MS) {
-        const target = laneY(this.lane)
-        this.setY(target)
-        body.velocity.y = 0
-        body.allowGravity = false
-        this.laneJumping = false
-        this.jumpConsumed = false
-        this.justLanded = true
-        this.enterFsm('IDLE', now)
-      }
-      return
-    }
-    if (this.fsm === 'ATTACK') {
-      if (!this.isMeleeActive() && this.atkCd <= 80) {
-        this.enterFsm(grounded ? (Math.abs(vx) > 12 ? 'MOVE' : 'IDLE') : 'JUMP', now)
-      }
-      return
-    }
-    if (!grounded || this.laneJumping) {
-      this.enterFsm('JUMP', now)
-      return
-    }
-    this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
-  }
 
   destroy(fromScene?: boolean) {
     this.stopIFrameFlash()

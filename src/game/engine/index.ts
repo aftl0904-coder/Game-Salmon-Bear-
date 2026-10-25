@@ -7,4 +7,11 @@ export * from './entities'
 export * from './player'
 export { DebugOverlay } from './debug'
 export { DEBUG_MODE } from './debugMode'
-export { FSM_TIMEOUT_MS, type PlayerFsm } from './playerFsm'
+export {
+  FSM_TIMEOUT_MS,
+  fsmEnter,
+  fsmUpdate,
+  type PlayerFsm,
+  type PlayerFsmHost,
+  type FsmUpdateCtx,
+} from './playerFsm'
