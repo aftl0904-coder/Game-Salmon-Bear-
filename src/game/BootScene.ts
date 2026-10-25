@@ -21,6 +21,7 @@ import {
 import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { applyEnemyPlaceholderTextures, ENEMY_SHEET_MAP } from './enemyPlaceholders'
+import { applyArtOverrides, preloadArtOverrides } from './artOverrides'
 import {
   BAKE_RES_FACTOR,
   OUTLINE_WIDTH,
@@ -93,6 +94,10 @@ export class BootScene extends Phaser.Scene {
     for (let v = 0; v < 4; v++) {
       this.load.image(`tile-ground-${v}`, `/art/tiles/ground-${v}.png`)
     }
+    // Hand-pixelled terrain (scripts/art/gen_terrain.py): grass lip + wide dirt, foreground bushes.
+    this.load.image('tile-ground-top', '/art/tiles/ground-top.png')
+    this.load.image('bg-bush-strip', '/art/tiles/bush-strip.png')
+    preloadArtOverrides(this)
     preloadRound1Map(this)
   }
 
@@ -104,6 +109,7 @@ export class BootScene extends Phaser.Scene {
     registerUiArt(this)
     const swapped = applyEnemyPlaceholderTextures(this)
     this.registry.set('enemyPlaceholders', swapped)
+    this.registry.set('artOverrides', applyArtOverrides(this))
     this.applyCelCoinTexture()
     this.bakeCastTextures()
     this.thickenPropOutlines()

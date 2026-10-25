@@ -113,29 +113,10 @@ export class PatrolEnemy extends Enemy {
     enableActorSprite(e)
     e.setData('baseTex', tex)
     // Real painted art — no role tint (was turning 紅魚 blue/orange).
-    if (spKey === 'elephant') {
-      const trunkKey = scene.textures.exists('fx-elephant-trunk-0')
-        ? 'fx-elephant-trunk-0'
-        : scene.textures.exists('fx-salmon-shot')
-          ? 'fx-salmon-shot'
-          : 'coin'
-      e.weapon = scene.add
-        .image(x + 22, feetY - 36, trunkKey)
-        .setOrigin(0, 0.5)
-        .setDepth(actorDepth('enemy', lane, feetY) + 0.25)
-      enableActorSprite(e.weapon)
-      e.weapon.setData('isTrunk', true)
-    } else {
-      const wKey = spKey === 'barrel'
-        ? (scene.textures.exists('prop-enemy-club') ? 'prop-enemy-club' : 'prop-sword')
-        : (scene.textures.exists('prop-enemy-knife')
-          ? 'prop-enemy-knife'
-          : scene.textures.exists('prop-enemy-spear')
-            ? 'prop-enemy-spear'
-            : 'prop-sword')
-      e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
-      enableActorSprite(e.weapon)
-    }
+    // Painted enemies carry their own look (紅魚 bite, 帽仔兵 rock, 機械豬 slam):
+    // no separate held weapon sprite — the old knife / club / elephant trunk
+    // didn't match the new art. Attack reads via wind-up frames + red flash.
+    e.weapon = null
     bindFootBody(e, {
       bodyW: spKey === 'elephant' ? 52 : spKey === 'barrel' ? 44 : 40,
       bodyH: spKey === 'elephant' ? 52 : spKey === 'barrel' ? 56 : 44,

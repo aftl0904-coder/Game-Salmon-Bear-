@@ -1495,7 +1495,10 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  private bushStrip: Phaser.GameObjects.TileSprite | null = null
+
   private animateBg() {
+    if (this.bushStrip) this.bushStrip.tilePositionX = Math.round(this.cameras.main.scrollX * 0.5)
     if (!this.water) return
     const sx = this.cameras.main.scrollX
     const t = this.time.now
@@ -1717,19 +1720,27 @@ export class GameScene extends Phaser.Scene {
     if (this.textures.exists('bg-wallpaper')) {
       // Far upper wallpaper — pixel nearest (640×360 ≤64c).
       const roadTop = GROUND_Y - 80
+      void roadTop
+      // Far layer is fixed (SNES-style distant backdrop): parallax drift used to
+      // expose the painting's right edge late in the stage. Bottom sits on the floor.
       const bg = this.add
-        .image(GAME_W / 2, Math.round(roadTop * 0.42), 'bg-wallpaper')
-        .setScrollFactor(0.018, 0)
+        .image(GAME_W / 2, LANE_FLOOR_Y + 6, 'bg-wallpaper')
+        .setOrigin(0.5, 1)
+        .setScrollFactor(0, 0)
         .setDepth(DEPTH.SKY_BAND)
         .setScale(1)
-        .setAlpha(0.85)
+        .setAlpha(1)
       bg.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
-      // Warm mist only near the road edge — blends into play space, not a blue wash.
-      const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
-      mist.fillStyle(0xf0ebe0, 0.18)
-      mist.fillRect(0, roadTop - L(70), GAME_W, L(36))
-      mist.fillStyle(0xf4f0e6, 0.4)
-      mist.fillRect(0, roadTop - L(40), GAME_W, L(44))
+      // Mid layer: bushes along the walk line, half-speed parallax for depth.
+      if (this.textures.exists('bg-bush-strip')) {
+        const bh = this.textures.get('bg-bush-strip').get().height
+        this.bushStrip = this.add
+          .tileSprite(0, LANE_FLOOR_Y + 4 - bh, GAME_W, bh, 'bg-bush-strip')
+          .setOrigin(0, 0)
+          .setScrollFactor(0)
+          .setDepth(DEPTH.SKY_BAND + 2)
+        enablePixelSprite(this.bushStrip as unknown as Phaser.GameObjects.Image)
+      }
       this.placeCampsite(stageX(700))
       this.placeCampsite(stageX(2800))
       this.placeCampsite(stageX(4600))
@@ -2003,20 +2014,19 @@ export class GameScene extends Phaser.Scene {
       g.fillStyle(0x2a1a14, 1).fillRect(p.x, floor, p.w, 6)
       g.fillStyle(0x5a3a22, 1).fillRect(p.x, floor, 2, GAME_H - floor).fillRect(p.x + p.w - 2, floor, 2, GAME_H - floor)
     }
-    const topTex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
     for (const st of STAGE1.steps) {
       const top = floor - st.h
-      // Earth body + grass lip; 1px dark outline to match sprite ink.
-      g.fillStyle(0x6b4428, 1).fillRect(st.x, top, st.w, st.h)
-      g.fillStyle(0x4e301c, 1).fillRect(st.x, top + Math.max(6, st.h - 6), st.w, Math.min(6, st.h))
+      // Earth body + grass lip (same tile as the ground ribbon); 1px dark outline.
+      if (this.textures.exists('tile-ground-top')) {
+        const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, 'tile-ground-top').setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
+      } else {
+        g.fillStyle(0x6b4428, 1).fillRect(st.x, top, st.w, st.h)
+      }
       g.fillStyle(0x12100c, 1)
         .fillRect(st.x - 1, top - 1, st.w + 2, 1)
         .fillRect(st.x - 1, top, 1, st.h)
         .fillRect(st.x + st.w, top, 1, st.h)
-      if (this.textures.exists(topTex)) {
-        const lip = this.add.tileSprite(st.x, top, st.w, 6, topTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
-        enablePixelSprite(lip as unknown as Phaser.GameObjects.Image)
-      }
     }
     const woodTex = this.textures.exists('blk-wood') ? 'blk-wood' : null
     for (const pl of STAGE1.platforms) {
@@ -2677,7 +2687,9 @@ export class GameScene extends Phaser.Scene {
 
   /** Full-width ground: left-origin tiles on integer stride — no mid-gap 斷開. */
   private layGroundRibbon(surfaceY: number) {
-    const tex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
+    const tex = this.textures.exists('tile-ground-top')
+      ? 'tile-ground-top'
+      : this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
     const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
