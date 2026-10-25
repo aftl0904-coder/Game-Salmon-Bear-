@@ -220,6 +220,37 @@ export const SFX = {
     tone(988, 0.08, 'sine', 0.12)
     tone(1480, 0.14, 'triangle', 0.09)
   },
+  /** 金鮭 weapon level up — rising arpeggio. */
+  powerUp: () => {
+    const f = [523, 659, 784, 1046, 1318]
+    f.forEach((hz, i) => tone(hz, 0.09, 'square', 0.06, undefined, i * 0.055))
+    tone(1568, 0.3, 'triangle', 0.08, undefined, 0.28)
+  },
+  /** Weapon level lost on hit — falling triad. */
+  powerDown: () => {
+    ;[784, 622, 466].forEach((hz, i) => tone(hz, 0.1, 'square', 0.05, hz * 0.9, i * 0.07))
+  },
+  /** Paper lantern torn open. */
+  paperTear: () => {
+    noise(0.09, 0.14, 0, 2600)
+    noise(0.06, 0.08, 0.05, 1800)
+  },
+  /** Clay pot shatters. */
+  potShatter: () => {
+    noise(0.05, 0.16, 0, 3200)
+    tone(1200, 0.05, 'triangle', 0.06, 900, 0.02)
+    tone(1650, 0.04, 'triangle', 0.05, undefined, 0.06)
+    noise(0.08, 0.06, 0.07, 1400)
+  },
+  /** Crusher: chain rattle before the drop. */
+  chain: () => {
+    for (let i = 0; i < 4; i++) tone(1900 + i * 140, 0.025, 'square', 0.03, undefined, i * 0.05)
+  },
+  /** Crusher slams the floor. */
+  slam: () => {
+    noise(0.14, 0.2, 0, 500)
+    tone(70, 0.22, 'sine', 0.22, 40)
+  },
   continue: () => {
     tone(523, 0.09, 'sine', 0.12)
     tone(784, 0.12, 'triangle', 0.1)

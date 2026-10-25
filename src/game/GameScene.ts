@@ -136,6 +136,22 @@ type Stage1 = {
   enemies: Array<{ x: number; species: string; kind: string; unlockX: number }>
   altarAmbush: Array<{ x: number; species: string }>
   altarTriggerX: number
+  movingPlatforms?: Array<{ x: number; w: number; h: number; range: number; periodMs: number }>
+  crushers?: Array<{ x: number; restH: number; warnMs: number; downMs: number; stayMs: number; upMs: number; idleMs: number }>
+  breakables?: Array<{ x: number; kind: 'lantern' | 'pot'; loot: LootKind }>
+}
+/** Weapon level (金鮭): 1–3, lose one on every hit taken. */
+const WEAPON_MAX_LV = 3
+type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
+type CrusherState = 'idle' | 'warn' | 'down' | 'stay' | 'up'
+type Crusher = {
+  spr: Phaser.GameObjects.Image
+  x: number
+  restBottom: number
+  floor: number
+  state: CrusherState
+  t: number
+  cfg: { warnMs: number; downMs: number; stayMs: number; upMs: number; idleMs: number }
 }
 const STAGE1 = stage1Raw as unknown as Stage1
 
@@ -617,6 +633,8 @@ export class GameScene extends Phaser.Scene {
     this.syncFx()
     this.animateBg()
     this.tickAmbientCritters(dt)
+    this.tickMovers()
+    this.tickCrushers(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -1060,19 +1078,32 @@ export class GameScene extends Phaser.Scene {
     const hgt = Math.max(16, h.displayHeight || 32)
     const muzzleX = h.x + h.facing * hgt * 0.55
     const muzzleY = h.y - hgt * 0.55
-    const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
+    // 金鮭 levels: Lv1 one roe · Lv2 two (up/down) · Lv3 three-way fan, range ×1.4.
+    const lv = this.weaponLv(h)
+    const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
+    const pattern: Array<{ dy: number; vy: number }> =
+      lv >= 3
+        ? [{ dy: 0, vy: -42 }, { dy: 0, vy: 0 }, { dy: 0, vy: 42 }]
+        : lv === 2
+          ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
+          : [{ dy: 0, vy: 0 }]
+    for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range)
+    burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    this.smashBreakablesInFront(h)
+  }
+
+  private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number) {
+    const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(2 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
+    shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)
-    shot.setData('originX', muzzleX)
-    shot.setData('maxRange', SALMON_SHOT_RANGE)
-    burst(this, muzzleX, muzzleY, 0xffaa66, 5)
-    this.smashBreakablesInFront(h)
+    shot.setData('originX', x)
+    shot.setData('maxRange', range)
     this.entities.add(shot, 'projectile')
-    const maxMs = Math.ceil((SALMON_SHOT_RANGE / SALMON_SHOT_SPEED) * 1000) + 80
+    const maxMs = Math.ceil((range / SALMON_SHOT_SPEED) * 1000) + 80
     this.time.delayedCall(maxMs, () => {
       if (shot.active) shot.destroy()
     })
@@ -1119,7 +1150,11 @@ export class GameScene extends Phaser.Scene {
         },
       })
     }
-    this.spawnAttackHitbox(h, PLAYER_ATTACK_DMG, SWORD_HIT_W, SWORD_HIT_H, SWORD_HIT_MS)
+    // 金鮭 levels: Lv2 reach ×1.35 · Lv3 reach ×1.7 and +1 damage.
+    const lv = this.weaponLv(h)
+    const reach = lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1
+    if (lv >= 2) burst(this, grip.x + h.facing * SWORD_HIT_W * reach * 0.6, grip.y, 0xffe070, 4 + lv * 2)
+    this.spawnAttackHitbox(h, PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0), Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
     this.smashBreakablesInFront(h)
   }
 
@@ -1288,6 +1323,7 @@ export class GameScene extends Phaser.Scene {
     SFX.hurt()
     freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
     freezeActors(this, this.combatActors().filter((a) => a !== h), HIT_CONFIRM_FREEZE_MS)
+    this.dropWeaponLv(h)
     if (pe.species === 'elephant' && typeof pe.grantDominate === 'function') {
       pe.grantDominate(this.time.now, ELEPHANT_DOMINATE_MS)
     }
@@ -1330,6 +1366,7 @@ export class GameScene extends Phaser.Scene {
     SFX.spike()
     burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
+    this.dropWeaponLv(h)
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts?.()
@@ -1356,6 +1393,7 @@ export class GameScene extends Phaser.Scene {
         h.snapToLane(h.lane, respawnX)
         h.setVelocity(0, 0)
         floatText(this, h.x, h.y - 56, '跌落坑！', '#ff8866')
+        this.dropWeaponLv(h)
         applyHurtPose(h, -h.facing)
         startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
         SFX.spike()
@@ -1968,12 +2006,10 @@ export class GameScene extends Phaser.Scene {
     for (const h of STAGE1.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
 
-    // Exactly 1 sushi on a random road lane — eat for +2 HP.
-    {
-      const sx = Phaser.Math.Between(500, WORLD_W - 400)
-      const sl = clampLane(Phaser.Math.Between(0, 4)) as LaneId
-      this.spawnSushi(sx, laneY(sl) - 20)
-    }
+    // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
+    this.powerPickups = this.physics.add.group()
+    this.placeBreakables()
+    this.placeCrushers()
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(2 * PROP_DISPLAY_SCALE, 1)
@@ -2010,6 +2046,18 @@ export class GameScene extends Phaser.Scene {
     }
     for (const pl of STAGE1.platforms) {
       solids.push({ x0: pl.x, x1: pl.x + pl.w, top: floor - pl.h, oneWay: true, kind: 'platform' })
+    }
+    // Moving planks: the Solid object is shared with engine/terrain, so moving x0/x1 moves the floor.
+    this.movers = []
+    for (const mp of STAGE1.movingPlatforms ?? []) {
+      const solid: Solid = { x0: mp.x, x1: mp.x + mp.w, top: floor - mp.h, oneWay: true, kind: 'platform' }
+      solids.push(solid)
+      const img = this.textures.exists('blk-wood')
+        ? this.add.tileSprite(mp.x, floor - mp.h, mp.w, 8, 'blk-wood').setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        : null
+      if (img) enablePixelSprite(img as unknown as Phaser.GameObjects.Image)
+      const posts = this.add.graphics().setDepth(DEPTH.GROUND + 3)
+      this.movers.push({ solid, baseX: mp.x, w: mp.w, range: mp.range, periodMs: mp.periodMs, img, posts })
     }
     setTerrain(solids, pits, floor)
   }
@@ -2281,6 +2329,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.sushiPickups, (_b, s) => this.takeSushi(this.boy, s as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.powerPickups, (_b, p) => this.takePowerUp(this.boy, p as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.enemyShots, (_b, s) => this.hitByFishBullet(this.boy, s as Phaser.Physics.Arcade.Sprite))
     if (this.girl) {
       const g = this.girl
@@ -2294,6 +2343,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.sushiPickups, (_g, s) => this.takeSushi(g, s as Phaser.Physics.Arcade.Sprite))
+      this.physics.add.overlap(g, this.powerPickups, (_g, p) => this.takePowerUp(g, p as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.enemyShots, (_g, s) => this.hitByFishBullet(g, s as Phaser.Physics.Arcade.Sprite))
     }
   }
@@ -2396,27 +2446,250 @@ export class GameScene extends Phaser.Scene {
     this.events.once('shutdown', () => handle.destroy())
   }
 
+  // ── Goemon-style stage mechanics ─────────────────────────────────────────
+
+  private powerPickups!: Phaser.Physics.Arcade.Group
+  private movers: Mover[] = []
+  private crushers: Crusher[] = []
+  private crusherChains: Phaser.GameObjects.Graphics | null = null
+
+  /** Paper lanterns / clay pots from stage JSON; break with any attack. */
+  private placeBreakables() {
+    for (const b of STAGE1.breakables ?? []) {
+      const tex = b.kind === 'lantern'
+        ? (this.textures.exists('prop-break-lantern') ? 'prop-break-lantern' : 'prop-lantern3d')
+        : (this.textures.exists('prop-break-pot') ? 'prop-break-pot' : 'pot3d')
+      const top = groundTopBelow(b.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
+      const spr = this.pots.create(b.x, top, tex) as Breakable
+      spr.setOrigin(0.5, 1).setDepth(DEPTH.BREAKABLE)
+      spr.breakKind = b.kind
+      spr.loot = b.loot
+      enablePixelSprite(spr)
+      const body = spr.body as Phaser.Physics.Arcade.Body
+      body.allowGravity = false
+      body.setImmovable(true)
+      // Lanterns sway a touch so they read as paper, not stone.
+      if (b.kind === 'lantern') {
+        spr.setData('baseY', top)
+        this.tweens.add({ targets: spr, angle: { from: -3, to: 3 }, yoyo: true, repeat: -1, duration: 900 + (b.x % 5) * 80, ease: 'Sine.inOut' })
+      }
+      addGroundShadow(this, spr, () => top, 0.45)
+    }
+  }
+
   private breakPot(pot: Breakable) {
-    if (!pot.active) return
+    if (!pot.active || pot.getData('broken')) return
+    pot.setData('broken', true)
     const loot: LootKind = pot.loot ?? (pot.breakKind === 'chest' ? 'coin' : 'honey')
-    const x = pot.x, y = pot.y
+    const x = pot.x
+    const midY = pot.y - pot.displayHeight * 0.5
     const facing = Math.sign(this.boy.x - x) || 1
-    SFX.kill()
-    // Same hit language as enemy smash: freeze + shake + white flash + lean
-    const debrisColor = pot.breakKind === 'chest' ? 0xc48a48 : 0xffc050
-    this.juice.solidHit(x, y, false, pot as Phaser.Physics.Arcade.Sprite, -facing)
-    this.juice.breakDebris(x, y, debrisColor)
-    impactRing(this, x, y, debrisColor, 12)
-    floatText(this, x, y - 18, pot.breakKind === 'chest' ? '寶箱破！' : '壺破！', '#ffe8a0')
-    this.addScorePop(x, y - 48, SCORE_BREAK)
+    const isLantern = pot.breakKind === 'lantern'
+    if (isLantern) SFX.paperTear()
+    else if (pot.breakKind === 'pot') SFX.potShatter()
+    else SFX.kill()
+    const debrisColor = isLantern ? 0xd8382a : pot.breakKind === 'pot' ? 0xa45c32 : 0xc48a48
+    this.juice.solidHit(x, midY, false, pot as Phaser.Physics.Arcade.Sprite, -facing)
+    this.juice.breakDebris(x, midY, debrisColor)
+    impactRing(this, x, midY, debrisColor, 12)
+    if (isLantern) burst(this, x, midY, 0xffd27a, 8) // candle sparks
+    this.addScorePop(x, midY - 30, SCORE_BREAK)
     this.time.delayedCall(70, () => {
       if (pot.active) pot.disableBody(true, true)
     })
-    if (loot === 'honey') {
-      this.grantHoneySpecial(x, y)
+    const dropY = pot.y - 12
+    if (loot === 'honey') this.grantHoneySpecial(x, midY)
+    else if (loot === 'power') this.spawnPowerUp(x, dropY)
+    else if (loot === 'food') {
+      this.spawnSushi(x, dropY)
+      floatText(this, x, midY - 20, '壽司！', '#ff99aa')
     } else {
-      this.spawnCoin?.(x, y - 10)
-      floatText(this, x, y - 36, '＋1幣', '#ffe08a')
+      this.spawnCoin?.(x, dropY)
+      floatText(this, x, midY - 20, '＋1幣', '#ffe08a')
+    }
+  }
+
+  /** 金鮭 pops out with a little hop, then bobs until taken. */
+  private spawnPowerUp(x: number, y: number) {
+    const key = this.textures.exists('pickup-power') ? 'pickup-power' : 'coin'
+    const p = this.powerPickups.create(x, y - 18, key) as Phaser.Physics.Arcade.Sprite
+    p.setDepth(DEPTH.PICKUP)
+    enablePixelSprite(p)
+    ;(p.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    addGroundShadow(this, p, () => y + 10, 0.5)
+    floatText(this, x, y - 40, '金鮭！', '#ffd040', { size: 16 })
+    this.tweens.add({
+      targets: p,
+      y,
+      duration: 260,
+      ease: 'Bounce.out',
+      onComplete: () => {
+        if (p.active) this.tweens.add({ targets: p, y: y - 5, yoyo: true, repeat: -1, duration: 520, ease: 'Sine.inOut' })
+      },
+    })
+    // Shine every second so it's never missed.
+    const shine = this.time.addEvent({
+      delay: 1000,
+      loop: true,
+      callback: () => {
+        if (!p.active) return shine.remove()
+        burst(this, p.x, p.y, 0xfff0a0, 3)
+      },
+    })
+  }
+
+  private weaponLv(h: Hero): number {
+    return (h.getData('wlv') as number | undefined) ?? 1
+  }
+
+  private takePowerUp(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
+    if (!item.active || !h.alive) return
+    item.disableBody(true, true)
+    const before = this.weaponLv(h)
+    const lv = Math.min(WEAPON_MAX_LV, before + 1)
+    h.setData('wlv', lv)
+    SFX.powerUp()
+    impactRing(this, h.x, h.y - 30, 0xffd040, 18)
+    burst(this, h.x, h.y - 30, 0xffe890, 14)
+    if (lv > before) {
+      floatText(this, h.x, h.y - 70, `武器升級 Lv${lv}`, '#ffd040', { size: 18, rise: 24, dur: 1600 })
+    } else {
+      // Already max → bank it as score.
+      this.addScorePop(h.x, h.y - 70, SCORE_BREAK * 2)
+      floatText(this, h.x, h.y - 70, '武器 MAX', '#ffd040', { size: 16 })
+    }
+    this.flashWeaponTint(h)
+  }
+
+  /** Lose one weapon level on any damage (Goemon rule). */
+  private dropWeaponLv(h: Hero) {
+    const lv = this.weaponLv(h)
+    if (lv <= 1) return
+    h.setData('wlv', lv - 1)
+    SFX.powerDown()
+    floatText(this, h.x, h.y - 84, `武器 Lv${lv - 1}`, '#c8a060', { size: 14, dur: 1000 })
+  }
+
+  private flashWeaponTint(h: Hero) {
+    h.setTint(0xffe070)
+    this.time.delayedCall(90, () => {
+      if (h.active && h.hurtLock <= 0) h.clearTint()
+    })
+  }
+
+  /** Moving planks: sine slide; heroes standing on them ride along. */
+  private tickMovers() {
+    if (!this.movers.length) return
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    for (const m of this.movers) {
+      const x0 = Math.round(m.baseX + m.range * Math.sin((this.time.now / m.periodMs) * Math.PI * 2))
+      const dx = x0 - m.solid.x0
+      if (dx !== 0) {
+        for (const h of heroes) {
+          const onIt = !h.laneJumping && Math.abs(h.y - m.solid.top) <= 3 && h.x >= m.solid.x0 - 4 && h.x <= m.solid.x1 + 4
+          if (onIt) h.x += dx
+        }
+      }
+      m.solid.x0 = x0
+      m.solid.x1 = x0 + m.w
+      const top = m.solid.top
+      if (m.img) m.img.x = x0
+      m.posts.clear()
+      if (!m.img) m.posts.fillStyle(0x8a5a30, 1).fillRect(x0, top, m.w, 8)
+      m.posts
+        .fillStyle(0x12100c, 1)
+        .fillRect(x0 - 1, top - 1, m.w + 2, 1)
+        .fillRect(x0 - 1, top + 8, m.w + 2, 1)
+        // Little gears under the plank so the motion reads as mechanical.
+        .fillStyle(0x6a6460, 1)
+        .fillRect(x0 + 4, top + 9, 4, 4)
+        .fillRect(x0 + m.w - 8, top + 9, 4, 4)
+    }
+  }
+
+  private placeCrushers() {
+    this.crushers = []
+    const list = STAGE1.crushers ?? []
+    if (!list.length) return
+    this.crusherChains = this.add.graphics().setDepth(DEPTH.BREAKABLE - 1)
+    const key = this.textures.exists('hazard-crusher') ? 'hazard-crusher' : 'coin'
+    for (const c of list) {
+      const floor = LANE_FLOOR_Y
+      const restBottom = floor - c.restH
+      const spr = this.add.image(c.x, restBottom, key).setOrigin(0.5, 1).setDepth(DEPTH.BREAKABLE)
+      enablePixelSprite(spr)
+      this.crushers.push({ spr, x: c.x, restBottom, floor, state: 'idle', t: c.idleMs, cfg: c })
+      // Warning stripe on the floor under it.
+      this.add.rectangle(c.x, floor + 1, spr.displayWidth + 4, 2, 0xb03020, 0.7).setOrigin(0.5, 0).setDepth(DEPTH.GROUND + 4)
+    }
+  }
+
+  private tickCrushers(dt: number) {
+    if (!this.crushers.length) return
+    const g = this.crusherChains
+    g?.clear()
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    const cam = this.cameras.main
+    for (const c of this.crushers) {
+      c.t -= dt
+      const cfg = c.cfg
+      const onScreen = c.x > cam.scrollX - 80 && c.x < cam.scrollX + GAME_W + 80
+      if (c.t <= 0) {
+        if (c.state === 'idle') {
+          c.state = 'warn'
+          c.t = cfg.warnMs
+          if (onScreen) SFX.chain()
+        } else if (c.state === 'warn') {
+          c.state = 'down'
+          c.t = cfg.downMs
+        } else if (c.state === 'down') {
+          c.state = 'stay'
+          c.t = cfg.stayMs
+          if (onScreen) {
+            SFX.slam()
+            this.cameras.main.shake(90, 0.004)
+            burst(this, c.x - 10, c.floor - 2, 0xc8b090, 6)
+            burst(this, c.x + 10, c.floor - 2, 0xc8b090, 6)
+          }
+        } else if (c.state === 'stay') {
+          c.state = 'up'
+          c.t = cfg.upMs
+        } else {
+          c.state = 'idle'
+          c.t = cfg.idleMs
+        }
+      }
+      // Position from state progress.
+      let bottom = c.restBottom
+      let shakeX = 0
+      if (c.state === 'warn') shakeX = Math.floor(this.time.now / 40) % 2 === 0 ? -1 : 1
+      else if (c.state === 'down') {
+        const k = 1 - Math.max(0, c.t) / cfg.downMs
+        bottom = c.restBottom + (c.floor - c.restBottom) * k * k
+      } else if (c.state === 'stay') bottom = c.floor
+      else if (c.state === 'up') {
+        const k = 1 - Math.max(0, c.t) / cfg.upMs
+        bottom = c.floor - (c.floor - c.restBottom) * k
+      }
+      c.spr.setPosition(c.x + shakeX, Math.round(bottom))
+      // Chain up to the canopy.
+      const topY = Math.round(bottom - c.spr.displayHeight)
+      if (g) {
+        for (let y = topY - 2; y > c.floor - 220; y -= 4) {
+          g.fillStyle(0x5a544e, 1).fillRect(c.x - 1 + shakeX, y - 2, 3, 2)
+          g.fillStyle(0x8a847c, 1).fillRect(c.x - 1 + shakeX, y - 2, 1, 1)
+        }
+      }
+      // Hurts only while falling / resting on the floor.
+      if (c.state === 'down' || c.state === 'stay') {
+        const halfW = c.spr.displayWidth * 0.5 - 2
+        for (const h of heroes) {
+          const headY = h.y - Math.max(24, h.displayHeight * 0.85)
+          if (Math.abs(h.x - c.x) < halfW + 4 && bottom > headY && h.y > bottom - c.spr.displayHeight) {
+            this.hazardHit(h, { knockX: (Math.sign(h.x - c.x) || -1) * 260, knockY: -420, label: '尖刺塊！' })
+          }
+        }
+      }
     }
   }
 

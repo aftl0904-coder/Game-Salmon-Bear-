@@ -10,6 +10,11 @@ export const ART_OVERRIDES: Record<string, string> = {
   'fx-fish-bullet': '/art/items/fish-bubble.png',
   // New key (no procedural original): 帽仔兵 thrown rock.
   'fx-rock': '/art/items/rock.png',
+  'pickup-power': '/art/items/power-salmon.png',
+  'hazard-crusher': '/art/items/crusher.png',
+  // Breakable loot holders (stage1.json breakables).
+  'prop-break-lantern': '/art/items/break-lantern.png',
+  'prop-break-pot': '/art/items/break-pot.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {
