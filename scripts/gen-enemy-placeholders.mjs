@@ -8,6 +8,13 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+// Real enemy art now lives in public/art/enemies/ (cut from enemy-lineup-five.png).
+// Running this would overwrite it with silhouettes — require an explicit flag.
+if (!process.argv.includes('--force-overwrite-real-art')) {
+  console.error('gen-enemy-placeholders: refusing to overwrite real enemy art. Pass --force-overwrite-real-art if you really mean it.')
+  process.exit(1)
+}
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const outEnemies = path.join(root, 'public/art/enemies')
 const outTiles = path.join(root, 'public/art/tiles')
