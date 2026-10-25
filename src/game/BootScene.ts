@@ -131,8 +131,26 @@ export class BootScene extends Phaser.Scene {
       'fx-fish-bullet',
       'fan3d',
       'prop-fan',
+      // Soft-bake pickups/props so they share cast AA (not harsh NEAREST vs wallpaper)
+      'prop-honey-stack',
+      'hazard-durian',
+      'pickup-sushi',
+      'goal3d',
+      'pot3d',
+      'chest3d',
+      'prop-tent',
+      'prop-picnic-table',
+      'prop-campfire',
+      'prop-picnic',
     ]) {
-      if (this.textures.exists(key)) bakeSmoothActorTexture(this, key, 3)
+      if (this.textures.exists(key)) bakeSmoothActorTexture(this, key, 2)
+    }
+
+    // Outline + soft AA on base frames BEFORE walk/idle bake so anims match.
+    for (const key of actors) {
+      thickenSpriteOutline(this, key, 2, [18, 14, 12])
+      softAaSameSize(this, key, 2)
+      setActorLinearFilter(this, key)
     }
 
     registerWalkCycle(this, 'art-salmon', WALK_FRAMES)
@@ -149,14 +167,10 @@ export class BootScene extends Phaser.Scene {
   }
 
   /**
-   * Outline policy:
-   * - Background scenery → thin black line (foggy distance)
-   * - Interactables (pots / goal / honey / hazards) → thick black line
-   * Actors / weapons keep AA bake separately (no chunky outline).
+   * Outline policy — shared cel rim so cast + props align (wallpaper stays soft/far).
    */
   private thickenPropOutlines() {
-    const ink: [number, number, number] = [12, 10, 14]
-    // Playfield interactables — thick black rim + soft AA (higher perceived res).
+    const ink: [number, number, number] = [18, 14, 12]
     const interactables = [
       'pot3d',
       'chest3d',
@@ -167,12 +181,17 @@ export class BootScene extends Phaser.Scene {
       'blk-spike',
       'pickup-sushi',
       'coin',
+      'prop-tent',
+      'prop-picnic-table',
+      'prop-campfire',
+      'prop-picnic',
+      'prop-shrine',
     ]
     for (const key of interactables) {
-      thickenSpriteOutline(this, key, 3, ink)
+      thickenSpriteOutline(this, key, 2, ink)
       softAaSameSize(this, key, 2)
     }
-    // Background only — thin black line (stays NEAREST / foggy distance).
+    // Far scenery — thinner rim only
     for (const key of [
       'prop-tree3d',
       'prop-house3d',
@@ -180,12 +199,7 @@ export class BootScene extends Phaser.Scene {
       'prop-bridge',
       'prop-banner',
       'prop-lantern3d',
-      'prop-picnic',
-      'prop-picnic-table',
-      'prop-tent',
-      'prop-campfire',
       'prop-owl',
-      'prop-shrine',
       'lm-mount-1',
       'lm-mount-2',
       'lm-mount-3',

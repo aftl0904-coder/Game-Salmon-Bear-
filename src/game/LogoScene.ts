@@ -15,13 +15,13 @@ export class LogoScene extends Phaser.Scene {
     const g = this.add.graphics()
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    // Far upper wallpaper only (above the stage floor strip)
+    // Far upper wallpaper — soft/淡 so cast stays hero
     if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(width / 2, height * 0.28, 'bg-wallpaper')
-        .setDisplaySize(width * 1.05, height * 0.55)
-        .setAlpha(0.55)
-        .setTint(0xc8d8e0)
+        .image(width / 2, height * 0.26, 'bg-wallpaper')
+        .setDisplaySize(width * 1.02, height * 0.5)
+        .setAlpha(0.3)
+        .setTint(0xb8c8d4)
     }
 
     if (this.textures.exists('ui-noren')) {
@@ -47,18 +47,27 @@ export class LogoScene extends Phaser.Scene {
     }
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    const lineupY = height - 150
-    this.add.image(width / 2 - 130, lineupY + 12, shad).setAlpha(0.5).setScale(1.4, 0.7)
-    // Cast heroes are 2× baked — display ~1.2 equals old 2.4 on raw 72px art.
-    enableActorSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(1.2))
-    this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
-    // 噗噗 — Pooh-style honey bear (center, hero of cover lineup)
-    enableActorSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.9))
-    this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
-    // Fan is baked onto art-girl's back — no floating prop.
-    enableActorSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
+    // Cast centered, ~30% of screen height (GAME_H 540 → ~160px tall).
+    const lineupY = Math.round(height * 0.58)
+    const gap = 72
+    const cx = width / 2
+    const boyS = 0.58
+    const girlS = 0.54
+    const bearS = 0.42
+    this.add.image(cx - gap, lineupY + 6, shad).setAlpha(0.45).setScale(0.7, 0.4)
+    enableActorSprite(
+      this.add.image(cx - gap, lineupY, 'art-salmon').setOrigin(0.5, 1).setScale(boyS),
+    )
+    this.add.image(cx, lineupY + 8, shad).setAlpha(0.4).setScale(0.75, 0.4)
+    enableActorSprite(
+      this.add.image(cx, lineupY + 2, 'art-bear').setOrigin(0.5, 1).setScale(bearS),
+    )
+    this.add.image(cx + gap, lineupY + 6, shad).setAlpha(0.4).setScale(0.65, 0.4)
+    enableActorSprite(
+      this.add.image(cx + gap, lineupY, 'art-girl').setOrigin(0.5, 1).setScale(girlS),
+    )
     if (this.textures.exists('pot3d')) {
-      this.add.image(width / 2 - 40, lineupY + 36, 'pot3d').setScale(1.85)
+      this.add.image(cx - 28, lineupY + 4, 'pot3d').setOrigin(0.5, 1).setScale(0.7)
     }
     if (this.textures.exists('prop-banner')) {
       this.add.image(90, height - 108, 'prop-banner').setOrigin(0.5, 1).setScale(1.4)
