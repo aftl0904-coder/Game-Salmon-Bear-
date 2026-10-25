@@ -7,6 +7,7 @@ import {
   isAggregateHealth,
   type GameEventMap,
 } from './EventBus'
+import { mountTouchControls } from './TouchControls'
 
 /**
  * HUD overlay — hearts + blue 絕招 MP; no red HP strip / no score plate.
@@ -47,7 +48,7 @@ export class UIScene extends Phaser.Scene {
     const hud = buildStageHud(this, {
       mode,
       stageTitle: cfg?.stageTitle ?? '第一關・溪流小路',
-      stageSub: cfg?.stageSub ?? '奪回春蜜',
+      stageSub: cfg?.stageSub ?? '奪回蜂蜜',
     })
     this.heartsL = hud.heartsL
     this.heartsR = hud.heartsR
@@ -91,6 +92,8 @@ export class UIScene extends Phaser.Scene {
     EventBus.on(GameEvents.SCORE_UPDATED, this.onScore, this)
     EventBus.on(GameEvents.GAME_OVER, this.onGameOver, this)
 
+    mountTouchControls(this)
+
     this.events.once('shutdown', this.unbind, this)
     this.events.once('destroy', this.unbind, this)
   }
@@ -112,7 +115,7 @@ export class UIScene extends Phaser.Scene {
       this.mpBar.fillColor = this.dispMp > 0.55 ? 0x3ec8ff : 0x2a7098
     }
     if (this.mpText) {
-      this.mpText.setText(this.targetMp >= 1 ? '滿・Ｔ放招' : '食春蜜')
+      this.mpText.setText(this.targetMp >= 1 ? '滿・Ｔ放招' : '食蜂蜜')
       this.mpText.setColor(this.targetMp >= 1 ? '#66eeff' : '#88aacc')
     }
   }

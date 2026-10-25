@@ -449,12 +449,12 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 40, 18, 8, 3, ink)
     set(42, 19, [255, 245, 220])
     set(45, 19, [255, 245, 220])
-    // tusks
+    // tusks — trunk is a separate face-anchored weapon sprite (not painted here)
     rect(set, 46, 17, 3, 10, ink)
     rect(set, 47, 18, 1, 8, [255, 240, 200])
-    // idle short trunk
-    rect(set, 44, 20, 6, 12, ink)
-    rect(set, 45, 21, 4, 10, hide)
+    // snout stump where the live trunk attaches
+    rect(set, 44, 20, 5, 5, ink)
+    rect(set, 45, 21, 3, 3, hide)
     rect(set, 10, 38, 8, 10, ink)
     rect(set, 11, 39, 6, 8, hideD)
     rect(set, 10, 46, 8, 2, [30, 16, 20])

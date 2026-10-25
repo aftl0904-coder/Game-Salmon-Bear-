@@ -122,28 +122,38 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     set(30, 5, [220, 220, 230])
   })
 
-  // 琪寶寶近戰短刀／劍（黑色描邊＋頂光三階）
-  paint(scene, 'prop-sword', 36, 14, (set) => {
-    rect(set, 2, 4, 8, 6, [90, 55, 35])
-    rect(set, 3, 5, 6, 4, [140, 90, 50])
-    rect(set, 8, 2, 4, 10, [60, 50, 55])
-    rect(set, 9, 3, 2, 8, [120, 110, 120])
-    for (let x = 12; x < 34; x++) {
-      const t = (x - 12) / 22
-      rect(set, x, 4, 1, 6, [
-        Math.floor(210 + t * 35),
-        Math.floor(220 + t * 25),
-        Math.floor(230 + t * 20),
+  // 琪寶寶長劍 — handle on left so origin sticks in her hand
+  paint(scene, 'prop-sword', 72, 18, (set) => {
+    const ink: RGB = [18, 12, 16]
+    // pommel
+    rect(set, 0, 6, 5, 6, ink)
+    rect(set, 1, 7, 3, 4, [180, 140, 60])
+    // grip
+    rect(set, 4, 5, 12, 8, ink)
+    rect(set, 5, 6, 10, 6, [90, 50, 30])
+    rect(set, 5, 6, 10, 2, [140, 85, 45])
+    rect(set, 7, 8, 6, 2, [60, 35, 22])
+    // guard
+    rect(set, 15, 1, 5, 16, ink)
+    rect(set, 16, 2, 3, 14, [200, 175, 90])
+    rect(set, 16, 2, 3, 2, [255, 230, 140])
+    // long blade
+    for (let x = 20; x < 68; x++) {
+      const t = (x - 20) / 48
+      const thick = 8 - Math.floor(t * 3)
+      const y0 = 9 - Math.floor(thick / 2)
+      rect(set, x, y0 - 1, 1, thick + 2, ink)
+      rect(set, x, y0, 1, thick, [
+        Math.floor(210 + t * 40),
+        Math.floor(220 + t * 30),
+        Math.floor(235 + t * 15),
       ])
-      set(x, 4, [255, 255, 245])
-      set(x, 9, [140, 150, 165])
+      set(x, y0, [255, 255, 248])
+      set(x, y0 + thick - 1, [130, 140, 160])
     }
-    rect(set, 32, 5, 3, 4, [245, 248, 255])
-    // outline dots
-    for (let x = 12; x < 34; x++) {
-      set(x, 3, [20, 16, 22])
-      set(x, 10, [20, 16, 22])
-    }
+    // tip
+    rect(set, 67, 6, 5, 6, ink)
+    rect(set, 68, 7, 3, 4, [245, 248, 255])
   })
 
   paint(scene, 'shadow-blob', 48, 16, (set) => {

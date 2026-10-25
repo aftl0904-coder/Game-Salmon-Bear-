@@ -87,7 +87,7 @@ export class BootScene extends Phaser.Scene {
       round: 1,
       stageId: 'creek-path',
       stageTitle: '第一關・溪流小路',
-      stageSub: '奪回春蜜與鮭供',
+      stageSub: '奪回蜂蜜與鮭供',
       cast: ['倫寶', '琪寶寶', '噗噗'] as const,
       maxHp: 10,
       coinsStart: 5,

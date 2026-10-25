@@ -105,7 +105,10 @@ export class PatrolEnemy extends Enemy {
         : scene.textures.exists('fx-salmon-shot')
           ? 'fx-salmon-shot'
           : 'coin'
-      e.weapon = scene.add.image(x + 22, feetY - 22, trunkKey).setDepth(actorDepth('enemy', lane, feetY) + 0.25)
+      e.weapon = scene.add
+        .image(x + 22, feetY - 36, trunkKey)
+        .setOrigin(0, 0.5)
+        .setDepth(actorDepth('enemy', lane, feetY) + 0.25)
       enablePixelSprite(e.weapon)
       e.weapon.setData('isTrunk', true)
     } else {
@@ -450,25 +453,27 @@ export class PatrolEnemy extends Enemy {
     const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
     const trunk = !!w.getData('isTrunk') || this.species === 'elephant'
     if (trunk) {
-      // Nose action frames: curl → thrust extend 1.5× body (fighter forward).
-      const bodyLen = Math.max(56, this.displayWidth)
-      const reach = bodyLen * 1.5
+      // Always anchor trunk BASE on the face — never float to the ground.
+      // Origin at the snout end so curl/thrust grows outward from the face.
+      const faceX = this.x + face * (this.displayWidth * 0.4)
+      const faceY = this.y - this.displayHeight * 0.58
+      w.setOrigin(this.flipX ? 1 : 0, 0.5)
       if (wind) {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
-        w.setPosition(this.x + face * 16, this.y - 32)
-        w.setScale(1.25)
-        w.setAngle(face * -40)
+        w.setPosition(faceX, faceY)
+        w.setScale(1.35)
+        w.setAngle(face * -55)
       } else if (strike) {
         if (this.scene.textures.exists('fx-elephant-trunk-1')) w.setTexture('fx-elephant-trunk-1')
-        // Tip sits ~1.5 body lengths ahead of feet.
-        w.setPosition(this.x + face * (bodyLen * 0.55 + reach * 0.45), this.y - 20)
+        w.setPosition(faceX, faceY)
+        // Long thrust from the face (reach handled by meleeRadius, not by moving sprite to ground).
         w.setScale(1.55)
-        w.setAngle(face * 2)
+        w.setAngle(face * 8)
       } else {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
-        w.setPosition(this.x + face * 20, this.y - 20)
-        w.setScale(1.05)
-        w.setAngle(face * 18)
+        w.setPosition(faceX, faceY + 2)
+        w.setScale(1.15)
+        w.setAngle(face * 28)
       }
       w.setFlipX(this.flipX)
       w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)

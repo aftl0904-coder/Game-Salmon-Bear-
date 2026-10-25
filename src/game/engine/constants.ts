@@ -105,7 +105,7 @@ export const SALMON_SHOT_SPEED = Math.round(520 * 0.7)
 /** 鮭魚槍射速：0.7× 原再射速度 → CD = 400 / 0.7 */
 export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7)
 /** 琪寶寶劍撃 hitbox 寬／高／持續 */
-export const SWORD_HIT_W = 96
+export const SWORD_HIT_W = 120
 export const SWORD_HIT_H = 58
 export const SWORD_HIT_MS = 160
 /** 噗噗跟在琪寶寶身後的水平距離 */

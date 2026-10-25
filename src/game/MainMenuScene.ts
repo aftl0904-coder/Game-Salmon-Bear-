@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 import { unlockAudio, startBgm } from './audio'
 import { loadScores } from './score'
 import { enablePixelSprite } from './pixelSnap'
+import { mountTouchControls } from './TouchControls'
+import { TouchInput } from './touchInput'
 
 type Mode = '1p' | '2p'
 type SoloCast = 'boy' | 'girl'
@@ -45,7 +47,22 @@ export class MainMenuScene extends Phaser.Scene {
     this.buildModeSelect(width)
     this.buildFooter(width, height)
     this.wireInput()
+    mountTouchControls(this)
     this.refresh()
+  }
+
+  update() {
+    if (TouchInput.justPressed('up')) {
+      this.cursor = (this.cursor + this.choices.length - 1) % this.choices.length
+      this.refresh()
+    }
+    if (TouchInput.justPressed('down')) {
+      this.cursor = (this.cursor + 1) % this.choices.length
+      this.refresh()
+    }
+    if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) {
+      this.confirmStart()
+    }
   }
 
   private buildAtmosphere(width: number, height: number) {
@@ -172,7 +189,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setDepth(11)
 
     const sub = this.add
-      .text(width / 2, 112, '第一關・溪流小路　｜　奪回春蜜與鮭供', {
+      .text(width / 2, 112, '第一關・溪流小路　｜　奪回蜂蜜與鮭供', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '18px',
         color: '#5a3820',
@@ -314,7 +331,7 @@ export class MainMenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 28,
-        '上下揀模式　「開始」／空白／Enter\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食春蜜充藍條）',
+        '上下揀模式　「開始」／空白／Enter\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '13px',

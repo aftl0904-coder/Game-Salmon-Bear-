@@ -19,6 +19,7 @@ import {
 import { PatrolEnemy } from './enemies'
 import { EventBus, GameEvents } from './EventBus'
 import { Player } from './Player'
+import { TouchInput } from './touchInput'
 import {
   WORLD_W,
   WORLD_H,
@@ -445,14 +446,14 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Fill 絕招 MP from eating／拾取春蜜（max 1 charge）. */
+  /** Fill 絕招 MP from eating／拾取蜂蜜（max 1 charge）. */
   private grantHoneySpecial(x: number, y: number, label = true) {
     this.honeyGot = Math.min(3, this.honeyGot + 1)
     if (this.specialCharges < 1) {
       this.specialCharges = 1
       if (label) floatText(this, x, y - 36, '絕招就緒！撳Ｔ', '#66ccff')
     } else if (label) {
-      floatText(this, x, y - 18, '春蜜＋１', '#ffcc44')
+      floatText(this, x, y - 18, '蜂蜜＋１', '#ffcc44')
     }
     this.emitScore()
   }
@@ -492,10 +493,12 @@ export class GameScene extends Phaser.Scene {
         this.registry.get('winScreenShown') &&
         (Phaser.Input.Keyboard.JustDown(this.keyR) ||
           Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
-          Phaser.Input.Keyboard.JustDown(this.keySpace))
+          Phaser.Input.Keyboard.JustDown(this.keySpace) ||
+          TouchInput.justPressed('start') ||
+          TouchInput.justPressed('attack'))
       ) {
         this.goMenu()
-      } else if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
+      } else if (Phaser.Input.Keyboard.JustDown(this.keyR) || TouchInput.justPressed('start')) {
         this.goMenu()
       }
       this.debugOverlay.draw({
@@ -559,7 +562,7 @@ export class GameScene extends Phaser.Scene {
       this.bossOn = true
       this.spawnBoss(WORLD_W - 420, GROUND_Y)
       SFX.boss()
-      this.emitScore('關底・三角傀儡武者！奪回春蜜與鮭供')
+      this.emitScore('關底・三角傀儡武者！奪回蜂蜜與鮭供')
     }
 
     this.updateCameraFollow()
@@ -568,7 +571,7 @@ export class GameScene extends Phaser.Scene {
     const sec = ((this.time.now - this.startedAt) / 1000).toFixed(0)
     this.scorePts = this.liveScore()
     this.emitScore(
-      `${this.mode === '1p' ? '單人' : '雙人'}　進度 ${pct}%　${sec}秒　春蜜 ${this.honeyGot}/3`,
+      `${this.mode === '1p' ? '單人' : '雙人'}　進度 ${pct}%　${sec}秒　蜂蜜 ${this.honeyGot}/3`,
     )
     this.emitHealth()
     this.checkWin()
@@ -644,7 +647,8 @@ export class GameScene extends Phaser.Scene {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
       Phaser.Input.Keyboard.JustDown(this.keySpace) ||
-      Phaser.Input.Keyboard.JustDown(this.keyC)
+      Phaser.Input.Keyboard.JustDown(this.keyC) ||
+      TouchInput.justPressed('start')
     )
   }
 
@@ -747,23 +751,42 @@ export class GameScene extends Phaser.Scene {
   /** Y = attack (F / , / legacy J) */
   /** P1 attack = F only（超任 Y）；J 唔再用。 */
   private p1AttackJust() {
-    return Phaser.Input.Keyboard.JustDown(this.keyF) || this.padFaceJust(this.pad1, 3)
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keyF) ||
+      this.padFaceJust(this.pad1, 3) ||
+      TouchInput.justPressed('attack')
+    )
   }
   /** B = jump (G / legacy K) */
   private p1JumpJust() {
-    return Phaser.Input.Keyboard.JustDown(this.keyG) || Phaser.Input.Keyboard.JustDown(this.keyK) || this.padFaceJust(this.pad1, 0)
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keyG) ||
+      Phaser.Input.Keyboard.JustDown(this.keyK) ||
+      this.padFaceJust(this.pad1, 0) ||
+      TouchInput.justPressed('jump')
+    )
   }
   private p1JumpHeld() {
-    return this.keyG.isDown || this.keyK.isDown || !!(this.pad1?.buttons[0]?.pressed)
+    return (
+      this.keyG.isDown ||
+      this.keyK.isDown ||
+      !!(this.pad1?.buttons[0]?.pressed) ||
+      TouchInput.isDown('jump')
+    )
   }
   private p1LaneUpHeld() {
-    return this.keyW.isDown || this.padAxis(this.pad1, false) < -0.45
+    return this.keyW.isDown || this.padAxis(this.pad1, false) < -0.45 || TouchInput.isDown('up')
   }
   private p1LaneDownHeld() {
-    return this.keyS.isDown || this.padAxis(this.pad1, false) > 0.45
+    return this.keyS.isDown || this.padAxis(this.pad1, false) > 0.45 || TouchInput.isDown('down')
   }
   private p1SpecialJust() {
-    return Phaser.Input.Keyboard.JustDown(this.keyT) || Phaser.Input.Keyboard.JustDown(this.keyU) || this.padFaceJust(this.pad1, 2)
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keyT) ||
+      Phaser.Input.Keyboard.JustDown(this.keyU) ||
+      this.padFaceJust(this.pad1, 2) ||
+      TouchInput.justPressed('special')
+    )
   }
   private p2AttackJust() {
     return (
@@ -845,8 +868,8 @@ export class GameScene extends Phaser.Scene {
 
   private moveBoy(dt: number) {
     const ax = this.padAxis(this.pad1, true)
-    const left = this.keyA.isDown || ax < -0.45
-    const right = this.keyD.isDown || ax > 0.45
+    const left = this.keyA.isDown || ax < -0.45 || TouchInput.isDown('left')
+    const right = this.keyD.isDown || ax > 0.45 || TouchInput.isDown('right')
     const spd = this.boy.role === 'girl' ? GIRL_SPEED : BOY_SPEED
     this.steerHero(
       this.boy, dt, left, right,
@@ -874,13 +897,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * Honey special (T / ; / pad X): needs 1 MP charge from eating春蜜.
+   * Honey special (T / ; / pad X): needs 1 MP charge from eating蜂蜜.
    * P1 attack = F（超任 Y）／J（舊鍵）both fire salmon — intentional aliases.
    */
   private fireHoneySpecial(h: Hero) {
     if (!h.alive) return
     if (this.specialCharges <= 0) {
-      floatText(this, h.x, h.y - 40, '需要春蜜！', '#88aacc')
+      floatText(this, h.x, h.y - 40, '需要蜂蜜！', '#88aacc')
       SFX.land()
       return
     }
@@ -916,7 +939,7 @@ export class GameScene extends Phaser.Scene {
     this.entities.add(jet, 'projectile')
     floatText(this, h.x, h.y - 48, '絕招！', '#66ddff')
     burst(this, h.x, h.y - 28, 0x66ccff, 10)
-    this.emitScore('絕招！春蜜 MP 清空')
+    this.emitScore('絕招！蜂蜜 MP 清空')
     this.time.delayedCall(900, () => {
       if (jet.active) jet.destroy()
     })
@@ -983,16 +1006,18 @@ export class GameScene extends Phaser.Scene {
     h.setAngle(0)
     h.setScale(h.baseScale)
     if (this.sword) {
+      this.sword.setVisible(true)
       this.sword.setAlpha(1)
+      this.sword.setOrigin(h.facing < 0 ? 0.88 : 0.12, 0.5)
+      this.sword.setPosition(h.x + h.facing * 22, h.y - 30)
       this.tweens.add({
         targets: this.sword,
-        angle: h.facing > 0 ? 55 : -55,
-        x: h.x + h.facing * 42,
-        duration: 90,
+        angle: h.facing > 0 ? 62 : -62,
+        duration: 100,
         yoyo: true,
         onComplete: () => {
           if (!this.sword) return
-          this.sword.setAngle(h.facing > 0 ? -12 : 12)
+          this.sword.setAngle(h.facing > 0 ? -18 : 18)
         },
       })
     }
@@ -1278,10 +1303,16 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.sword) {
       const swing = g.atkCd > 80
-      this.sword.setPosition(g.x + g.facing * (swing ? 40 : 26), g.y - 30)
+      // Keep grip glued to her hand; blade extends forward.
+      const handX = g.x + g.facing * (swing ? 22 : 16)
+      const handY = g.y - (swing ? 30 : 34)
+      this.sword.setVisible(true)
+      this.sword.setAlpha(1)
+      this.sword.setOrigin(g.facing < 0 ? 0.88 : 0.12, 0.5)
+      this.sword.setPosition(handX, handY)
       this.sword.setFlipX(g.facing < 0)
-      this.sword.setScale(1.15)
-      if (!swing) this.sword.setAngle(g.facing > 0 ? -12 : 12)
+      this.sword.setScale(1.35)
+      if (!swing) this.sword.setAngle(g.facing > 0 ? -18 : 18)
       this.sword.setDepth(actorDepth('hitbox', g.lane, g.y) + 0.2)
     }
   }
@@ -1585,7 +1616,7 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
-      .text(WORLD_W - 140, GROUND_Y - 130, '祭壇・春蜜', {
+      .text(WORLD_W - 140, GROUND_Y - 130, '祭壇・蜂蜜', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '14px',
         color: '#2a1a10',
@@ -1714,11 +1745,13 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(this.fan)
     this.fanGlow = this.add.circle(g.x - 48, g.y - 48, 6, 0x88ddff, 0.08).setDepth(actorDepth('fan', lane, g.y) - 0.1)
     const swordKey = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
+    // Long sword — origin at grip so it stays in her hand while swinging.
     this.sword = this.add
-      .image(g.x + 26, g.y - 30, swordKey)
+      .image(g.x + 18, g.y - 34, swordKey)
+      .setOrigin(0.12, 0.5)
       .setDepth(actorDepth('hitbox', lane, g.y) + 0.2)
-      .setScale(1.15)
-      .setAngle(-12)
+      .setScale(1.35)
+      .setAngle(-18)
     enablePixelSprite(this.sword)
     this.petShadow = this.add.image(petStartX, g.y + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
   }
@@ -1810,7 +1843,7 @@ export class GameScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜與鮭供\n△三角組織雇來的傀儡擋路\n倫寶・鮭魚槍（有射程）｜琪寶寶・劍×１.５速\n噗噗跟在琪寶寶身後；她受傷才噴蜜反擊\n上／中／下三線　ＷＳ／↑↓換線　同線先打到\n\n按空白鍵／點擊　或稍候自動開始',
+        '第１關・奪回蜂蜜與鮭供\n△三角組織雇來的傀儡擋路\n倫寶・鮭魚槍（有射程）｜琪寶寶・劍×１.５速\n噗噗跟在琪寶寶身後；她受傷才噴蜜反擊\n上／中／下三線　ＷＳ／↑↓換線　同線先打到\n\n按空白鍵／點擊　或稍候自動開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -1834,13 +1867,29 @@ export class GameScene extends Phaser.Scene {
       box.destroy()
       this.emitScore(
         this.mode === '1p'
-          ? '單人：ＷＳ換線　Ｇ跳　Ｆ鮭槍　Ｔ絕招（食春蜜）｜Ｒ回選單'
-          : '雙人：Ｆ／，攻擊　Ｇ／．跳　Ｔ／；絕招｜食春蜜充藍條',
+          ? '單人：ＷＳ換線　Ｇ跳　Ｆ鮭槍　Ｔ絕招（食蜂蜜）｜Ｒ回選單'
+          : '雙人：Ｆ／，攻擊　Ｇ／．跳　Ｔ／；絕招｜食蜂蜜充藍條',
       )
     }
     this.time.delayedCall(120, () => {
       this.input.keyboard?.once('keydown', go)
       this.input.once('pointerdown', go)
+    })
+    // Phone virtual「始」also dismisses intro.
+    const touchPoll = this.time.addEvent({
+      delay: 80,
+      loop: true,
+      callback: () => {
+        if (
+          this.started ||
+          TouchInput.justPressed('start') ||
+          TouchInput.justPressed('attack') ||
+          TouchInput.justPressed('jump')
+        ) {
+          touchPoll.remove(false)
+          go()
+        }
+      },
     })
     // Auto-start so「載入後沒反應」不會卡在說明框。
     this.time.delayedCall(4200, go)
