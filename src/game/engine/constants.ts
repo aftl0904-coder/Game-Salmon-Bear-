@@ -11,6 +11,10 @@ export const GROUND_Y = 428
 export const MAX_HP = 6
 /** Combat: hits connect on same lane OR ±1 adjacent lane. */
 export const LANE_HIT_TOL = 1
+/**
+ * Actors bake at 3× with LINEAR AA; display scale keeps on-screen size ≈ old 2× NEAREST.
+ */
+export const ACTOR_DISPLAY_SCALE = 2 / 3
 /** 噗噗反擊半傷 */
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */

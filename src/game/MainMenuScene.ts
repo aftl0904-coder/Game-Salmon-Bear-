@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { unlockAudio, startBgm } from './audio'
 import { loadScores } from './score'
-import { enablePixelSprite } from './pixelSnap'
+import { enableActorSprite } from './pixelSnap'
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 
@@ -220,13 +220,13 @@ export class MainMenuScene extends Phaser.Scene {
     const ly = height - 100
     this.previewBoyShad = this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
     this.previewBoy = this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25)
-    enablePixelSprite(this.previewBoy)
+    enableActorSprite(this.previewBoy)
     this.previewGirlShad = this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
     this.previewGirl = this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15)
-    enablePixelSprite(this.previewGirl)
+    enableActorSprite(this.previewGirl)
     this.previewBearShad = this.add.image(width - 220, ly + 8, shad).setDepth(6).setAlpha(0.5).setScale(0.9, 0.7)
     this.previewBear = this.add.image(width - 220, ly + 6, 'art-bear').setDepth(7).setScale(1)
-    enablePixelSprite(this.previewBear)
+    enableActorSprite(this.previewBear)
     this.previewGirl.setVisible(false)
     this.previewBear.setVisible(false)
     this.previewGirlShad.setVisible(false)

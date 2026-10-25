@@ -79,6 +79,79 @@ export function bakePixelTexture(
   return { w: dw, h: dh }
 }
 
+/**
+ * Higher-res bilinear upsample for heroes / enemies / weapons.
+ * Soft alpha + LINEAR — scene tiles/props stay NEAREST pixel art.
+ */
+export function bakeSmoothActorTexture(
+  scene: TexScene,
+  key: string,
+  factor = 3,
+): { w: number; h: number } | null {
+  if (!scene.textures.exists(key)) return null
+  const src = scene.textures.get(key).getSourceImage() as
+    | HTMLImageElement
+    | HTMLCanvasElement
+    | ImageBitmap
+  const sw = (src as { width: number }).width | 0
+  const sh = (src as { height: number }).height | 0
+  if (sw < 1 || sh < 1) return null
+
+  const dw = sw * factor
+  const dh = sh * factor
+  const canvas = document.createElement('canvas')
+  canvas.width = dw
+  canvas.height = dh
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
+  ctx.clearRect(0, 0, dw, dh)
+  ctx.drawImage(src as CanvasImageSource, 0, 0, sw, sh, 0, 0, dw, dh)
+
+  const img = ctx.getImageData(0, 0, dw, dh)
+  const data = img.data
+  for (let i = 0; i < data.length; i += 4) {
+    const a = data[i + 3]
+    if (a < 24) data[i + 3] = 0
+    else if (a < 200) data[i + 3] = Math.min(255, Math.round(a * 1.15))
+  }
+  ctx.putImageData(img, 0, 0)
+
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.LINEAR)
+  return { w: dw, h: dh }
+}
+
+/** Mark base + walk/combat frame keys as LINEAR. */
+export function setActorLinearFilter(scene: TexScene, baseKey: string) {
+  const mark = (key: string) => {
+    if (scene.textures.exists(key)) {
+      scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.LINEAR)
+    }
+  }
+  mark(baseKey)
+  for (let i = 0; i < 12; i++) mark(`${baseKey}-w${i}`)
+  mark(`${baseKey}-idle`)
+  mark(`${baseKey}-atk`)
+  mark(`${baseKey}-hurt`)
+}
+
+/**
+ * Heroes / enemies / weapons: LINEAR + safeAuto (no mid-body shear).
+ * Background props keep enablePixelSprite (NEAREST).
+ */
+export function enableActorSprite(
+  spr: Phaser.GameObjects.GameObject | null | undefined,
+) {
+  enablePixelSprite(spr)
+  const any = spr as Phaser.GameObjects.Image | Phaser.GameObjects.Sprite | null
+  const tex = any?.texture
+  if (tex && typeof tex.setFilter === 'function') {
+    tex.setFilter(Phaser.Textures.FilterMode.LINEAR)
+  }
+}
+
 /** Harden alpha in-place without resizing (for already-correct-size art). */
 export function hardenTextureAlpha(scene: TexScene, key: string, alphaCut = 96) {
   if (!scene.textures.exists(key)) return
@@ -544,7 +617,14 @@ function readBaseImageData(scene: TexScene, baseKey: string): { w: number; h: nu
   return { w, h, base: tctx.getImageData(0, 0, w, h) }
 }
 
-function putFrame(scene: TexScene, key: string, w: number, h: number, out: ImageData) {
+function putFrame(
+  scene: TexScene,
+  key: string,
+  w: number,
+  h: number,
+  out: ImageData,
+  linear = false,
+) {
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h
@@ -553,7 +633,13 @@ function putFrame(scene: TexScene, key: string, w: number, h: number, out: Image
   ctx.putImageData(out, 0, 0)
   if (scene.textures.exists(key)) scene.textures.remove(key)
   scene.textures.addCanvas(key, canvas)
-  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  scene.textures
+    .get(key)
+    .setFilter(
+      linear
+        ? Phaser.Textures.FilterMode.LINEAR
+        : Phaser.Textures.FilterMode.NEAREST,
+    )
 }
 
 /**

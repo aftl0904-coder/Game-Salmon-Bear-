@@ -18,6 +18,7 @@ import {
   LANE_SWITCH_MS,
   MAX_FALL,
   MAX_HP,
+  ACTOR_DISPLAY_SCALE,
   RUN_ACCEL,
   RUN_FRICTION,
   actorDepth,
@@ -34,7 +35,7 @@ import {
 } from './engine'
 import { EventBus, GameEvents } from './EventBus'
 import {
-  enablePixelSprite,
+  enableActorSprite,
   setDiePoseVisual,
   setHurtPoseVisual,
   setIdlePose,
@@ -138,7 +139,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = 0
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
-    this.baseScale = cfg.scale ?? 1
+    this.baseScale = (cfg.scale ?? 1) * ACTOR_DISPLAY_SCALE
     this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
     this.coyote = 0
     this.jumpBuf = 0
@@ -163,7 +164,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.syncActorDepth()
     this.setScale(this.baseScale)
     this.setData('baseTex', cfg.texture)
-    enablePixelSprite(this)
+    enableActorSprite(this)
     // 2× baked cast frames — hurtbox matches visual feet/torso (not pre-bake 22×36).
     bindFootBody(this, {
       bodyW: cfg.bodyW ?? 44,
@@ -182,7 +183,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackHitbox.setVisible(false)
     this.attackHitbox.setActive(false)
     this.attackHitbox.setDepth(actorDepth('hitbox', this.lane, this.y))
-    enablePixelSprite(this.attackHitbox)
+    enableActorSprite(this.attackHitbox)
     const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
     hb.allowGravity = false
     hb.setAllowGravity(false)

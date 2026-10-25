@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { enablePixelSprite } from './pixelSnap'
+import { enableActorSprite } from './pixelSnap'
 
 /** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
@@ -70,12 +70,12 @@ export class LogoScene extends Phaser.Scene {
     const lineupY = height - 150
     this.add.image(width / 2 - 130, lineupY + 12, shad).setAlpha(0.5).setScale(1.4, 0.7)
     // Cast heroes are 2× baked — display ~1.2 equals old 2.4 on raw 72px art.
-    enablePixelSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(1.2))
+    enableActorSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(1.2))
     this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
-    enablePixelSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
+    enableActorSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
     this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
     // Fan is baked onto art-girl's back — no floating prop.
-    enablePixelSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
+    enableActorSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
     if (this.textures.exists('pot3d')) {
       this.add.image(width / 2 - 40, lineupY + 36, 'pot3d').setScale(1.85)
     }

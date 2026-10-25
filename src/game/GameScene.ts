@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen } from './fx'
 import {
   enablePixelSprite,
+  enableActorSprite,
   snapCameraScroll,
   snapTilePosition,
   snapWorldActors,
@@ -63,6 +64,7 @@ import {
   SWORD_HIT_H,
   SWORD_HIT_MS,
   PET_FOLLOW_BEHIND,
+  ACTOR_DISPLAY_SCALE,
   clampLane,
   laneY,
   sameLane,
@@ -936,7 +938,7 @@ export class GameScene extends Phaser.Scene {
     SFX.swing()
     const jet = this.honeys.create(h.x, h.y - 28, 'fx-honey') as Phaser.Physics.Arcade.Sprite
     jet.setScale(1.7).setDepth(actorDepth('shot', h.lane, h.y))
-    enablePixelSprite(jet)
+    enableActorSprite(jet)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     const ang = Phaser.Math.Angle.Between(h.x, h.y - 28, best.x, best.y - 20)
     const spd = 620
@@ -989,7 +991,7 @@ export class GameScene extends Phaser.Scene {
     const muzzleY = h.y - 42
     const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
-    enablePixelSprite(shot)
+    enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
     shot.setData('lane', h.lane)
@@ -1825,8 +1827,12 @@ export class GameScene extends Phaser.Scene {
     const petStartX = g.x - PET_FOLLOW_BEHIND
     this.pet = this.physics.add.sprite(petStartX, g.y, 'art-bear')
     this.pet.setOrigin(0.5, 1)
-    this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', lane, g.y)).setVisible(true)
-    enablePixelSprite(this.pet)
+    this.pet
+      .setScale(ACTOR_DISPLAY_SCALE)
+      .setAlpha(0.85)
+      .setDepth(actorDepth('pet', lane, g.y))
+      .setVisible(true)
+    enableActorSprite(this.pet)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.pet.setData('lane', lane)
@@ -1836,9 +1842,9 @@ export class GameScene extends Phaser.Scene {
       .image(g.x + 14, g.y - 54, swordKey)
       .setOrigin(0.12, 0.5)
       .setDepth(actorDepth('hitbox', lane, g.y) + 0.2)
-      .setScale(1.4)
+      .setScale(1.4 * ACTOR_DISPLAY_SCALE)
       .setAngle(-22)
-    enablePixelSprite(this.sword)
+    enableActorSprite(this.sword)
     this.petShadow = this.add.image(petStartX, g.y + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
   }
 
@@ -1935,7 +1941,7 @@ export class GameScene extends Phaser.Scene {
     const y = e.y - 36
     const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.4).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
-    enablePixelSprite(shot)
+    enableActorSprite(shot)
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
     body.setSize(10, 6)
@@ -2139,9 +2145,9 @@ export class GameScene extends Phaser.Scene {
     const boy = this.add.image(-78, hugY, 'art-salmon').setScale(1.55).setOrigin(0.5, 1)
     const girl = this.add.image(78, hugY, 'art-girl').setScale(1.55).setOrigin(0.5, 1)
     const bear = this.add.image(0, hugY + 10, 'art-bear').setScale(1.75).setOrigin(0.5, 1)
-    enablePixelSprite(boy)
-    enablePixelSprite(girl)
-    enablePixelSprite(bear)
+    enableActorSprite(boy)
+    enableActorSprite(girl)
+    enableActorSprite(bear)
     overlay.add([boy, girl, bear])
     this.tweens.add({
       targets: [boy, girl, bear],

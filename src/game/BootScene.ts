@@ -6,17 +6,16 @@ import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
 import {
-  bakePixelTexture,
+  bakeSmoothActorTexture,
   hardenTextureAlpha,
-  closeVerticalAlphaGaps,
   sealTextureSeamsX,
-  fillInternalAlphaHoles,
   thickenSpriteOutline,
   registerWalkCycle,
   registerIdleBreath,
   registerEnemyCombatFrames,
   stampFanOntoGirl,
   stampCasualClothes,
+  setActorLinearFilter,
   WALK_FRAMES,
 } from './pixelSnap'
 
@@ -99,51 +98,39 @@ export class BootScene extends Phaser.Scene {
   }
 
   /**
-   * Bake 2× NEAREST into cast/enemy textures so gameplay sprites run at scale 1.
-   * Phaser 4 fullAuto on scale≠1 independently snaps quad corners → waist cuts;
-   * soft source alpha washes into horizontal slices under NEAREST — harden it.
-   * 噗噗 stays 1× (smaller companion) with hardened alpha only.
+   * Actors (heroes/enemies/weapons): higher-res bilinear + LINEAR (AA).
+   * Scene/tiles/landmarks stay chunky NEAREST SNES pixel.
    */
   private bakeCastTextures() {
-    // Fan is part of 琪寶寶's body art (back-mounted), not a floating prop.
     stampFanOntoGirl(this)
-    // Both heroes in casual picnic-day clothes (woodland theme).
     stampCasualClothes(this)
 
-    const baked = [
-      ['art-salmon', 2] as const,
-      ['art-girl', 2] as const,
-      ['art-enemy', 2] as const,
-      ['art-enemy-barrel', 2] as const,
-      ['art-enemy-elephant', 2] as const,
-    ]
-    // alphaCut 56 — keep soft waist AA; 100 punched a torso slice through 琪寶寶.
-    for (const [key, factor] of baked) {
-      const size = bakePixelTexture(this, key, factor, 56)
-      if (!size) continue
-      const frame = this.textures.get(key).get()
-      if (frame.width !== size.w || frame.height !== size.h) {
-        console.warn(
-          `[boot] baked ${key} frame ${frame.width}x${frame.height} ≠ ${size.w}x${size.h}`,
-        )
-      }
-    }
-    hardenTextureAlpha(this, 'art-bear', 56)
-    // Soft AA waist/leg bridges: fill up to 3px vertical holes after harden.
-    for (const key of [
+    const actors = [
       'art-salmon',
       'art-girl',
       'art-bear',
       'art-enemy',
       'art-enemy-barrel',
       'art-enemy-elephant',
-    ]) {
-      fillInternalAlphaHoles(this, key)
-      closeVerticalAlphaGaps(this, key, 3)
-      if (this.textures.exists(key)) {
-        this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
-      }
+    ] as const
+    for (const key of actors) {
+      // 3× supersample + LINEAR; gameplay uses ACTOR_DISPLAY_SCALE (≈ old 2× size).
+      bakeSmoothActorTexture(this, key, 3)
     }
+    for (const key of [
+      'prop-sword',
+      'prop-enemy-knife',
+      'prop-enemy-spear',
+      'prop-enemy-club',
+      'prop-enemy-trunk',
+      'fx-salmon-shot',
+      'fx-fish-bullet',
+      'fan3d',
+      'prop-fan',
+    ]) {
+      if (this.textures.exists(key)) bakeSmoothActorTexture(this, key, 3)
+    }
+
     registerWalkCycle(this, 'art-salmon', WALK_FRAMES)
     registerWalkCycle(this, 'art-girl', WALK_FRAMES)
     registerIdleBreath(this, 'art-salmon')
@@ -153,6 +140,8 @@ export class BootScene extends Phaser.Scene {
     registerEnemyCombatFrames(this, 'art-enemy')
     registerEnemyCombatFrames(this, 'art-enemy-barrel')
     registerEnemyCombatFrames(this, 'art-enemy-elephant')
+
+    for (const key of actors) setActorLinearFilter(this, key)
   }
 
   /** Thicker SNES-style black borders on smashables / landmarks. */
@@ -165,10 +154,7 @@ export class BootScene extends Phaser.Scene {
       'prop-tree3d',
       'prop-house3d',
       'prop-torii',
-      'prop-sword',
-      'prop-enemy-spear',
-      'prop-enemy-knife',
-      'prop-enemy-club',
+      // weapons intentionally NOT thickened — keep AA edges
       'prop-bridge',
       'prop-banner',
       'prop-lantern3d',
@@ -186,8 +172,6 @@ export class BootScene extends Phaser.Scene {
       'lm-cloud-2',
       'lm-cloud-3',
       'lm-river',
-      'fx-salmon-shot',
-      'fx-fish-bullet',
       'hazard-durian',
       'blk-spike',
     ]) {

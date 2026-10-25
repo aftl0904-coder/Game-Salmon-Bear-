@@ -4,9 +4,9 @@ import {
   LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
-import { enablePixelSprite, WALK_FRAMES } from '../pixelSnap'
+import { enableActorSprite, WALK_FRAMES } from '../pixelSnap'
 import { freezeActors, isActorFrozen } from '../fx'
-import { ATTACK_COMMIT_FREEZE_MS } from '../engine/constants'
+import { ATTACK_COMMIT_FREEZE_MS, ACTOR_DISPLAY_SCALE } from '../engine/constants'
 import {
   type EnemyKind,
   type EnemySpecies,
@@ -82,7 +82,7 @@ export class PatrolEnemy extends Enemy {
     e.hopCd = Phaser.Math.Between(200, 600)
     e.boss = kind === 'boss'
     e.elite = kind === 'interrupter'
-    e.baseScale = st.scale * sp.scaleMul
+    e.baseScale = st.scale * sp.scaleMul * ACTOR_DISPLAY_SCALE
     e.detectRadius = st.detect
     e.aggroRadius = st.aggro
     // Elephant nose hit range ≈ 1.5× own body length (fighter-forward extend).
@@ -97,7 +97,7 @@ export class PatrolEnemy extends Enemy {
     e.setCollideWorldBounds(true)
     e.setDepth(actorDepth('enemy', lane, feetY))
     e.setScale(e.baseScale)
-    enablePixelSprite(e)
+    enableActorSprite(e)
     e.setData('baseTex', tex)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     if (spKey === 'elephant') {
@@ -110,7 +110,7 @@ export class PatrolEnemy extends Enemy {
         .image(x + 22, feetY - 36, trunkKey)
         .setOrigin(0, 0.5)
         .setDepth(actorDepth('enemy', lane, feetY) + 0.25)
-      enablePixelSprite(e.weapon)
+      enableActorSprite(e.weapon)
       e.weapon.setData('isTrunk', true)
     } else {
       const wKey = spKey === 'barrel'
@@ -121,7 +121,7 @@ export class PatrolEnemy extends Enemy {
             ? 'prop-enemy-spear'
             : 'prop-sword')
       e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
-      enablePixelSprite(e.weapon)
+      enableActorSprite(e.weapon)
     }
     bindFootBody(e, {
       bodyW: spKey === 'elephant' ? 52 : spKey === 'barrel' ? 44 : 40,
