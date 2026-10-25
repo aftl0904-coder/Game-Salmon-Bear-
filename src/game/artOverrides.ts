@@ -13,14 +13,34 @@ export const ART_OVERRIDES: Record<string, string> = {
   'pickup-power': '/art/items/power-salmon.png',
   'hazard-crusher': '/art/items/crusher.png',
   // Breakable loot holders (stage1.json breakables).
-  'prop-break-lantern': '/art/items/break-lantern.png',
-  'prop-break-pot': '/art/items/break-pot.png',
+  // Cursor stage-1 props (scripts/art/slice_props.py) replace the earlier hand-pixelled stand-ins.
+  'prop-break-lantern': '/art/props/lantern.png',
+  'prop-break-pot': '/art/props/honey-pot.png',
   // Cutscene props (data/story.json).
   'cs-jar-fake': '/art/items/jar-fake.png',
   'cs-jar-real': '/art/items/jar-real.png',
   'cs-note': '/art/items/note.png',
-  'cs-picnic': '/art/items/picnic.png',
-  'cs-cart': '/art/items/coffee-cart.png',
+  'cs-picnic': '/art/props/picnic-blanket.png',
+  'cs-cart': '/art/props/coffee-cart.png',
+  'cs-mama': '/art/props/mama.png',
+  'cs-mama-offer': '/art/props/mama-offer.png',
+  // Goal: the honey tree with the glowing hive.
+  goal3d: '/art/props/honey-tree.png',
+  // Scenery (data/levels/stage1.json "decor").
+  'deco-stump-a': '/art/props/stump-a.png',
+  'deco-stump-b': '/art/props/stump-b.png',
+  'deco-rock-a': '/art/props/rock-a.png',
+  'deco-rock-b': '/art/props/rock-b.png',
+  'deco-rock-c': '/art/props/rock-c.png',
+  'deco-mushrooms': '/art/props/mushrooms.png',
+  'deco-grass-a': '/art/props/grass-a.png',
+  'deco-grass-c': '/art/props/grass-c.png',
+  'deco-fern-b': '/art/props/fern-b.png',
+  'deco-fence': '/art/props/fence.png',
+  'deco-sign-post': '/art/props/sign-post.png',
+  'deco-billboard': '/art/props/billboard.png',
+  'deco-stone-altar': '/art/props/stone-altar.png',
+  'deco-far-trunks': '/art/props/far-trunks.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {

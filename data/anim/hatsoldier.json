@@ -1,0 +1,37 @@
+{
+ "frameWidth": 62,
+ "frameHeight": 65,
+ "anchorX": 31,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "throw-low": {
+   "start": 4,
+   "count": 4,
+   "fps": 12,
+   "loop": false
+  },
+  "throw-high": {
+   "start": 8,
+   "count": 4,
+   "fps": 12,
+   "loop": false
+  },
+  "hit": {
+   "start": 12,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 14,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

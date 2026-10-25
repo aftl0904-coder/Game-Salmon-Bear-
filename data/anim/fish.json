@@ -1,0 +1,43 @@
+{
+ "frameWidth": 80,
+ "frameHeight": 57,
+ "anchorX": 40,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "charge": {
+   "start": 4,
+   "count": 3,
+   "fps": 10,
+   "loop": false
+  },
+  "dash": {
+   "start": 7,
+   "count": 3,
+   "fps": 14,
+   "loop": true
+  },
+  "dizzy": {
+   "start": 10,
+   "count": 3,
+   "fps": 8,
+   "loop": true
+  },
+  "hit": {
+   "start": 13,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 15,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

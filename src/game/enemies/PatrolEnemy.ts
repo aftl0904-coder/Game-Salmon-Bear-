@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { bindFootBody } from '../footBody'
+import { ANIM_SETS, SPECIES_ANIM, animTex, hasAnimSet, type AnimSetId } from '../heroAnims'
 import {
   LANE_DEFAULT, clampLane, inLaneBand, laneY, nearestLane, sameLaneId, type LaneId,
 } from '../engine/lanes'
@@ -62,6 +63,9 @@ export class PatrolEnemy extends Enemy {
   /** Extra reaction lag after hero changes row (ms, individual). */
   laneReactLag = 0
   weapon: Phaser.GameObjects.Image | null = null
+  /** Frame-animation set (Cursor action sheets); null → legacy warped still. */
+  animSet: AnimSetId | null = null
+  private animState = ''
 
   static spawn(
     scene: Phaser.Scene,
@@ -80,10 +84,13 @@ export class PatrolEnemy extends Enemy {
     const st = KIND_STATS[kind]
     const spKey = opts.species ?? defaultSpecies(kind)
     const sp = SPECIES_STATS[spKey]
-    const tex = scene.textures.exists(sp.tex) ? sp.tex : 'art-enemy'
+    const set = SPECIES_ANIM[spKey]
+    const animated = !!set && hasAnimSet(scene, set)
+    const tex = animated ? animTex(set!) : scene.textures.exists(sp.tex) ? sp.tex : 'art-enemy'
     const lane = clampLane(opts.lane ?? (inLaneBand(y) ? LANE_DEFAULT : 0))
     const feetY = inLaneBand(y) ? laneY(lane) : y
-    const e = new PatrolEnemy(scene, x, feetY, tex)
+    const e = new PatrolEnemy(scene, x, feetY, tex, animated ? ANIM_SETS[set!].anims.walk?.start ?? 0 : undefined)
+    e.animSet = animated ? set! : null
     e.kind = kind
     e.species = spKey
     e.lane = lane
@@ -515,7 +522,72 @@ export class PatrolEnemy extends Enemy {
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
+  /** Show a frame of an animation (manual frame index — used for distance-driven walks). */
+  private showFrame(name: string, index: number) {
+    const a = ANIM_SETS[this.animSet!].anims[name]
+    if (!a) return
+    if (this.anims.isPlaying) this.anims.stop()
+    this.animState = `${name}#`
+    this.setFrame(a.start + (((Math.floor(index) % a.count) + a.count) % a.count))
+  }
+
+  /** Play an animation once per state change (loops keep looping, one-shots hold). */
+  private playState(name: string) {
+    const set = this.animSet!
+    if (!ANIM_SETS[set].anims[name]) return
+    if (this.animState === name) return
+    this.animState = name
+    this.anims.play(`${set}-${name}`)
+  }
+
+  private applyAnimPose() {
+    this.setScale(this.baseScale || 1)
+    this.setAngle(0)
+    const sp = this.species
+    if (this.fsm === 'DEAD') return
+    if (this.fsm === 'HURT') {
+      this.playState(sp === 'elephant' ? 'block' : 'hit')
+      return
+    }
+    const now = this.scene.time.now
+    if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
+      // Telegraph = the wind-up frames + a soft red pulse (the art already shows the tell).
+      if (sp === 'fish') this.playState('charge')
+      else if (sp === 'elephant') this.playState('windup')
+      else this.showFrame(this.nextThrowHigh() ? 'throw-high' : 'throw-low', Math.min(1, ((now / 120) | 0) % 2))
+      if (Math.floor(now / 90) % 2 === 0) this.setTint(0xff7070)
+      else this.clearTint()
+      return
+    }
+    if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
+      this.clearTint()
+      if (sp === 'fish') this.playState('dash')
+      else if (sp === 'elephant') this.playState('lunge')
+      else this.playState(this.nextThrowHigh() ? 'throw-high' : 'throw-low')
+      return
+    }
+    if (this.atkPhase === 'recover') {
+      if (sp === 'fish') this.playState('dizzy')
+      else if (sp === 'elephant') this.playState('opening')
+      else this.showFrame('throw-low', 3)
+      return
+    }
+    // Walk frames advance with distance travelled (feet don't skate); stand on frame 0.
+    const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0)
+    this.showFrame('walk', vx > 8 ? this.walkPhase : 0)
+  }
+
+  /** 帽仔兵 alternates low / high rocks (GameScene.spawnRock reads the same counter). */
+  private nextThrowHigh() {
+    return (((this.getData('throwN') as number) || 0) + 1) % 2 === 0
+  }
+
   private applyPose() {
+    if (this.animSet) {
+      this.applyAnimPose()
+      this.syncWeapon()
+      return
+    }
     const lock = () => {
       // Keep fractional scale (elephant bigger than fish).
       this.setScale(this.baseScale || 1)
@@ -567,6 +639,23 @@ export class PatrolEnemy extends Enemy {
     if (this.weapon) {
       this.weapon.destroy()
       this.weapon = null
+    }
+    if (this.animSet && this.scene.anims.exists(`${this.animSet}-die`)) {
+      // Death plays on a detached sprite (the enemy body is removed by Enemy.die).
+      const corpse = this.scene.add
+        .sprite(this.x, this.y, animTex(this.animSet))
+        .setOrigin(0.5, 1)
+        .setFlipX(this.flipX)
+        .setScale(this.baseScale || 1)
+        .setDepth(this.depth)
+      corpse.play(`${this.animSet}-die`)
+      // `this` is destroyed ~280ms after die(), so drive the fade from the corpse's own scene.
+      corpse.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        corpse.scene?.tweens.add({ targets: corpse, alpha: 0, delay: 350, duration: 300, onComplete: () => corpse.destroy() })
+      })
+      super.die(dir)
+      this.setVisible(false)
+      return
     }
     super.die(dir)
   }

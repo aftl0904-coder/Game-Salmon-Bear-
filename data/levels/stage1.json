@@ -287,5 +287,90 @@
       "kind": "lantern",
       "loot": "power"
     }
-  ]
+  ],
+  "decor": {
+    "note": "背景物件（玩家身後）。front 嘅草由程式每約 230px 自動排，避開坑同台階。",
+    "back": [
+      {
+        "x": 140,
+        "kind": "picnic"
+      },
+      {
+        "x": 250,
+        "kind": "sign-post"
+      },
+      {
+        "x": 330,
+        "kind": "stump-a"
+      },
+      {
+        "x": 470,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 560,
+        "kind": "rock-b"
+      },
+      {
+        "x": 800,
+        "kind": "billboard"
+      },
+      {
+        "x": 900,
+        "kind": "rock-a"
+      },
+      {
+        "x": 1480,
+        "kind": "rock-c"
+      },
+      {
+        "x": 1640,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 1780,
+        "kind": "stump-a"
+      },
+      {
+        "x": 2080,
+        "kind": "rock-b"
+      },
+      {
+        "x": 2280,
+        "kind": "fence"
+      },
+      {
+        "x": 2380,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 2560,
+        "kind": "stump-b"
+      },
+      {
+        "x": 2760,
+        "kind": "rock-a"
+      },
+      {
+        "x": 2950,
+        "kind": "stump-a"
+      },
+      {
+        "x": 3160,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 3460,
+        "kind": "stone-altar"
+      },
+      {
+        "x": 3560,
+        "kind": "rock-b"
+      },
+      {
+        "x": 3620,
+        "kind": "fence"
+      }
+    ]
+  }
 }

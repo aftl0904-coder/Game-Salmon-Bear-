@@ -13,6 +13,7 @@ Run: python3 scripts/art/slice_anim.py [art-root]
 """
 import sys, json, os
 import numpy as np
+from scipy import ndimage
 from PIL import Image
 
 OUT = 'public/art/anim/'
@@ -28,6 +29,16 @@ def fur(a):  # 噗噗's golden fur
     r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
     return (r > 170) & (g > 110) & (b < 110) & (r - b > 90)
 
+def fish_red(a):  # 紅魚 body
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 170) & (g < 140) & (b < 130) & (r - g > 70)
+def wood(a):  # 帽仔兵 wooden body + straw hat
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 140) & (g > 90) & (g < 190) & (b < 100) & (r - b > 80)
+def wood_dark(a):  # 機械豬 barrel staves
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 80) & (r < 170) & (g > 40) & (g < 110) & (b < 70) & (r - b > 50)
+
 CHARS = {
     'lunbo': dict(height=72, ref='walk', key=hair_black, anims={
         'idle': (6, True), 'walk': (10, True), 'jump': (8, False), 'crouch': (14, False), 'shoot': (16, False),
@@ -38,15 +49,29 @@ CHARS = {
     'pupu': dict(height=56, ref='idle', key=fur, fit_height=['hollow-idle', 'wake-up'], anims={
         'idle': (6, True), 'walk': (10, True), 'cute-pose': (6, False), 'tackle': (14, False),
         'hollow-idle': (4, True), 'wake-up': (6, False)}),
+    # Enemies (art-src/anim/enemies/<dir>). `flip`: sheets the generator drew facing LEFT.
+    'fish': dict(height=40, ref='walk', key=fish_red, ref_scale=['die'], dir='enemies/E-01-fish', anims={
+        'walk': (8, True), 'charge': (10, False), 'dash': (14, True), 'dizzy': (8, True), 'hit': (12, False), 'die': (10, False)}),
+    'hatsoldier': dict(height=56, ref='walk', key=wood, ref_scale=['die'], dir='enemies/E-03-hatsoldier', anims={
+        'walk': (8, True), 'throw-low': (12, False), 'throw-high': (12, False), 'hit': (12, False), 'die': (10, False)}),
+    'mechpig': dict(height=64, ref='walk', key=wood_dark, ref_scale=['die'], dir='enemies/E-02-mechpig', flip=['walk', 'windup', 'die'], anims={
+        'walk': (7, True), 'windup': (8, False), 'lunge': (14, True), 'opening': (8, True), 'block': (14, False), 'die': (10, False)}),
 }
 
 def fg_mask(a):
     border = np.concatenate([a[:4].reshape(-1, 3), a[-4:].reshape(-1, 3), a[:, :4].reshape(-1, 3), a[:, -4:].reshape(-1, 3)])
     bg = np.median(border, axis=0)
     d = np.sqrt(((a.astype(float) - bg) ** 2).sum(-1))
-    # magenta-ish spill: strongly red+blue, little green → background too
+    fg = d > 70
+    # magenta fringe: strongly red+blue, little green — only where it touches the background,
+    # so red / pink bodies (紅魚) don't get holes punched in them.
     spill = (a[..., 1] < 40) & (a[..., 0] > 140) & (a[..., 2] > 60)
-    return (d > 70) & ~spill
+    near_bg = ndimage.binary_dilation(~fg, iterations=2)
+    fg = fg & ~(spill & near_bg)
+    # fill interior holes (dark-red bodies sit close to the crimson background colour),
+    # but keep real enclosed background gaps (between an arm and the body) transparent
+    holes = ndimage.binary_fill_holes(fg) & ~fg
+    return fg | (holes & (d > 30))
 
 def split(mask, n):
     h, w = mask.shape
@@ -97,9 +122,12 @@ def main():
     for ch, cfg in CHARS.items():
         sheets = {}
         for anim in cfg['anims']:
-            rel = f'art-src/anim/{ch}/{anim}.png'
+            rel = f"art-src/anim/{cfg.get('dir', ch)}/{anim}.png"
             if rel not in MAN or not os.path.exists(os.path.join(ROOT, rel)): continue
-            sheets[anim] = frames_of(os.path.join(ROOT, rel), MAN[rel]['frames'])
+            frs = frames_of(os.path.join(ROOT, rel), MAN[rel]['frames'])
+            if anim in cfg.get('flip', []):
+                frs = [(rgb[:, ::-1], m[:, ::-1]) for rgb, m in frs]
+            sheets[anim] = frs
         # scale reference: standing sheet height → target height
         ref = sheets[cfg['ref']]
         ref_h = np.median([f[1].shape[0] for f in ref])
@@ -107,7 +135,10 @@ def main():
         ref_key = np.median([cfg['key'](f[0])[f[1]].sum() for f in ref])
         scaled = {}
         for anim, frs in sheets.items():
-            if anim in cfg.get('fit_height', []):
+            if anim in cfg.get('ref_scale', []):
+                # debris / smoke frames confuse both cues: just reuse the reference scale
+                s = ref_scale
+            elif anim in cfg.get('fit_height', []):
                 # colour key can't see this sheet (e.g. grey 噗噗): fit standing height instead
                 s = cfg['height'] / float(np.median([f[1].shape[0] for f in frs]))
             else:

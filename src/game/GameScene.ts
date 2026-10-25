@@ -21,6 +21,7 @@ import { PatrolEnemy } from './enemies'
 import { EventBus, GameEvents } from './EventBus'
 import { Player } from './Player'
 import { animTex, hasAnimSet } from './heroAnims'
+import { hasFx, playFx } from './fxAnims'
 import { TouchInput } from './touchInput'
 import { playCutscene } from './cutscene'
 import stage1Raw from '../../data/levels/stage1.json'
@@ -81,12 +82,10 @@ import {
   GIRL_SCALE_MUL,
   PROJ_DISPLAY_SCALE,
   PROP_DISPLAY_SCALE,
-  SCENERY_DISPLAY_SCALE,
   BG_PALE_TINT,
   BG_MOUNT_TINT,
   BG_MOUNT_ALPHA,
   BG_MID_TINT,
-  BG_NEAR_TINT,
   sx as stageX,
   clampLane,
   laneY,
@@ -140,6 +139,7 @@ type Stage1 = {
   movingPlatforms?: Array<{ x: number; w: number; h: number; range: number; periodMs: number }>
   crushers?: Array<{ x: number; restH: number; warnMs: number; downMs: number; stayMs: number; upMs: number; idleMs: number }>
   breakables?: Array<{ x: number; kind: 'lantern' | 'pot'; loot: LootKind }>
+  decor?: { back: Array<{ x: number; kind: string }> }
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
@@ -929,7 +929,8 @@ export class GameScene extends Phaser.Scene {
       onJump: () => SFX.jump(), onAttack: doAttack, now: this.time.now,
     })
     if (h.justLandedFlag) {
-      this.juice.landDust(h.x, h.y)
+      if (hasFx(this, 'land-dust')) playFx(this, 'land-dust', h.x, h.y + 1, { originY: 1, depth: h.depth - 0.1 })
+      else this.juice.landDust(h.x, h.y)
       h.clearJustLanded()
     }
     const body = h.body as Phaser.Physics.Arcade.Body
@@ -1092,6 +1093,7 @@ export class GameScene extends Phaser.Scene {
           : [{ dy: 0, vy: 0 }]
     for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range)
     burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    playFx(this, 'muzzle-flash', muzzleX + h.facing * 6, muzzleY, { flipX: h.facing < 0, depth: h.depth + 1 })
     this.smashBreakablesInFront(h)
   }
 
@@ -1164,6 +1166,14 @@ export class GameScene extends Phaser.Scene {
     const reach = lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1
     if (lv >= 2) burst(this, grip.x + h.facing * SWORD_HIT_W * reach * 0.6, grip.y, 0xffe070, 4 + lv * 2)
     this.spawnAttackHitbox(h, PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0), Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
+    // Sword trail: one arc per combo step, longer with the weapon level.
+    const arc = (`slash-arc-${step}` as 'slash-arc-1' | 'slash-arc-2' | 'slash-arc-3')
+    playFx(this, arc, h.x + h.facing * (22 + 10 * reach), h.y - 36, {
+      flipX: h.facing < 0,
+      scale: reach > 1.5 ? 1.25 : reach > 1.2 ? 1.1 : 1,
+      depth: h.depth + 1,
+      alpha: 0.92,
+    })
     this.smashBreakablesInFront(h)
   }
 
@@ -1280,6 +1290,7 @@ export class GameScene extends Phaser.Scene {
       if (dir === -face) {
         floatText(this, pe.x, pe.y - 52, '鐵甲！打背脊', '#cfd8e0', { size: 12, dur: 600 })
         burst(this, pe.x + face * 14, pe.y - 30, 0xe8f0ff, 5)
+        playFx(this, 'armour-clank', pe.x + face * 22, pe.y - 30, { flipX: face < 0 })
         SFX.hit()
         return
       }
@@ -1291,11 +1302,15 @@ export class GameScene extends Phaser.Scene {
     // Hit confirm: freeze all characters 0.2s; do NOT pause world (ammo free).
     freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
     this.juice.shakeDamage()
-    burst(this, pe.x, pe.y - 18, 0xffe8a0, heavy ? 8 : 6)
+    const midY = pe.y - Math.max(16, pe.displayHeight * 0.45)
+    if (hasFx(this, 'hit-spark')) playFx(this, 'hit-spark', pe.x - dir * 6, midY, { scale: heavy ? 1.5 : 1 })
+    else burst(this, pe.x, pe.y - 18, 0xffe8a0, heavy ? 8 : 6)
     impactRing(this, pe.x, pe.y - 12, heavy ? 0xffcc66 : 0xffe8a0, 8)
     this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
     if (result.killed) {
       SFX.kill()
+      // 紅魚's own death frames already burst into smoke; the others get a puff.
+      if (pe.species !== 'fish') this.time.delayedCall(120, () => playFx(this, 'enemy-poof', pe.x, midY + 6))
       burst(this, pe.x, pe.y - 16, 0xff6688, 14)
       impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
       const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
@@ -1563,6 +1578,7 @@ export class GameScene extends Phaser.Scene {
 
   private animateBg() {
     if (this.bushStrip) this.bushStrip.tilePositionX = Math.round(this.cameras.main.scrollX * 0.5)
+    if (this.farTrunks) this.farTrunks.tilePositionX = Math.round(this.cameras.main.scrollX * 0.25)
     if (!this.water) return
     const sx = this.cameras.main.scrollX
     const t = this.time.now
@@ -1619,26 +1635,6 @@ export class GameScene extends Phaser.Scene {
     img.setData('parallax', 0.14)
     enablePixelSprite(img)
     this.bgMounts.push(img)
-  }
-
-  /** World-space campsite props — foggy roadside scenery (not playfield-sharp). */
-  private placeCampProp(x: number, key: string, scale: number, flip = false) {
-    if (!this.textures.exists(key)) return
-    const s = Math.max(1, Math.min(3, Math.round(scale * SCENERY_DISPLAY_SCALE)))
-    const img = this.add
-      .image(x, GROUND_Y - 2, key)
-      .setOrigin(0.5, 1)
-      .setDepth(DEPTH.PROP)
-      .setScale(s)
-      .setFlipX(flip)
-    this.styleBgPale(img, BG_NEAR_TINT)
-    enablePixelSprite(img)
-  }
-
-  /** Simple roadside camp — tent + fire only (no clutter table/blanket/basket). */
-  private placeCampsite(x: number) {
-    this.placeCampProp(x - 18, 'prop-tent', 1)
-    this.placeCampProp(x + 28, 'prop-campfire', 1)
   }
 
   /**
@@ -1807,9 +1803,7 @@ export class GameScene extends Phaser.Scene {
           .setDepth(DEPTH.SKY_BAND + 2)
         enablePixelSprite(this.bushStrip as unknown as Phaser.GameObjects.Image)
       }
-      this.placeCampsite(stageX(700))
-      this.placeCampsite(stageX(2800))
-      this.placeCampsite(stageX(4600))
+      // Legacy procedural tent/campfire retired — Cursor scenery lives in stage1.json "decor".
       this.spawnAmbientCritters()
     } else {
       g.fillStyle(0xa8d8f5, 1)
@@ -1973,9 +1967,7 @@ export class GameScene extends Phaser.Scene {
     this.placeBgDecor(stageX(5200), 'prop-house3d', 1.3)
     this.placeBgDecor(stageX(6400), 'prop-tree3d', 1.2)
 
-    this.placeCampsite(stageX(700))
-    this.placeCampsite(stageX(2800))
-    this.placeCampsite(stageX(4600))
+    // Legacy procedural tent/campfire retired — Cursor scenery lives in stage1.json "decor".
 
     this.placeBgDecor(stageX(900), 'prop-owl', 1.15)
     this.placeBgDecor(stageX(3400), 'prop-owl', 1.1, true)
@@ -2018,6 +2010,7 @@ export class GameScene extends Phaser.Scene {
     this.buildTerrainFromJson()
     this.layGroundRibbon(LANE_FLOOR_Y)
     this.drawTerrainFeatures()
+    this.placeDecor()
 
     for (const sp of STAGE1.spikes) this.spikes(sp.x, sp.n)
     for (const x of STAGE1.durians) this.placeDurian(x)
@@ -2119,20 +2112,75 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private farTrunks: Phaser.GameObjects.TileSprite | null = null
+
+  /** Scenery from stage JSON (behind actors) + auto-spaced foreground grass (in front). */
+  private placeDecor() {
+    // Far tree line between the painted backdrop and the bush strip, slow parallax.
+    this.farTrunks = null
+    if (this.textures.exists('deco-far-trunks')) {
+      const th = this.textures.get('deco-far-trunks').get().height
+      this.farTrunks = this.add
+        .tileSprite(0, LANE_FLOOR_Y - th + 2, GAME_W, th, 'deco-far-trunks')
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND + 1)
+        .setAlpha(0.38)
+      enablePixelSprite(this.farTrunks as unknown as Phaser.GameObjects.Image)
+    }
+    for (const d of STAGE1.decor?.back ?? []) {
+      const key = d.kind === 'picnic' ? 'cs-picnic' : `deco-${d.kind}`
+      if (!this.textures.exists(key)) continue
+      const top = groundTopBelow(d.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
+      const img = this.add.image(d.x, top + 2, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
+      enablePixelSprite(img)
+      if (d.kind === 'billboard') {
+        // The 地產 front company's sign — first hint of the plot.
+        this.add
+          .text(d.x, top - 50, '△畝發展\n即將動工', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8281c', align: 'center', lineSpacing: 2 })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.PROP - 1)
+      } else if (d.kind === 'sign-post') {
+        this.add.text(d.x, top - 27, '→', { fontFamily: FONT_UI, fontSize: '10px', color: '#3a2414' }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
+      }
+    }
+    // Foreground grass tufts pass in front of the cast (depth above actors, below FX).
+    const kinds = ['deco-grass-a', 'deco-fern-b', 'deco-grass-c']
+    let i = 0
+    for (let x = 110; x < WORLD_W - 60; x += 190 + ((x * 7) % 70)) {
+      const key = kinds[i++ % kinds.length]!
+      if (!this.textures.exists(key)) continue
+      const w = this.textures.get(key).get().width
+      if (terrainPits().some((p) => x + w / 2 > p.x0 - 4 && x - w / 2 < p.x1 + 4)) continue
+      const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
+      const g = this.add.image(x, top + 4, key).setOrigin(0.5, 1).setDepth(DEPTH.FX - 10)
+      enablePixelSprite(g)
+    }
+  }
+
   private checkpointXs: number[] = []
   private lastCheckpointX = 220
 
+  /** Checkpoints are 咖啡媽媽's coffee cart: respawn point + one cup (+1 HP) the first time. */
+  private checkpointMamas: Phaser.GameObjects.Image[] = []
   private placeCheckpoints() {
     this.checkpointXs = STAGE1.checkpoints.slice().sort((a, b) => a - b)
     this.lastCheckpointX = 220
-    const key = this.textures.exists('prop-lantern3d') ? 'prop-lantern3d' : null
+    this.checkpointMamas = []
     for (const x of this.checkpointXs) {
-      if (key) {
-        const l = this.add.image(x, LANE_FLOOR_Y, key).setOrigin(0.5, 1).setDepth(DEPTH.SIGN)
-        enablePixelSprite(l)
+      const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+      if (this.textures.exists('cs-cart')) {
+        const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+        enablePixelSprite(cart)
+      }
+      if (this.textures.exists('cs-mama')) {
+        const mama = this.add.image(x - 8, top + 1, 'cs-mama').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
+        enablePixelSprite(mama)
+        this.checkpointMamas.push(mama)
+        this.tweens.add({ targets: mama, scaleY: { from: 1, to: 1.02 }, duration: 900, yoyo: true, repeat: -1 })
       }
       this.add
-        .text(x, LANE_FLOOR_Y - 58, '存檔', { fontFamily: FONT_UI, fontSize: '12px', color: '#2a1a10', backgroundColor: '#f7e7c0', padding: { x: 3, y: 1 } })
+        .text(x + 30, top - 74, '咖啡車・存檔', { fontFamily: FONT_UI, fontSize: '11px', color: '#2a1a10', backgroundColor: '#f7e7c0', padding: { x: 3, y: 1 } })
         .setOrigin(0.5)
         .setDepth(DEPTH.SIGN)
     }
@@ -2144,14 +2192,33 @@ export class GameScene extends Phaser.Scene {
     for (const x of this.checkpointXs) {
       if (lead >= x && x > this.lastCheckpointX) {
         this.lastCheckpointX = x
-        floatText(this, x, LANE_FLOOR_Y - 76, '存檔點', '#ffe08a')
+        floatText(this, x, LANE_FLOOR_Y - 92, '咖啡媽媽：飲杯咖啡先！', '#ffe08a', { size: 12, dur: 1800 })
         SFX.coin()
+        // One warm cup: +1 HP for everyone still standing.
+        let healed = false
+        for (const h of [this.boy, this.girl]) {
+          if (h?.alive && h.hp < MAX_HP) {
+            h.hp += 1
+            healed = true
+            floatText(this, h.x, h.y - 70, '+1HP', '#7dffb0', { size: 14 })
+          }
+        }
+        if (healed) {
+          SFX.sparkle()
+          this.emitHealth()
+        }
+        const i = this.checkpointXs.indexOf(x)
+        const mama = this.checkpointMamas[i]
+        if (mama && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
       }
     }
   }
 
   private spawnHoneyJar(x: number, y: number) {
-    const key = this.textures.exists('prop-honey-stack')
+    // Real-honey jar (matches the cutscenes' 真蜂蜜) — legacy honey stack as fallback.
+    const key = this.textures.exists('cs-jar-real')
+      ? 'cs-jar-real'
+      : this.textures.exists('prop-honey-stack')
       ? 'prop-honey-stack'
       : this.textures.exists('fx-honey')
         ? 'fx-honey'
@@ -2195,7 +2262,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spawnCoin(x: number, y: number) {
-    const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
+    const spin = hasFx(this, 'coin-spin')
+    const c = this.coinPickups.create(x, y, spin ? 'fxa-coin-spin' : 'coin') as Phaser.Physics.Arcade.Sprite
+    if (spin) c.play('fxa-coin-spin')
     c.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -2332,6 +2401,7 @@ export class GameScene extends Phaser.Scene {
       const s = shot as Phaser.Physics.Arcade.Sprite
       const e = enemy as PatrolEnemy
       if (!e.active || e.isDead) return
+      playFx(this, 'roe-splash', s.x, s.y)
       s.destroy()
       this.damageEnemy(e, PLAYER_ATTACK_DMG, Math.sign(e.x - this.boy.x) || 1)
     })
@@ -2521,6 +2591,9 @@ export class GameScene extends Phaser.Scene {
     this.juice.breakDebris(x, midY, debrisColor)
     impactRing(this, x, midY, debrisColor, 12)
     if (isLantern) burst(this, x, midY, 0xffd27a, 8) // candle sparks
+    if (pot.breakKind === 'lantern' || pot.breakKind === 'pot') {
+      playFx(this, isLantern ? 'lantern-break' : 'pot-break', x, pot.y, { originY: 1, depth: DEPTH.BREAKABLE + 1 })
+    }
     this.addScorePop(x, midY - 30, SCORE_BREAK)
     this.time.delayedCall(70, () => {
       if (pot.active) pot.disableBody(true, true)
@@ -2577,6 +2650,7 @@ export class GameScene extends Phaser.Scene {
     const lv = Math.min(WEAPON_MAX_LV, before + 1)
     h.setData('wlv', lv)
     SFX.powerUp()
+    playFx(this, 'power-up', h.x, h.y - 34)
     impactRing(this, h.x, h.y - 30, 0xffd040, 18)
     burst(this, h.x, h.y - 30, 0xffe890, 14)
     if (lv > before) {
@@ -2725,6 +2799,7 @@ export class GameScene extends Phaser.Scene {
     if (!item.active) return
     item.disableBody(true, true)
     this.grantHoneySpecial(item.x, item.y)
+    playFx(this, 'honey-sparkle', item.x, item.y)
     SFX.kill(); burst(this, item.x, item.y, 0xffc050, 12)
   }
 

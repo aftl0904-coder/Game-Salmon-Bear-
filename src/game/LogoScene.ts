@@ -9,6 +9,7 @@ export class LogoScene extends Phaser.Scene {
   }
 
   create() {
+    if (this.textures.exists('story-cover')) return this.createCover()
     const { width, height } = this.scale
     this.cameras.main.setBackgroundColor('#5a98c8')
     this.cameras.main.fadeIn(420, 50, 90, 130)
@@ -162,5 +163,79 @@ export class LogoScene extends Phaser.Scene {
     this.time.delayedCall(3200, go)
     this.input.once('pointerdown', go)
     this.input.keyboard?.once('keydown', go)
+  }
+
+  /** Title over the cover illustration (art-src/story/cover.png). */
+  private createCover() {
+    const { width, height } = this.scale
+    this.cameras.main.setBackgroundColor('#000000')
+    this.cameras.main.fadeIn(600, 0, 0, 0)
+    const cover = this.add.image(width / 2, height / 2, 'story-cover')
+    // Slow push-in so the still breathes.
+    this.tweens.add({ targets: cover, scale: 1.04, duration: 9000, ease: 'Sine.inOut', yoyo: true, repeat: -1 })
+    // Dark band on top for the logo.
+    const g = this.add.graphics()
+    for (let i = 0; i < 24; i++) {
+      g.fillStyle(0x0c0804, 0.62 * (1 - i / 24))
+      g.fillRect(0, i * 5, width, 5)
+    }
+    const shadow = this.add
+      .text(width / 2 + 3, 46 + 3, '鮭鮭熊', { fontFamily: FONT_TITLE, fontSize: '44px', color: '#5a1808' })
+      .setOrigin(0.5)
+      .setAlpha(0)
+    const logo = this.add
+      .text(width / 2, 46, '鮭鮭熊', { fontFamily: FONT_TITLE, fontSize: '44px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 })
+      .setOrigin(0.5)
+      .setAlpha(0)
+    const sub = this.add
+      .text(width / 2, 84, '五罐真蜂蜜，救返噗噗', { fontFamily: FONT_UI, fontSize: '13px', color: '#fff2d0', stroke: '#1a0e06', strokeThickness: 3 })
+      .setOrigin(0.5)
+      .setAlpha(0)
+    this.tweens.add({ targets: [logo, shadow], alpha: 1, y: '-=6', duration: 900, ease: 'Sine.out' })
+    this.tweens.add({ targets: sub, alpha: 1, delay: 500, duration: 700 })
+    // Glint across the logo.
+    const glint = this.add
+      .text(width / 2, 40, '鮭鮭熊', { fontFamily: FONT_TITLE, fontSize: '44px', color: '#ffffff' })
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setBlendMode(Phaser.BlendModes.ADD)
+    this.tweens.add({ targets: glint, alpha: 0.6, delay: 1100, duration: 160, yoyo: true })
+    // Drifting light motes in the sunbeam.
+    for (let i = 0; i < 14; i++) {
+      const m = this.add.circle(Phaser.Math.Between(200, 440), Phaser.Math.Between(110, 300), 1, 0xfff0b0, 0.8)
+      this.tweens.add({
+        targets: m,
+        y: m.y - Phaser.Math.Between(30, 70),
+        alpha: { from: 0, to: 0.9 },
+        duration: Phaser.Math.Between(2600, 4200),
+        delay: i * 200,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+    }
+    const press = this.add
+      .text(width / 2, height - 22, '按任意鍵開始', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
+      .setOrigin(0.5)
+    this.tweens.add({ targets: press, alpha: 0.25, duration: 600, yoyo: true, repeat: -1 })
+    this.add
+      .text(width - 8, height - 8, 'ALAN FONG', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
+      .setOrigin(1, 1)
+      .setAlpha(0.7)
+
+    let left = false
+    const go = () => {
+      if (left) return
+      left = true
+      this.cameras?.main?.fadeOut(320, 0, 0, 0)
+      this.time.delayedCall(320, () => {
+        if (this.sys.isActive()) this.scene.start('menu')
+      })
+    }
+    // Title waits for the player (no auto-skip); ignore the press that skipped the studio splash.
+    this.time.delayedCall(500, () => {
+      this.input.once('pointerdown', go)
+      this.input.keyboard?.once('keydown', go)
+    })
   }
 }

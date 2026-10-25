@@ -41,8 +41,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   /** Altar climax ambusher: longer red telegraph + ambush shout. */
   altarAmbush = false
 
-  constructor(scene: Phaser.Scene, x: number, y: number, texture: string) {
-    super(scene, x, y, texture)
+  constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: number) {
+    super(scene, x, y, texture, frame)
     scene.add.existing(this)
     scene.physics.add.existing(this)
   }
