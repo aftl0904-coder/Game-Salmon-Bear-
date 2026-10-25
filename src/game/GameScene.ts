@@ -528,8 +528,8 @@ export class GameScene extends Phaser.Scene {
   }
   private p1JumpJust() { return Phaser.Input.Keyboard.JustDown(this.keyK) }
   private p1JumpHeld() { return this.keyK.isDown }
-  private p1LaneUpJust() { return Phaser.Input.Keyboard.JustDown(this.keyW) }
-  private p1LaneDownJust() { return Phaser.Input.Keyboard.JustDown(this.keyS) }
+  private p1LaneUpHeld() { return this.keyW.isDown }
+  private p1LaneDownHeld() { return this.keyS.isDown }
   private p2AttackJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyNP1) ||
@@ -539,8 +539,8 @@ export class GameScene extends Phaser.Scene {
   }
   private p2JumpJust() { return Phaser.Input.Keyboard.JustDown(this.keyNP2) }
   private p2JumpHeld() { return this.keyNP2.isDown }
-  private p2LaneUpJust() { return Phaser.Input.Keyboard.JustDown(this.cursors.up!) }
-  private p2LaneDownJust() { return Phaser.Input.Keyboard.JustDown(this.cursors.down!) }
+  private p2LaneUpHeld() { return !!this.cursors.up?.isDown }
+  private p2LaneDownHeld() { return !!this.cursors.down?.isDown }
 
   private steerHero(
     h: Hero,
@@ -630,7 +630,7 @@ export class GameScene extends Phaser.Scene {
       this.boy, dt, this.keyA.isDown, this.keyD.isDown,
       this.p1JumpJust(), this.p1JumpHeld(), BOY_SPEED,
       this.p1AttackJust(), () => this.fireSalmon(this.boy),
-      this.p1LaneUpJust(), this.p1LaneDownJust(),
+      this.p1LaneUpHeld(), this.p1LaneDownHeld(),
     )
   }
 
@@ -639,7 +639,7 @@ export class GameScene extends Phaser.Scene {
       this.girl, dt, !!this.cursors.left?.isDown, !!this.cursors.right?.isDown,
       this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED,
       this.p2AttackJust(), () => this.fanSlash(this.girl),
-      this.p2LaneUpJust(), this.p2LaneDownJust(),
+      this.p2LaneUpHeld(), this.p2LaneDownHeld(),
     )
   }
 

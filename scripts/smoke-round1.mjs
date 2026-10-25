@@ -107,8 +107,10 @@ try {
   }
 
   const lane0 = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.lane)
-  await page.keyboard.press('w')
-  await page.waitForTimeout(220)
+  await page.keyboard.down('w')
+  await page.waitForTimeout(200)
+  await page.keyboard.up('w')
+  await page.waitForTimeout(100)
   const lane1 = await page.evaluate(() => {
     const b = window.__SAKE_GAME__.scene.getScene('play').boy
     return { lane: b.lane, y: b.y }
@@ -116,10 +118,16 @@ try {
   console.log('lane switch', lane0, '→', lane1)
   if (lane1.lane !== 0) throw new Error(`W should switch to 上 lane 0, got ${lane1.lane}`)
   if (lane1.y > 390) throw new Error(`上 lane Y should be above mid, got ${lane1.y}`)
-  await page.keyboard.press('s')
-  await page.waitForTimeout(220)
-  const lane2 = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.lane)
-  if (lane2 !== 1) throw new Error(`S should return to mid lane 1, got ${lane2}`)
+  await page.keyboard.down('s')
+  await page.waitForTimeout(200)
+  await page.keyboard.up('s')
+  await page.waitForTimeout(100)
+  const lane2 = await page.evaluate(() => {
+    const b = window.__SAKE_GAME__.scene.getScene('play').boy
+    return { lane: b.lane, y: b.y }
+  })
+  console.log('lane switch back', lane2)
+  if (lane2.lane !== 1) throw new Error(`S should return to mid lane 1, got ${lane2.lane}`)
 
   console.log('SMOKE_PASS')
   await browser.close()
