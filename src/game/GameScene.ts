@@ -650,9 +650,11 @@ export class GameScene extends Phaser.Scene {
       return
     }
     const dx = this.boy.x - 56 - g.x
+    // Pulse while cd is clear so one-step-per-press re-arms between lanes.
     this.steerHero(
       g, dt, dx < -20, dx > 20, false, false, GIRL_SPEED * 0.9, false, () => {},
-      this.boy.lane < g.lane, this.boy.lane > g.lane,
+      this.boy.lane < g.lane && g.laneCd <= 0,
+      this.boy.lane > g.lane && g.laneCd <= 0,
     )
     if (g.atkCd <= 0) {
       const near = this.enemies.getChildren().some((o) => {

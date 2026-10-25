@@ -94,6 +94,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private attackUntil = 0
   private flashTween?: Phaser.Tweens.Tween
   private justLanded = false
+  /**
+   * Buffered lane intent (−1 上 / +1 下). Survives laneCd so a tap during
+   * cooldown is not eaten; cleared on apply.
+   */
+  private laneBuf = 0
+  /**
+   * After a step, ignore held input until release — one lane per press
+   * (held S cannot skip 中 → 下).
+   */
+  private laneHeldLock = false
   private readonly baseDepth = 8
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
@@ -142,6 +152,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.lane = LANE_DEFAULT
     this.laneCd = 0
     this.laneJumping = false
+    this.laneBuf = 0
+    this.laneHeldLock = false
 
     this.setCollideWorldBounds(true)
     this.setDragX(0)
@@ -223,9 +235,31 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.applyPose(grounded, 0)
       return
     }
-    if (grounded && !this.laneJumping && this.laneCd <= 0 && inLaneBand(this.y)) {
-      if (opts.laneUpJust && this.lane > 0) { this.lane = clampLane(this.lane - 1); this.laneCd = LANE_SWITCH_MS; opts.onLane?.(this.lane) }
-      else if (opts.laneDownJust && this.lane < 2) { this.lane = clampLane(this.lane + 1); this.laneCd = LANE_SWITCH_MS; opts.onLane?.(this.lane) }
+    const laneUp = !!opts.laneUpJust
+    const laneDown = !!opts.laneDownJust
+    if (!laneUp && !laneDown) this.laneHeldLock = false
+    else if (!this.laneHeldLock) {
+      if (laneUp && this.lane > 0) this.laneBuf = -1
+      else if (laneDown && this.lane < 2) this.laneBuf = 1
+    }
+    if (
+      this.laneBuf !== 0 &&
+      grounded &&
+      !this.laneJumping &&
+      this.laneCd <= 0 &&
+      inLaneBand(this.y)
+    ) {
+      if (this.laneBuf < 0 && this.lane > 0) {
+        this.lane = clampLane(this.lane - 1)
+        this.laneCd = LANE_SWITCH_MS
+        opts.onLane?.(this.lane)
+      } else if (this.laneBuf > 0 && this.lane < 2) {
+        this.lane = clampLane(this.lane + 1)
+        this.laneCd = LANE_SWITCH_MS
+        opts.onLane?.(this.lane)
+      }
+      this.laneBuf = 0
+      this.laneHeldLock = true
     }
     const dtSec = dt / 1000
     let target = 0
@@ -288,6 +322,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
   snapToLane(lane: LaneId = this.lane, x?: number) {
     this.lane = clampLane(lane); this.laneJumping = false; this.jumpConsumed = false
+    this.laneBuf = 0; this.laneHeldLock = false; this.laneCd = 0
     if (x !== undefined) this.setX(x)
     this.setY(laneY(this.lane)); this.setVelocity(0, 0)
     const body = this.body as Phaser.Physics.Arcade.Body | null

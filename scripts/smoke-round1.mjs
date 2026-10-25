@@ -108,24 +108,33 @@ try {
 
   const lane0 = await page.evaluate(() => window.__SAKE_GAME__.scene.getScene('play').boy.lane)
   await page.keyboard.down('w')
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(160)
   await page.keyboard.up('w')
-  await page.waitForTimeout(100)
-  const lane1 = await page.evaluate(() => {
-    const b = window.__SAKE_GAME__.scene.getScene('play').boy
-    return { lane: b.lane, y: b.y }
-  })
+  // Wait until 上 lane settles (cd + snap), not a fixed short sleep.
+  let lane1 = null
+  for (let i = 0; i < 30; i++) {
+    await page.waitForTimeout(40)
+    lane1 = await page.evaluate(() => {
+      const b = window.__SAKE_GAME__.scene.getScene('play').boy
+      return { lane: b.lane, y: b.y, cd: b.laneCd }
+    })
+    if (lane1.lane === 0 && lane1.cd <= 0 && lane1.y <= 390) break
+  }
   console.log('lane switch', lane0, '→', lane1)
   if (lane1.lane !== 0) throw new Error(`W should switch to 上 lane 0, got ${lane1.lane}`)
   if (lane1.y > 390) throw new Error(`上 lane Y should be above mid, got ${lane1.y}`)
   await page.keyboard.down('s')
-  await page.waitForTimeout(200)
+  await page.waitForTimeout(160)
   await page.keyboard.up('s')
-  await page.waitForTimeout(100)
-  const lane2 = await page.evaluate(() => {
-    const b = window.__SAKE_GAME__.scene.getScene('play').boy
-    return { lane: b.lane, y: b.y }
-  })
+  let lane2 = null
+  for (let i = 0; i < 30; i++) {
+    await page.waitForTimeout(40)
+    lane2 = await page.evaluate(() => {
+      const b = window.__SAKE_GAME__.scene.getScene('play').boy
+      return { lane: b.lane, y: b.y, cd: b.laneCd }
+    })
+    if (lane2.lane === 1 && lane2.cd <= 0) break
+  }
   console.log('lane switch back', lane2)
   if (lane2.lane !== 1) throw new Error(`S should return to mid lane 1, got ${lane2.lane}`)
 
