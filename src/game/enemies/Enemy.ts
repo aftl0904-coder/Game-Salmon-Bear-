@@ -65,8 +65,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setVelocityX(dir * (dmg >= 2 ? 340 : 280))
     this.setVelocityY(dmg >= 2 ? -280 : -230)
     this.setTint(0xffffff)
-    this.poseAngle = dir * (dmg >= 2 ? -18 : -12)
-    this.setAngle(this.poseAngle)
+    this.poseAngle = 0
+    this.setAngle(0)
     this.setScale(this.baseScale)
     this.think = this.hurtMs
     this.hitThis = false

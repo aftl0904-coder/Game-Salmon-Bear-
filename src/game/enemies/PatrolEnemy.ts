@@ -458,16 +458,16 @@ export class PatrolEnemy extends Enemy {
       return
     }
     if (this.fsm === 'HURT') {
-      q(this.poseAngle)
+      q(0)
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      q(-this.patrolDir * 6)
+      q(0)
       this.setTint(0xff1111)
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
-      q(this.chargeDir * 8)
+      q(0)
       return
     }
     q(0)

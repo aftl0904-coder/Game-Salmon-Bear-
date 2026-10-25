@@ -230,7 +230,7 @@ function applyPose(e: Creep) {
     return
   }
   if (e.state === 'hurt') {
-    q(Math.round(e.poseAngle))
+    q(0)
     return
   }
   if (e.state === 'windup' || e.state === 'pause') {
@@ -238,7 +238,7 @@ function applyPose(e: Creep) {
     return
   }
   if (e.state === 'charge' || e.state === 'attack' || e.state === 'hop') {
-    q(e.chargeDir * 8)
+    q(0)
     return
   }
   q(0)
