@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { ENEMY_SPEED } from './engine/constants'
+import { ENEMIES } from './config/gameData'
 
 /** Existence objective: 三角組織傀儡 — 阻止玩家奪回蜂蜜／鮭魚／抵達祭壇 */
 export type EnemyKind =
@@ -146,6 +147,62 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     knockMul: 1.15,
   },
 }
+
+/**
+ * data/enemies.json → species tuning (source of truth for hp / speed / telegraph).
+ * Meanings (see docs/bible/enemies-tuning.md):
+ *   hp           = basic hits to kill a 'blocker/chaser' of this species (ref 2)
+ *   speed        = move speed relative to ref 30 (30 = base enemy speed)
+ *   telegraphMs  = attack wind-up relative to ref 500 (500 = base wind-up)
+ *                  (E-02 uses ai.slamTelegraphMs)
+ * Kind tables (blocker / guardian / boss…) still scale on top of these.
+ */
+export const SPECIES_DATA_ID: Record<EnemySpecies, string> = {
+  fish: 'E-01',
+  barrel: 'E-03',
+  elephant: 'E-02',
+}
+const REF_HITS = 2
+const REF_SPEED = 30
+const REF_TELEGRAPH_MS = 500
+
+type EnemyJson = {
+  id: string
+  hp?: number | null
+  speed?: number
+  ai?: Record<string, unknown>
+}
+
+export function applyEnemyJsonTuning(defs: readonly EnemyJson[]): string[] {
+  const notes: string[] = []
+  for (const species of Object.keys(SPECIES_DATA_ID) as EnemySpecies[]) {
+    const id = SPECIES_DATA_ID[species]
+    const def = defs.find((d) => d.id === id)
+    const sp = SPECIES_STATS[species]
+    if (!def) {
+      notes.push(`${id}(${species}) 冇資料，用 code 預設`)
+      continue
+    }
+    if (typeof def.hp === 'number' && def.hp > 0) sp.hpMul = def.hp / REF_HITS
+    if (typeof def.speed === 'number' && def.speed > 0) sp.spdMul = def.speed / REF_SPEED
+    const ai = def.ai ?? {}
+    const tele = (ai.telegraphMs ?? ai.slamTelegraphMs) as number | undefined
+    if (typeof tele === 'number' && tele > 0) sp.windupMul = tele / REF_TELEGRAPH_MS
+    const unwired = ['frontArmor', 'vulnerableAfterSlamMs', 'dashSpeed', 'dashMs', 'stunMs', 'throwIntervalMs', 'throwHeights', 'retreatWithinPx', 'patrolTiles']
+      .filter((k) => k in ai)
+    if (unwired.length) notes.push(`${id} 未接入：${unwired.join(', ')}`)
+  }
+  console.info(
+    '[enemies.json] species tuning:',
+    (Object.keys(SPECIES_DATA_ID) as EnemySpecies[])
+      .map((s) => `${s}→${SPECIES_DATA_ID[s]} hp×${SPECIES_STATS[s].hpMul.toFixed(2)} spd×${SPECIES_STATS[s].spdMul.toFixed(2)} windup×${(SPECIES_STATS[s].windupMul ?? 1).toFixed(2)}`)
+      .join(' | '),
+  )
+  if (notes.length) console.info('[enemies.json]', notes.join(' ； '))
+  return notes
+}
+
+applyEnemyJsonTuning(ENEMIES as unknown as readonly EnemyJson[])
 
 /** Default species — Pack3 mixes fish / barrel / elephant */
 export function defaultSpecies(kind: EnemyKind): EnemySpecies {

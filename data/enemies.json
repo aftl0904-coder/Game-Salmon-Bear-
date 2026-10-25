@@ -19,11 +19,11 @@
     "id": "E-02",
     "name": "機械豬",
     "role": "heavy",
-    "hp": 5,
-    "speed": 30,
+    "hp": 4,
+    "speed": 25.5,
     "ai": {
       "frontArmor": true,
-      "slamTelegraphMs": 900,
+      "slamTelegraphMs": 500,
       "slamRange": 24,
       "vulnerableAfterSlamMs": 1200
     },
@@ -34,12 +34,15 @@
     "id": "E-03",
     "name": "帽仔兵",
     "role": "thrower",
-    "hp": 1,
-    "speed": 40,
+    "hp": 1.2,
+    "speed": 61.5,
     "ai": {
       "throwIntervalMs": 1800,
-      "throwHeights": ["low", "high"],
-      "telegraphMs": 400,
+      "throwHeights": [
+        "low",
+        "high"
+      ],
+      "telegraphMs": 310,
       "retreatWithinPx": 48
     },
     "answer": "low=jump, high=crouch",
