@@ -39,6 +39,7 @@ import {
   SCORE_BREAK,
   SALMON_SHOT_RANGE,
   SALMON_SHOT_SPEED,
+  SALMON_SHOT_COOLDOWN_MS,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -104,7 +105,6 @@ export class GameScene extends Phaser.Scene {
   private honeyPickups!: Phaser.Physics.Arcade.Group
   private goal!: Phaser.Physics.Arcade.Sprite
   private levelMap: LevelMapHandle | null = null
-  private solidsLayer: Phaser.Tilemaps.TilemapLayer | null = null
   private camTarget!: Phaser.GameObjects.Zone
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private keyW!: Phaser.Input.Keyboard.Key
@@ -695,26 +695,28 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fireSalmon(h: Hero) {
-    h.atkCd = 260
+    // 2.5 shots / sec
+    h.atkCd = SALMON_SHOT_COOLDOWN_MS
     h.pose = 'idle'
     SFX.swing()
-    // Ranged only — no free melee box (balance vs 琪寶寶劍).
     this.tweens.killTweensOf(h)
     h.setAngle(0)
     h.setScale(h.baseScale)
-    const originX = h.x + h.facing * 36
-    const shot = this.shots.create(originX, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
+    // Muzzle = salmon-gun tip on 2× baked feet-origin sprite (~52px forward, ~88px up).
+    const muzzleX = h.x + h.facing * 52
+    const muzzleY = h.y - 88
+    const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enablePixelSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)
-    shot.setData('originX', originX)
+    shot.setData('originX', muzzleX)
     shot.setData('maxRange', SALMON_SHOT_RANGE)
+    burst(this, muzzleX, muzzleY, 0xffaa66, 5)
     this.smashBreakablesInFront(h)
     this.entities.add(shot, 'projectile')
-    // Hard cap by distance; also failsafe timeout.
     const maxMs = Math.ceil((SALMON_SHOT_RANGE / SALMON_SHOT_SPEED) * 1000) + 80
     this.time.delayedCall(maxMs, () => {
       if (shot.active) shot.destroy()
@@ -1182,25 +1184,7 @@ export class GameScene extends Phaser.Scene {
     }
     // 1 house — clear of lane feet
     this.placeDecor(1050, 'prop-house3d', 1, 1.45)
-    // Optional: 1 bridge + little river (mid opening)
-    if (this.textures.exists('lm-river')) {
-      const river = this.add
-        .image(760, GROUND_Y + 12, 'lm-river')
-        .setOrigin(0.5, 0.5)
-        .setDepth(DEPTH.PROP_SHADOW - 0.1)
-        .setScale(1.9, 1.15)
-        .setAlpha(0.88)
-      enablePixelSprite(river)
-    }
-    if (this.textures.exists('prop-bridge')) {
-      this.add.image(760, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.5).setScale(2.0, 0.55)
-      const br = this.add
-        .image(760, GROUND_Y + 2, 'prop-bridge')
-        .setOrigin(0.5, 1)
-        .setDepth(DEPTH.PROP)
-        .setScale(1.75)
-      enablePixelSprite(br)
-    }
+    // No bridge prop — reads as a walkable plank and conflicts with lane combat.
   }
 
   private buildLevel() {
@@ -1210,7 +1194,12 @@ export class GameScene extends Phaser.Scene {
     this.coinPickups = this.physics.add.group()
     this.honeyPickups = this.physics.add.group()
     this.levelMap = createRound1Tilemap(this, this.pots, this.hazards)
-    this.solidsLayer = (this.levelMap?.solids as Phaser.Tilemaps.TilemapLayer | null) ?? null
+    // 三線橫版：唔要跳板／條條平台（會卡住角色）。跳躍只為過尖刺／越敵。
+    if (this.levelMap?.solids) {
+      this.levelMap.solids.setCollisionByExclusion([-1])
+      this.levelMap.solids.setVisible(false)
+      this.levelMap.solids.setActive(false)
+    }
 
     const banks: Array<[number, number]> = [
       [0, 480], [560, 280], [960, 300], [1400, 340],
@@ -1218,28 +1207,11 @@ export class GameScene extends Phaser.Scene {
     ]
     for (const [x, w] of banks) this.bank(x, LANE_FLOOR_Y, w)
 
-    this.woodPlat(420, 300, 3)
-    this.woodPlat(720, 240, 3)
-    this.woodPlat(1100, 280, 3)
-    this.woodPlat(1280, 200, 2)
-    this.woodPlat(1680, 250, 4)
-    this.woodPlat(2100, 220, 3)
-    this.woodPlat(2480, 260, 3)
-    this.woodPlat(2900, 210, 3)
-    this.stonePlat(900, 160, 2)
-    this.stonePlat(1900, 150, 2)
-    this.stonePlat(2600, 170, 2)
-    // Mid platforms with real clearance — never GROUND_Y-8 (body jam / sticking).
-    this.woodPlat(500, GROUND_Y - 96, 2)
-    this.woodPlat(860, GROUND_Y - 96, 2)
-    this.woodPlat(1820, GROUND_Y - 88, 3)
-    this.woodPlat(2680, GROUND_Y - 88, 3)
-
+    // Ground spike traps only — jump over these (or change lane).
     this.spikes(540, 3)
     this.spikes(1840, 3)
     this.spikes(2700, 3)
 
-    // First pot near spawn so early smash juice lands in the opening seconds.
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     for (const x of [380, 1200, 2050, 3000]) {
       this.add.image(x, GROUND_Y + 5, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.5).setScale(0.85, 0.55)
@@ -1252,8 +1224,6 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({ targets: pot, y: pot.y - 6, yoyo: true, repeat: -1, duration: 700 })
       this.spawnCoin(x + 60, GROUND_Y - 40)
     }
-    this.spawnCoin(760, 240 - 36)
-    this.spawnCoin(1720, 250 - 36)
 
     this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7, 0.7)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
@@ -1348,11 +1318,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.boy, this.ground)
     if (this.girl) this.physics.add.collider(this.girl, this.ground)
     this.physics.add.collider(this.enemies, this.ground)
-    if (this.solidsLayer) {
-      this.physics.add.collider(this.boy, this.solidsLayer)
-      if (this.girl) this.physics.add.collider(this.girl, this.solidsLayer)
-      this.physics.add.collider(this.enemies, this.solidsLayer)
-    }
+    // No solidsLayer colliders — platforms removed (lane combat, not platformer).
 
     this.physics.add.overlap(this.shots, this.pots, (shot, pot) => {
       ;(shot as Phaser.Physics.Arcade.Sprite).destroy()
@@ -1641,18 +1607,6 @@ export class GameScene extends Phaser.Scene {
     // Stride = tile width so top faces abut with no vertical seam gaps.
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 36
     for (let i = x; i < x + w; i += stride) this.placeSurfaceTile(i + stride / 2, surfaceY, tex)
-  }
-
-  private woodPlat(x: number, surfaceY: number, n: number) {
-    const tex = this.textures.exists('blk-wood') ? 'blk-wood' : 'til-wood'
-    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
-    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * stride + stride / 2, surfaceY, tex)
-  }
-
-  private stonePlat(x: number, surfaceY: number, n: number) {
-    const tex = this.textures.exists('blk-stone') ? 'blk-stone' : 'til-wood'
-    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
-    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * stride + stride / 2, surfaceY, tex)
   }
 
   private spikes(x: number, n: number) {

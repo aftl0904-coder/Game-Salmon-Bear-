@@ -76,6 +76,8 @@ export const SCORE_BREAK = 80
 export const SALMON_SHOT_RANGE = 260
 /** 鮭彈飛行速度 */
 export const SALMON_SHOT_SPEED = 520
+/** 鮭魚槍射速：約 2.5 發／秒 */
+export const SALMON_SHOT_COOLDOWN_MS = 400
 /** 琪寶寶劍撃 hitbox 寬／高／持續 */
 export const SWORD_HIT_W = 96
 export const SWORD_HIT_H = 58

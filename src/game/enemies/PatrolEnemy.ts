@@ -203,49 +203,19 @@ export class PatrolEnemy extends Enemy {
       return
     }
 
-    // Opening auto-aggro: first confrontation without a long walk-to-combat.
+    // Spot player → walk in smoothly (no freeze / hop jam on lane floor).
     if (
       this.earlyAggro &&
       this.fsm === 'PATROL' &&
       dist < Math.max(detectR, aggro + 40)
     ) {
       this.hooks.floatBang?.(this.x, this.y - 36, '！')
-      this.hooks.telegraph?.(this, 'windup')
-      this.setTint(0xff8866)
-      this.think = 160
       this.setFsm('CHASE')
-      this.setVelocityX(0)
-      this.applyPose()
-      return
-    }
-
-    if (this.fsm === 'PATROL' && dist < detectR) {
+    } else if (this.fsm === 'PATROL' && dist < detectR) {
       this.hooks.floatBang?.(this.x, this.y - 36)
-      this.hooks.telegraph?.(this, 'windup')
-      this.think = 180
       this.setFsm('CHASE')
-      this.setVelocityX(0)
-      this.applyPose()
-      return
-    }
-
-    if (this.fsm !== 'CHASE' && dist < aggro && this.kind === 'chaser') this.setFsm('CHASE')
-
-    if (
-      (this.fsm === 'CHASE' || this.fsm === 'PATROL') &&
-      this.hopCd <= 0 &&
-      body.blocked.down &&
-      Math.random() < st.hopChance
-    ) {
-      this.think = sp.style === 'hop' ? 260 : 220
-      this.hopCd = (sp.style === 'hop' ? 420 : 700) + Math.random() * (sp.style === 'hop' ? 520 : 900)
-      const dir = (Math.sign(target.x - this.x) || this.patrolDir) as 1 | -1
-      this.chargeDir = dir
-      this.setVelocityY(sp.style === 'hop' ? -480 - Math.random() * 120 : -370 - Math.random() * 90)
-      this.setVelocityX(dir * spd * (sp.style === 'hop' ? 1.35 : 1.1))
-      this.setFlipX(dir > 0)
-      this.applyPose()
-      return
+    } else if (this.fsm !== 'CHASE' && dist < aggro && this.kind === 'chaser') {
+      this.setFsm('CHASE')
     }
 
     if (this.fsm === 'CHASE') {
@@ -253,17 +223,12 @@ export class PatrolEnemy extends Enemy {
       if (dist > aggro * dropMul && this.kind !== 'chaser' && this.kind !== 'boss') {
         this.setFsm('PATROL')
       } else {
-        const goal = this.desireX(target, ctx.leadX, advancing)
-        const dir = (Math.sign(goal - this.x) || 1) as 1 | -1
-        if (this.kind === 'ambusher' && target.y > this.y + 30 && body.blocked.down) {
-          this.setVelocityY(-370)
-        }
-        if (sp.style === 'hop' && body.blocked.down && this.hopCd <= 0 && Math.random() < 0.04) {
-          this.setVelocityY(-290)
-          this.hopCd = 280
-        }
-        const boost = this.kind === 'interrupter' && advancing ? 1.3 : 1
-        this.setVelocityX(dir * spd * boost)
+        // Always close on the player — no home-X oscillation / wall-reverse jam.
+        const dx = target.x - this.x
+        const dir = (Math.sign(dx) || this.patrolDir) as 1 | -1
+        const arrive = Math.abs(dx) < 10
+        const boost = this.kind === 'interrupter' && advancing ? 1.25 : 1
+        this.setVelocityX(arrive ? dir * spd * 0.35 * boost : dir * spd * boost)
         this.setFlipX(dir > 0)
         this.patrolDir = dir
         this.applyPose()
@@ -272,10 +237,11 @@ export class PatrolEnemy extends Enemy {
     }
 
     this.setFsm('PATROL')
+    // Lane walkers: skip cliff/wall reverse (no platforms) — smooth patrol only.
     if (this.kind === 'blocker') {
       const goal = this.desireX(target, ctx.leadX, advancing)
-      this.patrolDir = (Math.sign(goal - this.x) || this.patrolDir) as 1 | -1
-      this.reverseIfBlockedOrCliff()
+      const dx = goal - this.x
+      this.patrolDir = (Math.abs(dx) < 8 ? this.patrolDir : (Math.sign(dx) || this.patrolDir)) as 1 | -1
       this.setVelocityX(this.patrolDir * patrolSpd)
       this.setFlipX(this.patrolDir > 0)
       this.applyPose()
@@ -283,7 +249,6 @@ export class PatrolEnemy extends Enemy {
     }
     if (this.x < this.patrolMin) this.patrolDir = 1
     if (this.x > this.patrolMax) this.patrolDir = -1
-    this.reverseIfBlockedOrCliff()
     const slow = this.kind === 'ambusher' ? 0.7 : 1
     this.setVelocityX(this.patrolDir * patrolSpd * slow)
     this.setFlipX(this.patrolDir > 0)

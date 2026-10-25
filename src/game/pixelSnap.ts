@@ -157,6 +157,139 @@ export function closeVerticalAlphaGaps(scene: TexScene, key: string, maxGap = 3)
   scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
 }
 
+/**
+ * Fill enclosed transparent holes inside a silhouette (e.g. hair AA punch-through).
+ * Soft source alpha + alphaCut leaves see-through gaps — fill with neighbor color
+ * (prefer dark ink/hair), never leave hollow pixels inside one object.
+ */
+export function fillInternalAlphaHoles(
+  scene: TexScene,
+  key: string,
+  fallback: [number, number, number] = [40, 34, 38],
+) {
+  if (!scene.textures.exists(key)) return
+  const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(src as CanvasImageSource, 0, 0)
+  const img = ctx.getImageData(0, 0, w, h)
+  const d = img.data
+  const opaque = (x: number, y: number) =>
+    x >= 0 && y >= 0 && x < w && y < h && d[(y * w + x) * 4 + 3] >= 160
+  for (let pass = 0; pass < 5; pass++) {
+    const todo: Array<{ i: number; r: number; g: number; b: number }> = []
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4
+        if (d[i + 3] >= 160) continue
+        let n = 0
+        let dr = 0
+        let dg = 0
+        let db = 0
+        let dn = 0
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue
+            const xx = x + dx
+            const yy = y + dy
+            if (!opaque(xx, yy)) continue
+            n++
+            const j = (yy * w + xx) * 4
+            const sum = d[j] + d[j + 1] + d[j + 2]
+            if (sum < 320) {
+              dr += d[j]
+              dg += d[j + 1]
+              db += d[j + 2]
+              dn++
+            }
+          }
+        }
+        if (n < 4) continue
+        todo.push({
+          i,
+          r: dn > 0 ? Math.round(dr / dn) : fallback[0],
+          g: dn > 0 ? Math.round(dg / dn) : fallback[1],
+          b: dn > 0 ? Math.round(db / dn) : fallback[2],
+        })
+      }
+    }
+    if (!todo.length) break
+    for (const t of todo) {
+      d[t.i] = t.r
+      d[t.i + 1] = t.g
+      d[t.i + 2] = t.b
+      d[t.i + 3] = 255
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
+/**
+ * Grow a black outline around opaque silhouette — thicker SNES-style borders.
+ */
+export function thickenSpriteOutline(
+  scene: TexScene,
+  key: string,
+  radius = 2,
+  ink: [number, number, number] = [18, 12, 14],
+) {
+  if (!scene.textures.exists(key)) return
+  const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(src as CanvasImageSource, 0, 0)
+  const img = ctx.getImageData(0, 0, w, h)
+  const d = img.data
+  const solid = new Uint8Array(w * h)
+  for (let i = 0; i < w * h; i++) solid[i] = d[i * 4 + 3] >= 140 ? 1 : 0
+  const ring: number[] = []
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const idx = y * w + x
+      if (solid[idx]) continue
+      // skip soft contact-shadow only regions (low alpha already transparent)
+      let near = false
+      for (let dy = -radius; dy <= radius && !near; dy++) {
+        for (let dx = -radius; dx <= radius; dx++) {
+          if (dx * dx + dy * dy > radius * radius) continue
+          const xx = x + dx
+          const yy = y + dy
+          if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue
+          if (solid[yy * w + xx]) {
+            near = true
+            break
+          }
+        }
+      }
+      if (near) ring.push(idx)
+    }
+  }
+  for (const idx of ring) {
+    const i = idx * 4
+    d[i] = ink[0]
+    d[i + 1] = ink[1]
+    d[i + 2] = ink[2]
+    d[i + 3] = 255
+  }
+  ctx.putImageData(img, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
 /** Force left/right edge columns identical so TileSprite repeats leave no vertical seam. */
 export function sealTextureSeamsX(scene: TexScene, key: string) {
   if (!scene.textures.exists(key)) return
@@ -267,25 +400,107 @@ export function setPixelPose(
   void opts.angle
 }
 
-export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, _phase: number) {
+/**
+ * Build 4 run frames from a baked idle texture by shifting the lower leg band.
+ * Keeps scale===1 / angle===0 (no shear tear) while feet visibly step.
+ */
+export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) {
+  if (!scene.textures.exists(baseKey)) return
+  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const tmp = document.createElement('canvas')
+  tmp.width = w
+  tmp.height = h
+  const tctx = tmp.getContext('2d')!
+  tctx.imageSmoothingEnabled = false
+  tctx.clearRect(0, 0, w, h)
+  tctx.drawImage(src as CanvasImageSource, 0, 0)
+  const base = tctx.getImageData(0, 0, w, h)
+  const legY0 = Math.floor(h * 0.58)
+  const shifts = [0, 3, 0, -3]
+  for (let f = 0; f < frames; f++) {
+    const key = `${baseKey}-run-${f}`
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    const out = ctx.createImageData(w, h)
+    out.data.set(base.data)
+    const shift = shifts[f % shifts.length]
+    if (shift !== 0) {
+      // Clear leg band then blit shifted opaque feet.
+      for (let y = legY0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4
+          out.data[i + 3] = 0
+        }
+      }
+      for (let y = legY0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const si = (y * w + x) * 4
+          if (base.data[si + 3] < 160) continue
+          const dx = x + shift
+          if (dx < 0 || dx >= w) continue
+          const di = (y * w + dx) * 4
+          out.data[di] = base.data[si]
+          out.data[di + 1] = base.data[si + 1]
+          out.data[di + 2] = base.data[si + 2]
+          out.data[di + 3] = base.data[si + 3]
+        }
+      }
+    }
+    ctx.putImageData(out, 0, 0)
+    if (scene.textures.exists(key)) scene.textures.remove(key)
+    scene.textures.addCanvas(key, canvas)
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  }
+}
+
+export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, phase: number) {
+  const base =
+    (spr.getData('baseTex') as string | undefined) ||
+    spr.texture.key.replace(/-run-\d+$/, '')
+  const frame = Math.floor(phase) % 4
+  const key = `${base}-run-${frame}`
+  if (spr.scene.textures.exists(key) && spr.texture.key !== key) {
+    spr.setTexture(key)
+  }
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
 export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _tMs: number) {
+  const base = (spr.getData('baseTex') as string | undefined) || spr.texture.key.replace(/-run-\d+$/, '')
+  if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
+    spr.setTexture(base)
+  }
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
+function restoreBaseTex(spr: Phaser.GameObjects.Sprite) {
+  const base =
+    (spr.getData('baseTex') as string | undefined) ||
+    spr.texture.key.replace(/-run-\d+$/, '')
+  if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
+    spr.setTexture(base)
+  }
+}
+
 export function setJumpPose(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  restoreBaseTex(spr)
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
 export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  restoreBaseTex(spr)
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
 export function setDiePoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
   // Never rotate — even death tilt shears NEAREST quads into a smear.
   void _facing
+  restoreBaseTex(spr)
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 

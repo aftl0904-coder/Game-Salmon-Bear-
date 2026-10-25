@@ -160,6 +160,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setMaxVelocity(this.moveSpeed + 60, MAX_FALL)
     this.syncActorDepth()
     this.setScale(this.baseScale)
+    this.setData('baseTex', cfg.texture)
     enablePixelSprite(this)
     // 2× baked cast frames — hurtbox matches visual feet/torso (not pre-bake 22×36).
     bindFootBody(this, {
@@ -627,7 +628,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (Math.abs(vx) > 12) {
       this.pose = 'run'
-      this.walkPhase += Math.abs(vx) * 0.0005
+      // ~8 footstep frames / sec at full run
+      this.walkPhase += Math.abs(vx) / this.moveSpeed * 0.14
       setRunPose(this, this.baseScale, this.walkPhase)
       return
     }

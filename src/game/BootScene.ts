@@ -10,6 +10,9 @@ import {
   hardenTextureAlpha,
   closeVerticalAlphaGaps,
   sealTextureSeamsX,
+  fillInternalAlphaHoles,
+  thickenSpriteOutline,
+  registerWalkCycle,
 } from './pixelSnap'
 
 
@@ -74,6 +77,7 @@ export class BootScene extends Phaser.Scene {
     registerIsoArt(this)
     registerUiArt(this)
     this.bakeCastTextures()
+    this.thickenPropOutlines()
     this.hardenSeamTiles()
 
     this.registry.set('gameConfig', {
@@ -122,10 +126,31 @@ export class BootScene extends Phaser.Scene {
       'art-enemy',
       'art-enemy-barrel',
     ]) {
+      fillInternalAlphaHoles(this, key)
       closeVerticalAlphaGaps(this, key, 3)
       if (this.textures.exists(key)) {
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
       }
+    }
+    registerWalkCycle(this, 'art-salmon', 4)
+    registerWalkCycle(this, 'art-girl', 4)
+  }
+
+  /** Thicker SNES-style black borders on smashables / landmarks. */
+  private thickenPropOutlines() {
+    for (const key of [
+      'pot3d',
+      'chest3d',
+      'goal3d',
+      'crate3d',
+      'prop-tree3d',
+      'prop-house3d',
+      'prop-torii',
+      'prop-sword',
+      'fx-salmon-shot',
+      'blk-spike',
+    ]) {
+      thickenSpriteOutline(this, key, 2)
     }
   }
 
