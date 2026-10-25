@@ -69,11 +69,12 @@ export class LogoScene extends Phaser.Scene {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const lineupY = height - 150
     this.add.image(width / 2 - 130, lineupY + 12, shad).setAlpha(0.5).setScale(1.4, 0.7)
-    enablePixelSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(2.4))
+    // Cast heroes are 2× baked — display ~1.2 equals old 2.4 on raw 72px art.
+    enablePixelSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(1.2))
     this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
     enablePixelSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
     this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
-    enablePixelSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(2.2))
+    enablePixelSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
     if (this.textures.exists('fan3d')) {
       this.add.image(width / 2 + 170, lineupY - 20, 'fan3d').setScale(2.2).setAngle(-18)
     }

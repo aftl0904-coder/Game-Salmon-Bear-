@@ -1,3 +1,4 @@
+import { DEPTH } from './engine/depth'
 import type Phaser from 'phaser'
 
 const MAX_HP = 10
@@ -15,7 +16,7 @@ export function buildStageHud(
     stageSub: string
   },
 ) {
-  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(40)
+  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 40)
 
   if (scene.textures.exists('ui-hud-wood')) {
     for (let x = 32; x < 960; x += 64) {

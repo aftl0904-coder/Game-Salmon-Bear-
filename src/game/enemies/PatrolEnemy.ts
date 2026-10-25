@@ -83,13 +83,13 @@ export class PatrolEnemy extends Enemy {
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
     e.setCollideWorldBounds(true)
-    e.setDepth(actorDepth('enemy', lane))
+    e.setDepth(actorDepth('enemy', lane, feetY))
     e.setScale(e.baseScale)
     enablePixelSprite(e)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     bindFootBody(e, {
-      bodyW: spKey === 'barrel' ? 22 : 20,
-      bodyH: spKey === 'barrel' ? 28 : 22,
+      bodyW: spKey === 'barrel' ? 44 : 40,
+      bodyH: spKey === 'barrel' ? 56 : 44,
     })
     const body = e.body as Phaser.Physics.Arcade.Body
     if (inLaneBand(feetY)) {
@@ -449,32 +449,32 @@ export class PatrolEnemy extends Enemy {
     if (this.y > target + 2 || (body.velocity.y >= 0 && this.y >= target - 2)) {
       this.setY(target); body.velocity.y = 0; body.allowGravity = false
     }
-    this.setDepth(actorDepth('enemy', this.lane))
+    this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
   private applyPose() {
-    // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
-    const q = (ang = 0) => {
-      this.setScale(this.baseScale)
-      this.setAngle(Math.round(ang))
+    // Always scale 1 + angle 0 after texture bake — no lean/smear under NEAREST.
+    const lock = () => {
+      this.setScale(Math.round(this.baseScale) || 1)
+      this.setAngle(0)
     }
     if (this.fsm === 'DEAD') {
-      q(this.poseAngle)
+      lock()
       return
     }
     if (this.fsm === 'HURT') {
-      q(0)
+      lock()
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      q(0)
+      lock()
       this.setTint(0xff1111)
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
-      q(0)
+      lock()
       return
     }
-    q(0)
+    lock()
   }
 }
 

@@ -7,6 +7,7 @@ import {
   HEAVY_HIT_SHAKE_MS,
   HEAVY_HIT_SHAKE_INTENSITY,
 } from './engine/constants'
+import { DEPTH } from './engine/depth'
 
 export function burst(
   scene: Phaser.Scene,
@@ -20,7 +21,7 @@ export function burst(
     const sp = 70 + Math.random() * 140
     const p = scene.add
       .circle(x, y, 2.5 + Math.random() * 3.5, color, 0.95)
-      .setDepth(15)
+      .setDepth(DEPTH.FX)
     scene.tweens.add({
       targets: p,
       x: x + Math.cos(a) * sp,
@@ -41,7 +42,7 @@ export function impactRing(
   color = 0xffe8a0,
   startR = 8,
 ) {
-  const ring = scene.add.circle(x, y, startR, color, 0).setDepth(14)
+  const ring = scene.add.circle(x, y, startR, color, 0).setDepth(DEPTH.FX)
   ring.setStrokeStyle(3, color, 0.95)
   scene.tweens.add({
     targets: ring,
@@ -70,7 +71,7 @@ export function floatText(
       strokeThickness: 4,
     })
     .setOrigin(0.5)
-    .setDepth(16)
+    .setDepth(DEPTH.FX)
   scene.tweens.add({
     targets: t,
     y: y - (opts.rise ?? 36),
@@ -146,21 +147,16 @@ export class JuiceManager {
    */
   knockLean(target: HitTarget | undefined, dir: number, heavy = false) {
     if (!target?.active) return
+    // Tint-only hit read — any angle lean shears NEAREST mid-sprite (enemy smear).
+    void dir
+    void heavy
     const baseX = Math.abs(target.scaleX ?? 1)
     const baseY = Math.abs(target.scaleY ?? 1)
-    // Discrete lean (whole degrees) — continuous ±24–34° mid-tween shreds NEAREST sprites.
-    const lean = Math.round(dir * (heavy ? 18 : 12))
-    target.setTint?.(0xffffff)
-    target.setAngle?.(lean)
-    target.setScale?.(baseX, baseY)
     this.scene.tweens.killTweensOf(target)
-    this.scene.tweens.add({
-      targets: target,
-      angle: 0,
-      duration: 140,
-      ease: 'Sine.out',
-    })
-    this.scene.time.delayedCall(80, () => {
+    target.setAngle?.(0)
+    target.setScale?.(baseX, baseY)
+    target.setTint?.(0xffffff)
+    this.scene.time.delayedCall(90, () => {
       if (target.active) target.clearTint?.()
     })
   }
@@ -210,7 +206,7 @@ export class JuiceManager {
       const size = 2 + Math.random() * 4
       const p = this.scene.add
         .rectangle(x, y, size, size, color, 1)
-        .setDepth(15)
+        .setDepth(DEPTH.FX)
         .setAngle(Math.random() * 360)
       this.scene.tweens.add({
         targets: p,
@@ -230,7 +226,7 @@ export class JuiceManager {
     for (let i = 0; i < count; i++) {
       const p = this.scene.add
         .circle(x + (Math.random() - 0.5) * 12, y, 2 + Math.random() * 2, color, 0.7)
-        .setDepth(7)
+        .setDepth(DEPTH.FX)
       this.scene.tweens.add({
         targets: p,
         x: p.x + (Math.random() - 0.5) * 28,

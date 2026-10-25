@@ -55,6 +55,7 @@ import {
   tickCombatTimers,
   EntityManager,
   DebugOverlay,
+  DEBUG_MODE,
   type LaneId,
 } from './engine'
 import {
@@ -366,6 +367,7 @@ export class GameScene extends Phaser.Scene {
         heroes: [this.boy, this.girl],
         enemies: (this.enemies?.getChildren() ?? []) as Creep[],
         pet: this.pet,
+        zoneSigns: this.zoneSignData(),
       })
       return
     }
@@ -374,6 +376,7 @@ export class GameScene extends Phaser.Scene {
         heroes: [this.boy, this.girl],
         enemies: (this.enemies?.getChildren() ?? []) as Creep[],
         pet: this.pet,
+        zoneSigns: this.zoneSignData(),
       })
       return
     }
@@ -430,7 +433,20 @@ export class GameScene extends Phaser.Scene {
       heroes: [this.boy, this.girl],
       enemies: this.enemies.getChildren() as Creep[],
       pet: this.pet,
+      zoneSigns: this.zoneSignData(),
     })
+  }
+
+  /** F1-only zone markers — never drawn in normal player view. */
+  private zoneSignData(): Array<{ x: number; y: number; label: string }> {
+    // DEBUG_MODE=false → 「平地・溪流」「平台帶」 never shown (F1 overlay also gated).
+    if (!DEBUG_MODE) return []
+    return [
+      { x: 180, y: GROUND_Y - 96, label: '平地・溪流' },
+      { x: 780, y: GROUND_Y - 96, label: '平台帶' },
+      { x: 1750, y: GROUND_Y - 96, label: '伏兵區' },
+      { x: 3000, y: GROUND_Y - 96, label: '祭壇前' },
+    ]
   }
 
   private liveScore() {
@@ -664,15 +680,18 @@ export class GameScene extends Phaser.Scene {
   private aiGirl(dt: number) {
     const g = this.girl
     if (g.hurtLock > 0 || g.pose === 'die' || !g.alive) {
-      this.applyHeroPose(g, true, 0)
+      const body = g.body as Phaser.Physics.Arcade.Body
+      const grounded = !!(body?.blocked?.down || body?.touching?.down) || !g.laneJumping
+      this.applyHeroPose(g, grounded, 0)
       return
     }
-    const dx = this.boy.x - 56 - g.x
-    // Pulse while cd is clear so one-step-per-press re-arms between lanes.
+    const dx = this.boy.x - 72 - g.x
+    // Stay on an adjacent lane so cast feet never stack on one Y.
+    const preferLane = this.boy.lane >= 2 ? this.boy.lane - 1 : this.boy.lane + 1
     this.steerHero(
       g, dt, dx < -20, dx > 20, false, false, GIRL_SPEED * 0.9, false, () => {},
-      this.boy.lane < g.lane && g.laneCd <= 0,
-      this.boy.lane > g.lane && g.laneCd <= 0,
+      preferLane < g.lane && g.laneCd <= 0,
+      preferLane > g.lane && g.laneCd <= 0,
     )
     if (g.atkCd <= 0) {
       const near = this.enemies.getChildren().some((o) => {
@@ -702,7 +721,7 @@ export class GameScene extends Phaser.Scene {
     h.setAngle(0)
     h.setScale(h.baseScale)
     const shot = this.shots.create(h.x + h.facing * 36, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.5).setDepth(actorDepth('shot', h.lane)).setFlipX(h.facing < 0)
+    shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enablePixelSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * 560)
@@ -734,7 +753,7 @@ export class GameScene extends Phaser.Scene {
       h.y - 28,
       key,
     ) as Phaser.Physics.Arcade.Sprite
-    box.setAlpha(0).setDepth(actorDepth('hitbox', h.lane))
+    box.setAlpha(0).setDepth(actorDepth('hitbox', h.lane, h.y))
     const body = box.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
     body.setSize(w, ht)
@@ -762,7 +781,7 @@ export class GameScene extends Phaser.Scene {
 
   private honeyJet(dir: number) {
     const jet = this.honeys.create(this.pet.x + dir * 16, this.pet.y - 20, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.55).setDepth(actorDepth('shot', this.girl.lane))
+    jet.setScale(1.55).setDepth(actorDepth('shot', this.girl.lane, this.girl.y))
     enablePixelSprite(jet)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     jet.setVelocityX(dir * 480)
@@ -905,7 +924,11 @@ export class GameScene extends Phaser.Scene {
     const g = this.girl
     const awayFromBoy = Math.sign(g.x - this.boy.x) || -g.facing
     const side = awayFromBoy !== 0 ? awayFromBoy : -g.facing
-    const followX = g.x + side * 84
+    let followX = g.x + side * 96
+    // Keep clear of 倫寶 silhouette so 噗噗 never draws through legs.
+    if (Math.abs(followX - this.boy.x) < 70) {
+      followX = this.boy.x + side * 110
+    }
     const followY = laneY(g.lane)
     const dx = followX - this.pet.x
     const dy = followY - this.pet.y
@@ -922,10 +945,11 @@ export class GameScene extends Phaser.Scene {
     this.pet.setVelocity(0, 0)
     this.pet.setFlipX(g.facing < 0)
     this.pet.setScale(1)
+    this.pet.setAngle(0)
     this.pet.setAlpha(this.petJetting ? 1 : 0.85)
     this.pet.setVisible(true)
     this.pet.setActive(true)
-    this.pet.setDepth(actorDepth('pet', g.lane))
+    this.pet.setDepth(actorDepth('pet', g.lane, this.pet.y))
     this.pet.setData('lane', g.lane)
   }
 
@@ -933,11 +957,14 @@ export class GameScene extends Phaser.Scene {
     this.boyShadow.setPosition(this.boy.x, laneY(this.boy.lane) + 4)
     this.petShadow.setPosition(this.pet.x, laneY(this.girl.lane) + 4)
     this.girlShadow.setPosition(this.girl.x, laneY(this.girl.lane) + 4)
-    this.fan.setPosition(this.girl.x - this.girl.facing * 22, this.girl.y - 52)
+    // Fan outside torso silhouette (clear of waist) — avoids false “waist slice”.
+    this.fan.setPosition(this.girl.x - this.girl.facing * 44, this.girl.y - 40)
     this.fan.setFlipX(this.girl.facing < 0)
-    this.fan.setDepth(actorDepth('fan', this.girl.lane))
+    this.fan.setScale(1)
+    this.fan.setAngle(0)
+    this.fan.setDepth(actorDepth('fan', this.girl.lane, this.girl.y))
     this.fanGlow.setPosition(this.fan.x, this.fan.y)
-    this.fanGlow.setDepth(actorDepth('fan', this.girl.lane) - 0.1)
+    this.fanGlow.setDepth(actorDepth('fan', this.girl.lane, this.girl.y) - 0.1)
     this.boyShadow.setDepth(DEPTH.SHADOW)
     this.girlShadow.setDepth(DEPTH.SHADOW)
     this.petShadow.setDepth(DEPTH.SHADOW)
@@ -1202,26 +1229,7 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(DEPTH.SIGN)
 
-    // Readable stage-beat signs — prop band, never pierce heroes or mountain BG.
-    const signs: Array<[number, string]> = [
-      [180, '平地・溪流'],
-      [780, '平台帶'],
-      [1750, '伏兵區'],
-      [3000, '祭壇前'],
-    ]
-    for (const [sx, label] of signs) {
-      this.add
-        .text(sx, GROUND_Y - 96, label, {
-          fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '13px',
-          color: '#3a2818',
-          backgroundColor: '#f0e0b8cc',
-          padding: { x: 8, y: 3 },
-        })
-        .setOrigin(0.5)
-        .setDepth(DEPTH.SIGN)
-        .setAlpha(0.9)
-    }
+    // Stage-beat zone labels are F1-only (DebugOverlay) — never in player view.
   }
 
   private spawnCoin(x: number, y: number) {
@@ -1234,35 +1242,41 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCast() {
     const grace = this.time.now + 1400
-    const midY = laneY(LANE_DEFAULT)
-    this.boy = Player.spawn(this, 250, midY, {
-      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 2, speed: BOY_SPEED,
+    // Split lanes so feet never stack: 倫寶 mid, 琪寶寶 down, 噗噗 with girl.
+    const boyLane = LANE_DEFAULT
+    const girlLane = clampLane(LANE_DEFAULT + 1)
+    const boyY = laneY(boyLane)
+    const girlY = laneY(girlLane)
+    // scale 1 — cast textures are 2× baked at boot (scale≠1 shears NEAREST quads).
+    this.boy = Player.spawn(this, 250, boyY, {
+      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: BOY_SPEED,
     })
-    this.girl = Player.spawn(this, 330, midY, {
-      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 2, speed: GIRL_SPEED,
+    this.girl = Player.spawn(this, 360, girlY, {
+      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1, speed: GIRL_SPEED,
     })
-    this.boy.snapToLane(LANE_DEFAULT, 250)
-    this.girl.snapToLane(LANE_DEFAULT, 330)
+    this.boy.snapToLane(boyLane, 250)
+    this.girl.snapToLane(girlLane, 360)
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
-    // Spawn 噗噗 beside 琪寶寶 (not between her and 倫寶).
-    this.pet = this.physics.add.sprite(400, midY, 'art-bear')
+    // 噗噗 beside 琪寶寶, clear of 倫寶 (never through legs).
+    this.pet = this.physics.add.sprite(470, girlY, 'art-bear')
     this.pet.setOrigin(0.5, 1)
-    this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', LANE_DEFAULT)).setVisible(true)
+    this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', girlLane, girlY)).setVisible(true)
     enablePixelSprite(this.pet)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    this.pet.setData('lane', LANE_DEFAULT)
+    this.pet.setData('lane', girlLane)
     this.entities.add(this.pet, 'pet')
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(330, midY - 52, fanKey).setDepth(actorDepth('fan', LANE_DEFAULT)).setScale(1.6)
+    // Fan sits beside torso (not across waist) so it cannot read as a waist slice.
+    this.fan = this.add.image(360 - 48, girlY - 40, fanKey).setDepth(actorDepth('fan', girlLane, girlY)).setScale(1)
     enablePixelSprite(this.fan)
-    this.fanGlow = this.add.circle(330, midY - 52, 12, 0x88ddff, 0.2).setDepth(actorDepth('fan', LANE_DEFAULT) - 0.1)
+    this.fanGlow = this.add.circle(360 - 48, girlY - 40, 10, 0x88ddff, 0.18).setDepth(actorDepth('fan', girlLane, girlY) - 0.1)
     this.fan.setAngle(0)
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.boyShadow = this.add.image(250, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.2, 0.75)
-    this.girlShadow = this.add.image(330, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.15, 0.75)
-    this.petShadow = this.add.image(400, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(0.55, 0.45)
+    this.boyShadow = this.add.image(250, boyY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.2, 0.75)
+    this.girlShadow = this.add.image(360, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.15, 0.75)
+    this.petShadow = this.add.image(470, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(0.55, 0.45)
   }
 
   private wirePhysics() {
@@ -1374,7 +1388,7 @@ export class GameScene extends Phaser.Scene {
       )
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(60)
+      .setDepth(DEPTH.FX)
 
     this.boy.setVelocity(0, 0)
     this.girl.setVelocity(0, 0)
@@ -1559,23 +1573,32 @@ export class GameScene extends Phaser.Scene {
 
   private bank(x: number, surfaceY: number, w: number) {
     const tex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    for (let i = x; i < x + w; i += 36) this.placeSurfaceTile(i + 18, surfaceY, tex)
+    // Stride = tile width so top faces abut with no vertical seam gaps.
+    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 36
+    for (let i = x; i < x + w; i += stride) this.placeSurfaceTile(i + stride / 2, surfaceY, tex)
   }
 
   private woodPlat(x: number, surfaceY: number, n: number) {
     const tex = this.textures.exists('blk-wood') ? 'blk-wood' : 'til-wood'
-    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * 36 + 18, surfaceY, tex)
+    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * stride + stride / 2, surfaceY, tex)
   }
 
   private stonePlat(x: number, surfaceY: number, n: number) {
     const tex = this.textures.exists('blk-stone') ? 'blk-stone' : 'til-wood'
-    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * 34 + 17, surfaceY, tex)
+    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    for (let i = 0; i < n; i++) this.placeSurfaceTile(x + i * stride + stride / 2, surfaceY, tex)
   }
 
   private spikes(x: number, n: number) {
     const tex = this.textures.exists('blk-spike') ? 'blk-spike' : 'til-spike'
+    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 24
     for (let i = 0; i < n; i++) {
-      const s = this.hazards.create(x + i * 26 + 12, LANE_FLOOR_Y + 8, tex) as Phaser.Physics.Arcade.Sprite
+      const s = this.hazards.create(
+        x + i * stride + stride / 2,
+        LANE_FLOOR_Y + 4,
+        tex,
+      ) as Phaser.Physics.Arcade.Sprite
       s.setOrigin(0.5, 0)
       s.refreshBody()
       s.setDepth(DEPTH.HAZARD)

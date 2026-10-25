@@ -1,3 +1,4 @@
+import { DEPTH } from './engine/depth'
 import Phaser from 'phaser'
 import { buildStageHud } from './hud'
 import {
@@ -55,19 +56,19 @@ export class UIScene extends Phaser.Scene {
     this.coinText = hud.coinText
     this.scoreText = hud.scoreText
     this.maxHp = hud.maxHp
-    this.add.rectangle(118, 42, 110, 5, 0x2a1810, 0.85).setOrigin(0.5).setScrollFactor(0).setDepth(40)
-    this.barL = this.add.rectangle(63, 42, 110, 5, 0xe07a4f, 1).setOrigin(0, 0.5).setScrollFactor(0).setDepth(41)
+    this.add.rectangle(118, 42, 110, 5, 0x2a1810, 0.85).setOrigin(0.5).setScrollFactor(0).setDepth(DEPTH.UI + 40)
+    this.barL = this.add.rectangle(63, 42, 110, 5, 0xe07a4f, 1).setOrigin(0, 0.5).setScrollFactor(0).setDepth(DEPTH.UI + 41)
     const p2BarA = mode === '1p' ? 0.28 : 0.85
     this.add
       .rectangle(846, 42, 110, 5, 0x2a1810, p2BarA)
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(40)
+      .setDepth(DEPTH.UI + 40)
     this.barR = this.add
       .rectangle(791, 42, 110, 5, 0xe89ab8, mode === '1p' ? 0.28 : 1)
       .setOrigin(0, 0.5)
       .setScrollFactor(0)
-      .setDepth(41)
+      .setDepth(DEPTH.UI + 41)
     this.targetHpL = this.dispHpL = this.maxHp
     this.targetHpR = this.dispHpR = this.maxHp
 
@@ -84,7 +85,7 @@ export class UIScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
-      .setDepth(50)
+      .setDepth(DEPTH.UI + 50)
       .setVisible(false)
 
     // GameScene registers under key 'play' (smoke / menu compat).

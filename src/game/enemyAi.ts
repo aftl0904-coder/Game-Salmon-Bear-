@@ -119,32 +119,33 @@ export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
     // Opening fight ~180–250px; windup ≥260ms fair telegraph.
     hp: 2, spd: 62, patrolSpd: 48, aggro: 280, detect: 340, melee: 50,
-    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 2, tint: 0x88aacc,
+    // scale 1 — textures are 2× baked at boot (non-1 scale shears NEAREST quads).
+    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 1, tint: 0x88aacc,
     label: '路障', chargePrefer: false, hopChance: 0.012,
   },
   chaser: {
     hp: 2, spd: 110, patrolSpd: 52, aggro: 380, detect: 420, melee: 52,
-    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 2, tint: 0xff9977,
+    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 1, tint: 0xff9977,
     label: '追擊', chargePrefer: true, hopChance: 0.022,
   },
   ambusher: {
     hp: 2, spd: 95, patrolSpd: 22, aggro: 180, detect: 280, melee: 56,
-    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 2, tint: 0xaa88ff,
+    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 1, tint: 0xaa88ff,
     label: '伏兵', chargePrefer: false, hopChance: 0.008,
   },
   guardian: {
     hp: 3, spd: 78, patrolSpd: 48, aggro: 300, detect: 360, melee: 52,
-    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 2, tint: 0xffcc44,
+    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 1, tint: 0xffcc44,
     label: '守蜜', chargePrefer: false, hopChance: 0.015,
   },
   interrupter: {
     hp: 3, spd: 100, patrolSpd: 58, aggro: 420, detect: 480, melee: 56,
-    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 2, tint: 0xff6644,
+    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 1, tint: 0xff6644,
     label: '精銳', chargePrefer: true, hopChance: 0.02,
   },
   boss: {
     hp: 12, spd: 95, patrolSpd: 48, aggro: 520, detect: 600, melee: 70,
-    windupMs: 320, recoverMs: 300, atkCdMs: 900, scale: 2.55, tint: 0xffaa77,
+    windupMs: 320, recoverMs: 300, atkCdMs: 900, scale: 1, tint: 0xffaa77,
     label: '武者', chargePrefer: true, hopChance: 0.018,
   },
 }
@@ -225,28 +226,28 @@ export type AiCtx = {
 }
 
 function applyPose(e: Creep) {
-  // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
-  const q = (ang = 0) => {
-    e.setScale(e.baseScale)
-    e.setAngle(Math.round(ang))
+  // Texture-baked scale 1 + angle 0 — lean/rotation smears NEAREST mid-sprite.
+  const lock = () => {
+    e.setScale(Math.round(e.baseScale) || 1)
+    e.setAngle(0)
   }
   if (e.state === 'die') {
-    q(Math.round(e.poseAngle))
+    lock()
     return
   }
   if (e.state === 'hurt') {
-    q(0)
+    lock()
     return
   }
   if (e.state === 'windup' || e.state === 'pause') {
-    q(0)
+    lock()
     return
   }
   if (e.state === 'charge' || e.state === 'attack' || e.state === 'hop') {
-    q(0)
+    lock()
     return
   }
-  q(0)
+  lock()
 }
 
 export function tickEnemy(e: Creep, ctx: AiCtx) {
