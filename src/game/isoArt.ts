@@ -87,7 +87,7 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 0, 38, 32, 1, [20, 14, 10], 140)
   })
 
-  // Seamless wood plank — no iso side-face (that painted vertical seams every stride).
+  // Seamless wood plank — horizontal grain only (vertical ticks read as tile seams).
   paint(scene, 'blk-wood', 32, 16, (set) => {
     for (let y = 0; y < 12; y++) {
       const t = y / 12
@@ -99,10 +99,9 @@ export function registerIsoArt(scene: Phaser.Scene) {
       rect(set, 0, y, 32, 1, shadeRGB([155, 100, 50], 1 - t * 0.3))
     }
     rect(set, 0, 11, 32, 2, [115, 70, 32])
-    for (let x = 4; x < 28; x += 8) rect(set, x, 2, 1, 8, [160, 105, 55], 140)
-    set(10, 4, [60, 60, 70])
-    set(22, 4, [60, 60, 70])
-    set(11, 4, [180, 180, 190])
+    // Subtle horizontal fiber only — never vertical lines at tile joins.
+    rect(set, 0, 4, 32, 1, [190, 130, 70], 90)
+    rect(set, 0, 8, 32, 1, [170, 115, 60], 70)
     rect(set, 0, 14, 32, 2, [28, 18, 10], 160)
   })
 
@@ -232,17 +231,18 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(7, 11, [255, 255, 220])
   })
 
-  // One spike tile, edge-to-edge — stride = width leaves no gap between hazards.
+  // Spike tile fills full width at base so stride=width leaves zero gap.
   paint(scene, 'blk-spike', 16, 24, (set) => {
     for (let y = 0; y < 20; y++) {
-      const half = Math.max(0, 5 - Math.floor(y / 3.2))
+      const half = Math.max(0, Math.min(7, 7 - Math.floor(y / 2.6)))
       rect(set, 8 - half, y, 1 + half * 2, 1, y < 5 ? [240, 245, 255] : [140, 150, 165])
       if (half > 0) set(8 + half, y, [85, 95, 115])
       if (half > 0) set(8 - half, y, [200, 210, 225])
     }
     set(8, 1, [255, 255, 255])
-    rect(set, 0, 20, 16, 4, [28, 28, 36], 200)
-    rect(set, 0, 20, 16, 1, [60, 60, 72], 220)
+    // Full-width opaque footing — abutting tiles share a continuous base.
+    rect(set, 0, 18, 16, 6, [28, 28, 36], 255)
+    rect(set, 0, 18, 16, 1, [60, 60, 72], 255)
   })
 
 

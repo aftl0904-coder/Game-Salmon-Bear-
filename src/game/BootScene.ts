@@ -5,7 +5,12 @@ import { registerHoneyArt } from './honeyArt'
 import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
-import { bakePixelTexture, hardenTextureAlpha, closeVerticalAlphaGaps } from './pixelSnap'
+import {
+  bakePixelTexture,
+  hardenTextureAlpha,
+  closeVerticalAlphaGaps,
+  sealTextureSeamsX,
+} from './pixelSnap'
 
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
@@ -97,8 +102,9 @@ export class BootScene extends Phaser.Scene {
       ['art-enemy', 2] as const,
       ['art-enemy-barrel', 2] as const,
     ]
+    // alphaCut 56 — keep soft waist AA; 100 punched a torso slice through 琪寶寶.
     for (const [key, factor] of baked) {
-      const size = bakePixelTexture(this, key, factor, 100)
+      const size = bakePixelTexture(this, key, factor, 56)
       if (!size) continue
       const frame = this.textures.get(key).get()
       if (frame.width !== size.w || frame.height !== size.h) {
@@ -107,8 +113,8 @@ export class BootScene extends Phaser.Scene {
         )
       }
     }
-    hardenTextureAlpha(this, 'art-bear', 100)
-    // Soft AA bridges at waist/legs die under harden — fill 1px vertical holes.
+    hardenTextureAlpha(this, 'art-bear', 56)
+    // Soft AA waist/leg bridges: fill up to 3px vertical holes after harden.
     for (const key of [
       'art-salmon',
       'art-girl',
@@ -116,17 +122,31 @@ export class BootScene extends Phaser.Scene {
       'art-enemy',
       'art-enemy-barrel',
     ]) {
-      closeVerticalAlphaGaps(this, key)
+      closeVerticalAlphaGaps(this, key, 3)
       if (this.textures.exists(key)) {
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
       }
     }
   }
 
-  /** Harden alpha on water/grass tiles to kill NEAREST seam wash. */
+  /** Harden + seal L/R edges so TileSprite repeats leave no vertical seam. */
   private hardenSeamTiles() {
-    for (const key of ['water-deep', 'water-mid', 'water-foam', 'blk-grass', 'til-grass', 'blk-wood', 'til-wood']) {
+    for (const key of [
+      'water-deep',
+      'water-mid',
+      'water-foam',
+      'blk-grass',
+      'til-grass',
+      'blk-wood',
+      'til-wood',
+      'blk-stone',
+      'blk-spike',
+      'til-spike',
+      'bg-horizon',
+      'bg-sky',
+    ]) {
       hardenTextureAlpha(this, key, 80)
+      sealTextureSeamsX(this, key)
     }
   }
 }

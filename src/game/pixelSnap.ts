@@ -24,7 +24,8 @@ export function bakePixelTexture(
   scene: TexScene,
   key: string,
   factor = 2,
-  alphaCut = 96,
+  // 56 keeps soft waist AA bridges; 100+ punched holes through 琪寶寶 torso.
+  alphaCut = 56,
 ): { w: number; h: number } | null {
   if (!scene.textures.exists(key)) return null
   const src = scene.textures.get(key).getSourceImage() as
@@ -104,10 +105,11 @@ export function hardenTextureAlpha(scene: TexScene, key: string, alphaCut = 96) 
 
 
 /**
- * Close 1px vertical holes in opaque silhouette (fixes waist/leg separation
- * when soft AA bridges are killed by alpha harden).
+ * Close vertical holes in opaque silhouette (腰／腿 slice).
+ * Soft AA at a natural waist pinch dies under alpha harden — fill runs of
+ * up to `maxGap` transparent px between opaque neighbors (multi-pass).
  */
-export function closeVerticalAlphaGaps(scene: TexScene, key: string) {
+export function closeVerticalAlphaGaps(scene: TexScene, key: string, maxGap = 3) {
   if (!scene.textures.exists(key)) return
   const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
   const w = (src as { width: number }).width | 0
@@ -120,20 +122,63 @@ export function closeVerticalAlphaGaps(scene: TexScene, key: string) {
   ctx.drawImage(src as CanvasImageSource, 0, 0)
   const img = ctx.getImageData(0, 0, w, h)
   const d = img.data
-  for (let x = 0; x < w; x++) {
-    for (let y = 1; y < h - 1; y++) {
-      const i = (y * w + x) * 4
-      const above = d[((y - 1) * w + x) * 4 + 3]
-      const below = d[((y + 1) * w + x) * 4 + 3]
-      if (d[i + 3] < 128 && above >= 200 && below >= 200) {
-        // Fill hole from neighbors
-        const ai = ((y - 1) * w + x) * 4
-        const bi = ((y + 1) * w + x) * 4
-        d[i] = Math.round((d[ai] + d[bi]) / 2)
-        d[i + 1] = Math.round((d[ai + 1] + d[bi + 1]) / 2)
-        d[i + 2] = Math.round((d[ai + 2] + d[bi + 2]) / 2)
-        d[i + 3] = 255
+  const alpha = (x: number, y: number) => d[(y * w + x) * 4 + 3]
+  const fill = (x: number, y: number, ai: number, bi: number, t: number) => {
+    const i = (y * w + x) * 4
+    d[i] = Math.round(d[ai] * (1 - t) + d[bi] * t)
+    d[i + 1] = Math.round(d[ai + 1] * (1 - t) + d[bi + 1] * t)
+    d[i + 2] = Math.round(d[ai + 2] * (1 - t) + d[bi + 2] * t)
+    d[i + 3] = 255
+  }
+  // Several passes: 琪寶寶 waist soft band is ~2–3px after harden.
+  for (let pass = 0; pass < maxGap; pass++) {
+    for (let x = 0; x < w; x++) {
+      let y = 0
+      while (y < h) {
+        while (y < h && alpha(x, y) >= 128) y++
+        const gapStart = y
+        while (y < h && alpha(x, y) < 128) y++
+        const gapEnd = y
+        const gapLen = gapEnd - gapStart
+        if (gapLen < 1 || gapLen > maxGap) continue
+        if (gapStart < 1 || gapEnd >= h) continue
+        if (alpha(x, gapStart - 1) < 200 || alpha(x, gapEnd) < 200) continue
+        const ai = ((gapStart - 1) * w + x) * 4
+        const bi = (gapEnd * w + x) * 4
+        for (let gy = gapStart; gy < gapEnd; gy++) {
+          fill(x, gy, ai, bi, (gy - gapStart + 1) / (gapLen + 1))
+        }
       }
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
+/** Force left/right edge columns identical so TileSprite repeats leave no vertical seam. */
+export function sealTextureSeamsX(scene: TexScene, key: string) {
+  if (!scene.textures.exists(key)) return
+  const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  if (w < 2) return
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(src as CanvasImageSource, 0, 0)
+  const img = ctx.getImageData(0, 0, w, h)
+  const d = img.data
+  for (let y = 0; y < h; y++) {
+    const li = (y * w) * 4
+    const ri = (y * w + (w - 1)) * 4
+    for (let c = 0; c < 4; c++) {
+      const v = Math.round((d[li + c] + d[ri + c]) / 2)
+      d[li + c] = v
+      d[ri + c] = v
     }
   }
   ctx.putImageData(img, 0, 0)
@@ -239,6 +284,8 @@ export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: num
 }
 
 export function setDiePoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  // Never rotate — even death tilt shears NEAREST quads into a smear.
+  void _facing
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 

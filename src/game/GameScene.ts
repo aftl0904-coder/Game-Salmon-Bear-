@@ -924,10 +924,13 @@ export class GameScene extends Phaser.Scene {
     const g = this.girl
     const awayFromBoy = Math.sign(g.x - this.boy.x) || -g.facing
     const side = awayFromBoy !== 0 ? awayFromBoy : -g.facing
-    let followX = g.x + side * 96
+    let followX = g.x + side * 120
     // Keep clear of 倫寶 silhouette so 噗噗 never draws through legs.
-    if (Math.abs(followX - this.boy.x) < 70) {
-      followX = this.boy.x + side * 110
+    if (Math.abs(followX - this.boy.x) < 90) {
+      followX = this.boy.x + side * 130
+    }
+    if (Math.abs(followX - g.x) < 64) {
+      followX = g.x + side * 120
     }
     const followY = laneY(g.lane)
     const dx = followX - this.pet.x
@@ -957,14 +960,15 @@ export class GameScene extends Phaser.Scene {
     this.boyShadow.setPosition(this.boy.x, laneY(this.boy.lane) + 4)
     this.petShadow.setPosition(this.pet.x, laneY(this.girl.lane) + 4)
     this.girlShadow.setPosition(this.girl.x, laneY(this.girl.lane) + 4)
-    // Fan outside torso silhouette (clear of waist) — avoids false “waist slice”.
-    this.fan.setPosition(this.girl.x - this.girl.facing * 44, this.girl.y - 40)
+    // Fan well clear of torso — overlapping blue glow reads as a false waist slice.
+    this.fan.setPosition(this.girl.x - this.girl.facing * 58, this.girl.y - 52)
     this.fan.setFlipX(this.girl.facing < 0)
     this.fan.setScale(1)
     this.fan.setAngle(0)
     this.fan.setDepth(actorDepth('fan', this.girl.lane, this.girl.y))
     this.fanGlow.setPosition(this.fan.x, this.fan.y)
     this.fanGlow.setDepth(actorDepth('fan', this.girl.lane, this.girl.y) - 0.1)
+    this.fanGlow.setAlpha(0.08)
     this.boyShadow.setDepth(DEPTH.SHADOW)
     this.girlShadow.setDepth(DEPTH.SHADOW)
     this.petShadow.setDepth(DEPTH.SHADOW)
@@ -1053,18 +1057,20 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts = []
     this.placeSparseLandmarks()
 
-    // Water stack at stage foot (gameplay creek) — deep → mid → foam.
+    // Water stack at stage foot — integer origin + width (multiple of 64) kills seams.
     this.water = this.add
       .tileSprite(480, 520, 960, 64, 'water-deep')
       .setScrollFactor(0)
       .setDepth(DEPTH.WATER_DEEP)
+    this.water.setPosition(480, 520)
     enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
         .tileSprite(480, 500, 960, 32, 'water-mid')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_MID)
-        .setAlpha(0.75)
+        .setAlpha(0.7)
+      this.waterMid.setPosition(480, 500)
       enablePixelSprite(this.waterMid)
     }
     if (this.textures.exists('water-foam')) {
@@ -1072,7 +1078,8 @@ export class GameScene extends Phaser.Scene {
         .tileSprite(480, 488, 960, 16, 'water-foam')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_FOAM)
-        .setAlpha(0.9)
+        .setAlpha(0.85)
+      this.waterFoam.setPosition(480, 488)
       enablePixelSprite(this.waterFoam)
     }
   }
@@ -1121,8 +1128,8 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(m.d)
-        .setScale(m.s)
-        .setAlpha(0.95)
+        .setScale(1)
+        .setAlpha(0.82)
         .setFlipX(!!m.flip)
       img.setData('baseX', m.x)
       img.setData('parallax', m.p)
@@ -1131,15 +1138,27 @@ export class GameScene extends Phaser.Scene {
     }
 
     // --- Ground landmarks (world-space, with contact shadows) ---
-    // Few trees (4)
-    this.placeDecor(150, 'prop-tree3d', 1.25, 1.2)
-    this.placeDecor(620, 'prop-tree3d', 1.05, 1.0, true)
-    this.placeDecor(1320, 'prop-tree3d', 1.2, 1.15)
-    this.placeDecor(2360, 'prop-tree3d', 1.1, 1.05)
-    // 1 torii — near opening beat so it reads as a landmark
-    this.placeDecor(455, 'prop-torii', 1.2, 1.75)
-    // 1 house
-    this.placeDecor(1050, 'prop-house3d', 1.3, 1.45)
+    // Few trees (4) — integer scales so safeAuto stays active.
+    this.placeDecor(150, 'prop-tree3d', 1, 1.2)
+    this.placeDecor(620, 'prop-tree3d', 1, 1.0, true)
+    this.placeDecor(1320, 'prop-tree3d', 1, 1.15)
+    this.placeDecor(2360, 'prop-tree3d', 1, 1.05)
+    // Torii as mid-parallax landmark (NOT on walk path) — characters never clip beams.
+    if (this.textures.exists('prop-torii')) {
+      const torii = this.add
+        .image(400, 300, 'prop-torii')
+        .setOrigin(0.5, 1)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.VILLAGE)
+        .setScale(1)
+        .setAlpha(0.92)
+      torii.setData('baseX', 400)
+      torii.setData('parallax', 0.12)
+      enablePixelSprite(torii)
+      this.bgMounts.push(torii)
+    }
+    // 1 house — clear of lane feet
+    this.placeDecor(1050, 'prop-house3d', 1, 1.45)
     // Optional: 1 bridge + little river (mid opening)
     if (this.textures.exists('lm-river')) {
       const river = this.add
@@ -1242,24 +1261,27 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCast() {
     const grace = this.time.now + 1400
-    // Split lanes so feet never stack: 倫寶 mid, 琪寶寶 down, 噗噗 with girl.
+    // Split lanes + wide X so feet never stack: 倫寶 mid, 琪寶寶 down, 噗噗 ahead.
     const boyLane = LANE_DEFAULT
     const girlLane = clampLane(LANE_DEFAULT + 1)
     const boyY = laneY(boyLane)
     const girlY = laneY(girlLane)
+    const boyX = 220
+    const girlX = 380
+    const petX = 520
     // scale 1 — cast textures are 2× baked at boot (scale≠1 shears NEAREST quads).
-    this.boy = Player.spawn(this, 250, boyY, {
+    this.boy = Player.spawn(this, boyX, boyY, {
       role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: BOY_SPEED,
     })
-    this.girl = Player.spawn(this, 360, girlY, {
+    this.girl = Player.spawn(this, girlX, girlY, {
       role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1, speed: GIRL_SPEED,
     })
-    this.boy.snapToLane(boyLane, 250)
-    this.girl.snapToLane(girlLane, 360)
+    this.boy.snapToLane(boyLane, boyX)
+    this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
-    // 噗噗 beside 琪寶寶, clear of 倫寶 (never through legs).
-    this.pet = this.physics.add.sprite(470, girlY, 'art-bear')
+    // 噗噗 ahead of 琪寶寶, clear of 倫寶 (never through legs).
+    this.pet = this.physics.add.sprite(petX, girlY, 'art-bear')
     this.pet.setOrigin(0.5, 1)
     this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', girlLane, girlY)).setVisible(true)
     enablePixelSprite(this.pet)
@@ -1268,15 +1290,15 @@ export class GameScene extends Phaser.Scene {
     this.pet.setData('lane', girlLane)
     this.entities.add(this.pet, 'pet')
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    // Fan sits beside torso (not across waist) so it cannot read as a waist slice.
-    this.fan = this.add.image(360 - 48, girlY - 40, fanKey).setDepth(actorDepth('fan', girlLane, girlY)).setScale(1)
+    // Fan well clear of torso — blue glow across waist reads as a false waist slice.
+    this.fan = this.add.image(girlX - 56, girlY - 52, fanKey).setDepth(actorDepth('fan', girlLane, girlY)).setScale(1)
     enablePixelSprite(this.fan)
-    this.fanGlow = this.add.circle(360 - 48, girlY - 40, 10, 0x88ddff, 0.18).setDepth(actorDepth('fan', girlLane, girlY) - 0.1)
+    this.fanGlow = this.add.circle(girlX - 56, girlY - 52, 6, 0x88ddff, 0.08).setDepth(actorDepth('fan', girlLane, girlY) - 0.1)
     this.fan.setAngle(0)
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.boyShadow = this.add.image(250, boyY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.2, 0.75)
-    this.girlShadow = this.add.image(360, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.15, 0.75)
-    this.petShadow = this.add.image(470, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(0.55, 0.45)
+    this.boyShadow = this.add.image(boyX, boyY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
+    this.girlShadow = this.add.image(girlX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
+    this.petShadow = this.add.image(petX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
   }
 
   private wirePhysics() {
@@ -1563,8 +1585,10 @@ export class GameScene extends Phaser.Scene {
 
 
   private placeSurfaceTile(x: number, surfaceY: number, tex: string) {
-    const t = this.ground.create(x, surfaceY, tex) as Phaser.Physics.Arcade.Sprite
+    const t = this.ground.create(Math.round(x), Math.round(surfaceY), tex) as Phaser.Physics.Arcade.Sprite
     t.setOrigin(0.5, 0)
+    t.setScale(1)
+    t.setAngle(0)
     t.refreshBody()
     t.setDepth(DEPTH.GROUND)
     enablePixelSprite(t)
@@ -1595,11 +1619,13 @@ export class GameScene extends Phaser.Scene {
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 24
     for (let i = 0; i < n; i++) {
       const s = this.hazards.create(
-        x + i * stride + stride / 2,
-        LANE_FLOOR_Y + 4,
+        Math.round(x + i * stride + stride / 2),
+        Math.round(LANE_FLOOR_Y + 4),
         tex,
       ) as Phaser.Physics.Arcade.Sprite
       s.setOrigin(0.5, 0)
+      s.setScale(1)
+      s.setAngle(0)
       s.refreshBody()
       s.setDepth(DEPTH.HAZARD)
       enablePixelSprite(s)
@@ -1607,10 +1633,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeEnemies() {
-    const opener = this.mkEnemy(450, GROUND_Y, 'blocker', undefined, 'fish', 1)
+    // Opening density: first contact ~150px / ~2s (spawn 250 → ~400), then a
+    // second-lane buddy so co-op has something to hit before the platform band.
+    const opener = this.mkEnemy(400, GROUND_Y, 'blocker', undefined, 'fish', 1)
     opener.earlyAggro = true
-    opener.detectRadius = 360
-    opener.aggroRadius = 300
+    opener.detectRadius = 380
+    opener.aggroRadius = 320
+    const opener2 = this.mkEnemy(580, GROUND_Y, 'blocker', undefined, 'fish', 2)
+    opener2.earlyAggro = true
+    opener2.detectRadius = 340
+    opener2.aggroRadius = 280
+    this.mkEnemy(820, GROUND_Y, 'chaser', undefined, 'fish', 0)
     this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish', 0)
     this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish', 2)
     this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish', 1)
