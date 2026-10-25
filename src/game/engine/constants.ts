@@ -9,8 +9,14 @@ export const GROUND_Y = 400
 export const MAX_HP = 10
 export const BOY_SPEED = 280
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
-/** 敵人接近／追擊速度 = 倫寶 × 0.8（慢一截，但仍係走嚟打） */
-export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.8)
+/** 敵人接近／追擊速度 = 倫寶 × 0.3（慢行進攻） */
+export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
+/** 每隔幾秒隨機定住一個敵人（ms 範圍） */
+export const ENEMY_STAGGER_EVERY_MIN_MS = 3000
+export const ENEMY_STAGGER_EVERY_MAX_MS = 4000
+export const ENEMY_STAGGER_HOLD_MS = 700
+/** 任何人出招瞬間世界定格 */
+export const ATTACK_COMMIT_FREEZE_MS = 200
 
 /**
  * World Arcade gravity (px/s²).
@@ -76,10 +82,10 @@ export const SCORE_BREAK = 80
 
 /** 倫寶鮭魚槍最大飛行距離（px）— 遠程有上限，與琪寶寶劍近戰平衡 */
 export const SALMON_SHOT_RANGE = 260
-/** 鮭彈飛行速度 */
-export const SALMON_SHOT_SPEED = 520
-/** 鮭魚槍射速：約 2.5 發／秒 */
-export const SALMON_SHOT_COOLDOWN_MS = 400
+/** 鮭彈飛行速度（0.7× 原 520） */
+export const SALMON_SHOT_SPEED = Math.round(520 * 0.7)
+/** 鮭魚槍射速：0.7× 原再射速度 → CD = 400 / 0.7 */
+export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7)
 /** 琪寶寶劍撃 hitbox 寬／高／持續 */
 export const SWORD_HIT_W = 96
 export const SWORD_HIT_H = 58

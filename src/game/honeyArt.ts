@@ -79,6 +79,32 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     set(12, 2, [255, 255, 220])
   })
 
+  // 醃魚雜兵：木柄魚槍
+  paint(scene, 'prop-enemy-spear', 40, 12, (set) => {
+    const ink: RGB = [18, 12, 14]
+    rect(set, 0, 3, 40, 6, ink)
+    rect(set, 1, 4, 22, 4, [120, 75, 40])
+    rect(set, 1, 4, 22, 1, [180, 120, 70])
+    rect(set, 22, 2, 16, 8, ink)
+    rect(set, 23, 3, 14, 6, [70, 150, 210])
+    rect(set, 23, 3, 14, 2, [160, 210, 255])
+    rect(set, 34, 4, 5, 4, [255, 240, 200])
+  })
+
+  // 木桶武者：釘棒
+  paint(scene, 'prop-enemy-club', 36, 14, (set) => {
+    const ink: RGB = [18, 12, 14]
+    rect(set, 0, 4, 36, 6, ink)
+    rect(set, 1, 5, 14, 4, [90, 55, 30])
+    rect(set, 1, 5, 14, 1, [140, 90, 50])
+    rect(set, 14, 2, 20, 10, ink)
+    rect(set, 15, 3, 18, 8, [160, 100, 50])
+    rect(set, 15, 3, 18, 2, [210, 150, 90])
+    set(20, 5, [220, 220, 230])
+    set(26, 7, [220, 220, 230])
+    set(30, 5, [220, 220, 230])
+  })
+
   // 琪寶寶近戰短刀／劍（黑色描邊＋頂光三階）
   paint(scene, 'prop-sword', 36, 14, (set) => {
     rect(set, 2, 4, 8, 6, [90, 55, 35])

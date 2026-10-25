@@ -4,7 +4,9 @@ import {
   LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
-import { enablePixelSprite } from '../pixelSnap'
+import { enablePixelSprite, WALK_FRAMES } from '../pixelSnap'
+import { hitstop } from '../fx'
+import { ATTACK_COMMIT_FREEZE_MS } from '../engine/constants'
 import {
   type EnemyKind,
   type EnemySpecies,
@@ -38,6 +40,9 @@ export class PatrolEnemy extends Enemy {
   atkPhase: AtkPhase = 'none'
   state: EnemyState = 'patrol'
   walkPhase = 0
+  /** Random brief freeze (ms timestamp). */
+  staggerUntil = 0
+  weapon: Phaser.GameObjects.Image | null = null
 
   static spawn(
     scene: Phaser.Scene,
@@ -89,6 +94,11 @@ export class PatrolEnemy extends Enemy {
     enablePixelSprite(e)
     e.setData('baseTex', tex)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
+    const wKey = spKey === 'barrel'
+      ? (scene.textures.exists('prop-enemy-club') ? 'prop-enemy-club' : 'prop-sword')
+      : (scene.textures.exists('prop-enemy-spear') ? 'prop-enemy-spear' : 'fx-salmon-shot')
+    e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
+    enablePixelSprite(e.weapon)
     bindFootBody(e, {
       bodyW: spKey === 'barrel' ? 44 : 40,
       bodyH: spKey === 'barrel' ? 56 : 44,
@@ -152,6 +162,20 @@ export class PatrolEnemy extends Enemy {
 
     this.holdLaneFloor(body)
 
+    if (this.scene.time.now < this.staggerUntil) {
+      this.setVelocityX(0)
+      this.setData('staggerTint', true)
+      this.applyPose()
+      this.syncWeapon()
+      return
+    }
+    if (this.getData('staggerTint')) {
+      this.setData('staggerTint', false)
+      this.clearTint()
+      const t = this.defaultTint()
+      if (t) this.setTint(t)
+    }
+
     if (this.fsm === 'HURT') {
       this.applyPose()
       if (this.think <= 0) {
@@ -185,18 +209,20 @@ export class PatrolEnemy extends Enemy {
       this.patrolDir = dir
       this.walkPhase += arrive ? 0.08 : 0.14
       this.applyPose()
+      this.syncWeapon()
     }
   }
 
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // Short telegraph — keep walking in (no freeze).
     this.windup = Math.min(160, Math.max(90, ms))
     this.hitThis = false
+    hitstop(this.scene, ATTACK_COMMIT_FREEZE_MS)
     this.setTint(0xff1111)
     this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
+    this.syncWeapon()
   }
 
   private tickAttack(
@@ -218,6 +244,7 @@ export class PatrolEnemy extends Enemy {
       // Keep closing — no stand-still recover.
       walkIn(0.7)
       this.applyPose()
+      this.syncWeapon()
       if (this.think <= 0) {
         this.hitThis = false
         this.setFsm('CHASE')
@@ -235,6 +262,7 @@ export class PatrolEnemy extends Enemy {
       this.setTint(0xff3333)
       walkIn(0.85)
       this.applyPose()
+      this.syncWeapon()
       if (this.windup <= 0) {
         this.atkPhase = 'strike'
         this.hitThis = false
@@ -247,6 +275,7 @@ export class PatrolEnemy extends Enemy {
     if (this.atkPhase === 'strike') {
       walkIn(1.35)
       this.applyPose()
+      this.syncWeapon()
       if (this.think <= 0) {
         this.clearTint()
         const t = this.defaultTint()
@@ -321,17 +350,20 @@ export class PatrolEnemy extends Enemy {
     if (this.fsm === 'DEAD' || this.fsm === 'HURT') {
       setTex(base)
       lock()
+      this.syncWeapon()
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
       setTex(`${base}-atk-windup`)
       this.setTint(0xff1111)
       lock()
+      this.syncWeapon()
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
       setTex(`${base}-atk-strike`)
       lock()
+      this.syncWeapon()
       return
     }
     const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0)
@@ -339,13 +371,42 @@ export class PatrolEnemy extends Enemy {
       if (this.atkPhase === 'none' || this.atkPhase === 'recover') {
         this.walkPhase += 0.1
       }
-      const frame = Math.floor(this.walkPhase) % 4
+      const frame = Math.floor(this.walkPhase) % WALK_FRAMES
       setTex(`${base}-run-${frame}`)
       lock()
+      this.syncWeapon()
       return
     }
     setTex(base)
     lock()
+    this.syncWeapon()
+  }
+
+  protected override die(dir: number) {
+    if (this.weapon) {
+      this.weapon.destroy()
+      this.weapon = null
+    }
+    super.die(dir)
+  }
+
+  private syncWeapon() {
+    const w = this.weapon
+    if (!w || !w.active) return
+    if (this.fsm === 'DEAD') {
+      w.setVisible(false)
+      return
+    }
+    w.setVisible(true)
+    const face = this.flipX ? -1 : 1
+    const strike = this.atkPhase === 'strike' || this.atkPhase === 'charge'
+    const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
+    const ox = strike ? 34 : wind ? 14 : 22
+    const oy = strike ? -22 : wind ? -40 : -28
+    w.setPosition(this.x + face * ox, this.y + oy)
+    w.setFlipX(this.flipX)
+    w.setAngle(strike ? face * 25 : wind ? face * -35 : face * -8)
+    w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)
   }
 }
 

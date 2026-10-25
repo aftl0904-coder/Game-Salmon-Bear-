@@ -628,8 +628,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (Math.abs(vx) > 12) {
       this.pose = 'run'
-      // ~8 footstep frames / sec at full run
-      this.walkPhase += Math.abs(vx) / this.moveSpeed * 0.14
+      // 3 frames per body-step (~40px); feet lead via baked run frames
+      this.walkPhase += (Math.abs(vx) / this.moveSpeed) * 0.22
       setRunPose(this, this.baseScale, this.walkPhase)
       return
     }

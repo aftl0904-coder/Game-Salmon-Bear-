@@ -1,6 +1,6 @@
 /** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
-import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager } from './fx'
+import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, hitstop } from './fx'
 import {
   enablePixelSprite,
   snapCameraScroll,
@@ -41,6 +41,10 @@ import {
   SALMON_SHOT_SPEED,
   SALMON_SHOT_COOLDOWN_MS,
   ENEMY_SPEED,
+  ENEMY_STAGGER_EVERY_MIN_MS,
+  ENEMY_STAGGER_EVERY_MAX_MS,
+  ENEMY_STAGGER_HOLD_MS,
+  ATTACK_COMMIT_FREEZE_MS,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -159,6 +163,8 @@ export class GameScene extends Phaser.Scene {
   private entities = new EntityManager()
   private debugOverlay!: DebugOverlay
   private juice!: JuiceManager
+  /** Countdown until next random enemy stagger-freeze. */
+  private enemyStaggerCd = 0
 
   constructor() {
     // Scene key 'play' kept for smoke / MainMenu startMode compat.
@@ -435,6 +441,7 @@ export class GameScene extends Phaser.Scene {
 
     this.updatePet()
     this.activateDeferredEnemies()
+    this.tickEnemyStagger(dt)
     this.updateEnemies(dt)
     this.cullSalmonShots()
     this.entities.syncEnemiesFromGroup(this.enemies)
@@ -699,6 +706,7 @@ export class GameScene extends Phaser.Scene {
     // 2.5 shots / sec
     h.atkCd = SALMON_SHOT_COOLDOWN_MS
     h.pose = 'idle'
+    hitstop(this, ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     this.tweens.killTweensOf(h)
     h.setAngle(0)
@@ -727,6 +735,7 @@ export class GameScene extends Phaser.Scene {
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
     h.atkCd = 220
+    hitstop(this, ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     burst(this, h.x + h.facing * 50, h.y - 28, 0xe8f0ff, 10)
     h.setAngle(0)
@@ -1202,11 +1211,8 @@ export class GameScene extends Phaser.Scene {
       this.levelMap.solids.setActive(false)
     }
 
-    const banks: Array<[number, number]> = [
-      [0, 480], [560, 280], [960, 300], [1400, 340],
-      [1880, 280], [2300, 320], [2760, 300], [3200, 600],
-    ]
-    for (const [x, w] of banks) this.bank(x, LANE_FLOOR_Y, w)
+    // One continuous aligned ground ribbon — no gaps / 斷開 between banks.
+    this.layGroundRibbon(LANE_FLOOR_Y)
 
     // Ground spike traps only — jump over these (or change lane).
     this.spikes(540, 3)
@@ -1594,7 +1600,7 @@ export class GameScene extends Phaser.Scene {
 
   private placeSurfaceTile(x: number, surfaceY: number, tex: string) {
     const t = this.ground.create(Math.round(x), Math.round(surfaceY), tex) as Phaser.Physics.Arcade.Sprite
-    t.setOrigin(0.5, 0)
+    t.setOrigin(0, 0)
     t.setScale(1)
     t.setAngle(0)
     t.refreshBody()
@@ -1603,11 +1609,13 @@ export class GameScene extends Phaser.Scene {
     return t
   }
 
-  private bank(x: number, surfaceY: number, w: number) {
+  /** Full-width ground: left-origin tiles on integer stride — no mid-gap 斷開. */
+  private layGroundRibbon(surfaceY: number) {
     const tex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    // Stride = tile width so top faces abut with no vertical seam gaps.
-    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 36
-    for (let i = x; i < x + w; i += stride) this.placeSurfaceTile(i + stride / 2, surfaceY, tex)
+    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    for (let x = 0; x < WORLD_W + stride; x += stride) {
+      this.placeSurfaceTile(x, surfaceY, tex)
+    }
   }
 
   private spikes(x: number, n: number) {
@@ -1672,6 +1680,22 @@ export class GameScene extends Phaser.Scene {
     e.setVisible(false)
     const body = e.body as Phaser.Physics.Arcade.Body
     body.enable = false
+  }
+
+  /** Every 3–4s, briefly freeze one live enemy (others keep walking in). */
+  private tickEnemyStagger(dt: number) {
+    this.enemyStaggerCd -= dt
+    if (this.enemyStaggerCd > 0) return
+    this.enemyStaggerCd = Phaser.Math.Between(ENEMY_STAGGER_EVERY_MIN_MS, ENEMY_STAGGER_EVERY_MAX_MS)
+    const live = this.enemies.getChildren().filter((o) => {
+      const e = o as PatrolEnemy
+      return e.active && e.fsm !== 'DEAD' && e.fsm !== 'HURT'
+    }) as PatrolEnemy[]
+    if (!live.length) return
+    const pick = live[Phaser.Math.Between(0, live.length - 1)]
+    pick.staggerUntil = this.time.now + ENEMY_STAGGER_HOLD_MS
+    pick.setVelocityX(0)
+    pick.setTint(0xaaccff)
   }
 
   private activateDeferredEnemies() {

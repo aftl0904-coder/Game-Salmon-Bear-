@@ -12,6 +12,8 @@ export class MainMenuScene extends Phaser.Scene {
   private panels: Phaser.GameObjects.Image[] = []
   private cursorsGfx: Phaser.GameObjects.Image[] = []
   private modes: Mode[] = ['1p', '2p']
+  private startBtn: Phaser.GameObjects.Image | null = null
+  private startLabel: Phaser.GameObjects.Text | null = null
 
   constructor() {
     super('menu')
@@ -196,9 +198,10 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private buildModeSelect(width: number) {
+    // GDD K/B: simple 單人／雙人; click only selects; grey = not selected.
     const items = [
-      { mode: '1p' as Mode, text: '１Ｐ　單人（琪寶寶＋噗噗同行）' },
-      { mode: '2p' as Mode, text: '２Ｐ　雙人鍵盤同行同行' },
+      { mode: '1p' as Mode, text: '單人　—　只玩倫寶' },
+      { mode: '2p' as Mode, text: '雙人　—　倫寶＋琪寶寶' },
     ]
     this.modes = items.map((i) => i.mode)
     this.panels = []
@@ -206,18 +209,21 @@ export class MainMenuScene extends Phaser.Scene {
     this.cursorsGfx = []
 
     items.forEach((item, i) => {
-      const y = 168 + i * 68
+      const y = 158 + i * 58
       const panelKey = this.textures.exists('ui-wood-panel') ? 'ui-wood-panel' : 'ui-scroll'
       const panel = this.add
         .image(width / 2, y, panelKey)
         .setDepth(12)
-        .setScale(panelKey === 'ui-wood-panel' ? 1.05 : 1.2)
+        .setScale(panelKey === 'ui-wood-panel' ? 0.95 : 1.1)
       panel.setInteractive({ useHandCursor: true })
       panel.on('pointerover', () => {
         this.cursor = i
         this.refresh()
       })
-      panel.on('pointerdown', () => this.startMode(item.mode))
+      panel.on('pointerdown', () => {
+        this.cursor = i
+        this.refresh()
+      })
       this.panels.push(panel)
 
       this.labels.push(
@@ -233,10 +239,34 @@ export class MainMenuScene extends Phaser.Scene {
 
       if (this.textures.exists('ui-cursor')) {
         this.cursorsGfx.push(
-          this.add.image(width / 2 - 200, y, 'ui-cursor').setDepth(13).setScale(1.6).setVisible(false),
+          this.add.image(width / 2 - 190, y, 'ui-cursor').setDepth(13).setScale(1.5).setVisible(false),
         )
       }
     })
+
+    const startY = 278
+    const startKey = this.textures.exists('ui-wood-panel-on')
+      ? 'ui-wood-panel-on'
+      : this.textures.exists('ui-wood-panel')
+        ? 'ui-wood-panel'
+        : 'ui-scroll'
+    this.startBtn = this.add
+      .image(width / 2, startY, startKey)
+      .setDepth(12)
+      .setScale(0.85)
+    this.startBtn.setInteractive({ useHandCursor: true })
+    this.startBtn.on('pointerdown', () => this.confirmStart())
+    this.startBtn.on('pointerover', () => this.startLabel?.setColor('#1a1008'))
+    this.startBtn.on('pointerout', () => this.startLabel?.setColor('#2a1810'))
+    this.startLabel = this.add
+      .text(width / 2, startY, '開始', {
+        fontFamily: 'Noto Sans TC, sans-serif',
+        fontSize: '26px',
+        color: '#2a1810',
+        fontStyle: 'bold',
+      })
+      .setOrigin(0.5)
+      .setDepth(13)
   }
 
   private buildFooter(width: number, height: number) {
@@ -245,19 +275,19 @@ export class MainMenuScene extends Phaser.Scene {
       scores.length === 0
         ? '尚無紀錄'
         : scores
-            .slice(0, 4)
+            .slice(0, 3)
             .map(
               (s, i) =>
                 `${i + 1}. ${s.score}分　${s.timeSec.toFixed(0)}秒　蜜${s.honey}　${s.mode === '1p' ? '單人' : '雙人'}`,
             )
             .join('\n')
     this.add
-      .text(width / 2, 308, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width / 2, 318, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '12px',
+        fontSize: '11px',
         color: '#f7e7c0',
         backgroundColor: '#3a2210cc',
-        padding: { x: 14, y: 8 },
+        padding: { x: 14, y: 6 },
         align: 'center',
       })
       .setOrigin(0.5, 0)
@@ -267,7 +297,7 @@ export class MainMenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 28,
-        '上下選擇　空白／Enter 開始\n倫寶：ＡＤ左右　ＷＳ換線　ＪＫＵＩ　｜　琪寶寶：←→　↑↓換線　１２４５　｜　噗噗跟線',
+        '上下揀模式　撳「開始」或空白／Enter 開局\n倫寶：ＡＤ左右　ＷＳ換線　ＪＫＵＩ　｜　琪寶寶：←→　↑↓換線　１２４５',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '11px',
@@ -291,7 +321,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.cursor = (this.cursor + 1) % this.modes.length
       this.refresh()
     }
-    const onStart = () => this.startMode(this.modes[this.cursor]!)
+    const onStart = () => this.confirmStart()
     kb.on('keydown-UP', onUp)
     kb.on('keydown-DOWN', onDown)
     kb.on('keydown-ENTER', onStart)
@@ -316,18 +346,25 @@ export class MainMenuScene extends Phaser.Scene {
   private refresh() {
     this.labels.forEach((t, i) => {
       const on = i === this.cursor
-      t.setColor(on ? '#1a1008' : '#3a2818')
-      t.setScale(on ? 1.05 : 1)
+      // Selected = warm ink; unselected = grey (AC-14)
+      t.setColor(on ? '#1a1008' : '#8a8a8a')
+      t.setScale(on ? 1.06 : 1)
       const panel = this.panels[i]
-      if (panel && this.textures.exists('ui-wood-panel')) {
-        panel.setTexture(on ? 'ui-wood-panel-on' : 'ui-wood-panel')
+      if (panel) {
+        if (this.textures.exists('ui-wood-panel')) {
+          panel.setTexture(on ? 'ui-wood-panel-on' : 'ui-wood-panel')
+        }
+        if (on) panel.clearTint()
+        else panel.setTint(0x7a7a7a)
+        panel.setAlpha(on ? 1 : 0.72)
       }
       const cur = this.cursorsGfx[i]
       if (cur) cur.setVisible(on)
     })
   }
 
-  private startMode(mode: Mode) {
+  private confirmStart() {
+    const mode = this.modes[this.cursor]!
     this.registry.set('playMode', mode)
     this.cameras.main.fadeOut(220, 40, 28, 16)
     this.time.delayedCall(220, () => this.scene.start('play'))

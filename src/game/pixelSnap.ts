@@ -400,11 +400,14 @@ export function setPixelPose(
   void opts.angle
 }
 
+/** Walk cycle length — 3 frames per body-step; feet lead the stride. */
+export const WALK_FRAMES = 3
+
 /**
- * Build 4 run frames from a baked idle texture by shifting the lower leg band.
- * Keeps scale===1 / angle===0 (no shear tear) while feet visibly step.
+ * Build 3 run frames: feet lead each 身位 (plant → push → reach).
+ * Keeps scale===1 / angle===0 (no shear tear) while feet visibly step ahead.
  */
-export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) {
+export function registerWalkCycle(scene: TexScene, baseKey: string, frames = WALK_FRAMES) {
   if (!scene.textures.exists(baseKey)) return
   const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
   const w = (src as { width: number }).width | 0
@@ -418,7 +421,8 @@ export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) 
   tctx.drawImage(src as CanvasImageSource, 0, 0)
   const base = tctx.getImageData(0, 0, w, h)
   const legY0 = Math.floor(h * 0.58)
-  const shifts = [0, 3, 0, -3]
+  // Feet lead body: plant L → mid push → reach R (positive = sprite-right = face-forward when unflipped)
+  const shifts = [4, 6, 2]
   for (let f = 0; f < frames; f++) {
     const key = `${baseKey}-run-${f}`
     const canvas = document.createElement('canvas')
@@ -428,27 +432,25 @@ export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) 
     ctx.imageSmoothingEnabled = false
     const out = ctx.createImageData(w, h)
     out.data.set(base.data)
-    const shift = shifts[f % shifts.length]
-    if (shift !== 0) {
-      // Clear leg band then blit shifted opaque feet.
-      for (let y = legY0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const i = (y * w + x) * 4
-          out.data[i + 3] = 0
-        }
+    const shift = shifts[f % shifts.length]!
+    // Clear leg band then blit shifted opaque feet (always shift so lead is visible).
+    for (let y = legY0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4
+        out.data[i + 3] = 0
       }
-      for (let y = legY0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          const si = (y * w + x) * 4
-          if (base.data[si + 3] < 160) continue
-          const dx = x + shift
-          if (dx < 0 || dx >= w) continue
-          const di = (y * w + dx) * 4
-          out.data[di] = base.data[si]
-          out.data[di + 1] = base.data[si + 1]
-          out.data[di + 2] = base.data[si + 2]
-          out.data[di + 3] = base.data[si + 3]
-        }
+    }
+    for (let y = legY0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const si = (y * w + x) * 4
+        if (base.data[si + 3] < 160) continue
+        const dx = x + shift
+        if (dx < 0 || dx >= w) continue
+        const di = (y * w + dx) * 4
+        out.data[di] = base.data[si]
+        out.data[di + 1] = base.data[si + 1]
+        out.data[di + 2] = base.data[si + 2]
+        out.data[di + 3] = base.data[si + 3]
       }
     }
     ctx.putImageData(out, 0, 0)
@@ -458,15 +460,62 @@ export function registerWalkCycle(scene: TexScene, baseKey: string, frames = 4) 
   }
 }
 
+/**
+ * 2-frame idle breath for heroes (tiny torso bob). Enemies skip this.
+ */
+export function registerIdleBreath(scene: TexScene, baseKey: string) {
+  if (!scene.textures.exists(baseKey)) return
+  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const tmp = document.createElement('canvas')
+  tmp.width = w
+  tmp.height = h
+  const tctx = tmp.getContext('2d')!
+  tctx.imageSmoothingEnabled = false
+  tctx.drawImage(src as CanvasImageSource, 0, 0)
+  const base = tctx.getImageData(0, 0, w, h)
+  const chestY1 = Math.floor(h * 0.62)
+  const bobs = [-1, 1] as const
+  for (let f = 0; f < 2; f++) {
+    const key = `${baseKey}-idle-${f}`
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    const out = ctx.createImageData(w, h)
+    for (let i = 3; i < out.data.length; i += 4) out.data[i] = 0
+    const bob = bobs[f]!
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const si = (y * w + x) * 4
+        if (base.data[si + 3] < 160) continue
+        const dy = y < chestY1 ? bob : 0
+        const yy = y + dy
+        if (yy < 0 || yy >= h) continue
+        const di = (yy * w + x) * 4
+        out.data[di] = base.data[si]
+        out.data[di + 1] = base.data[si + 1]
+        out.data[di + 2] = base.data[si + 2]
+        out.data[di + 3] = base.data[si + 3]
+      }
+    }
+    ctx.putImageData(out, 0, 0)
+    if (scene.textures.exists(key)) scene.textures.remove(key)
+    scene.textures.addCanvas(key, canvas)
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  }
+}
 
 /**
  * Enemy walk + attack poses (scale 1 / angle 0).
- * - run-0..3: footstep
+ * - run-0..2: footstep (3 frames, feet lead)
  * - atk-windup: lean back + raise arms (telegraph while still walking)
  * - atk-strike: lunge forward
  */
 export function registerEnemyCombatFrames(scene: TexScene, baseKey: string) {
-  registerWalkCycle(scene, baseKey, 4)
+  registerWalkCycle(scene, baseKey, WALK_FRAMES)
   if (!scene.textures.exists(baseKey)) return
   const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
   const w = (src as { width: number }).width | 0
@@ -523,11 +572,17 @@ export function registerEnemyCombatFrames(scene: TexScene, baseKey: string) {
   bakeShift(`${baseKey}-atk-strike`, 'strike')
 }
 
+function stripAnimSuffix(key: string) {
+  return key
+    .replace(/-run-\d+$/, '')
+    .replace(/-idle-\d+$/, '')
+    .replace(/-atk-(windup|strike)$/, '')
+}
+
 export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, phase: number) {
   const base =
-    (spr.getData('baseTex') as string | undefined) ||
-    spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
-  const frame = Math.floor(phase) % 4
+    (spr.getData('baseTex') as string | undefined) || stripAnimSuffix(spr.texture.key)
+  const frame = Math.floor(phase) % WALK_FRAMES
   const key = `${base}-run-${frame}`
   if (spr.scene.textures.exists(key) && spr.texture.key !== key) {
     spr.setTexture(key)
@@ -535,9 +590,14 @@ export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, ph
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
-export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _tMs: number) {
-  const base = (spr.getData('baseTex') as string | undefined) || spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
-  if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
+export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, tMs: number) {
+  const base =
+    (spr.getData('baseTex') as string | undefined) || stripAnimSuffix(spr.texture.key)
+  const frame = Math.floor(tMs / 480) % 2
+  const key = `${base}-idle-${frame}`
+  if (spr.scene.textures.exists(key)) {
+    if (spr.texture.key !== key) spr.setTexture(key)
+  } else if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
     spr.setTexture(base)
   }
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
@@ -545,8 +605,7 @@ export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _
 
 function restoreBaseTex(spr: Phaser.GameObjects.Sprite) {
   const base =
-    (spr.getData('baseTex') as string | undefined) ||
-    spr.texture.key.replace(/-run-\d+$/, '').replace(/-atk-(windup|strike)$/, '').replace(/-atk-(windup|strike)$/, '')
+    (spr.getData('baseTex') as string | undefined) || stripAnimSuffix(spr.texture.key)
   if (spr.scene.textures.exists(base) && spr.texture.key !== base) {
     spr.setTexture(base)
   }

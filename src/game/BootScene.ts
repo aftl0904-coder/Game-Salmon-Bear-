@@ -13,7 +13,9 @@ import {
   fillInternalAlphaHoles,
   thickenSpriteOutline,
   registerWalkCycle,
+  registerIdleBreath,
   registerEnemyCombatFrames,
+  WALK_FRAMES,
 } from './pixelSnap'
 
 
@@ -133,8 +135,10 @@ export class BootScene extends Phaser.Scene {
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
       }
     }
-    registerWalkCycle(this, 'art-salmon', 4)
-    registerWalkCycle(this, 'art-girl', 4)
+    registerWalkCycle(this, 'art-salmon', WALK_FRAMES)
+    registerWalkCycle(this, 'art-girl', WALK_FRAMES)
+    registerIdleBreath(this, 'art-salmon')
+    registerIdleBreath(this, 'art-girl')
     registerEnemyCombatFrames(this, 'art-enemy')
     registerEnemyCombatFrames(this, 'art-enemy-barrel')
   }
@@ -150,6 +154,8 @@ export class BootScene extends Phaser.Scene {
       'prop-house3d',
       'prop-torii',
       'prop-sword',
+      'prop-enemy-spear',
+      'prop-enemy-club',
       'fx-salmon-shot',
       'blk-spike',
     ]) {

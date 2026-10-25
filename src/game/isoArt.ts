@@ -258,37 +258,56 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 6, 8, 2, 2, [255, 230, 160])
   })
 
-  paint(scene, 'pot3d', 28, 32, (set) => {
-    rect(set, 4, 28, 20, 3, [18, 12, 16], 115)
-    for (let y = 10; y < 28; y++) {
-      for (let x = 5; x < 23; x++) {
-        const nx = (x - 14) / 9
-        const ny = (y - 19) / 9
+  // Graphic-pass pot: ink silhouette, lid highlight, honey glow band.
+  paint(scene, 'pot3d', 32, 36, (set) => {
+    const ink: RGB = [16, 10, 12]
+    rect(set, 5, 32, 22, 3, ink, 130)
+    // body outline
+    for (let y = 12; y < 32; y++) {
+      for (let x = 4; x < 28; x++) {
+        const nx = (x - 16) / 11
+        const ny = (y - 22) / 11
+        if (nx * nx + ny * ny <= 1.05) set(x, y, ink)
+      }
+    }
+    for (let y = 12; y < 32; y++) {
+      for (let x = 5; x < 27; x++) {
+        const nx = (x - 16) / 10
+        const ny = (y - 22) / 10
         if (nx * nx + ny * ny < 1) {
-          const lit = 1.15 - nx * 0.35 - (y > 24 ? 0.15 : 0)
-          set(x, y, shadeRGB([225, 155, 42], lit))
+          const lit = 1.2 - nx * 0.4 - (y > 26 ? 0.2 : 0)
+          set(x, y, shadeRGB([235, 165, 48], lit))
         }
       }
     }
-    rect(set, 9, 6, 10, 6, [255, 205, 85])
-    rect(set, 10, 4, 8, 3, [255, 235, 150])
-    rect(set, 11, 12, 3, 8, [255, 240, 180], 180)
-    set(12, 14, [255, 250, 210])
-    rect(set, 7, 18, 14, 3, [180, 90, 30])
-    rect(set, 8, 19, 12, 1, [255, 210, 100])
+    rect(set, 10, 8, 12, 7, ink)
+    rect(set, 11, 9, 10, 5, [255, 210, 95])
+    rect(set, 11, 9, 10, 2, [255, 240, 170])
+    rect(set, 12, 6, 8, 4, ink)
+    rect(set, 13, 7, 6, 2, [255, 250, 210])
+    rect(set, 8, 20, 16, 3, ink)
+    rect(set, 9, 21, 14, 1, [255, 220, 120])
+    set(13, 16, [255, 255, 230])
   })
 
-  paint(scene, 'chest3d', 32, 28, (set) => {
-    rect(set, 2, 24, 28, 3, [18, 12, 16], 115)
-    for (let y = 12; y < 26; y++) {
-      const t = (y - 12) / 14
-      rect(set, 4, y, 24, 1, shadeRGB([165, 105, 50], 1.05 - t * 0.25))
+  // Graphic-pass chest: wood panels, gold lock, rim light.
+  paint(scene, 'chest3d', 36, 30, (set) => {
+    const ink: RGB = [16, 10, 12]
+    rect(set, 3, 26, 30, 3, ink, 130)
+    rect(set, 3, 8, 30, 20, ink)
+    for (let y = 14; y < 27; y++) {
+      const t = (y - 14) / 13
+      rect(set, 5, y, 26, 1, shadeRGB([175, 112, 55], 1.08 - t * 0.28))
     }
-    rect(set, 4, 12, 24, 3, [210, 150, 80])
-    rect(set, 3, 6, 26, 8, [185, 125, 58])
-    rect(set, 3, 6, 26, 2, [230, 180, 100])
-    rect(set, 14, 14, 4, 5, [230, 190, 70])
-    set(15, 15, [255, 240, 160])
+    rect(set, 5, 14, 26, 2, [230, 170, 95])
+    rect(set, 4, 6, 28, 10, ink)
+    rect(set, 5, 7, 26, 8, [195, 130, 62])
+    rect(set, 5, 7, 26, 2, [245, 195, 120])
+    rect(set, 5, 15, 2, 11, [240, 190, 120])
+    rect(set, 16, 16, 5, 6, ink)
+    rect(set, 17, 17, 3, 4, [255, 210, 70])
+    set(18, 18, [255, 245, 180])
+    rect(set, 5, 20, 26, 2, [110, 65, 30])
   })
 
   paint(scene, 'fan3d', 28, 28, (set) => {
@@ -305,29 +324,37 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(8, 6, [255, 255, 180])
   })
 
-  paint(scene, 'goal3d', 48, 72, (set) => {
-    rect(set, 6, 66, 36, 5, [18, 12, 16], 125)
-    for (const ox of [10, 30]) {
-      for (let y = 30; y < 68; y++) {
-        rect(set, ox, y, 8, 1, [200, 58, 48])
-        rect(set, ox, y, 2, 1, [255, 130, 95])
-        rect(set, ox + 6, y, 2, 1, [130, 30, 28])
+  // Graphic-pass altar: red pillars, gold honey jar, ink frame.
+  paint(scene, 'goal3d', 52, 76, (set) => {
+    const ink: RGB = [16, 10, 12]
+    rect(set, 6, 70, 40, 5, ink, 140)
+    for (const ox of [8, 34]) {
+      rect(set, ox - 1, 28, 12, 44, ink)
+      for (let y = 30; y < 70; y++) {
+        rect(set, ox, y, 10, 1, shadeRGB([210, 55, 48], 1.05 - (y - 30) / 80))
+        rect(set, ox, y, 3, 1, [255, 140, 105])
+        rect(set, ox + 7, y, 3, 1, [130, 28, 28])
       }
     }
-    rect(set, 4, 22, 40, 10, [220, 70, 55])
-    rect(set, 4, 22, 40, 3, [255, 145, 105])
-    rect(set, 4, 29, 40, 3, [150, 40, 35])
-    rect(set, 0, 14, 48, 10, [195, 52, 42])
-    rect(set, 0, 14, 48, 3, [255, 155, 115])
-    rect(set, 0, 21, 48, 3, [130, 30, 28])
-    for (let y = 36; y < 60; y++) {
-      for (let x = 18; x < 30; x++) {
-        const nx = (x - 24) / 6
-        set(x, y, shadeRGB([236, 186, 58], 1.1 - nx * 0.25))
+    rect(set, 2, 20, 48, 12, ink)
+    rect(set, 3, 21, 46, 10, [220, 68, 52])
+    rect(set, 3, 21, 46, 3, [255, 155, 115])
+    rect(set, 3, 28, 46, 3, [140, 35, 32])
+    rect(set, 0, 12, 52, 12, ink)
+    rect(set, 1, 13, 50, 10, [200, 50, 42])
+    rect(set, 1, 13, 50, 3, [255, 160, 120])
+    rect(set, 1, 20, 50, 3, [120, 28, 26])
+    for (let y = 38; y < 64; y++) {
+      for (let x = 20; x < 32; x++) {
+        const nx = (x - 26) / 6
+        set(x, y, shadeRGB([240, 190, 60], 1.15 - nx * 0.3))
       }
     }
-    rect(set, 19, 37, 10, 6, [255, 236, 145])
-    set(21, 40, [255, 250, 200])
+    rect(set, 19, 37, 14, 8, ink)
+    rect(set, 20, 38, 12, 6, [255, 236, 145])
+    set(23, 40, [255, 252, 210])
+    rect(set, 22, 34, 8, 5, ink)
+    rect(set, 23, 35, 6, 3, [255, 210, 80])
   })
 
   paint(scene, 'prop-shrine', 40, 48, (set) => {

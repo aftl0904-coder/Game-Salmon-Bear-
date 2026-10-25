@@ -116,9 +116,9 @@ export function defaultSpecies(kind: EnemyKind): EnemySpecies {
   return 'fish' // blocker / chaser
 }
 
-/** All kinds walk/chase at ~0.8× 倫寶 — no freeze-and-wait pacing. */
+/** All kinds walk/chase at ~0.3× 倫寶. */
 const E_SPD = ENEMY_SPEED
-const E_PATROL = Math.round(ENEMY_SPEED * 0.85)
+const E_PATROL = Math.round(ENEMY_SPEED * 0.9)
 
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
