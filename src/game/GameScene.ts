@@ -1416,10 +1416,17 @@ export class GameScene extends Phaser.Scene {
     if (!this.water) return
     const sx = this.cameras.main.scrollX
     const t = this.time.now
-    // Stronger flow so the creek reads as a moving river.
-    snapTilePosition(this.water, sx * 0.35 + t * 0.085)
-    snapTilePosition(this.waterMid, sx * 0.4 + t * 0.11)
-    snapTilePosition(this.waterFoam, sx * 0.48 + t * 0.14)
+    // River current — layered speeds for depth (foam fastest).
+    snapTilePosition(this.water, sx * 0.28 + t * 0.12)
+    snapTilePosition(this.waterMid, sx * 0.38 + t * 0.17)
+    snapTilePosition(this.waterFoam, sx * 0.5 + t * 0.24)
+    // Soft vertical bob on mid water so the surface breathes.
+    if (this.waterMid) {
+      this.waterMid.y = 490 + Math.sin(t * 0.0022) * 1.5
+    }
+    if (this.waterFoam) {
+      this.waterFoam.y = 466 + Math.sin(t * 0.0031 + 1.2) * 1.2
+    }
     // Discrete landmarks stay in the sky band (scrollFactor 0).
     // Clouds soft-wrap; mountains drift slowly without re-tiling into a band.
     for (let i = 0; i < this.bgClouds.length; i++) {
@@ -1594,27 +1601,30 @@ export class GameScene extends Phaser.Scene {
   private drawWorld() {
     // Prefer generated wallpaper 貼圖 (pretty Flash/phone look) over hand-built mountains.
     const g = this.add.graphics().setDepth(DEPTH.SKY)
-    g.fillStyle(0x6ab4e0, 1)
+    // Soft sky under wallpaper — warm daylight, not heavy blue
+    g.fillStyle(0x9ec8e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
+    g.fillStyle(0xe8d8b8, 0.35)
+    g.fillRect(0, 120, WORLD_W, 200)
 
     this.bgClouds = []
     this.bgMounts = []
 
     if (this.textures.exists('bg-wallpaper')) {
-      // Far upper wallpaper only — heavily 淡化 so eyes stay on the road/cast.
+      // Far upper wallpaper — soft warm fog (no blue veil covering the art).
       const roadTop = GROUND_Y - 80
       this.add
-        .image(480, Math.round(roadTop * 0.4), 'bg-wallpaper')
-        .setScrollFactor(0.015, 0)
+        .image(480, Math.round(roadTop * 0.42), 'bg-wallpaper')
+        .setScrollFactor(0.018, 0)
         .setDepth(DEPTH.SKY_BAND)
-        .setDisplaySize(1000, Math.round(roadTop * 0.88))
-        .setAlpha(0.28)
-        .setTint(0xb8c8d4)
-      const wash = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
-      wash.fillStyle(0xa8c0d4, 0.42)
-      wash.fillRect(0, 0, 960, roadTop)
-      wash.fillStyle(0xd2e0ea, 0.55)
-      wash.fillRect(0, roadTop - 48, 960, 52)
+        .setDisplaySize(1040, Math.round(roadTop * 0.9))
+        .setAlpha(0.72)
+      // Warm mist only near the road edge — blends into play space, not a blue wash.
+      const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
+      mist.fillStyle(0xf0ebe0, 0.18)
+      mist.fillRect(0, roadTop - 70, 960, 36)
+      mist.fillStyle(0xf4f0e6, 0.4)
+      mist.fillRect(0, roadTop - 40, 960, 44)
       this.placeCampsite(stageX(520))
       this.placeCampsite(stageX(2100))
       this.placeCampsite(stageX(4200))
@@ -1625,37 +1635,70 @@ export class GameScene extends Phaser.Scene {
       this.placeSparseLandmarks()
     }
 
-    // Background creek band — taller + layered so it reads as a flowing river.
+    this.buildRiverBand()
+  }
+
+  /** Layered creek under the road — flowing water + foam + sparkle. */
+  private buildRiverBand() {
     const bank = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.WATER_DEEP - 1)
-    bank.fillStyle(0x5a7a48, 0.55)
-    bank.fillRect(0, 455, 960, 18)
-    bank.fillStyle(0x3a5a38, 0.4)
-    bank.fillRect(0, 468, 960, 10)
+    bank.fillStyle(0x4a6a40, 0.7)
+    bank.fillRect(0, 448, 960, 14)
+    bank.fillStyle(0x2e4a2c, 0.55)
+    bank.fillRect(0, 458, 960, 12)
+    // Wet stone lip
+    bank.fillStyle(0x6a7a68, 0.35)
+    bank.fillRect(0, 462, 960, 4)
 
     this.water = this.add
-      .tileSprite(480, 505, 960, 72, 'water-deep')
+      .tileSprite(480, 508, 960, 78, 'water-deep')
       .setScrollFactor(0)
       .setDepth(DEPTH.WATER_DEEP)
-      .setAlpha(0.95)
-    this.water.setPosition(480, 505)
+      .setAlpha(1)
+    this.water.setPosition(480, 508)
     enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
-        .tileSprite(480, 492, 960, 36, 'water-mid')
+        .tileSprite(480, 490, 960, 42, 'water-mid')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_MID)
-        .setAlpha(0.7)
-      this.waterMid.setPosition(480, 492)
+        .setAlpha(0.82)
+      this.waterMid.setPosition(480, 490)
       enablePixelSprite(this.waterMid)
     }
     if (this.textures.exists('water-foam')) {
       this.waterFoam = this.add
-        .tileSprite(480, 468, 960, 22, 'water-foam')
+        .tileSprite(480, 466, 960, 26, 'water-foam')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_FOAM)
-        .setAlpha(0.95)
-      this.waterFoam.setPosition(480, 468)
+        .setAlpha(0.9)
+      this.waterFoam.setPosition(480, 466)
       enablePixelSprite(this.waterFoam)
+    }
+    // Sun sparkles drifting on the current
+    for (let i = 0; i < 10; i++) {
+      const sp = this.add
+        .circle(
+          Phaser.Math.Between(40, 920),
+          Phaser.Math.Between(478, 530),
+          Phaser.Math.FloatBetween(1.2, 2.4),
+          0xe8f8ff,
+          Phaser.Math.FloatBetween(0.35, 0.75),
+        )
+        .setScrollFactor(0)
+        .setDepth(DEPTH.WATER_FOAM + 1)
+      this.tweens.add({
+        targets: sp,
+        x: sp.x + Phaser.Math.Between(80, 180),
+        alpha: { from: 0.15, to: 0.85 },
+        duration: Phaser.Math.Between(1600, 2800),
+        yoyo: true,
+        repeat: -1,
+        delay: i * 120,
+        ease: 'Sine.inOut',
+        onYoyo: () => {
+          if (sp.x > 980) sp.x = -20
+        },
+      })
     }
   }
 

@@ -69,14 +69,13 @@ export class MainMenuScene extends Phaser.Scene {
     const g = this.add.graphics().setDepth(0)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    // Far upper wallpaper — soft/淡 so menu cast stays focus
+    // Far upper wallpaper — warm fog, no blue veil
     if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(width / 2, height * 0.28, 'bg-wallpaper')
+        .image(width / 2, height * 0.3, 'bg-wallpaper')
         .setDepth(0)
-        .setDisplaySize(width * 1.02, height * 0.52)
-        .setAlpha(0.3)
-        .setTint(0xb8c8d4)
+        .setDisplaySize(width * 1.02, height * 0.55)
+        .setAlpha(0.7)
     }
 
     if (this.textures.exists('water-deep')) {

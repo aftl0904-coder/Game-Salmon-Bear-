@@ -78,18 +78,19 @@ export function registerWorldArt(scene: Phaser.Scene) {
     }
   })
 
-  // Wrap-safe water: period divides tile width exactly; fully opaque (no soft-alpha seams).
+  // Wrap-safe water — richer teal creek with clear current bands + sparkles.
   paint(scene, 'water-deep', 64, 64, (set, w, h) => {
-    const deep: RGB = [28, 92, 158]
-    const midC: RGB = [48, 158, 210]
-    const lit: RGB = [90, 210, 235]
+    const deep: RGB = [18, 78, 132]
+    const midC: RGB = [36, 148, 198]
+    const lit: RGB = [110, 214, 236]
     for (let y = 0; y < h; y++) {
       const t = y / h
-      const c = t < 0.45 ? mix(lit, midC, t / 0.45) : mix(midC, deep, (t - 0.45) / 0.55)
+      const c = t < 0.4 ? mix(lit, midC, t / 0.4) : mix(midC, deep, (t - 0.4) / 0.6)
       for (let x = 0; x < w; x++) {
-        // 2 full cycles across 64px → seamless at x=0/w.
-        const wave = Math.sin((x / w) * Math.PI * 2 * 2 + t * 3) * 0.06
-        const shade = 1 + wave - t * 0.1
+        const wave =
+          Math.sin((x / w) * Math.PI * 2 * 2 + t * 4) * 0.07 +
+          Math.sin((x / w) * Math.PI * 2 * 4 + t * 2.2) * 0.03
+        const shade = 1 + wave - t * 0.12
         set(x, y, [
           Math.min(255, Math.floor(c[0] * shade)),
           Math.min(255, Math.floor(c[1] * shade)),
@@ -97,28 +98,36 @@ export function registerWorldArt(scene: Phaser.Scene) {
         ], 255)
       }
     }
-    // Specular dots — wrap-safe positions, full opacity.
-    for (let i = 0; i < 8; i++) {
-      const x = (i * 8 + 4) % w
-      set(x, 8 + (i % 4), [180, 240, 255], 255)
-      set((x + 2) % w, 24 + (i % 3), [120, 220, 250], 255)
-      set((x + 4) % w, 44 + (i % 2), [70, 170, 220], 255)
+    // Current streaks
+    for (let i = 0; i < 6; i++) {
+      const yy = 10 + i * 9
+      for (let x = 0; x < w; x++) {
+        if ((x + i * 3) % 11 < 4) set(x, yy, [160, 230, 250], 255)
+      }
     }
-    rect(set, 0, h - 4, w, 4, [18, 60, 110], 255)
+    for (let i = 0; i < 12; i++) {
+      const x = (i * 5 + 3) % w
+      set(x, 6 + (i % 5), [210, 245, 255], 255)
+      set((x + 1) % w, 20 + (i % 4), [150, 228, 250], 255)
+      set((x + 3) % w, 38 + (i % 3), [90, 190, 230], 255)
+    }
+    rect(set, 0, h - 5, w, 5, [12, 48, 92], 255)
   })
 
   paint(scene, 'water-mid', 64, 32, (set, w, h) => {
     for (let y = 0; y < h; y++) {
       const t = y / h
-      const c: RGB = [lerp(70, 36, t), lerp(175, 120, t), lerp(230, 190, t)]
+      const c: RGB = [lerp(88, 42, t), lerp(190, 130, t), lerp(236, 198, t)]
       for (let x = 0; x < w; x++) {
-        const ripple = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.5) * 6
+        const ripple =
+          Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.55) * 8 +
+          Math.sin((x / w) * Math.PI * 2 * 3 - y * 0.3) * 3
         set(
           x,
           y,
           [
             Math.min(255, Math.max(0, Math.floor(c[0] + ripple))),
-            Math.min(255, Math.max(0, Math.floor(c[1] + ripple * 0.6))),
+            Math.min(255, Math.max(0, Math.floor(c[1] + ripple * 0.55))),
             Math.min(255, c[2]),
           ],
           255,
@@ -126,25 +135,29 @@ export function registerWorldArt(scene: Phaser.Scene) {
       }
     }
     for (let x = 0; x < w; x++) {
-      if ((x + 2) % 8 < 3) set(x, 4, [200, 240, 255], 255)
-      if ((x + 5) % 8 < 2) set(x, 14, [230, 250, 255], 255)
-      if (x % 8 < 2) set(x, 24, [170, 225, 250], 255)
+      if ((x + 2) % 7 < 3) set(x, 3, [220, 248, 255], 255)
+      if ((x + 5) % 7 < 2) set(x, 12, [240, 252, 255], 255)
+      if (x % 7 < 2) set(x, 22, [190, 235, 250], 255)
     }
   })
 
   paint(scene, 'water-foam', 64, 16, (set, w, h) => {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        // Soft continuous foam — fully opaque (soft alpha seams under NEAREST).
-        // Low-contrast continuous wash — high-contrast foam bands read as vertical seams.
-        const wave = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.7) * 0.5 + 0.5
+        const wave = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.85) * 0.5 + 0.5
+        const crest = Math.sin((x / w) * Math.PI * 2 * 3 - y) * 0.5 + 0.5
         const c: RGB = [
-          Math.floor(190 + wave * 40),
-          Math.floor(225 + wave * 25),
-          Math.floor(245 + wave * 10),
+          Math.floor(200 + wave * 35 + crest * 15),
+          Math.floor(230 + wave * 20 + crest * 10),
+          Math.floor(248 + wave * 7),
         ]
         set(x, y, c, 255)
       }
+    }
+    // Shore foam dots
+    for (let x = 0; x < w; x += 4) {
+      set(x, 2, [255, 255, 255], 255)
+      set((x + 2) % w, 5, [245, 252, 255], 255)
     }
   })
 
