@@ -181,4 +181,79 @@ def break_pot():
     px[5, 8] = (240, 200, 160, 255); px[6, 7] = (240, 200, 160, 255)
     return im
 break_pot().save(OUT + 'break-pot.png')
+
+# ---- Cutscene props (C1 / C2) ----
+def honey_jar(fake):
+    W, H = 18, 22
+    im = Image.new('RGBA', (W, H)); d = ImageDraw.Draw(im); px = im.load()
+    d.rectangle((4, 0, 13, 3), fill=(120, 78, 44, 255) if not fake else (70, 64, 70, 255))      # lid
+    d.line((4, 0, 13, 0), fill=(170, 120, 70, 255) if not fake else (110, 104, 110, 255))
+    HON = (236, 168, 40, 255) if not fake else (150, 110, 60, 255)
+    d.rounded_rectangle((1, 4, 16, 21), radius=4, fill=HON)
+    shade_fill(im, HON, (255, 214, 110, 255) if not fake else (176, 140, 90, 255), HON, (190, 120, 24, 255) if not fake else (104, 74, 44, 255))
+    d.rectangle((4, 9, 13, 16), fill=(246, 236, 210, 255))                                      # label
+    if fake:
+        for i in range(3): d.line((8 - i, 10 + i * 2, 9 + i, 10 + i * 2), fill=(30, 26, 30, 255)); d.line((8 - i, 11 + i * 2, 9 + i, 11 + i * 2), fill=(30, 26, 30, 255))
+    else:
+        d.ellipse((6, 10, 11, 15), fill=(236, 168, 40, 255)); px[8, 11] = (255, 240, 180, 255)  # honey drop
+    px[3, 6] = (255, 250, 230, 255); px[3, 7] = (255, 250, 230, 255)
+    outline(im)
+    return im
+honey_jar(True).save(OUT + 'jar-fake.png')
+honey_jar(False).save(OUT + 'jar-real.png')
+
+def note():
+    W, H = 22, 16
+    im = Image.new('RGBA', (W, H)); d = ImageDraw.Draw(im); px = im.load()
+    d.polygon([(1, 2), (20, 1), (21, 14), (2, 15)], fill=(240, 232, 212, 255))
+    for y in (6, 9, 12): d.line((5, y, 17, y - 1), fill=(150, 140, 130, 255))
+    d.polygon([(9, 0), (13, 0), (11, 4)], fill=(196, 40, 30, 255))     # red △ pin
+    outline(im)
+    return im
+note().save(OUT + 'note.png')
+
+def picnic():
+    W, H = 96, 22
+    im = Image.new('RGBA', (W, H)); d = ImageDraw.Draw(im); px = im.load()
+    d.polygon([(10, 10), (86, 10), (95, 21), (0, 21)], fill=(200, 50, 44, 255))
+    for y in range(10, 22):
+        for x in range(0, 96):
+            if px[x, y][3] and ((x // 8) + ((y - 10) // 3)) % 2 == 0: px[x, y] = (246, 236, 224, 255)
+    # basket
+    d.rectangle((60, 2, 82, 13), fill=(176, 120, 60, 255))
+    for x in range(60, 83, 3): d.line((x, 3, x, 13), fill=(140, 92, 44, 255))
+    d.arc((62, -6, 80, 10), 180, 360, fill=(120, 80, 40, 255))
+    d.line((60, 2, 82, 2), fill=(210, 160, 96, 255))
+    # cups
+    d.rectangle((22, 6, 26, 11), fill=(250, 250, 244, 255)); d.rectangle((30, 7, 34, 11), fill=(250, 250, 244, 255))
+    outline(im)
+    return im
+picnic().save(OUT + 'picnic.png')
+
+def coffee_cart():
+    W, H = 70, 58
+    im = Image.new('RGBA', (W, H)); d = ImageDraw.Draw(im); px = im.load()
+    # awning
+    for i in range(7):
+        col = (214, 70, 54, 255) if i % 2 == 0 else (246, 236, 220, 255)
+        d.polygon([(4 + i * 9, 6), (13 + i * 9, 6), (13 + i * 9, 16), (4 + i * 9, 16)], fill=col)
+        d.pieslice((4 + i * 9, 12, 13 + i * 9, 20), 0, 180, fill=col)
+    d.rectangle((3, 2, 66, 6), fill=(90, 56, 34, 255))
+    d.line((8, 20, 8, 30), fill=(90, 56, 34, 255)); d.line((61, 20, 61, 30), fill=(90, 56, 34, 255))   # poles
+    BODY = (120, 160, 150, 255)
+    d.rectangle((2, 30, 67, 48), fill=BODY)
+    shade_fill(im, BODY, (160, 200, 186, 255), BODY, (80, 116, 108, 255))
+    d.rectangle((2, 30, 67, 32), fill=(214, 190, 150, 255))                                     # counter top
+    # coffee cup sign
+    d.rectangle((28, 36, 38, 44), fill=(250, 246, 236, 255)); d.arc((36, 37, 42, 43), 270, 90, fill=(250, 246, 236, 255))
+    d.rectangle((29, 37, 37, 39), fill=(110, 70, 40, 255))
+    for i, x in enumerate((30, 33, 36)): d.line((x, 33 - (i % 2), x + 1, 35), fill=(220, 220, 220, 255))
+    # machine on counter
+    d.rectangle((48, 22, 58, 30), fill=(70, 70, 76, 255)); px[50, 24] = (200, 200, 210, 255)
+    # wheels
+    for cx in (14, 55):
+        d.ellipse((cx - 6, 44, cx + 6, 56), fill=(48, 40, 36, 255)); d.ellipse((cx - 2, 48, cx + 2, 52), fill=(150, 140, 130, 255))
+    outline(im)
+    return im
+coffee_cart().save(OUT + 'coffee-cart.png')
 print('items written')

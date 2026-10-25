@@ -1,0 +1,73 @@
+{
+ "frameWidth": 90,
+ "frameHeight": 89,
+ "anchorX": 45,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "run": {
+   "start": 3,
+   "count": 5,
+   "fps": 12,
+   "loop": true
+  },
+  "jump": {
+   "start": 8,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "crouch": {
+   "start": 11,
+   "count": 3,
+   "fps": 14,
+   "loop": false
+  },
+  "slash1": {
+   "start": 14,
+   "count": 4,
+   "fps": 18,
+   "loop": false
+  },
+  "slash2": {
+   "start": 18,
+   "count": 4,
+   "fps": 18,
+   "loop": false
+  },
+  "slash3": {
+   "start": 22,
+   "count": 5,
+   "fps": 18,
+   "loop": false
+  },
+  "fan-glide": {
+   "start": 27,
+   "count": 3,
+   "fps": 8,
+   "loop": true
+  },
+  "hurt": {
+   "start": 30,
+   "count": 3,
+   "fps": 10,
+   "loop": false
+  },
+  "ko": {
+   "start": 33,
+   "count": 5,
+   "fps": 8,
+   "loop": false
+  },
+  "win": {
+   "start": 38,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  }
+ }
+}

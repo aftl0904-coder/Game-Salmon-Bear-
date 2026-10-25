@@ -20,8 +20,9 @@ import {
 import { PatrolEnemy } from './enemies'
 import { EventBus, GameEvents } from './EventBus'
 import { Player } from './Player'
+import { animTex, hasAnimSet } from './heroAnims'
 import { TouchInput } from './touchInput'
-import { playStoryIntro } from './storyIntro'
+import { playCutscene } from './cutscene'
 import stage1Raw from '../../data/levels/stage1.json'
 import {
   setTerrain,
@@ -267,6 +268,7 @@ export class GameScene extends Phaser.Scene {
   create() {
     this.mode = (this.registry.get('playMode') as '1p' | '2p') || '2p'
     this.ended = false
+    this.outroOn = false
     this.awaitingContinue = false
     this.started = false
     this.bossOn = false
@@ -1068,6 +1070,7 @@ export class GameScene extends Phaser.Scene {
   private fireSalmon(h: Hero) {
     h.atkCd = SALMON_SHOT_COOLDOWN_MS
     h.pose = 'idle'
+    h.playAction(h.crouching ? 'shoot-crouch' : 'shoot')
     // Commit freeze actors only — salmon shot keeps flying (Pack2 G).
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
@@ -1128,6 +1131,12 @@ export class GameScene extends Phaser.Scene {
   private swordSlash(h: Hero) {
     h.atkCd = SWORD_COOLDOWN_MS
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
+    // 3-hit combo: presses within 0.6s chain slash1 → slash2 → slash3.
+    const lastAt = (h.getData('slashAt') as number | undefined) ?? -9999
+    const step = this.time.now - lastAt < 600 ? (((h.getData('slashN') as number | undefined) ?? 0) % 3) + 1 : 1
+    h.setData('slashAt', this.time.now)
+    h.setData('slashN', step)
+    h.playAction(`slash${step}`)
     SFX.swing()
     const grip = this.girlSwordAnchor(h, true)
     burst(this, grip.x + h.facing * 24, grip.y, 0xe8f0ff, 10)
@@ -1191,7 +1200,9 @@ export class GameScene extends Phaser.Scene {
     this.tweens.killTweensOf(pet)
     pet.setAngle(0)
     const basePet = this.petScaleForGirl(g)
-    this.tweens.add({
+    const petAnimated = pet.texture.key === animTex('pupu')
+    if (petAnimated) pet.anims.play('pupu-cute-pose')
+    else this.tweens.add({
       targets: pet,
       angle: { from: -14, to: 14 },
       scaleX: basePet * 1.12,
@@ -1208,6 +1219,7 @@ export class GameScene extends Phaser.Scene {
       }
       pet.setAngle(0)
       pet.setScale(this.petScaleForGirl(g))
+      if (petAnimated) pet.anims.play('pupu-tackle')
       const frontX = g.x + g.facing * 52
       const frontY = laneY(g.lane)
       this.tweens.add({
@@ -1504,6 +1516,10 @@ export class GameScene extends Phaser.Scene {
       pet.setPosition(followX, followY)
     }
     pet.setVelocity(0, 0)
+    if (pet.texture.key === animTex('pupu') && !this.petJetting) {
+      const want = dist > 6 ? 'pupu-walk' : 'pupu-idle'
+      if (pet.anims.currentAnim?.key !== want) pet.anims.play(want)
+    }
     pet.setFlipX(g.facing < 0)
     if (!this.petJetting) pet.setScale(this.petScaleForGirl(g))
     pet.setAngle(0)
@@ -1747,7 +1763,9 @@ export class GameScene extends Phaser.Scene {
     if (this.boy) sprites.push(this.boy)
     if (this.girl) sprites.push(this.girl)
     if (this.pet) sprites.push(this.pet)
-    for (const e of this.enemies?.getChildren() ?? []) sprites.push(e as Phaser.GameObjects.GameObject)
+    // On scene.restart this still points at last run's destroyed group (enemies are re-made later in wirePhysics).
+    const enemyList = this.enemies?.children ? this.enemies.getChildren() : []
+    for (const e of enemyList) sprites.push(e as Phaser.GameObjects.GameObject)
     if (lit.pointLights?.length) {
       addPointLights(this, sprites, lit.pointLights)
     }
@@ -2200,7 +2218,7 @@ export class GameScene extends Phaser.Scene {
       const y = laneY(lane)
       const x = 220
       this.boy = Player.spawn(this, x, y, {
-        role: 'girl', texture: 'art-girl', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
+        role: 'girl', texture: 'art-girl', animSet: 'kibobo', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
       })
       this.boy.snapToLane(lane, x)
       this.entities.add(this.boy, 'player')
@@ -2213,7 +2231,7 @@ export class GameScene extends Phaser.Scene {
     const boyY = laneY(boyLane)
     const boyX = 220
     this.boy = Player.spawn(this, boyX, boyY, {
-      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: PLAYER.moveSpeed,
+      role: 'boy', texture: 'art-salmon', animSet: 'lunbo', graceUntil: grace, scale: 1, speed: PLAYER.moveSpeed,
     })
     this.boy.snapToLane(boyLane, boyX)
     this.entities.add(this.boy, 'player')
@@ -2225,7 +2243,7 @@ export class GameScene extends Phaser.Scene {
     const girlY = laneY(girlLane)
     const girlX = 380
     this.girl = Player.spawn(this, girlX, girlY, {
-      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
+      role: 'girl', texture: 'art-girl', animSet: 'kibobo', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
     })
     this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.girl, 'player')
@@ -2236,7 +2254,9 @@ export class GameScene extends Phaser.Scene {
   /** 琪寶寶 sword／噗噗 — 電風扇已 stamp 喺 art-girl 背脊. */
   private attachGirlGear(g: Hero, lane: LaneId) {
     const petStartX = g.x - PET_FOLLOW_BEHIND
-    this.pet = this.physics.add.sprite(petStartX, g.y, 'art-bear')
+    const petAnim = hasAnimSet(this, 'pupu')
+    this.pet = this.physics.add.sprite(petStartX, g.y, petAnim ? animTex('pupu') : 'art-bear')
+    if (petAnim) this.pet.anims.play('pupu-idle')
     this.pet.setOrigin(0.5, 1)
     enableActorSprite(this.pet)
     this.pet
@@ -2248,6 +2268,12 @@ export class GameScene extends Phaser.Scene {
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.pet.setData('lane', lane)
     this.entities.add(this.pet, 'pet')
+    this.petShadow = addGroundShadow(this, this.pet, (t) => this.groundYFor(t), 0.85)
+    // Animated 琪寶寶 carries her sword + fan in the frames — no separate prop sprite.
+    if (g.animSet) {
+      this.sword = null
+      return
+    }
     const swordKey = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
     const grip = this.girlSwordAnchor(g, false)
     this.sword = this.add
@@ -2257,7 +2283,6 @@ export class GameScene extends Phaser.Scene {
       .setScale(grip.scale)
       .setAngle(-18)
     enableActorSprite(this.sword)
-    this.petShadow = addGroundShadow(this, this.pet, (t) => this.groundYFor(t), 0.85)
   }
 
   private wirePhysics() {
@@ -2416,9 +2441,13 @@ export class GameScene extends Phaser.Scene {
     this.girl?.setVelocity(0, 0)
     this.pet?.setVelocity(0, 0)
 
-    const handle = playStoryIntro({
-      scene: this,
-      onDone: () => {
+    // HUD lives in its own scene above us — hide it while the cutscene plays.
+    this.time.delayedCall(0, () => {
+      if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
+    })
+    const handle = playCutscene(this, 'C1', () => {
+        playSong('stage1')
+        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
         this.startedAt = this.time.now
@@ -2440,7 +2469,6 @@ export class GameScene extends Phaser.Scene {
           this.registry.set('activeSignId', tip.id)
           this.registry.set('activeSignText', tip.text)
         }
-      },
     })
     this.storyIntro = handle
     this.events.once('shutdown', () => handle.destroy())
@@ -2725,7 +2753,26 @@ export class GameScene extends Phaser.Scene {
       timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl?.hp ?? 0, deaths: this.deaths,
     })
     saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
-    this.win()
+    this.playOutro()
+  }
+
+  /** C2 (first real honey → 噗噗's ear twitches → note to 蜜樹丘), then the clear card. */
+  private outroOn = false
+  private playOutro() {
+    if (this.outroOn) return
+    this.outroOn = true
+    this.ended = true
+    this.physics.pause()
+    stopBgm()
+    SFX.win()
+    if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
+    this.time.delayedCall(1800, () => {
+      this.storyIntro = playCutscene(this, 'C2', () => {
+        this.storyIntro = null
+        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+        this.win()
+      })
+    })
   }
 
   /**
@@ -2756,7 +2803,7 @@ export class GameScene extends Phaser.Scene {
     EventBus.emit(GameEvents.GAME_OVER, { active: false })
 
     stopBgm()
-    SFX.win()
+    SFX.continue()
     this.cameras.main.stopFollow()
     this.cameras.main.setScroll(0, 0)
     this.cameras.main.fadeIn(280, 255, 236, 180)

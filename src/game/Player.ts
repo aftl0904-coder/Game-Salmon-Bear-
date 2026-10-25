@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { bindFootBody } from './footBody'
+import { ANIM_SETS, animTex, hasAnimSet, type AnimSetId } from './heroAnims'
 import {
   AIR_ACCEL_MUL,
   FALL_GRAVITY_MUL,
@@ -55,6 +56,8 @@ export type PlayerConfig = {
   bodyW?: number
   bodyH?: number
   graceUntil?: number
+  /** Frame-by-frame art set (public/art/anim). Falls back to the warped still if missing. */
+  animSet?: AnimSetId
 }
 
 export const HURTBOX_DEBUG = 0x4488ff
@@ -103,6 +106,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   fsmEnterAt = 0
 
   attackHitbox!: Phaser.Physics.Arcade.Image
+  /** Active frame-animation set, or null for the legacy single-image hero. */
+  animSet: AnimSetId | null = null
+  /** A one-shot action (shoot / slash) owns the sprite until this time. */
+  private actionUntil = 0
   private attackUntil = 0
   private flashTween?: Phaser.Tweens.Tween
   private jumpCutApplied = false
@@ -176,6 +183,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.syncActorDepth()
     this.setScale(this.baseScale)
     this.setData('baseTex', cfg.texture)
+    this.animSet = cfg.animSet && hasAnimSet(this.scene, cfg.animSet) ? cfg.animSet : null
+    if (this.animSet) {
+      this.setTexture(animTex(this.animSet), ANIM_SETS[this.animSet].anims.idle?.start ?? 0)
+      this.anims.play(`${this.animSet}-idle`)
+    }
     enableActorSprite(this)
     bindFootBody(this, {
       bodyW: cfg.bodyW ?? PLAYER.hitbox.standing.w,
@@ -663,7 +675,88 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.alive) this.setAlpha(1)
   }
 
+  /** Play a one-shot action (shoot / slash1…3 / shoot-crouch) and let it own the sprite. */
+  playAction(name: string) {
+    if (!this.animSet) return
+    const set = this.animSet
+    const key = `${set}-${name}`
+    const meta = ANIM_SETS[set].anims[name]
+    if (!meta || !this.scene.anims.exists(key)) return
+    this.anims.timeScale = 1
+    this.anims.play(key)
+    this.lastAnim = name
+    this.actionUntil = this.scene.time.now + (meta.count / meta.fps) * 1000
+  }
+
+  private animTo(name: string, timeScale = 1) {
+    const set = this.animSet
+    if (!set) return
+    const key = `${set}-${name}`
+    if (!this.scene.anims.exists(key)) return
+    this.anims.timeScale = timeScale
+    // Same state: keep looping / hold a finished one-shot on its last frame.
+    if (this.lastAnim === name && (this.anims.isPlaying || ANIM_SETS[set].anims[name]?.loop === false)) return
+    this.lastAnim = name
+    this.anims.play(key)
+  }
+  private lastAnim = ''
+
+  /** Frame-animation pose picker (replaces the warp/squash poses for animated sets). */
+  private applyAnimPose(grounded: boolean, vx: number) {
+    const set = this.animSet!
+    const now = this.scene.time.now
+    this.setScale(this.baseScale)
+    this.setAngle(0)
+    if (this.hp <= 0 || this.pose === 'die') {
+      this.animTo('ko')
+      return
+    }
+    if (this.pose === 'hurt' || this.hurtLock > 0) {
+      if (this.hurtLock <= 0) {
+        this.pose = grounded ? 'idle' : 'jump'
+        this.clearTint()
+      } else {
+        this.pose = 'hurt'
+        this.actionUntil = 0
+        this.animTo('hurt')
+        return
+      }
+    }
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (!grounded) {
+      this.pose = 'jump'
+      if (now < this.actionUntil && this.anims.isPlaying) return
+      // rise / apex / fall frames picked from vertical speed
+      const vy = body?.velocity.y ?? 0
+      const j = ANIM_SETS[set].anims.jump
+      if (j) {
+        const idx = vy < -70 ? 0 : vy < 70 ? 1 : 2
+        this.anims.stop()
+        this.lastAnim = 'jump'
+        this.setFrame(j.start + Math.min(idx, j.count - 1))
+      }
+      return
+    }
+    if (now < this.actionUntil && this.anims.isPlaying) {
+      this.pose = Math.abs(vx) > 12 ? 'run' : 'idle'
+      return
+    }
+    if (this.crouching) {
+      this.pose = 'idle'
+      this.animTo('crouch')
+      return
+    }
+    if (Math.abs(vx) > 12) {
+      this.pose = 'run'
+      this.animTo(set === 'kibobo' ? 'run' : 'walk', Phaser.Math.Clamp(Math.abs(vx) / this.moveSpeed, 0.6, 1.4))
+      return
+    }
+    this.pose = 'idle'
+    this.animTo('idle')
+  }
+
   private applyPose(grounded: boolean, vx: number) {
+    if (this.animSet) return this.applyAnimPose(grounded, vx)
     if (this.hp <= 0 || this.pose === 'die') {
       setDiePoseVisual(this, this.baseScale, this.facing)
       return

@@ -145,7 +145,8 @@ export class UIScene extends Phaser.Scene {
   }
 
   update(_t: number, dt: number) {
-    if (!this.heartsL.length) return
+    // Stale hearts from a previous run (scene restart) have no scene — skip until rebuilt.
+    if (!this.heartsL.length || !this.heartsL[0]?.scene) return
     const drain = Math.min(1, (dt / 1000) * 8)
     const recover = Math.min(1, (dt / 1000) * 6)
     this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)

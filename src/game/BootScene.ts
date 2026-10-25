@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { createHeroAnims, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
 import { registerTiles } from './tiles'
 import { registerWorldArt } from './worldArt'
 import { registerHoneyArt } from './honeyArt'
@@ -98,6 +99,7 @@ export class BootScene extends Phaser.Scene {
     this.load.image('tile-ground-top', '/art/tiles/ground-top.png')
     this.load.image('bg-bush-strip', '/art/tiles/bush-strip.png')
     preloadArtOverrides(this)
+    preloadHeroAnims(this)
     preloadRound1Map(this)
   }
 
@@ -110,6 +112,8 @@ export class BootScene extends Phaser.Scene {
     const swapped = applyEnemyPlaceholderTextures(this)
     this.registry.set('enemyPlaceholders', swapped)
     this.registry.set('artOverrides', applyArtOverrides(this))
+    // Frame-by-frame cast (Cursor action sheets) — also swaps the old stills to the new designs.
+    createHeroAnims(this)
     this.applyCelCoinTexture()
     this.bakeCastTextures()
     this.thickenPropOutlines()
@@ -207,6 +211,7 @@ export class BootScene extends Phaser.Scene {
 
     for (const key of playObjects) {
       if (!this.textures.exists(key)) continue
+      if (REPLACED_STILLS.has(key)) continue
       bakePixelTexture(this, key, BAKE_RES_FACTOR)
       thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
       setActorNearestFilter(this, key)

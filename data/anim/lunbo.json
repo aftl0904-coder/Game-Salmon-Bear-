@@ -1,0 +1,61 @@
+{
+ "frameWidth": 84,
+ "frameHeight": 81,
+ "anchorX": 42,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "walk": {
+   "start": 3,
+   "count": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "jump": {
+   "start": 7,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "crouch": {
+   "start": 10,
+   "count": 3,
+   "fps": 14,
+   "loop": false
+  },
+  "shoot": {
+   "start": 13,
+   "count": 4,
+   "fps": 16,
+   "loop": false
+  },
+  "shoot-crouch": {
+   "start": 17,
+   "count": 3,
+   "fps": 16,
+   "loop": false
+  },
+  "hurt": {
+   "start": 20,
+   "count": 3,
+   "fps": 10,
+   "loop": false
+  },
+  "ko": {
+   "start": 23,
+   "count": 5,
+   "fps": 8,
+   "loop": false
+  },
+  "win": {
+   "start": 28,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  }
+ }
+}
