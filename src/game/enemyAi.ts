@@ -171,8 +171,9 @@ function effectiveStats(e: Creep): KindStats {
 export function pickTarget(
   e: { x: number; y: number; lane?: number },
   boy: HeroRef,
-  girl: HeroRef,
+  girl: HeroRef | null,
 ): HeroRef {
+  if (!girl || !girl.active) return boy
   const laneScore = (h: HeroRef) => {
     if (e.lane === undefined || h.lane === undefined) return 0
     return e.lane === h.lane ? -80 : 40
@@ -219,7 +220,7 @@ function desireX(e: Creep, target: HeroRef, leadX: number, advancing: boolean): 
 export type AiCtx = {
   dt: number
   boy: HeroRef
-  girl: HeroRef
+  girl: HeroRef | null
   leadX: number
   prevLeadX: number
   floatBang: (x: number, y: number, msg?: string) => void
@@ -256,7 +257,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     fsm?: string
     tick?: (dt: number, c: {
       boy: HeroRef
-      girl: HeroRef
+      girl: HeroRef | null
       leadX: number
       prevLeadX: number
     }) => void

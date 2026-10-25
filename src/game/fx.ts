@@ -89,13 +89,18 @@ export function scorePop(scene: Phaser.Scene, x: number, y: number, pts: number)
 }
 
 /** Pause physics + tweens on solid hits (hit freeze).
- * Tweens must freeze too — otherwise mid-squash/angle frames capture as 撕裂. */
+ * Tweens must freeze too — otherwise mid-squash/angle frames capture as 撕裂.
+ * Non-reentrant: stacked hits must not leave world paused forever. */
+let hitstopLock = false
 export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
+  if (hitstopLock) return
+  hitstopLock = true
   scene.physics.world.pause()
   scene.tweens.pauseAll()
   scene.time.delayedCall(ms, () => {
+    hitstopLock = false
     if (!scene.sys.isActive()) return
-    scene.physics.world.resume()
+    if (scene.physics.world.isPaused) scene.physics.world.resume()
     scene.tweens.resumeAll()
   })
 }

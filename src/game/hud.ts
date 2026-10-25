@@ -51,12 +51,23 @@ export function buildStageHud(
       .setOrigin(0.5),
   )
 
+  // Portrait frame 44×44 — face must stay INSIDE the inner ~30px window.
   if (scene.textures.exists('ui-portrait')) {
-    root.add(scene.add.image(30, 28, 'ui-portrait').setScale(1.05))
+    root.add(scene.add.image(30, 28, 'ui-portrait').setScale(1))
   } else {
     root.add(scene.add.rectangle(30, 28, 44, 44, 0x243048, 0.95).setStrokeStyle(2, 0xe0b86a))
   }
-  root.add(scene.add.image(30, 28, 'art-salmon').setScale(0.62))
+  {
+    const face = scene.add.image(30, 28, 'art-salmon')
+    face.setDisplaySize(24, 24)
+    face.setScrollFactor(0)
+    const g = scene.make.graphics({ x: 0, y: 0 })
+    g.setScrollFactor(0)
+    g.fillStyle(0xffffff)
+    g.fillRect(18, 16, 24, 24)
+    face.setMask(g.createGeometryMask())
+    root.add(face)
+  }
   root.add(
     scene.add.text(58, 4, '1P 倫寶', {
       fontFamily: 'Noto Sans TC, sans-serif',
@@ -74,33 +85,41 @@ export function buildStageHud(
     root.add(h)
   }
 
-  // 1P：灰掉／淡化 2P HUD 心心與頭像（仍可見同伴血量，但不搶焦點）
-  const p2Alpha = opts.mode === '1p' ? 0.32 : 1
-  if (scene.textures.exists('ui-portrait')) {
-    root.add(scene.add.image(930, 28, 'ui-portrait').setScale(1.05).setAlpha(p2Alpha))
-  } else {
-    root.add(
-      scene.add.rectangle(930, 28, 44, 44, 0x402438, 0.95 * p2Alpha).setStrokeStyle(2, 0xe89ab8),
-    )
-  }
-  root.add(scene.add.image(930, 28, 'art-girl').setScale(0.58).setAlpha(p2Alpha))
-  root.add(
-    scene.add
-      .text(902, 4, '2P 琪寶寶', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '12px',
-        color: opts.mode === '1p' ? '#a09098' : '#fff0f6',
-        stroke: '#2a1810',
-        strokeThickness: 3,
-      })
-      .setOrigin(1, 0)
-      .setAlpha(p2Alpha),
-  )
+  // 1P：完全唔顯示 2P 頭像／血條（單人只有倫寶）
   const heartsR: Phaser.GameObjects.Image[] = []
-  for (let i = 0; i < MAX_HP; i++) {
-    const h = scene.add.image(792 + i * 11, 30, pipFull).setAlpha(p2Alpha)
-    heartsR.push(h)
-    root.add(h)
+  if (opts.mode === '2p') {
+    if (scene.textures.exists('ui-portrait')) {
+      root.add(scene.add.image(930, 28, 'ui-portrait').setScale(1))
+    } else {
+      root.add(scene.add.rectangle(930, 28, 44, 44, 0x402438, 0.95).setStrokeStyle(2, 0xe89ab8))
+    }
+    {
+      const face = scene.add.image(930, 28, 'art-girl')
+      face.setDisplaySize(24, 24)
+      face.setScrollFactor(0)
+      const g = scene.make.graphics({ x: 0, y: 0 })
+      g.setScrollFactor(0)
+      g.fillStyle(0xffffff)
+      g.fillRect(918, 16, 24, 24)
+      face.setMask(g.createGeometryMask())
+      root.add(face)
+    }
+    root.add(
+      scene.add
+        .text(902, 4, '2P 琪寶寶', {
+          fontFamily: 'Noto Sans TC, sans-serif',
+          fontSize: '12px',
+          color: '#fff0f6',
+          stroke: '#2a1810',
+          strokeThickness: 3,
+        })
+        .setOrigin(1, 0),
+    )
+    for (let i = 0; i < MAX_HP; i++) {
+      const h = scene.add.image(792 + i * 11, 30, pipFull)
+      heartsR.push(h)
+      root.add(h)
+    }
   }
 
   root.add(

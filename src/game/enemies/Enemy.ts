@@ -152,7 +152,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
 export type EnemyTickCtx = {
   boy: { x: number; y: number; active: boolean; lane?: number }
-  girl: { x: number; y: number; active: boolean; lane?: number }
+  girl: { x: number; y: number; active: boolean; lane?: number } | null
   leadX: number
   prevLeadX: number
 }

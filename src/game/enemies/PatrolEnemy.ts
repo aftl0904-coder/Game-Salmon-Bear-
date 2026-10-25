@@ -447,11 +447,24 @@ export class PatrolEnemy extends Enemy {
 
   private holdLaneFloor(body: Phaser.Physics.Arcade.Body) {
     if (!inLaneBand(this.homeY) && !inLaneBand(this.y)) return
-    const airborne = Math.abs(body.velocity.y) > 40 || body.velocity.y < -10
-    if (airborne) { body.allowGravity = true; return }
     const target = laneY(this.lane)
+    // Never freefall off the lane plane (was melting FPS / soft-freezing play).
+    if (this.y > target + 48 || this.y < target - 160) {
+      this.setY(target)
+      body.velocity.y = 0
+      body.allowGravity = false
+      this.setDepth(actorDepth('enemy', this.lane, this.y))
+      return
+    }
+    const airborne = Math.abs(body.velocity.y) > 40 || body.velocity.y < -10
+    if (airborne) {
+      body.allowGravity = true
+      return
+    }
     if (this.y > target + 2 || (body.velocity.y >= 0 && this.y >= target - 2)) {
-      this.setY(target); body.velocity.y = 0; body.allowGravity = false
+      this.setY(target)
+      body.velocity.y = 0
+      body.allowGravity = false
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
