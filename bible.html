@@ -21,7 +21,29 @@
       }
       .sub {
         color: #c8b090;
-        margin-bottom: 24px;
+        margin-bottom: 16px;
+      }
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .tabs button {
+        background: #2a1c14;
+        color: #f7e7c0;
+        border: 1px solid #5a4030;
+        padding: 8px 14px;
+        cursor: pointer;
+        font: inherit;
+      }
+      .tabs button[aria-selected='true'] {
+        background: #3a2818;
+        border-color: #e0b86a;
+        color: #ffe08a;
+      }
+      .panel[hidden] {
+        display: none;
       }
       section {
         margin: 0 0 28px;
@@ -31,6 +53,11 @@
         font-size: 18px;
         border-bottom: 1px solid #5a4030;
         padding-bottom: 6px;
+      }
+      h3 {
+        color: #ffe08a;
+        font-size: 15px;
+        margin: 16px 0 8px;
       }
       table {
         width: 100%;
@@ -62,12 +89,80 @@
         border: 1px solid #e0b86a;
         margin-top: 8px;
       }
+      .swatch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+        gap: 8px;
+        margin: 12px 0;
+      }
+      .swatch {
+        border: 1px solid #5a4030;
+        text-align: center;
+        font-size: 10px;
+        color: #f7e7c0;
+        background: #2a1c14;
+        overflow: hidden;
+      }
+      .swatch .chip {
+        height: 36px;
+        border-bottom: 1px solid #3a2818;
+      }
+      .swatch code {
+        display: block;
+        padding: 4px 2px;
+        font-size: 9px;
+      }
+      .tint-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 12px 0;
+      }
+      .tint {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #5a4030;
+        padding: 6px 10px;
+        background: #2a1c14;
+        font-size: 12px;
+      }
+      .tint .chip {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #5a4030;
+      }
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border: 1px solid #e0b86a;
+        color: #ffe08a;
+        font-size: 12px;
+        margin-left: 8px;
+      }
+      .stage-card {
+        border: 1px solid #3a2818;
+        padding: 12px;
+        margin: 0 0 16px;
+        background: #221610;
+      }
+      .meta {
+        color: #c8b090;
+        font-size: 12px;
+        margin: 4px 0;
+      }
+      .layer-list {
+        margin: 6px 0 0;
+        padding-left: 18px;
+        font-size: 12px;
+      }
     </style>
   </head>
   <body>
     <p><a href="/">← 返遊戲</a></p>
     <h1>鮭鮭熊・資料圖鑑</h1>
-    <p class="sub">來源 <code>data/*.json</code>（階段資料 1–4）· 路徑 <code>/bible</code></p>
+    <p class="sub">來源 <code>data/*.json</code> · 路徑 <code>/bible</code></p>
+    <nav class="tabs" role="tablist" aria-label="圖鑑分頁" id="tabs"></nav>
     <div id="root">載入中…</div>
     <script type="module" src="/src/bible/main.ts"></script>
   </body>

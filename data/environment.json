@@ -1,0 +1,134 @@
+{
+  "style": "16-bit side-scroller, pixel art, layered parallax",
+  "stages": [
+    {
+      "id": "ST-01",
+      "name": "百畝樹林",
+      "ground": {
+        "material": "泥土＋青苔",
+        "tileSizePx": 16,
+        "variants": 6,
+        "shading": "3-tone",
+        "edgeHighlight": true,
+        "detail": ["小石", "落葉", "草簇"],
+        "dither": "light"
+      },
+      "layers": [
+        { "id": "L-far", "type": "parallax", "speed": 0.2, "content": "遠山＋霧", "saturation": 0.5 },
+        { "id": "L-mid", "type": "parallax", "speed": 0.5, "content": "樹林剪影", "saturation": 0.7 },
+        { "id": "L-near", "type": "foreground", "speed": 1.2, "content": "草叢、樹枝", "alpha": 0.9 }
+      ],
+      "props": ["樹樁", "木牌", "野餐籃", "蜂巢"],
+      "lighting": {
+        "ambient": "#8fa8b8",
+        "light": "topLeft",
+        "fog": { "color": "#b8c8d0", "density": 0.15 }
+      },
+      "particles": ["落葉", "蟲"]
+    },
+    {
+      "id": "ST-02",
+      "name": "深夜辦公室",
+      "ground": {
+        "material": "地毯＋瓷磚",
+        "tileSizePx": 16,
+        "variants": 4,
+        "shading": "3-tone",
+        "edgeHighlight": true,
+        "detail": ["接縫", "磨損角", "咖啡漬"],
+        "dither": "light"
+      },
+      "layers": [
+        { "id": "L-far", "type": "parallax", "speed": 0.2, "content": "城市夜景", "saturation": 0.45 },
+        { "id": "L-mid", "type": "parallax", "speed": 0.5, "content": "辦公室隔間", "saturation": 0.65 },
+        { "id": "L-near", "type": "foreground", "speed": 1.15, "content": "螢幕光邊、電線", "alpha": 0.85 }
+      ],
+      "props": ["辦公椅", "文件堆", "飲水機", "時鐘"],
+      "lighting": {
+        "ambient": "#2a3550",
+        "light": "topLeft",
+        "flicker": { "everyMs": 4000, "durationMs": 120 },
+        "fog": { "color": "#1a2030", "density": 0.08 }
+      },
+      "particles": ["紙張"]
+    },
+    {
+      "id": "ST-03",
+      "name": "鬼夜市",
+      "ground": {
+        "material": "濕磚＋油紙",
+        "tileSizePx": 16,
+        "variants": 5,
+        "shading": "3-tone",
+        "edgeHighlight": true,
+        "detail": ["水漬", "燈籠影", "紙屑"],
+        "dither": "medium"
+      },
+      "layers": [
+        { "id": "L-far", "type": "parallax", "speed": 0.18, "content": "夜市燈海剪影", "saturation": 0.55 },
+        { "id": "L-mid", "type": "parallax", "speed": 0.45, "content": "攤檔布簾", "saturation": 0.75 },
+        { "id": "L-near", "type": "foreground", "speed": 1.25, "content": "燈籠、掛旗", "alpha": 0.88 }
+      ],
+      "props": ["攤車", "燈籠", "蒸籠", "木箱"],
+      "lighting": {
+        "ambient": "#5a3040",
+        "light": "topLeft",
+        "fog": { "color": "#c09070", "density": 0.2 },
+        "warmSpot": true
+      },
+      "particles": ["蒸汽", "紙屑"]
+    },
+    {
+      "id": "ST-04",
+      "name": "午夜公路",
+      "ground": {
+        "material": "瀝青＋黃線",
+        "tileSizePx": 16,
+        "variants": 4,
+        "shading": "3-tone",
+        "edgeHighlight": true,
+        "detail": ["裂縫", "反光釘", "碎石"],
+        "dither": "light"
+      },
+      "layers": [
+        { "id": "L-far", "type": "parallax", "speed": 0.15, "content": "遠燈／山影", "saturation": 0.4 },
+        { "id": "L-mid", "type": "parallax", "speed": 0.55, "content": "護欄、路牌剪影", "saturation": 0.6 },
+        { "id": "L-near", "type": "foreground", "speed": 1.35, "content": "車燈炫光、路緣", "alpha": 0.8 }
+      ],
+      "props": ["路障", "油桶", "反光錐", "休息站牌"],
+      "lighting": {
+        "ambient": "#1e2430",
+        "light": "topLeft",
+        "fog": { "color": "#405060", "density": 0.12 },
+        "headlightSweep": true
+      },
+      "particles": ["塵埃", "飛蟲"]
+    },
+    {
+      "id": "ST-05",
+      "name": "迷霧溫泉",
+      "ground": {
+        "material": "濕石＋青苔",
+        "tileSizePx": 16,
+        "variants": 6,
+        "shading": "3-tone",
+        "edgeHighlight": true,
+        "detail": ["水紋", "溫泉泡", "苔斑"],
+        "dither": "soft"
+      },
+      "layers": [
+        { "id": "L-far", "type": "parallax", "speed": 0.12, "content": "霧中山脊", "saturation": 0.35 },
+        { "id": "L-mid", "type": "parallax", "speed": 0.4, "content": "竹林／岩石", "saturation": 0.55 },
+        { "id": "L-near", "type": "foreground", "speed": 1.1, "content": "蒸汽、垂藤", "alpha": 0.75 }
+      ],
+      "props": ["石燈", "木桶", "毛巾架", "溫泉柱"],
+      "lighting": {
+        "ambient": "#708898",
+        "light": "topLeft",
+        "fog": { "color": "#c8d8e0", "density": 0.35 },
+        "visibilityLimited": true
+      },
+      "particles": ["蒸汽", "水滴"]
+    }
+  ]
+}

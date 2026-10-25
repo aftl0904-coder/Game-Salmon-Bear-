@@ -1,0 +1,218 @@
+{
+  "main": {
+    "maxColors": 32,
+    "status": "proposed",
+    "source": "median-cut from public/art/* + forced brand accents (ink/honey/gold/salmon/wood/slate); no pure black",
+    "license": "derived from project original art (project-owned)",
+    "colors": [
+      "#120e0c",
+      "#ffe08a",
+      "#e07a4f",
+      "#c01010",
+      "#f0b828",
+      "#884018",
+      "#304058",
+      "#8fa8b8",
+      "#ece8da",
+      "#ece3d7",
+      "#e1e7db",
+      "#dde2d5",
+      "#e3ded2",
+      "#d4decf",
+      "#d9d8c9",
+      "#ccdfd3",
+      "#cbd9ca",
+      "#cbd5c0",
+      "#c1d4c5",
+      "#c4ceb8",
+      "#b4cdc9",
+      "#bfc3a7",
+      "#b5bea5",
+      "#aebba5",
+      "#a4beb7",
+      "#92bdcb",
+      "#a1b2a0",
+      "#a2a990",
+      "#9aa690",
+      "#91a28e",
+      "#8a9886",
+      "#7b897a"
+    ],
+    "rgb": [
+      [
+        18,
+        14,
+        12
+      ],
+      [
+        255,
+        224,
+        138
+      ],
+      [
+        224,
+        122,
+        79
+      ],
+      [
+        192,
+        16,
+        16
+      ],
+      [
+        240,
+        184,
+        40
+      ],
+      [
+        136,
+        64,
+        24
+      ],
+      [
+        48,
+        64,
+        88
+      ],
+      [
+        143,
+        168,
+        184
+      ],
+      [
+        236,
+        232,
+        218
+      ],
+      [
+        236,
+        227,
+        215
+      ],
+      [
+        225,
+        231,
+        219
+      ],
+      [
+        221,
+        226,
+        213
+      ],
+      [
+        227,
+        222,
+        210
+      ],
+      [
+        212,
+        222,
+        207
+      ],
+      [
+        217,
+        216,
+        201
+      ],
+      [
+        204,
+        223,
+        211
+      ],
+      [
+        203,
+        217,
+        202
+      ],
+      [
+        203,
+        213,
+        192
+      ],
+      [
+        193,
+        212,
+        197
+      ],
+      [
+        196,
+        206,
+        184
+      ],
+      [
+        180,
+        205,
+        201
+      ],
+      [
+        191,
+        195,
+        167
+      ],
+      [
+        181,
+        190,
+        165
+      ],
+      [
+        174,
+        187,
+        165
+      ],
+      [
+        164,
+        190,
+        183
+      ],
+      [
+        146,
+        189,
+        203
+      ],
+      [
+        161,
+        178,
+        160
+      ],
+      [
+        162,
+        169,
+        144
+      ],
+      [
+        154,
+        166,
+        144
+      ],
+      [
+        145,
+        162,
+        142
+      ],
+      [
+        138,
+        152,
+        134
+      ],
+      [
+        123,
+        137,
+        122
+      ]
+    ]
+  },
+  "perStageTint": {
+    "ST-01": "#7fa6a0",
+    "ST-02": "#4a5a7a",
+    "ST-03": "#7a4a5a",
+    "ST-04": "#3a3a4a",
+    "ST-05": "#a0b8c8"
+  },
+  "rules": {
+    "outline": "1px darker variant",
+    "lightDirection": "topLeft",
+    "noPureBlack": true
+  },
+  "awaitingConfirmation": true,
+  "note": "請確認 main.colors；OK 後將 awaitingConfirmation 設 false，並可同步 docs/bible/palette.json"
+}

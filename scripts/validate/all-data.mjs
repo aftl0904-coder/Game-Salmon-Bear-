@@ -4,7 +4,15 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const dir = path.dirname(fileURLToPath(import.meta.url))
-const files = ['terrain.mjs', 'hazards.mjs', 'enemies.mjs', 'camera.mjs', 'signs.mjs']
+const files = [
+  'terrain.mjs',
+  'hazards.mjs',
+  'enemies.mjs',
+  'camera.mjs',
+  'signs.mjs',
+  'environment.mjs',
+  'palette.mjs',
+]
 let failed = 0
 for (const f of files) {
   const r = spawnSync(process.execPath, [path.join(dir, f)], { stdio: 'inherit' })
