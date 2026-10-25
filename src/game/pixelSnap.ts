@@ -72,36 +72,27 @@ export function setPixelPose(
   spr.setAngle(ang === 0 ? 0 : Math.round(ang))
 }
 
-/** Run bob: scale-only 2-phase pulse (no ±5° shear that shreds sprites). */
-export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, phase: number) {
-  const step = Math.sin(phase) >= 0 ? 1 : -1
-  setPixelPose(spr, baseScale, {
-    squashX: 1 + step * 0.03,
-    squashY: 1 - step * 0.04,
-    angle: 0,
-  })
+/** Run bob: keep uniform integer scale (motion read via flip / dust, not shear). */
+export function setRunPose(spr: Phaser.GameObjects.Sprite, baseScale: number, _phase: number) {
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
-/** Idle breathe: tiny pulse, angle locked. */
-export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, tMs: number) {
-  const step = Math.sin(tMs / 380) >= 0 ? 1 : -1
-  setPixelPose(spr, baseScale, {
-    squashX: 1 + step * 0.015,
-    squashY: 1 - step * 0.015,
-    angle: 0,
-  })
+/** Idle: locked integer scale — breathing squash shreds NEAREST columns. */
+export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _tMs: number) {
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
 export function setJumpPose(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {
-  setPixelPose(spr, baseScale, { squashX: 0.94, squashY: 1.08, angle: facing * -6 })
+  // Tiny discrete lean only — keep scale at integer base.
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: facing * -6 })
 }
 
 export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {
-  setPixelPose(spr, baseScale, { squashX: 1.1, squashY: 0.86, angle: facing * -18 })
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: facing * -18 })
 }
 
 export function setDiePoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {
-  setPixelPose(spr, baseScale, { squashX: 1.05, squashY: 0.7, angle: facing * 90 })
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: facing * 90 })
 }
 
 /**

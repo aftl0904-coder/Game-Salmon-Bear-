@@ -187,6 +187,9 @@ export class GameScene extends Phaser.Scene {
     this.bindKeys()
     this.debugOverlay = new DebugOverlay(this)
     this.juice = new JuiceManager(this)
+    // Snap AFTER Arcade step — update() runs before worldstep, so in-update
+    // snaps get overwritten by fractional velocity before render.
+    this.events.on(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
     this.launchUi()
     this.showIntro()
     this.emitHealth()
@@ -218,6 +221,7 @@ export class GameScene extends Phaser.Scene {
     // World.postUpdate still calls debugGraphic.clear() on undefined.
     this.resetPhysicsDebug(false)
     if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
+    this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
     this.time.removeAllEvents()
     this.tweens.killAll()
     this.input.keyboard?.removeAllListeners()
@@ -367,7 +371,6 @@ export class GameScene extends Phaser.Scene {
     this.updateEnemies(dt)
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
-    this.snapPixelArt()
     this.animateBg()
     this.checkFall()
     this.updateCheckpoint()
@@ -901,7 +904,7 @@ export class GameScene extends Phaser.Scene {
     }
     this.pet.setVelocity(0, 0)
     this.pet.setFlipX(g.facing < 0)
-    this.pet.setScale(0.75)
+    this.pet.setScale(1)
     this.pet.setAlpha(this.petJetting ? 1 : 0.85)
     this.pet.setVisible(true)
     this.pet.setActive(true)
@@ -1142,10 +1145,10 @@ export class GameScene extends Phaser.Scene {
     const grace = this.time.now + 1400
     // Spawn 前移 — first blocker ~180–220px ahead so opening fight lands in ~2–3s.
     this.boy = Player.spawn(this, 250, GROUND_Y, {
-      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1.85, speed: BOY_SPEED,
+      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 2, speed: BOY_SPEED,
     })
     this.girl = Player.spawn(this, 330, GROUND_Y, {
-      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1.8, speed: GIRL_SPEED,
+      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 2, speed: GIRL_SPEED,
     })
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
@@ -1153,13 +1156,13 @@ export class GameScene extends Phaser.Scene {
     this.pet = this.physics.add.sprite(280, GROUND_Y, 'art-bear')
     this.pet.setOrigin(0.5, 1)
     // 同屏可读：略缩小 + 半透明，跟在琪寶寶身后
-    this.pet.setScale(0.75).setAlpha(0.85).setDepth(7).setVisible(true)
+    this.pet.setScale(1).setAlpha(0.85).setDepth(7).setVisible(true)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.entities.add(this.pet, 'pet')
 
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(330, GROUND_Y - 36, fanKey).setDepth(10).setScale(1.55)
+    this.fan = this.add.image(330, GROUND_Y - 36, fanKey).setDepth(10).setScale(2)
     this.fanGlow = this.add.circle(330, GROUND_Y - 36, 15, 0x88ddff, 0.2).setDepth(9)
     this.tweens.add({ targets: this.fan, angle: { from: -28, to: 28 }, duration: 80, yoyo: true, repeat: -1 })
 

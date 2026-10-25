@@ -67,10 +67,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xffffff)
     this.poseAngle = dir * (dmg >= 2 ? -18 : -12)
     this.setAngle(this.poseAngle)
-    this.setScale(
-      Math.round(this.baseScale * 1.12 * 20) / 20,
-      Math.round(this.baseScale * 0.86 * 20) / 20,
-    )
+    this.setScale(this.baseScale)
     this.think = this.hurtMs
     this.hitThis = false
     this.setFsm('HURT')

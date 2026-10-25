@@ -112,7 +112,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = 0
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
-    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 1.8 : 1.85)
+    // Integer scale keeps NEAREST sampling stable (Phaser 4 safeAuto only
+    // rounds when scale===1; non-integer scale shreds columns during motion).
+    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 2 : 2)
     this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
     this.coyote = 0
     this.jumpBuf = 0
@@ -414,9 +416,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Attack pose — squash only (no continuous lean shear under NEAREST).
     if (this.atkCd > 80 || this.isMeleeActive()) {
       if (this.role === 'boy') {
-        setPixelPose(this, this.baseScale, { squashX: 1.1, squashY: 0.9, angle: this.facing * 8 })
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: this.facing * 8 })
       } else {
-        setPixelPose(this, this.baseScale, { squashX: 1.12, squashY: 0.88, angle: this.facing * 6 })
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: this.facing * 6 })
       }
       if (!grounded) this.pose = 'jump'
       else if (Math.abs(vx) > 12) this.pose = 'run'

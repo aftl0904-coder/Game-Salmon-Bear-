@@ -103,7 +103,7 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     style: 'hop',
     hopMul: 3.2,
     chargePrefer: true,
-    scaleMul: 1.06,
+    scaleMul: 1,
   },
 }
 
@@ -118,27 +118,27 @@ export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
     // Opening fight ~180–250px; windup ≥260ms fair telegraph.
     hp: 2, spd: 62, patrolSpd: 48, aggro: 280, detect: 340, melee: 50,
-    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 1.75, tint: 0x88aacc,
+    windupMs: 300, recoverMs: 340, atkCdMs: 1050, scale: 2, tint: 0x88aacc,
     label: '路障', chargePrefer: false, hopChance: 0.012,
   },
   chaser: {
     hp: 2, spd: 110, patrolSpd: 52, aggro: 380, detect: 420, melee: 52,
-    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 1.65, tint: 0xff9977,
+    windupMs: 280, recoverMs: 280, atkCdMs: 900, scale: 2, tint: 0xff9977,
     label: '追擊', chargePrefer: true, hopChance: 0.022,
   },
   ambusher: {
     hp: 2, spd: 95, patrolSpd: 22, aggro: 180, detect: 280, melee: 56,
-    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 1.7, tint: 0xaa88ff,
+    windupMs: 300, recoverMs: 340, atkCdMs: 1000, scale: 2, tint: 0xaa88ff,
     label: '伏兵', chargePrefer: false, hopChance: 0.008,
   },
   guardian: {
     hp: 3, spd: 78, patrolSpd: 48, aggro: 300, detect: 360, melee: 52,
-    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 1.8, tint: 0xffcc44,
+    windupMs: 300, recoverMs: 320, atkCdMs: 1000, scale: 2, tint: 0xffcc44,
     label: '守蜜', chargePrefer: false, hopChance: 0.015,
   },
   interrupter: {
     hp: 3, spd: 100, patrolSpd: 58, aggro: 420, detect: 480, melee: 56,
-    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 1.9, tint: 0xff6644,
+    windupMs: 280, recoverMs: 240, atkCdMs: 820, scale: 2, tint: 0xff6644,
     label: '精銳', chargePrefer: true, hopChance: 0.02,
   },
   boss: {
@@ -220,35 +220,28 @@ export type AiCtx = {
 }
 
 function applyPose(e: Creep) {
-  // Pixel-safe poses: quantized scale, no continuous ±5° shear (NEAREST shreds).
-  const q = (sx: number, sy: number, ang = 0) => {
-    e.setScale(Math.round(e.baseScale * sx * 20) / 20, Math.round(e.baseScale * sy * 20) / 20)
+  // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
+  const q = (ang = 0) => {
+    e.setScale(e.baseScale)
     e.setAngle(Math.round(ang))
   }
   if (e.state === 'die') {
-    q(1.05, 0.72, Math.round(e.poseAngle))
+    q(Math.round(e.poseAngle))
     return
   }
   if (e.state === 'hurt') {
-    q(1.08, 0.88, Math.round(e.poseAngle))
+    q(Math.round(e.poseAngle))
     return
   }
   if (e.state === 'windup' || e.state === 'pause') {
-    q(1.12, 0.86, 0)
+    q(0)
     return
   }
   if (e.state === 'charge' || e.state === 'attack' || e.state === 'hop') {
-    q(0.92, 1.1, e.chargeDir * 8)
+    q(e.chargeDir * 8)
     return
   }
-  const vx = Math.abs((e.body as Phaser.Physics.Arcade.Body)?.velocity.x ?? 0)
-  if (vx > 8) {
-    const t = performance.now() * 0.012
-    const step = Math.sin(t) >= 0 ? 1 : -1
-    q(1 + step * 0.03, 1 - step * 0.04, 0)
-  } else {
-    q(1, 1, 0)
-  }
+  q(0)
 }
 
 export function tickEnemy(e: Creep, ctx: AiCtx) {

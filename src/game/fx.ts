@@ -150,17 +150,13 @@ export class JuiceManager {
     const baseY = Math.abs(target.scaleY ?? 1)
     // Discrete lean (whole degrees) — continuous ±24–34° mid-tween shreds NEAREST sprites.
     const lean = Math.round(dir * (heavy ? 18 : 12))
-    const hitX = Math.round(baseX * (heavy ? 1.12 : 1.08) * 20) / 20
-    const hitY = Math.round(baseY * (heavy ? 0.82 : 0.88) * 20) / 20
     target.setTint?.(0xffffff)
     target.setAngle?.(lean)
-    target.setScale?.(hitX, hitY)
+    target.setScale?.(baseX, baseY)
     this.scene.tweens.killTweensOf(target)
     this.scene.tweens.add({
       targets: target,
       angle: 0,
-      scaleX: baseX,
-      scaleY: baseY,
       duration: 140,
       ease: 'Sine.out',
     })
