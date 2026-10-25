@@ -2,13 +2,23 @@
  * Shared virtual-pad state for phone landscape play.
  * UIScene writes; GameScene / menus read.
  */
-export type TouchBtn = 'left' | 'right' | 'up' | 'down' | 'attack' | 'jump' | 'special' | 'start'
+export type TouchBtn =
+  | 'left'
+  | 'right'
+  | 'up'
+  | 'down'
+  | 'crouch'
+  | 'attack'
+  | 'jump'
+  | 'special'
+  | 'start'
 
 const held: Record<TouchBtn, boolean> = {
   left: false,
   right: false,
   up: false,
   down: false,
+  crouch: false,
   attack: false,
   jump: false,
   special: false,
@@ -20,6 +30,7 @@ const just: Record<TouchBtn, boolean> = {
   right: false,
   up: false,
   down: false,
+  crouch: false,
   attack: false,
   jump: false,
   special: false,

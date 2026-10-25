@@ -1,86 +1,63 @@
-/** Side-view dual co-op lanes — Pack3: 5 rows (上→下). */
+/** Single-lane side-scroller — stage 1 (former 5-row fighter collapsed). */
 
 import { GROUND_Y, LANE_HIT_TOL } from './constants'
 
-export const LANE_COUNT = 5
+/** One walk line only. */
+export const LANE_COUNT = 1
 
-/**
- * Feet Y for lanes 0..4 (top→bottom).
- * Clear spacing so row swaps read; tied to lowered GROUND_Y.
- */
-/** Lane spacing halved with 480×270 layout (was ±36 / ±72 on 540-tall). */
-export const LANE_Y = [
-  GROUND_Y - 36,
-  GROUND_Y - 18,
-  GROUND_Y,
-  GROUND_Y + 18,
-  GROUND_Y + 36,
-] as const
+/** Feet Y — mid ground reference (art / ribbon unchanged). */
+export const LANE_Y = [GROUND_Y] as const
 
-export const LANE_DEFAULT = 2 as LaneId
+export const LANE_DEFAULT = 0 as LaneId
 
-/** Same-lane hit tolerance only used as Y fallback. */
+/** Same-lane hit tolerance (Y fallback). */
 export const LANE_HIT_Y_TOL = 10
 
-/** Cooldown between discrete lane switches while held (ms). */
+/** @deprecated lane switch removed in stage 1 */
 export const LANE_SWITCH_MS = 110
 
-/** Soft lerp toward target lane Y while grounded (px/s). */
+/** Soft lerp toward ground Y while grounded (px/s). */
 export const LANE_SNAP_SPEED = 290
 
 export const LANE_BAND_PAD = 14
 
+/** Legacy ids 0–4 still appear in spawn tables; runtime always clamps to 0. */
 export type LaneId = 0 | 1 | 2 | 3 | 4
 
-export function clampLane(n: number): LaneId {
-  return Math.max(0, Math.min(LANE_COUNT - 1, Math.round(n))) as LaneId
+export function clampLane(_n: number): LaneId {
+  return 0
 }
 
-export function laneY(lane: LaneId): number {
-  return LANE_Y[lane]
+export function laneY(_lane: LaneId = 0): number {
+  return LANE_Y[0]
 }
 
-/** Nearest lane id for a feet Y (ground band). */
-export function nearestLane(y: number): LaneId {
-  let best: LaneId = LANE_DEFAULT
-  let bestD = Infinity
-  for (let i = 0; i < LANE_COUNT; i++) {
-    const d = Math.abs(y - LANE_Y[i]!)
-    if (d < bestD) {
-      bestD = d
-      best = i as LaneId
-    }
-  }
-  return best
+/** Always the single lane. */
+export function nearestLane(_y: number): LaneId {
+  return 0
 }
 
-export function sameLaneId(a: number, b: number, tol = 0): boolean {
-  return Math.abs(a - b) <= tol
+export function sameLaneId(_a: number, _b: number, _tol = 0): boolean {
+  return true
 }
 
 type LaneActor = { lane?: number; y: number }
 
-/**
- * Hits connect on same lane OR ±LANE_HIT_TOL (default 1 = 上下差一行都打到).
- */
+/** Stage 1: everyone shares the one line — hits always lane-OK. */
 export function sameLane(
-  a: LaneActor,
-  b: LaneActor,
+  _a: LaneActor,
+  _b: LaneActor,
   _yTol = LANE_HIT_Y_TOL,
-  laneTol = LANE_HIT_TOL,
+  _laneTol = LANE_HIT_TOL,
 ): boolean {
-  void _yTol
-  if (a.lane !== undefined && b.lane !== undefined) {
-    return sameLaneId(a.lane, b.lane, laneTol)
-  }
-  return sameLaneId(nearestLane(a.y), nearestLane(b.y), laneTol)
+  return true
 }
 
-export function laneDepth(base: number, lane: LaneId): number {
-  return base + lane * 10
+export function laneDepth(base: number, _lane: LaneId): number {
+  return base
 }
 
-export const LANE_FLOOR_Y = LANE_Y[LANE_COUNT - 1]!
+export const LANE_FLOOR_Y = LANE_Y[0]!
 
 export const LANE_BAND_TOP = LANE_Y[0]! - LANE_BAND_PAD
 

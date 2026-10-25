@@ -2,20 +2,12 @@ import Phaser from 'phaser'
 import { bindFootBody } from './footBody'
 import {
   AIR_ACCEL_MUL,
-  BOY_SPEED,
-  COYOTE_MS,
   FALL_GRAVITY_MUL,
   GIRL_SPEED,
-  GRAVITY_Y,
   HURT_IFRAME_MS,
   HURT_LOCK_MS,
-  JUMP_BUF_MS,
-  JUMP_CUT,
-  JUMP_V,
-  LANE_COUNT,
   LANE_DEFAULT,
   LANE_SNAP_SPEED,
-  LANE_SWITCH_MS,
   MAX_FALL,
   MAX_HP,
   ACTOR_DISPLAY_SCALE,
@@ -34,6 +26,12 @@ import {
   type LaneId,
   type PlayerFsm,
 } from './engine'
+import {
+  PLAYER,
+  fullApexVelocity,
+  jumpGravity,
+  tapApexVelocity,
+} from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
 import {
   enableActorSprite,
@@ -71,15 +69,11 @@ const MELEE_OFFSET_X = 40
 const MELEE_OFFSET_Y = -52
 
 /**
- * Arcade player (倫寶 / 琪寶寶) — 超任 SNES weight on Phaser Arcade.
- *
- * Physics: high gravity, snappy jump, variable cut, fast fall, coyote/buffer ~100ms.
- * FSM: IDLE/MOVE/JUMP/LANE_SWAP/HURT/ATTACK(/DIE) with Entry/Update/Exit;
- * JUMP/LANE_SWAP timeout 800ms → never freeze mid-air.
- * Render: scale 1 after 2× bake; depth = lane*1000+y each update.
+ * Arcade player — single-lane side-scroller (stage 1).
+ * Jump / crouch / hitbox / speed from data/player.json.
  */
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  hp = MAX_HP
+  hp = PLAYER.hp
   facing: 1 | -1 = 1
   atkCd = 0
   hurtCd = 0
@@ -95,7 +89,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   pose: HeroPose = 'idle'
   alive = true
   awaitingContinue = false
-  moveSpeed = BOY_SPEED
+  moveSpeed = PLAYER.moveSpeed
+  /** Crouch held (ground only). */
+  crouching = false
   lane: LaneId = LANE_DEFAULT
   laneCd = 0
   laneJumping = false
@@ -109,6 +105,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private attackUntil = 0
   private flashTween?: Phaser.Tweens.Tween
   private jumpCutApplied = false
+  private jumpHoldMs = 0
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
     if (scene.textures.exists('__atk-hitbox')) return
@@ -134,18 +131,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private initFromConfig(cfg: PlayerConfig) {
     this.role = cfg.role
-    this.hp = MAX_HP
+    this.hp = PLAYER.hp
     this.facing = 1
     this.atkCd = 0
     this.hurtCd = 0
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
     this.baseScale = (cfg.scale ?? 1) * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL
-    this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
+    this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed)
     this.coyote = 0
     this.jumpBuf = 0
     this.jumpConsumed = false
     this.jumpCutApplied = false
+    this.jumpHoldMs = 0
+    this.crouching = false
     this.walkPhase = 0
     this.wasGrounded = true
     this.pose = 'idle'
@@ -166,10 +165,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(this.baseScale)
     this.setData('baseTex', cfg.texture)
     enableActorSprite(this)
-    // 2× baked cast frames — hurtbox matches visual feet/torso (not pre-bake 22×36).
     bindFootBody(this, {
-      bodyW: cfg.bodyW ?? 44,
-      bodyH: cfg.bodyH ?? 72,
+      bodyW: cfg.bodyW ?? PLAYER.hitbox.standing.w,
+      bodyH: cfg.bodyH ?? PLAYER.hitbox.standing.h,
     })
 
     const body = this.body as Phaser.Physics.Arcade.Body
@@ -214,7 +212,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       jumpJust: boolean
       jumpHeld: boolean
       attackJust: boolean
+      crouchHeld?: boolean
+      /** @deprecated stage 1 — ignored */
       laneUpJust?: boolean
+      /** @deprecated stage 1 — ignored */
       laneDownJust?: boolean
       onAttack?: () => void
       onJump?: () => void
@@ -226,19 +227,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const now = opts.now ?? this.scene.time.now
     const body = this.body as Phaser.Physics.Arcade.Body
     resolveStick(body)
-    this.laneCd = Math.max(0, this.laneCd - dt)
+    this.laneCd = 0
     this.resolveLaneJumpLanding(body)
     const grounded =
       isLaneGrounded(body, this.y, this.laneJumping) || this.canStartLaneJump(body)
 
     if (grounded && !this.laneJumping) {
-      this.coyote = COYOTE_MS
+      this.coyote = PLAYER.jump.coyoteMs
       this.jumpConsumed = false
     } else {
       this.coyote = Math.max(0, this.coyote - dt)
     }
 
-    if (opts.jumpJust) this.jumpBuf = JUMP_BUF_MS
+    if (opts.jumpJust) this.jumpBuf = PLAYER.jump.bufferMs
     else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
 
     this.atkCd = Math.max(0, this.atkCd - dt)
@@ -247,6 +248,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.tickIFrameFlash(now)
     this.syncAttackHitbox(now)
     this.applyAirGravity(body)
+
+    // Crouch: ground only; cancels if jumping.
+    const wantCrouch = !!opts.crouchHeld && grounded && !this.laneJumping
+    if (wantCrouch !== this.crouching) {
+      this.crouching = wantCrouch
+      this.applyCrouchHitbox()
+    } else if (!grounded && this.crouching) {
+      this.crouching = false
+      this.applyCrouchHitbox()
+    }
 
     if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
       if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * 0.82)
@@ -264,34 +275,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return
     }
 
-    // Hold W/S (or ↑↓): keep stepping lanes while cooldown ready — no release needed.
-    const laneUp = !!opts.laneUpJust
-    const laneDown = !!opts.laneDownJust
-    const laneMax = LANE_COUNT - 1
-    if (
-      grounded &&
-      !this.laneJumping &&
-      this.laneCd <= 0 &&
-      inLaneBand(this.y)
-    ) {
-      if (laneUp && this.lane > 0) {
-        this.lane = clampLane(this.lane - 1)
-        this.laneCd = LANE_SWITCH_MS
-        fsmEnter(this, 'LANE_SWAP', now)
-        opts.onLane?.(this.lane)
-      } else if (laneDown && this.lane < laneMax) {
-        this.lane = clampLane(this.lane + 1)
-        this.laneCd = LANE_SWITCH_MS
-        fsmEnter(this, 'LANE_SWAP', now)
-        opts.onLane?.(this.lane)
-      }
-    }
     this.laneBuf = 0
+    void opts.laneUpJust
+    void opts.laneDownJust
+    void opts.onLane
+
+    const baseSpeed = this.moveSpeed
+    const speed =
+      this.crouching ? baseSpeed * PLAYER.crouch.speedMultiplier : baseSpeed
 
     const dtSec = dt / 1000
     let target = 0
-    if (opts.left) target -= this.moveSpeed
-    if (opts.right) target += this.moveSpeed
+    if (opts.left) target -= speed
+    if (opts.right) target += speed
     const accel = grounded ? RUN_ACCEL : RUN_ACCEL * AIR_ACCEL_MUL
     let vx = body.velocity.x
     if (target !== 0) {
@@ -305,19 +301,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (Math.abs(vx) <= damp) vx = 0
       else vx -= Math.sign(vx) * damp
     }
-    vx = Phaser.Math.Clamp(vx, -this.moveSpeed, this.moveSpeed)
+    vx = Phaser.Math.Clamp(vx, -speed, speed)
     this.setVelocityX(vx)
 
     const canJump =
       !this.jumpConsumed &&
       !this.laneJumping &&
+      !this.crouching &&
       (this.canStartLaneJump(body) || this.coyote > 0)
     if (this.jumpBuf > 0 && canJump) {
       body.allowGravity = true
       body.setGravity(0, 0)
       this.laneJumping = true
       this.jumpCutApplied = false
-      this.setVelocityY(JUMP_V)
+      this.jumpHoldMs = 0
+      this.setVelocityY(fullApexVelocity())
       this.jumpBuf = 0
       this.coyote = 0
       this.jumpConsumed = true
@@ -325,21 +323,25 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       opts.onJump?.()
     }
 
-    if (
-      !opts.jumpHeld &&
-      !this.jumpCutApplied &&
-      this.laneJumping &&
-      body.velocity.y < -80
-    ) {
-      this.setVelocityY(body.velocity.y * JUMP_CUT)
-      this.jumpCutApplied = true
+    if (this.laneJumping) {
+      this.jumpHoldMs += dt
+      // Early release → tap height (~24px). Hold through apex → full (~48px).
+      if (!opts.jumpHeld && !this.jumpCutApplied && body.velocity.y < -40) {
+        const tapV = tapApexVelocity()
+        const cutV = body.velocity.y * PLAYER.jump.releaseCut
+        // Prefer targetHeightPx.tap; releaseCut softens only if higher than tap.
+        this.setVelocityY(Math.max(cutV, tapV))
+        this.jumpCutApplied = true
+      }
+      void PLAYER.jump.holdMaxMs
     }
 
     this.holdLaneFloor(body, dt)
     if (!this.wasGrounded && grounded) this.justLanded = true
     this.wasGrounded = grounded
 
-    if (this.atkCd <= 0 && opts.attackJust) {
+    const canAtk = !this.crouching || PLAYER.crouch.canAttack
+    if (this.atkCd <= 0 && opts.attackJust && canAtk) {
       this.startMelee(now)
       fsmEnter(this, 'ATTACK', now)
       opts.onAttack?.()
@@ -357,13 +359,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.applyPose(grounded, vx)
   }
 
+  /** Standing / crouch hurtbox from data/player.json. */
+  applyCrouchHitbox() {
+    const box = this.crouching ? PLAYER.hitbox.crouch : PLAYER.hitbox.standing
+    bindFootBody(this, { bodyW: box.w, bodyH: box.h })
+  }
+
   private applyAirGravity(body: Phaser.Physics.Arcade.Body) {
     if (!this.laneJumping || !body.allowGravity) {
       body.setGravity(0, 0)
       return
     }
+    const g = jumpGravity()
+    // Rising: world gravity only (via allowGravity + scene gravity). Falling: extra mul.
     if (body.velocity.y > 0) {
-      body.setGravity(0, GRAVITY_Y * (FALL_GRAVITY_MUL - 1))
+      body.setGravity(0, g * (FALL_GRAVITY_MUL - 1))
     } else {
       body.setGravity(0, 0)
     }

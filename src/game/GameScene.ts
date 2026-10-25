@@ -145,7 +145,6 @@ export class GameScene extends Phaser.Scene {
   private levelMap: LevelMapHandle | null = null
   private camTarget!: Phaser.GameObjects.Zone
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
-  private keyW!: Phaser.Input.Keyboard.Key
   private keyA!: Phaser.Input.Keyboard.Key
   private keyS!: Phaser.Input.Keyboard.Key
   private keyD!: Phaser.Input.Keyboard.Key
@@ -717,7 +716,6 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.BACKTICK,
     ])
     this.cursors = kb.createCursorKeys()
-    this.keyW = kb.addKey(Phaser.Input.Keyboard.KeyCodes.W, true)
     this.keyA = kb.addKey(Phaser.Input.Keyboard.KeyCodes.A, true)
     this.keyS = kb.addKey(Phaser.Input.Keyboard.KeyCodes.S, true)
     this.keyD = kb.addKey(Phaser.Input.Keyboard.KeyCodes.D, true)
@@ -802,11 +800,14 @@ export class GameScene extends Phaser.Scene {
       TouchInput.isDown('jump')
     )
   }
-  private p1LaneUpHeld() {
-    return this.keyW.isDown || this.padAxis(this.pad1, false) < -0.45 || TouchInput.isDown('up')
-  }
-  private p1LaneDownHeld() {
-    return this.keyS.isDown || this.padAxis(this.pad1, false) > 0.45 || TouchInput.isDown('down')
+  /** Stage 1: S / pad↓ / touch crouch — no lane swap. (Arrow↓ is P2.) */
+  private p1CrouchHeld() {
+    return (
+      this.keyS.isDown ||
+      this.padAxis(this.pad1, false) > 0.45 ||
+      TouchInput.isDown('down') ||
+      TouchInput.isDown('crouch')
+    )
   }
   private p1SpecialJust() {
     return (
@@ -833,10 +834,7 @@ export class GameScene extends Phaser.Scene {
   private p2JumpHeld() {
     return this.keyPeriod.isDown || this.keyNP2.isDown || !!(this.pad2?.buttons[0]?.pressed)
   }
-  private p2LaneUpHeld() {
-    return !!this.cursors.up?.isDown || this.padAxis(this.pad2, false) < -0.45
-  }
-  private p2LaneDownHeld() {
+  private p2CrouchHeld() {
     return !!this.cursors.down?.isDown || this.padAxis(this.pad2, false) > 0.45
   }
   private p2SpecialJust() {
@@ -857,12 +855,11 @@ export class GameScene extends Phaser.Scene {
     speed: number,
     attackJust: boolean,
     doAttack: () => void,
-    laneUpJust = false,
-    laneDownJust = false,
+    crouchHeld = false,
   ) {
     h.moveSpeed = speed
     h.updatePlayer(dt, {
-      left, right, jumpJust, jumpHeld, attackJust, laneUpJust, laneDownJust,
+      left, right, jumpJust, jumpHeld, attackJust, crouchHeld,
       onJump: () => SFX.jump(), onAttack: doAttack, now: this.time.now,
     })
     if (h.justLandedFlag) {
@@ -902,7 +899,7 @@ export class GameScene extends Phaser.Scene {
       this.p1JumpJust(), this.p1JumpHeld(), spd,
       this.p1AttackJust(),
       () => (this.boy.role === 'girl' ? this.swordSlash(this.boy) : this.fireSalmon(this.boy)),
-      this.p1LaneUpHeld(), this.p1LaneDownHeld(),
+      this.p1CrouchHeld(),
     )
     if (this.p1SpecialJust()) this.fireHoneySpecial(this.boy)
   }
@@ -917,7 +914,7 @@ export class GameScene extends Phaser.Scene {
       g, dt, left, right,
       this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED,
       this.p2AttackJust(), () => this.swordSlash(g),
-      this.p2LaneUpHeld(), this.p2LaneDownHeld(),
+      this.p2CrouchHeld(),
     )
     if (this.p2SpecialJust()) this.fireHoneySpecial(g)
   }

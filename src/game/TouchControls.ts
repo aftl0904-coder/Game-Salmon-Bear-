@@ -1,16 +1,17 @@
 import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
 import { TouchInput, isPhonePlay, type TouchBtn } from './touchInput'
-import { L } from './engine/constants'
+import { GAME_H, GAME_W } from './engine/constants'
 import { FONT_UI } from './ui/fonts'
 
-const ALPHA = 0.6
+const ALPHA = 0.55
 
 type PadSpec = { btn: TouchBtn; x: number; y: number; label: string; w?: number; h?: number }
 
 /**
- * Landscape phone HUD: D-pad bottom-left, ABXY-style 4 buttons bottom-right.
- * Alpha 60%. Only built when isPhonePlay().
+ * Landscape phone HUD — stage 1 single-lane:
+ * Left: ← → + 蹲；Right: 跳 / 攻 / 絕.
+ * Pads sit in bottom corners so they don't cover mid-screen hero.
  */
 export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Container | null {
   if (!isPhonePlay()) return null
@@ -19,8 +20,8 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
   root.setAlpha(ALPHA)
 
   const mkBtn = (spec: PadSpec) => {
-    const bw = spec.w ?? L(56)
-    const bh = spec.h ?? L(56)
+    const bw = spec.w ?? 44
+    const bh = spec.h ?? 44
     const bg = scene.add
       .rectangle(spec.x, spec.y, bw, bh, 0x1a1420, 0.85)
       .setStrokeStyle(2, 0xffe08a, 0.9)
@@ -29,7 +30,7 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
     const tx = scene.add
       .text(spec.x, spec.y, spec.label, {
         fontFamily: FONT_UI,
-        fontSize: '11px',
+        fontSize: '12px',
         color: '#fff4d0',
         stroke: '#2a1810',
         strokeThickness: 3,
@@ -51,21 +52,19 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
     bg.on('pointerupoutside', () => setDown(false))
   }
 
-  // Left: direction cross
-  const lx = L(88)
-  const ly = L(455)
-  mkBtn({ btn: 'up', x: lx, y: ly - L(52), label: '↑', w: L(52), h: L(48) })
-  mkBtn({ btn: 'down', x: lx, y: ly + L(52), label: '↓', w: L(52), h: L(48) })
-  mkBtn({ btn: 'left', x: lx - L(52), y: ly, label: '←', w: L(52), h: L(48) })
-  mkBtn({ btn: 'right', x: lx + L(52), y: ly, label: '→', w: L(52), h: L(48) })
+  // Bottom-left cluster — clear of centre playfield
+  const lx = 52
+  const ly = GAME_H - 36
+  mkBtn({ btn: 'left', x: lx - 40, y: ly, label: '←', w: 44, h: 40 })
+  mkBtn({ btn: 'right', x: lx + 40, y: ly, label: '→', w: 44, h: 40 })
+  mkBtn({ btn: 'crouch', x: lx, y: ly - 44, label: '蹲', w: 48, h: 40 })
 
-  // Right: 4 action buttons (SNES diamond)
-  const rx = L(872)
-  const ry = L(450)
-  mkBtn({ btn: 'special', x: rx, y: ry - L(58), label: '絕', w: L(54), h: L(54) })
-  mkBtn({ btn: 'attack', x: rx + L(58), y: ry, label: '攻', w: L(54), h: L(54) })
-  mkBtn({ btn: 'jump', x: rx, y: ry + L(58), label: '跳', w: L(54), h: L(54) })
-  mkBtn({ btn: 'start', x: rx - L(58), y: ry, label: '始', w: L(54), h: L(54) })
+  // Bottom-right actions
+  const rx = GAME_W - 56
+  const ry = GAME_H - 40
+  mkBtn({ btn: 'jump', x: rx, y: ry, label: '跳', w: 48, h: 48 })
+  mkBtn({ btn: 'attack', x: rx - 52, y: ry - 8, label: '攻', w: 44, h: 44 })
+  mkBtn({ btn: 'special', x: rx, y: ry - 56, label: '絕', w: 44, h: 40 })
 
   scene.events.once('shutdown', () => {
     TouchInput.clearAll()

@@ -5,7 +5,8 @@ import { LogoScene } from './game/LogoScene'
 import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
-import { GAME_W, GAME_H, GRAVITY_Y } from './game/engine/constants'
+import { GAME_W, GAME_H } from './game/engine/constants'
+import { jumpGravity } from './game/config/playerData'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
 
@@ -70,7 +71,7 @@ function bootGame() {
     pixelArt: true,
     roundPixels: true,
     antialias: false,
-    physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
+    physics: { default: 'arcade', arcade: { gravity: { x: 0, y: jumpGravity() }, debug: false } },
     input: { gamepad: true, activePointers: 3 },
     scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
     // NONE — we own CSS size for integer zoom; letterbox via margins + body bg.
