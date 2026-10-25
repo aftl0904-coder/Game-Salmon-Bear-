@@ -179,6 +179,8 @@ export class GameScene extends Phaser.Scene {
   /** Sparse parallax landmarks (not tiled mountain/village bands). */
   private bgClouds: Phaser.GameObjects.Image[] = []
   private bgMounts: Phaser.GameObjects.Image[] = []
+  /** Pack3 A-03: decorative bees — no physics / no damage. */
+  private ambientBees: Phaser.GameObjects.Image[] = []
   /** Entity registry — players/enemies/projectiles live here, not in HUD. */
   private entities = new EntityManager()
   private debugOverlay!: DebugOverlay
@@ -212,6 +214,8 @@ export class GameScene extends Phaser.Scene {
     this.startedAt = this.time.now
     this.registry.set('wave1Announced', false)
     this.entities.clear()
+    this.ambientBees = []
+    this.specialCharges = 0
     // Scene instances survive restart — reset debug before any frame can
     // hit World.postUpdate with a destroyed/null debugGraphic.
     this.resetPhysicsDebug(false)
@@ -485,6 +489,7 @@ export class GameScene extends Phaser.Scene {
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
     this.animateBg()
+    this.tickAmbientBees(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -1257,6 +1262,42 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts.push(img)
   }
 
+  /** Pack3 A-03: occasional bees drift across the upper sky — visual only. */
+  private spawnAmbientBees() {
+    this.ambientBees = []
+    if (!this.textures.exists('fx-ambient-bee')) return
+    const count = 5
+    for (let i = 0; i < count; i++) {
+      const bee = this.add
+        .image(Phaser.Math.Between(40, WORLD_W - 40), Phaser.Math.Between(36, 120), 'fx-ambient-bee')
+        .setDepth(DEPTH.SKY + 2)
+        .setScale(1.4)
+        .setAlpha(0.9)
+      bee.setData('vx', Phaser.Math.FloatBetween(18, 42) * (Math.random() < 0.5 ? 1 : -1))
+      bee.setData('phase', Math.random() * Math.PI * 2)
+      bee.setData('amp', Phaser.Math.FloatBetween(4, 10))
+      bee.setData('baseY', bee.y)
+      enablePixelSprite(bee)
+      this.ambientBees.push(bee)
+    }
+  }
+
+  private tickAmbientBees(dt: number) {
+    if (this.ambientBees.length === 0) return
+    const t = this.time.now
+    for (const bee of this.ambientBees) {
+      const vx = (bee.getData('vx') as number) || 24
+      const phase = (bee.getData('phase') as number) || 0
+      const amp = (bee.getData('amp') as number) || 6
+      const baseY = (bee.getData('baseY') as number) || bee.y
+      bee.x += (vx * dt) / 1000
+      bee.y = baseY + Math.sin(t * 0.004 + phase) * amp
+      bee.setFlipX(vx < 0)
+      if (bee.x < -40) bee.x = WORLD_W + 20
+      if (bee.x > WORLD_W + 40) bee.x = -20
+    }
+  }
+
   private drawWorld() {
     // Layer 0 — soft base only: gradient sky + sun + horizon wash (no tiled mountain strips).
     const g = this.add.graphics().setDepth(DEPTH.SKY)
@@ -1384,6 +1425,7 @@ export class GameScene extends Phaser.Scene {
     this.placeBgDecor(1400, 'prop-tree3d', 1.15)
     this.placeBgDecor(2500, 'prop-tree3d', 1.05)
     this.placeBgDecor(1100, 'prop-house3d', 1.35)
+    this.spawnAmbientBees()
     if (this.textures.exists('prop-torii')) {
       const torii = this.add
         .image(400, 300, 'prop-torii')
@@ -1859,15 +1901,16 @@ export class GameScene extends Phaser.Scene {
     for (const e of w1) this.deferEnemy(e, 620, 'wave1')
 
     // Wave 2+ — 全部更右，等 lead 推進先出。
+    // Pack3 A-02: mix fish / barrel / elephant
     const later: Array<[number, EnemyKind, EnemySpecies | undefined, LaneId, number]> = [
       [1280, 'chaser', 'fish', 2, 1100],
-      [1500, 'blocker', 'fish', 0, 1100],
+      [1500, 'blocker', 'elephant', 0, 1100],
       [1180, 'ambusher', 'barrel', 0, 1100],
       [1750, 'ambusher', 'barrel', 0, 1550],
-      [1980, 'chaser', 'fish', 1, 1700],
-      [2080, 'guardian', 'fish', 0, 1850],
+      [1980, 'chaser', 'elephant', 1, 1700],
+      [2080, 'guardian', 'elephant', 0, 1850],
       [2400, 'interrupter', 'barrel', 1, 2100],
-      [2680, 'guardian', 'barrel', 1, 2400],
+      [2680, 'guardian', 'elephant', 1, 2400],
     ]
     for (const [x, kind, sp, lane, unlock] of later) {
       const e = this.mkEnemy(x, GROUND_Y, kind, kind === 'guardian' ? x : undefined, sp, lane)

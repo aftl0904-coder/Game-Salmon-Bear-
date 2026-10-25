@@ -435,6 +435,23 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 31, 35, 4, 6, [130, 130, 140])
   })
 
+  // Pack3 A-03: ambient bees (decor only — no combat / no collision)
+  paint(scene, 'fx-ambient-bee', 12, 10, (set) => {
+    const ink: RGB = [28, 18, 10]
+    const gold: RGB = [240, 190, 40]
+    const dark: RGB = [50, 36, 20]
+    rect(set, 3, 4, 6, 4, ink)
+    rect(set, 4, 5, 4, 2, gold)
+    set(5, 5, dark)
+    set(7, 5, dark)
+    set(4, 3, [220, 240, 255])
+    set(5, 2, [200, 230, 255])
+    set(7, 3, [220, 240, 255])
+    set(8, 2, [200, 230, 255])
+    set(3, 6, ink)
+    set(9, 6, ink)
+  })
+
   paint(scene, 'art-enemy-barrel', 40, 48, (set) => {
     rect(set, 6, 44, 28, 3, [18, 12, 16], 125)
     rect(set, 10, 36, 6, 10, [70, 48, 32])
