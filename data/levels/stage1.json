@@ -1,0 +1,63 @@
+{
+  "id": "ST-01",
+  "name": "百畝樹林",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "physicsRef": {
+    "note": "Measured in-game 2026-10-25 (倫寶 run 95px/s): full jump ≈47px high, ≈76px far; tap jump ≈24px. 琪寶寶 runs 115px/s (≈92px far).",
+    "maxPitPx": 64,
+    "maxStepPx": 40
+  },
+  "segments": [
+    { "id": "S1", "role": "teach", "x0": 0, "x1": 560, "note": "起步。第一隻紅魚；地刺教矮跳。" },
+    { "id": "S2", "role": "teach", "x0": 560, "x1": 860, "note": "第一個坑，32px，前後無敵人。" },
+    { "id": "S3", "role": "test", "x0": 860, "x1": 1300, "note": "矮台階 16px + 48px 坑 + 紅魚。" },
+    { "id": "S4", "role": "rest", "x0": 1300, "x1": 1500, "note": "存檔點 + 蜂蜜。" },
+    { "id": "S5", "role": "test", "x0": 1500, "x1": 2140, "note": "帽仔兵 + 刺球；寬坑中間有木板，木板上有蜂蜜（冒險獎勵）。" },
+    { "id": "S6", "role": "rest", "x0": 2140, "x1": 2320, "note": "存檔點。" },
+    { "id": "S7", "role": "twist", "x0": 2320, "x1": 3040, "note": "32px 高台（要長按跳）、64px 坑、地刺、機械豬守衛。" },
+    { "id": "S8", "role": "rest", "x0": 3040, "x1": 3200, "note": "存檔點 + 蜂蜜。" },
+    { "id": "S9", "role": "boss", "x0": 3200, "x1": 3800, "note": "祭壇伏兵，終點蜂巢。" }
+  ],
+  "pits": [
+    { "x": 672, "w": 32 },
+    { "x": 1184, "w": 40 },
+    { "x": 1872, "w": 144, "note": "中間有 platform，唔可以一跳過" },
+    { "x": 2624, "w": 64 }
+  ],
+  "steps": [
+    { "x": 992, "w": 128, "h": 16 },
+    { "x": 2416, "w": 112, "h": 32 }
+  ],
+  "platforms": [
+    { "x": 1904, "w": 64, "h": 24 }
+  ],
+  "spikes": [
+    { "x": 420, "n": 2 },
+    { "x": 2800, "n": 3 }
+  ],
+  "durians": [1600, 2340, 3320],
+  "honey": [
+    { "x": 1400, "h": 36, "note": "休息區" },
+    { "x": 1936, "h": 56, "note": "木板上方，要跳上木板先拎到" },
+    { "x": 3120, "h": 36, "note": "休息區" }
+  ],
+  "checkpoints": [1340, 2180, 3080],
+  "enemies": [
+    { "x": 520, "species": "fish", "kind": "blocker", "unlockX": 300 },
+    { "x": 1080, "species": "fish", "kind": "chaser", "unlockX": 860 },
+    { "x": 1290, "species": "fish", "kind": "chaser", "unlockX": 1100 },
+    { "x": 1700, "species": "barrel", "kind": "ambusher", "unlockX": 1500 },
+    { "x": 1790, "species": "fish", "kind": "chaser", "unlockX": 1560 },
+    { "x": 2100, "species": "barrel", "kind": "ambusher", "unlockX": 2040 },
+    { "x": 2560, "species": "fish", "kind": "chaser", "unlockX": 2360 },
+    { "x": 2900, "species": "elephant", "kind": "guardian", "unlockX": 2700 },
+    { "x": 2980, "species": "barrel", "kind": "ambusher", "unlockX": 2760 }
+  ],
+  "altarAmbush": [
+    { "x": 3420, "species": "barrel" },
+    { "x": 3500, "species": "fish" },
+    { "x": 3560, "species": "elephant" },
+    { "x": 3620, "species": "barrel" }
+  ],
+  "altarTriggerX": 3300
+}

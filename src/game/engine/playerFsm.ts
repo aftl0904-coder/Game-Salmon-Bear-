@@ -12,6 +12,7 @@
 
 import type Phaser from 'phaser'
 import { laneY, type LaneId } from './lanes'
+import { terrainEnabled } from './terrain'
 
 export type PlayerFsm =
   | 'IDLE'
@@ -100,7 +101,8 @@ const STATES: Record<PlayerFsm, StateHooks> = {
       if (h.hp <= 0 || !h.alive) return 'DIE'
       if (h.hurtLock > 0) return 'HURT'
       if (ctx.grounded && !h.laneJumping) return loco(ctx.vx)
-      if (timedOut(h, ctx.now)) {
+      // With level terrain, airborne time is real (pits, ledges) — never force-land mid-air.
+      if (!terrainEnabled() && timedOut(h, ctx.now)) {
         forceLand(h, ctx.body)
         return 'IDLE'
       }
