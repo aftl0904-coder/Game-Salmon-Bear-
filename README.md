@@ -54,7 +54,10 @@ npm run dev -- --host 0.0.0.0 --port 4637
 
 ## 發佈
 
+**Production：** [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app)
+
 GitHub 目標：`aftl0904-coder/Game-Salmon-Bear-`  
-Vercel：靜態 `dist`（見 `vercel.json`）
+Vercel 專案：`sake-kuma`（靜態 `dist`，見 `vercel.json`）
 
 對 Agent 講 **publish** 即會一次完成：push GitHub、開／更新 PR、Vercel 部署。
+
