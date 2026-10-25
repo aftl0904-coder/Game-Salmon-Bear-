@@ -162,8 +162,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(this.baseScale)
     enablePixelSprite(this)
     bindFootBody(this, {
-      bodyW: cfg.bodyW ?? 22,
-      bodyH: cfg.bodyH ?? 36,
+      bodyW: cfg.bodyW ?? 44,
+      bodyH: cfg.bodyH ?? 72,
     })
 
     const body = this.body as Phaser.Physics.Arcade.Body

@@ -88,8 +88,8 @@ export class PatrolEnemy extends Enemy {
     enablePixelSprite(e)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     bindFootBody(e, {
-      bodyW: spKey === 'barrel' ? 22 : 20,
-      bodyH: spKey === 'barrel' ? 28 : 22,
+      bodyW: spKey === 'barrel' ? 44 : 40,
+      bodyH: spKey === 'barrel' ? 56 : 44,
     })
     const body = e.body as Phaser.Physics.Arcade.Body
     if (inLaneBand(feetY)) {
