@@ -62,10 +62,11 @@ export const HITBOX_DEBUG = 0x44ff66
 /** Melee commit window — attack rate 0.8× → longer lock */
 const MELEE_MS = Math.round(150 / 0.8)
 const MELEE_W = 48
-const MELEE_H = 56
+/** Tall enough to overlap ±1 adjacent lane (~36px spacing). */
+const MELEE_H = 96
 const MELEE_OFFSET_X = 40
-/** Torso height from feet — was -28 (too low → bottom-lane misses). */
-const MELEE_OFFSET_Y = -40
+/** Torso-centered so ±1 lane bodies still overlap. */
+const MELEE_OFFSET_Y = -52
 
 /**
  * Arcade player (倫寶 / 琪寶寶) — 超任 SNES weight on Phaser Arcade.

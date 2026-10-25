@@ -7,8 +7,10 @@ export const WORLD_H = 540
 /** Shared mid-lane walk surface (feet origin). Lowered for more playable ground (Pack3). */
 export const GROUND_Y = 428
 
-/** Pack2/3: heroes have 7 HP; 1 enemy hit = −1. */
-export const MAX_HP = 7
+/** Heroes HP (每人少 1 心 vs 舊 7). 1 enemy hit = −1. */
+export const MAX_HP = 6
+/** Combat: hits connect on same lane OR ±1 adjacent lane. */
+export const LANE_HIT_TOL = 1
 /** 噗噗反擊半傷 */
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */
@@ -122,7 +124,8 @@ export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8)
 export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8)
 /** 琪寶寶劍撃 hitbox 寬／高／持續 */
 export const SWORD_HIT_W = 120
-export const SWORD_HIT_H = 58
+/** Tall for ±1 lane reach */
+export const SWORD_HIT_H = 96
 export const SWORD_HIT_MS = 160
 /** 噗噗跟在琪寶寶身後的水平距離 */
 export const PET_FOLLOW_BEHIND = 78

@@ -220,7 +220,10 @@ export function pickTarget(
   if (!girl || !girl.active) return boy
   const laneScore = (h: HeroRef) => {
     if (e.lane === undefined || h.lane === undefined) return 0
-    return e.lane === h.lane ? -80 : 40
+    const d = Math.abs(e.lane - h.lane)
+    if (d === 0) return -80
+    if (d === 1) return -40 // 差一行仍優先打得到
+    return 40
   }
   const db = Phaser.Math.Distance.Between(e.x, e.y, boy.x, boy.y) + laneScore(boy)
   const dg = Phaser.Math.Distance.Between(e.x, e.y, girl.x, girl.y) + laneScore(girl)

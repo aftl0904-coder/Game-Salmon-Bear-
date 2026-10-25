@@ -1100,9 +1100,12 @@ export class GameScene extends Phaser.Scene {
           for (const o of this.enemies.getChildren()) {
             const e = o as PatrolEnemy
             if (!e.active || e.fsm === 'DEAD') continue
-            const same = e.lane === g.lane
+            const adj =
+              e.lane !== undefined && g.lane !== undefined
+                ? Math.abs(e.lane - g.lane) <= 1
+                : false
             const d = Phaser.Math.Distance.Between(frontX, frontY, e.x, e.y)
-            const score = same ? d : d + 400
+            const score = adj ? d : d + 400
             if (score < bestD) {
               bestD = score
               best = e
@@ -1398,21 +1401,47 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Background-only decor (trees/houses) — never on the walk road (Pack3 K). */
+  /**
+   * Mid/far decor (trees/houses) — sits behind the road band.
+   * Scale should keep props taller than heroes (~person can “enter” a house).
+   */
   private placeBgDecor(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
-    const y = GROUND_Y - 110
+    const y = GROUND_Y - 24
     const img = this.add
       .image(x, y, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.VILLAGE)
       .setScale(scale)
       .setFlipX(flip)
-      .setAlpha(0.92)
+      .setAlpha(0.95)
     img.setData('baseX', x)
-    img.setData('parallax', 0.18)
+    img.setData('parallax', 0.14)
     enablePixelSprite(img)
     this.bgMounts.push(img)
+  }
+
+  /** World-space campsite props (scroll with stage; sit on ground plane). */
+  private placeCampProp(x: number, key: string, scale: number, flip = false) {
+    if (!this.textures.exists(key)) return
+    const img = this.add
+      .image(x, GROUND_Y + 6, key)
+      .setOrigin(0.5, 1)
+      .setDepth(DEPTH.PROP)
+      .setScale(scale)
+      .setFlipX(flip)
+    enablePixelSprite(img)
+  }
+
+  /** Picnic table + tent + fire — roadside campsite beats. */
+  private placeCampsite(x: number) {
+    this.placeCampProp(x - 70, 'prop-tent', 2.6)
+    this.placeCampProp(x, 'prop-picnic-table', 2.4)
+    this.placeCampProp(x + 55, 'prop-campfire', 2.0)
+    this.placeCampProp(x + 20, 'prop-picnic', 2.2)
+    if (this.textures.exists('prop-shrine')) {
+      this.placeCampProp(x - 110, 'prop-shrine', 2.0) // picnic basket
+    }
   }
 
   /** Sky bees: fly across the camera, leave, then a new one enters randomly. */
@@ -1570,12 +1599,12 @@ export class GameScene extends Phaser.Scene {
       this.bgClouds.push(img)
     }
 
-    // --- 4 unique mountains (far→near), spaced so they never read as a tiled strip ---
+    // Far mountains — ~5× prior display size (SNES-mountain scale reference).
     const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number }> = [
-      { key: 'lm-mount-2', x: 210, y: 270, s: 1.6, p: 0.07, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-1', x: 520, y: 282, s: 1.4, flip: true, p: 0.09, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-4', x: 820, y: 305, s: 1.5, p: 0.14, d: DEPTH.MOUNT_NEAR },
-      { key: 'lm-mount-3', x: 1120, y: 318, s: 1.3, flip: true, p: 0.17, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-2', x: 160, y: 400, s: 1.6 * 5, p: 0.05, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-1', x: 520, y: 410, s: 1.4 * 5, flip: true, p: 0.07, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-4', x: 900, y: 420, s: 1.5 * 5, p: 0.1, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-3', x: 1280, y: 430, s: 1.3 * 5, flip: true, p: 0.12, d: DEPTH.MOUNT_NEAR },
     ]
     for (const m of mountSpecs) {
       if (!this.textures.exists(m.key)) continue
@@ -1584,8 +1613,8 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(m.d)
-        .setScale(1)
-        .setAlpha(0.82)
+        .setScale(m.s)
+        .setAlpha(0.88)
         .setFlipX(!!m.flip)
       img.setData('baseX', m.x)
       img.setData('parallax', m.p)
@@ -1593,33 +1622,42 @@ export class GameScene extends Phaser.Scene {
       this.bgMounts.push(img)
     }
 
-    // Trees / houses: background only (not on road).
-    this.placeBgDecor(180, 'prop-tree3d', 1.1)
-    this.placeBgDecor(700, 'prop-tree3d', 1.0, true)
-    this.placeBgDecor(1400, 'prop-tree3d', 1.15)
-    this.placeBgDecor(2500, 'prop-tree3d', 1.05)
-    this.placeBgDecor(1100, 'prop-house3d', 1.35)
-    this.placeBgDecor(3800, 'prop-tree3d', 1.1, true)
-    this.placeBgDecor(5200, 'prop-house3d', 1.3)
-    this.placeBgDecor(6400, 'prop-tree3d', 1.2)
-    // Picnic + woodland friends (original forest cast silhouettes)
-    this.placeBgDecor(520, 'prop-picnic', 1.4)
-    this.placeBgDecor(560, 'prop-shrine', 1.1)
-    this.placeBgDecor(900, 'prop-owl', 1.2)
-    this.placeBgDecor(1900, 'prop-picnic', 1.2)
-    this.placeBgDecor(3200, 'prop-owl', 1.15, true)
-    this.placeBgDecor(4500, 'prop-shrine', 1.05)
+    // Forest + cottages: smaller than mountains, but larger than heroes (house door readable).
+    this.placeBgDecor(120, 'prop-tree3d', 3.8)
+    this.placeBgDecor(320, 'prop-tree3d', 4.2, true)
+    this.placeBgDecor(620, 'prop-tree3d', 3.6)
+    this.placeBgDecor(980, 'prop-house3d', 4.5) // ~person can enter
+    this.placeBgDecor(1400, 'prop-tree3d', 4.0)
+    this.placeBgDecor(1780, 'prop-tree3d', 3.5, true)
+    this.placeBgDecor(2200, 'prop-house3d', 4.2)
+    this.placeBgDecor(2680, 'prop-tree3d', 4.1)
+    this.placeBgDecor(3200, 'prop-tree3d', 3.7, true)
+    this.placeBgDecor(3800, 'prop-house3d', 4.8)
+    this.placeBgDecor(4400, 'prop-tree3d', 4.0)
+    this.placeBgDecor(5100, 'prop-tree3d', 3.9, true)
+    this.placeBgDecor(5800, 'prop-house3d', 4.4)
+    this.placeBgDecor(6500, 'prop-tree3d', 4.2)
+
+    // Campsites with picnic tables (world props on the ground band)
+    this.placeCampsite(480)
+    this.placeCampsite(2100)
+    this.placeCampsite(4200)
+    this.placeCampsite(6000)
+
+    this.placeBgDecor(900, 'prop-owl', 2.4)
+    this.placeBgDecor(3400, 'prop-owl', 2.2, true)
+
     this.spawnAmbientBees()
     if (this.textures.exists('prop-torii')) {
       const arch = this.add
-        .image(400, 300, 'prop-torii')
+        .image(380, 390, 'prop-torii')
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
-        .setScale(1)
+        .setScale(3.2)
         .setAlpha(0.92)
-      arch.setData('baseX', 400)
-      arch.setData('parallax', 0.12)
+      arch.setData('baseX', 380)
+      arch.setData('parallax', 0.1)
       enablePixelSprite(arch)
       this.bgMounts.push(arch)
     }
@@ -1917,7 +1955,8 @@ export class GameScene extends Phaser.Scene {
       return
     }
     const lane = shot.getData('lane') as number | undefined
-    if (lane !== undefined && h.lane !== undefined && lane !== h.lane) return
+    // ±1 lane still hits (同上下差一行)
+    if (lane !== undefined && h.lane !== undefined && Math.abs(lane - h.lane) > 1) return
     shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
     const dmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
@@ -2314,35 +2353,42 @@ export class GameScene extends Phaser.Scene {
    * unlockX = 玩家 leadX 達到才啟用（inactive 直到解鎖）。
    */
   private placeEnemies() {
-    // Wave 1 — elephant early; unlock after short walk.
+    // Wave 1 — elephant early; unlock after short walk. (+20% density vs prior pack)
     const w1 = [
       this.mkEnemy(780, GROUND_Y, 'blocker', undefined, 'fish', 1),
       this.mkEnemy(860, GROUND_Y, 'chaser', undefined, 'elephant', 3),
       this.mkEnemy(940, GROUND_Y, 'chaser', undefined, 'fish', 0),
       this.mkEnemy(1020, GROUND_Y, 'blocker', undefined, 'fish', 4),
       this.mkEnemy(1100, GROUND_Y, 'chaser', undefined, 'elephant', 2),
+      this.mkEnemy(1180, GROUND_Y, 'chaser', undefined, 'fish', 3), // +20%
     ]
     for (const e of w1) this.deferEnemy(e, 620, 'wave1')
 
-    // Doubled stage — denser later waves across full WORLD_W.
+    // Later waves — base list + ~20% extras mixed in.
     const later: Array<[number, EnemyKind, EnemySpecies | undefined, LaneId, number]> = [
       [1280, 'chaser', 'fish', 2, 1100],
       [1500, 'blocker', 'elephant', 4, 1100],
       [1180, 'ambusher', 'barrel', 0, 1100],
+      [1380, 'chaser', 'fish', 1, 1200], // +20%
       [1750, 'ambusher', 'barrel', 0, 1550],
       [1980, 'chaser', 'elephant', 1, 1700],
       [2080, 'guardian', 'elephant', 2, 1850],
+      [2200, 'ambusher', 'barrel', 3, 1950], // +20%
       [2400, 'interrupter', 'barrel', 1, 2100],
       [2680, 'guardian', 'elephant', 3, 2400],
+      [2900, 'chaser', 'fish', 4, 2600], // +20%
       [3100, 'chaser', 'fish', 0, 2800],
       [3300, 'blocker', 'elephant', 2, 2900],
       [3500, 'ambusher', 'barrel', 4, 3100],
+      [3650, 'chaser', 'fish', 2, 3300], // +20%
       [3800, 'chaser', 'elephant', 1, 3400],
       [4100, 'guardian', 'elephant', 3, 3700],
       [4400, 'interrupter', 'barrel', 0, 4000],
+      [4550, 'ambusher', 'barrel', 2, 4150], // +20%
       [4700, 'chaser', 'fish', 2, 4300],
       [5000, 'blocker', 'elephant', 4, 4600],
       [5300, 'ambusher', 'barrel', 1, 4900],
+      [5450, 'chaser', 'fish', 0, 5050], // +20%
       [5600, 'guardian', 'elephant', 2, 5200],
       [5900, 'chaser', 'fish', 3, 5500],
       [6200, 'blocker', 'elephant', 0, 5800],
@@ -2355,7 +2401,8 @@ export class GameScene extends Phaser.Scene {
     const a2 = this.mkEnemy(WORLD_W - 480, GROUND_Y, 'ambusher', undefined, 'barrel', 1)
     const a3 = this.mkEnemy(WORLD_W - 280, GROUND_Y, 'ambusher', undefined, 'barrel', 2)
     const a4 = this.mkEnemy(WORLD_W - 680, GROUND_Y, 'ambusher', undefined, 'elephant', 4)
-    for (const a of [a1, a2, a3, a4]) {
+    const a5 = this.mkEnemy(WORLD_W - 580, GROUND_Y, 'ambusher', undefined, 'fish', 3) // +20%
+    for (const a of [a1, a2, a3, a4, a5]) {
       a.altarAmbush = true
       this.deferEnemy(a, WORLD_W - 1200, 'altar')
     }

@@ -91,7 +91,7 @@ export class BootScene extends Phaser.Scene {
       stageTitle: '第一關・百畝樹林',
       stageSub: '奪回蜂蜜・野餐之路',
       cast: ['倫寶', '琪寶寶', '噗噗'] as const,
-      maxHp: 10,
+      maxHp: 6,
       coinsStart: 5,
     })
 
@@ -174,6 +174,9 @@ export class BootScene extends Phaser.Scene {
       'prop-lantern3d',
       'prop-honey-stack',
       'prop-picnic',
+      'prop-picnic-table',
+      'prop-tent',
+      'prop-campfire',
       'prop-owl',
       'prop-shrine',
       'lm-mount-1',

@@ -21,7 +21,7 @@ export class UIScene extends Phaser.Scene {
   private mpBar!: Phaser.GameObjects.Rectangle
   private mpText!: Phaser.GameObjects.Text
   private mpMaxW = 156
-  private maxHp = 10
+  private maxHp = 6
   private targetHpL = 10
   private targetHpR = 10
   private dispHpL = 10

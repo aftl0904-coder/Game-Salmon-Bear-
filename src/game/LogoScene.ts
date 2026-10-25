@@ -35,9 +35,9 @@ export class LogoScene extends Phaser.Scene {
       this.tweens.add({ targets: c, x: x + 24, duration: 22000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.28, 270, 1.4],
-      ['lm-mount-1', width * 0.72, 278, 1.25, true],
-      ['lm-mount-3', width * 0.5, 295, 1.1],
+      ['lm-mount-2', width * 0.22, 400, 4.2],
+      ['lm-mount-1', width * 0.75, 410, 3.8, true],
+      ['lm-mount-3', width * 0.5, 420, 3.5],
     ]
     for (const [key, x, y, s, flip] of mounts) {
       if (!this.textures.exists(key)) continue

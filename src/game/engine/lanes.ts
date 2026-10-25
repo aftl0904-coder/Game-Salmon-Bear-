@@ -1,6 +1,6 @@
 /** Side-view dual co-op lanes — Pack3: 5 rows (上→下). */
 
-import { GROUND_Y } from './constants'
+import { GROUND_Y, LANE_HIT_TOL } from './constants'
 
 export const LANE_COUNT = 5
 
@@ -58,12 +58,19 @@ export function sameLaneId(a: number, b: number, tol = 0): boolean {
 type LaneActor = { lane?: number; y: number }
 
 /**
- * Hits connect only on shared lane id — sprite height irrelevant (Pack3).
+ * Hits connect on same lane OR ±LANE_HIT_TOL (default 1 = 上下差一行都打到).
  */
-export function sameLane(a: LaneActor, b: LaneActor, _yTol = LANE_HIT_Y_TOL): boolean {
+export function sameLane(
+  a: LaneActor,
+  b: LaneActor,
+  _yTol = LANE_HIT_Y_TOL,
+  laneTol = LANE_HIT_TOL,
+): boolean {
   void _yTol
-  if (a.lane !== undefined && b.lane !== undefined) return sameLaneId(a.lane, b.lane)
-  return nearestLane(a.y) === nearestLane(b.y)
+  if (a.lane !== undefined && b.lane !== undefined) {
+    return sameLaneId(a.lane, b.lane, laneTol)
+  }
+  return sameLaneId(nearestLane(a.y), nearestLane(b.y), laneTol)
 }
 
 export function laneDepth(base: number, lane: LaneId): number {

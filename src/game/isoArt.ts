@@ -418,6 +418,69 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 2, 17, 44, 1, [18, 12, 10])
   })
 
+  // Picnic table (campsite) — big enough a hero can sit at
+  paint(scene, 'prop-picnic-table', 64, 40, (set) => {
+    const ink: RGB = [18, 12, 10]
+    rect(set, 4, 36, 56, 3, ink, 110)
+    // top
+    rect(set, 2, 10, 60, 10, ink)
+    for (let y = 11; y < 19; y++) {
+      rect(set, 3, y, 58, 1, shadeRGB([160, 110, 55], 1.08 - (y - 11) * 0.04))
+    }
+    rect(set, 3, 11, 58, 2, [210, 160, 90])
+    // benches
+    rect(set, 0, 22, 20, 5, ink)
+    rect(set, 1, 23, 18, 3, [140, 95, 45])
+    rect(set, 44, 22, 20, 5, ink)
+    rect(set, 45, 23, 18, 3, [140, 95, 45])
+    // legs
+    rect(set, 10, 19, 4, 18, ink)
+    rect(set, 11, 19, 2, 18, [120, 80, 40])
+    rect(set, 50, 19, 4, 18, ink)
+    rect(set, 51, 19, 2, 18, [120, 80, 40])
+    // plate + honey jar on table
+    rect(set, 28, 6, 10, 5, ink)
+    rect(set, 29, 7, 8, 3, [255, 200, 70])
+    set(32, 5, [255, 240, 160])
+  })
+
+  // Simple camp tent
+  paint(scene, 'prop-tent', 56, 48, (set) => {
+    const ink: RGB = [16, 10, 12]
+    rect(set, 6, 44, 44, 3, ink, 100)
+    // triangle body
+    for (let i = 0; i < 22; i++) {
+      const w = 4 + i * 2
+      const x0 = 28 - Math.floor(w / 2)
+      rect(set, x0 - 1, 4 + i, w + 2, 1, ink)
+      const c: RGB = i < 4 ? [200, 70, 55] : i % 3 === 0 ? [180, 55, 45] : [220, 90, 70]
+      rect(set, x0, 4 + i, w, 1, c)
+      if (i < 6) set(x0 + 1, 4 + i, [255, 160, 120])
+    }
+    // flap opening
+    rect(set, 24, 24, 10, 20, ink)
+    rect(set, 25, 25, 8, 18, [40, 28, 22])
+    rect(set, 26, 26, 3, 16, [70, 50, 35])
+    // pole
+    rect(set, 27, 2, 2, 8, [90, 70, 40])
+  })
+
+  // Campfire ring
+  paint(scene, 'prop-campfire', 32, 28, (set) => {
+    const ink: RGB = [18, 12, 10]
+    rect(set, 4, 22, 24, 4, ink, 100)
+    for (const [x, y] of [[6, 20], [22, 20], [8, 24], [20, 24], [14, 18]] as const) {
+      rect(set, x, y, 5, 4, ink)
+      rect(set, x + 1, y + 1, 3, 2, [120, 120, 130])
+    }
+    // flames
+    rect(set, 12, 8, 8, 12, ink)
+    rect(set, 13, 9, 6, 10, [255, 140, 40])
+    rect(set, 14, 6, 4, 8, [255, 200, 60])
+    set(15, 4, [255, 255, 180])
+    set(17, 10, [255, 80, 30])
+  })
+
   // Friendly owl silhouette (tree friend — original woodland, not a trademark design)
   paint(scene, 'prop-owl', 24, 28, (set) => {
     const ink: RGB = [18, 12, 10]

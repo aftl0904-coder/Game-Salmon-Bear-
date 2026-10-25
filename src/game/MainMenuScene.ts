@@ -92,9 +92,9 @@ export class MainMenuScene extends Phaser.Scene {
       this.tweens.add({ targets: c, x: x + 28, duration: 26000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.22, 285, 1.5],
-      ['lm-mount-1', width * 0.55, 292, 1.3, true],
-      ['lm-mount-4', width * 0.82, 300, 1.35],
+      ['lm-mount-2', width * 0.18, 400, 4.5],
+      ['lm-mount-1', width * 0.52, 410, 4.0, true],
+      ['lm-mount-4', width * 0.88, 420, 4.2],
     ]
     for (const [key, x, y, s, flip] of mounts) {
       if (!this.textures.exists(key)) continue
