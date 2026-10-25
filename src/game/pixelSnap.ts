@@ -102,6 +102,46 @@ export function hardenTextureAlpha(scene: TexScene, key: string, alphaCut = 96) 
   scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
 }
 
+
+/**
+ * Close 1px vertical holes in opaque silhouette (fixes waist/leg separation
+ * when soft AA bridges are killed by alpha harden).
+ */
+export function closeVerticalAlphaGaps(scene: TexScene, key: string) {
+  if (!scene.textures.exists(key)) return
+  const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.drawImage(src as CanvasImageSource, 0, 0)
+  const img = ctx.getImageData(0, 0, w, h)
+  const d = img.data
+  for (let x = 0; x < w; x++) {
+    for (let y = 1; y < h - 1; y++) {
+      const i = (y * w + x) * 4
+      const above = d[((y - 1) * w + x) * 4 + 3]
+      const below = d[((y + 1) * w + x) * 4 + 3]
+      if (d[i + 3] < 128 && above >= 200 && below >= 200) {
+        // Fill hole from neighbors
+        const ai = ((y - 1) * w + x) * 4
+        const bi = ((y + 1) * w + x) * 4
+        d[i] = Math.round((d[ai] + d[bi]) / 2)
+        d[i + 1] = Math.round((d[ai + 1] + d[bi + 1]) / 2)
+        d[i + 2] = Math.round((d[ai + 2] + d[bi + 2]) / 2)
+        d[i + 3] = 255
+      }
+    }
+  }
+  ctx.putImageData(img, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
 /**
  * Actors should be scale===1 after bakePixelTexture so safeAuto rounds cleanly.
  * Do NOT use fullAuto — it independently snaps quad corners and shears mid-sprite.
