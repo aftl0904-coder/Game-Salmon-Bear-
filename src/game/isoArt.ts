@@ -485,14 +485,14 @@ function registerLandmarkArt(scene: Phaser.Scene) {
     })
   }
 
-  // Four unique mountains — different lobe layouts / hues
+  // Four unique mountains — one dominant peak each (optional tiny shoulder), never a cone strip
   paintPeak(
     'lm-mount-1',
-    104,
-    88,
+    100,
+    86,
     [
-      { px: 36, top: 22, half: 28 },
-      { px: 68, top: 10, half: 34 },
+      { px: 58, top: 8, half: 40 },
+      { px: 28, top: 36, half: 16 }, // tiny left shoulder only
     ],
     [150, 190, 175],
     [110, 155, 145],
@@ -502,19 +502,16 @@ function registerLandmarkArt(scene: Phaser.Scene) {
     'lm-mount-2',
     120,
     96,
-    [{ px: 60, top: 6, half: 52 }],
+    [{ px: 60, top: 4, half: 54 }],
     [165, 185, 200],
     [120, 150, 165],
     [75, 105, 125],
   )
   paintPeak(
     'lm-mount-3',
-    88,
-    72,
-    [
-      { px: 28, top: 14, half: 26 },
-      { px: 58, top: 24, half: 22 },
-    ],
+    84,
+    70,
+    [{ px: 42, top: 10, half: 36 }],
     [130, 185, 120],
     [85, 150, 95],
     [45, 105, 70],
@@ -525,9 +522,8 @@ function registerLandmarkArt(scene: Phaser.Scene) {
     108,
     84,
     [
-      { px: 30, top: 28, half: 24 },
-      { px: 55, top: 8, half: 30 },
-      { px: 82, top: 20, half: 26 },
+      { px: 52, top: 6, half: 44 },
+      { px: 86, top: 34, half: 18 }, // tiny right shoulder
     ],
     [145, 175, 130],
     [95, 145, 105],
