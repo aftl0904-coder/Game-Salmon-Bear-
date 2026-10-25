@@ -100,12 +100,12 @@ export const ENEMY_STAGGER_HOLD_MAX_MS = 1000
 /** @deprecated use HOLD_MIN/MAX */
 export const ENEMY_STAGGER_HOLD_MS = 700
 
-/** 出招 commit：只凍角色 0.1s（子彈繼續飛） */
-export const ATTACK_COMMIT_FREEZE_MS = 100
-/** 命中 confirm：全員角色再凍 0.2s */
-export const HIT_CONFIRM_FREEZE_MS = 200
-/** 主角被打：本人 freeze 0.3s */
-export const PLAYER_HURT_FREEZE_MS = 300
+/** 出招 commit：0 = 唔停（2026-10-26 手感：每次出招停 0.1s 太黏，射擊連跳會斷） */
+export const ATTACK_COMMIT_FREEZE_MS = 0
+/** 命中 confirm（hit-stop）：約 4 格畫面，夠「實」又唔拖 */
+export const HIT_CONFIRM_FREEZE_MS = 70
+/** 主角被打：本人 freeze */
+export const PLAYER_HURT_FREEZE_MS = 200
 /** 大象蓄力鼻擊 */
 export const ELEPHANT_WINDUP_MS = 500
 /** 大象打中後短暫「霸體」——別人打唔入 */

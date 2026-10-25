@@ -8,7 +8,7 @@ import {
   snapTilePosition,
   snapWorldActors,
 } from './pixelSnap'
-import { SFX, startBgm, unlockAudio } from './audio'
+import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore } from './score'
 import {
   type Creep,
@@ -298,7 +298,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(300, 40, 100, 140)
 
     unlockAudio()
-    startBgm()
+    playSong('stage1')
 
     this.drawWorld()
     this.buildLevel()
@@ -2755,6 +2755,7 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene')) this.scene.stop('UIScene')
     EventBus.emit(GameEvents.GAME_OVER, { active: false })
 
+    stopBgm()
     SFX.win()
     this.cameras.main.stopFollow()
     this.cameras.main.setScroll(0, 0)
@@ -3173,6 +3174,7 @@ export class GameScene extends Phaser.Scene {
   private triggerAltarAmbush() {
     this.altarAmbushOn = true
     SFX.boss()
+    playSong('ambush')
     this.cameras.main.flash(160, 255, 120, 80)
     this.emitScore('蜂巢伏兵！疾風桶突襲')
     floatText(this, this.cameras.main.scrollX + GAME_W / 2, L(120), '蜂巢伏兵！', '#ff6644')

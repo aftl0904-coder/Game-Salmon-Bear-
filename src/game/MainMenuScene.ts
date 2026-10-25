@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { unlockAudio, startBgm } from './audio'
+import { unlockAudio, playSong } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
 import { enableActorSprite } from './pixelSnap'
@@ -329,11 +329,11 @@ export class MainMenuScene extends Phaser.Scene {
 
     kb.once('keydown', () => {
       unlockAudio()
-      startBgm()
+      playSong('title')
     })
     this.input.once('pointerdown', () => {
       unlockAudio()
-      startBgm()
+      playSong('title')
     })
   }
 
