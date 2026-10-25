@@ -1,3 +1,4 @@
+/** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager } from './fx'
 import {
