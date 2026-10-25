@@ -141,12 +141,22 @@ try {
   const hurt = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')
     play.playHurtPose(play.boy, -1)
-    return { pose: play.boy.pose, angle: play.boy.angle, scaleY: play.boy.scaleY, base: play.boy.baseScale }
+    const b = play.boy
+    // Tear-off keeps angle/squash at 0 — NEAREST shreds rotated sprites; tint is the hit read.
+    return {
+      pose: b.pose,
+      angle: b.angle,
+      tint: b.tintTopLeft,
+      hurtLock: b.hurtLock,
+      scaleY: b.scaleY,
+      base: b.baseScale,
+    }
   })
   console.log('hurt', hurt)
   if (hurt.pose !== 'hurt') throw new Error('hurt pose not set')
-  if (Math.abs(hurt.angle) < 5) throw new Error('hurt angle missing')
-  if (hurt.scaleY >= hurt.base * 0.95) throw new Error('hurt squash missing')
+  if (!(hurt.hurtLock > 0)) throw new Error('hurt lock missing')
+  if (hurt.tint === 0xffffff || hurt.tint === 16777215) throw new Error('hurt tint missing')
+  if (Math.abs(hurt.angle) > 0.5) throw new Error('hurt must stay unrotated for NEAREST')
   console.log('hurt pose ok')
 
   // clear hurt lock so continue-path test is independent of pose timer

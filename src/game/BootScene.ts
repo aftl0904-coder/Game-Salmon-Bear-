@@ -17,15 +17,17 @@ export class BootScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#3a2818')
 
     const g = this.add.graphics()
-    g.fillStyle(0x5a8fc4, 0.35)
+    g.fillGradientStyle(0x4a88b0, 0x4a88b0, 0x3a2818, 0x2a1810, 1)
     g.fillRect(0, 0, width, height)
-    g.fillStyle(0xe8b86a, 0.12)
+    g.fillStyle(0xe8b86a, 0.16)
     g.fillCircle(width * 0.85, 60, 140)
+    g.fillStyle(0xe07a4f, 0.1)
+    g.fillCircle(width * 0.12, height - 50, 90)
 
     this.add
       .text(width / 2, height / 2 - 48, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '44px',
+        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
+        fontSize: '48px',
         color: '#ffe08a',
         stroke: '#3a2010',
         strokeThickness: 8,

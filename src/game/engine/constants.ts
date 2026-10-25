@@ -30,10 +30,12 @@ export const AIR_ACCEL_MUL = 0.7
 /** Goemon one-blade juice — short freeze + shake + white flash. */
 export const HITFREEZE_MS = 70
 export const HIT_SHAKE_MS = 120
-export const HIT_SHAKE_INTENSITY = 0.02
+/** ~0.008 × 960 ≈ 8px — integer shake steps under roundPixels (avoids subpixel tear). */
+export const HIT_SHAKE_INTENSITY = 0.008
 export const HEAVY_HITFREEZE_MS = 95
 export const HEAVY_HIT_SHAKE_MS = 160
-export const HEAVY_HIT_SHAKE_INTENSITY = 0.028
+/** ~0.012 × 960 ≈ 12px whole-pixel heavy shake. */
+export const HEAVY_HIT_SHAKE_INTENSITY = 0.012
 /** Enemy attack telegraph floor (fair, readable). */
 export const WINDUP_FLOOR_MS = 260
 export const WINDUP_ALTAR_MS = 300

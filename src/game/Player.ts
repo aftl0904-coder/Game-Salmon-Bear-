@@ -25,6 +25,14 @@ import {
   type LaneId,
 } from './engine'
 import { EventBus, GameEvents } from './EventBus'
+import {
+  setDiePoseVisual,
+  setHurtPoseVisual,
+  setIdlePose,
+  setJumpPose,
+  setPixelPose,
+  setRunPose,
+} from './pixelSnap'
 
 export type HeroPose = 'idle' | 'run' | 'jump' | 'hurt' | 'die'
 export type PlayerRole = 'boy' | 'girl'
@@ -118,7 +126,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = 0
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
-    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 1.8 : 1.85)
+    // Integer scale keeps NEAREST sampling stable (Phaser 4 safeAuto only
+    // rounds when scale===1; non-integer scale shreds columns during motion).
+    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 2 : 2)
     this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
     this.coyote = 0
     this.jumpBuf = 0
@@ -355,8 +365,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.facing = dir < 0 ? -1 : 1
     this.setFlipX(this.facing < 0)
     this.setTint(0xff4444)
-    this.setAngle(this.facing * -22)
-    this.setScale(this.baseScale * 1.1, this.baseScale * 0.86)
+    setHurtPoseVisual(this, this.baseScale, this.facing)
   }
 
   beginDeath() {
@@ -369,8 +378,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setAlpha(1)
     this.setVelocity(this.facing * -60, -140)
     this.setTint(0x884444)
-    this.setAngle(this.facing * 90)
-    this.setScale(this.baseScale * 1.05, this.baseScale * 0.7)
+    setDiePoseVisual(this, this.baseScale, this.facing)
     this.attackHitbox.disableBody(true, true)
     EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
       role: this.role,
@@ -392,12 +400,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.stopIFrameFlash()
     this.clearTint()
     this.setAlpha(1)
-    this.setAngle(0)
-    this.setScale(this.baseScale)
+    setPixelPose(this, this.baseScale)
     this.setActive(true)
     this.setVisible(true)
     if (inLaneBand(y)) this.snapToLane(this.lane, x)
-    else { this.setPosition(x, y); this.setVelocity(0, 0) }
+    else {
+      this.setPosition(Math.round(x), Math.round(y))
+      this.setVelocity(0, 0)
+    }
     EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
       role: this.role,
       hp: this.hp,
@@ -431,8 +441,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private applyPose(grounded: boolean, vx: number) {
     if (this.hp <= 0 || this.pose === 'die') {
-      this.setAngle(this.facing * 90)
-      this.setScale(this.baseScale * 1.05, this.baseScale * 0.7)
+      setDiePoseVisual(this, this.baseScale, this.facing)
       return
     }
     if (this.pose === 'hurt' || this.hurtLock > 0) {
@@ -441,19 +450,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.clearTint()
       } else {
         this.pose = 'hurt'
-        this.setAngle(this.facing * -22)
-        this.setScale(this.baseScale * 1.1, this.baseScale * 0.86)
+        setHurtPoseVisual(this, this.baseScale, this.facing)
         return
       }
     }
-    // Attack pose — 倫寶 salmon lean / 琪寶寶 fan squash (visible whole atkCd).
+    // Attack pose — squash only (no continuous lean shear under NEAREST).
     if (this.atkCd > 80 || this.isMeleeActive()) {
       if (this.role === 'boy') {
-        this.setScale(this.baseScale * 1.1, this.baseScale * 0.9)
-        this.setAngle(this.facing * 12)
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: 0 })
       } else {
-        this.setScale(this.baseScale * 1.12, this.baseScale * 0.88)
-        this.setAngle(this.facing * 10)
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: 0 })
       }
       if (!grounded) this.pose = 'jump'
       else if (Math.abs(vx) > 12) this.pose = 'run'
@@ -462,22 +468,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (!grounded) {
       this.pose = 'jump'
-      this.setScale(this.baseScale * 0.94, this.baseScale * 1.08)
-      this.setAngle(this.facing * -8)
+      setJumpPose(this, this.baseScale, this.facing)
       return
     }
     if (Math.abs(vx) > 12) {
       this.pose = 'run'
       this.walkPhase += Math.abs(vx) * 0.0005
-      const bob = Math.sin(this.walkPhase) * 0.05
-      this.setScale(this.baseScale * (1 + bob * 0.35), this.baseScale * (1 - bob))
-      this.setAngle(Math.sin(this.walkPhase) * 5 * this.facing)
+      setRunPose(this, this.baseScale, this.walkPhase)
       return
     }
     this.pose = 'idle'
-    const breathe = Math.sin(this.scene.time.now / 380) * 0.02
-    this.setScale(this.baseScale * (1 + breathe), this.baseScale * (1 - breathe))
-    this.setAngle(0)
+    setIdlePose(this, this.baseScale, this.scene.time.now)
   }
 
   /** Draw hurtbox (blue) + attack hitbox (green) when arcade / overlay debug is on. */

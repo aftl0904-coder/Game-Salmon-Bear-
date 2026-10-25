@@ -449,38 +449,29 @@ export class PatrolEnemy extends Enemy {
     this.setDepth(laneDepth(6, this.lane))
   }
   private applyPose() {
+    // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
+    const q = (ang = 0) => {
+      this.setScale(this.baseScale)
+      this.setAngle(Math.round(ang))
+    }
     if (this.fsm === 'DEAD') {
-      this.setAngle(this.poseAngle)
-      this.setScale(this.baseScale * 1.05, this.baseScale * 0.72)
+      q(this.poseAngle)
       return
     }
     if (this.fsm === 'HURT') {
-      this.setAngle(this.poseAngle)
-      this.setScale(this.baseScale * 1.08, this.baseScale * 0.88)
+      q(0)
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      // Pull-back lean — telegraph "about to lunge"
-      const lean = -this.patrolDir * 8
-      this.setAngle(lean)
-      this.setScale(this.baseScale * 1.16, this.baseScale * 0.82)
+      q(0)
       this.setTint(0xff1111)
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
-      this.setAngle(this.chargeDir * 10)
-      this.setScale(this.baseScale * 0.92, this.baseScale * 1.1)
+      q(0)
       return
     }
-    const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body)?.velocity.x ?? 0)
-    if (vx > 8) {
-      const t = performance.now() * 0.012
-      this.setAngle(Math.sin(t) * 5 * this.patrolDir)
-      this.setScale(this.baseScale * (1 + Math.sin(t) * 0.03), this.baseScale * (1 - Math.sin(t) * 0.04))
-    } else {
-      this.setAngle(0)
-      this.setScale(this.baseScale)
-    }
+    q(0)
   }
 }
 

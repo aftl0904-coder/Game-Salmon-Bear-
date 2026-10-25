@@ -1,5 +1,6 @@
 import type Phaser from 'phaser'
 import { HURT_IFRAME_MS, HURT_LOCK_MS, MAX_HP } from './constants'
+import { setDiePoseVisual, setHurtPoseVisual, setPixelPose } from '../pixelSnap'
 
 export type CombatActor = Phaser.Physics.Arcade.Sprite & {
   hp: number
@@ -43,15 +44,14 @@ export function applyDamage(h: CombatActor, opts: DamageOpts): number {
   return h.hp
 }
 
-/** Visual hurt squash — SNES hit reaction. */
+/** Visual hurt squash — SNES hit reaction (pixel-safe, no micro-shear). */
 export function applyHurtPose(h: CombatActor, dir: number = -1) {
   h.pose = 'hurt'
   h.hurtLock = Math.max(h.hurtLock, HURT_LOCK_MS)
   h.facing = dir < 0 ? -1 : 1
   h.setFlipX(h.facing < 0)
   h.setTint(0xff4444)
-  h.setAngle(h.facing * -22)
-  h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
+  setHurtPoseVisual(h, h.baseScale, h.facing)
 }
 
 /** Clear hurt visuals once lock expires (caller drives lock via dt). */
@@ -59,8 +59,7 @@ export function clearHurtPoseIfReady(h: CombatActor, grounded: boolean) {
   if (h.pose !== 'hurt' || h.hurtLock > 0 || h.hp <= 0) return
   h.pose = grounded ? 'idle' : 'jump'
   h.clearTint()
-  h.setAngle(0)
-  h.setScale(h.baseScale)
+  setPixelPose(h, h.baseScale)
 }
 
 /** Begin death presentation (caller triggers lose / continue UI). */
@@ -71,8 +70,7 @@ export function beginDeathPose(h: CombatActor) {
   h.hurtLock = 99999
   h.setVelocity(h.facing * -60, -140)
   h.setTint(0x884444)
-  h.setAngle(h.facing * 90)
-  h.setScale(h.baseScale * 1.05, h.baseScale * 0.7)
+  setDiePoseVisual(h, h.baseScale, h.facing)
 }
 
 /** Full restore after coin continue. */
@@ -84,9 +82,8 @@ export function reviveActor(h: CombatActor, x: number, y: number, now: number, g
   h.hurtLock = 0
   h.grace = now + graceMs
   h.clearTint()
-  h.setAngle(0)
-  h.setScale(h.baseScale)
-  h.setPosition(x, y)
+  setPixelPose(h, h.baseScale)
+  h.setPosition(Math.round(x), Math.round(y))
   h.setVelocity(0, 0)
   h.setActive(true)
   h.setVisible(true)

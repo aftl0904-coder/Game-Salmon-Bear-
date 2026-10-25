@@ -87,11 +87,15 @@ export function scorePop(scene: Phaser.Scene, x: number, y: number, pts: number)
   return floatText(scene, x, y - 8, `＋${pts}`, '#ffe08a', { size: 26, rise: 52, dur: 620 })
 }
 
-/** Pause physics on solid hits (hit freeze). */
+/** Pause physics + tweens on solid hits (hit freeze).
+ * Tweens must freeze too — otherwise mid-squash/angle frames capture as 撕裂. */
 export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
   scene.physics.world.pause()
+  scene.tweens.pauseAll()
   scene.time.delayedCall(ms, () => {
-    if (scene.sys.isActive()) scene.physics.world.resume()
+    if (!scene.sys.isActive()) return
+    scene.physics.world.resume()
+    scene.tweens.resumeAll()
   })
 }
 
@@ -116,11 +120,15 @@ export class JuiceManager {
   }
 
   shakeDamage() {
-    this.scene.cameras.main.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
+    const cam = this.scene.cameras.main
+    cam.setRoundPixels(true)
+    cam.shake(HIT_SHAKE_MS, HIT_SHAKE_INTENSITY)
   }
 
   shakeHeavy() {
-    this.scene.cameras.main.shake(HEAVY_HIT_SHAKE_MS, HEAVY_HIT_SHAKE_INTENSITY)
+    const cam = this.scene.cameras.main
+    cam.setRoundPixels(true)
+    cam.shake(HEAVY_HIT_SHAKE_MS, HEAVY_HIT_SHAKE_INTENSITY)
   }
 
   freeze(ms = HITFREEZE_MS) {
@@ -140,18 +148,17 @@ export class JuiceManager {
     if (!target?.active) return
     const baseX = Math.abs(target.scaleX ?? 1)
     const baseY = Math.abs(target.scaleY ?? 1)
-    const lean = dir * (heavy ? 34 : 24)
+    // Discrete lean (whole degrees) — continuous ±24–34° mid-tween shreds NEAREST sprites.
+    const lean = Math.round(dir * (heavy ? 18 : 12))
     target.setTint?.(0xffffff)
     target.setAngle?.(lean)
-    target.setScale?.(baseX * (heavy ? 1.2 : 1.12), baseY * (heavy ? 0.76 : 0.84))
+    target.setScale?.(baseX, baseY)
     this.scene.tweens.killTweensOf(target)
     this.scene.tweens.add({
       targets: target,
       angle: 0,
-      scaleX: baseX,
-      scaleY: baseY,
-      duration: 160,
-      ease: 'Back.out',
+      duration: 140,
+      ease: 'Sine.out',
     })
     this.scene.time.delayedCall(80, () => {
       if (target.active) target.clearTint?.()
