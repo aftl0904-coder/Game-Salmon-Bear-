@@ -12,7 +12,7 @@ import { mountMuteButton } from './muteButton'
 import { FONT_UI } from './ui/fonts'
 
 /**
- * HUD overlay — hearts + blue 絕招 MP; no red HP strip / no score plate.
+ * HUD overlay — two-row layout; hearts show all slots; 滿 only when MP full.
  */
 export class UIScene extends Phaser.Scene {
   private heartsL: Phaser.GameObjects.Image[] = []
@@ -22,14 +22,17 @@ export class UIScene extends Phaser.Scene {
   private hudInfo!: Phaser.GameObjects.Text
   private mpBar!: Phaser.GameObjects.Rectangle
   private mpText!: Phaser.GameObjects.Text
-  private mpMaxW = 58
+  private mpMaxW = 62
   private maxHp = 6
-  private targetHpL = 10
-  private targetHpR = 10
-  private dispHpL = 10
-  private dispHpR = 10
+  private targetHpL = 6
+  private targetHpR = 6
+  private dispHpL = 6
+  private dispHpR = 6
   private targetMp = 0
   private dispMp = 0
+  private pipFull = 'heart-full'
+  private pipEmpty = 'heart-empty'
+  private fullBlink = 0
 
   banner!: Phaser.GameObjects.Text
 
@@ -47,34 +50,59 @@ export class UIScene extends Phaser.Scene {
       | { stageTitle?: string; stageSub?: string }
       | undefined
 
-    const hud = buildStageHud(this, {
-      mode,
-      stageTitle: cfg?.stageTitle ?? '第一關・溪流小路',
-      stageSub: cfg?.stageSub ?? '奪回蜂蜜',
+    const build = () => {
+      const hud = buildStageHud(this, {
+        mode,
+        stageTitle: cfg?.stageTitle ?? '第一關・百畝樹林',
+        stageSub: cfg?.stageSub ?? '奪回蜂蜜',
+      })
+      this.heartsL = hud.heartsL
+      this.heartsR = hud.heartsR
+      this.hudInfo = hud.info
+      this.coinText = hud.coinText
+      this.scoreText = hud.scoreText
+      this.mpBar = hud.mpBar
+      this.mpText = hud.mpText
+      this.mpMaxW = hud.mpMaxW
+      this.maxHp = hud.maxHp
+      this.pipFull = hud.pipFull
+      this.pipEmpty = hud.pipEmpty
+      this.targetHpL = this.dispHpL = this.maxHp
+      this.targetHpR = this.dispHpR = this.maxHp
+      this.targetMp = this.dispMp = 0
+
+      mountMuteButton(this, hud.muteAnchor.x + 11, hud.muteAnchor.y + 8)
+    }
+
+    // Wait for Fusion Pixel so first paint uses correct metrics (no font swap jump).
+    const ready = Promise.race([
+      document.fonts?.load('12px "Fusion Pixel"').then(() => document.fonts.ready),
+      new Promise<void>((r) => setTimeout(r, 800)),
+    ])
+    void ready.then(() => {
+      if (!this.sys.settings.active && this.sys.settings.status !== 1) {
+        /* scene may have shut down */
+      }
+      try {
+        build()
+      } catch (e) {
+        console.warn('[hud] build failed', e)
+      }
     })
-    this.heartsL = hud.heartsL
-    this.heartsR = hud.heartsR
-    this.hudInfo = hud.info
-    this.coinText = hud.coinText
-    this.scoreText = hud.scoreText
-    this.mpBar = hud.mpBar
-    this.mpText = hud.mpText
-    this.mpMaxW = hud.mpMaxW
-    this.maxHp = hud.maxHp
-    this.targetHpL = this.dispHpL = this.maxHp
-    this.targetHpR = this.dispHpR = this.maxHp
-    this.targetMp = this.dispMp = 0
+    // Sync fallback if fonts already ready
+    if (document.fonts?.status === 'loaded') {
+      // still async microtask via ready
+    }
 
     this.banner = this.add
       .text(this.scale.width / 2, this.scale.height / 2, '', {
         fontFamily: FONT_UI,
-        fontSize: '14px',
+        fontSize: '16px',
         color: '#ffe8b0',
         backgroundColor: '#120818f2',
         padding: { x: 14, y: 10 },
         align: 'center',
-        stroke: '#c48a28',
-        strokeThickness: 2,
+        shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
@@ -95,31 +123,36 @@ export class UIScene extends Phaser.Scene {
     EventBus.on(GameEvents.GAME_OVER, this.onGameOver, this)
 
     mountTouchControls(this)
-    mountMuteButton(this, 14, 8)
 
     this.events.once('shutdown', this.unbind, this)
     this.events.once('destroy', this.unbind, this)
   }
 
   update(_t: number, dt: number) {
+    if (!this.heartsL.length) return
     const drain = Math.min(1, (dt / 1000) * 8)
     const recover = Math.min(1, (dt / 1000) * 6)
     this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)
     this.dispHpR += (this.targetHpR - this.dispHpR) * (this.targetHpR < this.dispHpR ? drain : recover)
     this.dispMp += (this.targetMp - this.dispMp) * Math.min(1, (dt / 1000) * 10)
-    const full = this.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
-    const empty = this.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
     for (let i = 0; i < this.maxHp; i++) {
-      this.heartsL[i]?.setTexture(i < Math.round(this.dispHpL) ? full : empty)
-      this.heartsR[i]?.setTexture(i < Math.round(this.dispHpR) ? full : empty)
+      this.heartsL[i]?.setTexture(i < Math.round(this.dispHpL) ? this.pipFull : this.pipEmpty)
+      this.heartsR[i]?.setTexture(i < Math.round(this.dispHpR) ? this.pipFull : this.pipEmpty)
     }
     if (this.mpBar) {
       this.mpBar.width = Math.max(0, this.dispMp * this.mpMaxW)
       this.mpBar.fillColor = this.dispMp > 0.55 ? 0x3ec8ff : 0x2a7098
     }
     if (this.mpText) {
-      this.mpText.setText(this.targetMp >= 1 ? '滿・Ｔ放招' : '食蜂蜜')
-      this.mpText.setColor(this.targetMp >= 1 ? '#66eeff' : '#88aacc')
+      const full = this.targetMp >= 1
+      this.mpText.setText(full ? '滿' : '')
+      this.mpText.setVisible(full)
+      if (full) {
+        this.fullBlink += dt
+        this.mpText.setAlpha(0.55 + 0.45 * Math.sin(this.fullBlink / 120))
+      } else {
+        this.mpText.setAlpha(1)
+      }
     }
   }
 
@@ -152,31 +185,12 @@ export class UIScene extends Phaser.Scene {
       this.banner.setVisible(false).setScale(1).setAlpha(1)
       return
     }
-    if (p.win) {
-      this.banner.setStyle({
-        fontSize: '28px',
-        color: '#fff4c8',
-        backgroundColor: '#1a2810f5',
-        stroke: '#e8c040',
-        strokeThickness: 4,
-      })
-    } else if (p.canContinue) {
-      this.banner.setStyle({
-        fontSize: '26px',
-        color: '#ffe08a',
-        backgroundColor: '#280810f5',
-        stroke: '#ff6644',
-        strokeThickness: 4,
-      })
-    } else {
-      this.banner.setStyle({
-        fontSize: '26px',
-        color: '#f7e7c0',
-        backgroundColor: '#120818f2',
-        stroke: '#886040',
-        strokeThickness: 3,
-      })
-    }
+    this.banner.setStyle({
+      fontSize: '16px',
+      color: p.win ? '#fff4c8' : '#ffe08a',
+      backgroundColor: p.win ? '#1a2810f5' : '#280810f5',
+      shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
+    })
     this.banner.setText(p.message ?? '').setVisible(true).setScale(0.86).setAlpha(1)
     this.tweens.add({
       targets: this.banner,

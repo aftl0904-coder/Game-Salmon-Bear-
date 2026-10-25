@@ -4,8 +4,7 @@ import { isMuted, toggleMute, unlockAudio } from './audio'
 import { FONT_UI } from './ui/fonts'
 
 /**
- * Top-left mute toggle — usable on menu + play HUD.
- * Shows 🔊 / 🔇 ; tap or click to toggle (persisted).
+ * HUD mute toggle — icon only (🔊 / 🔇), no text label under the button.
  */
 export function mountMuteButton(
   scene: Phaser.Scene,
@@ -15,7 +14,7 @@ export function mountMuteButton(
   const root = scene.add.container(x, y).setScrollFactor(0).setDepth(DEPTH.UI + 90)
 
   const bg = scene.add
-    .rectangle(0, 0, 28, 22, 0x1a1420, 0.82)
+    .rectangle(0, 0, 22, 16, 0x1a1420, 0.85)
     .setStrokeStyle(1, 0xe0b86a, 0.95)
     .setInteractive({ useHandCursor: true })
 
@@ -26,23 +25,12 @@ export function mountMuteButton(
     })
     .setOrigin(0.5)
 
-  const hint = scene.add
-    .text(0, 12, isMuted() ? '靜音' : '聲音', {
-      fontFamily: FONT_UI,
-      fontSize: '8px',
-      color: '#ffe08a',
-      stroke: '#1a1008',
-      strokeThickness: 2,
-    })
-    .setOrigin(0.5, 0)
-
-  root.add([bg, label, hint])
+  root.add([bg, label])
 
   const refresh = () => {
     const m = isMuted()
     label.setText(m ? '🔇' : '🔊')
-    hint.setText(m ? '靜音' : '聲音')
-    bg.setFillStyle(m ? 0x3a2820 : 0x1a1420, 0.82)
+    bg.setFillStyle(m ? 0x3a2820 : 0x1a1420, 0.85)
   }
   refresh()
 

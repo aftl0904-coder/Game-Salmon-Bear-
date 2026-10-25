@@ -189,5 +189,18 @@
     "colors": 16,
     "license": "project-owned",
     "note": "頂草／中泥／底暗；腳底對齊 GROUND_Y"
+  },
+  {
+    "id": "F-fusion-pixel-12",
+    "name": "Fusion Pixel Font 12px",
+    "source": "fonts/fusion-pixel-12-zh-hk.woff2",
+    "output": [
+      "fonts/fusion-pixel-12-zh-hk.woff2",
+      "fonts/fusion-pixel-12-zh-hant.woff2"
+    ],
+    "license": "SIL Open Font License 1.1",
+    "licenseFile": "fonts/OFL-fusion-pixel.txt",
+    "role": "ui-font",
+    "note": "繁體中文像素字；HUD 僅用 12px／16px；作者 TakWolf / Fusion Pixel"
   }
 ]

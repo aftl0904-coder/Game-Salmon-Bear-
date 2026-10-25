@@ -1,12 +1,51 @@
 import { DEPTH } from './engine/depth'
 import type Phaser from 'phaser'
+import { MAX_HP, GAME_W } from './engine/constants'
+import { FONT_UI } from './ui/fonts'
+import {
+  layoutRow,
+  layoutRowMirror,
+  findOverlaps,
+  type HudBound,
+  type RowItem,
+} from './ui/layoutRow'
+import { isDebugQuery } from './assertIntegerScale'
 
-import { MAX_HP, GAME_W, L } from './engine/constants'
-import { FONT_TITLE, FONT_UI } from './ui/fonts'
+const HUD_H = 32
+const GAP = 6
+const PAD = 4
+const HEART = 8
+const FACE = 16
+const MP_W = 64
+const MP_H = 6
+
+function safeLeftPx(): number {
+  try {
+    const v = getComputedStyle(document.documentElement).getPropertyValue('--safe-left').trim()
+    const n = parseFloat(v)
+    return Number.isFinite(n) ? n : 0
+  } catch {
+    return 0
+  }
+}
+
+function ellipsize(s: string, maxChars: number): string {
+  if (s.length <= maxChars) return s
+  return `${s.slice(0, Math.max(1, maxChars - 1))}…`
+}
+
+function textStyle(size: 12 | 16, color: string): Phaser.Types.GameObjects.Text.TextStyle {
+  return {
+    fontFamily: FONT_UI,
+    fontSize: `${size}px`,
+    color,
+    // 1px shadow instead of thick stroke (crisp CJK pixels)
+    shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
+  }
+}
 
 /**
- * Top HUD: title only (no subtitle), P1 hearts + 絕招 MP on left,
- * 2P hearts on right when duo.
+ * Top HUD (640×360): two 16px rows inside 32px band, layoutRow spacing.
  */
 export function buildStageHud(
   scene: Phaser.Scene,
@@ -16,160 +55,307 @@ export function buildStageHud(
     stageSub?: string
   },
 ) {
+  const inset = PAD + safeLeftPx()
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 40)
-
-  if (scene.textures.exists('ui-hud-wood')) {
-    for (let x = L(32); x < GAME_W; x += L(64)) {
-      root.add(scene.add.image(x, L(34), 'ui-hud-wood').setScale(0.55, 0.75).setAlpha(0.92))
-    }
-  } else {
-    root.add(scene.add.rectangle(GAME_W / 2, L(34), GAME_W, L(72), 0x5a3820, 0.88).setOrigin(0.5))
+  const bounds: HudBound[] = []
+  const track = (
+    id: string,
+    left: number,
+    top: number,
+    w: number,
+    h: number,
+  ) => {
+    bounds.push({ id, left, top, right: left + w, bottom: top + h })
   }
-  root.add(scene.add.rectangle(GAME_W / 2, L(2), GAME_W, L(3), 0xe8c878, 1).setOrigin(0.5))
-  root.add(scene.add.rectangle(GAME_W / 2, L(68), GAME_W, L(3), 0x8a5828, 1).setOrigin(0.5))
 
-  const bannerKey = scene.textures.exists('ui-stage-banner') ? 'ui-stage-banner' : 'ui-scroll'
-  root.add(
-    scene.add.image(GAME_W / 2, L(28), bannerKey).setScale(bannerKey === 'ui-stage-banner' ? 0.55 : 0.58, 0.6),
-  )
-  // Subject only — no description under the title.
+  // Background band
   root.add(
     scene.add
-      .text(GAME_W / 2, L(28), opts.stageTitle, {
-        fontFamily: FONT_TITLE,
-        fontSize: '9px',
-        color: '#2a1810',
-      })
-      .setOrigin(0.5),
+      .rectangle(GAME_W / 2, HUD_H / 2, GAME_W, HUD_H, 0x3a2818, 0.92)
+      .setOrigin(0.5)
+      .setScrollFactor(0),
   )
-  void opts.stageSub
 
   const soloCast = (scene.registry.get('soloCast') as 'boy' | 'girl') || 'boy'
   const mode1p = opts.mode === '1p'
-  const p1Name = mode1p && soloCast === 'girl' ? '1P 琪寶寶' : '1P 倫寶'
+  const p1Name = mode1p && soloCast === 'girl' ? '琪寶寶' : '倫寶'
   const p1Face = mode1p && soloCast === 'girl' ? 'art-girl' : 'art-salmon'
-  if (scene.textures.exists('ui-portrait')) {
-    root.add(scene.add.image(L(30), L(22), 'ui-portrait').setScale(0.45))
-  } else {
-    root.add(scene.add.rectangle(L(30), L(22), L(40), L(40), 0x243048, 0.95).setStrokeStyle(2, 0xe0b86a))
-  }
-  {
-    const face = scene.add.image(L(30), L(22), p1Face)
-    face.setDisplaySize(L(22), L(22))
-    face.setScrollFactor(0)
-    const g = scene.make.graphics({ x: 0, y: 0 })
-    g.setScrollFactor(0)
-    g.fillStyle(0xffffff)
-    g.fillRect(L(19), L(11), L(22), L(22))
-    face.setMask(g.createGeometryMask())
-    root.add(face)
-  }
-  root.add(
-    scene.add.text(L(54), L(2), p1Name, {
-      fontFamily: FONT_UI,
-      fontSize: '10px',
-      color: '#fff4d0',
-      stroke: '#2a1810',
-      strokeThickness: 3,
-    }),
-  )
   const pipFull = scene.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
+  const pipEmpty = scene.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
+
+  const row1Y = 2
+  const row2Y = 16
+
+  // —— Row 1: face | name | hearts ——
   const heartsL: Phaser.GameObjects.Image[] = []
+  const face = scene.add.image(0, 0, p1Face).setOrigin(0, 0).setScrollFactor(0)
+  face.setDisplaySize(FACE, FACE)
+  root.add(face)
+
+  const nameTx = scene.add
+    .text(0, 0, p1Name, textStyle(12, '#fff4d0'))
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+  root.add(nameTx)
+
   for (let i = 0; i < MAX_HP; i++) {
-    const h = scene.add.image(L(60) + i * L(13), L(22), pipFull).setScale(0.55)
+    const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0)
+    h.setDisplaySize(HEART, HEART)
     heartsL.push(h)
     root.add(h)
   }
 
-  // 絕招 MP on P1 side (under hearts).
-  root.add(
-    scene.add
-      .text(L(54), L(42), '絕招', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: '#c8e8ff',
-        stroke: '#102030',
-        strokeThickness: 3,
-      })
-      .setOrigin(0, 0.5),
+  const heartsWidth = MAX_HP * HEART + (MAX_HP - 1) * 1
+  const row1End = layoutRow(
+    [
+      {
+        width: FACE,
+        place: (x) => {
+          face.setPosition(x, row1Y)
+          track('p1-face', x, row1Y, FACE, FACE)
+        },
+      },
+      {
+        width: Math.ceil(nameTx.width),
+        place: (x) => {
+          nameTx.setPosition(x, row1Y + 2)
+          track('p1-name', x, row1Y + 2, nameTx.width, nameTx.height)
+        },
+      },
+      {
+        width: heartsWidth,
+        place: (x) => {
+          for (let i = 0; i < heartsL.length; i++) {
+            const hx = x + i * (HEART + 1)
+            heartsL[i]!.setPosition(hx, row1Y + 4)
+            track(`p1-heart-${i}`, hx, row1Y + 4, HEART, HEART)
+          }
+        },
+      },
+    ] satisfies RowItem[],
+    inset,
+    GAP,
   )
-  const mpTrack = scene.add.rectangle(L(88), L(42), L(120), L(10), 0x102838, 0.95).setOrigin(0, 0.5)
-  mpTrack.setStrokeStyle(2, 0x4a80a8)
+
+  // —— Row 2: 絕招 | bar | 滿 | coin | ×n ——
+  const specialLabel = scene.add
+    .text(0, 0, '絕招', textStyle(12, '#c8e8ff'))
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+  root.add(specialLabel)
+
+  const mpTrack = scene.add
+    .rectangle(0, 0, MP_W, MP_H + 2, 0x102838, 0.95)
+    .setOrigin(0, 0)
+    .setStrokeStyle(1, 0x4a80a8)
+    .setScrollFactor(0)
   root.add(mpTrack)
-  const mpBar = scene.add.rectangle(L(90), L(42), 0, L(6), 0x3ec8ff, 1).setOrigin(0, 0.5)
+  const mpBar = scene.add
+    .rectangle(0, 0, 0, MP_H, 0x3ec8ff, 1)
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
   root.add(mpBar)
+
   const mpText = scene.add
-    .text(L(214), L(42), '空', {
-      fontFamily: FONT_UI,
-      fontSize: '12px',
-      color: '#a8d8ff',
-      stroke: '#102030',
-      strokeThickness: 3,
-    })
-    .setOrigin(0, 0.5)
+    .text(0, 0, '', textStyle(12, '#66eeff'))
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
+    .setVisible(false)
   root.add(mpText)
 
-  root.add(scene.add.image(L(270), L(42), 'coin').setScale(1))
+  const coinIcon = scene.add.image(0, 0, 'coin').setOrigin(0, 0).setScrollFactor(0)
+  coinIcon.setDisplaySize(12, 12)
+  root.add(coinIcon)
   const coinText = scene.add
-    .text(L(282), L(42), '×5', {
-      fontFamily: FONT_UI,
-      fontSize: '14px',
-      color: '#ffe08a',
-      stroke: '#2a1810',
-      strokeThickness: 3,
-    })
-    .setOrigin(0, 0.5)
+    .text(0, 0, '×5', textStyle(12, '#ffe08a'))
+    .setOrigin(0, 0)
+    .setScrollFactor(0)
   root.add(coinText)
 
+  // 「滿」slot width: reserve 12px so layout doesn't jump when MP fills
+  const fullSlotW = 12
+  const row2End = layoutRow(
+    [
+      {
+        width: Math.ceil(specialLabel.width),
+        place: (x) => {
+          specialLabel.setPosition(x, row2Y)
+          track('special-label', x, row2Y, specialLabel.width, specialLabel.height)
+        },
+      },
+      {
+        width: MP_W,
+        place: (x) => {
+          mpTrack.setPosition(x, row2Y + 3)
+          mpBar.setPosition(x + 1, row2Y + 4)
+          track('mp-track', x, row2Y + 3, MP_W, MP_H + 2)
+        },
+      },
+      {
+        width: fullSlotW,
+        place: (x) => {
+          mpText.setPosition(x, row2Y)
+          track('mp-full', x, row2Y, fullSlotW, 12)
+        },
+      },
+      {
+        width: 12,
+        place: (x) => {
+          coinIcon.setPosition(x, row2Y + 2)
+          track('coin-icon', x, row2Y + 2, 12, 12)
+        },
+      },
+      {
+        width: Math.ceil(coinText.width),
+        place: (x) => {
+          coinText.setPosition(x, row2Y)
+          track('coin-text', x, row2Y, coinText.width, coinText.height)
+        },
+      },
+    ] satisfies RowItem[],
+    inset,
+    GAP,
+  )
+
+  // Mute — top-right corner of HUD, icon only
+  const muteX = GAME_W - inset - 22
+  const muteY = 4
+  track('mute-slot', muteX, muteY, 22, 16)
+
+  // —— P2 mirror (right), ending left of mute slot ——
   const heartsR: Phaser.GameObjects.Image[] = []
+  let p2Left = muteX
   if (opts.mode === '2p') {
-    if (scene.textures.exists('ui-portrait')) {
-      root.add(scene.add.image(L(930), L(22), 'ui-portrait').setScale(0.45))
-    } else {
-      root.add(scene.add.rectangle(L(930), L(22), L(40), L(40), 0x402438, 0.95).setStrokeStyle(2, 0xe89ab8))
-    }
-    {
-      const face = scene.add.image(L(930), L(22), 'art-girl')
-      face.setDisplaySize(22, 22)
-      face.setScrollFactor(0)
-      const g = scene.make.graphics({ x: 0, y: 0 })
-      g.setScrollFactor(0)
-      g.fillStyle(0xffffff)
-      g.fillRect(L(919), L(11), L(22), L(22))
-      face.setMask(g.createGeometryMask())
-      root.add(face)
-    }
-    root.add(
-      scene.add
-        .text(L(906), L(2), '2P 琪寶寶', {
-          fontFamily: FONT_UI,
-          fontSize: '14px',
-          color: '#fff0f6',
-          stroke: '#2a1810',
-          strokeThickness: 3,
-        })
-        .setOrigin(1, 0),
-    )
+    const p2Face = scene.add.image(0, 0, 'art-girl').setOrigin(0, 0).setScrollFactor(0)
+    p2Face.setDisplaySize(FACE, FACE)
+    root.add(p2Face)
+    const p2Name = scene.add
+      .text(0, 0, '琪寶寶', textStyle(12, '#fff0f6'))
+      .setOrigin(0, 0)
+      .setScrollFactor(0)
+    root.add(p2Name)
     for (let i = 0; i < MAX_HP; i++) {
-      const h = scene.add.image(L(840) + i * L(13), L(22), pipFull).setScale(0.55)
+      const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0)
+      h.setDisplaySize(HEART, HEART)
       heartsR.push(h)
       root.add(h)
     }
+    // Mirror order matches P1 visual (face at outer edge): face → name → hearts, RTL from mute
+    p2Left = layoutRowMirror(
+      [
+        {
+          width: FACE,
+          place: (x) => {
+            p2Face.setPosition(x, row1Y)
+            track('p2-face', x, row1Y, FACE, FACE)
+          },
+        },
+        {
+          width: Math.ceil(p2Name.width),
+          place: (x) => {
+            p2Name.setPosition(x, row1Y + 2)
+            track('p2-name', x, row1Y + 2, p2Name.width, p2Name.height)
+          },
+        },
+        {
+          width: heartsWidth,
+          place: (x) => {
+            for (let i = 0; i < heartsR.length; i++) {
+              const hx = x + i * (HEART + 1)
+              heartsR[i]!.setPosition(hx, row1Y + 4)
+              track(`p2-heart-${i}`, hx, row1Y + 4, HEART, HEART)
+            }
+          },
+        },
+      ] satisfies RowItem[],
+      muteX - GAP,
+      GAP,
+    )
   }
+
+  // Stage title centered in remaining space (between P1 cluster and P2/mute)
+  const leftClusterEnd = Math.max(row1End, row2End)
+  const titleZoneLeft = leftClusterEnd + GAP
+  const titleZoneRight = (opts.mode === '2p' ? p2Left : muteX) - GAP
+  const titleAvail = Math.max(24, titleZoneRight - titleZoneLeft)
+  let title = opts.stageTitle
+  const stageTx = scene.add
+    .text(0, 0, title, textStyle(12, '#2a1810'))
+    .setOrigin(0.5, 0.5)
+    .setScrollFactor(0)
+  let chipW = Math.ceil(stageTx.width) + 16
+  let maxChars = title.length
+  while (chipW > titleAvail && maxChars > 2) {
+    maxChars -= 1
+    title = ellipsize(opts.stageTitle, maxChars)
+    stageTx.setText(title)
+    chipW = Math.ceil(stageTx.width) + 16
+  }
+  chipW = Math.min(chipW, titleAvail)
+  const chip = scene.add
+    .rectangle(0, 0, chipW, 18, 0xe8c878, 0.95)
+    .setStrokeStyle(1, 0x8a5828)
+    .setScrollFactor(0)
+  const titleCenterX = Math.round((titleZoneLeft + titleZoneRight) / 2)
+  chip.setPosition(titleCenterX, HUD_H / 2)
+  stageTx.setPosition(titleCenterX, HUD_H / 2)
+  root.add(chip)
+  root.add(stageTx)
+  track('stage-title', titleCenterX - chipW / 2, HUD_H / 2 - 9, chipW, 18)
+  void opts.stageSub
 
   const scoreText = scene.add.text(-999, -999, '').setVisible(false)
   root.add(scoreText)
 
   const info = scene.add
-    .text(GAME_W / 2, L(518), '', {
+    .text(GAME_W / 2, scene.scale.height - 18, '', {
       fontFamily: FONT_UI,
-      fontSize: '11px',
+      fontSize: '12px',
       color: '#fff8e0',
       backgroundColor: '#4a2a18cc',
-      padding: { x: 16, y: 8 },
+      padding: { x: 10, y: 4 },
+      shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
     })
     .setOrigin(0.5)
+    .setScrollFactor(0)
   root.add(info)
+
+  // Debug bounds
+  const overlaps = findOverlaps(bounds)
+  ;(
+    window as unknown as {
+      __SAKE_HUD_BOUNDS__: HudBound[]
+      __SAKE_HUD_OVERLAPS__: { count: number; pairs: { a: string; b: string }[] }
+    }
+  ).__SAKE_HUD_BOUNDS__ = bounds
+  ;(
+    window as unknown as {
+      __SAKE_HUD_OVERLAPS__: { count: number; pairs: { a: string; b: string }[] }
+    }
+  ).__SAKE_HUD_OVERLAPS__ = { count: overlaps.length, pairs: overlaps }
+
+  if (isDebugQuery()) {
+    for (const b of bounds) {
+      root.add(
+        scene.add
+          .rectangle(
+            (b.left + b.right) / 2,
+            (b.top + b.bottom) / 2,
+            b.right - b.left,
+            b.bottom - b.top,
+            0xff0000,
+            0,
+          )
+          .setStrokeStyle(1, 0xff3333, 0.9)
+          .setScrollFactor(0),
+      )
+    }
+    if (overlaps.length) {
+      console.warn('[hud] overlaps:', overlaps)
+    } else {
+      console.log('[hud] bounds overlap = 0')
+    }
+  }
 
   return {
     root,
@@ -180,7 +366,10 @@ export function buildStageHud(
     scoreText,
     mpBar,
     mpText,
-    mpMaxW: L(116),
+    mpMaxW: MP_W - 2,
     maxHp: MAX_HP,
+    muteAnchor: { x: muteX, y: muteY },
+    pipFull,
+    pipEmpty,
   }
 }
