@@ -34,7 +34,7 @@ export class MainMenuScene extends Phaser.Scene {
   create() {
     const { width, height } = this.scale
     this.cameras.main.setBackgroundColor('#6a9ec8')
-    this.cameras.main.fadeIn(360, 70, 120, 150)
+    this.cameras.main.fadeIn(300, 70, 120, 150)
     this.cursor = 0
     this.starting = false
     this.registry.set('leavingToMenu', false)
@@ -375,8 +375,8 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.registry.set('stageRound', 1)
-    // 過場黑畫面至少 1 秒
-    this.cameras.main.fadeOut(1000, 0, 0, 0)
-    this.time.delayedCall(1000, () => this.scene.start('play'))
+    // 過場黑幕 0.3s 淡出 → 下一場淡入
+    this.cameras.main.fadeOut(300, 0, 0, 0)
+    this.time.delayedCall(300, () => this.scene.start('play'))
   }
 }

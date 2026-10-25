@@ -246,7 +246,7 @@ export class GameScene extends Phaser.Scene {
 
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.physics.world.setBounds(0, 0, WORLD_W, WORLD_H)
-    this.cameras.main.fadeIn(350, 40, 100, 140)
+    this.cameras.main.fadeIn(300, 40, 100, 140)
 
     unlockAudio()
     startBgm()
@@ -429,10 +429,10 @@ export class GameScene extends Phaser.Scene {
     }
     this.registry.set('winScreenShown', false)
     this.stopUi()
-    // 過場黑畫面至少 1 秒，再回選單
+    // 過場黑幕 0.3s 淡出 → 選單淡入
     const play = this
     try {
-      play.cameras.main.fadeOut(1000, 0, 0, 0)
+      play.cameras.main.fadeOut(300, 0, 0, 0)
     } catch {
       /* camera may be gone */
     }
@@ -448,7 +448,7 @@ export class GameScene extends Phaser.Scene {
       } finally {
         play.game.registry.set('leavingToMenu', false)
       }
-    }, 1000)
+    }, 300)
   }
 
   private emitHealth() {
