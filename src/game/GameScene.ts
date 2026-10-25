@@ -67,7 +67,6 @@ import {
   SWORD_HIT_MS,
   PET_FOLLOW_BEHIND,
   ACTOR_DISPLAY_SCALE,
-  HERO_SIZE_MUL,
   GIRL_SCALE_MUL,
   PET_HEIGHT_FRAC,
   PROJ_DISPLAY_SCALE,
@@ -99,6 +98,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
+import { addGroundShadow } from './shadow'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -123,13 +123,13 @@ export class GameScene extends Phaser.Scene {
   /** 2P only — null in 1P（單人只有倫寶） */
   private girl: Hero | null = null
   private pet: Phaser.Physics.Arcade.Sprite | null = null
-  private petShadow: Phaser.GameObjects.Image | null = null
+  private petShadow: Phaser.GameObjects.Ellipse | null = null
   /** 琪寶寶長劍（電風扇已 bake 喺角色背脊，唔再用獨立 fan sprite） */
   private sword: Phaser.GameObjects.Image | null = null
   /** 刺刺魚小彈 */
   private enemyShots!: Phaser.Physics.Arcade.Group
-  private boyShadow!: Phaser.GameObjects.Image
-  private girlShadow: Phaser.GameObjects.Image | null = null
+  private boyShadow!: Phaser.GameObjects.Ellipse
+  private girlShadow: Phaser.GameObjects.Ellipse | null = null
   /** Soft margin inside camera for duo same-screen walls (2P). */
   private static readonly CAM_EDGE_PAD = 48
   private ground!: Phaser.Physics.Arcade.StaticGroup
@@ -888,21 +888,27 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Snap actors + shadows onto the integer pixel grid after motion/FX. */
+  /** Snap actors onto the integer pixel grid after motion/FX. Ground ellipses self-update. */
   private snapPixelArt() {
     const enemies = (this.enemies?.getChildren() ?? []) as Creep[]
     snapWorldActors({
       heroes: [this.boy, this.girl].filter(Boolean) as Hero[],
       pet: this.pet ?? undefined,
       enemies,
-      shadows: [this.boyShadow, this.girlShadow, this.petShadow].filter(Boolean) as Phaser.GameObjects.Image[],
-      shadowSources: [
-        { x: this.boy.x, y: this.boy.y, oy: 4 },
-        ...(this.girl ? [{ x: this.girl.x, y: this.girl.y, oy: 4 }] : []),
-        ...(this.pet ? [{ x: this.pet.x, y: this.pet.y, oy: 4 }] : []),
-      ],
+      shadows: [],
+      shadowSources: [],
       extras: [this.sword].filter((o): o is Phaser.GameObjects.Image => !!o),
     })
+  }
+
+  /** Feet contact Y for ground-shadow (lane floor; jump lift fades the ellipse). */
+  private groundYFor(target: Phaser.GameObjects.Sprite | Phaser.Physics.Arcade.Sprite): number {
+    const lane =
+      typeof (target as Hero).lane === 'number'
+        ? (target as Hero).lane
+        : (target.getData('lane') as LaneId | undefined)
+    if (lane !== undefined && lane !== null) return laneY(clampLane(lane))
+    return GROUND_Y
   }
 
   private moveBoy(dt: number) {
@@ -1391,20 +1397,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private syncFx() {
-    this.boyShadow.setPosition(this.boy.x, laneY(this.boy.lane) + 4)
-    this.boyShadow.setDepth(DEPTH.SHADOW)
+    // Ground shadows (ellipse) self-update via addGroundShadow.
     const g = this.girlHero()
     if (!g) return
-    if (this.girl) {
-      this.girlShadow?.setPosition(g.x, laneY(g.lane) + 4)
-      this.girlShadow?.setDepth(DEPTH.SHADOW)
-    }
-    if (this.pet && this.petShadow) {
-      this.petShadow.setPosition(this.pet.x, laneY(g.lane) + 4)
-      this.petShadow.setDepth(DEPTH.SHADOW)
-      const ps = this.petScaleForGirl(g)
-      this.petShadow.setScale(Math.max(0.45, ps * 1.1), 0.4)
-    }
     if (this.sword) {
       const swing = g.atkCd > 80
       const grip = this.girlSwordAnchor(g, swing)
@@ -1911,7 +1906,6 @@ export class GameScene extends Phaser.Scene {
   private spawnCast() {
     const grace = this.time.now + 1400
     const soloCast = (this.registry.get('soloCast') as 'boy' | 'girl') || 'boy'
-    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.girl = null
     this.pet = null
     this.sword = null
@@ -1928,11 +1922,7 @@ export class GameScene extends Phaser.Scene {
       })
       this.boy.snapToLane(lane, x)
       this.entities.add(this.boy, 'player')
-      this.boyShadow = this.add
-        .image(x, y + 4, shad)
-        .setDepth(DEPTH.SHADOW)
-        .setAlpha(0.55)
-        .setScale(0.55 * HERO_SIZE_MUL, 0.32)
+      this.boyShadow = addGroundShadow(this, this.boy, (t) => this.groundYFor(t))
       this.attachGirlGear(this.boy, lane)
       return
     }
@@ -1945,11 +1935,7 @@ export class GameScene extends Phaser.Scene {
     })
     this.boy.snapToLane(boyLane, boyX)
     this.entities.add(this.boy, 'player')
-    this.boyShadow = this.add
-      .image(boyX, boyY + 4, shad)
-      .setDepth(DEPTH.SHADOW)
-      .setAlpha(0.55)
-      .setScale(0.55 * HERO_SIZE_MUL, 0.32)
+    this.boyShadow = addGroundShadow(this, this.boy, (t) => this.groundYFor(t))
 
     if (this.mode !== '2p') return
 
@@ -1961,17 +1947,12 @@ export class GameScene extends Phaser.Scene {
     })
     this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.girl, 'player')
-    this.girlShadow = this.add
-      .image(girlX, girlY + 4, shad)
-      .setDepth(DEPTH.SHADOW)
-      .setAlpha(0.55)
-      .setScale(0.55 * HERO_SIZE_MUL, 0.32)
+    this.girlShadow = addGroundShadow(this, this.girl, (t) => this.groundYFor(t))
     this.attachGirlGear(this.girl, girlLane)
   }
 
   /** 琪寶寶 sword／噗噗 — 電風扇已 stamp 喺 art-girl 背脊. */
   private attachGirlGear(g: Hero, lane: LaneId) {
-    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const petStartX = g.x - PET_FOLLOW_BEHIND
     this.pet = this.physics.add.sprite(petStartX, g.y, 'art-bear')
     this.pet.setOrigin(0.5, 1)
@@ -1994,12 +1975,7 @@ export class GameScene extends Phaser.Scene {
       .setScale(grip.scale)
       .setAngle(-18)
     enableActorSprite(this.sword)
-    const ps = this.petScaleForGirl(g)
-    this.petShadow = this.add
-      .image(petStartX, g.y + 4, shad)
-      .setDepth(DEPTH.SHADOW)
-      .setAlpha(0.35)
-      .setScale(Math.max(0.45, ps * 1.1), 0.4)
+    this.petShadow = addGroundShadow(this, this.pet, (t) => this.groundYFor(t), 0.85)
   }
 
   private wirePhysics() {
@@ -2733,6 +2709,7 @@ export class GameScene extends Phaser.Scene {
       },
     })
     this.entities.add(e, 'enemy')
+    addGroundShadow(this, e, (t) => this.groundYFor(t), 0.65)
     return e
   }
 
