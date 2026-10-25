@@ -261,6 +261,7 @@ export class GameScene extends Phaser.Scene {
     this.drawWorld()
     this.buildLevel()
     this.spawnCast()
+    this.applyStageLighting()
     this.wirePhysics()
     this.setupCameraFollow()
     this.bindKeys()
@@ -1605,6 +1606,35 @@ export class GameScene extends Phaser.Scene {
         this.ambientCritters.splice(i, 1)
         this.respawnAmbientKind(kind)
       }
+    }
+  }
+
+  /** Multiply veil + optional WebGL point lights from data/environment.json (ST-01 default). */
+  private applyStageLighting() {
+    const stageId = (this.registry.get('stageId') as string) || 'ST-01'
+    const env = environmentById(stageId) ?? environmentById('ST-01')
+    if (!env?.lighting) return
+    const lit = env.lighting as {
+      lightX?: number
+      lightY?: number
+      shadeColor?: string
+      pointLights?: { x: number; y: number; radius: number; color: number; intensity: number }[]
+    }
+    if (lit.shadeColor != null && lit.lightX != null && lit.lightY != null) {
+      addStageLighting(this, {
+        id: env.id,
+        lightX: lit.lightX,
+        lightY: lit.lightY,
+        shadeColor: lit.shadeColor,
+      })
+    }
+    const sprites: Phaser.GameObjects.GameObject[] = []
+    if (this.boy) sprites.push(this.boy)
+    if (this.girl) sprites.push(this.girl)
+    if (this.pet) sprites.push(this.pet)
+    for (const e of this.enemies?.getChildren() ?? []) sprites.push(e as Phaser.GameObjects.GameObject)
+    if (lit.pointLights?.length) {
+      addPointLights(this, sprites, lit.pointLights)
     }
   }
 

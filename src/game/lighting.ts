@@ -29,6 +29,7 @@ export function addStageLighting(
   const key = `light-${cfg.id}`
   if (!scene.textures.exists(key)) {
     const tex = scene.textures.createCanvas(key, W, H)
+    if (!tex) throw new Error(`createCanvas failed for ${key}`)
     const ctx = tex.getContext()
     const lx = W * cfg.lightX
     const ly = H * cfg.lightY
@@ -52,7 +53,7 @@ export function addStageLighting(
  */
 export function addPointLights(
   scene: Phaser.Scene,
-  sprites: Phaser.GameObjects.Sprite[],
+  sprites: Phaser.GameObjects.GameObject[],
   lights: PointLightDef[],
 ): void {
   try {
@@ -63,7 +64,13 @@ export function addPointLights(
       scene.lights.addLight(l.x, l.y, l.radius, l.color, l.intensity)
     }
     for (const s of sprites) {
-      if (s?.active) s.setPipeline('Light2D')
+      const pipe = s as Phaser.GameObjects.GameObject & {
+        active?: boolean
+        setPipeline?: (name: string) => void
+      }
+      if (pipe.active && typeof pipe.setPipeline === 'function') {
+        pipe.setPipeline('Light2D')
+      }
     }
   } catch {
     /* WebGL Light2D unsupported — skip quietly */
