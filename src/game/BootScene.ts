@@ -126,7 +126,7 @@ export class BootScene extends Phaser.Scene {
       coinsStart: 5,
     })
 
-    this.scene.start('logo')
+    this.scene.start('studio')
   }
 
   /** Prefer cel PNG coin over procedural koban paint (heroes + coin share style). */
