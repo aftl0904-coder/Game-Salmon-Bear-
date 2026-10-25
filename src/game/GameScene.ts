@@ -1351,7 +1351,8 @@ export class GameScene extends Phaser.Scene {
     const followY = laneY(g.lane)
     const dx = followX - pet.x
     const dy = followY - pet.y
-    const speed = this.petJetting ? 260 : 360
+    // −20% with cast move pack (was 260 / 360).
+    const speed = this.petJetting ? Math.round(260 * 0.8) : Math.round(360 * 0.8)
     const dist = Math.hypot(dx, dy)
     if (dist > 6) {
       const nx = dx / dist

@@ -20,6 +20,12 @@ import {
   WALK_FRAMES,
 } from './pixelSnap'
 import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
+import {
+  BAKE_RES_FACTOR,
+  OUTLINE_WIDTH,
+  OUTLINE_INK,
+  SOFT_AA_FACTOR,
+} from './engine/constants'
 
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
@@ -104,8 +110,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   /**
-   * Actors (heroes/enemies/weapons): higher-res bilinear + LINEAR (AA).
-   * Scene/tiles/landmarks stay chunky NEAREST SNES pixel.
+   * Shared resolution + outer border for cast / weapons / props.
+   * Same bake factor + same outline width so nothing looks sharper/softer alone.
    */
   private bakeCastTextures() {
     stampFanOntoGirl(this)
@@ -119,11 +125,8 @@ export class BootScene extends Phaser.Scene {
       'art-enemy-barrel',
       'art-enemy-elephant',
     ] as const
-    for (const key of actors) {
-      // 3× supersample + LINEAR; gameplay uses ACTOR_DISPLAY_SCALE (≈ old 2× size).
-      bakeSmoothActorTexture(this, key, 3)
-    }
-    for (const key of [
+    const playObjects = [
+      ...actors,
       'prop-sword',
       'prop-enemy-knife',
       'prop-enemy-spear',
@@ -131,27 +134,33 @@ export class BootScene extends Phaser.Scene {
       'prop-enemy-trunk',
       'fx-salmon-shot',
       'fx-fish-bullet',
+      'fx-honey',
+      'fx-elephant-trunk-0',
+      'fx-elephant-trunk-1',
       'fan3d',
       'prop-fan',
-      // Soft-bake pickups/props so they share cast AA (not harsh NEAREST vs wallpaper)
       'prop-honey-stack',
+      'prop-honey-pot',
       'hazard-durian',
       'pickup-sushi',
       'goal3d',
       'pot3d',
       'chest3d',
+      'crate3d',
+      'coin',
       'prop-tent',
       'prop-picnic-table',
       'prop-campfire',
       'prop-picnic',
-    ]) {
-      if (this.textures.exists(key)) bakeSmoothActorTexture(this, key, 2)
-    }
+      'prop-shrine',
+      'blk-spike',
+    ] as const
 
-    // Outline + soft AA on base frames BEFORE walk/idle bake so anims match.
-    for (const key of actors) {
-      thickenSpriteOutline(this, key, 2, [18, 14, 12])
-      softAaSameSize(this, key, 2)
+    for (const key of playObjects) {
+      if (!this.textures.exists(key)) continue
+      bakeSmoothActorTexture(this, key, BAKE_RES_FACTOR)
+      thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
+      softAaSameSize(this, key, SOFT_AA_FACTOR)
       setActorLinearFilter(this, key)
     }
 
@@ -169,31 +178,9 @@ export class BootScene extends Phaser.Scene {
   }
 
   /**
-   * Outline policy — shared cel rim so cast + props align (wallpaper stays soft/far).
+   * Far scenery — same outline width/ink as play objects (aligned borders).
    */
   private thickenPropOutlines() {
-    const ink: [number, number, number] = [18, 14, 12]
-    const interactables = [
-      'pot3d',
-      'chest3d',
-      'goal3d',
-      'crate3d',
-      'prop-honey-stack',
-      'hazard-durian',
-      'blk-spike',
-      'pickup-sushi',
-      'coin',
-      'prop-tent',
-      'prop-picnic-table',
-      'prop-campfire',
-      'prop-picnic',
-      'prop-shrine',
-    ]
-    for (const key of interactables) {
-      thickenSpriteOutline(this, key, 2, ink)
-      softAaSameSize(this, key, 2)
-    }
-    // Far scenery — thinner rim only
     for (const key of [
       'prop-tree3d',
       'prop-house3d',
@@ -211,7 +198,9 @@ export class BootScene extends Phaser.Scene {
       'lm-cloud-3',
       'lm-river',
     ]) {
-      thickenSpriteOutline(this, key, 1, ink)
+      if (!this.textures.exists(key)) continue
+      thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
+      softAaSameSize(this, key, SOFT_AA_FACTOR)
     }
   }
 

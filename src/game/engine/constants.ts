@@ -57,11 +57,16 @@ export const BG_NEAR_TINT = 0xd2e0d4
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */
 export const COINS_PER_HP = 10
-/** Player move speed −20% vs prior 280. */
-export const BOY_SPEED = Math.round(280 * 0.8)
+/** Player move speed: prior 280 → ×0.8 → ×0.8 again (−20% this pack). */
+export const BOY_SPEED = Math.round(280 * 0.8 * 0.8)
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
-/** 敵人接近／追擊速度 = 倫寶 × 0.3（慢行進攻） */
+/** 敵人接近／追擊速度 = 倫寶 × 0.3（跟主角一齊慢） */
 export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
+/** Shared bake / outline pipeline — keep cast + props resolution aligned. */
+export const BAKE_RES_FACTOR = 3
+export const OUTLINE_WIDTH = 2
+export const OUTLINE_INK: [number, number, number] = [18, 14, 12]
+export const SOFT_AA_FACTOR = 2
 /** 每隔幾秒隨機定住一個敵人（ms 範圍） */
 export const ENEMY_STAGGER_EVERY_MIN_MS = 3000
 export const ENEMY_STAGGER_EVERY_MAX_MS = 4000
@@ -95,15 +100,15 @@ export const ENEMY_ATTACK_DMG = 1
 
 /**
  * World Arcade gravity (px/s²).
- * Higher than floaty 1500 — apex ~0.28s, peak ~97px with JUMP_V.
+ * Higher than floaty 1500 — apex ~0.33s with JUMP_V.
  */
 export const GRAVITY_Y = 2600
 
 /**
- * Jump impulse (px/s). Snappy rise; pair with JUMP_CUT + FALL_GRAVITY_MUL.
- * h = v² / (2g) ≈ 710² / 5200 ≈ 97px — slight hang vs raw -700.
+ * Jump impulse (px/s). Higher hop for readability.
+ * h ≈ v² / (2g) ≈ 880² / 5200 ≈ 149px.
  */
-export const JUMP_V = -710
+export const JUMP_V = -880
 
 /** Variable jump: multiply rising vy once when jump is released. */
 export const JUMP_CUT = 0.5
