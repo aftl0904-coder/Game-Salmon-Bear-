@@ -213,6 +213,7 @@ export class GameScene extends Phaser.Scene {
     this.stageBeat = 0
     this.startedAt = this.time.now
     this.registry.set('wave1Announced', false)
+    this.registry.set('winScreenShown', false)
     this.entities.clear()
     this.ambientBees = []
     this.specialCharges = 0
@@ -1848,27 +1849,32 @@ export class GameScene extends Phaser.Scene {
 
   private checkWin() {
     if (this.ended || !this.started) return
-    if (this.bossOn) {
-      const alive = this.enemies.getChildren().some((o) => {
-        const e = o as Creep
-        return e.active && e.boss
-      })
-      if (alive) return
-    } else return
-    if (this.boyGoal && this.girlGoal) {
-      const timeSec = (this.time.now - this.startedAt) / 1000
-      this.scorePts = calcScore({
-        timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl?.hp ?? 0, deaths: this.deaths,
-      })
-      saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
-      this.win()
-    }
+    if (!this.bossOn) return
+    const bossAlive = this.enemies.getChildren().some((o) => {
+      const e = o as Creep
+      return e.active && e.boss
+    })
+    if (bossAlive) return
+    // 1P: solo hero on goal. 2P: both on goal.
+    if (!(this.boyGoal && this.girlGoal)) return
+    const timeSec = (this.time.now - this.startedAt) / 1000
+    this.scorePts = calcScore({
+      timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl?.hp ?? 0, deaths: this.deaths,
+    })
+    saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
+    this.win()
   }
 
-  /** Round-1 clear: joy screen with cast hug + 第2關待續 + one menu button. */
+  /**
+   * Stage clear → full-screen joy cutscene (not stuck on gameplay cam).
+   * 倫寶＋琪寶寶＋噗噗 hug, 「第２關・待續」, button → character select.
+   */
   private win() {
+    if (this.registry.get('winScreenShown')) return
+    this.registry.set('winScreenShown', true)
     this.ended = true
     this.awaitingContinue = false
+    this.physics.pause()
     this.boy.setVelocity(0, 0)
     this.girl?.setVelocity(0, 0)
     this.boy.setVisible(false)
@@ -1879,129 +1885,126 @@ export class GameScene extends Phaser.Scene {
     this.petShadow?.setVisible(false)
     this.fan?.setVisible(false)
     this.sword?.setVisible(false)
+    this.enemies?.setVisible(false)
+    // Hide in-game HUD so only the clear screen shows.
+    if (this.scene.isActive('UIScene')) this.scene.stop('UIScene')
+    EventBus.emit(GameEvents.GAME_OVER, { active: false })
+
     SFX.win()
-    this.cameras.main.flash(420, 255, 220, 140)
     this.cameras.main.stopFollow()
+    this.cameras.main.setScroll(0, 0)
+    this.cameras.main.fadeIn(280, 255, 236, 180)
 
-    const cam = this.cameras.main
-    const cx = cam.scrollX + 480
-    const cy = 270
-    const overlay = this.add.container(cx, cy).setDepth(DEPTH.UI + 80).setScrollFactor(0)
+    // scrollFactor 0 + screen center (NOT world X) — stage end cam was hiding the old overlay.
+    const overlay = this.add.container(480, 270).setDepth(DEPTH.UI + 120).setScrollFactor(0)
 
-    const bg = this.add.rectangle(0, 0, 960, 540, 0x1a2840, 0.55).setOrigin(0.5)
-    overlay.add(bg)
-    // Confetti dots
-    for (let i = 0; i < 28; i++) {
-      const colors = [0xffe08a, 0xff8899, 0x66ddff, 0xa8f070, 0xffcc44, 0xff66aa]
-      const d = this.add
-        .circle(
-          Phaser.Math.Between(-440, 440),
-          Phaser.Math.Between(-240, 240),
-          Phaser.Math.Between(3, 7),
-          colors[i % colors.length]!,
-          0.9,
-        )
+    const sky = this.add.rectangle(0, 0, 960, 540, 0x7ec8f0, 1).setOrigin(0.5)
+    overlay.add(sky)
+    const wash = this.add.rectangle(0, 80, 960, 380, 0xffe8b0, 0.55).setOrigin(0.5)
+    overlay.add(wash)
+
+    for (let i = 0; i < 36; i++) {
+      const colors = [0xffe08a, 0xff8899, 0x66ddff, 0xa8f070, 0xffcc44, 0xff66aa, 0xffffff]
+      const d = this.add.circle(
+        Phaser.Math.Between(-460, 460),
+        Phaser.Math.Between(-250, 250),
+        Phaser.Math.Between(3, 8),
+        colors[i % colors.length]!,
+        0.95,
+      )
       overlay.add(d)
       this.tweens.add({
         targets: d,
-        y: d.y + Phaser.Math.Between(40, 120),
-        alpha: 0.35,
-        duration: 1400 + (i % 5) * 200,
+        y: d.y + Phaser.Math.Between(50, 140),
+        alpha: 0.3,
+        duration: 1200 + (i % 6) * 180,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.inOut',
       })
     }
 
-    const panel = this.add.rectangle(0, 10, 620, 360, 0xfff6e0, 0.96).setStrokeStyle(5, 0xe8a040)
+    const panel = this.add.rectangle(0, 8, 640, 380, 0xfff8ec, 0.98).setStrokeStyle(6, 0xe8a040)
     overlay.add(panel)
 
     const title = this.add
-      .text(0, -140, '◆ 第１關　通關！◆', {
+      .text(0, -150, '◆ 第１關　通關！◆', {
         fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '36px',
+        fontSize: '38px',
         color: '#c44828',
         stroke: '#ffe8a0',
-        strokeThickness: 6,
+        strokeThickness: 7,
       })
       .setOrigin(0.5)
     overlay.add(title)
 
-    // Cast hug — boy + girl + bear together
-    const hugY = -10
-    const boy = this.add.image(-70, hugY, 'art-salmon').setScale(1.35).setOrigin(0.5, 1)
-    const girl = this.add.image(70, hugY, 'art-girl').setScale(1.35).setOrigin(0.5, 1)
-    const bear = this.add.image(0, hugY + 8, 'art-bear').setScale(1.55).setOrigin(0.5, 1)
+    // Always show both characters + bear hugging together.
+    const hugY = 8
+    const boy = this.add.image(-78, hugY, 'art-salmon').setScale(1.55).setOrigin(0.5, 1)
+    const girl = this.add.image(78, hugY, 'art-girl').setScale(1.55).setOrigin(0.5, 1)
+    const bear = this.add.image(0, hugY + 10, 'art-bear').setScale(1.75).setOrigin(0.5, 1)
     enablePixelSprite(boy)
     enablePixelSprite(girl)
     enablePixelSprite(bear)
     overlay.add([boy, girl, bear])
     this.tweens.add({
       targets: [boy, girl, bear],
-      y: '-=10',
+      y: '-=12',
       duration: 520,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.inOut',
     })
-    this.tweens.add({
-      targets: boy,
-      angle: -6,
-      duration: 480,
-      yoyo: true,
-      repeat: -1,
-    })
-    this.tweens.add({
-      targets: girl,
-      angle: 6,
-      duration: 480,
-      yoyo: true,
-      repeat: -1,
-    })
+    this.tweens.add({ targets: boy, angle: -8, duration: 480, yoyo: true, repeat: -1 })
+    this.tweens.add({ targets: girl, angle: 8, duration: 480, yoyo: true, repeat: -1 })
+    this.tweens.add({ targets: bear, scale: 1.85, duration: 560, yoyo: true, repeat: -1 })
 
-    const joy = this.add
-      .text(0, 88, '倫寶・琪寶寶・噗噗　開心擁抱！', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '20px',
-        color: '#5a3020',
-      })
-      .setOrigin(0.5)
-    overlay.add(joy)
+    overlay.add(
+      this.add
+        .text(0, 95, '倫寶・琪寶寶・噗噗　開心擁抱！', {
+          fontFamily: 'Noto Sans TC, sans-serif',
+          fontSize: '20px',
+          color: '#5a3020',
+        })
+        .setOrigin(0.5),
+    )
 
-    const next = this.add
-      .text(0, 122, '第２關　・　待續', {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '24px',
-        color: '#2a6890',
-        backgroundColor: '#d8f0ff',
-        padding: { x: 16, y: 6 },
-      })
-      .setOrigin(0.5)
-    overlay.add(next)
+    overlay.add(
+      this.add
+        .text(0, 132, '第２關　・　待續', {
+          fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
+          fontSize: '26px',
+          color: '#1a6088',
+          backgroundColor: '#d8f0ff',
+          padding: { x: 18, y: 8 },
+        })
+        .setOrigin(0.5),
+    )
 
-    const btnBg = this.add.rectangle(0, 168, 280, 48, 0xe07a4f, 1).setStrokeStyle(3, 0xffe08a).setInteractive({ useHandCursor: true })
+    const btnBg = this.add
+      .rectangle(0, 182, 300, 52, 0xe07a4f, 1)
+      .setStrokeStyle(3, 0xffe08a)
+      .setInteractive({ useHandCursor: true })
     const btnTx = this.add
-      .text(0, 168, '回主選單', {
+      .text(0, 182, '回角色選擇', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '22px',
+        fontSize: '24px',
         color: '#fff8e0',
         stroke: '#4a2010',
         strokeThickness: 4,
       })
       .setOrigin(0.5)
     overlay.add([btnBg, btnTx])
-    const toMenu = () => {
+    const toSelect = () => {
       btnBg.disableInteractive()
+      this.registry.set('winScreenShown', false)
       this.goMenu()
     }
     btnBg.on('pointerover', () => btnBg.setFillStyle(0xf09060))
     btnBg.on('pointerout', () => btnBg.setFillStyle(0xe07a4f))
-    btnBg.on('pointerdown', toMenu)
-    this.input.keyboard?.once('keydown-ENTER', toMenu)
-    this.input.keyboard?.once('keydown-SPACE', toMenu)
-
-    // Hide old text GAME_OVER banner — joy overlay owns the win UI.
-    EventBus.emit(GameEvents.GAME_OVER, { active: false })
+    btnBg.on('pointerdown', toSelect)
+    this.input.keyboard?.once('keydown-ENTER', toSelect)
+    this.input.keyboard?.once('keydown-SPACE', toSelect)
   }
 
   private lose(msg: string) {
