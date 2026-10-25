@@ -34,7 +34,7 @@ await page.waitForTimeout(1200)
 const measures = await page.evaluate(() => {
   const g = window.__SAKE_GAME__
   if (!g) return { error: 'no game' }
-  const sc = g.scene.getScene('game') || g.scene.getScenes(true).find((s) => s.sys?.settings?.key === 'game')
+  const sc = g.scene.getScene('play') || g.scene.getScenes(true).find((s) => s.sys?.settings?.key === 'play')
   if (!sc) return { error: 'no game scene', scenes: g.scene.getScenes(true).map((s) => s.sys?.settings?.key) }
   const boy = sc.boy
   const girl = sc.girl
