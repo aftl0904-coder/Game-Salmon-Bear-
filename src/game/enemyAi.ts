@@ -220,34 +220,34 @@ export type AiCtx = {
 }
 
 function applyPose(e: Creep) {
+  // Pixel-safe poses: quantized scale, no continuous ±5° shear (NEAREST shreds).
+  const q = (sx: number, sy: number, ang = 0) => {
+    e.setScale(Math.round(e.baseScale * sx * 20) / 20, Math.round(e.baseScale * sy * 20) / 20)
+    e.setAngle(Math.round(ang))
+  }
   if (e.state === 'die') {
-    e.setAngle(e.poseAngle)
-    e.setScale(e.baseScale * 1.05, e.baseScale * 0.72)
+    q(1.05, 0.72, Math.round(e.poseAngle))
     return
   }
   if (e.state === 'hurt') {
-    e.setAngle(e.poseAngle)
-    e.setScale(e.baseScale * 1.08, e.baseScale * 0.88)
+    q(1.08, 0.88, Math.round(e.poseAngle))
     return
   }
   if (e.state === 'windup' || e.state === 'pause') {
-    e.setAngle(0)
-    e.setScale(e.baseScale * 1.12, e.baseScale * 0.86)
+    q(1.12, 0.86, 0)
     return
   }
   if (e.state === 'charge' || e.state === 'attack' || e.state === 'hop') {
-    e.setAngle(e.chargeDir * 10)
-    e.setScale(e.baseScale * 0.92, e.baseScale * 1.1)
+    q(0.92, 1.1, e.chargeDir * 8)
     return
   }
   const vx = Math.abs((e.body as Phaser.Physics.Arcade.Body)?.velocity.x ?? 0)
   if (vx > 8) {
     const t = performance.now() * 0.012
-    e.setAngle(Math.sin(t) * 5 * e.patrolDir)
-    e.setScale(e.baseScale * (1 + Math.sin(t) * 0.03), e.baseScale * (1 - Math.sin(t) * 0.04))
+    const step = Math.sin(t) >= 0 ? 1 : -1
+    q(1 + step * 0.03, 1 - step * 0.04, 0)
   } else {
-    e.setAngle(0)
-    e.setScale(e.baseScale)
+    q(1, 1, 0)
   }
 }
 

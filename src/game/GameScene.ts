@@ -1,5 +1,14 @@
 import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager } from './fx'
+import {
+  setDiePoseVisual,
+  setHurtPoseVisual,
+  setIdlePose,
+  setJumpPose,
+  setRunPose,
+  snapCameraScroll,
+  snapWorldActors,
+} from './pixelSnap'
 import { SFX, startBgm, unlockAudio } from './audio'
 import { calcScore, saveScore } from './score'
 import {
@@ -123,9 +132,12 @@ export class GameScene extends Phaser.Scene {
   /** Stage beat index: 0 flat → 1 platforms → 2 ambush → 3 altar */
   private stageBeat = 0
   private water!: Phaser.GameObjects.TileSprite
+  private waterMid?: Phaser.GameObjects.TileSprite
+  private waterFoam?: Phaser.GameObjects.TileSprite
   private clouds!: Phaser.GameObjects.TileSprite
   private mountFar!: Phaser.GameObjects.TileSprite
   private mountNear!: Phaser.GameObjects.TileSprite
+  private villageBand?: Phaser.GameObjects.TileSprite
   /** Entity registry — players/enemies/projectiles live here, not in HUD. */
   private entities = new EntityManager()
   private debugOverlay!: DebugOverlay
@@ -183,17 +195,22 @@ export class GameScene extends Phaser.Scene {
   }
 
   private setupCameraFollow() {
-    // Round-1 feel: soft follow lerp 0.1 + world bounds (tightens near altar too).
+    // Round-1 feel: soft follow + world bounds. roundPixels must stay on for pixelArt.
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
+    this.cameras.main.setRoundPixels(true)
     this.camTarget = this.add.zone((this.boy.x + this.girl.x) / 2, WORLD_H / 2, 1, 1)
-    this.cameras.main.startFollow(this.camTarget, true, 0.1, 0.1)
+    this.cameras.main.startFollow(this.camTarget, true, 0.12, 0.12)
     this.cameras.main.setDeadzone(110, 56)
   }
 
   private updateCameraFollow() {
     if (!this.camTarget || !this.boy || !this.girl) return
     const midX = (this.boy.x + this.girl.x) / 2
-    this.camTarget.setPosition(Phaser.Math.Clamp(midX, 480, WORLD_W - 480), WORLD_H / 2)
+    this.camTarget.setPosition(
+      Math.round(Phaser.Math.Clamp(midX, 480, WORLD_W - 480)),
+      WORLD_H / 2,
+    )
+    snapCameraScroll(this.cameras.main)
   }
 
   private onSceneShutdown() {
@@ -350,6 +367,7 @@ export class GameScene extends Phaser.Scene {
     this.updateEnemies(dt)
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
+    this.snapPixelArt()
     this.animateBg()
     this.checkFall()
     this.updateCheckpoint()
@@ -555,8 +573,7 @@ export class GameScene extends Phaser.Scene {
 
   private applyHeroPose(h: Hero, grounded: boolean, vx: number) {
     if (h.hp <= 0 || h.pose === 'die') {
-      h.setAngle(h.facing * 90)
-      h.setScale(h.baseScale * 1.05, h.baseScale * 0.7)
+      setDiePoseVisual(h, h.baseScale, h.facing)
       return
     }
     if (h.pose === 'hurt' || h.hurtLock > 0) {
@@ -566,8 +583,7 @@ export class GameScene extends Phaser.Scene {
         // fall through to idle/run/jump posing below
       } else {
         h.pose = 'hurt'
-        h.setAngle(h.facing * -22)
-        h.setScale(h.baseScale * 1.1, h.baseScale * 0.86)
+        setHurtPoseVisual(h, h.baseScale, h.facing)
         return
       }
     }
@@ -580,22 +596,34 @@ export class GameScene extends Phaser.Scene {
     }
     if (!grounded) {
       h.pose = 'jump'
-      h.setScale(h.baseScale * 0.94, h.baseScale * 1.08)
-      h.setAngle(h.facing * -8)
+      setJumpPose(h, h.baseScale, h.facing)
       return
     }
     if (Math.abs(vx) > 12) {
       h.pose = 'run'
       h.walkPhase += Math.abs(vx) * 0.0005
-      const bob = Math.sin(h.walkPhase) * 0.05
-      h.setScale(h.baseScale * (1 + bob * 0.35), h.baseScale * (1 - bob))
-      h.setAngle(Math.sin(h.walkPhase) * 5 * h.facing)
+      setRunPose(h, h.baseScale, h.walkPhase)
       return
     }
     h.pose = 'idle'
-    const breathe = Math.sin(this.time.now / 380) * 0.02
-    h.setScale(h.baseScale * (1 + breathe), h.baseScale * (1 - breathe))
-    h.setAngle(0)
+    setIdlePose(h, h.baseScale, this.time.now)
+  }
+
+  /** Snap actors + shadows onto the integer pixel grid after motion/FX. */
+  private snapPixelArt() {
+    const enemies = (this.enemies?.getChildren() ?? []) as Creep[]
+    snapWorldActors({
+      heroes: [this.boy, this.girl],
+      pet: this.pet,
+      enemies,
+      shadows: [this.boyShadow, this.girlShadow, this.petShadow],
+      shadowSources: [
+        { x: this.boy.x, y: this.boy.y, oy: 4 },
+        { x: this.girl.x, y: this.girl.y, oy: 4 },
+        { x: this.pet.x, y: this.pet.y, oy: 42 },
+      ],
+      extras: [this.fan, this.fanGlow],
+    })
   }
 
   private moveBoy(dt: number) {
@@ -803,7 +831,7 @@ export class GameScene extends Phaser.Scene {
           knockbackY: -200,
           now: this.time.now,
         })
-        // Snap back onto the shared ground plane (same Y as enemies).
+        // Snap back onto hero's lane track.
         snapToGroundPlane(h, Math.max(80, h.x - 80), GROUND_Y)
         h.setVelocity(0, -200)
         applyHurtPose(h, -h.facing)
@@ -891,51 +919,127 @@ export class GameScene extends Phaser.Scene {
 
   private animateBg() {
     const sx = this.cameras.main.scrollX
-    this.water.tilePositionX = sx * 0.45 + this.time.now * 0.025
-    this.clouds.tilePositionX = sx * 0.08 + this.time.now * 0.005
+    const t = this.time.now
+    this.water.tilePositionX = sx * 0.45 + t * 0.025
+    if (this.waterMid) this.waterMid.tilePositionX = sx * 0.5 + t * 0.032
+    if (this.waterFoam) this.waterFoam.tilePositionX = sx * 0.55 + t * 0.04
+    this.clouds.tilePositionX = sx * 0.08 + t * 0.005
     if (this.mountFar) this.mountFar.tilePositionX = sx * 0.12
+    if (this.villageBand) this.villageBand.tilePositionX = sx * 0.18
     if (this.mountNear) this.mountNear.tilePositionX = sx * 0.28
   }
 
+  private placeDecor(x: number, key: string, scale: number, shadScale = 1, flip = false) {
+    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
+    this.add
+      .image(x + 4, GROUND_Y + 5, shad)
+      .setDepth(2)
+      .setAlpha(0.42)
+      .setScale(shadScale * 0.9, shadScale * 0.55)
+    if (!this.textures.exists(key)) return
+    this.add
+      .image(x, GROUND_Y, key)
+      .setOrigin(0.5, 1)
+      .setDepth(3.2)
+      .setScale(scale)
+      .setFlipX(flip)
+  }
+
   private drawWorld() {
-    const g = this.add.graphics().setDepth(-45)
-    g.fillStyle(0x7ec8f0, 1)
+    const g = this.add.graphics().setDepth(-50)
+    // layered dawn sky (volumetric wash)
+    g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
-    g.fillStyle(0xb8e4ff, 1)
-    g.fillRect(0, 0, WORLD_W, 140)
-    g.fillStyle(0xffe8b0, 0.45)
-    g.fillRect(0, 170, WORLD_W, 180)
+    g.fillStyle(0xa8d8f5, 1)
+    g.fillRect(0, 0, WORLD_W, 150)
+    g.fillStyle(0xffe8b0, 0.5)
+    g.fillRect(0, 160, WORLD_W, 200)
     g.fillStyle(0xfff6d0, 0.55)
-    g.fillCircle(160, 70, 70)
+    g.fillCircle(160, 70, 78)
     g.fillStyle(0xffe08a, 1)
-    g.fillCircle(160, 70, 28)
+    g.fillCircle(160, 70, 30)
 
-    this.clouds = this.add.tileSprite(480, 58, 960, 56, 'bg-cloud').setScrollFactor(0).setDepth(-40).setAlpha(0.8)
-    this.mountFar = this.add.tileSprite(480, 250, 960, 80, 'bg-mount-far').setScrollFactor(0).setDepth(-35).setAlpha(0.9)
-    this.mountNear = this.add.tileSprite(480, 310, 960, 70, 'bg-mount-near').setScrollFactor(0).setDepth(-30)
-
-    for (let x = 160; x < WORLD_W; x += 260) {
-      this.add.image(x + 8, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.55).setScale(1.1, 0.8)
-      this.add.image(x, GROUND_Y, 'prop-tree3d').setOrigin(0.5, 1).setDepth(3).setScale(1.2)
+    if (this.textures.exists('bg-sky')) {
+      this.add.tileSprite(480, 100, 960, 200, 'bg-sky').setScrollFactor(0).setDepth(-48).setAlpha(0.5)
     }
-    for (let x = 400; x < WORLD_W; x += 700) {
-      this.add.image(x + 30, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.5).setScale(1.6, 0.7)
-      this.add.image(x, GROUND_Y, 'prop-torii').setOrigin(0.5, 1).setDepth(3).setScale(1.1)
-      this.add.image(x + 130, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.45).setScale(1.3, 0.7)
-      this.add.image(x + 130, GROUND_Y, 'prop-house3d').setOrigin(0.5, 1).setDepth(3).setScale(1.2)
-      if (x + 280 < WORLD_W) {
-        this.add.image(x + 280, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.4).setScale(1.1, 0.65)
-        this.add.image(x + 280, GROUND_Y, 'prop-house3d').setOrigin(0.5, 1).setDepth(3).setScale(1.0).setFlipX(true)
+
+    this.clouds = this.add
+      .tileSprite(480, 52, 960, 56, 'bg-cloud')
+      .setScrollFactor(0)
+      .setDepth(-42)
+      .setAlpha(0.82)
+    this.mountFar = this.add
+      .tileSprite(480, 235, 960, 96, 'bg-mount-far')
+      .setScrollFactor(0)
+      .setDepth(-38)
+      .setAlpha(0.92)
+    if (this.textures.exists('bg-village')) {
+      this.villageBand = this.add
+        .tileSprite(480, 285, 960, 56, 'bg-village')
+        .setScrollFactor(0)
+        .setDepth(-34)
+        .setAlpha(0.85)
+    }
+    this.mountNear = this.add
+      .tileSprite(480, 318, 960, 88, 'bg-mount-near')
+      .setScrollFactor(0)
+      .setDepth(-30)
+
+    // Trees — denser mid-ground
+    for (let x = 140; x < WORLD_W; x += 220) {
+      this.placeDecor(x, 'prop-tree3d', 1.15 + ((x / 220) % 3) * 0.08, 1.15)
+    }
+    // Torii + houses — shrine town rhythm
+    for (let x = 380; x < WORLD_W; x += 680) {
+      this.placeDecor(x, 'prop-torii', 1.12, 1.7)
+      this.placeDecor(x + 140, 'prop-house3d', 1.2, 1.35)
+      if (x + 300 < WORLD_W) this.placeDecor(x + 300, 'prop-house3d', 1.0, 1.15, true)
+      if (this.textures.exists('prop-shrine')) this.placeDecor(x + 60, 'prop-shrine', 1.1, 0.85)
+    }
+    // Salmon nobori banners
+    for (let x = 240; x < WORLD_W; x += 320) {
+      if (this.textures.exists('prop-banner')) this.placeDecor(x, 'prop-banner', 1.35, 0.5)
+    }
+    // Lanterns along path
+    for (let x = 70; x < WORLD_W; x += 160) {
+      this.placeDecor(x, 'prop-lantern3d', 1.25, 0.5)
+    }
+    // Honey stacks + bushes + rocks (thematic set dressing)
+    for (let x = 500; x < WORLD_W; x += 520) {
+      if (this.textures.exists('prop-honey-stack')) this.placeDecor(x + 40, 'prop-honey-stack', 1.2, 0.85)
+      if (this.textures.exists('prop-bush')) this.placeDecor(x - 50, 'prop-bush', 1.3, 0.7)
+    }
+    for (let x = 200; x < WORLD_W; x += 290) {
+      if (this.textures.exists('fg-rock')) {
+        this.add.image(x, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.3).setScale(0.55, 0.4)
+        this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(3.4).setScale(1.3)
+      }
+      if (this.textures.exists('fg-reed')) {
+        this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(3.6).setScale(1.2)
       }
     }
-    for (let x = 80; x < WORLD_W; x += 180) {
-      this.add.image(x, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.35).setScale(0.55, 0.55)
-      this.add.image(x, GROUND_Y, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(3.5).setScale(1.2)
+    // Wooden bridges over creek gaps (visual span between banks)
+    if (this.textures.exists('prop-bridge')) {
+      for (const bx of [520, 920, 1860, 2740]) {
+        this.add.image(bx, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.35).setScale(1.8, 0.45)
+        this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(3.1).setScale(1.6)
+      }
     }
 
-    this.water = this.add.tileSprite(480, 518, 960, 48, 'water-deep').setScrollFactor(0).setDepth(1)
+    this.water = this.add.tileSprite(480, 522, 960, 52, 'water-deep').setScrollFactor(0).setDepth(1)
+    if (this.textures.exists('water-mid')) {
+      this.waterMid = this.add
+        .tileSprite(480, 505, 960, 28, 'water-mid')
+        .setScrollFactor(0)
+        .setDepth(1.5)
+        .setAlpha(0.75)
+    }
     if (this.textures.exists('water-foam')) {
-      this.add.tileSprite(480, 496, 960, 12, 'water-foam').setScrollFactor(0).setDepth(2).setAlpha(0.85)
+      this.waterFoam = this.add
+        .tileSprite(480, 494, 960, 12, 'water-foam')
+        .setScrollFactor(0)
+        .setDepth(2)
+        .setAlpha(0.9)
     }
   }
 
@@ -976,7 +1080,9 @@ export class GameScene extends Phaser.Scene {
     this.spikes(2700, 3)
 
     // First pot near spawn so early smash juice lands in the opening seconds.
+    const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     for (const x of [380, 1200, 2050, 3000]) {
+      this.add.image(x, GROUND_Y + 4, shadKey).setDepth(3).setAlpha(0.4).setScale(0.7, 0.5)
       const pot = this.pots.create(x, GROUND_Y - 40, 'pot3d') as Phaser.Physics.Arcade.Sprite
       pot.setScale(1.45).setDepth(4)
       ;(pot as Breakable).breakKind = 'pot'
@@ -988,6 +1094,7 @@ export class GameScene extends Phaser.Scene {
     this.spawnCoin(760, 240 - 36)
     this.spawnCoin(1720, 250 - 36)
 
+    this.add.image(WORLD_W - 140, GROUND_Y + 6, shadKey).setDepth(3).setAlpha(0.5).setScale(1.6, 0.65)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
     this.goal.setImmovable(true).setScale(1.35).setDepth(4)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -1150,7 +1257,7 @@ export class GameScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n噗噗（ＡＩ）始終跟隨琪寶寶\n琪寶寶受傷 → 噗噗噴蜜\n角色可重疊、互不推擠\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n上／中／下三線　｜　ＷＳ／↑↓換線　｜　Ｋ／２跳躍\n同線先打得到　｜　噗噗跟琪寶寶線\n琪寶寶受傷 → 噗噗噴蜜\n\n按空白鍵或點擊畫面開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -1174,8 +1281,8 @@ export class GameScene extends Phaser.Scene {
       box.destroy()
       this.emitScore(
         this.mode === '1p'
-          ? '單人：倫寶ＪＫＵＩ｜琪寶寶＋噗噗同行｜Ｒ回選單'
-          : '雙人：倫寶ＪＫＵＩ　琪寶寶數字鍵｜噗噗跟隨｜Ｒ回選單',
+          ? '單人：ＷＳ換線　Ｋ跳　Ｊ攻擊｜琪寶寶＋噗噗同行｜Ｒ回選單'
+          : '雙人：ＷＳ／↑↓換線　Ｋ／２跳｜噗噗跟線｜Ｒ回選單',
       )
     }
     this.time.delayedCall(180, () => {
@@ -1303,7 +1410,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Public for smoke / continue path — spends one coin and respawns on shared ground plane. */
+  /** Public for smoke / continue path — spends one coin and respawns on mid lane. */
   insertCoinContinue() {
     if (!this.awaitingContinue || this.coinStock <= 0) return
     this.coinStock -= 1

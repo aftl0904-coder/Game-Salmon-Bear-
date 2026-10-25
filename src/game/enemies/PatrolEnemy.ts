@@ -448,37 +448,36 @@ export class PatrolEnemy extends Enemy {
   }
 
   private applyPose() {
+    // Pixel-safe: quantized scale, discrete angles — no continuous micro-shear.
+    const q = (sx: number, sy: number, ang = 0) => {
+      this.setScale(Math.round(this.baseScale * sx * 20) / 20, Math.round(this.baseScale * sy * 20) / 20)
+      this.setAngle(Math.round(ang))
+    }
     if (this.fsm === 'DEAD') {
-      this.setAngle(this.poseAngle)
-      this.setScale(this.baseScale * 1.05, this.baseScale * 0.72)
+      q(1.05, 0.72, this.poseAngle)
       return
     }
     if (this.fsm === 'HURT') {
-      this.setAngle(this.poseAngle)
-      this.setScale(this.baseScale * 1.08, this.baseScale * 0.88)
+      q(1.08, 0.88, this.poseAngle)
       return
     }
     if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
-      // Pull-back lean — telegraph "about to lunge"
-      const lean = -this.patrolDir * 8
-      this.setAngle(lean)
-      this.setScale(this.baseScale * 1.16, this.baseScale * 0.82)
+      // Pull-back telegraph without shredding NEAREST columns.
+      q(1.12, 0.86, -this.patrolDir * 6)
       this.setTint(0xff1111)
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
-      this.setAngle(this.chargeDir * 10)
-      this.setScale(this.baseScale * 0.92, this.baseScale * 1.1)
+      q(0.92, 1.1, this.chargeDir * 8)
       return
     }
     const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body)?.velocity.x ?? 0)
     if (vx > 8) {
       const t = performance.now() * 0.012
-      this.setAngle(Math.sin(t) * 5 * this.patrolDir)
-      this.setScale(this.baseScale * (1 + Math.sin(t) * 0.03), this.baseScale * (1 - Math.sin(t) * 0.04))
+      const step = Math.sin(t) >= 0 ? 1 : -1
+      q(1 + step * 0.03, 1 - step * 0.04, 0)
     } else {
-      this.setAngle(0)
-      this.setScale(this.baseScale)
+      q(1, 1, 0)
     }
   }
 }
