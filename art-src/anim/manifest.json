@@ -710,5 +710,157 @@
     "rows": 1,
     "facing": "front",
     "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage2/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/story/cover.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 title key art: 倫寶 orange hoodie salmon gun + 琪寶寶 cream top sword fan + 噗噗 original bear before 百畝樹林 golden hour faint triangle shadow; top 35% empty for logo; NO TEXT. Refs model-sheets."
+  },
+  {
+    "file": "art-src/story/c1-picnic.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 cutscene picnic 噗噗 tasting honey. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c1-hollow.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 噗噗 grey hollow triangle shadow over forest. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c1-mama.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 咖啡媽媽 at coffee cart serious. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c2-note.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 blank paper note with triangle pin. NO TEXT on note."
+  },
+  {
+    "file": "art-src/story/c3-queen.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 honey-crown queen bee calmed on hive. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c4-taxi.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 taxi rain night 咖啡媽媽 coffee through window. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c5-bus.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 quiet bus fog midnight calm no faces. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c6-screen.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 dark office blank glowing screen. NO TEXT on screen."
+  },
+  {
+    "file": "art-src/story/c7-boss.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 suit silhouette triangle mask control room. NO TEXT."
+  },
+  {
+    "file": "art-src/story/ending-1.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 噗噗 awake jumping forest colour returning. NO TEXT."
+  },
+  {
+    "file": "art-src/story/ending-2.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 three picnic sunset warm happy. NO TEXT."
+  },
+  {
+    "file": "art-src/story/credits-bg.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 calm forest night fireflies empty centre. NO TEXT."
+  },
+  {
+    "file": "art-src/portraits/lunbo.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr neutral/happy/shocked 倫寶 orange hoodie."
+  },
+  {
+    "file": "art-src/portraits/kibobo.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 琪寶寶 cream top ponytail."
+  },
+  {
+    "file": "art-src/portraits/pupu.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 噗噗 original bear blue ribbon."
+  },
+  {
+    "file": "art-src/portraits/pupu-hollow.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 噗噗 hollow grey."
+  },
+  {
+    "file": "art-src/portraits/coffee-mama.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 咖啡媽媽."
+  },
+  {
+    "file": "art-src/portraits/queen-bee.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 蜜冠女王蜂."
   }
 ]
