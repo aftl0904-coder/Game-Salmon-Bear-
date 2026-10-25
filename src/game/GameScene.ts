@@ -903,7 +903,7 @@ export class GameScene extends Phaser.Scene {
     const g = this.girl
     const awayFromBoy = Math.sign(g.x - this.boy.x) || -g.facing
     const side = awayFromBoy !== 0 ? awayFromBoy : -g.facing
-    const followX = g.x + side * 70
+    const followX = g.x + side * 84
     const followY = laneY(g.lane)
     const dx = followX - this.pet.x
     const dy = followY - this.pet.y
@@ -1010,14 +1010,14 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(this.mountFar)
     if (this.textures.exists('bg-village')) {
       this.villageBand = this.add
-        .tileSprite(480, 268, 960, 64, 'bg-village')
+        .tileSprite(480, 264, 960, 64, 'bg-village')
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
         .setAlpha(0.85)
       enablePixelSprite(this.villageBand)
     }
     this.mountNear = this.add
-      .tileSprite(480, 332, 960, 64, 'bg-mount-near')
+      .tileSprite(480, 336, 960, 64, 'bg-mount-near')
       .setScrollFactor(0)
       .setDepth(DEPTH.MOUNT_NEAR)
     enablePixelSprite(this.mountNear)
