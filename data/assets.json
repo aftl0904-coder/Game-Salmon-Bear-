@@ -30,14 +30,133 @@
     "note": "原創夥伴；來源現為 40px，待重畫至 56px 細節"
   },
   {
-    "id": "E-fish",
-    "name": "鮭魚敵",
-    "source": "fish-enemy.png",
-    "output": "fish-enemy.png",
+    "id": "E-01",
+    "name": "紅魚",
+    "source": "enemies/E-01.png",
+    "output": "enemies/E-01.png",
     "targetHeightPx": 40,
-    "colors": 64,
-    "license": "project-owned",
-    "role": "enemy-small"
+    "frameWidth": 36,
+    "frameHeight": 40,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-small",
+    "runtimeTex": "art-enemy",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位；待正式原畫"
+  },
+  {
+    "id": "E-02",
+    "name": "機械豬",
+    "source": "enemies/E-02.png",
+    "output": "enemies/E-02.png",
+    "targetHeightPx": 72,
+    "frameWidth": 64,
+    "frameHeight": 72,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-heavy",
+    "runtimeTex": "art-enemy-barrel",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位；待正式原畫"
+  },
+  {
+    "id": "E-03",
+    "name": "帽仔兵",
+    "source": "enemies/E-03.png",
+    "output": "enemies/E-03.png",
+    "targetHeightPx": 56,
+    "frameWidth": 40,
+    "frameHeight": 56,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-mid",
+    "runtimeTex": "art-enemy-elephant",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位（暫接重型 runtime key）；待正式原畫"
+  },
+  {
+    "id": "E-04",
+    "name": "刺球",
+    "source": "enemies/E-04.png",
+    "output": "enemies/E-04.png",
+    "targetHeightPx": 40,
+    "frameWidth": 40,
+    "frameHeight": 40,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-small",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位；尚未接入 runtime"
+  },
+  {
+    "id": "E-05",
+    "name": "蜜蜂",
+    "source": "enemies/E-05.png",
+    "output": "enemies/E-05.png",
+    "targetHeightPx": 40,
+    "frameWidth": 40,
+    "frameHeight": 40,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-flyer",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位；ambient critter 尚未換圖"
+  },
+  {
+    "id": "E-06",
+    "name": "滾動怪",
+    "source": "enemies/E-06.png",
+    "output": "enemies/E-06.png",
+    "targetHeightPx": 56,
+    "frameWidth": 48,
+    "frameHeight": 56,
+    "colors": 32,
+    "license": "project-owned-placeholder",
+    "role": "enemy-mid",
+    "frames": {
+      "idle": 4,
+      "walk": 4,
+      "telegraph": 2,
+      "attack": 3,
+      "hurt": 1,
+      "die": 3
+    },
+    "note": "剪影佔位；尚未接入 runtime"
   },
   {
     "id": "I-coin",
@@ -48,5 +167,27 @@
     "colors": 32,
     "license": "project-owned",
     "role": "item"
+  },
+  {
+    "id": "BG-wallpaper",
+    "name": "遠景",
+    "source": "bg-wallpaper.jpg",
+    "output": "bg-wallpaper-px.png",
+    "targetWidthPx": 640,
+    "targetHeightPx": 360,
+    "colors": 64,
+    "license": "project-owned",
+    "note": "lanczos3 + 64 色像素化"
+  },
+  {
+    "id": "T-ground",
+    "name": "地面 tile",
+    "source": "tiles/ground-*.png",
+    "output": "tiles/ground-0..3.png",
+    "tileSizePx": 16,
+    "variants": 4,
+    "colors": 16,
+    "license": "project-owned",
+    "note": "頂草／中泥／底暗；腳底對齊 GROUND_Y"
   }
 ]

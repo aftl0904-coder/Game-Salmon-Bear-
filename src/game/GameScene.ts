@@ -1653,14 +1653,15 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts = []
 
     if (this.textures.exists('bg-wallpaper')) {
-      // Far upper wallpaper — soft warm fog (no blue veil covering the art).
+      // Far upper wallpaper — pixel nearest (640×360 ≤64c).
       const roadTop = GROUND_Y - 80
-      this.add
+      const bg = this.add
         .image(GAME_W / 2, Math.round(roadTop * 0.42), 'bg-wallpaper')
         .setScrollFactor(0.018, 0)
         .setDepth(DEPTH.SKY_BAND)
         .setDisplaySize(GAME_W + L(80), Math.round(roadTop * 0.9))
-        .setAlpha(0.72)
+        .setAlpha(0.85)
+      bg.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
       // Warm mist only near the road edge — blends into play space, not a blue wash.
       const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
       mist.fillStyle(0xf0ebe0, 0.18)
@@ -1677,7 +1678,31 @@ export class GameScene extends Phaser.Scene {
       this.placeSparseLandmarks()
     }
 
+    this.buildGroundTiles()
     this.buildRiverBand()
+  }
+
+  /**
+   * 16px ground tiles (≥4 variants) filling ~20% of screen height under feet.
+   * Top of first row aligns with GROUND_Y (character feet).
+   */
+  private buildGroundTiles() {
+    const TS = 16
+    const bandH = Math.round(GAME_H * 0.2)
+    const rows = Math.max(4, Math.ceil(bandH / TS))
+    for (let row = 0; row < rows; row++) {
+      for (let col = 0; col * TS < WORLD_W + TS; col++) {
+        const v = (col + row * 3) % 4
+        const key = `tile-ground-${v}`
+        if (!this.textures.exists(key)) continue
+        const x = col * TS + TS / 2
+        const y = GROUND_Y + row * TS + TS / 2
+        this.add
+          .image(Math.round(x), Math.round(y), key)
+          .setDepth(DEPTH.GROUND)
+          .setOrigin(0.5)
+      }
+    }
   }
 
   /** Layered creek under the road — flowing water + foam + sparkle. */

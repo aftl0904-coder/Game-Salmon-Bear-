@@ -9,6 +9,13 @@ function paint(
   h: number,
   draw: (set: (x: number, y: number, c: RGB, a?: number) => void) => void,
 ) {
+  // Prefer PNG / spritesheet placeholders already loaded (enemy art swap).
+  if (
+    key.startsWith('art-enemy') &&
+    scene.textures.exists(`enemy-sheet-${key === 'art-enemy' ? 'E-01' : key === 'art-enemy-barrel' ? 'E-02' : 'E-03'}`)
+  ) {
+    return
+  }
   const canvas = document.createElement('canvas')
   canvas.width = w
   canvas.height = h

@@ -19,6 +19,7 @@ import {
 } from './pixelSnap'
 import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { applyEnemyPlaceholderTextures, ENEMY_SHEET_MAP } from './enemyPlaceholders'
 import {
   BAKE_RES_FACTOR,
   OUTLINE_WIDTH,
@@ -82,9 +83,15 @@ export class BootScene extends Phaser.Scene {
     this.load.image('art-enemy', '/art/fish-enemy.png')
     // Cel coin (salmon emblem) — overrides procedural paint after registers.
     this.load.image('coin-cel', '/art/coin.png')
-    // Pretty wallpaper 貼圖 — Flash/phone look without hand-building mountains
-    this.load.image('bg-wallpaper', '/art/bg-wallpaper.jpg')
+    // Pixel wallpaper (640×360 ≤64c)
+    this.load.image('bg-wallpaper', '/art/bg-wallpaper-px.png')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
+    for (const meta of Object.values(ENEMY_SHEET_MAP)) {
+      this.load.image(`enemy-sheet-${meta.id}`, `/art/enemies/${meta.id}.png`)
+    }
+    for (let v = 0; v < 4; v++) {
+      this.load.image(`tile-ground-${v}`, `/art/tiles/ground-${v}.png`)
+    }
     preloadRound1Map(this)
   }
 
@@ -94,6 +101,8 @@ export class BootScene extends Phaser.Scene {
     registerHoneyArt(this)
     registerIsoArt(this)
     registerUiArt(this)
+    const swapped = applyEnemyPlaceholderTextures(this)
+    this.registry.set('enemyPlaceholders', swapped)
     this.applyCelCoinTexture()
     this.bakeCastTextures()
     this.thickenPropOutlines()
