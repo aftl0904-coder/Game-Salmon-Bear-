@@ -5,7 +5,8 @@
 
 let ctx: AudioContext | null = null
 let master: GainNode | null = null
-let bgmNodes: AudioNode[] = []
+/** Scheduled BGM sources (pruned as they finish; stopped on song change). */
+let bgmNodes: Array<{ n: AudioScheduledSourceNode; end: number }> = []
 let bgmPlaying = false
 let muted = false
 let bgmTimer: number | null = null
@@ -258,131 +259,296 @@ export const SFX = {
   },
 }
 
-/**
- * Warm riverside pad BGM — soft sine/triangle, gentle pulse (phone/Flash vibe).
- */
-export function startBgm() {
-  if (bgmPlaying || muted) return
-  const c = ensureRunning()
-  bgmPlaying = true
-  bgmNodes = []
+// ── Chiptune sequencer (original compositions, synthesised live) ─────────────
+//
+// Each song is a set of step strings (one token per 16th note):
+//   note "A5" / "C#6" / "Bb4" starts a note · "-" holds it · "." is a rest.
+//   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
+// Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-  const tempo = 92
-  const beat = 60 / tempo
-  // Pentatonic riverside melody — slower, airy
-  const melody: Array<[number, number]> = [
-    [0, 392], [1.5, 440], [3, 523], [4.5, 494],
-    [6, 440], [7.5, 392], [9, 349], [10.5, 392],
-    [12, 440], [13.5, 523], [15, 587], [16.5, 523],
-    [18, 494], [19.5, 440], [21, 392], [22.5, 349],
-  ]
-  const bass = [98, 98, 110, 98, 130.81, 123.47, 110, 98] as const
-  const pads: Array<[number, number, number, number]> = [
-    [0, 196, 247, 294],
-    [8, 175, 220, 262],
-    [16, 220, 277, 330],
-  ]
+type SongId = 'title' | 'stage1' | 'ambush'
+type Song = {
+  bpm: number
+  chords: string[]
+  lead: string
+  drums: string[]
+  /** Bars (by index) that get the 16th-note arpeggio layer. */
+  arpBars?: number[]
+  bassStyle: 'walk' | 'drive' | 'pad'
+  leadWave: 'pulse25' | 'pulse12' | 'triangle'
+  vol: number
+}
 
-  const scheduleLoop = (startAt: number) => {
-    if (!bgmPlaying || !master) return
-    const bar = beat * 24
-    const duck = startAt < fanfareUntil
-    const melVol = duck ? 0.015 : 0.055
-    const bassVol = duck ? 0.012 : 0.045
-    const padVol = duck ? 0.008 : 0.028
+const NOTE_IDX: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }
+function noteHz(tok: string): number {
+  const m = /^([A-G])([#b]?)(-?\d)$/.exec(tok)
+  if (!m) return 0
+  let n = NOTE_IDX[m[1]!]! + (m[2] === '#' ? 1 : m[2] === 'b' ? -1 : 0)
+  const oct = Number(m[3])
+  n += (oct + 1) * 12
+  return 440 * Math.pow(2, (n - 69) / 12)
+}
+/** Chord name → triad note names at a given octave. "Bm", "F#m", "A", "Em", "G", "D", "Asus". */
+function chordTones(ch: string, oct: number): number[] {
+  const m = /^([A-G][#b]?)(m|sus)?$/.exec(ch)
+  if (!m) return []
+  const root = noteHz(`${m[1]}${oct}`)
+  const third = m[2] === 'm' ? 3 : m[2] === 'sus' ? 5 : 4
+  return [root, root * Math.pow(2, third / 12), root * Math.pow(2, 7 / 12)]
+}
+function tokens(src: string): string[] {
+  return src.split(/[\s|]+/).filter(Boolean)
+}
 
-    for (const [i, r, third, fifth] of pads) {
-      const t = startAt + i * beat
-      for (const f of [r, third, fifth]) {
-        const o = c.createOscillator()
-        const g = c.createGain()
-        o.type = 'sine'
-        o.frequency.value = f
-        g.gain.setValueAtTime(0.0001, t)
-        g.gain.exponentialRampToValueAtTime(padVol, t + 0.2)
-        g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 7.5)
-        o.connect(g)
-        g.connect(master)
-        o.start(t)
-        o.stop(t + beat * 8)
-        bgmNodes.push(o, g)
+const SONGS: Record<SongId, Song> = {
+  // 標題：期待、溫暖 (100 BPM)
+  title: {
+    bpm: 100,
+    chords: ['D', 'G', 'Bm', 'A', 'D', 'G', 'Em', 'A'],
+    lead: `
+      F#5 - - - A5 - - - D6 - - - - - C#6 -   | B5 - - - G5 - - - D5 - - - - - . .
+      F#5 - - - A5 - - - B5 - - - A5 - F#5 -   | E5 - - - - - - - C#5 - E5 - A5 - - -
+      F#5 - - - A5 - - - D6 - - - E6 - F#6 -   | G6 - - - F#6 - E6 - D6 - - - B5 - - -
+      G5 - - - B5 - - - E6 - - - D6 - B5 -     | A5 - - - - - - - - - - - . . . .`,
+    drums: ['k . . . h . . . s . . . h . . .', 'k . . . h . k . s . . . h . h .'],
+    arpBars: [4, 5, 6, 7],
+    bassStyle: 'pad',
+    leadWave: 'pulse25',
+    vol: 0.9,
+  },
+  // 第 1 關・百畝樹林：輕快、少少不安 (120 BPM)，C 段轉小調
+  stage1: {
+    bpm: 120,
+    chords: ['D', 'Bm', 'G', 'A', 'D', 'Bm', 'Em', 'A', 'Bm', 'F#m', 'G', 'A'],
+    lead: `
+      F#5 - A5 - D6 - A5 - B5 - A5 - F#5 - - -   | D5 - F#5 - B5 - - - A5 - F#5 - D5 - E5 -
+      G5 - B5 - D6 - E6 - D6 - B5 - G5 - A5 -    | A5 - - - E5 - A5 - C#6 - B5 - A5 - - -
+      F#5 - A5 - D6 - E6 - F#6 - E6 - D6 - A5 -  | B5 - - - A5 - F#5 - A5 - B5 - D6 - - -
+      E6 - D6 - B5 - G5 - E5 - G5 - B5 - - -     | A5 - G5 - F#5 - E5 - C#5 - E5 - A5 - - -
+      B4 - D5 - F#5 - G5 - F#5 - D5 - B4 - - -   | C#5 - F#5 - A5 - - - G#5 - F#5 - F5 - F#5 -
+      G5 - - - B5 - D6 - C6 - B5 - A5 - G5 -     | A5 - - - - - - - E5 - G5 - A5 - C#6 -`,
+    drums: [
+      'k . h . s . h . k . h k s . h .',
+      'k . h . s . h . k . h . s . o .',
+      'k . h . s . h . k . h k s . h .',
+      'k . h . s . h k k . h . s s s s',
+    ],
+    arpBars: [4, 5, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'walk',
+    leadWave: 'pulse25',
+    vol: 1,
+  },
+  // 祭壇伏兵 / Boss：壓迫 (138 BPM)，B 小調
+  ambush: {
+    bpm: 138,
+    chords: ['Bm', 'Bm', 'G', 'F#', 'Bm', 'Bm', 'G', 'A', 'Em', 'Bm', 'C', 'F#'],
+    lead: `
+      B5 - . B5 . . D6 - C#6 - . A5 - - . .     | B5 - . B5 . . F#6 - E6 - D6 - C#6 - . .
+      D6 - . D6 . . B5 - G5 - . B5 - D6 - .     | C#6 - - - A#5 - - - F#5 - - - - - . .
+      B5 - . B5 . . D6 - C#6 - . A5 - - . .     | B5 - . B5 . . F#6 - G6 - F#6 - E6 - . .
+      D6 - . D6 . . B5 - G5 - . B5 - D6 - .     | E6 - - - C#6 - - - A5 - - - - - . .
+      G5 - B5 - E6 - - - D6 - B5 - G5 - . .     | F#5 - B5 - D6 - - - C#6 - B5 - F#5 - . .
+      E5 - G5 - C6 - - - B5 - G5 - E5 - . .     | F#5 - - - A#5 - - - C#6 - - - F#6 - - -`,
+    drums: ['k . h k s . h . k k h . s . h h', 'k . h k s . h . k k h . s s s s'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'drive',
+    leadWave: 'pulse12',
+    vol: 1,
+  },
+}
+
+let currentSong: SongId = 'title'
+let songStep = 0
+let songNextTime = 0
+const waveCache = new Map<string, PeriodicWave>()
+
+function pulseWave(c: AudioContext, duty: number): PeriodicWave {
+  const key = `p${duty}`
+  const hit = waveCache.get(key)
+  if (hit) return hit
+  const n = 32
+  const real = new Float32Array(n)
+  const imag = new Float32Array(n)
+  for (let k = 1; k < n; k++) imag[k] = (2 / (k * Math.PI)) * Math.sin(k * Math.PI * duty)
+  const w = c.createPeriodicWave(real, imag)
+  waveCache.set(key, w)
+  return w
+}
+
+function voice(c: AudioContext, wave: Song['leadWave'] | 'triangle' | 'square', hz: number, t: number, dur: number, vol: number, opts: { vibrato?: boolean; decay?: boolean } = {}) {
+  if (!master || hz <= 0) return
+  const o = c.createOscillator()
+  const g = c.createGain()
+  if (wave === 'pulse25') o.setPeriodicWave(pulseWave(c, 0.25))
+  else if (wave === 'pulse12') o.setPeriodicWave(pulseWave(c, 0.125))
+  else o.type = wave
+  o.frequency.setValueAtTime(hz, t)
+  if (opts.vibrato && dur > 0.3) {
+    const lfo = c.createOscillator()
+    const lg = c.createGain()
+    lfo.frequency.value = 5.5
+    lg.gain.setValueAtTime(0, t)
+    lg.gain.linearRampToValueAtTime(hz * 0.012, t + dur)
+    lfo.connect(lg)
+    lg.connect(o.frequency)
+    lfo.start(t)
+    lfo.stop(t + dur + 0.05)
+    bgmNodes.push({ n: lfo, end: t + dur + 0.05 })
+  }
+  g.gain.setValueAtTime(0.0001, t)
+  g.gain.exponentialRampToValueAtTime(vol, t + 0.008)
+  if (opts.decay) g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol * 0.35), t + Math.min(dur, 0.25))
+  g.gain.setValueAtTime(opts.decay ? Math.max(0.0002, vol * 0.35) : vol, t + Math.max(0.01, dur - 0.03))
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
+  o.connect(g)
+  g.connect(master)
+  o.start(t)
+  o.stop(t + dur + 0.02)
+  bgmNodes.push({ n: o, end: t + dur + 0.02 })
+}
+
+function drum(c: AudioContext, kind: string, t: number, vol: number) {
+  if (!master) return
+  if (kind === 'k') {
+    const o = c.createOscillator()
+    const g = c.createGain()
+    o.type = 'sine'
+    o.frequency.setValueAtTime(150, t)
+    o.frequency.exponentialRampToValueAtTime(42, t + 0.12)
+    g.gain.setValueAtTime(0.32 * vol, t)
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16)
+    o.connect(g)
+    g.connect(master)
+    o.start(t)
+    o.stop(t + 0.18)
+    bgmNodes.push({ n: o, end: t + 0.18 })
+    return
+  }
+  const len = kind === 's' ? 0.13 : kind === 'o' ? 0.18 : 0.035
+  const n = Math.floor(c.sampleRate * len)
+  const buf = c.createBuffer(1, n, c.sampleRate)
+  const d = buf.getChannelData(0)
+  for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1
+  const src = c.createBufferSource()
+  src.buffer = buf
+  const f = c.createBiquadFilter()
+  f.type = kind === 's' ? 'bandpass' : 'highpass'
+  f.frequency.value = kind === 's' ? 1800 : 7000
+  const g = c.createGain()
+  const v = (kind === 's' ? 0.16 : kind === 'o' ? 0.05 : 0.04) * vol
+  g.gain.setValueAtTime(v, t)
+  g.gain.exponentialRampToValueAtTime(0.0001, t + len)
+  src.connect(f)
+  f.connect(g)
+  g.connect(master)
+  src.start(t)
+  src.stop(t + len + 0.01)
+  bgmNodes.push({ n: src, end: t + len + 0.01 })
+  if (kind === 's') {
+    // Tonal body under the snare noise.
+    const o = c.createOscillator()
+    const og = c.createGain()
+    o.type = 'triangle'
+    o.frequency.setValueAtTime(220, t)
+    o.frequency.exponentialRampToValueAtTime(140, t + 0.06)
+    og.gain.setValueAtTime(0.08 * vol, t)
+    og.gain.exponentialRampToValueAtTime(0.0001, t + 0.08)
+    o.connect(og)
+    og.connect(master)
+    o.start(t)
+    o.stop(t + 0.1)
+    bgmNodes.push({ n: o, end: t + 0.1 })
+  }
+}
+
+function scheduleSong(c: AudioContext) {
+  const song = SONGS[currentSong]
+  const stepDur = 60 / song.bpm / 4
+  const lead = tokens(song.lead)
+  const total = song.chords.length * 16
+  const horizon = c.currentTime + 0.35
+  while (songNextTime < horizon) {
+    const t = songNextTime
+    const step = songStep % total
+    const bar = Math.floor(step / 16)
+    const inBar = step % 16
+    const duck = t < fanfareUntil ? 0.25 : 1
+    const v = song.vol * duck
+    // Lead: start a note and measure its held length.
+    const tok = lead[step] ?? '.'
+    if (tok !== '-' && tok !== '.') {
+      let len = 1
+      while (lead[(step + len) % total] === '-' && len < 32) len++
+      voice(c, song.leadWave, noteHz(tok), t, len * stepDur * 0.95, 0.09 * v, { vibrato: true })
+      // Soft echo one octave down, an 8th later — gives the SNES "two channel" width.
+      voice(c, 'triangle', noteHz(tok) / 2, t + stepDur * 2, Math.min(len, 3) * stepDur, 0.025 * v)
+    }
+    // Bass from the chord.
+    const chord = song.chords[bar] ?? song.chords[0]!
+    const [r, , fifth] = chordTones(chord, 2)
+    if (r) {
+      if (song.bassStyle === 'walk' && inBar % 2 === 0) {
+        const pat = [r, 0, r * 2, 0, fifth!, 0, r * 2, 0, r, 0, r * 2, 0, fifth!, 0, r * 2, r * 1.122]
+        const hz = pat[inBar]!
+        if (hz) voice(c, 'triangle', hz, t, stepDur * 1.8, 0.13 * v)
+      } else if (song.bassStyle === 'drive') {
+        voice(c, 'triangle', inBar % 4 === 2 ? r * 2 : r, t, stepDur * 0.9, 0.13 * v)
+      } else if (song.bassStyle === 'pad' && inBar % 8 === 0) {
+        voice(c, 'triangle', r, t, stepDur * 7.5, 0.1 * v)
+      }
+      // Arpeggio layer (quiet 12.5% pulse, chord tones up and down).
+      if (song.arpBars?.includes(bar)) {
+        const tones = chordTones(chord, 4)
+        const seq = [0, 1, 2, 1]
+        voice(c, 'pulse12', tones[seq[inBar % 4]!]!, t, stepDur * 0.8, 0.022 * v, { decay: true })
       }
     }
-    for (const [i, f] of melody) {
-      const t = startAt + i * beat
-      const o = c.createOscillator()
-      const g = c.createGain()
-      o.type = 'triangle'
-      o.frequency.value = f
-      g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(melVol, t + 0.04)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.2)
-      o.connect(g)
-      g.connect(master)
-      o.start(t)
-      o.stop(t + beat * 1.35)
-      bgmNodes.push(o, g)
-      const h = c.createOscillator()
-      const hg = c.createGain()
-      h.type = 'sine'
-      h.frequency.value = f * 2
-      hg.gain.setValueAtTime(0.0001, t)
-      hg.gain.exponentialRampToValueAtTime(melVol * 0.25, t + 0.05)
-      hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.9)
-      h.connect(hg)
-      hg.connect(master)
-      h.start(t)
-      h.stop(t + beat)
-      bgmNodes.push(h, hg)
-    }
-    for (let i = 0; i < bass.length; i++) {
-      const t = startAt + i * beat * 3
-      const o = c.createOscillator()
-      const g = c.createGain()
-      o.type = 'sine'
-      o.frequency.value = bass[i]!
-      g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(bassVol, t + 0.03)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 2.4)
-      o.connect(g)
-      g.connect(master)
-      o.start(t)
-      o.stop(t + beat * 2.6)
-      bgmNodes.push(o, g)
-    }
-    // Soft shaker pulse (not snare kit)
-    for (let i = 0; i < 24; i += 2) {
-      const t = startAt + i * beat
-      const n = Math.floor(c.sampleRate * 0.04)
-      const buf = c.createBuffer(1, n, c.sampleRate)
-      const data = buf.getChannelData(0)
-      for (let k = 0; k < n; k++) data[k] = (Math.random() * 2 - 1) * (1 - k / n)
-      const src = c.createBufferSource()
-      src.buffer = buf
-      const g = c.createGain()
-      const f = c.createBiquadFilter()
-      f.type = 'highpass'
-      f.frequency.value = i % 4 === 0 ? 900 : 1400
-      g.gain.setValueAtTime(duck ? 0.015 : i % 4 === 0 ? 0.04 : 0.025, t)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05)
-      src.connect(f)
-      f.connect(g)
-      g.connect(master)
-      src.start(t)
-      src.stop(t + 0.08)
-      bgmNodes.push(src, g)
-    }
-    const next = startAt + bar
-    const waitMs = Math.max(0, (next - c.currentTime) * 1000 - 50)
-    if (bgmTimer != null) window.clearTimeout(bgmTimer)
-    bgmTimer = window.setTimeout(() => scheduleLoop(next), waitMs)
+    // Drums: pattern per bar (cycled).
+    const pat = tokens(song.drums[bar % song.drums.length]!)
+    const d = pat[inBar] ?? '.'
+    if (d !== '.') drum(c, d, t, duck)
+    songStep++
+    songNextTime += stepDur
   }
+}
 
-  scheduleLoop(c.currentTime + 0.05)
+/** Start (or switch to) a song. Safe to call repeatedly with the same id. */
+export function playSong(id: SongId) {
+  if (muted) {
+    currentSong = id
+    return
+  }
+  if (bgmPlaying && currentSong === id) return
+  stopBgm()
+  currentSong = id
+  const c = ensureRunning()
+  bgmPlaying = true
+  songStep = 0
+  songNextTime = c.currentTime + 0.08
+  const tick = () => {
+    if (!bgmPlaying) return
+    scheduleSong(c)
+    const now = c.currentTime
+    bgmNodes = bgmNodes.filter((x) => x.end > now)
+    bgmTimer = window.setTimeout(tick, 100)
+  }
+  tick()
+}
+
+/** Resume whichever song is current (menus / unmute). */
+export function startBgm() {
+  playSong(currentSong)
 }
 
 export function stopBgm() {
   bgmPlaying = false
+  for (const { n } of bgmNodes) {
+    try {
+      n.stop()
+    } catch {
+      /* already stopped */
+    }
+  }
   bgmNodes = []
   if (bgmTimer != null) {
     window.clearTimeout(bgmTimer)

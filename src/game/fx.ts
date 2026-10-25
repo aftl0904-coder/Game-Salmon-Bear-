@@ -115,9 +115,12 @@ export function freezeActors(
   actors: Array<Phaser.Physics.Arcade.Sprite | null | undefined>,
   ms: number,
 ) {
+  if (ms <= 0) return
   const until = scene.time.now + ms
   for (const a of actors) {
     if (!a || !a.active) continue
+    // Never stop an airborne hero mid-jump — it kills the arc and feels like lag.
+    if ((a as { laneJumping?: boolean }).laneJumping) continue
     const prev = (a.getData(FREEZE_KEY) as number) || 0
     a.setData(FREEZE_KEY, Math.max(prev, until))
     const body = a.body as Phaser.Physics.Arcade.Body | null
