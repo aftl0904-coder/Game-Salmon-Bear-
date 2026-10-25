@@ -33,6 +33,7 @@ import {
   tapApexVelocity,
 } from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
+import { landingTopAt, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
 import {
   enableActorSprite,
   setDiePoseVisual,
@@ -106,6 +107,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private flashTween?: Phaser.Tweens.Tween
   private jumpCutApplied = false
   private jumpHoldMs = 0
+  /** Feet Y last frame — landing test crosses from prevFeetY to y. */
+  private prevFeetY = 0
+  /** Half foot width for terrain support / walls (matches standing hitbox). */
+  private get footHalfW() {
+    return Math.max(3, Math.round(PLAYER.hitbox.standing.w / 2) - 1)
+  }
+  /** Floor top under the feet from data/levels terrain (null = over a pit / off an edge). */
+  private terrainSupport(): number | null {
+    // Allow 10px sink (one fast physics step) so a landing / respawn never misses the floor.
+    return supportTopAt(this.x, this.y, this.footHalfW, 10)
+  }
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
     if (scene.textures.exists('__atk-hitbox')) return
@@ -229,8 +241,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     resolveStick(body)
     this.laneCd = 0
     this.resolveLaneJumpLanding(body)
-    const grounded =
-      isLaneGrounded(body, this.y, this.laneJumping) || this.canStartLaneJump(body)
+    const grounded = terrainEnabled()
+      ? !this.laneJumping && this.terrainSupport() !== null
+      : isLaneGrounded(body, this.y, this.laneJumping) || this.canStartLaneJump(body)
 
     if (grounded && !this.laneJumping) {
       this.coyote = PLAYER.jump.coyoteMs
@@ -302,6 +315,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       else vx -= Math.sign(vx) * damp
     }
     vx = Phaser.Math.Clamp(vx, -speed, speed)
+    if (terrainEnabled() && vx !== 0) {
+      // Raised steps are walls: can't walk into them, must jump up.
+      const nx = this.x + (vx * dt) / 1000
+      const clampX = wallClampX(nx, this.y, Math.sign(vx), this.footHalfW + 2)
+      if (clampX !== null) {
+        this.setX(clampX)
+        vx = 0
+      }
+    }
     this.setVelocityX(vx)
 
     const canJump =
@@ -381,12 +403,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private canStartLaneJump(body: Phaser.Physics.Arcade.Body): boolean {
     if (this.laneJumping) return false
+    if (terrainEnabled()) return this.terrainSupport() !== null && body.velocity.y >= -20
     if (isLaneGrounded(body, this.y, false)) return body.velocity.y >= -20
     return isGrounded(body) && body.velocity.y >= 0
   }
 
   private resolveLaneJumpLanding(body: Phaser.Physics.Arcade.Body) {
     if (!this.laneJumping) return
+    if (terrainEnabled()) {
+      const prev = this.prevFeetY || this.y
+      this.prevFeetY = this.y
+      if (this.jumpHoldMs < 50 || body.velocity.y < 0) return
+      const top = landingTopAt(this.x, prev, this.y, this.footHalfW)
+      if (top === null) return
+      this.setY(top)
+      body.velocity.y = 0
+      body.allowGravity = false
+      body.setGravity(0, 0)
+      this.laneJumping = false
+      this.justLanded = true
+      this.jumpCutApplied = false
+      this.jumpHoldMs = 0
+      return
+    }
     const target = laneY(this.lane)
     // Don't cancel takeoff — feet are still on the line for the first frames.
     if (this.jumpHoldMs < 50 || body.velocity.y < -40) return
@@ -410,6 +449,26 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   private holdLaneFloor(body: Phaser.Physics.Arcade.Body, dt: number) {
     if (this.laneJumping) return
+    if (terrainEnabled()) {
+      const top = this.terrainSupport()
+      this.prevFeetY = this.y
+      if (top === null) {
+        // Walked off a ledge / onto a pit → fall with gravity (lands via resolveLaneJumpLanding).
+        this.laneJumping = true
+        this.jumpHoldMs = 999
+        this.jumpCutApplied = true
+        this.jumpConsumed = true
+        body.allowGravity = true
+        body.setGravity(0, 0)
+        if (body.velocity.y < 0) body.velocity.y = 0
+        return
+      }
+      body.allowGravity = false
+      body.setGravity(0, 0)
+      body.velocity.y = 0
+      this.setY(top)
+      return
+    }
     if (!inLaneBand(this.y) && isGrounded(body)) {
       body.allowGravity = true
       return
@@ -438,6 +497,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setY(laneY(this.lane))
     this.setVelocity(0, 0)
     const body = this.body as Phaser.Physics.Arcade.Body | null
+    // Teleport: reset the Arcade body too, or the next step applies the old fall velocity.
+    body?.reset(this.x, this.y)
+    this.prevFeetY = this.y
     if (body) {
       body.allowGravity = false
       body.setGravity(0, 0)

@@ -22,6 +22,17 @@ import { EventBus, GameEvents } from './EventBus'
 import { Player } from './Player'
 import { TouchInput } from './touchInput'
 import { playStoryIntro } from './storyIntro'
+import stage1Raw from '../../data/levels/stage1.json'
+import {
+  setTerrain,
+  groundTopBelow,
+  pitDeathY,
+  supportTopAt,
+  terrainEnabled,
+  wallClampX,
+  terrainPits,
+  type Solid,
+} from './engine/terrain'
 import {
   WORLD_W,
   WORLD_H,
@@ -112,6 +123,21 @@ export { GROUND_Y, LANE_Y }
 
 /** Heroes are Player entities (accel/coyote/melee/i-frames). */
 type Hero = Player
+
+/** data/levels/stage1.json — level layout (pits, steps, planks, hazards, enemies). */
+type Stage1 = {
+  pits: Array<{ x: number; w: number }>
+  steps: Array<{ x: number; w: number; h: number }>
+  platforms: Array<{ x: number; w: number; h: number }>
+  spikes: Array<{ x: number; n: number }>
+  durians: number[]
+  honey: Array<{ x: number; h: number }>
+  checkpoints: number[]
+  enemies: Array<{ x: number; species: string; kind: string; unlockX: number }>
+  altarAmbush: Array<{ x: number; species: string }>
+  altarTriggerX: number
+}
+const STAGE1 = stage1Raw as unknown as Stage1
 
 /**
  * Round 1 — 溪流小路（側視 上／中／下 三線）
@@ -600,7 +626,7 @@ export class GameScene extends Phaser.Scene {
     this.tickStageBeats()
 
     // Altar climax: 2–3 barrel ambushers wake with clear telegraph before boss.
-    if (!this.altarAmbushOn && this.leadX() > WORLD_W - 980) {
+    if (!this.altarAmbushOn && this.leadX() > STAGE1.altarTriggerX) {
       this.triggerAltarAmbush()
     }
 
@@ -685,8 +711,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateCheckpoint() {
-    const lead = this.leadX()
-    if (lead > this.checkpointX + 200) this.checkpointX = lead
+    // Fixed checkpoints from stage1.json (continue revives at checkpointX − 40).
+    this.tickCheckpoints()
+    this.checkpointX = this.lastCheckpointX + 40
   }
 
   private coinJust() {
@@ -910,6 +937,11 @@ export class GameScene extends Phaser.Scene {
       typeof (target as Hero).lane === 'number'
         ? (target as Hero).lane
         : (target.getData('lane') as LaneId | undefined)
+    if (terrainEnabled()) {
+      const top = groundTopBelow(target.x, target.y)
+      if (top !== null) return top
+      return GAME_H + 40 // over a pit: shadow drops out of view
+    }
     if (lane !== undefined && lane !== null) return laneY(clampLane(lane))
     return GROUND_Y
   }
@@ -1295,17 +1327,25 @@ export class GameScene extends Phaser.Scene {
   }
   private checkFall() {
     const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h)
+    const deathY = terrainEnabled() ? pitDeathY() : FALL_Y
     for (const h of heroes) {
-      if (h.y > FALL_Y) {
-        if (this.ended || !this.started || !canTakeDamage(h, this.time.now)) continue
+      if (h.y > deathY) {
+        if (this.ended || !this.started) continue
+        const respawnX = this.respawnXFor(h.x)
+        if (!canTakeDamage(h, this.time.now)) {
+          // Still in i-frames: no damage, but never leave the hero falling forever.
+          h.snapToLane(h.lane, respawnX)
+          continue
+        }
         const hpLeft = applyDamage(h, {
           amount: 1,
           knockbackX: 0,
-          knockbackY: -200,
+          knockbackY: 0,
           now: this.time.now,
         })
-        h.snapToLane(h.lane, Math.max(80, h.x - 80))
-        h.setVelocity(0, -200)
+        h.snapToLane(h.lane, respawnX)
+        h.setVelocity(0, 0)
+        floatText(this, h.x, h.y - 56, '跌落坑！', '#ff8866')
         applyHurtPose(h, -h.facing)
         startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
         SFX.spike()
@@ -1314,6 +1354,22 @@ export class GameScene extends Phaser.Scene {
         if (hpLeft <= 0) this.knockOut(h)
       }
     }
+  }
+
+  /** Pit fall respawn: last checkpoint passed, else start; always on solid base floor. */
+  private respawnXFor(fallX: number): number {
+    // Prefer solid floor just before the pit that was missed (keeps the retry loop short).
+    const pit = terrainPits().find((p) => fallX >= p.x0 - 8 && fallX <= p.x1 + 8)
+    if (pit) {
+      // ~80px run-up so a held → doesn't walk straight back into the pit.
+      for (let x = pit.x0 - 80; x > pit.x0 - 240; x -= 8) {
+        if (supportTopAt(x, LANE_FLOOR_Y, 8) !== null) return x
+      }
+    }
+    let x = this.lastCheckpointX
+    if (x > fallX) x = 220
+    if (supportTopAt(x, LANE_FLOOR_Y) === null) x = 220
+    return x
   }
 
   /**
@@ -1349,8 +1405,24 @@ export class GameScene extends Phaser.Scene {
         prevLeadX: this.prevLeadX,
         floatBang: (x, y, msg) => floatText(this, x, y, msg ?? '！', '#ff3333'),
       })
+      this.keepEnemyOnTerrain(o as PatrolEnemy, dt)
     })
     this.prevLeadX = leadX
+  }
+
+  /** Enemies walk the base floor only: stop at pit edges and at raised-step walls. */
+  private keepEnemyOnTerrain(e: PatrolEnemy, dt: number) {
+    if (!terrainEnabled() || !e.active || !e.body) return
+    const body = e.body as Phaser.Physics.Arcade.Body
+    const vx = body.velocity.x
+    const dir = Math.sign(vx)
+    if (!dir) return
+    const half = Math.max(8, Math.round((e.displayWidth || 32) * 0.3))
+    const nx = e.x + (vx * dt) / 1000
+    const lead = nx + dir * half
+    const blocked =
+      supportTopAt(lead, LANE_FLOOR_Y, 1) === null || wallClampX(nx, LANE_FLOOR_Y, dir, half) !== null
+    if (blocked) e.setVelocityX(0)
   }
 
   /** Active 琪寶寶 — 2P girl or 1P solo girl (stored in boy slot). */
@@ -1865,18 +1937,15 @@ export class GameScene extends Phaser.Scene {
     this.hazards.clear(true, true)
     this.pots.clear(true, true)
 
+    // data/levels/stage1.json — pits / steps / planks / hazards / honey / checkpoints.
+    this.buildTerrainFromJson()
     this.layGroundRibbon(LANE_FLOOR_Y)
+    this.drawTerrainFeatures()
 
-    // Sparse spikes + 榴槤 traps（踩到 −1HP）+ honey jars along shorter stage.
-    for (const x of [920, 2720, 4800].map(stageX)) {
-      this.spikes(x, 3)
-    }
-    for (const x of [1180, 2100, 3320, 4200, 5400, 6400].map(stageX)) {
-      this.placeDurian(x)
-    }
-    for (const x of [640, 1600, 2800, 4200, 5600, 6800].map(stageX)) {
-      this.spawnHoneyJar(x, laneY(LANE_DEFAULT) - 36)
-    }
+    for (const sp of STAGE1.spikes) this.spikes(sp.x, sp.n)
+    for (const x of STAGE1.durians) this.placeDurian(x)
+    for (const h of STAGE1.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
+    this.placeCheckpoints()
 
     // Exactly 1 sushi on a random road lane — eat for +2 HP.
     {
@@ -1902,6 +1971,97 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setDepth(DEPTH.SIGN)
+  }
+
+  /** Solids for engine/terrain from stage JSON: base floor minus pits, steps, one-way planks. */
+  private buildTerrainFromJson() {
+    const floor = LANE_FLOOR_Y
+    const pits = STAGE1.pits.map((p) => ({ x0: p.x, x1: p.x + p.w })).sort((a, b) => a.x0 - b.x0)
+    const solids: Solid[] = []
+    let cur = 0
+    for (const p of pits) {
+      if (p.x0 > cur) solids.push({ x0: cur, x1: p.x0, top: floor, oneWay: false, kind: 'ground' })
+      cur = Math.max(cur, p.x1)
+    }
+    if (cur < WORLD_W) solids.push({ x0: cur, x1: WORLD_W, top: floor, oneWay: false, kind: 'ground' })
+    for (const st of STAGE1.steps) {
+      solids.push({ x0: st.x, x1: st.x + st.w, top: floor - st.h, oneWay: false, kind: 'step' })
+    }
+    for (const pl of STAGE1.platforms) {
+      solids.push({ x0: pl.x, x1: pl.x + pl.w, top: floor - pl.h, oneWay: true, kind: 'platform' })
+    }
+    setTerrain(solids, pits, floor)
+  }
+
+  /** Pit holes, raised steps and wooden planks (visual only — collision is engine/terrain). */
+  private drawTerrainFeatures() {
+    const floor = LANE_FLOOR_Y
+    const g = this.add.graphics().setDepth(DEPTH.GROUND + 2)
+    for (const p of STAGE1.pits) {
+      // Dark drop with a lighter dirt lip on both edges.
+      g.fillStyle(0x140c12, 1).fillRect(p.x, floor, p.w, GAME_H - floor)
+      g.fillStyle(0x2a1a14, 1).fillRect(p.x, floor, p.w, 6)
+      g.fillStyle(0x5a3a22, 1).fillRect(p.x, floor, 2, GAME_H - floor).fillRect(p.x + p.w - 2, floor, 2, GAME_H - floor)
+    }
+    const topTex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
+    for (const st of STAGE1.steps) {
+      const top = floor - st.h
+      // Earth body + grass lip; 1px dark outline to match sprite ink.
+      g.fillStyle(0x6b4428, 1).fillRect(st.x, top, st.w, st.h)
+      g.fillStyle(0x4e301c, 1).fillRect(st.x, top + Math.max(6, st.h - 6), st.w, Math.min(6, st.h))
+      g.fillStyle(0x12100c, 1)
+        .fillRect(st.x - 1, top - 1, st.w + 2, 1)
+        .fillRect(st.x - 1, top, 1, st.h)
+        .fillRect(st.x + st.w, top, 1, st.h)
+      if (this.textures.exists(topTex)) {
+        const lip = this.add.tileSprite(st.x, top, st.w, 6, topTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        enablePixelSprite(lip as unknown as Phaser.GameObjects.Image)
+      }
+    }
+    const woodTex = this.textures.exists('blk-wood') ? 'blk-wood' : null
+    for (const pl of STAGE1.platforms) {
+      const top = floor - pl.h
+      if (woodTex) {
+        const plank = this.add.tileSprite(pl.x, top, pl.w, 8, woodTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        enablePixelSprite(plank as unknown as Phaser.GameObjects.Image)
+      } else {
+        g.fillStyle(0x8a5a30, 1).fillRect(pl.x, top, pl.w, 8)
+      }
+      g.fillStyle(0x12100c, 1).fillRect(pl.x - 1, top - 1, pl.w + 2, 1).fillRect(pl.x - 1, top + 8, pl.w + 2, 1)
+      // Rope posts so the plank reads as hanging, not floating.
+      g.fillStyle(0x3a2616, 1).fillRect(pl.x + 3, top + 8, 2, 10).fillRect(pl.x + pl.w - 5, top + 8, 2, 10)
+    }
+  }
+
+  private checkpointXs: number[] = []
+  private lastCheckpointX = 220
+
+  private placeCheckpoints() {
+    this.checkpointXs = STAGE1.checkpoints.slice().sort((a, b) => a - b)
+    this.lastCheckpointX = 220
+    const key = this.textures.exists('prop-lantern3d') ? 'prop-lantern3d' : null
+    for (const x of this.checkpointXs) {
+      if (key) {
+        const l = this.add.image(x, LANE_FLOOR_Y, key).setOrigin(0.5, 1).setDepth(DEPTH.SIGN)
+        enablePixelSprite(l)
+      }
+      this.add
+        .text(x, LANE_FLOOR_Y - 58, '存檔', { fontFamily: FONT_UI, fontSize: '12px', color: '#2a1a10', backgroundColor: '#f7e7c0', padding: { x: 3, y: 1 } })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+    }
+  }
+
+  /** Reached a checkpoint → falls respawn here. */
+  private tickCheckpoints() {
+    const lead = this.leadX()
+    for (const x of this.checkpointXs) {
+      if (lead >= x && x > this.lastCheckpointX) {
+        this.lastCheckpointX = x
+        floatText(this, x, LANE_FLOOR_Y - 76, '存檔點', '#ffe08a')
+        SFX.coin()
+      }
+    }
   }
 
   private spawnHoneyJar(x: number, y: number) {
@@ -2519,8 +2679,24 @@ export class GameScene extends Phaser.Scene {
   private layGroundRibbon(surfaceY: number) {
     const tex = this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
-      this.placeSurfaceTile(x, surfaceY, tex)
+      // Cut the ribbon at pits: crop the tile to the part outside any pit.
+      let x0 = x
+      let x1 = x + stride
+      for (const p of pits) {
+        if (p.x0 <= x0 && p.x1 >= x1) { x1 = x0; break }
+        if (p.x0 > x0 && p.x0 < x1) x1 = p.x0
+        if (p.x1 > x0 && p.x1 < x1 && p.x0 <= x0) x0 = p.x1
+      }
+      if (x1 - x0 < 1) continue
+      const t = this.placeSurfaceTile(x, surfaceY, tex)
+      if (x0 !== x || x1 !== x + stride) {
+        t.setCrop(x0 - x, 0, x1 - x0, t.height)
+        const b = t.body as Phaser.Physics.Arcade.StaticBody
+        b.setSize(x1 - x0, t.height, false)
+        b.setOffset(x0 - x, 0)
+      }
     }
   }
 
@@ -2564,56 +2740,17 @@ export class GameScene extends Phaser.Scene {
    * unlockX = 玩家 leadX 達到才啟用（inactive 直到解鎖）。
    */
   private placeEnemies() {
-    // Wave 1 — elephant early; unlock after short walk. X scaled −25% stage.
-    const w1 = [
-      // Teach first: fish only, then one 帽仔兵. Heavy 機械豬 appears later, alone.
-      this.mkEnemy(stageX(780), GROUND_Y, 'blocker', undefined, 'fish', 1),
-      this.mkEnemy(stageX(940), GROUND_Y, 'chaser', undefined, 'fish', 0),
-      this.mkEnemy(stageX(1100), GROUND_Y, 'chaser', undefined, 'barrel', 2),
-    ]
-    for (const e of w1) this.deferEnemy(e, stageX(620), 'wave1')
-
-    const later: Array<[number, EnemyKind, EnemySpecies | undefined, LaneId, number]> = [
-      [1280, 'chaser', 'fish', 2, 1100],
-      [1500, 'blocker', 'fish', 4, 1100],
-      [1180, 'ambusher', 'barrel', 0, 1100],
-      [1380, 'chaser', 'fish', 1, 1200],
-      [1750, 'ambusher', 'barrel', 0, 1550],
-      [1980, 'chaser', 'barrel', 1, 1700],
-      [2080, 'guardian', 'elephant', 2, 1850],
-      [2200, 'ambusher', 'barrel', 3, 1950],
-      [2400, 'interrupter', 'barrel', 1, 2100],
-      [2680, 'guardian', 'elephant', 3, 2400],
-      [2900, 'chaser', 'fish', 4, 2600],
-      [3100, 'chaser', 'fish', 0, 2800],
-      [3300, 'blocker', 'fish', 2, 2900],
-      [3500, 'ambusher', 'barrel', 4, 3100],
-      [3650, 'chaser', 'fish', 2, 3300],
-      [3800, 'chaser', 'barrel', 1, 3400],
-      [4100, 'guardian', 'elephant', 3, 3700],
-      [4400, 'interrupter', 'barrel', 0, 4000],
-      [4550, 'ambusher', 'barrel', 2, 4150],
-      [4700, 'chaser', 'fish', 2, 4300],
-      [5000, 'blocker', 'fish', 4, 4600],
-      [5300, 'ambusher', 'barrel', 1, 4900],
-      [5450, 'chaser', 'fish', 0, 5050],
-      [5600, 'guardian', 'elephant', 2, 5200],
-      [5900, 'chaser', 'fish', 3, 5500],
-      [6200, 'blocker', 'barrel', 0, 5800],
-    ]
-    for (const [x, kind, sp, lane, unlock] of later) {
-      const xx = stageX(x)
-      const e = this.mkEnemy(xx, GROUND_Y, kind, kind === 'guardian' ? xx : undefined, sp, lane)
-      this.deferEnemy(e, stageX(unlock), 'later')
+    // data/levels/stage1.json — each enemy walks in from the screen edge once lead ≥ unlockX.
+    for (const en of STAGE1.enemies) {
+      const kind = en.kind as EnemyKind
+      const sp = en.species as EnemySpecies
+      const e = this.mkEnemy(en.x, GROUND_Y, kind, kind === 'guardian' ? en.x : undefined, sp, 0)
+      this.deferEnemy(e, en.unlockX, en.unlockX <= 400 ? 'wave1' : 'later')
     }
-    const a1 = this.mkEnemy(WORLD_W - stageX(880), GROUND_Y, 'ambusher', undefined, 'barrel', 0)
-    const a2 = this.mkEnemy(WORLD_W - stageX(480), GROUND_Y, 'ambusher', undefined, 'barrel', 1)
-    const a3 = this.mkEnemy(WORLD_W - stageX(280), GROUND_Y, 'ambusher', undefined, 'barrel', 2)
-    const a4 = this.mkEnemy(WORLD_W - stageX(680), GROUND_Y, 'ambusher', undefined, 'elephant', 4)
-    const a5 = this.mkEnemy(WORLD_W - stageX(580), GROUND_Y, 'ambusher', undefined, 'fish', 3)
-    for (const a of [a1, a2, a3, a4, a5]) {
+    for (const en of STAGE1.altarAmbush) {
+      const a = this.mkEnemy(en.x, GROUND_Y, 'ambusher', undefined, en.species as EnemySpecies, 0)
       a.altarAmbush = true
-      this.deferEnemy(a, WORLD_W - stageX(1200), 'altar')
+      this.deferEnemy(a, STAGE1.altarTriggerX - 120, 'altar')
     }
   }
 
@@ -2671,10 +2808,11 @@ export class GameScene extends Phaser.Scene {
       if (wave !== 'wave1' && !wave1GateOpen) return
       // 開始 10 秒後：左右兩邊都可走入；之前淨係右邊。
       const fromLeft = allowLeft && stagger % 2 === 1
-      const enterX = fromLeft
+      let enterX = fromLeft
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
         : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
       stagger += 1
+      if (terrainEnabled()) enterX = this.nearestBaseFloorX(enterX, fromLeft ? 1 : -1)
       const enterY = laneY(e.lane)
       e.setPosition(enterX, enterY)
       e.homeX = enterX
@@ -2716,6 +2854,15 @@ export class GameScene extends Phaser.Scene {
         floatText(this, cam.scrollX + GAME_W / 2, L(120), '傀儡來襲！', '#ff6644')
       }
     })
+  }
+
+  /** Closest x (stepping inward) whose base floor exists — enemies never spawn over pits / in steps. */
+  private nearestBaseFloorX(x: number, inwardDir: number): number {
+    for (let i = 0; i < 80; i++) {
+      const xx = x + inwardDir * i * 8
+      if (supportTopAt(xx, LANE_FLOOR_Y, 20) !== null) return xx
+    }
+    return x
   }
 
   /** Wake altar ambushers — they already enter from the right; just harden chase. */
