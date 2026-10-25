@@ -135,7 +135,12 @@ export function registerIsoArt(scene: Phaser.Scene) {
   })
 
   paint(scene, 'prop-torii', 72, 80, (set) => {
-    rect(set, 8, 72, 56, 6, [18, 12, 16], 110)
+    const ink: RGB = [18, 10, 12]
+    rect(set, 8, 72, 56, 6, ink, 110)
+    // black silhouette posts + beams
+    for (const ox of [11, 47]) rect(set, ox - 1, 27, 12, 48, ink)
+    rect(set, 0, 9, 72, 12, ink)
+    rect(set, 3, 17, 66, 12, ink)
     for (const ox of [12, 48]) {
       for (let y = 28; y < 74; y++) {
         rect(set, ox, y, 10, 1, [175, 55, 48])
@@ -157,7 +162,10 @@ export function registerIsoArt(scene: Phaser.Scene) {
   })
 
   paint(scene, 'prop-tree3d', 48, 72, (set) => {
-    rect(set, 10, 64, 28, 6, [18, 12, 16], 120)
+    const ink: RGB = [16, 12, 14]
+    rect(set, 10, 64, 28, 6, ink, 120)
+    // trunk outline + fill
+    rect(set, 19, 39, 12, 30, ink)
     for (let y = 40; y < 68; y++) {
       for (let x = 20; x < 30; x++) {
         const nx = (x - 24.5) / 5
@@ -171,18 +179,26 @@ export function registerIsoArt(scene: Phaser.Scene) {
       [24, 20, 12, [105, 195, 115]],
       [20, 24, 10, [90, 175, 100]],
     ]
+    for (const [cx, cy, r] of blobs) {
+      for (let y = -r - 1; y <= r + 1; y++)
+        for (let x = -r - 1; x <= r + 1; x++)
+          if (x * x + y * y <= (r + 1) * (r + 1)) set(cx + x, cy + y, ink)
+    }
     for (const [cx, cy, r, c] of blobs) {
       for (let y = -r; y <= r; y++)
         for (let x = -r; x <= r; x++)
           if (x * x + y * y <= r * r) {
-            const lit = y < -3 ? 1.2 : y > 7 ? 0.7 : 1
+            const lit = y < -3 ? 1.25 : y > 7 ? 0.68 : y < 2 ? 1.05 : 0.9
             set(cx + x, cy + y, shadeRGB(c, lit))
           }
     }
   })
 
   paint(scene, 'prop-house3d', 56, 56, (set) => {
-    rect(set, 8, 50, 40, 5, [18, 12, 16], 125)
+    const ink: RGB = [18, 12, 14]
+    rect(set, 8, 50, 40, 5, ink, 125)
+    rect(set, 7, 23, 44, 30, ink)
+    for (let i = 0; i < 17; i++) rect(set, 5 + i, 21 - i, 36 - i * 2, 3, ink)
     for (let y = 22; y < 52; y++) {
       const t = (y - 22) / 30
       rect(set, 36, y, 14, 1, shadeRGB([185, 125, 75], 1 - t * 0.2))
@@ -393,4 +409,120 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 12, 8, 16, 4, [210, 150, 90])
     rect(set, 14, 7, 12, 2, [240, 190, 120])
   })
+
+  // --- Sparse Goemon-like landmarks (unique volumetric sprites, not tile bands) ---
+  registerLandmarkArt(scene)
+}
+
+/** Independent mountain / cloud landmarks: black outline + 3+ shade top-light. */
+function registerLandmarkArt(scene: Phaser.Scene) {
+  const ink: RGB = [22, 16, 20]
+
+  function paintPeak(
+    key: string,
+    w: number,
+    h: number,
+    peakX: number,
+    peakTop: number,
+    halfBase: number,
+    lit: RGB,
+    mid: RGB,
+    shade: RGB,
+    snow = true,
+  ) {
+    paint(scene, key, w, h, (set) => {
+      const baseY = h - 4
+      // soft contact shadow
+      rect(set, peakX - halfBase + 4, h - 5, halfBase * 2 - 8, 4, ink, 90)
+      // silhouette (outline)
+      for (let y = peakTop; y < baseY; y++) {
+        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
+        const half = Math.max(2, Math.floor(halfBase * t) + 1)
+        rect(set, peakX - half - 1, y, half * 2 + 2, 1, ink)
+      }
+      // body with top-light 3+ shades
+      for (let y = peakTop; y < baseY; y++) {
+        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
+        const half = Math.max(1, Math.floor(halfBase * t))
+        for (let x = peakX - half; x <= peakX + half; x++) {
+          const nx = (x - peakX) / Math.max(1, half)
+          let c = mid
+          if (t < 0.18) c = lit
+          else if (t > 0.72) c = shade
+          else if (nx < -0.35) c = lit
+          else if (nx > 0.45) c = shade
+          const ridge = Math.abs(nx) < 0.12 && t < 0.55 ? 1.12 : 1
+          set(x, y, shadeRGB(c, ridge - t * 0.08))
+        }
+      }
+      if (snow) {
+        const snowH = Math.max(4, Math.floor((baseY - peakTop) * 0.16))
+        for (let y = peakTop; y < peakTop + snowH; y++) {
+          const t = (y - peakTop) / snowH
+          const half = Math.max(1, Math.floor(halfBase * ((y - peakTop) / Math.max(1, baseY - peakTop))))
+          rect(set, peakX - half, y, half * 2 + 1, 1, shadeRGB([245, 250, 255], 1.05 - t * 0.15))
+          set(peakX - half, y, [210, 220, 230])
+        }
+      }
+      // left highlight rim / right dark rim
+      for (let y = peakTop + 2; y < baseY - 2; y++) {
+        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
+        const half = Math.max(1, Math.floor(halfBase * t))
+        set(peakX - half, y, shadeRGB(lit, 1.15))
+        set(peakX + half, y, shadeRGB(shade, 0.85))
+      }
+    })
+  }
+
+  // Four unique mountains (far→near hues / silhouettes)
+  paintPeak('lm-mount-1', 96, 88, 48, 10, 40, [150, 190, 175], [110, 155, 145], [70, 110, 115])
+  paintPeak('lm-mount-2', 112, 96, 58, 6, 48, [165, 185, 200], [120, 150, 165], [75, 105, 125])
+  paintPeak('lm-mount-3', 80, 72, 38, 12, 34, [130, 185, 120], [85, 150, 95], [45, 105, 70], false)
+  paintPeak('lm-mount-4', 100, 80, 52, 8, 42, [145, 175, 130], [95, 145, 105], [55, 100, 75])
+
+  function paintCloud(
+    key: string,
+    w: number,
+    h: number,
+    blobs: Array<[number, number, number]>,
+  ) {
+    paint(scene, key, w, h, (set) => {
+      for (const [cx, cy, r] of blobs) {
+        for (let y = -r - 1; y <= r + 1; y++)
+          for (let x = -r - 1; x <= r + 1; x++)
+            if (x * x + y * y <= (r + 1) * (r + 1)) set(cx + x, cy + y, ink)
+      }
+      for (const [cx, cy, r] of blobs) {
+        for (let y = -r; y <= r; y++) {
+          for (let x = -r; x <= r; x++) {
+            if (x * x + y * y > r * r) continue
+            const lit = y < -r * 0.35 ? 1.18 : y > r * 0.35 ? 0.78 : 1
+            const c: RGB = y < -2 ? [255, 255, 255] : y > 4 ? [215, 222, 235] : [242, 246, 252]
+            set(cx + x, cy + y, shadeRGB(c, lit))
+          }
+        }
+      }
+    })
+  }
+
+  // Three unique cloud shapes — place up to 6 with flip/scale
+  paintCloud('lm-cloud-1', 64, 40, [
+    [18, 22, 10],
+    [32, 16, 13],
+    [48, 22, 11],
+    [28, 26, 9],
+  ])
+  paintCloud('lm-cloud-2', 72, 36, [
+    [16, 20, 9],
+    [30, 14, 12],
+    [46, 18, 11],
+    [58, 22, 8],
+    [36, 24, 8],
+  ])
+  paintCloud('lm-cloud-3', 56, 32, [
+    [14, 18, 9],
+    [28, 14, 11],
+    [42, 18, 10],
+    [24, 22, 7],
+  ])
 }

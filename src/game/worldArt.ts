@@ -133,99 +133,36 @@ export function registerWorldArt(scene: Phaser.Scene) {
     }
   })
 
-  paint(scene, 'bg-mount-far', 256, 128, (set, w, h) => {
+  // Soft distant haze only — no mountain / village tile strips.
+  // Landmark mountains & clouds are discrete volumetric sprites (isoArt).
+  paint(scene, 'bg-horizon', 64, 32, (set, w, h) => {
     for (let y = 0; y < h; y++) {
-      rect(set, 0, y, w, 1, mix([140, 188, 210], [120, 168, 150], y / h))
-    }
-    for (let i = 0; i < 6; i++) {
-      const px = 20 + i * 42
-      for (let y = 0; y < 48; y++) {
-        const half = Math.max(0, 24 - Math.floor(y / 1.9))
-        rect(set, px - half, 96 - y, half * 2, 1, [115, 165, 155], 200)
-      }
-      rect(set, px - 5, 48, 10, 5, [210, 228, 235], 180)
-    }
-    for (let i = 0; i < 5; i++) {
-      const px = 32 + i * 48
-      for (let y = 0; y < 72; y++) {
-        const half = Math.max(0, 22 - Math.floor(y / 2.4))
-        const lit: RGB = y < 12 ? [150, 185, 175] : y > 48 ? [85, 140, 125] : [105, 160, 140]
-        rect(set, px - half, 108 - y, half * 2, 1, lit)
-        if (half > 2) set(px - half + 1, 108 - y, [170, 205, 190])
-      }
-      rect(set, px - 6, 36, 12, 6, [225, 238, 245])
-      rect(set, px - 3, 34, 6, 3, [245, 250, 255])
-    }
-    for (let y = 112; y < h; y++) {
-      rect(set, 0, y, w, 1, [180, 210, 200], Math.floor((y - 112) * 8))
+      const t = y / h
+      const a = Math.floor(t < 0.45 ? t * 90 : (1 - t) * 110)
+      rect(set, 0, y, w, 1, mix([190, 220, 235], [210, 200, 160], t), Math.max(0, a))
     }
   })
 
-  paint(scene, 'bg-mount-near', 128, 64, (set, w, h) => {
+  // Tiny creek wash under the single bridge landmark (not a tiled river band).
+  paint(scene, 'lm-river', 96, 24, (set, w, h) => {
     for (let y = 0; y < h; y++) {
-      rect(set, 0, y, w, 1, mix([95, 175, 105], [55, 120, 70], y / h))
-    }
-    for (let i = 0; i < 4; i++) {
-      const px = 16 + i * 32
-      for (let y = 0; y < 44; y++) {
-        const half = Math.max(0, 16 - Math.floor(y / 2.4))
-        const face: RGB = y < 8 ? [110, 195, 115] : y > 30 ? [50, 115, 60] : [75, 160, 85]
-        rect(set, px - half, 52 - y, half * 2, 1, face)
-        if (half > 3) {
-          set(px - half + 1, 52 - y, [150, 215, 140])
-          set(px + half - 2, 52 - y, [40, 100, 50])
-        }
-        if (y > 22 && y % 4 === 0 && half > 4) {
-          rect(set, px - half + 3, 52 - y - 3, 3, 4, [40, 100, 55])
-          rect(set, px + 2, 52 - y - 4, 4, 5, [55, 130, 70])
-        }
+      const t = y / h
+      const c = mix([90, 180, 220], [40, 110, 170], t)
+      for (let x = 0; x < w; x++) {
+        const edge = Math.min(x, w - 1 - x) / (w * 0.5)
+        const a = Math.floor(Math.max(0, Math.min(1, edge * 1.4 - t * 0.2)) * 200)
+        if (a < 8) continue
+        const wave = Math.sin(x * 0.35 + y * 0.5) * 10
+        set(x, y, [
+          Math.min(255, c[0] + wave),
+          Math.min(255, c[1] + Math.floor(wave * 0.5)),
+          Math.min(255, c[2]),
+        ], a)
       }
     }
-    for (let y = 56; y < h; y++) {
-      const a = Math.floor(((y - 56) / 8) * 160)
-      rect(set, 0, y, w, 1, [70, 48, 28], a)
-    }
-  })
-
-  paint(scene, 'bg-village', 256, 64, (set) => {
-    const sil: RGB = [55, 78, 72]
-    const silL: RGB = [78, 105, 95]
-    for (const ox of [16, 56, 100, 148, 196, 230]) {
-      rect(set, ox, 32, 22, 28, sil, 210)
-      for (let i = 0; i < 12; i++) {
-        rect(set, ox - 2 + i, 32 - i, 26 - i * 2, 1, silL, 220)
-      }
-      if (ox % 40 < 30) rect(set, ox + 6, 40, 5, 5, [255, 200, 100], 160)
-    }
-    rect(set, 120, 20, 4, 40, sil, 230)
-    rect(set, 148, 20, 4, 40, sil, 230)
-    rect(set, 116, 16, 40, 5, silL, 230)
-    rect(set, 114, 12, 44, 5, sil, 230)
-    for (const tx of [36, 84, 180]) {
-      for (let i = 0; i < 8; i++) {
-        rect(set, tx - 4 + i, 26 - i, 10 - i, 1, [40, 70, 55], 200)
-      }
-    }
-  })
-
-  paint(scene, 'bg-cloud', 128, 64, (set) => {
-    const blobs: Array<[number, number, number, number]> = [
-      [28, 32, 14, 200],
-      [52, 24, 16, 220],
-      [78, 30, 13, 200],
-      [44, 36, 12, 180],
-      [68, 38, 10, 160],
-      [100, 28, 12, 190],
-    ]
-    for (const [cx, cy, r, a] of blobs) {
-      for (let y = -r; y <= r; y++) {
-        for (let x = -r; x <= r; x++) {
-          if (x * x + y * y <= r * r) {
-            const lit: RGB = y < -2 ? [255, 255, 255] : y > 4 ? [230, 236, 245] : [248, 250, 255]
-            set(cx + x, cy + y, lit, a)
-          }
-        }
-      }
+    for (let x = 8; x < w - 8; x += 9) {
+      set(x, 4 + (x % 5), [220, 245, 255], 180)
+      set(x + 3, 10 + (x % 3), [180, 230, 250], 140)
     }
   })
 
@@ -299,7 +236,9 @@ export function registerWorldArt(scene: Phaser.Scene) {
   })
 
   paint(scene, 'prop-bridge', 64, 28, (set) => {
-    rect(set, 4, 24, 56, 3, [20, 14, 12], 110)
+    const ink: RGB = [18, 12, 14]
+    rect(set, 4, 24, 56, 3, ink, 110)
+    rect(set, 1, 1, 62, 20, ink)
     rect(set, 2, 8, 60, 10, [190, 130, 70])
     rect(set, 2, 8, 60, 2, [230, 180, 120])
     rect(set, 2, 16, 60, 2, [130, 80, 40])

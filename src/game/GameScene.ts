@@ -143,10 +143,9 @@ export class GameScene extends Phaser.Scene {
   private water!: Phaser.GameObjects.TileSprite
   private waterMid?: Phaser.GameObjects.TileSprite
   private waterFoam?: Phaser.GameObjects.TileSprite
-  private clouds!: Phaser.GameObjects.TileSprite
-  private mountFar!: Phaser.GameObjects.TileSprite
-  private mountNear!: Phaser.GameObjects.TileSprite
-  private villageBand?: Phaser.GameObjects.TileSprite
+  /** Sparse parallax landmarks (not tiled mountain/village bands). */
+  private bgClouds: Phaser.GameObjects.Image[] = []
+  private bgMounts: Phaser.GameObjects.Image[] = []
   /** Entity registry — players/enemies/projectiles live here, not in HUD. */
   private entities = new EntityManager()
   private debugOverlay!: DebugOverlay
@@ -950,10 +949,24 @@ export class GameScene extends Phaser.Scene {
     snapTilePosition(this.water, sx * 0.45 + t * 0.025)
     snapTilePosition(this.waterMid, sx * 0.5 + t * 0.032)
     snapTilePosition(this.waterFoam, sx * 0.55 + t * 0.04)
-    snapTilePosition(this.clouds, sx * 0.08 + t * 0.005)
-    snapTilePosition(this.mountFar, sx * 0.12)
-    snapTilePosition(this.villageBand, sx * 0.18)
-    snapTilePosition(this.mountNear, sx * 0.28)
+    // Discrete landmarks stay in the sky band (scrollFactor 0) with soft wrap.
+    const wrap = (base: number, rate: number, span: number) => {
+      let x = base - sx * rate
+      x = ((x % span) + span) % span
+      return Math.round(x)
+    }
+    for (let i = 0; i < this.bgClouds.length; i++) {
+      const c = this.bgClouds[i]
+      const base = (c.getData('baseX') as number) ?? c.x
+      const rate = (c.getData('parallax') as number) ?? 0.08
+      c.x = wrap(base + Math.sin(t * 0.00035 + i) * 6, rate, 1200) - 80
+    }
+    for (let i = 0; i < this.bgMounts.length; i++) {
+      const m = this.bgMounts[i]
+      const base = (m.getData('baseX') as number) ?? m.x
+      const rate = (m.getData('parallax') as number) ?? 0.18
+      m.x = wrap(base, rate, 1400) - 100
+    }
   }
 
   private placeDecor(x: number, key: string, scale: number, shadScale = 1, flip = false) {
@@ -975,94 +988,46 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawWorld() {
+    // Layer 0 — soft base only: gradient sky + sun + horizon wash (no tiled mountain strips).
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
     g.fillStyle(0xa8d8f5, 1)
-    g.fillRect(0, 0, WORLD_W, 150)
-    g.fillStyle(0xffe8b0, 0.5)
-    g.fillRect(0, 160, WORLD_W, 200)
+    g.fillRect(0, 0, WORLD_W, 160)
+    g.fillStyle(0xffe8b0, 0.42)
+    g.fillRect(0, 170, WORLD_W, 180)
     g.fillStyle(0xfff6d0, 0.55)
     g.fillCircle(160, 70, 78)
     g.fillStyle(0xffe08a, 1)
     g.fillCircle(160, 70, 30)
+    // Simple horizon line washes (not a busy mountain band).
+    g.fillStyle(0xc8dce8, 0.35)
+    g.fillRect(0, 248, WORLD_W, 10)
+    g.fillStyle(0xb8c8a8, 0.28)
+    g.fillRect(0, 256, WORLD_W, 18)
 
-    // Parallax bands stacked without Y overlap so different scroll rates cannot
-    // shear a shared horizontal cut through hills / village / water.
     if (this.textures.exists('bg-sky')) {
       const sky = this.add
-        .tileSprite(480, 96, 960, 192, 'bg-sky')
+        .tileSprite(480, 100, 960, 200, 'bg-sky')
         .setScrollFactor(0)
         .setDepth(DEPTH.SKY_BAND)
-        .setAlpha(0.5)
+        .setAlpha(0.4)
       enablePixelSprite(sky)
     }
-
-    this.clouds = this.add
-      .tileSprite(480, 48, 960, 64, 'bg-cloud')
-      .setScrollFactor(0)
-      .setDepth(DEPTH.CLOUD)
-      .setAlpha(0.82)
-    enablePixelSprite(this.clouds)
-    this.mountFar = this.add
-      .tileSprite(480, 200, 960, 128, 'bg-mount-far')
-      .setScrollFactor(0)
-      .setDepth(DEPTH.MOUNT_FAR)
-      .setAlpha(0.92)
-    enablePixelSprite(this.mountFar)
-    if (this.textures.exists('bg-village')) {
-      this.villageBand = this.add
-        .tileSprite(480, 264, 960, 64, 'bg-village')
+    if (this.textures.exists('bg-horizon')) {
+      const hz = this.add
+        .tileSprite(480, 262, 960, 32, 'bg-horizon')
         .setScrollFactor(0)
-        .setDepth(DEPTH.VILLAGE)
-        .setAlpha(0.85)
-      enablePixelSprite(this.villageBand)
-    }
-    this.mountNear = this.add
-      .tileSprite(480, 336, 960, 64, 'bg-mount-near')
-      .setScrollFactor(0)
-      .setDepth(DEPTH.MOUNT_NEAR)
-    enablePixelSprite(this.mountNear)
-
-    for (let x = 140; x < WORLD_W; x += 220) {
-      this.placeDecor(x, 'prop-tree3d', 1.15 + ((x / 220) % 3) * 0.08, 1.15)
-    }
-    for (let x = 380; x < WORLD_W; x += 680) {
-      this.placeDecor(x, 'prop-torii', 1.12, 1.7)
-      this.placeDecor(x + 140, 'prop-house3d', 1.2, 1.35)
-      if (x + 300 < WORLD_W) this.placeDecor(x + 300, 'prop-house3d', 1.0, 1.15, true)
-      if (this.textures.exists('prop-shrine')) this.placeDecor(x + 60, 'prop-shrine', 1.1, 0.85)
-    }
-    for (let x = 240; x < WORLD_W; x += 320) {
-      if (this.textures.exists('prop-banner')) this.placeDecor(x, 'prop-banner', 1.35, 0.5)
-    }
-    for (let x = 70; x < WORLD_W; x += 160) {
-      this.placeDecor(x, 'prop-lantern3d', 1.25, 0.5)
-    }
-    for (let x = 500; x < WORLD_W; x += 520) {
-      if (this.textures.exists('prop-honey-stack')) this.placeDecor(x + 40, 'prop-honey-stack', 1.2, 0.85)
-      if (this.textures.exists('prop-bush')) this.placeDecor(x - 50, 'prop-bush', 1.3, 0.7)
-    }
-    for (let x = 200; x < WORLD_W; x += 290) {
-      if (this.textures.exists('fg-rock')) {
-        this.add.image(x, GROUND_Y + 5, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.4).setScale(0.65, 0.45)
-        const rock = this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP_FG).setScale(1.3)
-        enablePixelSprite(rock)
-      }
-      if (this.textures.exists('fg-reed')) {
-        const reed = this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(DEPTH.PROP_FG).setScale(1.2)
-        enablePixelSprite(reed)
-      }
-    }
-    if (this.textures.exists('prop-bridge')) {
-      for (const bx of [520, 920, 1860, 2740]) {
-        this.add.image(bx, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.45).setScale(1.9, 0.5)
-        const br = this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setScale(1.6)
-        enablePixelSprite(br)
-      }
+        .setDepth(DEPTH.SKY_BAND + 1)
+        .setAlpha(0.55)
+      enablePixelSprite(hz)
     }
 
-    // Water stack: deep → mid → foam, integer heights matching POT textures.
+    this.bgClouds = []
+    this.bgMounts = []
+    this.placeSparseLandmarks()
+
+    // Water stack at stage foot (gameplay creek) — deep → mid → foam.
     this.water = this.add
       .tileSprite(480, 520, 960, 64, 'water-deep')
       .setScrollFactor(0)
@@ -1083,6 +1048,90 @@ export class GameScene extends Phaser.Scene {
         .setDepth(DEPTH.WATER_FOAM)
         .setAlpha(0.9)
       enablePixelSprite(this.waterFoam)
+    }
+  }
+
+  /**
+   * Curated sparse BG — quality over quantity.
+   * Budget: 4 mountains, 6 clouds, 1 house, 1 torii, few trees, 1 bridge + little river.
+   * Each landmark is an independent volumetric sprite (not a repeating tile strip).
+   */
+  private placeSparseLandmarks() {
+    // --- 6 clouds (3 unique textures × flip/scale) ---
+    const cloudSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number }> = [
+      { key: 'lm-cloud-1', x: 120, y: 52, s: 1.35, p: 0.05 },
+      { key: 'lm-cloud-2', x: 340, y: 38, s: 1.15, flip: true, p: 0.07 },
+      { key: 'lm-cloud-3', x: 560, y: 60, s: 1.25, p: 0.06 },
+      { key: 'lm-cloud-1', x: 780, y: 44, s: 1.05, flip: true, p: 0.08 },
+      { key: 'lm-cloud-2', x: 980, y: 56, s: 1.4, p: 0.05 },
+      { key: 'lm-cloud-3', x: 1180, y: 36, s: 1.2, flip: true, p: 0.09 },
+    ]
+    for (const c of cloudSpecs) {
+      if (!this.textures.exists(c.key)) continue
+      const img = this.add
+        .image(c.x, c.y, c.key)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.CLOUD)
+        .setScale(c.s)
+        .setAlpha(0.9)
+        .setFlipX(!!c.flip)
+      img.setData('baseX', c.x)
+      img.setData('parallax', c.p)
+      enablePixelSprite(img)
+      this.bgClouds.push(img)
+    }
+
+    // --- 4 unique mountains (far→near) ---
+    const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number }> = [
+      { key: 'lm-mount-2', x: 180, y: 268, s: 1.55, p: 0.1, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-1', x: 520, y: 278, s: 1.35, flip: true, p: 0.12, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-4', x: 860, y: 300, s: 1.45, p: 0.2, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-3', x: 1180, y: 312, s: 1.25, flip: true, p: 0.24, d: DEPTH.MOUNT_NEAR },
+    ]
+    for (const m of mountSpecs) {
+      if (!this.textures.exists(m.key)) continue
+      const img = this.add
+        .image(m.x, m.y, m.key)
+        .setOrigin(0.5, 1)
+        .setScrollFactor(0)
+        .setDepth(m.d)
+        .setScale(m.s)
+        .setAlpha(0.95)
+        .setFlipX(!!m.flip)
+      img.setData('baseX', m.x)
+      img.setData('parallax', m.p)
+      enablePixelSprite(img)
+      this.bgMounts.push(img)
+    }
+
+    // --- Ground landmarks (world-space, with contact shadows) ---
+    // Few trees
+    this.placeDecor(160, 'prop-tree3d', 1.2, 1.15)
+    this.placeDecor(680, 'prop-tree3d', 1.05, 1.0, true)
+    this.placeDecor(1480, 'prop-tree3d', 1.25, 1.2)
+    this.placeDecor(2480, 'prop-tree3d', 1.1, 1.05)
+    // 1 torii
+    this.placeDecor(420, 'prop-torii', 1.15, 1.7)
+    // 1 house
+    this.placeDecor(980, 'prop-house3d', 1.25, 1.4)
+    // Optional: 1 bridge + little river
+    if (this.textures.exists('lm-river')) {
+      const river = this.add
+        .image(720, GROUND_Y + 10, 'lm-river')
+        .setOrigin(0.5, 0.5)
+        .setDepth(DEPTH.PROP_SHADOW - 0.1)
+        .setScale(1.8, 1.1)
+        .setAlpha(0.85)
+      enablePixelSprite(river)
+    }
+    if (this.textures.exists('prop-bridge')) {
+      this.add.image(720, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.45).setScale(1.9, 0.5)
+      const br = this.add
+        .image(720, GROUND_Y + 2, 'prop-bridge')
+        .setOrigin(0.5, 1)
+        .setDepth(DEPTH.PROP)
+        .setScale(1.65)
+      enablePixelSprite(br)
     }
   }
 

@@ -42,22 +42,31 @@ export class MainMenuScene extends Phaser.Scene {
     g.fillCircle(width * 0.86, 64, 30)
 
     if (this.textures.exists('bg-sky')) {
-      this.add.tileSprite(width / 2, 120, width, 240, 'bg-sky').setDepth(0).setAlpha(0.55)
+      this.add.tileSprite(width / 2, 120, width, 240, 'bg-sky').setDepth(0).setAlpha(0.45)
     }
-    if (this.textures.exists('bg-cloud')) {
-      const c1 = this.add.tileSprite(width / 2, 48, width, 64, 'bg-cloud').setDepth(1).setAlpha(0.85)
-      this.tweens.add({ targets: c1, tilePositionX: 120, duration: 28000, repeat: -1 })
+    if (this.textures.exists('bg-horizon')) {
+      this.add.tileSprite(width / 2, 268, width, 32, 'bg-horizon').setDepth(1).setAlpha(0.5)
     }
-    if (this.textures.exists('bg-mount-far')) {
-      this.add.image(width * 0.3, 210, 'bg-mount-far').setDepth(1).setScale(2.2).setAlpha(0.85)
-      this.add.image(width * 0.75, 220, 'bg-mount-far').setDepth(1).setScale(2.0).setAlpha(0.75).setFlipX(true)
+    // Sparse discrete landmarks (not tiled mountain / village bands).
+    const clouds: Array<[string, number, number, number, boolean?]> = [
+      ['lm-cloud-1', width * 0.16, 46, 1.3],
+      ['lm-cloud-2', width * 0.48, 34, 1.15, true],
+      ['lm-cloud-3', width * 0.78, 52, 1.2],
+      ['lm-cloud-1', width * 0.92, 40, 0.95, true],
+    ]
+    for (const [key, x, y, s, flip] of clouds) {
+      if (!this.textures.exists(key)) continue
+      const c = this.add.image(x, y, key).setDepth(1).setScale(s).setAlpha(0.88).setFlipX(!!flip)
+      this.tweens.add({ targets: c, x: x + 28, duration: 26000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
-    if (this.textures.exists('bg-village')) {
-      this.add.image(width / 2, 268, 'bg-village').setDepth(2).setScale(3.2).setAlpha(0.7)
-    }
-    if (this.textures.exists('bg-mount-near')) {
-      this.add.image(width * 0.2, 300, 'bg-mount-near').setDepth(2).setScale(2.4).setAlpha(0.9)
-      this.add.image(width * 0.82, 305, 'bg-mount-near').setDepth(2).setScale(2.2).setAlpha(0.85).setFlipX(true)
+    const mounts: Array<[string, number, number, number, boolean?]> = [
+      ['lm-mount-2', width * 0.22, 285, 1.5],
+      ['lm-mount-1', width * 0.55, 292, 1.3, true],
+      ['lm-mount-4', width * 0.82, 300, 1.35],
+    ]
+    for (const [key, x, y, s, flip] of mounts) {
+      if (!this.textures.exists(key)) continue
+      this.add.image(x, y, key).setOrigin(0.5, 1).setDepth(2).setScale(s).setAlpha(0.92).setFlipX(!!flip)
     }
 
     if (this.textures.exists('water-deep')) {

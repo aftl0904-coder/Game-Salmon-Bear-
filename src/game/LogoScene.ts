@@ -20,20 +20,28 @@ export class LogoScene extends Phaser.Scene {
     g.fillStyle(0xffe08a, 1)
     g.fillCircle(width * 0.16, 68, 28)
 
-    if (this.textures.exists('bg-cloud')) {
-      const clouds = this.add.tileSprite(width / 2, 50, width, 40, 'bg-cloud').setAlpha(0.8)
-      this.tweens.add({ targets: clouds, tilePositionX: 80, duration: 20000, repeat: -1 })
+    // Sparse landmarks only — soft base already drawn above; no tiled mountain strips.
+    if (this.textures.exists('bg-horizon')) {
+      this.add.tileSprite(width / 2, 250, width, 32, 'bg-horizon').setAlpha(0.5)
     }
-    if (this.textures.exists('bg-mount-far')) {
-      this.add.image(width * 0.35, 200, 'bg-mount-far').setScale(2.1).setAlpha(0.85)
-      this.add.image(width * 0.78, 210, 'bg-mount-far').setScale(1.9).setAlpha(0.7).setFlipX(true)
+    const clouds: Array<[string, number, number, number, boolean?]> = [
+      ['lm-cloud-1', width * 0.18, 48, 1.2],
+      ['lm-cloud-2', width * 0.52, 36, 1.1, true],
+      ['lm-cloud-3', width * 0.82, 54, 1.25],
+    ]
+    for (const [key, x, y, s, flip] of clouds) {
+      if (!this.textures.exists(key)) continue
+      const c = this.add.image(x, y, key).setScale(s).setAlpha(0.88).setFlipX(!!flip)
+      this.tweens.add({ targets: c, x: x + 24, duration: 22000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
-    if (this.textures.exists('bg-village')) {
-      this.add.image(width / 2, 255, 'bg-village').setScale(3.0).setAlpha(0.65)
-    }
-    if (this.textures.exists('bg-mount-near')) {
-      this.add.image(width * 0.22, 290, 'bg-mount-near').setScale(2.3).setAlpha(0.9)
-      this.add.image(width * 0.8, 295, 'bg-mount-near').setScale(2.1).setAlpha(0.85).setFlipX(true)
+    const mounts: Array<[string, number, number, number, boolean?]> = [
+      ['lm-mount-2', width * 0.28, 270, 1.4],
+      ['lm-mount-1', width * 0.72, 278, 1.25, true],
+      ['lm-mount-3', width * 0.5, 295, 1.1],
+    ]
+    for (const [key, x, y, s, flip] of mounts) {
+      if (!this.textures.exists(key)) continue
+      this.add.image(x, y, key).setOrigin(0.5, 1).setScale(s).setAlpha(0.9).setFlipX(!!flip)
     }
 
     if (this.textures.exists('ui-noren')) {
