@@ -20,6 +20,7 @@ import { PatrolEnemy } from './enemies'
 import { EventBus, GameEvents } from './EventBus'
 import { Player } from './Player'
 import { TouchInput } from './touchInput'
+import { playStoryIntro } from './storyIntro'
 import {
   WORLD_W,
   WORLD_H,
@@ -414,10 +415,13 @@ export class GameScene extends Phaser.Scene {
     }
     this.registry.set('winScreenShown', false)
     this.stopUi()
-    // Must use ScenePlugin.start from play so THIS scene shuts down.
-    // game.scene.start('menu') only launches menu in parallel → clear screen sticks.
-    // Defer off the keydown/JustDown stack so the transition is not aborted.
+    // 過場黑畫面至少 1 秒，再回選單
     const play = this
+    try {
+      play.cameras.main.fadeOut(1000, 0, 0, 0)
+    } catch {
+      /* camera may be gone */
+    }
     window.setTimeout(() => {
       try {
         if (play.sys?.isActive()) {
@@ -430,7 +434,7 @@ export class GameScene extends Phaser.Scene {
       } finally {
         play.game.registry.set('leavingToMenu', false)
       }
-    }, 0)
+    }, 1000)
   }
 
   private emitHealth() {
@@ -1935,61 +1939,29 @@ export class GameScene extends Phaser.Scene {
   }
 
 
+  /**
+   * After cast select: 3 story acts (7s each, A/攻 skips act).
+   * Every transition ≥1s black; after last act → 2s black → gameplay.
+   */
   private showIntro() {
-    const box = this.add
-      .text(
-        480,
-        200,
-        '第１關・奪回蜂蜜與鮭供\n△三角組織雇來的傀儡擋路\n倫寶・鮭魚槍（有射程）｜琪寶寶・劍×１.５速\n噗噗跟在琪寶寶身後；她受傷才噴蜜反擊\n上／中／下三線　ＷＳ／↑↓換線　同線先打到\n\n按空白鍵／點擊　或稍候自動開始',
-        {
-          fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '15px',
-          color: '#f7e7c0',
-          backgroundColor: '#4a2a18ee',
-          padding: { x: 16, y: 12 },
-          align: 'center',
-        },
-      )
-      .setOrigin(0.5)
-      .setScrollFactor(0)
-      .setDepth(DEPTH.FX)
-
     this.boy.setVelocity(0, 0)
     this.girl?.setVelocity(0, 0)
+    this.pet?.setVelocity(0, 0)
 
-    const go = () => {
-      if (this.started) return
-      this.started = true
-      this.startedAt = this.time.now
-      box.destroy()
-      this.emitScore(
-        this.mode === '1p'
-          ? '單人：ＷＳ換線　Ｇ跳　Ｆ鮭槍　Ｔ絕招（食蜂蜜）｜Ｒ回選單'
-          : '雙人：Ｆ／，攻擊　Ｇ／．跳　Ｔ／；絕招｜食蜂蜜充藍條',
-      )
-    }
-    this.time.delayedCall(120, () => {
-      this.input.keyboard?.once('keydown', go)
-      this.input.once('pointerdown', go)
-    })
-    // Phone virtual「始」also dismisses intro.
-    const touchPoll = this.time.addEvent({
-      delay: 80,
-      loop: true,
-      callback: () => {
-        if (
-          this.started ||
-          TouchInput.justPressed('start') ||
-          TouchInput.justPressed('attack') ||
-          TouchInput.justPressed('jump')
-        ) {
-          touchPoll.remove(false)
-          go()
-        }
+    const handle = playStoryIntro({
+      scene: this,
+      onDone: () => {
+        if (this.started) return
+        this.started = true
+        this.startedAt = this.time.now
+        this.emitScore(
+          this.mode === '1p'
+            ? '單人：ＷＳ換線　Ｇ跳　Ｆ鮭槍　Ｔ絕招（食蜂蜜）｜Ｒ回選單'
+            : '雙人：Ｆ／，攻擊　Ｇ／．跳　Ｔ／；絕招｜食蜂蜜充藍條',
+        )
       },
     })
-    // Auto-start so「載入後沒反應」不會卡在說明框。
-    this.time.delayedCall(4200, go)
+    this.events.once('shutdown', () => handle.destroy())
   }
 
   private breakPot(pot: Breakable) {

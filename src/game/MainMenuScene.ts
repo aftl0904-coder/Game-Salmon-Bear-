@@ -414,7 +414,8 @@ export class MainMenuScene extends Phaser.Scene {
     this.starting = true
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
-    this.cameras.main.fadeOut(220, 40, 28, 16)
-    this.time.delayedCall(220, () => this.scene.start('play'))
+    // 過場黑畫面至少 1 秒
+    this.cameras.main.fadeOut(1000, 0, 0, 0)
+    this.time.delayedCall(1000, () => this.scene.start('play'))
   }
 }
