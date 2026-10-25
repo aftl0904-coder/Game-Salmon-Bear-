@@ -21,8 +21,8 @@ export const LANE_DEFAULT = 2 as LaneId
 /** Same-lane hit tolerance only used as Y fallback. */
 export const LANE_HIT_Y_TOL = 20
 
-/** Cooldown between discrete lane switches (ms). */
-export const LANE_SWITCH_MS = 140
+/** Cooldown between discrete lane switches while held (ms). */
+export const LANE_SWITCH_MS = 110
 
 /** Soft lerp toward target lane Y while grounded (px/s). */
 export const LANE_SNAP_SPEED = 580

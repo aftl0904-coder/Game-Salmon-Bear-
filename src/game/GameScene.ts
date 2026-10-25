@@ -1260,9 +1260,10 @@ export class GameScene extends Phaser.Scene {
     if (!this.water) return
     const sx = this.cameras.main.scrollX
     const t = this.time.now
-    snapTilePosition(this.water, sx * 0.45 + t * 0.025)
-    snapTilePosition(this.waterMid, sx * 0.5 + t * 0.032)
-    snapTilePosition(this.waterFoam, sx * 0.55 + t * 0.04)
+    // Stronger flow so the creek reads as a moving river.
+    snapTilePosition(this.water, sx * 0.35 + t * 0.085)
+    snapTilePosition(this.waterMid, sx * 0.4 + t * 0.11)
+    snapTilePosition(this.waterFoam, sx * 0.48 + t * 0.14)
     // Discrete landmarks stay in the sky band (scrollFactor 0).
     // Clouds soft-wrap; mountains drift slowly without re-tiling into a band.
     for (let i = 0; i < this.bgClouds.length; i++) {
@@ -1298,39 +1299,54 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts.push(img)
   }
 
-  /** Pack3 A-03: occasional bees drift across the upper sky — visual only. */
+  /** Sky bees: fly across the camera, leave, then a new one enters randomly. */
   private spawnAmbientBees() {
     this.ambientBees = []
     if (!this.textures.exists('fx-ambient-bee')) return
-    const count = 5
-    for (let i = 0; i < count; i++) {
-      const bee = this.add
-        .image(Phaser.Math.Between(40, WORLD_W - 40), Phaser.Math.Between(36, 120), 'fx-ambient-bee')
-        .setDepth(DEPTH.SKY + 2)
-        .setScale(1.4)
-        .setAlpha(0.9)
-      bee.setData('vx', Phaser.Math.FloatBetween(18, 42) * (Math.random() < 0.5 ? 1 : -1))
-      bee.setData('phase', Math.random() * Math.PI * 2)
-      bee.setData('amp', Phaser.Math.FloatBetween(4, 10))
-      bee.setData('baseY', bee.y)
-      enablePixelSprite(bee)
-      this.ambientBees.push(bee)
-    }
+    for (let i = 0; i < 4; i++) this.spawnOneBee(true)
+  }
+
+  private spawnOneBee(initial = false) {
+    if (!this.textures.exists('fx-ambient-bee')) return
+    const fromLeft = Math.random() < 0.5
+    const bee = this.add
+      .image(fromLeft ? -30 : 990, Phaser.Math.Between(28, 110), 'fx-ambient-bee')
+      .setScrollFactor(0)
+      .setDepth(DEPTH.SKY + 2)
+      .setScale(Phaser.Math.FloatBetween(1.2, 1.7))
+      .setAlpha(0.92)
+    const vx = fromLeft
+      ? Phaser.Math.FloatBetween(55, 95)
+      : -Phaser.Math.FloatBetween(55, 95)
+    bee.setData('vx', vx)
+    bee.setData('phase', Math.random() * Math.PI * 2)
+    bee.setData('amp', Phaser.Math.FloatBetween(6, 14))
+    bee.setData('baseY', bee.y)
+    bee.setData('life', initial ? Phaser.Math.Between(0, 4000) : 0)
+    enablePixelSprite(bee)
+    this.ambientBees.push(bee)
   }
 
   private tickAmbientBees(dt: number) {
-    if (this.ambientBees.length === 0) return
     const t = this.time.now
-    for (const bee of this.ambientBees) {
-      const vx = (bee.getData('vx') as number) || 24
+    for (let i = this.ambientBees.length - 1; i >= 0; i--) {
+      const bee = this.ambientBees[i]!
+      const vx = (bee.getData('vx') as number) || 60
       const phase = (bee.getData('phase') as number) || 0
-      const amp = (bee.getData('amp') as number) || 6
+      const amp = (bee.getData('amp') as number) || 8
       const baseY = (bee.getData('baseY') as number) || bee.y
       bee.x += (vx * dt) / 1000
-      bee.y = baseY + Math.sin(t * 0.004 + phase) * amp
+      bee.y = baseY + Math.sin(t * 0.005 + phase) * amp
       bee.setFlipX(vx < 0)
-      if (bee.x < -40) bee.x = WORLD_W + 20
-      if (bee.x > WORLD_W + 40) bee.x = -20
+      // Fly away off the screen → despawn and spawn a fresh bee later.
+      if (bee.x < -60 || bee.x > 1020) {
+        bee.destroy()
+        this.ambientBees.splice(i, 1)
+        this.time.delayedCall(Phaser.Math.Between(400, 2200), () => {
+          if (!this.sys.isActive()) return
+          this.spawnOneBee(false)
+        })
+      }
     }
   }
 
@@ -1374,30 +1390,36 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts = []
     this.placeSparseLandmarks()
 
-    // Water stack at stage foot — integer origin + width (multiple of 64) kills seams.
-    // Less river visible — ground sits lower, more playable space (Pack3 F).
+    // Background creek band — taller + layered so it reads as a flowing river.
+    const bank = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.WATER_DEEP - 1)
+    bank.fillStyle(0x5a7a48, 0.55)
+    bank.fillRect(0, 455, 960, 18)
+    bank.fillStyle(0x3a5a38, 0.4)
+    bank.fillRect(0, 468, 960, 10)
+
     this.water = this.add
-      .tileSprite(480, 528, 960, 36, 'water-deep')
+      .tileSprite(480, 505, 960, 72, 'water-deep')
       .setScrollFactor(0)
       .setDepth(DEPTH.WATER_DEEP)
-    this.water.setPosition(480, 528)
+      .setAlpha(0.95)
+    this.water.setPosition(480, 505)
     enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
-        .tileSprite(480, 516, 960, 20, 'water-mid')
+        .tileSprite(480, 492, 960, 36, 'water-mid')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_MID)
-        .setAlpha(0.55)
-      this.waterMid.setPosition(480, 516)
+        .setAlpha(0.7)
+      this.waterMid.setPosition(480, 492)
       enablePixelSprite(this.waterMid)
     }
     if (this.textures.exists('water-foam')) {
       this.waterFoam = this.add
-        .tileSprite(480, 488, 960, 16, 'water-foam')
+        .tileSprite(480, 468, 960, 22, 'water-foam')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_FOAM)
-        .setAlpha(0.85)
-      this.waterFoam.setPosition(480, 488)
+        .setAlpha(0.95)
+      this.waterFoam.setPosition(480, 468)
       enablePixelSprite(this.waterFoam)
     }
   }

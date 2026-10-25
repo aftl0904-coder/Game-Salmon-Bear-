@@ -103,7 +103,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   attackHitbox!: Phaser.Physics.Arcade.Image
   private attackUntil = 0
   private flashTween?: Phaser.Tweens.Tween
-  private laneHeldLock = false
   private jumpCutApplied = false
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
@@ -152,7 +151,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.laneCd = 0
     this.laneJumping = false
     this.laneBuf = 0
-    this.laneHeldLock = false
     this.fsm = 'IDLE'
     this.fsmEnterAt = 0
 
@@ -261,35 +259,29 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       return
     }
 
+    // Hold W/S (or ↑↓): keep stepping lanes while cooldown ready — no release needed.
     const laneUp = !!opts.laneUpJust
     const laneDown = !!opts.laneDownJust
     const laneMax = LANE_COUNT - 1
-    if (!laneUp && !laneDown) this.laneHeldLock = false
-    else if (!this.laneHeldLock) {
-      if (laneUp && this.lane > 0) this.laneBuf = -1
-      else if (laneDown && this.lane < laneMax) this.laneBuf = 1
-    }
     if (
-      this.laneBuf !== 0 &&
       grounded &&
       !this.laneJumping &&
       this.laneCd <= 0 &&
       inLaneBand(this.y)
     ) {
-      if (this.laneBuf < 0 && this.lane > 0) {
+      if (laneUp && this.lane > 0) {
         this.lane = clampLane(this.lane - 1)
         this.laneCd = LANE_SWITCH_MS
         fsmEnter(this, 'LANE_SWAP', now)
         opts.onLane?.(this.lane)
-      } else if (this.laneBuf > 0 && this.lane < laneMax) {
+      } else if (laneDown && this.lane < laneMax) {
         this.lane = clampLane(this.lane + 1)
         this.laneCd = LANE_SWITCH_MS
         fsmEnter(this, 'LANE_SWAP', now)
         opts.onLane?.(this.lane)
       }
-      this.laneBuf = 0
-      this.laneHeldLock = true
     }
+    this.laneBuf = 0
 
     const dtSec = dt / 1000
     let target = 0
@@ -432,7 +424,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.jumpConsumed = false
     this.jumpCutApplied = false
     this.laneBuf = 0
-    this.laneHeldLock = false
     this.laneCd = 0
     if (x !== undefined) this.setX(x)
     this.setY(laneY(this.lane))

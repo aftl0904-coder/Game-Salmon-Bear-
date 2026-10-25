@@ -97,10 +97,12 @@ export class PatrolEnemy extends Enemy {
     e.setData('baseTex', tex)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     if (spKey === 'elephant') {
-      // Trunk weapon — curled in windup, extends 0.7× body on strike.
-      e.weapon = scene.add
-        .image(x + 22, feetY - 22, scene.textures.exists('fx-elephant-trunk') ? 'fx-elephant-trunk' : 'fx-salmon-shot')
-        .setDepth(actorDepth('enemy', lane, feetY) + 0.25)
+      const trunkKey = scene.textures.exists('fx-elephant-trunk-0')
+        ? 'fx-elephant-trunk-0'
+        : scene.textures.exists('fx-salmon-shot')
+          ? 'fx-salmon-shot'
+          : 'coin'
+      e.weapon = scene.add.image(x + 22, feetY - 22, trunkKey).setDepth(actorDepth('enemy', lane, feetY) + 0.25)
       enablePixelSprite(e.weapon)
       e.weapon.setData('isTrunk', true)
     } else {
@@ -232,12 +234,19 @@ export class PatrolEnemy extends Enemy {
       const dir = (Math.sign(dx) || this.patrolDir) as 1 | -1
       const arrive = Math.abs(dx) < 12
       this.setVelocityX(arrive ? dir * spd * 0.45 : dir * spd)
-      this.setFlipX(dir < 0)
       this.patrolDir = dir
-      this.walkPhase += arrive ? 0.08 : 0.14
+      this.faceMoveDir()
+      this.walkPhase += arrive ? 0.16 : 0.22
       this.applyPose()
       this.syncWeapon()
     }
+  }
+
+  /** Face the side we're actually moving (forward or back). */
+  private faceMoveDir() {
+    const vx = (this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0
+    if (Math.abs(vx) > 6) this.setFlipX(vx < 0)
+    else this.setFlipX(this.patrolDir < 0)
   }
 
   private beginWindup(ms: number) {
@@ -264,9 +273,9 @@ export class PatrolEnemy extends Enemy {
     const dir = (Math.sign(target.x - this.x) || this.patrolDir) as 1 | -1
     const walkIn = (mul: number) => {
       this.setVelocityX(dir * spd * mul)
-      this.setFlipX(dir < 0)
       this.patrolDir = dir
-      this.walkPhase += 0.12 * mul
+      this.faceMoveDir()
+      this.walkPhase += 0.2 * mul
     }
     if (this.atkPhase === 'recover') {
       // Keep closing — no stand-still recover.
@@ -368,7 +377,8 @@ export class PatrolEnemy extends Enemy {
   }
   private applyPose() {
     const lock = () => {
-      this.setScale(Math.round(this.baseScale) || 1)
+      // Keep fractional scale (elephant bigger than fish).
+      this.setScale(this.baseScale || 1)
       this.setAngle(0)
     }
     const base = (this.getData('baseTex') as string) || 'art-enemy'
@@ -389,17 +399,22 @@ export class PatrolEnemy extends Enemy {
       return
     }
     if (this.atkPhase === 'charge' || this.atkPhase === 'strike') {
-      setTex(`${base}-atk-strike`)
+      // Alternate 2 attack frames for readable strike motion.
+      const strikeKey =
+        Math.floor(this.walkPhase) % 2 === 0 ? `${base}-atk-strike` : `${base}-atk-windup`
+      setTex(this.scene.textures.exists(strikeKey) ? strikeKey : `${base}-atk-strike`)
+      this.walkPhase += 0.25
       lock()
       this.syncWeapon()
       return
     }
     const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0)
-    if (vx > 20 && (this.fsm === 'CHASE' || this.fsm === 'PATROL' || this.atkPhase === 'recover')) {
+    if (vx > 8 && (this.fsm === 'CHASE' || this.fsm === 'PATROL' || this.atkPhase === 'recover')) {
       if (this.atkPhase === 'none' || this.atkPhase === 'recover') {
-        this.walkPhase += 0.1
+        this.walkPhase += 0.18
       }
-      const frame = Math.floor(this.walkPhase) % WALK_FRAMES
+      // At least 2 distinct walk frames.
+      const frame = Math.floor(this.walkPhase) % Math.max(2, WALK_FRAMES)
       setTex(`${base}-run-${frame}`)
       lock()
       this.syncWeapon()
@@ -431,21 +446,24 @@ export class PatrolEnemy extends Enemy {
     const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
     const trunk = !!w.getData('isTrunk') || this.species === 'elephant'
     if (trunk) {
-      // 原卷起 (windup) → strike extend nose ~0.7× body length forward
-      const bodyLen = Math.max(40, this.displayWidth)
+      // 2-frame nose: curled (0) → extended (1) ~0.7× body length
+      const bodyLen = Math.max(48, this.displayWidth)
       const reach = bodyLen * 0.7
       if (wind) {
-        w.setPosition(this.x + face * 10, this.y - 28)
-        w.setScale(0.55, 0.9)
-        w.setAngle(face * -110)
+        if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
+        w.setPosition(this.x + face * 14, this.y - 30)
+        w.setScale(1.1)
+        w.setAngle(face * -25)
       } else if (strike) {
-        w.setPosition(this.x + face * (18 + reach * 0.45), this.y - 18)
-        w.setScale(1.15 + reach / 80, 0.85)
-        w.setAngle(face * 8)
+        if (this.scene.textures.exists('fx-elephant-trunk-1')) w.setTexture('fx-elephant-trunk-1')
+        w.setPosition(this.x + face * (22 + reach * 0.35), this.y - 18)
+        w.setScale(1.25)
+        w.setAngle(face * 5)
       } else {
-        w.setPosition(this.x + face * 20, this.y - 16)
-        w.setScale(0.85, 0.85)
-        w.setAngle(face * 35)
+        if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
+        w.setPosition(this.x + face * 18, this.y - 18)
+        w.setScale(0.95)
+        w.setAngle(face * 20)
       }
       w.setFlipX(this.flipX)
       w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)

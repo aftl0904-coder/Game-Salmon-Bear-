@@ -393,46 +393,92 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
-  // Pack3: elephant puppet (replaces bee combat look)
-  paint(scene, 'art-enemy-elephant', 48, 44, (set) => {
-    const ink: RGB = [18, 12, 14]
-    rect(set, 8, 40, 32, 3, ink, 130)
-    // body
-    for (let y = 14; y < 40; y++) {
-      for (let x = 8; x < 40; x++) {
-        const nx = (x - 24) / 15
-        const ny = (y - 27) / 13
+  // Bad-guy elephant puppet — fish-style ink silhouette, stripes, angry face, contact shadow.
+  paint(scene, 'art-enemy-elephant', 56, 52, (set) => {
+    const ink: RGB = [14, 8, 12]
+    const hide: RGB = [92, 78, 108]
+    const hideL: RGB = [130, 110, 145]
+    const hideD: RGB = [58, 48, 72]
+    const stripe: RGB = [210, 48, 62]
+    // ground shadow
+    rect(set, 8, 48, 40, 3, ink, 140)
+    // body mass
+    for (let y = 16; y < 46; y++) {
+      for (let x = 6; x < 42; x++) {
+        const nx = (x - 24) / 17
+        const ny = (y - 30) / 15
+        if (nx * nx + ny * ny < 1) {
+          if (nx * nx + ny * ny > 0.86) set(x, y, ink)
+          else set(x, y, shadeRGB(hide, 1.12 - nx * 0.35))
+        }
+      }
+    }
+    // villain stripes / pattern
+    for (const y of [22, 28, 34]) {
+      rect(set, 12, y, 20, 2, stripe)
+      rect(set, 12, y, 20, 1, [255, 120, 90])
+    }
+    // scar mark
+    rect(set, 18, 24, 8, 1, ink)
+    // head
+    for (let y = 4; y < 24; y++) {
+      for (let x = 30; x < 52; x++) {
+        const nx = (x - 40) / 10
+        const ny = (y - 14) / 10
         if (nx * nx + ny * ny < 1) {
           if (nx * nx + ny * ny > 0.82) set(x, y, ink)
-          else set(x, y, shadeRGB([160, 160, 168], 1.1 - nx * 0.3))
+          else set(x, y, shadeRGB(hideL, 1.18 - nx * 0.3))
         }
       }
     }
-    // head
-    for (let y = 6; y < 22; y++) {
-      for (let x = 28; x < 46; x++) {
-        const nx = (x - 36) / 8
-        const ny = (y - 14) / 8
-        if (nx * nx + ny * ny < 1) {
-          if (nx * nx + ny * ny > 0.8) set(x, y, ink)
-          else set(x, y, shadeRGB([175, 175, 182], 1.15 - nx * 0.25))
-        }
-      }
-    }
-    // trunk
-    rect(set, 40, 18, 6, 14, ink)
-    rect(set, 41, 19, 4, 12, [150, 150, 158])
     // ear
-    rect(set, 26, 8, 8, 10, ink)
-    rect(set, 27, 9, 6, 8, [140, 140, 150])
-    // eye
-    rect(set, 34, 12, 3, 3, ink)
-    set(35, 12, [255, 240, 200])
-    // legs
-    rect(set, 12, 34, 6, 8, ink)
-    rect(set, 13, 35, 4, 6, [130, 130, 140])
-    rect(set, 30, 34, 6, 8, ink)
-    rect(set, 31, 35, 4, 6, [130, 130, 140])
+    rect(set, 26, 6, 10, 14, ink)
+    rect(set, 27, 7, 8, 12, hideD)
+    rect(set, 28, 9, 5, 8, [160, 70, 90])
+    // angry eye + brow
+    rect(set, 36, 9, 8, 2, ink)
+    rect(set, 38, 12, 5, 4, ink)
+    rect(set, 39, 13, 3, 2, [255, 60, 40])
+    set(40, 13, [255, 220, 80])
+    // tusks
+    rect(set, 46, 18, 3, 8, ink)
+    rect(set, 47, 19, 1, 6, [255, 245, 210])
+    // default trunk (short)
+    rect(set, 44, 20, 6, 12, ink)
+    rect(set, 45, 21, 4, 10, hide)
+    // legs with boots
+    rect(set, 10, 38, 8, 10, ink)
+    rect(set, 11, 39, 6, 8, hideD)
+    rect(set, 10, 46, 8, 2, [40, 28, 20])
+    rect(set, 28, 38, 8, 10, ink)
+    rect(set, 29, 39, 6, 8, hideD)
+    rect(set, 28, 46, 8, 2, [40, 28, 20])
+  })
+
+  // Trunk attack frame 0 — curled (原卷起)
+  paint(scene, 'fx-elephant-trunk-0', 16, 18, (set) => {
+    const ink: RGB = [14, 8, 12]
+    const hide: RGB = [110, 95, 125]
+    rect(set, 4, 2, 8, 10, ink)
+    rect(set, 5, 3, 6, 8, hide)
+    rect(set, 2, 8, 6, 6, ink)
+    rect(set, 3, 9, 4, 4, hide)
+    rect(set, 1, 12, 5, 4, ink)
+    rect(set, 2, 13, 3, 2, [90, 75, 105])
+  })
+  // Trunk attack frame 1 — extended forward
+  paint(scene, 'fx-elephant-trunk-1', 36, 12, (set) => {
+    const ink: RGB = [14, 8, 12]
+    const hide: RGB = [110, 95, 125]
+    const tip: RGB = [70, 55, 85]
+    for (let x = 2; x < 32; x++) {
+      const t = x / 32
+      const thick = 2 + Math.floor((1 - t) * 3)
+      rect(set, x, 6 - thick, 1, thick * 2, ink)
+      rect(set, x, 7 - thick + 1, 1, Math.max(1, thick * 2 - 2), t > 0.75 ? tip : hide)
+    }
+    rect(set, 30, 3, 5, 6, ink)
+    rect(set, 31, 4, 3, 4, tip)
   })
 
   // Ground sushi pickup — +2 HP when eaten
@@ -458,21 +504,6 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(8, 4, fishD)
     set(12, 4, [255, 200, 180])
     set(7, 5, fishD)
-  })
-
-  // Elephant trunk tip — used as extendable nose weapon
-  paint(scene, 'fx-elephant-trunk', 28, 12, (set) => {
-    const ink: RGB = [18, 12, 14]
-    const grey: RGB = [150, 150, 158]
-    const greyD: RGB = [120, 120, 128]
-    for (let x = 2; x < 26; x++) {
-      const t = x / 26
-      const thick = 2 + Math.floor((1 - t) * 3)
-      rect(set, x, 6 - thick, 1, thick * 2, ink)
-      rect(set, x, 7 - thick + 1, 1, Math.max(1, thick * 2 - 2), t > 0.7 ? greyD : grey)
-    }
-    rect(set, 24, 4, 3, 4, ink)
-    rect(set, 25, 5, 2, 2, grey)
   })
 
   // Pack3 A-03: ambient bees — thin outline, readable bee detail (no combat)

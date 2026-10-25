@@ -117,7 +117,7 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     style: 'chase',
     hopMul: 1,
     chargePrefer: false,
-    scaleMul: 1.2,
+    scaleMul: 1.55,
     hpMul: 2,
   },
 }
