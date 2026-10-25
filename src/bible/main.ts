@@ -14,8 +14,11 @@ import {
 
 function el(html: string) {
   const d = document.createElement('div')
-  d.innerHTML = html
-  return d.firstElementChild as HTMLElement
+  d.innerHTML = html.trim()
+  if (d.childElementCount === 1) return d.firstElementChild as HTMLElement
+  const wrap = document.createElement('div')
+  while (d.firstChild) wrap.appendChild(d.firstChild)
+  return wrap
 }
 
 function table(headers: string[], rows: string[][]) {
