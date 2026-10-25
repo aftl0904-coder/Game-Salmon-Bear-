@@ -6,6 +6,7 @@ import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
 import { GAME_W, GAME_H, phaserConfig } from './game/display'
+import { installFit } from './game/fitCanvas'
 import { jumpGravity } from './game/config/playerData'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
@@ -20,45 +21,12 @@ function updateOrientationUi() {
   if (hint) hint.setAttribute('aria-hidden', portrait ? 'false' : 'true')
 }
 
-/**
- * Integer zoom when possible (1×, 2×, 3×…).
- * Temporary until fitCanvas.js lands; same contract as Scale.NONE + CSS size.
- */
-function applyIntegerZoom() {
-  if (!game?.canvas || !root) return
-  const availW = Math.max(1, root.clientWidth)
-  const availH = Math.max(1, root.clientHeight)
-  const fit = Math.min(availW / GAME_W, availH / GAME_H)
-  let zoom = Math.floor(fit)
-  let fractional = false
-  if (zoom < 1) {
-    zoom = fit
-    fractional = true
-  }
-  const cssW = GAME_W * zoom
-  const cssH = GAME_H * zoom
-  const canvas = game.canvas
-  canvas.style.width = `${cssW}px`
-  canvas.style.height = `${cssH}px`
-  canvas.style.imageRendering = 'pixelated'
-  ;(canvas.style as CSSStyleDeclaration & { imageRendering: string }).imageRendering = 'pixelated'
-  canvas.style.marginLeft = `${Math.floor((availW - cssW) / 2)}px`
-  canvas.style.marginTop = `${Math.floor((availH - cssH) / 2)}px`
-  canvas.style.display = 'block'
-  document.body.dataset.scaleZoom = String(zoom)
-  document.body.dataset.scaleFractional = fractional ? '1' : '0'
-  ;(window as unknown as { __SAKE_SCALE__: { zoom: number; fractional: boolean; cssW: number; cssH: number } }).__SAKE_SCALE__ =
-    { zoom, fractional, cssW, cssH }
-}
-
 updateOrientationUi()
+window.addEventListener('resize', updateOrientationUi)
+window.addEventListener('orientationchange', () => setTimeout(updateOrientationUi, 200))
+window.visualViewport?.addEventListener('resize', updateOrientationUi)
 
 let game: Phaser.Game
-
-function onViewportChange() {
-  updateOrientationUi()
-  applyIntegerZoom()
-}
 
 function bootGame() {
   game = new Phaser.Game({
@@ -69,7 +37,6 @@ function bootGame() {
     scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
     scale: {
       mode: Phaser.Scale.NONE,
-      autoCenter: Phaser.Scale.CENTER_BOTH,
       width: GAME_W,
       height: GAME_H,
       parent: root,
@@ -84,16 +51,14 @@ function bootGame() {
   })
   ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
 
-  window.addEventListener('resize', onViewportChange)
-  window.addEventListener('orientationchange', () => setTimeout(onViewportChange, 120))
-
   game.events.once('ready', () => {
     for (const scene of game.scene.getScenes(false)) {
       scene.cameras?.cameras?.forEach((c) => c.setRoundPixels(true))
     }
     const splash = document.getElementById('boot-splash')
     if (splash) splash.remove()
-    onViewportChange()
+    installFit(game, GAME_W, GAME_H)
+    updateOrientationUi()
   })
 }
 

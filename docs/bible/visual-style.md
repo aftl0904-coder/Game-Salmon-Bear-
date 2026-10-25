@@ -22,10 +22,10 @@
 
 | 項 | 數值 | 來源 |
 |----|------|------|
-| 內部解像度 | **480×270**（16:9） | `constants.ts` |
-| pixelArt / roundPixels | true | `main.ts` |
-| antialias | false | `main.ts` |
-| 縮放 | 整數倍 1×／2×／3×… | `applyIntegerZoom()` |
+| 內部解像度 | **640×360**（16:9） | `display.ts` |
+| pixelArt / roundPixels | true | `phaserConfig` |
+| antialias | false | `phaserConfig` |
+| 縮放 | Scale.NONE + CSS（整數倍優先；浪費過多則平滑） | `fitCanvas.ts` / `installFit` |
 | canvas CSS | `image-rendering: pixelated` | `style.css` |
 | Actor bake | `bakePixelTexture` ×`BAKE_RES_FACTOR=1` | `BootScene` |
 | Outline | `OUTLINE_WIDTH=1` | `constants.ts` |
