@@ -5,6 +5,7 @@ import { LogoScene } from './game/LogoScene'
 import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
+import { GRAVITY_Y } from './game/engine/constants'
 
 const GAME_W = 960
 const GAME_H = 540
@@ -37,7 +38,7 @@ const game = new Phaser.Game({
   pixelArt: true,
   roundPixels: true,
   antialias: false,
-  physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 1500 }, debug: false } },
+  physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
   scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
   // NONE: we own integer CSS zoom above. FIT would stretch to non-integer sizes.
   scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },

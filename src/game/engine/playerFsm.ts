@@ -6,6 +6,8 @@
  *   JUMP / LANE_SWAP / ATTACK / HURT
  *     ↓
  *   (timeout ~800ms) → force IDLE + grounded recover
+ *
+ * JUMP / LANE_SWAP must never freeze mid-air.
  */
 
 import type Phaser from 'phaser'

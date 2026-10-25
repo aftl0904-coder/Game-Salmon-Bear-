@@ -2,10 +2,14 @@ import Phaser from 'phaser'
 import {
   JUMP_V,
   JUMP_BUF_MS,
+  JUMP_CUT,
   COYOTE_MS,
   RUN_ACCEL,
   RUN_FRICTION,
   AIR_ACCEL_MUL,
+  FALL_GRAVITY_MUL,
+  GRAVITY_Y,
+  MAX_FALL,
 } from './constants'
 import { resolveStick } from './collision'
 
@@ -22,6 +26,7 @@ export type ControllableHero = Phaser.Physics.Arcade.Sprite & {
   walkPhase: number
   pose: string
   baseScale: number
+  jumpCutApplied?: boolean
 }
 
 export type SteerOpts = {
@@ -43,16 +48,25 @@ export function canStartJump(body: Phaser.Physics.Arcade.Body): boolean {
   return body.velocity.y >= 0
 }
 
+/** Shared SNES-weight steer for non-lane arcade heroes (keep in sync with Player). */
 export function steerArcadeHero(h: ControllableHero, opts: SteerOpts) {
   const body = h.body as Phaser.Physics.Arcade.Body
   resolveStick(body)
+  body.setMaxVelocity(opts.speed + 60, MAX_FALL)
 
   const grounded = canStartJump(body)
   if (grounded) {
     h.jumpConsumed = false
     h.coyote = COYOTE_MS
+    h.jumpCutApplied = false
+    body.setGravity(0, 0)
   } else {
     h.coyote = Math.max(0, h.coyote - opts.dt)
+    if (body.velocity.y > 0) {
+      body.setGravity(0, GRAVITY_Y * (FALL_GRAVITY_MUL - 1))
+    } else {
+      body.setGravity(0, 0)
+    }
   }
 
   if (opts.jumpJust) h.jumpBuf = JUMP_BUF_MS
@@ -90,11 +104,13 @@ export function steerArcadeHero(h: ControllableHero, opts: SteerOpts) {
     h.jumpBuf = 0
     h.coyote = 0
     h.jumpConsumed = true
+    h.jumpCutApplied = false
     opts.onJump?.()
   }
 
-  if (!opts.jumpHeld && body.velocity.y < -120) {
-    h.setVelocityY(body.velocity.y * 0.55)
+  if (!opts.jumpHeld && !h.jumpCutApplied && body.velocity.y < -80) {
+    h.setVelocityY(body.velocity.y * JUMP_CUT)
+    h.jumpCutApplied = true
   }
 
   if (!h.wasGrounded && grounded) opts.onLand?.()

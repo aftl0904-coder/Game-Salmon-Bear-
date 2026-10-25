@@ -11,7 +11,7 @@ export {
   FSM_TIMEOUT_MS,
   fsmEnter,
   fsmUpdate,
+  type FsmUpdateCtx,
   type PlayerFsm,
   type PlayerFsmHost,
-  type FsmUpdateCtx,
 } from './playerFsm'

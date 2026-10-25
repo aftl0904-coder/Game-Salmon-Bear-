@@ -352,7 +352,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
       e.hitThis = false
       e.chargeDir = (Math.sign(target.x - e.x) || 1) as 1 | -1
       e.setVelocityX(e.chargeDir * spd * 2.35)
-      e.setVelocityY(sp.style === 'hop' ? -220 : -160)
+      e.setVelocityY(sp.style === 'hop' ? -290 : -210)
       e.setFlipX(e.chargeDir > 0)
       ctx.floatBang(e.x, e.y - 36)
     }
@@ -383,7 +383,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
       const dir = (Math.sign(target.x - e.x) || 1) as 1 | -1
       e.chargeDir = dir
       e.setVelocityX(dir * spd * (sp.style === 'hop' ? 2.05 : 1.85))
-      e.setVelocityY(sp.style === 'hop' ? -300 : -220)
+      e.setVelocityY(sp.style === 'hop' ? -400 : -290)
       e.setFlipX(dir > 0)
     }
     return
@@ -463,7 +463,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     e.hopCd = (sp.style === 'hop' ? 420 : 700) + Math.random() * (sp.style === 'hop' ? 520 : 900)
     const dir = (Math.sign(target.x - e.x) || e.patrolDir) as 1 | -1
     e.chargeDir = dir
-    e.setVelocityY(sp.style === 'hop' ? -360 - Math.random() * 100 : -280 - Math.random() * 80)
+    e.setVelocityY(sp.style === 'hop' ? -480 - Math.random() * 120 : -370 - Math.random() * 90)
     e.setVelocityX(dir * spd * (sp.style === 'hop' ? 1.35 : 1.1))
     e.setFlipX(dir > 0)
     applyPose(e)
@@ -477,9 +477,9 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
     } else {
       const goal = desireX(e, target, ctx.leadX, advancing)
       const dir = (Math.sign(goal - e.x) || 1) as 1 | -1
-      if (e.kind === 'ambusher' && target.y > e.y + 30 && body.blocked.down) e.setVelocityY(-280)
+      if (e.kind === 'ambusher' && target.y > e.y + 30 && body.blocked.down) e.setVelocityY(-370)
       if (sp.style === 'hop' && body.blocked.down && (e.hopCd ?? 0) <= 0 && Math.random() < 0.04) {
-        e.setVelocityY(-220)
+        e.setVelocityY(-290)
         e.hopCd = 280
       }
       const boost = e.kind === 'interrupter' && advancing ? 1.3 : 1

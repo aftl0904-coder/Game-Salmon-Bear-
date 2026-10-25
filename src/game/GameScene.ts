@@ -821,7 +821,7 @@ export class GameScene extends Phaser.Scene {
     const pe = e as PatrolEnemy
     if (!sameLane(h, pe)) return
     if (pe.fsm === 'ATTACK') pe.hitThis = true
-    else pe.contactCd = 700
+    else pe.contactCd = 650
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     const hpLeft = applyDamage(h, {
       amount: 1,

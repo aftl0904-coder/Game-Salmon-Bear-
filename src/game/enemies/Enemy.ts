@@ -65,7 +65,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.hp -= dmg
     // Goemon knockback lean — heavier push + white flash pose
     this.setVelocityX(dir * (dmg >= 2 ? 340 : 280))
-    this.setVelocityY(dmg >= 2 ? -280 : -230)
+    this.setVelocityY(dmg >= 2 ? -370 : -300)
     this.setTint(0xffffff)
     this.poseAngle = 0
     this.setAngle(0)

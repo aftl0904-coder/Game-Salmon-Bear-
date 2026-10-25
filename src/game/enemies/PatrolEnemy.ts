@@ -4,6 +4,7 @@ import {
   LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
+import { WINDUP_ALTAR_MS, WINDUP_FLOOR_MS } from '../engine/constants'
 import { enablePixelSprite } from '../pixelSnap'
 import {
   type EnemyKind,
@@ -237,7 +238,7 @@ export class PatrolEnemy extends Enemy {
       this.hopCd = (sp.style === 'hop' ? 420 : 700) + Math.random() * (sp.style === 'hop' ? 520 : 900)
       const dir = (Math.sign(target.x - this.x) || this.patrolDir) as 1 | -1
       this.chargeDir = dir
-      this.setVelocityY(sp.style === 'hop' ? -360 - Math.random() * 100 : -280 - Math.random() * 80)
+      this.setVelocityY(sp.style === 'hop' ? -480 - Math.random() * 120 : -370 - Math.random() * 90)
       this.setVelocityX(dir * spd * (sp.style === 'hop' ? 1.35 : 1.1))
       this.setFlipX(dir > 0)
       this.applyPose()
@@ -252,10 +253,10 @@ export class PatrolEnemy extends Enemy {
         const goal = this.desireX(target, ctx.leadX, advancing)
         const dir = (Math.sign(goal - this.x) || 1) as 1 | -1
         if (this.kind === 'ambusher' && target.y > this.y + 30 && body.blocked.down) {
-          this.setVelocityY(-280)
+          this.setVelocityY(-370)
         }
         if (sp.style === 'hop' && body.blocked.down && this.hopCd <= 0 && Math.random() < 0.04) {
-          this.setVelocityY(-220)
+          this.setVelocityY(-290)
           this.hopCd = 280
         }
         const boost = this.kind === 'interrupter' && advancing ? 1.3 : 1
@@ -290,7 +291,7 @@ export class PatrolEnemy extends Enemy {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
     // Fair telegraph: red + pause ≥260ms (altar ≥300ms) before lunge.
-    const floor = this.altarAmbush ? 300 : 260
+    const floor = this.altarAmbush ? WINDUP_ALTAR_MS : WINDUP_FLOOR_MS
     this.windup = Math.max(floor, ms)
     this.hitThis = false
     this.setVelocityX(0)
@@ -338,7 +339,7 @@ export class PatrolEnemy extends Enemy {
         this.hitThis = false
         this.chargeDir = (Math.sign(target.x - this.x) || 1) as 1 | -1
         this.setVelocityX(this.chargeDir * spd * 2.35)
-        this.setVelocityY(sp.style === 'hop' ? -220 : -160)
+        this.setVelocityY(sp.style === 'hop' ? -290 : -210)
         this.setFlipX(this.chargeDir > 0)
         this.hooks.floatBang?.(this.x, this.y - 36)
       }
@@ -372,7 +373,7 @@ export class PatrolEnemy extends Enemy {
           this.setVelocityX(0)
         } else {
           this.setVelocityX(dir * spd * (sp.style === 'hop' ? 2.05 : 1.85))
-          this.setVelocityY(sp.style === 'hop' ? -300 : -220)
+          this.setVelocityY(sp.style === 'hop' ? -400 : -290)
         }
         this.setFlipX(dir > 0)
       }
