@@ -12,24 +12,24 @@ export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 
 /**
  * World Arcade gravity (px/s²).
- * Higher than floaty 1500 — apex ~0.27s, peak ~94px with JUMP_V.
+ * Higher than floaty 1500 — apex ~0.28s, peak ~97px with JUMP_V.
  */
 export const GRAVITY_Y = 2600
 
 /**
  * Jump impulse (px/s). Snappy rise; pair with JUMP_CUT + FALL_GRAVITY_MUL.
- * h = v² / (2g) ≈ 700² / 5200 ≈ 94px.
+ * h = v² / (2g) ≈ 710² / 5200 ≈ 97px — slight hang vs raw -700.
  */
-export const JUMP_V = -700
+export const JUMP_V = -710
 
 /** Variable jump: multiply rising vy once when jump is released. */
-export const JUMP_CUT = 0.48
+export const JUMP_CUT = 0.5
 
 /**
  * Extra body gravity while falling (added on top of world GRAVITY_Y).
- * Total fall accel ≈ GRAVITY_Y * FALL_GRAVITY_MUL.
+ * Total fall accel ≈ GRAVITY_Y * FALL_GRAVITY_MUL — soft hang, still SNES-weight.
  */
-export const FALL_GRAVITY_MUL = 1.35
+export const FALL_GRAVITY_MUL = 1.28
 
 /** Terminal fall speed (Arcade maxVelocity.y). */
 export const MAX_FALL = 980
@@ -62,8 +62,8 @@ export const HEAVY_HIT_SHAKE_MS = 170
 /** ~0.012 × 960 ≈ 12px whole-pixel heavy shake. */
 export const HEAVY_HIT_SHAKE_INTENSITY = 0.012
 /** Enemy attack telegraph floor (fair, readable). */
-export const WINDUP_FLOOR_MS = 280
-export const WINDUP_ALTAR_MS = 320
+export const WINDUP_FLOOR_MS = 300
+export const WINDUP_ALTAR_MS = 340
 /** Contact bump cooldown after player-enemy body overlap (ms). */
 export const CONTACT_CD_MS = 650
 /** Arcade score pops. */

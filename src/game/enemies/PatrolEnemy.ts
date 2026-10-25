@@ -210,7 +210,9 @@ export class PatrolEnemy extends Enemy {
       dist < Math.max(detectR, aggro + 40)
     ) {
       this.hooks.floatBang?.(this.x, this.y - 36, '！')
-      this.think = 120
+      this.hooks.telegraph?.(this, 'windup')
+      this.setTint(0xff8866)
+      this.think = 160
       this.setFsm('CHASE')
       this.setVelocityX(0)
       this.applyPose()
@@ -219,6 +221,7 @@ export class PatrolEnemy extends Enemy {
 
     if (this.fsm === 'PATROL' && dist < detectR) {
       this.hooks.floatBang?.(this.x, this.y - 36)
+      this.hooks.telegraph?.(this, 'windup')
       this.think = 180
       this.setFsm('CHASE')
       this.setVelocityX(0)

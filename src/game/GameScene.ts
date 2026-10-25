@@ -845,9 +845,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spike(h: Hero) {
-    this.hazardHit(h, { knockX: h.facing * -180, knockY: -480, label: '尖刺' })
+    this.hazardHit(h, { knockX: h.facing * -180, knockY: -560, label: '尖刺' })
   }
-  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string } = { knockX: 0, knockY: -480 }) {
+  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string } = { knockX: 0, knockY: -560 }) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, { amount: 1, knockbackX: opts.knockX, knockbackY: opts.knockY, iframeMs: HURT_IFRAME_MS, now: this.time.now })
@@ -1354,12 +1354,12 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.girl, this.hazards, () => this.spike(this.girl))
     this.physics.add.overlap(this.boy, this.hazards, (_b, hz) => {
       const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
-      if (kind === 'lava') this.hazardHit(this.boy, { knockX: this.boy.facing * -220, knockY: -520, label: '熔岩' })
+      if (kind === 'lava') this.hazardHit(this.boy, { knockX: this.boy.facing * -220, knockY: -600, label: '熔岩' })
       else this.spike(this.boy)
     })
     this.physics.add.overlap(this.girl, this.hazards, (_g, hz) => {
       const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
-      if (kind === 'lava') this.hazardHit(this.girl, { knockX: this.girl.facing * -220, knockY: -520, label: '熔岩' })
+      if (kind === 'lava') this.hazardHit(this.girl, { knockX: this.girl.facing * -220, knockY: -600, label: '熔岩' })
       else this.spike(this.girl)
     })
     // (hazards also wired below if duplicated — dedupe later)
@@ -1607,10 +1607,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeEnemies() {
-    const opener = this.mkEnemy(450, GROUND_Y, 'blocker', undefined, 'fish', 1)
+    // Opening density: first contact ~150px / ~2s (spawn 250 → ~400), then a
+    // second-lane buddy so co-op has something to hit before the platform band.
+    const opener = this.mkEnemy(400, GROUND_Y, 'blocker', undefined, 'fish', 1)
     opener.earlyAggro = true
-    opener.detectRadius = 360
-    opener.aggroRadius = 300
+    opener.detectRadius = 380
+    opener.aggroRadius = 320
+    const opener2 = this.mkEnemy(580, GROUND_Y, 'blocker', undefined, 'fish', 2)
+    opener2.earlyAggro = true
+    opener2.detectRadius = 340
+    opener2.aggroRadius = 280
+    this.mkEnemy(820, GROUND_Y, 'chaser', undefined, 'fish', 0)
     this.mkEnemy(1500, GROUND_Y, 'blocker', undefined, 'fish', 0)
     this.mkEnemy(1050, GROUND_Y, 'chaser', undefined, 'fish', 2)
     this.mkEnemy(1980, GROUND_Y, 'chaser', undefined, 'fish', 1)
@@ -1672,13 +1679,15 @@ export class GameScene extends Phaser.Scene {
         spawnCoin: (cx, cy) => this.spawnCoin(cx, cy),
         floatBang: (bx, by, msg) => floatText(this, bx, by, msg ?? '！', '#ff3333'),
         telegraph: (en, kindT) => {
+          // Bigger / brighter windup ring so attack intent reads before the lunge.
           impactRing(
             this,
             en.x,
             en.y - 18,
-            kindT === 'ambush' ? 0xff4422 : 0xffaa66,
-            kindT === 'ambush' ? 14 : 10,
+            kindT === 'ambush' ? 0xff4422 : 0xffcc66,
+            kindT === 'ambush' ? 18 : 14,
           )
+          en.setTint(kindT === 'ambush' ? 0xff2222 : 0xff8866)
         },
       },
     })
