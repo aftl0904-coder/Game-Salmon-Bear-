@@ -5,7 +5,7 @@ import { LogoScene } from './game/LogoScene'
 import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
-import { GAME_W, GAME_H } from './game/engine/constants'
+import { GAME_W, GAME_H, phaserConfig } from './game/display'
 import { jumpGravity } from './game/config/playerData'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
@@ -22,7 +22,7 @@ function updateOrientationUi() {
 
 /**
  * Integer zoom when possible (1×, 2×, 3×…).
- * If viewport < 1× game size, fall back to fractional FIT contain.
+ * Temporary until fitCanvas.js lands; same contract as Scale.NONE + CSS size.
  */
 function applyIntegerZoom() {
   if (!game?.canvas || !root) return
@@ -42,7 +42,6 @@ function applyIntegerZoom() {
   canvas.style.height = `${cssH}px`
   canvas.style.imageRendering = 'pixelated'
   ;(canvas.style as CSSStyleDeclaration & { imageRendering: string }).imageRendering = 'pixelated'
-  // Center inside #game-root via flex — root is full window; use margin auto on canvas
   canvas.style.marginLeft = `${Math.floor((availW - cssW) / 2)}px`
   canvas.style.marginTop = `${Math.floor((availH - cssH) / 2)}px`
   canvas.style.display = 'block'
@@ -63,18 +62,11 @@ function onViewportChange() {
 
 function bootGame() {
   game = new Phaser.Game({
-    type: Phaser.AUTO,
+    ...phaserConfig,
     parent: root,
-    width: GAME_W,
-    height: GAME_H,
-    backgroundColor: '#1a1420',
-    pixelArt: true,
-    roundPixels: true,
-    antialias: false,
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: jumpGravity() }, debug: false } },
     input: { gamepad: true, activePointers: 3 },
     scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
-    // NONE — we own CSS size for integer zoom; letterbox via margins + body bg.
     scale: {
       mode: Phaser.Scale.NONE,
       autoCenter: Phaser.Scale.CENTER_BOTH,

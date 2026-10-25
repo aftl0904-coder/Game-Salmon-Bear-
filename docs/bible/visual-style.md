@@ -3,8 +3,8 @@
 > 資料圖鑑（terrain／hazards／enemies／camera／signs）：見 [`data-catalog.md`](./data-catalog.md) · 頁面 `/bible`。
 
 > 來源：code + `public/art/*` + `scripts/art-normalize/run.py`。  
-> **遊戲內部解像度 480×270**（`GAME_W` / `GAME_H`）。整數倍縮放見 `src/main.ts`。  
-> 用戶確認：**全部都跟住改**（比例表／nearest／32 色共用／NEAREST bake／像素字／BG）。
+> **遊戲內部解像度 640×360**（`src/game/display.ts` · `GAME_W` / `GAME_H`）。`Scale.NONE`；CSS 縮放見 `main.ts`（待接 `fitCanvas`）。  
+> 比例表／art-normalize 目標高度（72／56／40…）緊接後續步驟；暫保留既有 sprite 高度。  
 
 ---
 

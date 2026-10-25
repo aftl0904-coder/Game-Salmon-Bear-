@@ -1,20 +1,21 @@
 /** Shared stage / physics constants — 超任 SNES weight (Goemon / classic platformer). */
 import charactersPack from '../../../data/characters.json'
+import { GAME_W, GAME_H } from '../display'
+
+export { GAME_W, GAME_H }
 
 /**
- * Native render size (16:9). Prior pack used 960×540; halved for integer zoom on phones.
- * Layout units from the 960×540 era multiply by LAYOUT_SCALE.
+ * Native render size is 640×360 (see display.ts).
+ * Layout units from the 960×540 era multiply by LAYOUT_SCALE (= 640/960).
  */
-export const GAME_W = 480
-export const GAME_H = 270
-export const LAYOUT_SCALE = 0.5
+export const LAYOUT_SCALE = GAME_W / 960
 /** Helper: map a legacy 960×540 layout value into native coords. */
 export function L(n: number) {
   return Math.round(n * LAYOUT_SCALE)
 }
 
 /**
- * Stage length — previous 7600 shortened −25%, then × LAYOUT_SCALE for 480×270.
+ * Stage length — previous 7600 shortened −25%, then × LAYOUT_SCALE.
  * Spawn X positions should use `sx()` / STAGE_LEN_MUL.
  */
 export const WORLD_W = L(5700)
