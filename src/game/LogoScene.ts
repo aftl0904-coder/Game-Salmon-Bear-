@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-/** Logo splash — Goemon packaging plaque + cast lineup (~5s → menu) */
+/** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
   constructor() {
     super('logo')
@@ -8,20 +8,32 @@ export class LogoScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale
-    this.cameras.main.setBackgroundColor('#4a90c8')
-    this.cameras.main.fadeIn(400, 40, 80, 120)
+    this.cameras.main.setBackgroundColor('#5a98c8')
+    this.cameras.main.fadeIn(420, 50, 90, 130)
 
     const g = this.add.graphics()
     g.fillGradientStyle(0x7ec8f0, 0x7ec8f0, 0xffe6b0, 0xffd090, 1)
     g.fillRect(0, 0, width, height)
     g.fillStyle(0xfff0c0, 0.55)
-    g.fillCircle(width * 0.18, 70, 56)
+    g.fillCircle(width * 0.16, 68, 60)
     g.fillStyle(0xffe08a, 1)
-    g.fillCircle(width * 0.18, 70, 28)
-    g.fillStyle(0x6ab070, 0.55)
-    g.fillEllipse(width * 0.3, height * 0.72, 420, 120)
-    g.fillStyle(0x4e9860, 0.5)
-    g.fillEllipse(width * 0.75, height * 0.74, 380, 110)
+    g.fillCircle(width * 0.16, 68, 28)
+
+    if (this.textures.exists('bg-cloud')) {
+      const clouds = this.add.tileSprite(width / 2, 50, width, 40, 'bg-cloud').setAlpha(0.8)
+      this.tweens.add({ targets: clouds, tilePositionX: 80, duration: 20000, repeat: -1 })
+    }
+    if (this.textures.exists('bg-mount-far')) {
+      this.add.image(width * 0.35, 200, 'bg-mount-far').setScale(2.1).setAlpha(0.85)
+      this.add.image(width * 0.78, 210, 'bg-mount-far').setScale(1.9).setAlpha(0.7).setFlipX(true)
+    }
+    if (this.textures.exists('bg-village')) {
+      this.add.image(width / 2, 255, 'bg-village').setScale(3.0).setAlpha(0.65)
+    }
+    if (this.textures.exists('bg-mount-near')) {
+      this.add.image(width * 0.22, 290, 'bg-mount-near').setScale(2.3).setAlpha(0.9)
+      this.add.image(width * 0.8, 295, 'bg-mount-near').setScale(2.1).setAlpha(0.85).setFlipX(true)
+    }
 
     if (this.textures.exists('ui-noren')) {
       this.add.image(36, 120, 'ui-noren').setScale(1.4)
@@ -41,45 +53,90 @@ export class LogoScene extends Phaser.Scene {
     g.fillStyle(0xe0b070, 0.5)
     g.fillRect(0, height - 110, width, 6)
 
+    if (this.textures.exists('water-foam')) {
+      this.add.tileSprite(width / 2, height - 118, width, 12, 'water-foam').setAlpha(0.85)
+    }
+
+    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const lineupY = height - 150
-    this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(2.35)
-    this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.5)
-    this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(2.15)
+    this.add.image(width / 2 - 130, lineupY + 12, shad).setAlpha(0.5).setScale(1.4, 0.7)
+    this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(2.4)
+    this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
+    this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55)
+    this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
+    this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(2.2)
     if (this.textures.exists('fan3d')) {
       this.add.image(width / 2 + 170, lineupY - 20, 'fan3d').setScale(2.2).setAngle(-18)
     }
     if (this.textures.exists('pot3d')) {
-      this.add.image(width / 2 - 40, lineupY + 36, 'pot3d').setScale(1.8)
+      this.add.image(width / 2 - 40, lineupY + 36, 'pot3d').setScale(1.85)
+    }
+    if (this.textures.exists('prop-banner')) {
+      this.add.image(90, height - 108, 'prop-banner').setOrigin(0.5, 1).setScale(1.4)
+      this.add.image(width - 90, height - 108, 'prop-banner').setOrigin(0.5, 1).setScale(1.4)
+    }
+    if (this.textures.exists('prop-lantern3d')) {
+      const L = this.add.image(160, height - 108, 'prop-lantern3d').setOrigin(0.5, 1).setScale(1.5)
+      this.tweens.add({
+        targets: L,
+        angle: { from: -5, to: 5 },
+        duration: 1300,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
     }
 
     const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
     const plaque = this.add
       .image(width / 2, 118, plaqueKey)
-      .setScale(plaqueKey === 'ui-title-plaque' ? 1.15 : 1.6)
+      .setScale(plaqueKey === 'ui-title-plaque' ? 1.2 : 1.65)
       .setAlpha(0)
 
     const logo = this.add
-      .text(width / 2, 108, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '64px',
-        color: '#2a1810',
+      .text(width / 2, 106, '鮭鮭熊', {
+        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
+        fontSize: '68px',
+        color: '#2a1408',
         stroke: '#fff4d0',
-        strokeThickness: 4,
+        strokeThickness: 5,
       })
       .setOrigin(0.5)
       .setAlpha(0)
 
     const sub = this.add
-      .text(width / 2, 158, '鮭之力・蜜之心', {
+      .text(width / 2, 160, '鮭之力・蜜之心', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '18px',
+        fontSize: '20px',
         color: '#5a3820',
       })
       .setOrigin(0.5)
       .setAlpha(0)
 
-    this.tweens.add({ targets: [plaque, logo], alpha: 1, y: '-=6', duration: 700, ease: 'Sine.out' })
-    this.tweens.add({ targets: sub, alpha: 1, delay: 220, duration: 550 })
+    this.tweens.add({ targets: [plaque, logo], alpha: 1, y: '-=8', duration: 750, ease: 'Sine.out' })
+    this.tweens.add({ targets: sub, alpha: 1, delay: 240, duration: 560 })
+    this.tweens.add({
+      targets: [plaque, logo],
+      y: '+=5',
+      delay: 800,
+      duration: 2400,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.inOut',
+    })
+
+    for (let i = 0; i < 6; i++) {
+      const spark = this.add.circle(120 + i * 140, 50 + (i % 3) * 20, 2.5, 0xffe08a, 0.5)
+      this.tweens.add({
+        targets: spark,
+        y: '-=12',
+        alpha: { from: 0.25, to: 0.9 },
+        duration: 1500 + i * 100,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+    }
 
     this.add
       .text(width / 2, height - 28, '按任意鍵略過', {

@@ -934,23 +934,23 @@ export class GameScene extends Phaser.Scene {
 
   private placeDecor(x: number, key: string, scale: number, shadScale = 1, flip = false) {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
+    // Depth above bank tiles (3) so contact shadows stay visible / stable.
     this.add
-      .image(x + 4, GROUND_Y + 5, shad)
-      .setDepth(2)
-      .setAlpha(0.42)
-      .setScale(shadScale * 0.9, shadScale * 0.55)
+      .image(x + 4, GROUND_Y + 6, shad)
+      .setDepth(3.4)
+      .setAlpha(0.55)
+      .setScale(shadScale * 1.05, shadScale * 0.65)
     if (!this.textures.exists(key)) return
     this.add
       .image(x, GROUND_Y, key)
       .setOrigin(0.5, 1)
-      .setDepth(3.2)
+      .setDepth(3.6)
       .setScale(scale)
       .setFlipX(flip)
   }
 
   private drawWorld() {
     const g = this.add.graphics().setDepth(-50)
-    // layered dawn sky (volumetric wash)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
     g.fillStyle(0xa8d8f5, 1)
@@ -988,44 +988,38 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(-30)
 
-    // Trees — denser mid-ground
     for (let x = 140; x < WORLD_W; x += 220) {
       this.placeDecor(x, 'prop-tree3d', 1.15 + ((x / 220) % 3) * 0.08, 1.15)
     }
-    // Torii + houses — shrine town rhythm
     for (let x = 380; x < WORLD_W; x += 680) {
       this.placeDecor(x, 'prop-torii', 1.12, 1.7)
       this.placeDecor(x + 140, 'prop-house3d', 1.2, 1.35)
       if (x + 300 < WORLD_W) this.placeDecor(x + 300, 'prop-house3d', 1.0, 1.15, true)
       if (this.textures.exists('prop-shrine')) this.placeDecor(x + 60, 'prop-shrine', 1.1, 0.85)
     }
-    // Salmon nobori banners
     for (let x = 240; x < WORLD_W; x += 320) {
       if (this.textures.exists('prop-banner')) this.placeDecor(x, 'prop-banner', 1.35, 0.5)
     }
-    // Lanterns along path
     for (let x = 70; x < WORLD_W; x += 160) {
       this.placeDecor(x, 'prop-lantern3d', 1.25, 0.5)
     }
-    // Honey stacks + bushes + rocks (thematic set dressing)
     for (let x = 500; x < WORLD_W; x += 520) {
       if (this.textures.exists('prop-honey-stack')) this.placeDecor(x + 40, 'prop-honey-stack', 1.2, 0.85)
       if (this.textures.exists('prop-bush')) this.placeDecor(x - 50, 'prop-bush', 1.3, 0.7)
     }
     for (let x = 200; x < WORLD_W; x += 290) {
       if (this.textures.exists('fg-rock')) {
-        this.add.image(x, GROUND_Y + 4, 'shad').setDepth(2).setAlpha(0.3).setScale(0.55, 0.4)
-        this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(3.4).setScale(1.3)
+        this.add.image(x, GROUND_Y + 5, 'shad').setDepth(3.4).setAlpha(0.4).setScale(0.65, 0.45)
+        this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(3.7).setScale(1.3)
       }
       if (this.textures.exists('fg-reed')) {
-        this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(3.6).setScale(1.2)
+        this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(3.8).setScale(1.2)
       }
     }
-    // Wooden bridges over creek gaps (visual span between banks)
     if (this.textures.exists('prop-bridge')) {
       for (const bx of [520, 920, 1860, 2740]) {
-        this.add.image(bx, GROUND_Y + 6, 'shad').setDepth(2).setAlpha(0.35).setScale(1.8, 0.45)
-        this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(3.1).setScale(1.6)
+        this.add.image(bx, GROUND_Y + 7, 'shad').setDepth(3.4).setAlpha(0.45).setScale(1.9, 0.5)
+        this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(3.55).setScale(1.6)
       }
     }
 
@@ -1085,7 +1079,7 @@ export class GameScene extends Phaser.Scene {
     // First pot near spawn so early smash juice lands in the opening seconds.
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     for (const x of [380, 1200, 2050, 3000]) {
-      this.add.image(x, GROUND_Y + 4, shadKey).setDepth(3).setAlpha(0.4).setScale(0.7, 0.5)
+      this.add.image(x, GROUND_Y + 5, shadKey).setDepth(3.5).setAlpha(0.5).setScale(0.85, 0.55)
       const pot = this.pots.create(x, GROUND_Y - 40, 'pot3d') as Phaser.Physics.Arcade.Sprite
       pot.setScale(1.45).setDepth(4)
       ;(pot as Breakable).breakKind = 'pot'
@@ -1097,7 +1091,7 @@ export class GameScene extends Phaser.Scene {
     this.spawnCoin(760, 240 - 36)
     this.spawnCoin(1720, 250 - 36)
 
-    this.add.image(WORLD_W - 140, GROUND_Y + 6, shadKey).setDepth(3).setAlpha(0.5).setScale(1.6, 0.65)
+    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(3.5).setAlpha(0.55).setScale(1.7, 0.7)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
     this.goal.setImmovable(true).setScale(1.35).setDepth(4)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
