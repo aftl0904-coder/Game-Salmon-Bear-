@@ -982,5 +982,101 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Egg break 3 frames magenta shattered by attack."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Boss queen-bee model sheet 4 views magenta #FF00FF. Yellow+purple stripes pink eyes golden crown. ~128px native 8× NN. Side/3-4 facing RIGHT. Same size. Refs queen-bee.png portraits."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/hover.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen hover 4 frames magenta facing RIGHT. Wing flap bob. Same 128px scale as model."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/summon.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen summon 4 frames magenta facing RIGHT. Raises sceptre-stinger. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/land.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen land 3 frames magenta facing RIGHT. Heavy landing wings fold. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/lay-eggs.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen lay-eggs 4 frames magenta facing RIGHT. Bend drop eggs. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/spray.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen spray 4 frames magenta facing RIGHT. Fake honey stream. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/weak.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen weak 3 frames magenta facing RIGHT. Exhausted glowing head weak point. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen hurt 2 frames magenta facing RIGHT. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen defeat 5 frames magenta facing RIGHT. Crown falls shrink wakes kind. Same design family."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/honey-stream.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX honey-stream 4 frames magenta L→R spray. No characters."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/honey-puddle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX honey-puddle 3 frames magenta sticky floor."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/swarm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX swarm 3 frames magenta facing RIGHT. Line of 3 mini bees."
   }
 ]
