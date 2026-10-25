@@ -131,7 +131,9 @@ try {
   console.log('lanes', JSON.stringify(laneInfo))
   if (plane.boy.originY !== 1 || plane.girl.originY !== 1) throw new Error('foot origin missing')
   if (plane.boy.hp !== 10 || plane.girl.hp !== 10) throw new Error(`HP expected 10 got ${plane.boy.hp}/${plane.girl.hp}`)
-  if (laneInfo.boyLane !== 1 || laneInfo.girlLane !== 1) throw new Error(`heroes should start mid lane`)
+  // Cast feet must not stack: 倫寶 mid, 琪寶寶 on an adjacent lane.
+  if (laneInfo.boyLane !== 1) throw new Error(`boy should start mid lane got ${laneInfo.boyLane}`)
+  if (laneInfo.girlLane === laneInfo.boyLane) throw new Error(`girl must start on adjacent lane, got ${laneInfo.girlLane}`)
   if (laneInfo.enemyLanes.length < 2) throw new Error(`need multi-lane enemies`)
   if (laneInfo.anyLabel) throw new Error('enemy label still visible')
   if (Math.abs(laneInfo.boyY - 400) > 8) throw new Error(`boy not on mid lane Y=${laneInfo.boyY}`)
