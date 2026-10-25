@@ -1238,5 +1238,21 @@
     "rows": 1,
     "facing": "front",
     "prompt": "Stage2 canopy-front foreground leaf strip magenta."
+  },
+  {
+    "file": "art-src/story/c2-bike.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 cutscene NO TEXT. 倫寶+琪寶寶 bike uphill to honey tree; grey hollow 噗噗 in 琪寶寶 basket. Refs model-sheets."
+  },
+  {
+    "file": "art-src/story/s2-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 boss intro NO TEXT. 蜜冠女王蜂 angry glowing eyes before huge honeycomb wall. Refs queen model."
   }
 ]
