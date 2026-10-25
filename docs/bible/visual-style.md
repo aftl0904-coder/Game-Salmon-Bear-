@@ -1,5 +1,7 @@
 # Visual style & proportion table（階段 1–5 · 已確認）
 
+> 資料圖鑑（terrain／hazards／enemies／camera／signs）：見 [`data-catalog.md`](./data-catalog.md) · 頁面 `/bible`。
+
 > 來源：code + `public/art/*` + `scripts/art-normalize/run.py`。  
 > **遊戲內部解像度 480×270**（`GAME_W` / `GAME_H`）。整數倍縮放見 `src/main.ts`。  
 > 用戶確認：**全部都跟住改**（比例表／nearest／32 色共用／NEAREST bake／像素字／BG）。

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>鮭鮭熊・圖鑑 /bible</title>
+    <link rel="stylesheet" href="/src/style.css" />
+    <style>
+      body {
+        overflow: auto;
+        padding: 24px;
+        max-width: 960px;
+        margin: 0 auto;
+        background: #1a1420;
+        color: #f7e7c0;
+      }
+      h1 {
+        color: #ffe08a;
+        font-size: 28px;
+        margin: 0 0 8px;
+      }
+      .sub {
+        color: #c8b090;
+        margin-bottom: 24px;
+      }
+      section {
+        margin: 0 0 28px;
+      }
+      h2 {
+        color: #e0b86a;
+        font-size: 18px;
+        border-bottom: 1px solid #5a4030;
+        padding-bottom: 6px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid #3a2818;
+        vertical-align: top;
+      }
+      th {
+        color: #ffe08a;
+      }
+      code {
+        color: #8fd4ff;
+      }
+      a {
+        color: #ffe08a;
+      }
+      #cam-lookahead {
+        font-size: 16px;
+        color: #fff4d0;
+        background: #3a2818;
+        display: inline-block;
+        padding: 8px 12px;
+        border: 1px solid #e0b86a;
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <p><a href="/">← 返遊戲</a></p>
+    <h1>鮭鮭熊・資料圖鑑</h1>
+    <p class="sub">來源 <code>data/*.json</code>（階段資料 1–4）· 路徑 <code>/bible</code></p>
+    <div id="root">載入中…</div>
+    <script type="module" src="/src/bible/main.ts"></script>
+  </body>
+</html>

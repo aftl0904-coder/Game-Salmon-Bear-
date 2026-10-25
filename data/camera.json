@@ -1,0 +1,10 @@
+{
+  "mode": "followX",
+  "deadZonePx": { "x": 48, "y": 24 },
+  "lookAheadPx": 32,
+  "vertical": { "follow": true, "smoothing": 0.15 },
+  "lockZones": [
+    { "stage": "ST-01", "fromTile": 210, "toTile": 238, "reason": "boss" }
+  ],
+  "shake": { "hit": 4, "slam": 6, "ms": 120 }
+}

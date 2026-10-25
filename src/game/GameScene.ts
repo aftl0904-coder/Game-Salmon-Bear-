@@ -97,6 +97,7 @@ import {
 } from './engine'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
+import { CAMERA, tutorialSign } from './config/gameData'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -282,13 +283,17 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setRoundPixels(true)
     const startX = this.girl ? (this.boy.x + this.girl.x) / 2 : this.boy.x
     this.camTarget = this.add.zone(startX, WORLD_H / 2, 1, 1)
-    this.cameras.main.startFollow(this.camTarget, true, 0.18, 0.18)
-    this.cameras.main.setDeadzone(this.girl ? L(90) : L(120), L(56))
+    // data/camera.json — deadzone + smoothing (no combat rule change)
+    const sm = CAMERA.vertical.smoothing
+    this.cameras.main.startFollow(this.camTarget, true, sm, sm)
+    this.cameras.main.setDeadzone(CAMERA.deadZonePx.x, CAMERA.deadZonePx.y)
+    this.registry.set('cameraJson', CAMERA)
   }
 
   /** 雙人：鏡頭跟中點；兩人可左右分邊，但唔准單獨行出畫面。 */
   private updateCameraFollow() {
     if (!this.camTarget || !this.boy) return
+    const ahead = CAMERA.lookAheadPx
     if (this.girl && this.girl.active) {
       this.clampDuoToCamera()
       const midX = (this.boy.x + this.girl.x) / 2
@@ -297,8 +302,10 @@ export class GameScene extends Phaser.Scene {
         WORLD_H / 2,
       )
     } else {
+      const face = this.boy.facing || 1
+      const targetX = this.boy.x + face * ahead
       this.camTarget.setPosition(
-        Math.round(Phaser.Math.Clamp(this.boy.x, 480, WORLD_W - 480)),
+        Math.round(Phaser.Math.Clamp(targetX, 480, WORLD_W - 480)),
         WORLD_H / 2,
       )
     }
@@ -2142,6 +2149,18 @@ export class GameScene extends Phaser.Scene {
             ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Ｒ回選單'
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
         )
+        // data/signs.json SG-02 — display-only tutorial (no combat change)
+        const tip = tutorialSign()
+        if (tip && 'text' in tip && tip.text) {
+          const ms = 'showMs' in tip && typeof tip.showMs === 'number' ? tip.showMs : 3000
+          floatText(this, this.boy.x, this.boy.y - 56, tip.text, '#ffe08a', {
+            size: 12,
+            rise: 10,
+            dur: ms,
+          })
+          this.registry.set('activeSignId', tip.id)
+          this.registry.set('activeSignText', tip.text)
+        }
       },
     })
     this.events.once('shutdown', () => handle.destroy())

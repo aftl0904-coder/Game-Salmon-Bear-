@@ -1,0 +1,9 @@
+[
+  {
+    "id": "ST-01",
+    "name": "百畝樹林",
+    "newMechanic": "矮跳過尖刺、蹲低過擺刀",
+    "bgm": "bgm_forest",
+    "note": "stub for camera.lockZones refs — full stages pack is later"
+  }
+]

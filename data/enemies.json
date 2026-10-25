@@ -1,0 +1,89 @@
+[
+  {
+    "id": "E-01",
+    "name": "紅魚",
+    "role": "charger",
+    "hp": 2,
+    "speed": 30,
+    "ai": {
+      "patrolTiles": 6,
+      "telegraphMs": 500,
+      "dashSpeed": 180,
+      "dashMs": 600,
+      "stunMs": 1000
+    },
+    "answer": "jump",
+    "counter": "起跳避過衝刺，落地後反擊"
+  },
+  {
+    "id": "E-02",
+    "name": "機械豬",
+    "role": "heavy",
+    "hp": 5,
+    "speed": 30,
+    "ai": {
+      "frontArmor": true,
+      "slamTelegraphMs": 900,
+      "slamRange": 24,
+      "vulnerableAfterSlamMs": 1200
+    },
+    "answer": "wait",
+    "counter": "等重擊落空後追擊"
+  },
+  {
+    "id": "E-03",
+    "name": "帽仔兵",
+    "role": "thrower",
+    "hp": 1,
+    "speed": 40,
+    "ai": {
+      "throwIntervalMs": 1800,
+      "throwHeights": ["low", "high"],
+      "telegraphMs": 400,
+      "retreatWithinPx": 48
+    },
+    "answer": "low=jump, high=crouch",
+    "counter": "按投擲高度跳或蹲，近身擊殺"
+  },
+  {
+    "id": "E-04",
+    "name": "刺球",
+    "role": "rollingHazard",
+    "hp": null,
+    "speed": 45,
+    "ai": {
+      "patrolTiles": 8,
+      "indestructible": true,
+      "contactDamage": 1
+    },
+    "answer": "jump",
+    "counter": "只可跳過"
+  },
+  {
+    "id": "E-05",
+    "name": "蜜蜂",
+    "role": "flyer",
+    "hp": 1,
+    "speed": 60,
+    "ai": {
+      "pattern": "sine",
+      "flightHeightPx": 20,
+      "amplitudePx": 8,
+      "diveEveryMs": 3000
+    },
+    "answer": "crouch",
+    "counter": "蹲低避開頭部高度，等佢俯衝後攻擊"
+  },
+  {
+    "id": "E-06",
+    "name": "滾動怪",
+    "role": "roller",
+    "hp": 1,
+    "ai": {
+      "rollSpeed": 70,
+      "followsSlope": true,
+      "bounceOnWall": true
+    },
+    "answer": "jump_or_attack"
+  }
+]

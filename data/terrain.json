@@ -1,0 +1,14 @@
+{
+  "tiles": [
+    { "id": "T-01", "type": "solid" },
+    { "id": "T-02", "type": "oneWay", "note": "可從下方跳上" },
+    {
+      "id": "T-03",
+      "type": "slope",
+      "angleDeg": [15, 30],
+      "speedMultiplier": { "up": 0.8, "down": 1.1 },
+      "sliding": false
+    },
+    { "id": "T-04", "type": "beam", "note": "窄長平台，可放尖刺" }
+  ]
+}

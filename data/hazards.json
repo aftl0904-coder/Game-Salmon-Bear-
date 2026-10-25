@@ -1,0 +1,81 @@
+[
+  {
+    "id": "H-01",
+    "name": "坑",
+    "type": "pit",
+    "widthTiles": [2, 3, 4],
+    "answer": "jump_full"
+  },
+  {
+    "id": "H-02",
+    "name": "地面尖刺",
+    "type": "spikes",
+    "heightPx": 8,
+    "damage": 1,
+    "answer": "jump_tap_or_full",
+    "look": "銀色三角，靜止"
+  },
+  {
+    "id": "H-03",
+    "name": "擺動刀",
+    "type": "swingBlade",
+    "bottomFromGroundPx": 20,
+    "periodMs": 1800,
+    "telegraphMs": 400,
+    "answer": "crouch"
+  },
+  {
+    "id": "H-04",
+    "name": "墮落物",
+    "type": "fallingObject",
+    "bottomFromGroundPx": 20,
+    "telegraphMs": 500,
+    "shadow": true,
+    "answer": "crouch_or_move"
+  },
+  {
+    "id": "H-05",
+    "name": "定時尖刺",
+    "type": "retractableSpikes",
+    "warnMs": 300,
+    "outMs": 600,
+    "inMs": 900,
+    "answer": "timing"
+  },
+  {
+    "id": "H-06",
+    "name": "移動平台",
+    "type": "movingPlatform",
+    "speed": 40,
+    "rangeTiles": 4,
+    "answer": "timing"
+  },
+  {
+    "id": "H-07",
+    "name": "崩塌平台",
+    "type": "crumble",
+    "delayMs": 500,
+    "respawnMs": 3000,
+    "answer": "keep_moving"
+  },
+  {
+    "id": "H-08",
+    "name": "高台階",
+    "type": "step",
+    "heightTiles": [2, 3],
+    "answer": "jump_full"
+  },
+  {
+    "id": "H-09",
+    "name": "懸掛尖刺塊",
+    "type": "ceilingCrusher",
+    "restBottomFromGroundPx": 56,
+    "lowBottomFromGroundPx": 16,
+    "warnMs": 400,
+    "downMs": 300,
+    "stayMs": 600,
+    "upMs": 900,
+    "damage": 1,
+    "answer": "timing"
+  }
+]

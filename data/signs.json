@@ -1,0 +1,17 @@
+[
+  {
+    "id": "SG-01",
+    "name": "方向箭咀",
+    "type": "direction",
+    "icon": "arrow",
+    "note": "指引下一區域，唔阻擋玩家"
+  },
+  {
+    "id": "SG-02",
+    "name": "教學提示",
+    "type": "tutorial",
+    "text": "按住跳掣跳得更高",
+    "showMs": 3000,
+    "firstTimeOnly": true
+  }
+]
