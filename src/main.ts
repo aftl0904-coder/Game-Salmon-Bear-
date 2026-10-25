@@ -46,6 +46,8 @@ const game = new Phaser.Game({
     roundPixels: true,
     antialias: false,
     powerPreference: 'high-performance',
+    // Needed so canvas.toDataURL / screenshots see the last frame.
+    preserveDrawingBuffer: true,
   },
 })
 ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
