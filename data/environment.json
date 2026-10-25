@@ -27,7 +27,7 @@
         "shadeColor": "rgb(170,160,185)",
         "fog": { "color": "#b8c8d0", "density": 0.15 },
         "pointLights": [
-          { "x": 180, "y": 40, "radius": 220, "color": 0xfff0d0, "intensity": 0.55 }
+          { "x": 180, "y": 40, "radius": 220, "color": 16773328, "intensity": 0.55 }
         ]
       },
       "particles": ["落葉", "蟲"]
@@ -59,8 +59,8 @@
         "flicker": { "everyMs": 4000, "durationMs": 120 },
         "fog": { "color": "#1a2030", "density": 0.08 },
         "pointLights": [
-          { "x": 320, "y": 20, "radius": 160, "color": 0xa0c0ff, "intensity": 0.4 },
-          { "x": 520, "y": 80, "radius": 90, "color": 0xffcc88, "intensity": 0.7 }
+          { "x": 320, "y": 20, "radius": 160, "color": 10535167, "intensity": 0.4 },
+          { "x": 520, "y": 80, "radius": 90, "color": 16764040, "intensity": 0.7 }
         ]
       },
       "particles": ["紙張"]
@@ -92,8 +92,8 @@
         "fog": { "color": "#c09070", "density": 0.2 },
         "warmSpot": true,
         "pointLights": [
-          { "x": 200, "y": 60, "radius": 120, "color": 0xff8844, "intensity": 0.8 },
-          { "x": 480, "y": 50, "radius": 100, "color": 0xffaa66, "intensity": 0.65 }
+          { "x": 200, "y": 60, "radius": 120, "color": 16746564, "intensity": 0.8 },
+          { "x": 480, "y": 50, "radius": 100, "color": 16755302, "intensity": 0.65 }
         ]
       },
       "particles": ["蒸汽", "紙屑"]
@@ -125,7 +125,7 @@
         "fog": { "color": "#405060", "density": 0.12 },
         "headlightSweep": true,
         "pointLights": [
-          { "x": 100, "y": 180, "radius": 140, "color": 0xffffcc, "intensity": 0.5 }
+          { "x": 100, "y": 180, "radius": 140, "color": 16777164, "intensity": 0.5 }
         ]
       },
       "particles": ["塵埃", "飛蟲"]
@@ -157,7 +157,7 @@
         "fog": { "color": "#c8d8e0", "density": 0.35 },
         "visibilityLimited": true,
         "pointLights": [
-          { "x": 320, "y": 90, "radius": 180, "color": 0xd0e8ff, "intensity": 0.45 }
+          { "x": 320, "y": 90, "radius": 180, "color": 13691135, "intensity": 0.45 }
         ]
       },
       "particles": ["蒸汽", "水滴"]
