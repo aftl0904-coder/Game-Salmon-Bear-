@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
 import { TouchInput, isPhonePlay, type TouchBtn } from './touchInput'
 import { L } from './engine/constants'
+import { FONT_UI } from './ui/fonts'
 
 const ALPHA = 0.6
 
@@ -27,7 +28,7 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
       .setInteractive({ useHandCursor: false })
     const tx = scene.add
       .text(spec.x, spec.y, spec.label, {
-        fontFamily: 'Noto Sans TC, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '11px',
         color: '#fff4d0',
         stroke: '#2a1810',

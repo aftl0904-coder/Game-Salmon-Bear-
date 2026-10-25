@@ -32,31 +32,29 @@ export const MAX_HP = 6
 /** Combat: hits connect on same lane OR ±1 adjacent lane. */
 export const LANE_HIT_TOL = 1
 /**
- * Actors bake at 3× with LINEAR AA.
- * Tuned so heroes/enemies read clearly vs world props (not microscopic).
- * ×1.11 — cast readability pack; × LAYOUT_SCALE keeps screen fraction on 480×270
- * until art-normalize locks absolute px heights (see docs/bible/visual-style.md).
+ * Absolute display scales (bible stage 3).
+ * PNGs + procedural actors are nearest-fit to target heights; bake is NEAREST ×1
+ * so sprites run at scale ≈ 1 (no mid-body shear under Phaser safeAuto).
+ * @see docs/bible/visual-style.md
  */
-export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55 * 1.11 * LAYOUT_SCALE
-/**
- * Heroes slightly under enemy size (readable co-op cast).
- */
-export const HERO_SIZE_MUL = 0.85
-/** 琪寶寶 slightly smaller than 倫寶 after HERO_SIZE_MUL. */
-export const GIRL_SCALE_MUL = 0.92
-/** 噗噗 always ≈ half 琪寶寶 height. */
-export const PET_HEIGHT_FRAC = 0.5
-/** Projectiles / ammo — sit under character scale. */
-export const PROJ_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
+export const ACTOR_DISPLAY_SCALE = 1
+/** Heroes match bible 48px — no extra shrink. */
+export const HERO_SIZE_MUL = 1
+/** 琪寶寶 same target height as 倫寶 (48px). */
+export const GIRL_SCALE_MUL = 1
+/** 噗噗 bible 40px / hero 48px. */
+export const PET_HEIGHT_FRAC = 40 / 48
+/** Projectiles / ammo — art already sized; keep native. */
+export const PROJ_DISPLAY_SCALE = 1
 /** Held weapons (sword, trunk, clubs). */
-export const WEAPON_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
+export const WEAPON_DISPLAY_SCALE = 1
 /**
- * World interactables (honey / sushi / coin / durian / goal) — smaller than heroes
- * so pickups don't dwarf the cast.
+ * World interactables (honey / sushi / coin / durian / goal) —
+ * boot nearest-fits oversized paints to bible item heights.
  */
-export const PROP_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
-/** Roadside scenery (tent / picnic) — a bit larger than pickups, still under old 1.x. */
-export const SCENERY_DISPLAY_SCALE = 0.62 * LAYOUT_SCALE
+export const PROP_DISPLAY_SCALE = 1
+/** Roadside scenery — native after prop outline bake. */
+export const SCENERY_DISPLAY_SCALE = 1
 /** Pale BG tint (opaque sprites — colour shift only, not transparency). */
 export const BG_PALE_TINT = 0xd8e6f0
 /** Washed fog green for distant mountains (paired with BG_MOUNT_ALPHA). */
@@ -76,11 +74,19 @@ export const BOY_SPEED = Math.round(280 * 0.8 * 0.8 * LAYOUT_SCALE)
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（跟主角一齊慢） */
 export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
-/** Shared bake / outline pipeline — keep cast + props resolution aligned. */
-export const BAKE_RES_FACTOR = 3
-export const OUTLINE_WIDTH = 2
+/** Shared bake / outline — NEAREST ×1 + 1px ink (no soft AA). */
+export const BAKE_RES_FACTOR = 1
+export const OUTLINE_WIDTH = 1
 export const OUTLINE_INK: [number, number, number] = [18, 14, 12]
-export const SOFT_AA_FACTOR = 2
+/** @deprecated soft AA removed in visual unify stage 3 */
+export const SOFT_AA_FACTOR = 1
+/** Bible target display heights (480×270). */
+export const TARGET_H_HERO = 48
+export const TARGET_H_PET = 40
+export const TARGET_H_ENEMY_S = 32
+export const TARGET_H_ENEMY_M = 48
+export const TARGET_H_ENEMY_L = 64
+export const TARGET_H_ITEM = 20
 /** 每隔幾秒隨機定住一個敵人（ms 範圍） */
 export const ENEMY_STAGGER_EVERY_MIN_MS = 3000
 export const ENEMY_STAGGER_EVERY_MAX_MS = 4000

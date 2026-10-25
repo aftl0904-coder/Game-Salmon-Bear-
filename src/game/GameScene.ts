@@ -96,6 +96,7 @@ import {
   DEBUG_MODE,
   type LaneId,
 } from './engine'
+import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -1033,12 +1034,12 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** 噗噗 display scale so height ≈ half 琪寶寶. */
+  /** 噗噗 display scale so height ≈ bible 40/48 of 琪寶寶. */
   private petScaleForGirl(g: Hero) {
     const pet = this.pet
-    if (!pet) return ACTOR_DISPLAY_SCALE * 0.5
-    const girlH = Math.max(40, g.displayHeight || 64)
-    const frameH = Math.max(1, pet.frame?.height || pet.height || 64)
+    if (!pet) return ACTOR_DISPLAY_SCALE * PET_HEIGHT_FRAC
+    const girlH = Math.max(40, g.displayHeight || 48)
+    const frameH = Math.max(1, pet.frame?.height || pet.height || 40)
     return (girlH * PET_HEIGHT_FRAC) / frameH
   }
 
@@ -1829,12 +1830,12 @@ export class GameScene extends Phaser.Scene {
     this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7 * PROP_DISPLAY_SCALE, 0.7)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 10, 'goal3d')
     this.goal.setOrigin(0.5, 1)
-    this.goal.setImmovable(true).setScale(1.25 * PROP_DISPLAY_SCALE).setDepth(DEPTH.BREAKABLE)
+    this.goal.setImmovable(true).setScale(0.85 * PROP_DISPLAY_SCALE).setDepth(DEPTH.BREAKABLE)
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
       .text(WORLD_W - 140, GROUND_Y - 140, '樹頂・蜂巢', {
-        fontFamily: 'Noto Sans TC, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '14px',
         color: '#2a1a10',
         backgroundColor: '#f7e7c0',
@@ -1851,7 +1852,7 @@ export class GameScene extends Phaser.Scene {
         ? 'fx-honey'
         : 'coin'
     const jar = this.honeyPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    jar.setScale((key === 'coin' ? 1.6 : 1.25) * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    jar.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(jar)
     ;(jar.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
@@ -1860,7 +1861,7 @@ export class GameScene extends Phaser.Scene {
   private spawnSushi(x: number, y: number) {
     const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
     const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    s.setScale(1.6 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    s.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: s, y: y - 6, yoyo: true, repeat: -1, duration: 700 })
@@ -1888,7 +1889,7 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCoin(x: number, y: number) {
     const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
-    c.setScale(1.55 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    c.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
@@ -2266,32 +2267,32 @@ export class GameScene extends Phaser.Scene {
       })
     }
 
-    const panel = this.add.rectangle(0, 8, 640, 380, 0xfff8ec, 0.98).setStrokeStyle(6, 0xe8a040)
+    const panel = this.add.rectangle(0, 4, 420, 230, 0xfff8ec, 0.98).setStrokeStyle(3, 0xe8a040)
     overlay.add(panel)
 
     const title = this.add
-      .text(0, -150, '◆ 第１關　通關！◆', {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '38px',
+      .text(0, -88, '◆ 第１關　通關！◆', {
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
         color: '#c44828',
         stroke: '#ffe8a0',
-        strokeThickness: 7,
+        strokeThickness: 4,
       })
       .setOrigin(0.5)
     overlay.add(title)
 
     // Always show both characters + bear hugging together.
-    const hugY = 8
-    const boy = this.add.image(-78, hugY, 'art-salmon').setScale(1.55).setOrigin(0.5, 1)
-    const girl = this.add.image(78, hugY, 'art-girl').setScale(1.55).setOrigin(0.5, 1)
-    const bear = this.add.image(0, hugY + 10, 'art-bear').setScale(1.75).setOrigin(0.5, 1)
+    const hugY = 4
+    const boy = this.add.image(-52, hugY, 'art-salmon').setScale(1.6).setOrigin(0.5, 1)
+    const girl = this.add.image(52, hugY, 'art-girl').setScale(1.6).setOrigin(0.5, 1)
+    const bear = this.add.image(0, hugY + 6, 'art-bear').setScale(1.7).setOrigin(0.5, 1)
     enableActorSprite(boy)
     enableActorSprite(girl)
     enableActorSprite(bear)
     overlay.add([boy, girl, bear])
     this.tweens.add({
       targets: [boy, girl, bear],
-      y: '-=12',
+      y: '-=8',
       duration: 520,
       yoyo: true,
       repeat: -1,
@@ -2303,9 +2304,9 @@ export class GameScene extends Phaser.Scene {
 
     overlay.add(
       this.add
-        .text(0, 95, '倫寶・琪寶寶・噗噗　開心擁抱！', {
-          fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '20px',
+        .text(0, 58, '倫寶・琪寶寶・噗噗　開心擁抱！', {
+          fontFamily: FONT_UI,
+          fontSize: '12px',
           color: '#5a3020',
         })
         .setOrigin(0.5),
@@ -2313,26 +2314,26 @@ export class GameScene extends Phaser.Scene {
 
     overlay.add(
       this.add
-        .text(0, 132, '第２關　・　待續', {
-          fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-          fontSize: '26px',
+        .text(0, 80, '第２關　・　待續', {
+          fontFamily: FONT_TITLE,
+          fontSize: '12px',
           color: '#1a6088',
           backgroundColor: '#d8f0ff',
-          padding: { x: 18, y: 8 },
+          padding: { x: 10, y: 4 },
         })
         .setOrigin(0.5),
     )
 
     const btnBg = this.add
-      .rectangle(0, 182, 320, 56, 0xe07a4f, 1)
-      .setStrokeStyle(3, 0xffe08a)
+      .rectangle(0, 108, 180, 32, 0xe07a4f, 1)
+      .setStrokeStyle(2, 0xffe08a)
     const btnTx = this.add
-      .text(0, 182, '回角色選擇', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '24px',
+      .text(0, 108, '回角色選擇', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
         color: '#fff8e0',
         stroke: '#4a2010',
-        strokeThickness: 4,
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
     overlay.add([btnBg, btnTx])
@@ -2341,7 +2342,7 @@ export class GameScene extends Phaser.Scene {
     btnTx.setInteractive({ useHandCursor: true })
     // Click anywhere on the lower third of the panel as fallback.
     const hitPad = this.add
-      .rectangle(0, 182, 640, 90, 0x000000, 0.001)
+      .rectangle(0, 108, 420, 56, 0x000000, 0.001)
       .setInteractive({ useHandCursor: true })
     overlay.add(hitPad)
     let left = false

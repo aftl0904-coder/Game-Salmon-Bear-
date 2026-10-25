@@ -2,6 +2,7 @@ import { DEPTH } from './engine/depth'
 import type Phaser from 'phaser'
 
 import { MAX_HP, GAME_W, L } from './engine/constants'
+import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 /**
  * Top HUD: title only (no subtitle), P1 hearts + 絕招 MP on left,
@@ -35,7 +36,7 @@ export function buildStageHud(
   root.add(
     scene.add
       .text(GAME_W / 2, L(28), opts.stageTitle, {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
+        fontFamily: FONT_TITLE,
         fontSize: '9px',
         color: '#2a1810',
       })
@@ -65,7 +66,7 @@ export function buildStageHud(
   }
   root.add(
     scene.add.text(L(54), L(2), p1Name, {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '10px',
       color: '#fff4d0',
       stroke: '#2a1810',
@@ -84,7 +85,7 @@ export function buildStageHud(
   root.add(
     scene.add
       .text(L(54), L(42), '絕招', {
-        fontFamily: 'Noto Sans TC, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '12px',
         color: '#c8e8ff',
         stroke: '#102030',
@@ -99,7 +100,7 @@ export function buildStageHud(
   root.add(mpBar)
   const mpText = scene.add
     .text(L(214), L(42), '空', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '12px',
       color: '#a8d8ff',
       stroke: '#102030',
@@ -108,10 +109,10 @@ export function buildStageHud(
     .setOrigin(0, 0.5)
   root.add(mpText)
 
-  root.add(scene.add.image(L(270), L(42), 'coin').setScale(0.55))
+  root.add(scene.add.image(L(270), L(42), 'coin').setScale(1))
   const coinText = scene.add
     .text(L(282), L(42), '×5', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '14px',
       color: '#ffe08a',
       stroke: '#2a1810',
@@ -141,7 +142,7 @@ export function buildStageHud(
     root.add(
       scene.add
         .text(L(906), L(2), '2P 琪寶寶', {
-          fontFamily: 'Noto Sans TC, sans-serif',
+          fontFamily: FONT_UI,
           fontSize: '14px',
           color: '#fff0f6',
           stroke: '#2a1810',
@@ -161,7 +162,7 @@ export function buildStageHud(
 
   const info = scene.add
     .text(GAME_W / 2, L(518), '', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#fff8e0',
       backgroundColor: '#4a2a18cc',

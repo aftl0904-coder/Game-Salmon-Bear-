@@ -137,7 +137,8 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     style: 'chase',
     hopMul: 1,
     chargePrefer: false,
-    scaleMul: 1.55,
+    // Texture nearest-fit to 64px at boot — keep scale 1 (no shear).
+    scaleMul: 1,
     hpMul: 2,
     spdMul: 0.85,
     atkCdMul: 1,

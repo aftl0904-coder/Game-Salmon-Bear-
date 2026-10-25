@@ -8,6 +8,7 @@ import {
   HEAVY_HIT_SHAKE_INTENSITY,
 } from './engine/constants'
 import { DEPTH } from './engine/depth'
+import { FONT_UI } from './ui/fonts'
 
 export function burst(
   scene: Phaser.Scene,
@@ -64,7 +65,7 @@ export function floatText(
 ) {
   const t = scene.add
     .text(x, y, msg, {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: `${opts.size ?? 20}px`,
       color,
       stroke: '#fff8e8',

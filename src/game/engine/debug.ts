@@ -2,6 +2,7 @@ import { DEPTH } from './depth'
 import Phaser from 'phaser'
 import { isGrounded } from './collision'
 import { enemyFsmLabel, type Creep } from '../enemyAi'
+import { FONT_UI } from '../ui/fonts'
 
 type DebugHero = Phaser.Physics.Arcade.Sprite & {
   pose?: string
@@ -27,7 +28,7 @@ export class DebugOverlay {
     this.gfx = scene.add.graphics().setDepth(DEPTH.DEBUG).setScrollFactor(1)
     this.hint = scene.add
       .text(8, 64, '', {
-        fontFamily: 'Noto Sans TC, monospace, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '11px',
         color: '#a8ffc8',
         backgroundColor: '#102018cc',
@@ -62,7 +63,7 @@ export class DebugOverlay {
   private label(x: number, y: number, msg: string, color = '#ffe08a') {
     const t = this.scene.add
       .text(x, y, msg, {
-        fontFamily: 'Noto Sans TC, monospace, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '10px',
         color,
         backgroundColor: '#101820aa',

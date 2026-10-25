@@ -5,6 +5,7 @@ import { loadScores } from './score'
 import { enableActorSprite } from './pixelSnap'
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
+import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 type Mode = '1p' | '2p'
 type SoloCast = 'boy' | 'girl'
@@ -156,8 +157,8 @@ export class MainMenuScene extends Phaser.Scene {
 
     const brand = this.add
       .text(width / 2, 32, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
-        fontSize: '28px',
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
         color: '#2a1408',
         stroke: '#fff6d0',
         strokeThickness: 3,
@@ -167,8 +168,8 @@ export class MainMenuScene extends Phaser.Scene {
 
     const sub = this.add
       .text(width / 2, 54, '第一關・百畝樹林　｜　奪回蜂蜜・野餐之路', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '10px',
+        fontFamily: FONT_UI,
+        fontSize: '12px',
         color: '#5a3820',
         backgroundColor: '#ffe8b088',
         padding: { x: 6, y: 2 },
@@ -194,17 +195,16 @@ export class MainMenuScene extends Phaser.Scene {
     })
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    // Keep previews under the title band so they don't cover 副標題 (480×270).
-    const ly = height - 28
-    this.previewBoyShad = this.add.image(70, ly + 4, shad).setDepth(6).setAlpha(0.6).setScale(0.7, 0.4)
-    this.previewBoy = this.add.image(70, ly, 'art-salmon').setDepth(7).setScale(0.55)
+    // Bible-sized cast (48/40) at ~1× — keep under title band on 480×270.
+    const ly = height - 22
+    this.previewBoyShad = this.add.image(70, ly + 3, shad).setDepth(6).setAlpha(0.6).setScale(0.85, 0.4)
+    this.previewBoy = this.add.image(70, ly, 'art-salmon').setDepth(7).setScale(1.15)
     enableActorSprite(this.previewBoy)
-    this.previewGirlShad = this.add.image(width - 70, ly + 4, shad).setDepth(6).setAlpha(0.55).setScale(0.65, 0.4)
-    this.previewGirl = this.add.image(width - 70, ly, 'art-girl').setDepth(7).setScale(0.5)
+    this.previewGirlShad = this.add.image(width - 70, ly + 3, shad).setDepth(6).setAlpha(0.55).setScale(0.8, 0.4)
+    this.previewGirl = this.add.image(width - 70, ly, 'art-girl').setDepth(7).setScale(1.15)
     enableActorSprite(this.previewGirl)
-    this.previewBearShad = this.add.image(width - 110, ly + 4, shad).setDepth(6).setAlpha(0.5).setScale(0.55, 0.35)
-    // 噗噗 Pooh-style — readable on menu, below subtitle
-    this.previewBear = this.add.image(width - 110, ly + 2, 'art-bear').setDepth(7).setScale(0.42)
+    this.previewBearShad = this.add.image(width - 110, ly + 3, shad).setDepth(6).setAlpha(0.5).setScale(0.7, 0.35)
+    this.previewBear = this.add.image(width - 110, ly + 1, 'art-bear').setDepth(7).setScale(1.1)
     enableActorSprite(this.previewBear)
     this.previewGirl.setVisible(false)
     this.previewBear.setVisible(false)
@@ -245,7 +245,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.labels.push(
         this.add
           .text(width / 2, y, item.text, {
-            fontFamily: 'Noto Sans TC, sans-serif',
+            fontFamily: FONT_UI,
             fontSize: '12px',
             color: '#2a1810',
             padding: { x: 4, y: 2 },
@@ -277,7 +277,7 @@ export class MainMenuScene extends Phaser.Scene {
             .join('\n')
     this.add
       .text(width / 2, 168, `★ 高分榜 ★\n${scoreLines}`, {
-        fontFamily: 'Noto Sans TC, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '10px',
         color: '#f7e7c0',
         backgroundColor: '#3a2210cc',
@@ -293,7 +293,7 @@ export class MainMenuScene extends Phaser.Scene {
         height - 14,
         '點選模式即開始　｜　上下揀　空白／Enter確認\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
         {
-          fontFamily: 'Noto Sans TC, sans-serif',
+          fontFamily: FONT_UI,
           fontSize: '9px',
           color: '#3a2818',
           align: 'center',

@@ -155,11 +155,11 @@ export function softAaSameSize(scene: TexScene, key: string, factor = 2) {
   scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.LINEAR)
 }
 
-/** Mark base + walk/combat frame keys as LINEAR. */
-export function setActorLinearFilter(scene: TexScene, baseKey: string) {
+/** Mark base + walk/combat frame keys as NEAREST (pixel unify). */
+export function setActorNearestFilter(scene: TexScene, baseKey: string) {
   const mark = (key: string) => {
     if (scene.textures.exists(key)) {
-      scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.LINEAR)
+      scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
     }
   }
   mark(baseKey)
@@ -169,19 +169,58 @@ export function setActorLinearFilter(scene: TexScene, baseKey: string) {
   mark(`${baseKey}-hurt`)
 }
 
+/** @deprecated use setActorNearestFilter — LINEAR bake removed in stage 3. */
+export const setActorLinearFilter = setActorNearestFilter
+
 /**
- * Heroes / enemies / weapons: LINEAR + safeAuto (no mid-body shear).
- * Background props keep enablePixelSprite (NEAREST).
+ * NEAREST-fit a texture to an exact pixel height (width scales with aspect).
+ * Used for procedural enemies/props that still exceed bible targets.
+ */
+export function nearestFitTextureHeight(
+  scene: TexScene,
+  key: string,
+  targetH: number,
+  alphaCut = 90,
+): { w: number; h: number } | null {
+  if (!scene.textures.exists(key) || targetH < 1) return null
+  const src = scene.textures.get(key).getSourceImage() as
+    | HTMLImageElement
+    | HTMLCanvasElement
+  const sw = (src as { width: number }).width | 0
+  const sh = (src as { height: number }).height | 0
+  if (sw < 1 || sh < 1) return null
+  if (sh === targetH) {
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    return { w: sw, h: sh }
+  }
+  const dw = Math.max(1, Math.round((sw * targetH) / sh))
+  const dh = targetH
+  const canvas = document.createElement('canvas')
+  canvas.width = dw
+  canvas.height = dh
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0, 0, dw, dh)
+  ctx.drawImage(src as CanvasImageSource, 0, 0, sw, sh, 0, 0, dw, dh)
+  const img = ctx.getImageData(0, 0, dw, dh)
+  const data = img.data
+  for (let i = 0; i < data.length; i += 4) {
+    data[i + 3] = data[i + 3] < alphaCut ? 0 : 255
+  }
+  ctx.putImageData(img, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  return { w: dw, h: dh }
+}
+
+/**
+ * Heroes / enemies / weapons: NEAREST + safeAuto (scale≈1 after bible normalize).
  */
 export function enableActorSprite(
   spr: Phaser.GameObjects.GameObject | null | undefined,
 ) {
   enablePixelSprite(spr)
-  const any = spr as Phaser.GameObjects.Image | Phaser.GameObjects.Sprite | null
-  const tex = any?.texture
-  if (tex && typeof tex.setFilter === 'function') {
-    tex.setFilter(Phaser.Textures.FilterMode.LINEAR)
-  }
 }
 
 /** Harden alpha in-place without resizing (for already-correct-size art). */

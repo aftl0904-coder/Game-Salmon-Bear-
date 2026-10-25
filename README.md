@@ -35,6 +35,12 @@
 | **大象傀儡** | 體型較大，混入中後段 |
 | **背景小蜂** | 只在天空飛過，無碰撞 |
 
+## 畫面規格
+
+- 內部解像度 **480×270**，整數倍縮放（見 `docs/bible/visual-style.md`）
+- 角色／敵人／道具 nearest 像素化 + 共用 32 色板；Fusion Pixel 字型（`public/fonts/`）
+- 重跑美術正規化：`python3 scripts/art-normalize/run.py`
+
 ## 執行
 
 ```bash

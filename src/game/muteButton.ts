@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
 import { isMuted, toggleMute, unlockAudio } from './audio'
+import { FONT_UI } from './ui/fonts'
 
 /**
  * Top-left mute toggle — usable on menu + play HUD.
@@ -20,14 +21,14 @@ export function mountMuteButton(
 
   const label = scene.add
     .text(0, 0, isMuted() ? '🔇' : '🔊', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '12px',
     })
     .setOrigin(0.5)
 
   const hint = scene.add
     .text(0, 12, isMuted() ? '靜音' : '聲音', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '8px',
       color: '#ffe08a',
       stroke: '#1a1008',

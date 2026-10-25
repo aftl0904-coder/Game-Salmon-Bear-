@@ -53,49 +53,60 @@ function applyIntegerZoom() {
 
 updateOrientationUi()
 
-const game = new Phaser.Game({
-  type: Phaser.AUTO,
-  parent: root,
-  width: GAME_W,
-  height: GAME_H,
-  backgroundColor: '#1a1420',
-  pixelArt: true,
-  roundPixels: true,
-  antialias: false,
-  physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
-  input: { gamepad: true, activePointers: 3 },
-  scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
-  // NONE — we own CSS size for integer zoom; letterbox via margins + body bg.
-  scale: {
-    mode: Phaser.Scale.NONE,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: GAME_W,
-    height: GAME_H,
-    parent: root,
-  },
-  render: {
-    pixelArt: true,
-    roundPixels: true,
-    antialias: false,
-    powerPreference: 'high-performance',
-    preserveDrawingBuffer: true,
-  },
-})
-;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
+let game: Phaser.Game
 
 function onViewportChange() {
   updateOrientationUi()
   applyIntegerZoom()
 }
 
-window.addEventListener('resize', onViewportChange)
-window.addEventListener('orientationchange', () => setTimeout(onViewportChange, 120))
+function bootGame() {
+  game = new Phaser.Game({
+    type: Phaser.AUTO,
+    parent: root,
+    width: GAME_W,
+    height: GAME_H,
+    backgroundColor: '#1a1420',
+    pixelArt: true,
+    roundPixels: true,
+    antialias: false,
+    physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
+    input: { gamepad: true, activePointers: 3 },
+    scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
+    // NONE — we own CSS size for integer zoom; letterbox via margins + body bg.
+    scale: {
+      mode: Phaser.Scale.NONE,
+      autoCenter: Phaser.Scale.CENTER_BOTH,
+      width: GAME_W,
+      height: GAME_H,
+      parent: root,
+    },
+    render: {
+      pixelArt: true,
+      roundPixels: true,
+      antialias: false,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true,
+    },
+  })
+  ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
 
-game.events.once('ready', () => {
-  for (const scene of game.scene.getScenes(false)) {
-    scene.cameras?.cameras?.forEach((c) => c.setRoundPixels(true))
-  }
-  const splash = document.getElementById('boot-splash')
-  if (splash) splash.remove()
-  onViewportChange()
-})
+  window.addEventListener('resize', onViewportChange)
+  window.addEventListener('orientationchange', () => setTimeout(onViewportChange, 120))
+
+  game.events.once('ready', () => {
+    for (const scene of game.scene.getScenes(false)) {
+      scene.cameras?.cameras?.forEach((c) => c.setRoundPixels(true))
+    }
+    const splash = document.getElementById('boot-splash')
+    if (splash) splash.remove()
+    onViewportChange()
+  })
+}
+
+/** Wait briefly for Fusion Pixel so Phaser text isn't measured with fallback metrics. */
+const fontReady = Promise.race([
+  document.fonts?.ready ?? Promise.resolve(),
+  new Promise<void>((r) => setTimeout(r, 1200)),
+])
+fontReady.then(() => bootGame())

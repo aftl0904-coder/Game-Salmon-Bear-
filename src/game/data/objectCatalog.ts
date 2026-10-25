@@ -128,7 +128,7 @@ export const OBJECT_CATALOG: CatalogEntry[] = [
       scale: ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL,
       cooldownMs: SALMON_SHOT_COOLDOWN_MS,
       range: SALMON_SHOT_RANGE,
-      notes: 'Salmon gun; PNG /art/salmon-boy.png → 3× bake + walk/idle frames',
+      notes: 'Salmon gun; PNG /art/salmon-boy.png → NEAREST×1 + 1px outline + walk/idle',
     },
   },
   {
@@ -160,7 +160,7 @@ export const OBJECT_CATALOG: CatalogEntry[] = [
     frames: petFrames('art-bear'),
     specs: {
       scale: PET_HEIGHT_FRAC,
-      notes: 'Classic Pooh-style PNG /art/kind-bear.png; height ≈ half 琪寶寶',
+      notes: 'PNG /art/kind-bear.png; bible height 40px (40/48 of 琪寶寶)',
     },
   },
 

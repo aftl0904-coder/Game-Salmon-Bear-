@@ -6,23 +6,26 @@ import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
 import {
-  bakeSmoothActorTexture,
+  bakePixelTexture,
   hardenTextureAlpha,
   sealTextureSeamsX,
   thickenSpriteOutline,
-  softAaSameSize,
+  nearestFitTextureHeight,
   registerWalkCycle,
   registerIdleBreath,
   registerEnemyCombatFrames,
-  setActorLinearFilter,
+  setActorNearestFilter,
   WALK_FRAMES,
 } from './pixelSnap'
 import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
+import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import {
   BAKE_RES_FACTOR,
   OUTLINE_WIDTH,
   OUTLINE_INK,
-  SOFT_AA_FACTOR,
+  TARGET_H_ENEMY_L,
+  TARGET_H_ENEMY_M,
+  TARGET_H_ITEM,
 } from './engine/constants'
 
 
@@ -45,30 +48,30 @@ export class BootScene extends Phaser.Scene {
     g.fillCircle(width * 0.12, height - 50, 90)
 
     this.add
-      .text(width / 2, height / 2 - 48, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
-        fontSize: '48px',
+      .text(width / 2, height / 2 - 28, '鮭鮭熊', {
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
         color: '#ffe08a',
         stroke: '#3a2010',
-        strokeThickness: 8,
+        strokeThickness: 4,
       })
       .setOrigin(0.5)
 
-    const barBg = this.add.rectangle(width / 2, height / 2 + 28, 340, 22, 0x6a4228)
-    barBg.setStrokeStyle(3, 0xe0b86a)
+    const barBg = this.add.rectangle(width / 2, height / 2 + 16, 200, 12, 0x6a4228)
+    barBg.setStrokeStyle(2, 0xe0b86a)
     const bar = this.add
-      .rectangle(width / 2 - 166, height / 2 + 28, 4, 14, 0xe07a4f)
+      .rectangle(width / 2 - 96, height / 2 + 16, 4, 8, 0xe07a4f)
       .setOrigin(0, 0.5)
     this.add
-      .text(width / 2, height / 2 + 72, '讀取中…　請稍候', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '15px',
+      .text(width / 2, height / 2 + 40, '讀取中…　請稍候', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
         color: '#f3e6c8',
       })
       .setOrigin(0.5)
 
     this.load.on('progress', (p: number) => {
-      bar.width = Math.max(4, 332 * p)
+      bar.width = Math.max(4, 192 * p)
     })
 
     // Single-frame hero/enemy art (not spritesheets). Wrong frameWidth/Height
@@ -130,11 +133,22 @@ export class BootScene extends Phaser.Scene {
 
   /**
    * Shared resolution + outer border for cast / weapons / props.
-   * Same bake factor + same outline width so nothing looks sharper/softer alone.
+   * NEAREST bake ×1 + 1px ink — no soft AA (bible stage 3).
    */
   private bakeCastTextures() {
     // Cel hero PNGs already include casual outfits + 琪寶寶背風扇 —
     // do NOT stampCasualClothes / stampFanOntoGirl (would muddy the rebuild).
+
+    const fitH: Record<string, number> = {
+      'art-enemy-barrel': TARGET_H_ENEMY_M,
+      'art-enemy-elephant': TARGET_H_ENEMY_L,
+      'prop-honey-stack': TARGET_H_ITEM + 4,
+      'prop-honey-pot': TARGET_H_ITEM,
+      'hazard-durian': TARGET_H_ITEM + 4,
+    }
+    for (const [key, h] of Object.entries(fitH)) {
+      if (this.textures.exists(key)) nearestFitTextureHeight(this, key, h)
+    }
 
     const actors = [
       'art-salmon',
@@ -177,10 +191,9 @@ export class BootScene extends Phaser.Scene {
 
     for (const key of playObjects) {
       if (!this.textures.exists(key)) continue
-      bakeSmoothActorTexture(this, key, BAKE_RES_FACTOR)
+      bakePixelTexture(this, key, BAKE_RES_FACTOR)
       thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
-      softAaSameSize(this, key, SOFT_AA_FACTOR)
-      setActorLinearFilter(this, key)
+      setActorNearestFilter(this, key)
     }
 
     registerWalkCycle(this, 'art-salmon', WALK_FRAMES)
@@ -193,11 +206,11 @@ export class BootScene extends Phaser.Scene {
     registerEnemyCombatFrames(this, 'art-enemy-barrel')
     registerEnemyCombatFrames(this, 'art-enemy-elephant')
 
-    for (const key of actors) setActorLinearFilter(this, key)
+    for (const key of actors) setActorNearestFilter(this, key)
   }
 
   /**
-   * Far scenery — same outline width/ink as play objects (aligned borders).
+   * Far scenery — same 1px outline ink as play objects (aligned borders).
    */
   private thickenPropOutlines() {
     for (const key of [
@@ -219,7 +232,7 @@ export class BootScene extends Phaser.Scene {
     ]) {
       if (!this.textures.exists(key)) continue
       thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
-      softAaSameSize(this, key, SOFT_AA_FACTOR)
+      setActorNearestFilter(this, key)
     }
   }
 

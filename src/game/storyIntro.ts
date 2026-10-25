@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
 import { GAME_W, GAME_H, L } from './engine/constants'
 import { TouchInput } from './touchInput'
+import { FONT_UI } from './ui/fonts'
 
 /** Draft R1 prologue — pending your confirmation; no personal 待補 details. */
 export type StoryBeat = {
@@ -70,7 +71,7 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
   const panel = scene.add.rectangle(GAME_W / 2, L(200), L(720), L(220), 0x2a1810, 1).setStrokeStyle(3, 0xe0b86a).setScrollFactor(0)
   const caption = scene.add
     .text(GAME_W / 2, L(120), '', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '14px',
       color: '#ffe08a',
       stroke: '#1a1008',
@@ -80,7 +81,7 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
     .setScrollFactor(0)
   const line = scene.add
     .text(GAME_W / 2, L(210), '', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '15px',
       color: '#fff6e0',
       stroke: '#1a1008',
@@ -92,7 +93,7 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
     .setScrollFactor(0)
   const hint = scene.add
     .text(GAME_W / 2, L(470), 'Ａ／攻　跳過本幕', {
-      fontFamily: 'Noto Sans TC, sans-serif',
+      fontFamily: FONT_UI,
       fontSize: '12px',
       color: '#c8b090',
     })
@@ -107,7 +108,7 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
     const img = scene.add
       .image(L(300) + i * L(180), L(320), key)
       .setOrigin(0.5, 1)
-      .setScale(key === 'art-bear' ? 1.3 : 0.55)
+      .setScale(key === 'art-bear' ? 1.4 : 1.35)
       .setScrollFactor(0)
       .setAlpha(0)
     faces.push(img)

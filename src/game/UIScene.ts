@@ -9,6 +9,7 @@ import {
 } from './EventBus'
 import { mountTouchControls } from './TouchControls'
 import { mountMuteButton } from './muteButton'
+import { FONT_UI } from './ui/fonts'
 
 /**
  * HUD overlay — hearts + blue 絕招 MP; no red HP strip / no score plate.
@@ -66,7 +67,7 @@ export class UIScene extends Phaser.Scene {
 
     this.banner = this.add
       .text(this.scale.width / 2, this.scale.height / 2, '', {
-        fontFamily: 'Noto Sans TC, sans-serif',
+        fontFamily: FONT_UI,
         fontSize: '14px',
         color: '#ffe8b0',
         backgroundColor: '#120818f2',

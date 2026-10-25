@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { enableActorSprite } from './pixelSnap'
+import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 /** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
@@ -46,34 +47,34 @@ export class LogoScene extends Phaser.Scene {
     }
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    // Cast centered, ~30% of screen height (GAME_H 540 → ~160px tall).
-    const lineupY = Math.round(height * 0.58)
-    const gap = 72
+    // Cast at bible px heights (hero 48 / pet 40) — slight bump for logo presence.
+    const lineupY = Math.round(height * 0.62)
+    const gap = 56
     const cx = width / 2
-    const boyS = 0.58
-    const girlS = 0.54
-    const bearS = 0.42
-    this.add.image(cx - gap, lineupY + 6, shad).setAlpha(0.45).setScale(0.7, 0.4)
+    const boyS = 1.35
+    const girlS = 1.35
+    const bearS = 1.35
+    this.add.image(cx - gap, lineupY + 4, shad).setAlpha(0.45).setScale(0.9, 0.45)
     enableActorSprite(
       this.add.image(cx - gap, lineupY, 'art-salmon').setOrigin(0.5, 1).setScale(boyS),
     )
-    this.add.image(cx, lineupY + 8, shad).setAlpha(0.4).setScale(0.75, 0.4)
+    this.add.image(cx, lineupY + 5, shad).setAlpha(0.4).setScale(0.85, 0.4)
     enableActorSprite(
       this.add.image(cx, lineupY + 2, 'art-bear').setOrigin(0.5, 1).setScale(bearS),
     )
-    this.add.image(cx + gap, lineupY + 6, shad).setAlpha(0.4).setScale(0.65, 0.4)
+    this.add.image(cx + gap, lineupY + 4, shad).setAlpha(0.4).setScale(0.85, 0.4)
     enableActorSprite(
       this.add.image(cx + gap, lineupY, 'art-girl').setOrigin(0.5, 1).setScale(girlS),
     )
     if (this.textures.exists('pot3d')) {
-      this.add.image(cx - 28, lineupY + 4, 'pot3d').setOrigin(0.5, 1).setScale(0.7)
+      this.add.image(cx - 22, lineupY + 2, 'pot3d').setOrigin(0.5, 1).setScale(0.55)
     }
     if (this.textures.exists('prop-banner')) {
-      this.add.image(90, height - 108, 'prop-banner').setOrigin(0.5, 1).setScale(1.4)
-      this.add.image(width - 90, height - 108, 'prop-banner').setOrigin(0.5, 1).setScale(1.4)
+      this.add.image(70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(0.85)
+      this.add.image(width - 70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(0.85)
     }
     if (this.textures.exists('prop-lantern3d')) {
-      const L = this.add.image(160, height - 108, 'prop-lantern3d').setOrigin(0.5, 1).setScale(1.5)
+      const L = this.add.image(120, height - 54, 'prop-lantern3d').setOrigin(0.5, 1).setScale(0.95)
       this.tweens.add({
         targets: L,
         angle: { from: -5, to: 5 },
@@ -86,25 +87,25 @@ export class LogoScene extends Phaser.Scene {
 
     const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
     const plaque = this.add
-      .image(width / 2, 118, plaqueKey)
-      .setScale(plaqueKey === 'ui-title-plaque' ? 1.2 : 1.65)
+      .image(width / 2, 56, plaqueKey)
+      .setScale(plaqueKey === 'ui-title-plaque' ? 0.48 : 0.62)
       .setAlpha(0)
 
     const logo = this.add
-      .text(width / 2, 106, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
-        fontSize: '68px',
+      .text(width / 2, 50, '鮭鮭熊', {
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
         color: '#2a1408',
         stroke: '#fff4d0',
-        strokeThickness: 5,
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setAlpha(0)
 
     const sub = this.add
-      .text(width / 2, 160, '百畝樹林野餐　｜　奪回蜂蜜與朋友', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '20px',
+      .text(width / 2, 78, '百畝樹林野餐　｜　奪回蜂蜜與朋友', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
         color: '#5a3820',
       })
       .setOrigin(0.5)
@@ -136,12 +137,12 @@ export class LogoScene extends Phaser.Scene {
     }
 
     this.add
-      .text(width / 2, height - 28, '按任意鍵略過', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '14px',
+      .text(width / 2, height - 18, '按任意鍵略過', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
         color: '#3a2818',
         backgroundColor: '#ffe08acc',
-        padding: { x: 10, y: 4 },
+        padding: { x: 8, y: 3 },
       })
       .setOrigin(0.5)
       .setAlpha(0.85)

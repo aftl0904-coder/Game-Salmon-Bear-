@@ -1,10 +1,27 @@
-/* System / local CJK stacks only — avoid Google Fonts network hang on load. */
+/* Self-hosted pixel CJK — no Google Fonts network hang. */
+
+@font-face {
+  font-family: 'Fusion Pixel';
+  src: url('/fonts/fusion-pixel-12-zh-hk.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fusion Pixel';
+  src: url('/fonts/fusion-pixel-12-zh-hant.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   color-scheme: dark;
   --bg-deep: #1a1420;
   --frame: #e8c070;
   --honey: #ffe08a;
+  --font-pixel: 'Fusion Pixel', 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -24,10 +41,12 @@ body {
   height: 100dvh;
   overflow: hidden;
   background: var(--bg-deep);
-  font-family: 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', 'Hiragino Sans GB', sans-serif;
+  font-family: var(--font-pixel);
   color: #f7e7c0;
   touch-action: none;
   overscroll-behavior: none;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
 }
 
 body {
@@ -64,7 +83,7 @@ body {
   background: radial-gradient(ellipse at 50% 40%, #3a2818 0%, #1a1420 70%);
   color: #ffe08a;
   text-align: center;
-  font-family: 'PingFang TC', 'Noto Sans TC', sans-serif;
+  font-family: var(--font-pixel);
 }
 
 #rotate-hint .rotate-title {
