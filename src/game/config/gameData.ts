@@ -10,6 +10,8 @@ import signsRaw from '../../../data/signs.json'
 import stagesRaw from '../../../data/stages.json'
 import environmentRaw from '../../../data/environment.json'
 import paletteRaw from '../../../data/palette.json'
+import charactersRaw from '../../../data/characters.json'
+import companionRaw from '../../../data/companion.json'
 
 export const TERRAIN = terrainRaw
 export const HAZARDS = hazardsRaw
@@ -19,6 +21,8 @@ export const SIGNS = signsRaw
 export const STAGES = stagesRaw
 export const ENVIRONMENT = environmentRaw
 export const PALETTE = paletteRaw
+export const CHARACTERS = charactersRaw
+export const COMPANION = companionRaw
 
 export type HazardDef = (typeof HAZARDS)[number]
 export type EnemyDef = (typeof ENEMIES)[number]
@@ -26,6 +30,12 @@ export type SignDef = (typeof SIGNS)[number]
 export type CameraDef = typeof CAMERA
 export type EnvironmentStage = (typeof ENVIRONMENT.stages)[number]
 export type PaletteDef = typeof PALETTE
+export type CharacterDef = (typeof CHARACTERS.characters)[number]
+export type CompanionDef = typeof COMPANION
+
+export function characterById(id: string): CharacterDef | undefined {
+  return CHARACTERS.characters.find((c) => c.id === id)
+}
 
 export function hazardById(id: string): HazardDef | undefined {
   return HAZARDS.find((h) => h.id === id)

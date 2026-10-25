@@ -1,0 +1,49 @@
+{
+  "id": "CP-01",
+  "name": "噗噗",
+  "role": "helper",
+  "follow": {
+    "target": "P-02",
+    "fallback": "P-01",
+    "trailDistancePx": [24, 40],
+    "delayMs": 250,
+    "teleportIfFarPx": 160
+  },
+  "invulnerable": true,
+  "downed": { "onHit": "hide", "recoverMs": 5000 },
+  "assists": [
+    {
+      "id": "AS-01",
+      "name": "蜂蜜感應",
+      "type": "pointer",
+      "triggerEverySec": 15,
+      "effect": "附近有隱藏蜂蜜時，頭上冒蜂蜜圖標並向佢方向望"
+    },
+    {
+      "id": "AS-02",
+      "name": "小熊衝撞",
+      "type": "attack",
+      "cooldownMs": 8000,
+      "damage": 1,
+      "target": "nearestEnemy",
+      "range": 64
+    },
+    {
+      "id": "AS-03",
+      "name": "拾取",
+      "type": "pickup",
+      "radiusPx": 40,
+      "items": ["I-02"]
+    }
+  ],
+  "limits": {
+    "cannotKillBoss": true,
+    "noBlockingPlayer": true
+  },
+  "art": {
+    "note": "原創夥伴造型；唔模仿任何現有遊戲角色",
+    "license": "project-owned"
+  },
+  "awaitingConfirmation": true,
+  "note": "確認後接 coop／控制／驗收（項目 3–5）"
+}

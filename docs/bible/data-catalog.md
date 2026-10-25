@@ -12,12 +12,17 @@
 | `data/stages.json` | **stub** ST-01（供 camera.lockZones ref） | — |
 | `data/environment.json` | ST-01…ST-05 場景質感（地面／視差／光／粒子） | `scripts/validate/environment.mjs` |
 | `data/palette.json` | 統一 32 色＋每關 tint（**proposed，待確認**） | `scripts/validate/palette.mjs` |
+| `data/characters.json` | P-01 倫寶／P-02 琪寶寶（**取代 player.json**，待確認） | `scripts/validate/characters.mjs` |
+| `data/companion.json` | CP-01 噗噗跟隨／assist（待確認） | `scripts/validate/companion.mjs` |
+
+詳見 [`characters.md`](./characters.md)。
 
 ## 接入（唔改戰鬥規則）
 
 - `CAMERA.deadZonePx` / `vertical.smoothing` / `lookAheadPx` → `GameScene` 鏡頭
 - `SIGNS` tutorial（SG-02）→ 開場後顯示提示字（`floatText`）
 - `ENVIRONMENT` / `PALETTE` → `/bible`「場景」「色板」分頁（渲染規格；未改關卡美術 pipeline）
+- `CHARACTERS` / `COMPANION` → `/bible`「角色」分頁；`PLAYER`／`BOY_SPEED`／`GIRL_SPEED` 由 characters.json 驅動
 - 完整 catalog → `/bible`（`bible.html`）
 
 ## 指令
@@ -31,6 +36,7 @@ npm run play   # 然後開 http://127.0.0.1:4741/bible
 ## 待確認後
 
 - 色板 `awaitingConfirmation` → false；可同步 `docs/bible/palette.json`
-- 項目 3：`data/music.json`＋Tone.js／BeepBox 規格
+- 角色／夥伴確認 → `data/coop.json`、控制／HUD、Playwright 攻速／滑翔／跟隨／雙人／機械人
+- 項目 3（場景包）：`data/music.json`＋Tone.js／BeepBox 規格
 - 項目 4–5：`docs/bible/visual-style.md` 質感標準、截圖／loop 驗收、`data/assets.json` license
 - 資料包 5–14：items／checkpoints／config／ui／audio／story／bosses／qte／stages 完整包／difficulty／assets

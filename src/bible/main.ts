@@ -7,6 +7,8 @@ import {
   STAGES,
   ENVIRONMENT,
   PALETTE,
+  CHARACTERS,
+  COMPANION,
   stageTint,
 } from '../game/config/gameData'
 
@@ -28,6 +30,84 @@ function panel(id: string, label: string, html: string) {
   const node = el(`<div class="panel" id="panel-${id}" role="tabpanel" data-panel="${id}"></div>`)
   node.appendChild(el(html))
   panels.push({ id, label, node })
+}
+
+/** —— 角色／夥伴（characters + companion）—— */
+{
+  const awaiting =
+    CHARACTERS.awaitingConfirmation === true || COMPANION.awaitingConfirmation === true
+  const cards = CHARACTERS.characters
+    .map((c) => {
+      const atk = (() => {
+        const a = c.attack
+        if (a.type === 'projectile' && a.projectile) {
+          return `projectile ${a.projectile.name} dmg=${a.projectile.damage} spd=${a.projectile.speed} cd=${a.cooldownMs}ms`
+        }
+        if (a.type === 'melee' && a.combo) {
+          return `melee combo×${a.combo.length} window=${a.comboWindowMs}ms cd=${a.cooldownMs}ms`
+        }
+        return a.type
+      })()
+      const fan =
+        'backFan' in c && c.backFan
+          ? `<p class="meta">風扇：${c.backFan.name} · glide fall×${c.backFan.glide.fallSpeedMultiplier} max=${c.backFan.glide.maxMs}ms · +${c.backFan.glide.extraDistanceTiles} tile</p>`
+          : ''
+      const special =
+        'shots' in c.special
+          ? `${c.special.name} ×${c.special.shots} / ${c.special.intervalMs}ms dmg=${c.special.damage} cost=${c.special.cost}`
+          : `${c.special.name} dmg=${c.special.damage} r=${'radiusPx' in c.special ? c.special.radiusPx : '—'} cost=${c.special.cost}`
+      return `<article class="stage-card" data-testid="char-${c.id}" id="char-${c.id}">
+        <h3><code>${c.id}</code> ${c.name} <span class="badge">${c.role} · ${c.difficulty}</span></h3>
+        <p class="meta">hp=${c.hp} · moveSpeed=<strong data-testid="speed-${c.id}">${c.moveSpeed}</strong> · jumpV=${c.jumpVelocity}</p>
+        <p class="meta">武器：${c.weapon.name} — ${c.weapon.look}</p>
+        <p class="meta">攻擊：${atk}</p>
+        ${fan}
+        <p class="meta">絕招：${special}</p>
+        <p class="meta">弱點：${c.weakness}</p>
+      </article>`
+    })
+    .join('')
+
+  const assists = COMPANION.assists
+    .map(
+      (a) =>
+        `<tr><td><code>${a.id}</code></td><td>${a.name}</td><td>${a.type}</td><td>${
+          'effect' in a && a.effect
+            ? String(a.effect)
+            : [
+                'cooldownMs' in a ? `cd=${a.cooldownMs}` : '',
+                'damage' in a ? `dmg=${a.damage}` : '',
+                'range' in a ? `range=${a.range}` : '',
+                'radiusPx' in a ? `r=${a.radiusPx}` : '',
+                'items' in a && Array.isArray(a.items) ? `items=${a.items.join(',')}` : '',
+                'triggerEverySec' in a ? `every=${a.triggerEverySec}s` : '',
+              ]
+                .filter(Boolean)
+                .join(' · ')
+        }</td></tr>`,
+    )
+    .join('')
+
+  const sh = CHARACTERS.shared
+  panel(
+    'cast',
+    '角色',
+    `<section id="sec-characters" data-testid="sec-characters">
+      <h2>角色 · data/characters.json
+        ${awaiting ? '<span class="badge" data-testid="cast-awaiting">待確認</span>' : '<span class="badge">已確認</span>'}
+      </h2>
+      <p class="meta">shared hitbox stand ${sh.hitbox.standing.w}×${sh.hitbox.standing.h} / crouch ${sh.hitbox.crouch.w}×${sh.hitbox.crouch.h} · jump g=${sh.jump.gravity} coyote=${sh.jump.coyoteMs} buffer=${sh.jump.bufferMs} · tap/full ${sh.jump.targetHeightPx.tap}/${sh.jump.targetHeightPx.full}px</p>
+      <p class="meta">balance: DPS 琪/倫 ${CHARACTERS.balanceTargets.dpsRatioGirlToBoy.join('–')} · bot 倫 ${CHARACTERS.balanceTargets.clearRateBotBoy.join('–')} · bot 琪 ${CHARACTERS.balanceTargets.clearRateBotGirl.join('–')}</p>
+      ${CHARACTERS.note ? `<p class="meta">${CHARACTERS.note}</p>` : ''}
+      ${cards}
+    </section>
+    <section id="sec-companion" data-testid="sec-companion">
+      <h2>夥伴 · data/companion.json · <code>${COMPANION.id}</code> ${COMPANION.name}</h2>
+      <p class="meta">follow ${COMPANION.follow.target}→${COMPANION.follow.fallback} · trail ${COMPANION.follow.trailDistancePx.join('–')}px · delay=${COMPANION.follow.delayMs}ms · teleport=${COMPANION.follow.teleportIfFarPx}px</p>
+      <p class="meta">invulnerable=${COMPANION.invulnerable} · downed ${COMPANION.downed.onHit} ${COMPANION.downed.recoverMs}ms · limits bossKill=${!COMPANION.limits.cannotKillBoss} block=${!COMPANION.limits.noBlockingPlayer}</p>
+      <table data-testid="companion-assists"><thead><tr><th>id</th><th>name</th><th>type</th><th>detail</th></tr></thead><tbody>${assists}</tbody></table>
+    </section>`,
+  )
 }
 
 /** —— 場景（environment.json）—— */

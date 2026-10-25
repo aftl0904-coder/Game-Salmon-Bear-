@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Stage 1 QA — single-lane: crouch hitbox + variable jump (from data/player.json).
+ * Stage 1 QA — single-lane: crouch hitbox + variable jump (from data/characters.json).
  * Story intro is force-finished (keyboard A↔Phaser JustDown unreliable in headless).
  */
 import { chromium } from 'playwright'

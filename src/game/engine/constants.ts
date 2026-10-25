@@ -1,4 +1,5 @@
 /** Shared stage / physics constants — 超任 SNES weight (Goemon / classic platformer). */
+import charactersPack from '../../../data/characters.json'
 
 /**
  * Native render size (16:9). Prior pack used 960×540; halved for integer zoom on phones.
@@ -69,9 +70,11 @@ export const BG_NEAR_TINT = 0xd2e0d4
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */
 export const COINS_PER_HP = 10
-/** Player move speed: prior 280 → ×0.8 → ×0.8 again, then × LAYOUT_SCALE for 480×270. */
-export const BOY_SPEED = Math.round(280 * 0.8 * 0.8 * LAYOUT_SCALE)
-export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
+/** Player move speeds — from data/characters.json (P-01 / P-02). */
+const _p01 = charactersPack.characters.find((c) => c.id === 'P-01')!
+const _p02 = charactersPack.characters.find((c) => c.id === 'P-02')!
+export const BOY_SPEED = _p01.moveSpeed
+export const GIRL_SPEED = _p02.moveSpeed
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（跟主角一齊慢） */
 export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
 /** Shared bake / outline — NEAREST ×1 + 1px ink (no soft AA). */

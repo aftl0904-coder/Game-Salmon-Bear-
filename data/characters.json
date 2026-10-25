@@ -1,0 +1,113 @@
+{
+  "shared": {
+    "hitbox": {
+      "standing": { "w": 12, "h": 24 },
+      "crouch": { "w": 12, "h": 14 }
+    },
+    "jump": {
+      "gravity": 700,
+      "holdMaxMs": 180,
+      "releaseCut": 0.5,
+      "coyoteMs": 90,
+      "bufferMs": 110,
+      "targetHeightPx": { "tap": 24, "full": 48 }
+    },
+    "crouch": { "speedMultiplier": 0.5 },
+    "hurt": { "invulnMs": 1000, "knockbackX": 60, "knockbackY": 120 },
+    "fall": { "damage": 1, "respawn": "lastCheckpoint" }
+  },
+  "characters": [
+    {
+      "id": "P-01",
+      "name": "倫寶",
+      "role": "ranged",
+      "difficulty": "hard",
+      "hp": 6,
+      "moveSpeed": 95,
+      "jumpVelocity": 260,
+      "weapon": { "name": "鮭魚槍", "look": "手持一條鮭魚形狀嘅槍（原創）" },
+      "attack": {
+        "type": "projectile",
+        "projectile": {
+          "name": "鮭魚籽",
+          "speed": 170,
+          "gravity": 40,
+          "rangePx": 150,
+          "damage": 2,
+          "sizePx": 4,
+          "pierce": 0,
+          "spawnOffset": [20, -14]
+        },
+        "startupMs": 120,
+        "activeMs": 60,
+        "recoveryMs": 200,
+        "cooldownMs": 520,
+        "maxOnScreen": 3,
+        "canShootCrouching": true,
+        "canShootInAir": true
+      },
+      "special": {
+        "name": "魚籽連射",
+        "shots": 5,
+        "intervalMs": 90,
+        "damage": 1,
+        "cost": 1
+      },
+      "weakness": "動作慢、射擊後有硬直，近身冇保護",
+      "art": {
+        "note": "原創造型；唔模仿任何現有遊戲角色",
+        "license": "project-owned"
+      }
+    },
+    {
+      "id": "P-02",
+      "name": "琪寶寶",
+      "role": "melee",
+      "difficulty": "easy",
+      "hp": 5,
+      "moveSpeed": 115,
+      "jumpVelocity": 270,
+      "weapon": { "name": "劍", "look": "手持短劍，近身快速斬擊（原創）" },
+      "attack": {
+        "type": "melee",
+        "comboWindowMs": 300,
+        "cooldownMs": 140,
+        "hitboxHeightPx": 28,
+        "combo": [
+          { "damage": 1, "startupMs": 40, "activeMs": 80, "recoveryMs": 70, "range": 24 },
+          { "damage": 1, "startupMs": 40, "activeMs": 80, "recoveryMs": 70, "range": 24 },
+          { "damage": 2, "startupMs": 50, "activeMs": 100, "recoveryMs": 140, "range": 28 }
+        ]
+      },
+      "backFan": {
+        "name": "背脊風扇",
+        "look": "背脊揹住一把大風扇（原創造型，跟琪寶寶色板）",
+        "glide": {
+          "holdJumpInAir": true,
+          "fallSpeedMultiplier": 0.35,
+          "maxMs": 900,
+          "extraDistanceTiles": 1
+        }
+      },
+      "special": {
+        "name": "旋風斬",
+        "damage": 2,
+        "radiusPx": 32,
+        "invulnMs": 400,
+        "cost": 1
+      },
+      "weakness": "要近身，容易受傷；血量較少",
+      "art": {
+        "note": "原創造型；唔模仿任何現有遊戲角色",
+        "license": "project-owned"
+      }
+    }
+  ],
+  "balanceTargets": {
+    "dpsRatioGirlToBoy": [1.0, 1.5],
+    "clearRateBotBoy": [0.55, 0.7],
+    "clearRateBotGirl": [0.7, 0.85]
+  },
+  "awaitingConfirmation": true,
+  "note": "取代 data/player.json；確認後接 coop／控制／驗收（項目 3–5）"
+}
