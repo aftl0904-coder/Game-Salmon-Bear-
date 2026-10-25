@@ -230,5 +230,141 @@
     "rows": 1,
     "facing": "right",
     "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 wake-up: grey hollow limp → stir → colour returning → full warm colour → jump celebrate. 噗噗 original bear NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png, hollow-idle."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 red piranha walk/swim 4 frames magenta #FF00FF facing RIGHT. Design from enemy-lineup-five: red-pink aggressive fish sharp teeth bulging eyes fins. Native 40px 8× NN. Refs: enemy-lineup-five.png."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/charge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 charge puffing up 3 frames magenta. Same red piranha design. Native 40px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/dash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 dash stretch forward 3 frames magenta. Same design. Native 40px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/dizzy.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 dizzy with stars 3 frames magenta. Same design. Native 40px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 hit flinch 2 frames magenta. Same design. Native 40px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-01-fish/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 die 4 frames magenta cartoon dissolve. Same design. Native 40px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 hatsoldier walk 4 frames magenta facing RIGHT. Wooden mannequin straw hat purple accents holding rock. Native 56px 8× NN. Refs: enemy-lineup-five.png."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-low.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 throw-low 4 frames magenta underhand rock throw. Same hatsoldier design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-high.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 throw-high 4 frames magenta overhead rock throw. Same design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 hit 2 frames magenta. Same design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 die 4 frames magenta wooden collapse. Same design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 mechpig walk 4 frames magenta facing RIGHT. Barrel body metal bands pig head red eyes golden wind-up key four mech legs. Native 72px 8× NN. Refs: enemy-lineup-five.png."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/windup.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 windup 3 frames magenta compress key winds. Same mechpig. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/lunge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 lunge 3 frames magenta charge. Same design. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/opening.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 opening weak moment gears pop loose 3 frames magenta. Same design. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/block.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 block 2 frames magenta sparks on front armour. Same design. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/die.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 die 5 frames magenta barrel break apart. Same design. Native 72px 8× NN."
   }
 ]
