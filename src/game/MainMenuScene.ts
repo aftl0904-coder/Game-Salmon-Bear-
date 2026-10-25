@@ -17,8 +17,6 @@ export class MainMenuScene extends Phaser.Scene {
   private panels: Phaser.GameObjects.Image[] = []
   private cursorsGfx: Phaser.GameObjects.Image[] = []
   private choices: MenuChoice[] = []
-  private startBtn: Phaser.GameObjects.Image | null = null
-  private startLabel: Phaser.GameObjects.Text | null = null
   private previewGirl: Phaser.GameObjects.Image | null = null
   private previewBear: Phaser.GameObjects.Image | null = null
   private previewGirlShad: Phaser.GameObjects.Image | null = null
@@ -40,7 +38,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.cursor = 0
     this.starting = false
     this.registry.set('leavingToMenu', false)
-    // Block the Return/Space that just dismissed the clear screen from also hitting「開始」.
+    // Block the Return/Space that just dismissed the clear screen from also picking a mode.
     this.inputReadyAt = this.time.now + 450
 
     this.buildAtmosphere(width, height)
@@ -236,9 +234,11 @@ export class MainMenuScene extends Phaser.Scene {
         this.cursor = i
         this.refresh()
       })
+      // Pick a mode → go straight into the run (no separate Start button).
       panel.on('pointerdown', () => {
         this.cursor = i
         this.refresh()
+        this.confirmStart()
       })
       this.panels.push(panel)
 
@@ -261,27 +261,6 @@ export class MainMenuScene extends Phaser.Scene {
       }
     })
 
-    const startY = 300
-    const startKey = this.textures.exists('ui-wood-panel-on')
-      ? 'ui-wood-panel-on'
-      : this.textures.exists('ui-wood-panel')
-        ? 'ui-wood-panel'
-        : 'ui-scroll'
-    this.startBtn = this.add.image(width / 2, startY, startKey).setDepth(12).setScale(0.85)
-    this.startBtn.setInteractive({ useHandCursor: true })
-    this.startBtn.on('pointerdown', () => this.confirmStart())
-    this.startBtn.on('pointerover', () => this.startLabel?.setColor('#1a1008'))
-    this.startBtn.on('pointerout', () => this.startLabel?.setColor('#2a1810'))
-    this.startLabel = this.add
-      .text(width / 2, startY, '開始', {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '32px',
-        color: '#2a1810',
-        fontStyle: 'bold',
-        padding: { x: 12, y: 6 },
-      })
-      .setOrigin(0.5)
-      .setDepth(13)
   }
 
   private buildFooter(width: number, height: number) {
@@ -297,7 +276,7 @@ export class MainMenuScene extends Phaser.Scene {
             )
             .join('\n')
     this.add
-      .text(width / 2, 338, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width / 2, 310, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '14px',
         color: '#f7e7c0',
@@ -312,7 +291,7 @@ export class MainMenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 28,
-        '上下揀模式　「開始」／空白／Enter\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
+        '點選模式即開始　｜　上下揀　空白／Enter確認\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '13px',
