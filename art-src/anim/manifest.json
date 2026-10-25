@@ -1078,5 +1078,45 @@
     "rows": 1,
     "facing": "right",
     "prompt": "FX swarm 3 frames magenta facing RIGHT. Line of 3 mini bees."
+  },
+  {
+    "file": "art-src/anim/lunbo/bike-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "倫寶 bike-ride 4 frames magenta facing RIGHT. Orange hoodie salmon gun on casual city bike. Same 72px scale as model. Refs lunbo model-sheet."
+  },
+  {
+    "file": "art-src/anim/lunbo/bike-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "倫寶 bike-jump 3 frames magenta facing RIGHT. Same scale design."
+  },
+  {
+    "file": "art-src/anim/kibobo/bike-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top fan on back city bike. Same 72px scale."
+  },
+  {
+    "file": "art-src/anim/kibobo/bike-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 bike-jump 3 frames magenta facing RIGHT. Same scale."
+  },
+  {
+    "file": "art-src/anim/kibobo/fan-float.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
   }
 ]
