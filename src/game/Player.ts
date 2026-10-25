@@ -388,6 +388,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private resolveLaneJumpLanding(body: Phaser.Physics.Arcade.Body) {
     if (!this.laneJumping) return
     const target = laneY(this.lane)
+    // Don't cancel takeoff — feet are still on the line for the first frames.
+    if (this.jumpHoldMs < 50 || body.velocity.y < -40) return
     if (isGrounded(body) && this.y < laneY(0) - 20) {
       this.laneJumping = false
       body.velocity.y = 0
@@ -402,15 +404,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.laneJumping = false
       this.justLanded = true
       this.jumpCutApplied = false
-    }
-    if (this.laneJumping && body.velocity.y >= -20 && Math.abs(this.y - target) < 3) {
-      this.setY(target)
-      body.velocity.y = 0
-      body.allowGravity = false
-      body.setGravity(0, 0)
-      this.laneJumping = false
-      this.justLanded = true
-      this.jumpCutApplied = false
+      this.jumpHoldMs = 0
     }
   }
 
