@@ -8,24 +8,27 @@ export const LANE_COUNT = 5
  * Feet Y for lanes 0..4 (top→bottom).
  * Clear spacing so row swaps read; tied to lowered GROUND_Y.
  */
+/** Lane spacing halved with 480×270 layout (was ±36 / ±72 on 540-tall). */
 export const LANE_Y = [
-  GROUND_Y - 72,
   GROUND_Y - 36,
+  GROUND_Y - 18,
   GROUND_Y,
+  GROUND_Y + 18,
   GROUND_Y + 36,
-  GROUND_Y + 72,
 ] as const
 
 export const LANE_DEFAULT = 2 as LaneId
 
 /** Same-lane hit tolerance only used as Y fallback. */
-export const LANE_HIT_Y_TOL = 20
+export const LANE_HIT_Y_TOL = 10
 
 /** Cooldown between discrete lane switches while held (ms). */
 export const LANE_SWITCH_MS = 110
 
 /** Soft lerp toward target lane Y while grounded (px/s). */
-export const LANE_SNAP_SPEED = 580
+export const LANE_SNAP_SPEED = 290
+
+export const LANE_BAND_PAD = 14
 
 export type LaneId = 0 | 1 | 2 | 3 | 4
 
@@ -79,7 +82,7 @@ export function laneDepth(base: number, lane: LaneId): number {
 
 export const LANE_FLOOR_Y = LANE_Y[LANE_COUNT - 1]!
 
-export const LANE_BAND_TOP = LANE_Y[0]! - 28
+export const LANE_BAND_TOP = LANE_Y[0]! - LANE_BAND_PAD
 
 export function inLaneBand(y: number): boolean {
   return y >= LANE_BAND_TOP

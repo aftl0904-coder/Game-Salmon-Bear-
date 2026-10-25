@@ -165,15 +165,21 @@ export function registerUiArt(scene: Phaser.Scene) {
     for (let x = 30; x < 310; x += 7) set(x, 40, [70, 140, 190])
   })
 
-  // Koban / ryo coin (投幣續關)
+  // Fallback coin — salmon emblem (BootScene may replace with cel PNG).
   paint(scene, 'coin', 16, 16, (set) => {
-    circ(set, 8, 8, 7, goldD)
-    circ(set, 8, 8, 6, gold)
-    circ(set, 8, 8, 5, goldL)
-    // oval koban hint
-    rect(set, 5, 3, 6, 10, goldD)
-    rect(set, 6, 4, 4, 8, goldL)
-    rect(set, 7, 5, 2, 6, [255, 250, 200])
+    const ink: RGB = [18, 12, 8]
+    const rim: RGB = [180, 110, 30]
+    const face: RGB = [255, 210, 70]
+    const hi: RGB = [255, 245, 180]
+    const fish: RGB = [230, 120, 45]
+    circ(set, 8, 8, 7, ink)
+    circ(set, 8, 8, 6, rim)
+    circ(set, 8, 8, 5, face)
+    circ(set, 6, 6, 2, hi)
+    rect(set, 4, 7, 7, 3, fish)
+    rect(set, 10, 6, 2, 2, fish)
+    rect(set, 10, 9, 2, 2, fish)
+    set(5, 8, hi)
   })
 
   // Compact heart pip (10-unit life meter like Goemon life blocks)

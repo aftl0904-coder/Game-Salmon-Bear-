@@ -8,30 +8,30 @@ import { isMuted, toggleMute, unlockAudio } from './audio'
  */
 export function mountMuteButton(
   scene: Phaser.Scene,
-  x = 28,
-  y = 18,
+  x = 14,
+  y = 9,
 ): Phaser.GameObjects.Container {
   const root = scene.add.container(x, y).setScrollFactor(0).setDepth(DEPTH.UI + 90)
 
   const bg = scene.add
-    .rectangle(0, 0, 44, 36, 0x1a1420, 0.82)
-    .setStrokeStyle(2, 0xe0b86a, 0.95)
+    .rectangle(0, 0, 28, 22, 0x1a1420, 0.82)
+    .setStrokeStyle(1, 0xe0b86a, 0.95)
     .setInteractive({ useHandCursor: true })
 
   const label = scene.add
     .text(0, 0, isMuted() ? '🔇' : '🔊', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '20px',
+      fontSize: '12px',
     })
     .setOrigin(0.5)
 
   const hint = scene.add
-    .text(0, 22, isMuted() ? '靜音' : '聲音', {
+    .text(0, 12, isMuted() ? '靜音' : '聲音', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '11px',
+      fontSize: '8px',
       color: '#ffe08a',
       stroke: '#1a1008',
-      strokeThickness: 3,
+      strokeThickness: 2,
     })
     .setOrigin(0.5, 0)
 

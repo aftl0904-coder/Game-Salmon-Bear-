@@ -47,7 +47,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.buildFooter(width, height)
     this.wireInput()
     mountTouchControls(this)
-    mountMuteButton(this, 28, 16)
+    mountMuteButton(this, 14, 8)
     this.refresh()
   }
 

@@ -1,19 +1,31 @@
 /** Shared stage / physics constants — 超任 SNES weight (Goemon / classic platformer). */
 
 /**
- * Stage length — previous 7600 shortened −25%.
+ * Native render size (16:9). Prior pack used 960×540; halved for integer zoom on phones.
+ * Layout units from the 960×540 era multiply by LAYOUT_SCALE.
+ */
+export const GAME_W = 480
+export const GAME_H = 270
+export const LAYOUT_SCALE = 0.5
+/** Helper: map a legacy 960×540 layout value into native coords. */
+export function L(n: number) {
+  return Math.round(n * LAYOUT_SCALE)
+}
+
+/**
+ * Stage length — previous 7600 shortened −25%, then × LAYOUT_SCALE for 480×270.
  * Spawn X positions should use `sx()` / STAGE_LEN_MUL.
  */
-export const WORLD_W = 5700
-export const WORLD_H = 540
-/** Multiply legacy absolute stage X coords by this (WORLD_W / 7600). */
-export const STAGE_LEN_MUL = 0.75
+export const WORLD_W = L(5700)
+export const WORLD_H = GAME_H
+/** Multiply legacy absolute stage X coords by this (WORLD_W design / 7600), then layout scale. */
+export const STAGE_LEN_MUL = 0.75 * LAYOUT_SCALE
 export function sx(x: number) {
   return Math.round(x * STAGE_LEN_MUL)
 }
 
 /** Shared mid-lane walk surface (feet origin). Lowered for more playable ground (Pack3). */
-export const GROUND_Y = 428
+export const GROUND_Y = L(428)
 
 /** Heroes HP (每人少 1 心 vs 舊 7). 1 enemy hit = −1. */
 export const MAX_HP = 6
@@ -22,9 +34,10 @@ export const LANE_HIT_TOL = 1
 /**
  * Actors bake at 3× with LINEAR AA.
  * Tuned so heroes/enemies read clearly vs world props (not microscopic).
- * ×1.11 — cast readability pack (all characters).
+ * ×1.11 — cast readability pack; × LAYOUT_SCALE keeps screen fraction on 480×270
+ * until art-normalize locks absolute px heights (see docs/bible/visual-style.md).
  */
-export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55 * 1.11
+export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55 * 1.11 * LAYOUT_SCALE
 /**
  * Heroes slightly under enemy size (readable co-op cast).
  */
@@ -34,16 +47,16 @@ export const GIRL_SCALE_MUL = 0.92
 /** 噗噗 always ≈ half 琪寶寶 height. */
 export const PET_HEIGHT_FRAC = 0.5
 /** Projectiles / ammo — sit under character scale. */
-export const PROJ_DISPLAY_SCALE = 0.55
+export const PROJ_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
 /** Held weapons (sword, trunk, clubs). */
-export const WEAPON_DISPLAY_SCALE = 0.55
+export const WEAPON_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
 /**
  * World interactables (honey / sushi / coin / durian / goal) — smaller than heroes
  * so pickups don't dwarf the cast.
  */
-export const PROP_DISPLAY_SCALE = 0.55
+export const PROP_DISPLAY_SCALE = 0.55 * LAYOUT_SCALE
 /** Roadside scenery (tent / picnic) — a bit larger than pickups, still under old 1.x. */
-export const SCENERY_DISPLAY_SCALE = 0.62
+export const SCENERY_DISPLAY_SCALE = 0.62 * LAYOUT_SCALE
 /** Pale BG tint (opaque sprites — colour shift only, not transparency). */
 export const BG_PALE_TINT = 0xd8e6f0
 /** Washed fog green for distant mountains (paired with BG_MOUNT_ALPHA). */
@@ -58,8 +71,8 @@ export const BG_NEAR_TINT = 0xd2e0d4
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */
 export const COINS_PER_HP = 10
-/** Player move speed: prior 280 → ×0.8 → ×0.8 again (−20% this pack). */
-export const BOY_SPEED = Math.round(280 * 0.8 * 0.8)
+/** Player move speed: prior 280 → ×0.8 → ×0.8 again, then × LAYOUT_SCALE for 480×270. */
+export const BOY_SPEED = Math.round(280 * 0.8 * 0.8 * LAYOUT_SCALE)
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（跟主角一齊慢） */
 export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
@@ -100,16 +113,14 @@ export const PLAYER_ATTACK_DMG = 3
 export const ENEMY_ATTACK_DMG = 1
 
 /**
- * World Arcade gravity (px/s²).
- * Higher than floaty 1500 — apex ~0.33s with JUMP_V.
+ * World Arcade gravity (px/s²) — scaled with LAYOUT_SCALE so apex height stays ~screen-relative.
  */
-export const GRAVITY_Y = 2600
+export const GRAVITY_Y = Math.round(2600 * LAYOUT_SCALE)
 
 /**
- * Jump impulse (px/s). Higher hop for readability.
- * h ≈ v² / (2g) ≈ 880² / 5200 ≈ 149px.
+ * Jump impulse (px/s). Scaled with layout; apex ≈ same fraction of GAME_H as before.
  */
-export const JUMP_V = -880
+export const JUMP_V = Math.round(-880 * LAYOUT_SCALE)
 
 /** Variable jump: multiply rising vy once when jump is released. */
 export const JUMP_CUT = 0.5
@@ -121,7 +132,7 @@ export const JUMP_CUT = 0.5
 export const FALL_GRAVITY_MUL = 1.28
 
 /** Terminal fall speed (Arcade maxVelocity.y). */
-export const MAX_FALL = 980
+export const MAX_FALL = Math.round(980 * LAYOUT_SCALE)
 
 /** Coyote time after leaving floor (~100ms). */
 export const COYOTE_MS = 100
@@ -130,15 +141,15 @@ export const JUMP_BUF_MS = 100
 export const HURT_LOCK_MS = 260
 /** Player hurt i-frames (1.5s blink). */
 export const HURT_IFRAME_MS = 1500
-export const FALL_Y = 530
+export const FALL_Y = L(530)
 export const COINS_START = 5
 
 /** Minimum platform height above ground to avoid body jam in narrow gaps. */
-export const MIN_PLATFORM_CLEARANCE = 64
+export const MIN_PLATFORM_CLEARANCE = L(64)
 
 /** Ground accel/friction — snappy start/stop, not ice-skate. */
-export const RUN_ACCEL = 3400
-export const RUN_FRICTION = 3000
+export const RUN_ACCEL = Math.round(3400 * LAYOUT_SCALE)
+export const RUN_FRICTION = Math.round(3000 * LAYOUT_SCALE)
 export const AIR_ACCEL_MUL = 0.65
 
 /** Goemon one-blade juice — short freeze + shake + white flash. */
@@ -162,9 +173,9 @@ export const SCORE_BOSS_KILL = 800
 export const SCORE_BREAK = 80
 
 /** 倫寶鮭魚槍最大飛行距離（px）— 遠程有上限，與琪寶寶劍近戰平衡 */
-export const SALMON_SHOT_RANGE = Math.round(260 * STAGE_LEN_MUL)
-/** 鮭彈飛行速度（0.7× 原 520） */
-export const SALMON_SHOT_SPEED = Math.round(520 * 0.7)
+export const SALMON_SHOT_RANGE = Math.round(260 * 0.75 * LAYOUT_SCALE)
+/** 鮭彈飛行速度（0.7× 原 520），layout-scaled */
+export const SALMON_SHOT_SPEED = Math.round(520 * 0.7 * LAYOUT_SCALE)
 /**
  * 攻擊頻率 −20%：CD ÷0.8 again on top of prior pack.
  * 鮭魚槍基底：400/0.7；劍撃基底：220
@@ -177,4 +188,4 @@ export const SWORD_HIT_W = Math.round(120 * WEAPON_DISPLAY_SCALE)
 export const SWORD_HIT_H = Math.round(96 * WEAPON_DISPLAY_SCALE)
 export const SWORD_HIT_MS = 160
 /** 噗噗跟在琪寶寶身後的水平距離 */
-export const PET_FOLLOW_BEHIND = Math.round(36 + 42 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL)
+export const PET_FOLLOW_BEHIND = Math.round((36 + 42 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL) * LAYOUT_SCALE)

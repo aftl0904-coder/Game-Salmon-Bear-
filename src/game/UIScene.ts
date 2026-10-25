@@ -21,7 +21,7 @@ export class UIScene extends Phaser.Scene {
   private hudInfo!: Phaser.GameObjects.Text
   private mpBar!: Phaser.GameObjects.Rectangle
   private mpText!: Phaser.GameObjects.Text
-  private mpMaxW = 156
+  private mpMaxW = 58
   private maxHp = 6
   private targetHpL = 10
   private targetHpR = 10
@@ -65,15 +65,15 @@ export class UIScene extends Phaser.Scene {
     this.targetMp = this.dispMp = 0
 
     this.banner = this.add
-      .text(480, 270, '', {
+      .text(this.scale.width / 2, this.scale.height / 2, '', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '26px',
+        fontSize: '14px',
         color: '#ffe8b0',
         backgroundColor: '#120818f2',
-        padding: { x: 28, y: 18 },
+        padding: { x: 14, y: 10 },
         align: 'center',
         stroke: '#c48a28',
-        strokeThickness: 3,
+        strokeThickness: 2,
       })
       .setOrigin(0.5)
       .setScrollFactor(0)
@@ -94,7 +94,7 @@ export class UIScene extends Phaser.Scene {
     EventBus.on(GameEvents.GAME_OVER, this.onGameOver, this)
 
     mountTouchControls(this)
-    mountMuteButton(this, 28, 16)
+    mountMuteButton(this, 14, 8)
 
     this.events.once('shutdown', this.unbind, this)
     this.events.once('destroy', this.unbind, this)

@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
 import { TouchInput, isPhonePlay, type TouchBtn } from './touchInput'
+import { L } from './engine/constants'
 
 const ALPHA = 0.6
 
@@ -17,8 +18,8 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
   root.setAlpha(ALPHA)
 
   const mkBtn = (spec: PadSpec) => {
-    const bw = spec.w ?? 56
-    const bh = spec.h ?? 56
+    const bw = spec.w ?? L(56)
+    const bh = spec.h ?? L(56)
     const bg = scene.add
       .rectangle(spec.x, spec.y, bw, bh, 0x1a1420, 0.85)
       .setStrokeStyle(2, 0xffe08a, 0.9)
@@ -27,7 +28,7 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
     const tx = scene.add
       .text(spec.x, spec.y, spec.label, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '16px',
+        fontSize: '11px',
         color: '#fff4d0',
         stroke: '#2a1810',
         strokeThickness: 3,
@@ -50,20 +51,20 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
   }
 
   // Left: direction cross
-  const lx = 88
-  const ly = 455
-  mkBtn({ btn: 'up', x: lx, y: ly - 52, label: '↑', w: 52, h: 48 })
-  mkBtn({ btn: 'down', x: lx, y: ly + 52, label: '↓', w: 52, h: 48 })
-  mkBtn({ btn: 'left', x: lx - 52, y: ly, label: '←', w: 52, h: 48 })
-  mkBtn({ btn: 'right', x: lx + 52, y: ly, label: '→', w: 52, h: 48 })
+  const lx = L(88)
+  const ly = L(455)
+  mkBtn({ btn: 'up', x: lx, y: ly - L(52), label: '↑', w: L(52), h: L(48) })
+  mkBtn({ btn: 'down', x: lx, y: ly + L(52), label: '↓', w: L(52), h: L(48) })
+  mkBtn({ btn: 'left', x: lx - L(52), y: ly, label: '←', w: L(52), h: L(48) })
+  mkBtn({ btn: 'right', x: lx + L(52), y: ly, label: '→', w: L(52), h: L(48) })
 
   // Right: 4 action buttons (SNES diamond)
-  const rx = 872
-  const ry = 450
-  mkBtn({ btn: 'special', x: rx, y: ry - 58, label: '絕', w: 54, h: 54 })
-  mkBtn({ btn: 'attack', x: rx + 58, y: ry, label: '攻', w: 54, h: 54 })
-  mkBtn({ btn: 'jump', x: rx, y: ry + 58, label: '跳', w: 54, h: 54 })
-  mkBtn({ btn: 'start', x: rx - 58, y: ry, label: '始', w: 54, h: 54 })
+  const rx = L(872)
+  const ry = L(450)
+  mkBtn({ btn: 'special', x: rx, y: ry - L(58), label: '絕', w: L(54), h: L(54) })
+  mkBtn({ btn: 'attack', x: rx + L(58), y: ry, label: '攻', w: L(54), h: L(54) })
+  mkBtn({ btn: 'jump', x: rx, y: ry + L(58), label: '跳', w: L(54), h: L(54) })
+  mkBtn({ btn: 'start', x: rx - L(58), y: ry, label: '始', w: L(54), h: L(54) })
 
   scene.events.once('shutdown', () => {
     TouchInput.clearAll()

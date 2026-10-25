@@ -77,6 +77,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')
+    // Cel coin (salmon emblem) — overrides procedural paint after registers.
+    this.load.image('coin-cel', '/art/coin.png')
     // Pretty wallpaper 貼圖 — Flash/phone look without hand-building mountains
     this.load.image('bg-wallpaper', '/art/bg-wallpaper.jpg')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
@@ -89,6 +91,7 @@ export class BootScene extends Phaser.Scene {
     registerHoneyArt(this)
     registerIsoArt(this)
     registerUiArt(this)
+    this.applyCelCoinTexture()
     this.bakeCastTextures()
     this.thickenPropOutlines()
     this.hardenSeamTiles()
@@ -105,6 +108,24 @@ export class BootScene extends Phaser.Scene {
     })
 
     this.scene.start('logo')
+  }
+
+  /** Prefer cel PNG coin over procedural koban paint (heroes + coin share style). */
+  private applyCelCoinTexture() {
+    if (!this.textures.exists('coin-cel')) return
+    const src = this.textures.get('coin-cel').getSourceImage() as HTMLImageElement | HTMLCanvasElement
+    const w = (src as { width: number }).width | 0
+    const h = (src as { height: number }).height | 0
+    if (w < 4 || h < 4) return
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    ctx.clearRect(0, 0, w, h)
+    ctx.drawImage(src as CanvasImageSource, 0, 0)
+    if (this.textures.exists('coin')) this.textures.remove('coin')
+    this.textures.addCanvas('coin', canvas)
   }
 
   /**

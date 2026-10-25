@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { DEPTH } from './engine/depth'
+import { GAME_W, GAME_H, L } from './engine/constants'
 import { TouchInput } from './touchInput'
 
 /** Draft R1 prologue — pending your confirmation; no personal 待補 details. */
@@ -63,14 +64,14 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
   const beats = opts.beats ?? ROUND1_PROLOGUE
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 200)
 
-  const veil = scene.add.rectangle(480, 270, 980, 560, 0x000000, 1).setScrollFactor(0)
+  const veil = scene.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W + L(20), GAME_H + L(20), 0x000000, 1).setScrollFactor(0)
   root.add(veil)
 
-  const panel = scene.add.rectangle(480, 200, 720, 220, 0x2a1810, 1).setStrokeStyle(3, 0xe0b86a).setScrollFactor(0)
+  const panel = scene.add.rectangle(GAME_W / 2, L(200), L(720), L(220), 0x2a1810, 1).setStrokeStyle(3, 0xe0b86a).setScrollFactor(0)
   const caption = scene.add
-    .text(480, 120, '', {
+    .text(GAME_W / 2, L(120), '', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '22px',
+      fontSize: '14px',
       color: '#ffe08a',
       stroke: '#1a1008',
       strokeThickness: 4,
@@ -78,21 +79,21 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
     .setOrigin(0.5)
     .setScrollFactor(0)
   const line = scene.add
-    .text(480, 210, '', {
+    .text(GAME_W / 2, L(210), '', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '26px',
+      fontSize: '15px',
       color: '#fff6e0',
       stroke: '#1a1008',
       strokeThickness: 5,
       align: 'center',
-      wordWrap: { width: 640 },
+      wordWrap: { width: L(640) },
     })
     .setOrigin(0.5)
     .setScrollFactor(0)
   const hint = scene.add
-    .text(480, 470, 'Ａ／攻　跳過本幕', {
+    .text(GAME_W / 2, L(470), 'Ａ／攻　跳過本幕', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '18px',
+      fontSize: '12px',
       color: '#c8b090',
     })
     .setOrigin(0.5)
@@ -104,9 +105,9 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
   faceKeys.forEach((key, i) => {
     if (!scene.textures.exists(key)) return
     const img = scene.add
-      .image(300 + i * 180, 320, key)
+      .image(L(300) + i * L(180), L(320), key)
       .setOrigin(0.5, 1)
-      .setScale(key === 'art-bear' ? 2.6 : 1.05)
+      .setScale(key === 'art-bear' ? 1.3 : 0.55)
       .setScrollFactor(0)
       .setAlpha(0)
     faces.push(img)

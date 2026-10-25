@@ -25,6 +25,9 @@ import { playStoryIntro } from './storyIntro'
 import {
   WORLD_W,
   WORLD_H,
+  GAME_W,
+  GAME_H,
+  L,
   GROUND_Y,
   LANE_DEFAULT,
   LANE_FLOOR_Y,
@@ -280,7 +283,7 @@ export class GameScene extends Phaser.Scene {
     const startX = this.girl ? (this.boy.x + this.girl.x) / 2 : this.boy.x
     this.camTarget = this.add.zone(startX, WORLD_H / 2, 1, 1)
     this.cameras.main.startFollow(this.camTarget, true, 0.18, 0.18)
-    this.cameras.main.setDeadzone(this.girl ? 90 : 120, 56)
+    this.cameras.main.setDeadzone(this.girl ? L(90) : L(120), L(56))
   }
 
   /** 雙人：鏡頭跟中點；兩人可左右分邊，但唔准單獨行出畫面。 */
@@ -646,7 +649,7 @@ export class GameScene extends Phaser.Scene {
       const b = beats[next]
       SFX.boss()
       this.cameras.main.flash(120, 255, 220, 140)
-      floatText(this, this.cameras.main.scrollX + 480, 100, b.title, '#ffe08a', {
+      floatText(this, this.cameras.main.scrollX + GAME_W / 2, L(100), b.title, '#ffe08a', {
         size: 28,
         rise: 24,
         dur: 900,
@@ -1610,17 +1613,17 @@ export class GameScene extends Phaser.Scene {
       // Far upper wallpaper — soft warm fog (no blue veil covering the art).
       const roadTop = GROUND_Y - 80
       this.add
-        .image(480, Math.round(roadTop * 0.42), 'bg-wallpaper')
+        .image(GAME_W / 2, Math.round(roadTop * 0.42), 'bg-wallpaper')
         .setScrollFactor(0.018, 0)
         .setDepth(DEPTH.SKY_BAND)
-        .setDisplaySize(1040, Math.round(roadTop * 0.9))
+        .setDisplaySize(GAME_W + L(80), Math.round(roadTop * 0.9))
         .setAlpha(0.72)
       // Warm mist only near the road edge — blends into play space, not a blue wash.
       const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
       mist.fillStyle(0xf0ebe0, 0.18)
-      mist.fillRect(0, roadTop - 70, 960, 36)
+      mist.fillRect(0, roadTop - L(70), GAME_W, L(36))
       mist.fillStyle(0xf4f0e6, 0.4)
-      mist.fillRect(0, roadTop - 40, 960, 44)
+      mist.fillRect(0, roadTop - L(40), GAME_W, L(44))
       this.placeCampsite(stageX(700))
       this.placeCampsite(stageX(2800))
       this.placeCampsite(stageX(4600))
@@ -1638,15 +1641,15 @@ export class GameScene extends Phaser.Scene {
   private buildRiverBand() {
     const bank = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.WATER_DEEP - 1)
     bank.fillStyle(0x4a6a40, 0.7)
-    bank.fillRect(0, 448, 960, 14)
+    bank.fillRect(0, L(448), GAME_W, L(14))
     bank.fillStyle(0x2e4a2c, 0.55)
-    bank.fillRect(0, 458, 960, 12)
+    bank.fillRect(0, L(458), GAME_W, L(12))
     // Wet stone lip
     bank.fillStyle(0x6a7a68, 0.35)
-    bank.fillRect(0, 462, 960, 4)
+    bank.fillRect(0, L(462), GAME_W, L(4))
 
     this.water = this.add
-      .tileSprite(480, 508, 960, 78, 'water-deep')
+      .tileSprite(GAME_W / 2, L(508), GAME_W, L(78), 'water-deep')
       .setScrollFactor(0)
       .setDepth(DEPTH.WATER_DEEP)
       .setAlpha(1)
@@ -1654,7 +1657,7 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
-        .tileSprite(480, 490, 960, 42, 'water-mid')
+        .tileSprite(GAME_W / 2, L(490), GAME_W, L(42), 'water-mid')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_MID)
         .setAlpha(0.82)
@@ -1663,7 +1666,7 @@ export class GameScene extends Phaser.Scene {
     }
     if (this.textures.exists('water-foam')) {
       this.waterFoam = this.add
-        .tileSprite(480, 466, 960, 26, 'water-foam')
+        .tileSprite(GAME_W / 2, L(466), GAME_W, L(26), 'water-foam')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_FOAM)
         .setAlpha(0.9)
@@ -1675,7 +1678,7 @@ export class GameScene extends Phaser.Scene {
       const sp = this.add
         .circle(
           Phaser.Math.Between(40, 920),
-          Phaser.Math.Between(478, 530),
+          Phaser.Math.Between(L(478), L(530)),
           Phaser.Math.FloatBetween(1.2, 2.4),
           0xe8f8ff,
           Phaser.Math.FloatBetween(0.35, 0.75),
@@ -2235,11 +2238,11 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(280, 255, 236, 180)
 
     // scrollFactor 0 + screen center (NOT world X) — stage end cam was hiding the old overlay.
-    const overlay = this.add.container(480, 270).setDepth(DEPTH.UI + 120).setScrollFactor(0)
+    const overlay = this.add.container(GAME_W / 2, GAME_H / 2).setDepth(DEPTH.UI + 120).setScrollFactor(0)
 
-    const sky = this.add.rectangle(0, 0, 960, 540, 0x7ec8f0, 1).setOrigin(0.5)
+    const sky = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x7ec8f0, 1).setOrigin(0.5)
     overlay.add(sky)
-    const wash = this.add.rectangle(0, 80, 960, 380, 0xffe8b0, 0.55).setOrigin(0.5)
+    const wash = this.add.rectangle(0, L(80), GAME_W, L(380), 0xffe8b0, 0.55).setOrigin(0.5)
     overlay.add(wash)
 
     for (let i = 0; i < 36; i++) {
@@ -2649,7 +2652,7 @@ export class GameScene extends Phaser.Scene {
       e.syncWeaponPublic()
       if (wave === 'wave1' && !this.registry.get('wave1Announced')) {
         this.registry.set('wave1Announced', true)
-        floatText(this, cam.scrollX + 480, 120, '傀儡來襲！', '#ff6644')
+        floatText(this, cam.scrollX + GAME_W / 2, L(120), '傀儡來襲！', '#ff6644')
       }
     })
   }
@@ -2660,7 +2663,7 @@ export class GameScene extends Phaser.Scene {
     SFX.boss()
     this.cameras.main.flash(160, 255, 120, 80)
     this.emitScore('蜂巢伏兵！疾風桶突襲')
-    floatText(this, this.cameras.main.scrollX + 480, 120, '蜂巢伏兵！', '#ff6644')
+    floatText(this, this.cameras.main.scrollX + GAME_W / 2, L(120), '蜂巢伏兵！', '#ff6644')
     this.enemies.getChildren().forEach((o) => {
       const e = o as PatrolEnemy
       if (!e.active || !e.altarAmbush || e.fsm === 'DEAD') return

@@ -235,12 +235,22 @@ export function registerTiles(scene: Phaser.Scene) {
     rect(set, 4, 9, 6, 2, c)
   })
 
-  // arcade coin (投幣續關)
-  paint(scene, 'coin', 14, 14, (set) => {
-    circ(set, 7, 7, 6, [240, 190, 60])
-    circ(set, 7, 7, 5, [255, 220, 90])
-    circ(set, 7, 7, 3, [210, 150, 40])
-    rect(set, 6, 4, 2, 6, [255, 240, 160])
+  // Fallback arcade coin — salmon-emblem gold (BootScene may replace with cel PNG).
+  paint(scene, 'coin', 16, 16, (set) => {
+    const ink: RGB = [18, 12, 8]
+    const rim: RGB = [180, 110, 30]
+    const face: RGB = [255, 210, 70]
+    const hi: RGB = [255, 245, 180]
+    const fish: RGB = [230, 120, 45]
+    circ(set, 8, 8, 7, ink)
+    circ(set, 8, 8, 6, rim)
+    circ(set, 8, 8, 5, face)
+    circ(set, 6, 6, 2, hi)
+    // tiny salmon silhouette
+    rect(set, 4, 7, 7, 3, fish)
+    rect(set, 10, 6, 2, 2, fish)
+    rect(set, 10, 9, 2, 2, fish)
+    set(5, 8, hi)
   })
 
   // compact HP pip for 10-unit bar

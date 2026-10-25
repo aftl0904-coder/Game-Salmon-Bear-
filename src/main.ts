@@ -5,22 +5,50 @@ import { LogoScene } from './game/LogoScene'
 import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
-import { GRAVITY_Y } from './game/engine/constants'
-
-const GAME_W = 960
-const GAME_H = 540
+import { GAME_W, GAME_H, GRAVITY_Y } from './game/engine/constants'
 
 const root = document.querySelector<HTMLDivElement>('#game-root')!
 
 /**
  * Portrait lock — do not crush 16:9 into a skinny vertical strip.
- * Landscape: Phaser Scale.FIT contain-scales into #game-root.
  */
 function updateOrientationUi() {
   const portrait = window.innerHeight > window.innerWidth
   document.body.classList.toggle('portrait', portrait)
   const hint = document.getElementById('rotate-hint')
   if (hint) hint.setAttribute('aria-hidden', portrait ? 'false' : 'true')
+}
+
+/**
+ * Integer zoom when possible (1×, 2×, 3×…).
+ * If viewport < 1× game size, fall back to fractional FIT contain.
+ */
+function applyIntegerZoom() {
+  if (!game?.canvas || !root) return
+  const availW = Math.max(1, root.clientWidth)
+  const availH = Math.max(1, root.clientHeight)
+  const fit = Math.min(availW / GAME_W, availH / GAME_H)
+  let zoom = Math.floor(fit)
+  let fractional = false
+  if (zoom < 1) {
+    zoom = fit
+    fractional = true
+  }
+  const cssW = GAME_W * zoom
+  const cssH = GAME_H * zoom
+  const canvas = game.canvas
+  canvas.style.width = `${cssW}px`
+  canvas.style.height = `${cssH}px`
+  canvas.style.imageRendering = 'pixelated'
+  ;(canvas.style as CSSStyleDeclaration & { imageRendering: string }).imageRendering = 'pixelated'
+  // Center inside #game-root via flex — root is full window; use margin auto on canvas
+  canvas.style.marginLeft = `${Math.floor((availW - cssW) / 2)}px`
+  canvas.style.marginTop = `${Math.floor((availH - cssH) / 2)}px`
+  canvas.style.display = 'block'
+  document.body.dataset.scaleZoom = String(zoom)
+  document.body.dataset.scaleFractional = fractional ? '1' : '0'
+  ;(window as unknown as { __SAKE_SCALE__: { zoom: number; fractional: boolean; cssW: number; cssH: number } }).__SAKE_SCALE__ =
+    { zoom, fractional, cssW, cssH }
 }
 
 updateOrientationUi()
@@ -37,8 +65,9 @@ const game = new Phaser.Game({
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
   input: { gamepad: true, activePointers: 3 },
   scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
+  // NONE — we own CSS size for integer zoom; letterbox via margins + body bg.
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.NONE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     width: GAME_W,
     height: GAME_H,
@@ -56,7 +85,7 @@ const game = new Phaser.Game({
 
 function onViewportChange() {
   updateOrientationUi()
-  game.scale.refresh()
+  applyIntegerZoom()
 }
 
 window.addEventListener('resize', onViewportChange)

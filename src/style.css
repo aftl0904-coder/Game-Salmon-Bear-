@@ -43,12 +43,11 @@ body {
   padding: 0;
   overflow: hidden;
   background: var(--bg-deep);
-  /* Phaser Scale.FIT sets canvas CSS size; do not pin 960×540 here. */
+  /* Integer zoom sets canvas CSS in main.ts; do not pin game size here. */
 }
 
 #game-root canvas {
   display: block;
-  /* Phaser FIT owns width/height — do not force 100%. */
   image-rendering: pixelated;
   image-rendering: crisp-edges;
 }
