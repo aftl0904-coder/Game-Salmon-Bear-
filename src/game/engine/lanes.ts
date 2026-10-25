@@ -57,9 +57,13 @@ export function sameLane(a: LaneActor, b: LaneActor, yTol = LANE_HIT_Y_TOL): boo
   return Math.abs(a.y - b.y) <= yTol
 }
 
-/** Draw order: 下 in front of 中 in front of 上. */
+/**
+ * Draw order: 下 in front of 中 in front of 上.
+ * Prefer `actorDepth` from ./depth for heroes/enemies/pet — larger stride so
+ * lane layers never collapse into prop/sign bands.
+ */
 export function laneDepth(base: number, lane: LaneId): number {
-  return base + lane
+  return base + lane * 12
 }
 
 /** Lowest walk surface — physical floor that catches hop landings. */

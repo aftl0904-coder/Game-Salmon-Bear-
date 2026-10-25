@@ -19,13 +19,14 @@ import {
   inLaneBand,
   isGrounded,
   isLaneGrounded,
-  laneDepth,
+  actorDepth,
   laneY,
   resolveStick,
   type LaneId,
 } from './engine'
 import { EventBus, GameEvents } from './EventBus'
 import {
+  enablePixelSprite,
   setDiePoseVisual,
   setHurtPoseVisual,
   setIdlePose,
@@ -104,7 +105,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * (held S cannot skip 中 → 下).
    */
   private laneHeldLock = false
-  private readonly baseDepth = 8
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
     if (scene.textures.exists('__atk-hitbox')) return
@@ -158,8 +158,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true)
     this.setDragX(0)
     this.setMaxVelocity(this.moveSpeed + 60, 1200)
-    this.setDepth(laneDepth(this.baseDepth, this.lane))
+    this.setDepth(actorDepth('hero', this.lane))
     this.setScale(this.baseScale)
+    enablePixelSprite(this)
     bindFootBody(this, {
       bodyW: cfg.bodyW ?? 22,
       bodyH: cfg.bodyH ?? 36,
@@ -175,7 +176,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackHitbox = this.scene.physics.add.image(this.x, this.y, '__atk-hitbox')
     this.attackHitbox.setVisible(false)
     this.attackHitbox.setActive(false)
-    this.attackHitbox.setDepth(12)
+    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
+    enablePixelSprite(this.attackHitbox)
     const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
     hb.allowGravity = false
     hb.setAllowGravity(false)
@@ -292,7 +294,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.holdLaneFloor(body, dt)
     if (!this.wasGrounded && grounded) this.justLanded = true
     this.wasGrounded = grounded
-    this.setDepth(laneDepth(this.baseDepth, this.lane))
+    this.setDepth(actorDepth('hero', this.lane))
+    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
     if (this.atkCd <= 0 && opts.attackJust) { this.startMelee(opts.now ?? this.scene.time.now); opts.onAttack?.() }
     this.applyPose(grounded, vx)
   }
@@ -327,7 +330,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setY(laneY(this.lane)); this.setVelocity(0, 0)
     const body = this.body as Phaser.Physics.Arcade.Body | null
     if (body) { body.allowGravity = false; body.blocked.down = true }
-    this.setDepth(laneDepth(this.baseDepth, this.lane))
+    this.setDepth(actorDepth('hero', this.lane))
+    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
   }
   startMelee(now = this.scene.time.now) {
     this.atkCd = Math.max(this.atkCd, MELEE_MS + 40)

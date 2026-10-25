@@ -4,13 +4,25 @@ import type Phaser from 'phaser'
  * Pixel-art render integrity for Phaser 4 + `pixelArt: true`.
  *
  * Phaser 4 default `vertexRoundMode: 'safeAuto'` only rounds when a sprite is
- * translation-only (scale === 1, rotation === 0). Our cast uses ~1.8× scale and
- * micro-rotations during run/hit — so vertices stay on fractional pixels while
- * NEAREST sampling runs. That shears columns/rows and reads as 撕裂 / incomplete.
+ * translation-only (scale === 1, rotation === 0). Our cast uses 2× scale — so
+ * vertices stay on fractional pixels while NEAREST sampling runs. That shears
+ * columns/rows and reads as mid-sprite 撕裂 / waist cuts.
  *
- * Fix: snap world positions after physics, keep poses rotation-light, and prefer
- * integer camera scroll. Shadows must share the same snapped feet point.
+ * Camera `startFollow` also lerps scroll inside `Camera.preRender` *after*
+ * POST_UPDATE — undoing any in-update integer snap. Re-snap on FOLLOW_UPDATE
+ * and force `fullAuto` vertex rounding on actors.
  */
+
+
+/** Force vertex rounding even when scale ≠ 1 (Phaser 4 safeAuto skips it). */
+export function enablePixelSprite(
+  spr: Phaser.GameObjects.GameObject | null | undefined,
+) {
+  if (!spr || typeof (spr as Phaser.GameObjects.GameObject).setVertexRoundMode !== 'function') {
+    return
+  }
+  ;(spr as Phaser.GameObjects.GameObject).setVertexRoundMode('fullAuto')
+}
 
 type PosLike = {
   x: number
@@ -52,6 +64,23 @@ export function snapXY(
 export function snapCameraScroll(cam: Phaser.Cameras.Scene2D.Camera) {
   cam.scrollX = Math.round(cam.scrollX)
   cam.scrollY = Math.round(cam.scrollY)
+}
+
+/**
+ * Integer tile offsets for parallax TileSprites.
+ * Fractional tilePosition + NEAREST (and NPOT→POT upsample) paints visible seams.
+ */
+export function snapTilePosition(
+  tile:
+    | { tilePositionX: number; tilePositionY?: number }
+    | null
+    | undefined,
+  x: number,
+  y = 0,
+) {
+  if (!tile) return
+  tile.tilePositionX = Math.round(x)
+  if (tile.tilePositionY !== undefined) tile.tilePositionY = Math.round(y)
 }
 
 /**
