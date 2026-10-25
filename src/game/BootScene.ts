@@ -5,7 +5,7 @@ import { registerHoneyArt } from './honeyArt'
 import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
-import { bakePixelTexture, hardenTextureAlpha } from './pixelSnap'
+import { bakePixelTexture, hardenTextureAlpha, closeVerticalAlphaGaps } from './pixelSnap'
 
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
@@ -108,6 +108,7 @@ export class BootScene extends Phaser.Scene {
       }
     }
     hardenTextureAlpha(this, 'art-bear', 100)
+    // Soft AA bridges at waist/legs die under harden — fill 1px vertical holes.
     for (const key of [
       'art-salmon',
       'art-girl',
@@ -115,6 +116,7 @@ export class BootScene extends Phaser.Scene {
       'art-enemy',
       'art-enemy-barrel',
     ]) {
+      closeVerticalAlphaGaps(this, key)
       if (this.textures.exists(key)) {
         this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
       }
