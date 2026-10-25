@@ -25,6 +25,22 @@ export const ROUND1_PROLOGUE: StoryBeat[] = [
   },
 ]
 
+/** R2 office prologue — plays after R1 clear transition. */
+export const ROUND2_PROLOGUE: StoryBeat[] = [
+  {
+    caption: '第二關・深夜辦公室',
+    line: '線索指向一棟仲亮住燈嘅公司樓。',
+  },
+  {
+    caption: '第二關',
+    line: '電腦螢幕自己喺度閃：「Deadline missed。」',
+  },
+  {
+    caption: '第二關',
+    line: '地產發展商怪物坐喺最頂層——原創怪物，唔係任何真人。',
+  },
+]
+
 const BEAT_MS = 7000
 /** Black hold between acts (and before first beat). */
 const TRANSITION_BLACK_MS = 1000

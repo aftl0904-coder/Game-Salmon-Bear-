@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { bindFootBody } from '../footBody'
 import {
-  LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
+  LANE_DEFAULT, clampLane, inLaneBand, laneY, nearestLane, sameLaneId, type LaneId,
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
 import { enableActorSprite, WALK_FRAMES } from '../pixelSnap'
@@ -42,6 +42,8 @@ export class PatrolEnemy extends Enemy {
   walkPhase = 0
   /** Random brief freeze (ms timestamp). */
   staggerUntil = 0
+  /** Cooldown between vertical lane steps while chasing. */
+  laneSwitchCd = 0
   weapon: Phaser.GameObjects.Image | null = null
 
   static spawn(
@@ -177,6 +179,7 @@ export class PatrolEnemy extends Enemy {
     this.detectT = Math.max(0, this.detectT - dt)
     this.hopCd = Math.max(0, this.hopCd - dt)
     this.contactCd = Math.max(0, this.contactCd - dt)
+    this.laneSwitchCd = Math.max(0, this.laneSwitchCd - dt)
     if (isActorFrozen(this, this.scene.time.now)) {
       this.setVelocity(0, 0)
       if (this.fsm === 'ATTACK' && this.atkPhase === 'windup' && this.windup <= 0) {
@@ -230,7 +233,14 @@ export class PatrolEnemy extends Enemy {
       return
     }
 
-    if (dist < melee && this.atkCd <= 0 && this.fsm === 'CHASE') {
+    // Seek hero lane first — don't stand on a different row swinging into air.
+    const targetLane = clampLane(
+      target.lane !== undefined ? target.lane : nearestLane(target.y),
+    )
+    this.seekHeroLane(targetLane)
+
+    const onHeroLane = sameLaneId(this.lane, targetLane, 0)
+    if (onHeroLane && dist < melee && this.atkCd <= 0 && this.fsm === 'CHASE') {
       const wind =
         st.windupMs * mul.windup * (sp.windupMul ?? 1) * (sp.style === 'hop' ? 0.85 : 1)
       this.beginWindup(wind)
@@ -242,14 +252,30 @@ export class PatrolEnemy extends Enemy {
     {
       const dx = target.x - this.x
       const dir = (Math.sign(dx) || this.patrolDir) as 1 | -1
+      // While off-lane, still close X but keep pressure so hero can dodge/row-swap.
       const arrive = Math.abs(dx) < 12
-      this.setVelocityX(arrive ? dir * spd * 0.45 : dir * spd)
+      const xMul = onHeroLane ? 1 : 0.85
+      this.setVelocityX(arrive ? dir * spd * 0.45 * xMul : dir * spd * xMul)
       this.patrolDir = dir
       this.faceMoveDir()
       this.walkPhase += arrive ? 0.16 : 0.22
       this.applyPose()
       this.syncWeapon()
     }
+  }
+
+  /** Step toward hero's lane (one row at a time) so melee can connect. */
+  private seekHeroLane(targetLane: LaneId) {
+    if (this.lane === targetLane) return
+    if (this.laneSwitchCd > 0) return
+    const step = Math.sign(targetLane - this.lane)
+    if (!step) return
+    this.lane = clampLane(this.lane + step)
+    this.laneSwitchCd = 150
+    // Nudge feet toward new lane immediately; holdLaneFloor finishes the snap.
+    const ty = laneY(this.lane)
+    this.setY(this.y + (ty - this.y) * 0.55)
+    this.homeY = ty
   }
 
   /** Face the side we're actually moving (forward or back). */

@@ -123,6 +123,38 @@ export function bakeSmoothActorTexture(
   return { w: dw, h: dh }
 }
 
+/**
+ * Soft AA without changing texture pixel size: upsample → downsample with LINEAR.
+ * Use on interactables after a thick black outline so rims stay crisp but edges anti-alias.
+ */
+export function softAaSameSize(scene: TexScene, key: string, factor = 2) {
+  if (!scene.textures.exists(key)) return
+  const src = scene.textures.get(key).getSourceImage() as
+    | HTMLImageElement
+    | HTMLCanvasElement
+    | ImageBitmap
+  const sw = (src as { width: number }).width | 0
+  const sh = (src as { height: number }).height | 0
+  if (sw < 1 || sh < 1) return
+  const up = document.createElement('canvas')
+  up.width = sw * factor
+  up.height = sh * factor
+  const uctx = up.getContext('2d')!
+  uctx.imageSmoothingEnabled = true
+  uctx.imageSmoothingQuality = 'high'
+  uctx.drawImage(src as CanvasImageSource, 0, 0, sw, sh, 0, 0, up.width, up.height)
+  const out = document.createElement('canvas')
+  out.width = sw
+  out.height = sh
+  const octx = out.getContext('2d')!
+  octx.imageSmoothingEnabled = true
+  octx.imageSmoothingQuality = 'high'
+  octx.drawImage(up, 0, 0, up.width, up.height, 0, 0, sw, sh)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, out)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.LINEAR)
+}
+
 /** Mark base + walk/combat frame keys as LINEAR. */
 export function setActorLinearFilter(scene: TexScene, baseKey: string) {
   const mark = (key: string) => {

@@ -35,13 +35,19 @@ export class LogoScene extends Phaser.Scene {
       this.tweens.add({ targets: c, x: x + 24, duration: 22000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.22, 400, 4.2],
-      ['lm-mount-1', width * 0.75, 410, 3.8, true],
-      ['lm-mount-3', width * 0.5, 420, 3.5],
+      ['lm-mount-2', width * 0.22, 300, 2.4],
+      ['lm-mount-1', width * 0.75, 310, 2.2, true],
+      ['lm-mount-3', width * 0.5, 318, 2.0],
     ]
     for (const [key, x, y, s, flip] of mounts) {
       if (!this.textures.exists(key)) continue
-      this.add.image(x, y, key).setOrigin(0.5, 1).setScale(s).setAlpha(0.9).setFlipX(!!flip)
+      this.add
+        .image(x, y, key)
+        .setOrigin(0.5, 1)
+        .setScale(s)
+        .setAlpha(0.5)
+        .setTint(0xc8d8e8)
+        .setFlipX(!!flip)
     }
 
     if (this.textures.exists('ui-noren')) {

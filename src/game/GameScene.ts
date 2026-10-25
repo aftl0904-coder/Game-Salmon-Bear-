@@ -65,6 +65,12 @@ import {
   SWORD_HIT_MS,
   PET_FOLLOW_BEHIND,
   ACTOR_DISPLAY_SCALE,
+  GIRL_SCALE_MUL,
+  PET_HEIGHT_FRAC,
+  BG_FOG_TINT,
+  BG_FOG_ALPHA_FAR,
+  BG_FOG_ALPHA_MID,
+  BG_FOG_ALPHA_NEAR,
   clampLane,
   laneY,
   sameLane,
@@ -1007,19 +1013,40 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** Sword grip at waist / forward hand — not floating at chest. */
+  private girlSwordAnchor(h: Hero, swinging = false) {
+    const hgt = Math.max(40, h.displayHeight || 64)
+    return {
+      x: h.x + h.facing * (swinging ? hgt * 0.32 : hgt * 0.24),
+      y: h.y - hgt * 0.36,
+      scale: h.baseScale * 1.05,
+    }
+  }
+
+  /** 噗噗 display scale so height ≈ half 琪寶寶. */
+  private petScaleForGirl(g: Hero) {
+    const pet = this.pet
+    if (!pet) return ACTOR_DISPLAY_SCALE * 0.5
+    const girlH = Math.max(40, g.displayHeight || 64)
+    const frameH = Math.max(1, pet.frame?.height || pet.height || 64)
+    return (girlH * PET_HEIGHT_FRAC) / frameH
+  }
+
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
     h.atkCd = SWORD_COOLDOWN_MS
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
-    burst(this, h.x + h.facing * 50, h.y - 28, 0xe8f0ff, 10)
+    const grip = this.girlSwordAnchor(h, true)
+    burst(this, grip.x + h.facing * 24, grip.y, 0xe8f0ff, 10)
     h.setAngle(0)
     h.setScale(h.baseScale)
     if (this.sword) {
       this.sword.setVisible(true)
       this.sword.setAlpha(1)
-      this.sword.setOrigin(h.facing < 0 ? 0.88 : 0.12, 0.5)
-      this.sword.setPosition(h.x + h.facing * 20, h.y - 52)
+      this.sword.setOrigin(h.facing < 0 ? 0.88 : 0.12, 0.55)
+      this.sword.setPosition(grip.x, grip.y)
+      this.sword.setScale(grip.scale)
       this.tweens.add({
         targets: this.sword,
         angle: h.facing > 0 ? 70 : -70,
@@ -1027,7 +1054,7 @@ export class GameScene extends Phaser.Scene {
         yoyo: true,
         onComplete: () => {
           if (!this.sword) return
-          this.sword.setAngle(h.facing > 0 ? -22 : 22)
+          this.sword.setAngle(h.facing > 0 ? -18 : 18)
         },
       })
     }
@@ -1067,11 +1094,12 @@ export class GameScene extends Phaser.Scene {
     floatText(this, pet.x, pet.y - 50, '噗噗～！', '#ffcc44')
     this.tweens.killTweensOf(pet)
     pet.setAngle(0)
+    const basePet = this.petScaleForGirl(g)
     this.tweens.add({
       targets: pet,
       angle: { from: -14, to: 14 },
-      scaleX: 1.15,
-      scaleY: 0.88,
+      scaleX: basePet * 1.12,
+      scaleY: basePet * 0.9,
       duration: 220,
       yoyo: true,
       repeat: Math.max(1, Math.floor(BEAR_POSE_MS / 440)),
@@ -1083,7 +1111,7 @@ export class GameScene extends Phaser.Scene {
         return
       }
       pet.setAngle(0)
-      pet.setScale(1)
+      pet.setScale(this.petScaleForGirl(g))
       const frontX = g.x + g.facing * 52
       const frontY = laneY(g.lane)
       this.tweens.add({
@@ -1328,7 +1356,7 @@ export class GameScene extends Phaser.Scene {
     }
     pet.setVelocity(0, 0)
     pet.setFlipX(g.facing < 0)
-    pet.setScale(1)
+    if (!this.petJetting) pet.setScale(this.petScaleForGirl(g))
     pet.setAngle(0)
     pet.setAlpha(this.petJetting ? 1 : 0.85)
     pet.setVisible(true)
@@ -1349,19 +1377,19 @@ export class GameScene extends Phaser.Scene {
     if (this.pet && this.petShadow) {
       this.petShadow.setPosition(this.pet.x, laneY(g.lane) + 4)
       this.petShadow.setDepth(DEPTH.SHADOW)
+      const ps = this.petScaleForGirl(g)
+      this.petShadow.setScale(Math.max(0.45, ps * 1.1), 0.4)
     }
     if (this.sword) {
       const swing = g.atkCd > 80
-      // Hand height (~chest), never at feet.
-      const handX = g.x + g.facing * (swing ? 20 : 14)
-      const handY = g.y - (swing ? 50 : 54)
+      const grip = this.girlSwordAnchor(g, swing)
       this.sword.setVisible(true)
       this.sword.setAlpha(1)
-      this.sword.setOrigin(g.facing < 0 ? 0.88 : 0.12, 0.5)
-      this.sword.setPosition(handX, handY)
+      this.sword.setOrigin(g.facing < 0 ? 0.88 : 0.12, 0.55)
+      this.sword.setPosition(grip.x, grip.y)
       this.sword.setFlipX(g.facing < 0)
-      this.sword.setScale(1.4)
-      if (!swing) this.sword.setAngle(g.facing > 0 ? -22 : 22)
+      this.sword.setScale(grip.scale)
+      if (!swing) this.sword.setAngle(g.facing > 0 ? -18 : 18)
       this.sword.setDepth(actorDepth('hitbox', g.lane, g.y) + 0.2)
     }
   }
@@ -1403,46 +1431,56 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** Pale fog wash — BG reads farther / hazier than the playfield. */
+  private styleBgFog(
+    img: Phaser.GameObjects.Image,
+    alpha: number,
+    tint: number = BG_FOG_TINT,
+  ) {
+    img.setAlpha(alpha).setTint(tint)
+  }
+
   /**
-   * Mid/far decor (trees/houses) — sits behind the road band.
-   * Scale should keep props taller than heroes (~person can “enter” a house).
+   * Mid/far decor (trees/houses) — soft foggy backdrop behind the road.
+   * Keep near original gameplay scale; only mountains are enlarged.
    */
   private placeBgDecor(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
-    const y = GROUND_Y - 24
+    const y = GROUND_Y - 40
     const img = this.add
       .image(x, y, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.VILLAGE)
       .setScale(scale)
       .setFlipX(flip)
-      .setAlpha(0.95)
+    this.styleBgFog(img, BG_FOG_ALPHA_MID)
     img.setData('baseX', x)
     img.setData('parallax', 0.14)
     enablePixelSprite(img)
     this.bgMounts.push(img)
   }
 
-  /** World-space campsite props (scroll with stage; sit on ground plane). */
+  /** World-space campsite props — foggy roadside scenery (not playfield-sharp). */
   private placeCampProp(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
     const img = this.add
-      .image(x, GROUND_Y + 6, key)
+      .image(x, GROUND_Y - 2, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.PROP)
       .setScale(scale)
       .setFlipX(flip)
+    this.styleBgFog(img, BG_FOG_ALPHA_NEAR, 0xd2dde8)
     enablePixelSprite(img)
   }
 
   /** Picnic table + tent + fire — roadside campsite beats. */
   private placeCampsite(x: number) {
-    this.placeCampProp(x - 70, 'prop-tent', 2.6)
-    this.placeCampProp(x, 'prop-picnic-table', 2.4)
-    this.placeCampProp(x + 55, 'prop-campfire', 2.0)
-    this.placeCampProp(x + 20, 'prop-picnic', 2.2)
+    this.placeCampProp(x - 56, 'prop-tent', 1.35)
+    this.placeCampProp(x, 'prop-picnic-table', 1.25)
+    this.placeCampProp(x + 42, 'prop-campfire', 1.15)
+    this.placeCampProp(x + 16, 'prop-picnic', 1.2)
     if (this.textures.exists('prop-shrine')) {
-      this.placeCampProp(x - 110, 'prop-shrine', 2.0) // picnic basket
+      this.placeCampProp(x - 90, 'prop-shrine', 1.1)
     }
   }
 
@@ -1461,7 +1499,8 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(DEPTH.SKY + 2)
       .setScale(Phaser.Math.FloatBetween(1.2, 1.7))
-      .setAlpha(0.92)
+      .setAlpha(0.55)
+      .setTint(BG_FOG_TINT)
     const vx = fromLeft
       ? Phaser.Math.FloatBetween(55, 95)
       : -Phaser.Math.FloatBetween(55, 95)
@@ -1529,7 +1568,8 @@ export class GameScene extends Phaser.Scene {
         .tileSprite(480, 262, 960, 32, 'bg-horizon')
         .setScrollFactor(0)
         .setDepth(DEPTH.SKY_BAND + 1)
-        .setAlpha(0.55)
+        .setAlpha(0.35)
+        .setTint(BG_FOG_TINT)
       enablePixelSprite(hz)
     }
 
@@ -1593,20 +1633,20 @@ export class GameScene extends Phaser.Scene {
         .setScrollFactor(0)
         .setDepth(DEPTH.CLOUD)
         .setScale(c.s)
-        .setAlpha(0.9)
         .setFlipX(!!c.flip)
+      this.styleBgFog(img, BG_FOG_ALPHA_FAR + 0.08, 0xd8e4f0)
       img.setData('baseX', c.x)
       img.setData('parallax', c.p)
       enablePixelSprite(img)
       this.bgClouds.push(img)
     }
 
-    // Far mountains — ~5× prior display size (SNES-mountain scale reference).
+    // Far mountains — modestly larger (~2.2×), pale fog so they sit far behind the road.
     const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number }> = [
-      { key: 'lm-mount-2', x: 160, y: 400, s: 1.6 * 5, p: 0.05, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-1', x: 520, y: 410, s: 1.4 * 5, flip: true, p: 0.07, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-4', x: 900, y: 420, s: 1.5 * 5, p: 0.1, d: DEPTH.MOUNT_NEAR },
-      { key: 'lm-mount-3', x: 1280, y: 430, s: 1.3 * 5, flip: true, p: 0.12, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-2', x: 210, y: 278, s: 1.6 * 2.2, p: 0.05, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-1', x: 520, y: 288, s: 1.4 * 2.2, flip: true, p: 0.07, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-4', x: 820, y: 308, s: 1.5 * 2.2, p: 0.1, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-3', x: 1120, y: 318, s: 1.3 * 2.2, flip: true, p: 0.12, d: DEPTH.MOUNT_NEAR },
     ]
     for (const m of mountSpecs) {
       if (!this.textures.exists(m.key)) continue
@@ -1616,53 +1656,54 @@ export class GameScene extends Phaser.Scene {
         .setScrollFactor(0)
         .setDepth(m.d)
         .setScale(m.s)
-        .setAlpha(0.88)
         .setFlipX(!!m.flip)
+      this.styleBgFog(img, BG_FOG_ALPHA_FAR)
       img.setData('baseX', m.x)
       img.setData('parallax', m.p)
       enablePixelSprite(img)
       this.bgMounts.push(img)
     }
 
-    // Forest + cottages: smaller than mountains, but larger than heroes (house door readable).
-    this.placeBgDecor(120, 'prop-tree3d', 3.8)
-    this.placeBgDecor(320, 'prop-tree3d', 4.2, true)
-    this.placeBgDecor(620, 'prop-tree3d', 3.6)
-    this.placeBgDecor(980, 'prop-house3d', 4.5) // ~person can enter
-    this.placeBgDecor(1400, 'prop-tree3d', 4.0)
-    this.placeBgDecor(1780, 'prop-tree3d', 3.5, true)
-    this.placeBgDecor(2200, 'prop-house3d', 4.2)
-    this.placeBgDecor(2680, 'prop-tree3d', 4.1)
-    this.placeBgDecor(3200, 'prop-tree3d', 3.7, true)
-    this.placeBgDecor(3800, 'prop-house3d', 4.8)
-    this.placeBgDecor(4400, 'prop-tree3d', 4.0)
-    this.placeBgDecor(5100, 'prop-tree3d', 3.9, true)
-    this.placeBgDecor(5800, 'prop-house3d', 4.4)
-    this.placeBgDecor(6500, 'prop-tree3d', 4.2)
+    // Forest + cottages — restore original-ish scale; pale so the road reads clearly.
+    this.placeBgDecor(180, 'prop-tree3d', 1.1)
+    this.placeBgDecor(700, 'prop-tree3d', 1.0, true)
+    this.placeBgDecor(1400, 'prop-tree3d', 1.15)
+    this.placeBgDecor(1100, 'prop-house3d', 1.35)
+    this.placeBgDecor(2500, 'prop-tree3d', 1.05)
+    this.placeBgDecor(3800, 'prop-tree3d', 1.1, true)
+    this.placeBgDecor(5200, 'prop-house3d', 1.3)
+    this.placeBgDecor(6400, 'prop-tree3d', 1.2)
 
-    // Campsites with picnic tables (world props on the ground band)
-    this.placeCampsite(480)
+    // Campsites — modest roadside props (not covering the path).
+    this.placeCampsite(520)
     this.placeCampsite(2100)
     this.placeCampsite(4200)
     this.placeCampsite(6000)
 
-    this.placeBgDecor(900, 'prop-owl', 2.4)
-    this.placeBgDecor(3400, 'prop-owl', 2.2, true)
+    this.placeBgDecor(900, 'prop-owl', 1.15)
+    this.placeBgDecor(3400, 'prop-owl', 1.1, true)
 
     this.spawnAmbientBees()
     if (this.textures.exists('prop-torii')) {
       const arch = this.add
-        .image(380, 390, 'prop-torii')
+        .image(400, 300, 'prop-torii')
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
-        .setScale(3.2)
-        .setAlpha(0.92)
-      arch.setData('baseX', 380)
+        .setScale(1.15)
+      this.styleBgFog(arch, BG_FOG_ALPHA_MID)
+      arch.setData('baseX', 400)
       arch.setData('parallax', 0.1)
       enablePixelSprite(arch)
       this.bgMounts.push(arch)
     }
+
+    // Soft mist veil over the backdrop band (not over heroes / road).
+    const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.MOUNT_NEAR + 1)
+    mist.fillStyle(0xb8cce0, 0.18)
+    mist.fillRect(0, 120, 960, 220)
+    mist.fillStyle(0xd0dce8, 0.12)
+    mist.fillRect(0, 200, 960, 140)
   }
 
   private buildLevel() {
@@ -1788,7 +1829,7 @@ export class GameScene extends Phaser.Scene {
       const y = laneY(lane)
       const x = 220
       this.boy = Player.spawn(this, x, y, {
-        role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1, speed: GIRL_SPEED,
+        role: 'girl', texture: 'art-girl', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
       })
       this.boy.snapToLane(lane, x)
       this.entities.add(this.boy, 'player')
@@ -1813,7 +1854,7 @@ export class GameScene extends Phaser.Scene {
     const girlY = laneY(girlLane)
     const girlX = 380
     this.girl = Player.spawn(this, girlX, girlY, {
-      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: 1, speed: GIRL_SPEED,
+      role: 'girl', texture: 'art-girl', graceUntil: grace, scale: GIRL_SCALE_MUL, speed: GIRL_SPEED,
     })
     this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.girl, 'player')
@@ -1827,25 +1868,31 @@ export class GameScene extends Phaser.Scene {
     const petStartX = g.x - PET_FOLLOW_BEHIND
     this.pet = this.physics.add.sprite(petStartX, g.y, 'art-bear')
     this.pet.setOrigin(0.5, 1)
+    enableActorSprite(this.pet)
     this.pet
-      .setScale(ACTOR_DISPLAY_SCALE)
+      .setScale(this.petScaleForGirl(g))
       .setAlpha(0.85)
       .setDepth(actorDepth('pet', lane, g.y))
       .setVisible(true)
-    enableActorSprite(this.pet)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.pet.setData('lane', lane)
     this.entities.add(this.pet, 'pet')
     const swordKey = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
+    const grip = this.girlSwordAnchor(g, false)
     this.sword = this.add
-      .image(g.x + 14, g.y - 54, swordKey)
-      .setOrigin(0.12, 0.5)
+      .image(grip.x, grip.y, swordKey)
+      .setOrigin(0.12, 0.55)
       .setDepth(actorDepth('hitbox', lane, g.y) + 0.2)
-      .setScale(1.4 * ACTOR_DISPLAY_SCALE)
-      .setAngle(-22)
+      .setScale(grip.scale)
+      .setAngle(-18)
     enableActorSprite(this.sword)
-    this.petShadow = this.add.image(petStartX, g.y + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
+    const ps = this.petScaleForGirl(g)
+    this.petShadow = this.add
+      .image(petStartX, g.y + 4, shad)
+      .setDepth(DEPTH.SHADOW)
+      .setAlpha(0.35)
+      .setScale(Math.max(0.45, ps * 1.1), 0.4)
   }
 
   private wirePhysics() {

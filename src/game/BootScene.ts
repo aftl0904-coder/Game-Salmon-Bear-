@@ -10,6 +10,7 @@ import {
   hardenTextureAlpha,
   sealTextureSeamsX,
   thickenSpriteOutline,
+  softAaSameSize,
   registerWalkCycle,
   registerIdleBreath,
   registerEnemyCombatFrames,
@@ -144,21 +145,38 @@ export class BootScene extends Phaser.Scene {
     for (const key of actors) setActorLinearFilter(this, key)
   }
 
-  /** Thicker SNES-style black borders on smashables / landmarks. */
+  /**
+   * Outline policy:
+   * - Background scenery → thin black line (foggy distance)
+   * - Interactables (pots / goal / honey / hazards) → thick black line
+   * Actors / weapons keep AA bake separately (no chunky outline).
+   */
   private thickenPropOutlines() {
-    for (const key of [
+    const ink: [number, number, number] = [12, 10, 14]
+    // Playfield interactables — thick black rim + soft AA (higher perceived res).
+    const interactables = [
       'pot3d',
       'chest3d',
       'goal3d',
       'crate3d',
+      'prop-honey-stack',
+      'hazard-durian',
+      'blk-spike',
+      'pickup-sushi',
+      'coin',
+    ]
+    for (const key of interactables) {
+      thickenSpriteOutline(this, key, 3, ink)
+      softAaSameSize(this, key, 2)
+    }
+    // Background only — thin black line (stays NEAREST / foggy distance).
+    for (const key of [
       'prop-tree3d',
       'prop-house3d',
       'prop-torii',
-      // weapons intentionally NOT thickened — keep AA edges
       'prop-bridge',
       'prop-banner',
       'prop-lantern3d',
-      'prop-honey-stack',
       'prop-picnic',
       'prop-picnic-table',
       'prop-tent',
@@ -167,15 +185,14 @@ export class BootScene extends Phaser.Scene {
       'prop-shrine',
       'lm-mount-1',
       'lm-mount-2',
+      'lm-mount-3',
       'lm-mount-4',
       'lm-cloud-1',
       'lm-cloud-2',
       'lm-cloud-3',
       'lm-river',
-      'hazard-durian',
-      'blk-spike',
     ]) {
-      thickenSpriteOutline(this, key, 2)
+      thickenSpriteOutline(this, key, 1, ink)
     }
   }
 

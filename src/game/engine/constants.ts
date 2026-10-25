@@ -15,6 +15,18 @@ export const LANE_HIT_TOL = 1
  * Actors bake at 3× with LINEAR AA; display scale keeps on-screen size ≈ old 2× NEAREST.
  */
 export const ACTOR_DISPLAY_SCALE = 2 / 3
+/** 琪寶寶 smaller than 倫寶 (art sheet reads oversized at 1×). */
+export const GIRL_SCALE_MUL = 0.72
+/** 噗噗 always ≈ half 琪寶寶 height. */
+export const PET_HEIGHT_FRAC = 0.5
+/** Far BG fog wash — pale tint so landmarks read distant. */
+export const BG_FOG_TINT = 0xc5d4e4
+/** Far mountains / clouds alpha under fog. */
+export const BG_FOG_ALPHA_FAR = 0.38
+/** Mid BG (trees / houses / torii) alpha under fog. */
+export const BG_FOG_ALPHA_MID = 0.48
+/** Soft roadside scenery (campsite) — still behind playfield. */
+export const BG_FOG_ALPHA_NEAR = 0.58
 /** 噗噗反擊半傷 */
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */

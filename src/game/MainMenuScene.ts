@@ -94,13 +94,20 @@ export class MainMenuScene extends Phaser.Scene {
       this.tweens.add({ targets: c, x: x + 28, duration: 26000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.18, 400, 4.5],
-      ['lm-mount-1', width * 0.52, 410, 4.0, true],
-      ['lm-mount-4', width * 0.88, 420, 4.2],
+      ['lm-mount-2', width * 0.18, 300, 2.5],
+      ['lm-mount-1', width * 0.52, 310, 2.3, true],
+      ['lm-mount-4', width * 0.88, 318, 2.4],
     ]
     for (const [key, x, y, s, flip] of mounts) {
       if (!this.textures.exists(key)) continue
-      this.add.image(x, y, key).setOrigin(0.5, 1).setDepth(2).setScale(s).setAlpha(0.92).setFlipX(!!flip)
+      this.add
+        .image(x, y, key)
+        .setOrigin(0.5, 1)
+        .setDepth(2)
+        .setScale(s)
+        .setAlpha(0.5)
+        .setTint(0xc8d8e8)
+        .setFlipX(!!flip)
     }
 
     if (this.textures.exists('water-deep')) {
@@ -416,6 +423,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.starting = true
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
+    this.registry.set('stageRound', 1)
     // 過場黑畫面至少 1 秒
     this.cameras.main.fadeOut(1000, 0, 0, 0)
     this.time.delayedCall(1000, () => this.scene.start('play'))
