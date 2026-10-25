@@ -136,8 +136,13 @@ export function registerWorldArt(scene: Phaser.Scene) {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
         // Soft continuous foam — fully opaque (soft alpha seams under NEAREST).
+        // Low-contrast continuous wash — high-contrast foam bands read as vertical seams.
         const wave = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.7) * 0.5 + 0.5
-        const c: RGB = wave > 0.65 ? [245, 252, 255] : [170, 215, 240]
+        const c: RGB = [
+          Math.floor(190 + wave * 40),
+          Math.floor(225 + wave * 25),
+          Math.floor(245 + wave * 10),
+        ]
         set(x, y, c, 255)
       }
     }
