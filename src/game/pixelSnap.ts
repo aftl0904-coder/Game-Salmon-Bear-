@@ -130,6 +130,7 @@ export function closeVerticalAlphaGaps(scene: TexScene, key: string, maxGap = 3)
     d[i + 2] = Math.round(d[ai + 2] * (1 - t) + d[bi + 2] * t)
     d[i + 3] = 255
   }
+  // Several passes: 琪寶寶 waist soft band is ~2–3px after harden.
   for (let pass = 0; pass < maxGap; pass++) {
     for (let x = 0; x < w; x++) {
       let y = 0
@@ -283,6 +284,8 @@ export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: num
 }
 
 export function setDiePoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  // Never rotate — even death tilt shears NEAREST quads into a smear.
+  void _facing
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 

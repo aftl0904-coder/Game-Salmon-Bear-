@@ -78,6 +78,7 @@ export function registerWorldArt(scene: Phaser.Scene) {
     }
   })
 
+  // Wrap-safe water: period divides tile width exactly; fully opaque (no soft-alpha seams).
   paint(scene, 'water-deep', 64, 64, (set, w, h) => {
     const deep: RGB = [28, 92, 158]
     const midC: RGB = [48, 158, 210]
@@ -86,22 +87,24 @@ export function registerWorldArt(scene: Phaser.Scene) {
       const t = y / h
       const c = t < 0.45 ? mix(lit, midC, t / 0.45) : mix(midC, deep, (t - 0.45) / 0.55)
       for (let x = 0; x < w; x++) {
-        const wave = Math.sin((x / w) * Math.PI * 2 * 3 + t * 4) * 0.08
-        const shade = 1 + wave - t * 0.12
+        // 2 full cycles across 64px → seamless at x=0/w.
+        const wave = Math.sin((x / w) * Math.PI * 2 * 2 + t * 3) * 0.06
+        const shade = 1 + wave - t * 0.1
         set(x, y, [
           Math.min(255, Math.floor(c[0] * shade)),
           Math.min(255, Math.floor(c[1] * shade)),
           Math.min(255, Math.floor(c[2] * shade)),
-        ])
+        ], 255)
       }
     }
+    // Specular dots — wrap-safe positions, full opacity.
     for (let i = 0; i < 8; i++) {
-      const x = (i * 8 + 3) % w
-      set(x, 6 + (i % 5), [180, 240, 255], 200)
-      set((x + 2) % w, 22 + (i % 4), [120, 220, 250], 160)
-      set((x + 4) % w, 40 + (i % 3), [70, 170, 220], 140)
+      const x = (i * 8 + 4) % w
+      set(x, 8 + (i % 4), [180, 240, 255], 255)
+      set((x + 2) % w, 24 + (i % 3), [120, 220, 250], 255)
+      set((x + 4) % w, 44 + (i % 2), [70, 170, 220], 255)
     }
-    rect(set, 0, h - 4, w, 4, [18, 60, 110], 200)
+    rect(set, 0, h - 4, w, 4, [18, 60, 110], 255)
   })
 
   paint(scene, 'water-mid', 64, 32, (set, w, h) => {
@@ -109,27 +112,33 @@ export function registerWorldArt(scene: Phaser.Scene) {
       const t = y / h
       const c: RGB = [lerp(70, 36, t), lerp(175, 120, t), lerp(230, 190, t)]
       for (let x = 0; x < w; x++) {
-        const ripple = Math.sin((x / w) * Math.PI * 2 * 4 + y * 0.6) * 8
-        set(x, y, [
-          Math.min(255, c[0] + ripple),
-          Math.min(255, c[1] + ripple * 0.6),
-          Math.min(255, c[2]),
-        ], 210)
+        const ripple = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.5) * 6
+        set(
+          x,
+          y,
+          [
+            Math.min(255, Math.max(0, Math.floor(c[0] + ripple))),
+            Math.min(255, Math.max(0, Math.floor(c[1] + ripple * 0.6))),
+            Math.min(255, c[2]),
+          ],
+          255,
+        )
       }
     }
     for (let x = 0; x < w; x++) {
-      if ((x + 2) % 8 < 3) set(x, 4, [200, 240, 255], 180)
-      if ((x + 5) % 8 < 2) set(x, 14, [230, 250, 255], 160)
-      if (x % 8 < 2) set(x, 24, [170, 225, 250], 130)
+      if ((x + 2) % 8 < 3) set(x, 4, [200, 240, 255], 255)
+      if ((x + 5) % 8 < 2) set(x, 14, [230, 250, 255], 255)
+      if (x % 8 < 2) set(x, 24, [170, 225, 250], 255)
     }
   })
 
   paint(scene, 'water-foam', 64, 16, (set, w, h) => {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        const wave = Math.sin((x / w) * Math.PI * 2 * 4 + y * 0.8) * 0.5 + 0.5
-        if (wave > 0.5) set(x, y, [240, 252, 255], Math.floor(90 + wave * 120))
-        if (wave > 0.82) set(x, y, [255, 255, 255], 220)
+        // Soft continuous foam — fully opaque (soft alpha seams under NEAREST).
+        const wave = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.7) * 0.5 + 0.5
+        const c: RGB = wave > 0.65 ? [245, 252, 255] : [170, 215, 240]
+        set(x, y, c, 255)
       }
     }
   })

@@ -147,16 +147,15 @@ export class JuiceManager {
    */
   knockLean(target: HitTarget | undefined, dir: number, heavy = false) {
     if (!target?.active) return
-    // Tint-only hit read — any angle lean shears NEAREST mid-sprite (enemy smear).
+    // Tint-only hit read — any angle/scale tween shears NEAREST into enemy smear.
     void dir
     void heavy
-    const baseX = Math.abs(target.scaleX ?? 1)
-    const baseY = Math.abs(target.scaleY ?? 1)
     this.scene.tweens.killTweensOf(target)
     target.setAngle?.(0)
-    target.setScale?.(baseX, baseY)
-    target.setTint?.(0xffffff)
-    this.scene.time.delayedCall(90, () => {
+    target.setScale?.(1, 1)
+    // Soft flash (not full white) — full white + burst particles read as a smear ghost.
+    target.setTint?.(0xffccaa)
+    this.scene.time.delayedCall(70, () => {
       if (target.active) target.clearTint?.()
     })
   }
@@ -175,16 +174,14 @@ export class JuiceManager {
     if (heavy) {
       this.freeze(HEAVY_HITFREEZE_MS)
       this.shakeHeavy()
-      burst(this.scene, x, y, 0xffe8a0, 14)
-      burst(this.scene, x, y - 8, 0xffffff, 6)
+      burst(this.scene, x, y, 0xffe8a0, 8)
     } else {
       this.freeze(HITFREEZE_MS)
       this.shakeDamage()
-      burst(this.scene, x, y, 0xffe8a0, 12)
-      burst(this.scene, x, y - 6, 0xffffff, 5)
+      burst(this.scene, x, y, 0xffe8a0, 6)
     }
     this.whiteFlash(heavy)
-    impactRing(this.scene, x, y - 12, heavy ? 0xffcc66 : 0xffe8a0, 10)
+    impactRing(this.scene, x, y - 12, heavy ? 0xffcc66 : 0xffe8a0, 8)
     this.knockLean(target, dir, heavy)
   }
 
