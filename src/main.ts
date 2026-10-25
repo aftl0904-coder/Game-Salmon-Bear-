@@ -39,6 +39,7 @@ const game = new Phaser.Game({
   roundPixels: true,
   antialias: false,
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
+  input: { gamepad: true },
   scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
   // NONE: we own integer CSS zoom above. FIT would stretch to non-integer sizes.
   scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },

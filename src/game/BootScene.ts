@@ -108,6 +108,7 @@ export class BootScene extends Phaser.Scene {
       ['art-girl', 2] as const,
       ['art-enemy', 2] as const,
       ['art-enemy-barrel', 2] as const,
+      ['art-enemy-elephant', 2] as const,
     ]
     // alphaCut 56 — keep soft waist AA; 100 punched a torso slice through 琪寶寶.
     for (const [key, factor] of baked) {
@@ -128,6 +129,7 @@ export class BootScene extends Phaser.Scene {
       'art-bear',
       'art-enemy',
       'art-enemy-barrel',
+      'art-enemy-elephant',
     ]) {
       fillInternalAlphaHoles(this, key)
       closeVerticalAlphaGaps(this, key, 3)
@@ -141,6 +143,7 @@ export class BootScene extends Phaser.Scene {
     registerIdleBreath(this, 'art-girl')
     registerEnemyCombatFrames(this, 'art-enemy')
     registerEnemyCombatFrames(this, 'art-enemy-barrel')
+    registerEnemyCombatFrames(this, 'art-enemy-elephant')
   }
 
   /** Thicker SNES-style black borders on smashables / landmarks. */

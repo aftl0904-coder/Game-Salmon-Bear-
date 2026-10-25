@@ -14,6 +14,10 @@ export class MainMenuScene extends Phaser.Scene {
   private modes: Mode[] = ['1p', '2p']
   private startBtn: Phaser.GameObjects.Image | null = null
   private startLabel: Phaser.GameObjects.Text | null = null
+  private previewGirl: Phaser.GameObjects.Image | null = null
+  private previewBear: Phaser.GameObjects.Image | null = null
+  private previewGirlShad: Phaser.GameObjects.Image | null = null
+  private previewBearShad: Phaser.GameObjects.Image | null = null
 
   constructor() {
     super('menu')
@@ -190,10 +194,17 @@ export class MainMenuScene extends Phaser.Scene {
     const ly = height - 100
     this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
     enablePixelSprite(this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25))
-    this.add.image(270, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.7, 0.85)
-    enablePixelSprite(this.add.image(270, ly - 4, 'art-bear').setDepth(7).setScale(2.55))
-    this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
-    enablePixelSprite(this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15))
+    // 2P preview: girl + bear at gameplay size (bear ~half human) — toggled in refresh.
+    this.previewGirlShad = this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
+    this.previewGirl = this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15)
+    enablePixelSprite(this.previewGirl)
+    this.previewBearShad = this.add.image(width - 220, ly + 8, shad).setDepth(6).setAlpha(0.5).setScale(0.9, 0.7)
+    this.previewBear = this.add.image(width - 220, ly + 6, 'art-bear').setDepth(7).setScale(1)
+    enablePixelSprite(this.previewBear)
+    this.previewGirl.setVisible(false)
+    this.previewBear.setVisible(false)
+    this.previewGirlShad.setVisible(false)
+    this.previewBearShad.setVisible(false)
     if (this.textures.exists('pot3d')) {
       this.add.image(width / 2 + 90, ly + 28, 'pot3d').setDepth(6).setScale(1.7)
     }
@@ -366,6 +377,11 @@ export class MainMenuScene extends Phaser.Scene {
       const cur = this.cursorsGfx[i]
       if (cur) cur.setVisible(on)
     })
+    const duo = this.modes[this.cursor] === '2p'
+    this.previewGirl?.setVisible(duo)
+    this.previewBear?.setVisible(duo)
+    this.previewGirlShad?.setVisible(duo)
+    this.previewBearShad?.setVisible(duo)
   }
 
   private confirmStart() {

@@ -49,6 +49,8 @@ import {
   HIT_CONFIRM_FREEZE_MS,
   PLAYER_ATTACK_DMG,
   ENEMY_ATTACK_DMG,
+  BEAR_ASSIST_DMG,
+  COINS_PER_HP,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -120,22 +122,36 @@ export class GameScene extends Phaser.Scene {
   private keyA!: Phaser.Input.Keyboard.Key
   private keyS!: Phaser.Input.Keyboard.Key
   private keyD!: Phaser.Input.Keyboard.Key
+  /** SNES face: F=Y atk, G=B jump, T=X special, H=A unused */
+  private keyF!: Phaser.Input.Keyboard.Key
+  private keyG!: Phaser.Input.Keyboard.Key
+  private keyT!: Phaser.Input.Keyboard.Key
+  private keyH!: Phaser.Input.Keyboard.Key // A unused
+  /** Legacy compat */
   private keyJ!: Phaser.Input.Keyboard.Key
   private keyK!: Phaser.Input.Keyboard.Key
   private keyU!: Phaser.Input.Keyboard.Key
-  private keyI!: Phaser.Input.Keyboard.Key
+  /** 2P SNES: ,=Y . =B ; =X / =A */
+  private keyComma!: Phaser.Input.Keyboard.Key
+  private keyPeriod!: Phaser.Input.Keyboard.Key
+  private keySemicolon!: Phaser.Input.Keyboard.Key
+  private keySlash!: Phaser.Input.Keyboard.Key // A unused
   private keyNP1!: Phaser.Input.Keyboard.Key
   private keyNP2!: Phaser.Input.Keyboard.Key
   private keyNP4!: Phaser.Input.Keyboard.Key
-  private keyNP5!: Phaser.Input.Keyboard.Key
   private keyR!: Phaser.Input.Keyboard.Key
   private keyEnter!: Phaser.Input.Keyboard.Key
   private keySpace!: Phaser.Input.Keyboard.Key
   private keyC!: Phaser.Input.Keyboard.Key
+  private keyRShift!: Phaser.Input.Keyboard.Key // 2P Start
   private keyDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebugAlt!: Phaser.Input.Keyboard.Key
   private physicsDebug = false
+  /** Honey special charges (max 1). */
+  private specialCharges = 0
+  private pad1: Phaser.Input.Gamepad.Gamepad | null = null
+  private pad2: Phaser.Input.Gamepad.Gamepad | null = null
   /** Synced from UIScene for smoke / continue path. */
   banner!: Phaser.GameObjects.Text
   continueBox!: Phaser.GameObjects.Text
@@ -582,6 +598,10 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.A,
       Phaser.Input.Keyboard.KeyCodes.S,
       Phaser.Input.Keyboard.KeyCodes.D,
+      Phaser.Input.Keyboard.KeyCodes.F,
+      Phaser.Input.Keyboard.KeyCodes.G,
+      Phaser.Input.Keyboard.KeyCodes.T,
+      Phaser.Input.Keyboard.KeyCodes.H,
       Phaser.Input.Keyboard.KeyCodes.J,
       Phaser.Input.Keyboard.KeyCodes.K,
       Phaser.Input.Keyboard.KeyCodes.U,
@@ -590,6 +610,10 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.RIGHT,
       Phaser.Input.Keyboard.KeyCodes.UP,
       Phaser.Input.Keyboard.KeyCodes.DOWN,
+      Phaser.Input.Keyboard.KeyCodes.COMMA,
+      Phaser.Input.Keyboard.KeyCodes.PERIOD,
+      Phaser.Input.Keyboard.KeyCodes.SEMICOLON,
+      Phaser.Input.Keyboard.KeyCodes.FORWARD_SLASH,
       Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE,
       Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO,
       Phaser.Input.Keyboard.KeyCodes.NUMPAD_FOUR,
@@ -597,6 +621,7 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.KeyCodes.R,
       Phaser.Input.Keyboard.KeyCodes.ENTER,
       Phaser.Input.Keyboard.KeyCodes.SPACE,
+      Phaser.Input.Keyboard.KeyCodes.SHIFT,
       Phaser.Input.Keyboard.KeyCodes.C,
       Phaser.Input.Keyboard.KeyCodes.F1,
       Phaser.Input.Keyboard.KeyCodes.F2,
@@ -607,45 +632,116 @@ export class GameScene extends Phaser.Scene {
     this.keyA = kb.addKey(Phaser.Input.Keyboard.KeyCodes.A, true)
     this.keyS = kb.addKey(Phaser.Input.Keyboard.KeyCodes.S, true)
     this.keyD = kb.addKey(Phaser.Input.Keyboard.KeyCodes.D, true)
+    this.keyF = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F, true)
+    this.keyG = kb.addKey(Phaser.Input.Keyboard.KeyCodes.G, true)
+    this.keyT = kb.addKey(Phaser.Input.Keyboard.KeyCodes.T, true)
+    this.keyH = kb.addKey(Phaser.Input.Keyboard.KeyCodes.H, true)
     this.keyJ = kb.addKey(Phaser.Input.Keyboard.KeyCodes.J, true)
     this.keyK = kb.addKey(Phaser.Input.Keyboard.KeyCodes.K, true)
     this.keyU = kb.addKey(Phaser.Input.Keyboard.KeyCodes.U, true)
-    this.keyI = kb.addKey(Phaser.Input.Keyboard.KeyCodes.I, true)
+    this.keyComma = kb.addKey(Phaser.Input.Keyboard.KeyCodes.COMMA, true)
+    this.keyPeriod = kb.addKey(Phaser.Input.Keyboard.KeyCodes.PERIOD, true)
+    this.keySemicolon = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SEMICOLON, true)
+    this.keySlash = kb.addKey(Phaser.Input.Keyboard.KeyCodes.FORWARD_SLASH, true)
     this.keyNP1 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_ONE, true)
     this.keyNP2 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO, true)
     this.keyNP4 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FOUR, true)
-    this.keyNP5 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE, true)
     this.keyR = kb.addKey(Phaser.Input.Keyboard.KeyCodes.R, true)
     this.keyEnter = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER, true)
     this.keySpace = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true)
     this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
+    this.keyRShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT, true)
+    void this.keyH
+    void this.keySlash
+    void this.keyRShift
     this.keyDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F1, true)
     this.keyPhysicsDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.BACKTICK, true)
     this.keyPhysicsDebugAlt = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F2, true)
+
+    this.input.gamepad?.once('connected', (pad: Phaser.Input.Gamepad.Gamepad) => {
+      if (!this.pad1) this.pad1 = pad
+      else if (!this.pad2) this.pad2 = pad
+    })
+    if (this.input.gamepad?.pad1) this.pad1 = this.input.gamepad.pad1
+    if (this.input.gamepad?.pad2) this.pad2 = this.input.gamepad.pad2
   }
 
+  private padPrev: Record<string, boolean> = {}
+  private padFaceJust(pad: Phaser.Input.Gamepad.Gamepad | null, i: number) {
+    if (!pad) return false
+    const b = pad.buttons[i]
+    const down = !!(b && ((b as { pressed?: boolean }).pressed || (b as { value?: number }).value! > 0.5))
+    const key = `${pad.index}:${i}`
+    const was = !!this.padPrev[key]
+    this.padPrev[key] = down
+    return down && !was
+  }
+  private padAxis(pad: Phaser.Input.Gamepad.Gamepad | null, horiz: boolean) {
+    if (!pad) return 0
+    if (horiz) {
+      if (pad.left) return -1
+      if (pad.right) return 1
+      return pad.leftStick?.x ?? 0
+    }
+    if (pad.up) return -1
+    if (pad.down) return 1
+    return pad.leftStick?.y ?? 0
+  }
+
+  /** Y = attack (F / , / legacy J) */
   private p1AttackJust() {
     return (
+      Phaser.Input.Keyboard.JustDown(this.keyF) ||
       Phaser.Input.Keyboard.JustDown(this.keyJ) ||
-      Phaser.Input.Keyboard.JustDown(this.keyU) ||
-      Phaser.Input.Keyboard.JustDown(this.keyI)
+      this.padFaceJust(this.pad1, 3) // Xbox Y / Nintendo X-ish — map index 3 as Y-face
     )
   }
-  private p1JumpJust() { return Phaser.Input.Keyboard.JustDown(this.keyK) }
-  private p1JumpHeld() { return this.keyK.isDown }
-  private p1LaneUpHeld() { return this.keyW.isDown }
-  private p1LaneDownHeld() { return this.keyS.isDown }
+  /** B = jump (G / legacy K) */
+  private p1JumpJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keyG) || Phaser.Input.Keyboard.JustDown(this.keyK) || this.padFaceJust(this.pad1, 0)
+  }
+  private p1JumpHeld() {
+    return this.keyG.isDown || this.keyK.isDown || !!(this.pad1?.buttons[0]?.pressed)
+  }
+  private p1LaneUpHeld() {
+    return this.keyW.isDown || this.padAxis(this.pad1, false) < -0.45
+  }
+  private p1LaneDownHeld() {
+    return this.keyS.isDown || this.padAxis(this.pad1, false) > 0.45
+  }
+  private p1SpecialJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keyT) || Phaser.Input.Keyboard.JustDown(this.keyU) || this.padFaceJust(this.pad1, 2)
+  }
   private p2AttackJust() {
     return (
+      Phaser.Input.Keyboard.JustDown(this.keyComma) ||
       Phaser.Input.Keyboard.JustDown(this.keyNP1) ||
-      Phaser.Input.Keyboard.JustDown(this.keyNP4) ||
-      Phaser.Input.Keyboard.JustDown(this.keyNP5)
+      this.padFaceJust(this.pad2 ?? this.pad1, 3)
     )
   }
-  private p2JumpJust() { return Phaser.Input.Keyboard.JustDown(this.keyNP2) }
-  private p2JumpHeld() { return this.keyNP2.isDown }
-  private p2LaneUpHeld() { return !!this.cursors.up?.isDown }
-  private p2LaneDownHeld() { return !!this.cursors.down?.isDown }
+  private p2JumpJust() {
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keyPeriod) ||
+      Phaser.Input.Keyboard.JustDown(this.keyNP2) ||
+      this.padFaceJust(this.pad2, 0)
+    )
+  }
+  private p2JumpHeld() {
+    return this.keyPeriod.isDown || this.keyNP2.isDown || !!(this.pad2?.buttons[0]?.pressed)
+  }
+  private p2LaneUpHeld() {
+    return !!this.cursors.up?.isDown || this.padAxis(this.pad2, false) < -0.45
+  }
+  private p2LaneDownHeld() {
+    return !!this.cursors.down?.isDown || this.padAxis(this.pad2, false) > 0.45
+  }
+  private p2SpecialJust() {
+    return (
+      Phaser.Input.Keyboard.JustDown(this.keySemicolon) ||
+      Phaser.Input.Keyboard.JustDown(this.keyNP4) ||
+      this.padFaceJust(this.pad2, 2)
+    )
+  }
 
   private steerHero(
     h: Hero,
@@ -695,23 +791,83 @@ export class GameScene extends Phaser.Scene {
   }
 
   private moveBoy(dt: number) {
+    const ax = this.padAxis(this.pad1, true)
+    const left = this.keyA.isDown || ax < -0.45
+    const right = this.keyD.isDown || ax > 0.45
     this.steerHero(
-      this.boy, dt, this.keyA.isDown, this.keyD.isDown,
+      this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), BOY_SPEED,
       this.p1AttackJust(), () => this.fireSalmon(this.boy),
       this.p1LaneUpHeld(), this.p1LaneDownHeld(),
     )
+    if (this.p1SpecialJust()) this.fireHoneySpecial(this.boy)
   }
 
   private moveGirl(dt: number) {
     const g = this.girl
     if (!g) return
+    const ax = this.padAxis(this.pad2, true)
+    const left = !!this.cursors.left?.isDown || ax < -0.45
+    const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
-      g, dt, !!this.cursors.left?.isDown, !!this.cursors.right?.isDown,
+      g, dt, left, right,
       this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED,
       this.p2AttackJust(), () => this.swordSlash(g),
       this.p2LaneUpHeld(), this.p2LaneDownHeld(),
     )
+    if (this.p2SpecialJust()) this.fireHoneySpecial(g)
+  }
+
+  /** Pack3 J: spend 1 honey charge — auto-aim nearest enemy. */
+  private fireHoneySpecial(h: Hero) {
+    if (this.specialCharges <= 0 || !h.alive) return
+    let best: PatrolEnemy | null = null
+    let bestD = Infinity
+    for (const o of this.enemies.getChildren()) {
+      const e = o as PatrolEnemy
+      if (!e.active || e.fsm === 'DEAD') continue
+      const d = Phaser.Math.Distance.Between(h.x, h.y, e.x, e.y)
+      if (d < bestD) {
+        bestD = d
+        best = e
+      }
+    }
+    if (!best) {
+      floatText(this, h.x, h.y - 40, '無目標', '#aaaaaa')
+      return
+    }
+    this.specialCharges -= 1
+    freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
+    SFX.swing()
+    const jet = this.honeys.create(h.x, h.y - 28, 'fx-honey') as Phaser.Physics.Arcade.Sprite
+    jet.setScale(1.7).setDepth(actorDepth('shot', h.lane, h.y))
+    enablePixelSprite(jet)
+    ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    const ang = Phaser.Math.Angle.Between(h.x, h.y - 28, best.x, best.y - 20)
+    const spd = 620
+    jet.setVelocity(Math.cos(ang) * spd, Math.sin(ang) * spd)
+    jet.setData('lane', best.lane)
+    jet.setData('fromY', best.y)
+    jet.setData('homing', best)
+    this.entities.add(jet, 'projectile')
+    floatText(this, h.x, h.y - 48, '絕招！', '#ffcc44')
+    burst(this, h.x, h.y - 28, 0xffc050, 10)
+    this.emitScore(`絕招剩餘 ${this.specialCharges}`)
+    this.time.delayedCall(900, () => {
+      if (jet.active) jet.destroy()
+    })
+  }
+
+  private tryAutoHealFromCoins() {
+    while (this.coinStock >= COINS_PER_HP) {
+      this.coinStock -= COINS_PER_HP
+      if (this.boy?.alive) this.boy.hp = Math.min(MAX_HP, this.boy.hp + 1)
+      if (this.girl?.alive) this.girl.hp = Math.min(MAX_HP, this.girl.hp + 1)
+      floatText(this, this.boy.x, this.boy.y - 56, '10幣→雙方+1HP', '#7dffb0')
+      SFX.continue()
+      this.refreshHearts()
+    }
+    this.refreshCoins()
   }
 
 
@@ -802,31 +958,55 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** Pack3 E: rush to girl's front, one melee hit (half dmg), hit-confirm freeze. */
   private summonBearAssist() {
     if (!this.girl || !this.pet || this.petJetting || this.girl.hp <= 0) return
+    const g = this.girl
+    const pet = this.pet
     this.petJetting = true
-    SFX.hit()
-    floatText(this, this.pet.x, this.pet.y - 50, '噗噗！', '#ffcc44')
-    this.tweens.add({ targets: this.pet, scaleX: 1.9, scaleY: 1.5, yoyo: true, duration: 90 })
-    this.honeyJet(this.girl.facing)
-    this.time.delayedCall(520, () => {
-      this.petJetting = false
-    })
-  }
+    SFX.swing()
+    floatText(this, pet.x, pet.y - 50, '噗噗衝擊！', '#ffcc44')
 
-  private honeyJet(dir: number) {
-    if (!this.girl || !this.pet) return
-    const jet = this.honeys.create(this.pet.x + dir * 16, this.pet.y - 20, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.55).setDepth(actorDepth('shot', this.girl.lane, this.girl.y))
-    enablePixelSprite(jet)
-    ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    jet.setVelocityX(dir * 480)
-    jet.setData('lane', this.girl.lane)
-    jet.setData('fromY', this.girl.y)
-    this.entities.add(jet, 'projectile')
-    burst(this, this.pet.x, this.pet.y, 0xffc050, 14)
-    floatText(this, this.pet.x, this.pet.y - 36, '蜂蜜噴流', '#ffcc44')
-    this.time.delayedCall(700, () => jet.destroy())
+    const frontX = g.x + g.facing * 52
+    const frontY = laneY(g.lane)
+    this.tweens.add({
+      targets: pet,
+      x: frontX,
+      y: frontY,
+      duration: 140,
+      ease: 'Cubic.out',
+      onComplete: () => {
+        if (!this.girl || !this.pet) {
+          this.petJetting = false
+          return
+        }
+        // Nearest enemy on girl's lane (else nearest overall).
+        let best: PatrolEnemy | null = null
+        let bestD = Infinity
+        for (const o of this.enemies.getChildren()) {
+          const e = o as PatrolEnemy
+          if (!e.active || e.fsm === 'DEAD') continue
+          const same = e.lane === g.lane
+          const d = Phaser.Math.Distance.Between(frontX, frontY, e.x, e.y)
+          const score = same ? d : d + 400
+          if (score < bestD) {
+            bestD = score
+            best = e
+          }
+        }
+        if (best && bestD < 220) {
+          const dir = (Math.sign(best.x - pet.x) || g.facing) as 1 | -1
+          this.damageEnemy(best, BEAR_ASSIST_DMG, dir, { lane: g.lane, y: g.y })
+          burst(this, best.x, best.y - 20, 0xffc050, 12)
+          floatText(this, best.x, best.y - 44, '半傷！', '#ffe08a')
+        } else {
+          burst(this, frontX, frontY - 16, 0xffc050, 8)
+        }
+        this.time.delayedCall(180, () => {
+          this.petJetting = false
+        })
+      },
+    })
   }
 
   private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number, from?: { lane?: number; y: number }) {
@@ -1060,22 +1240,21 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private placeDecor(x: number, key: string, scale: number, shadScale = 1, flip = false) {
-    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    const sh = this.add
-      .image(x + 4, GROUND_Y + 6, shad)
-      .setDepth(DEPTH.PROP_SHADOW)
-      .setAlpha(0.55)
-      .setScale(shadScale * 1.05, shadScale * 0.65)
-    enablePixelSprite(sh)
+  /** Background-only decor (trees/houses) — never on the walk road (Pack3 K). */
+  private placeBgDecor(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
+    const y = GROUND_Y - 110
     const img = this.add
-      .image(x, GROUND_Y, key)
+      .image(x, y, key)
       .setOrigin(0.5, 1)
-      .setDepth(DEPTH.PROP)
+      .setDepth(DEPTH.VILLAGE)
       .setScale(scale)
       .setFlipX(flip)
+      .setAlpha(0.92)
+    img.setData('baseX', x)
+    img.setData('parallax', 0.18)
     enablePixelSprite(img)
+    this.bgMounts.push(img)
   }
 
   private drawWorld() {
@@ -1119,19 +1298,20 @@ export class GameScene extends Phaser.Scene {
     this.placeSparseLandmarks()
 
     // Water stack at stage foot — integer origin + width (multiple of 64) kills seams.
+    // Less river visible — ground sits lower, more playable space (Pack3 F).
     this.water = this.add
-      .tileSprite(480, 520, 960, 64, 'water-deep')
+      .tileSprite(480, 528, 960, 36, 'water-deep')
       .setScrollFactor(0)
       .setDepth(DEPTH.WATER_DEEP)
-    this.water.setPosition(480, 520)
+    this.water.setPosition(480, 528)
     enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
-        .tileSprite(480, 500, 960, 32, 'water-mid')
+        .tileSprite(480, 516, 960, 20, 'water-mid')
         .setScrollFactor(0)
         .setDepth(DEPTH.WATER_MID)
-        .setAlpha(0.7)
-      this.waterMid.setPosition(480, 500)
+        .setAlpha(0.55)
+      this.waterMid.setPosition(480, 516)
       enablePixelSprite(this.waterMid)
     }
     if (this.textures.exists('water-foam')) {
@@ -1198,13 +1378,12 @@ export class GameScene extends Phaser.Scene {
       this.bgMounts.push(img)
     }
 
-    // --- Ground landmarks (world-space, with contact shadows) ---
-    // Few trees (4) — integer scales so safeAuto stays active.
-    this.placeDecor(150, 'prop-tree3d', 1, 1.2)
-    this.placeDecor(620, 'prop-tree3d', 1, 1.0, true)
-    this.placeDecor(1320, 'prop-tree3d', 1, 1.15)
-    this.placeDecor(2360, 'prop-tree3d', 1, 1.05)
-    // Torii as mid-parallax landmark (NOT on walk path) — characters never clip beams.
+    // Trees / houses: background only (not on road).
+    this.placeBgDecor(180, 'prop-tree3d', 1.1)
+    this.placeBgDecor(700, 'prop-tree3d', 1.0, true)
+    this.placeBgDecor(1400, 'prop-tree3d', 1.15)
+    this.placeBgDecor(2500, 'prop-tree3d', 1.05)
+    this.placeBgDecor(1100, 'prop-house3d', 1.35)
     if (this.textures.exists('prop-torii')) {
       const torii = this.add
         .image(400, 300, 'prop-torii')
@@ -1218,9 +1397,6 @@ export class GameScene extends Phaser.Scene {
       enablePixelSprite(torii)
       this.bgMounts.push(torii)
     }
-    // 1 house — clear of lane feet
-    this.placeDecor(1050, 'prop-house3d', 1, 1.45)
-    // No bridge prop — reads as a walkable plank and conflicts with lane combat.
   }
 
   private buildLevel() {
@@ -1240,10 +1416,11 @@ export class GameScene extends Phaser.Scene {
     // One continuous aligned ground ribbon — no gaps / 斷開 between banks.
     this.layGroundRibbon(LANE_FLOOR_Y)
 
-    // Ground spike traps only — jump over these (or change lane).
-    this.spikes(540, 3)
-    this.spikes(1840, 3)
-    this.spikes(2700, 3)
+    // Random spike traps on the road — avoid or get hurt (Pack3 K).
+    const spikeXs = [480, 920, 1380, 1860, 2280, 2720, 3100]
+    for (const x of spikeXs) {
+      if (Math.random() < 0.85) this.spikes(x + Phaser.Math.Between(-40, 40), Phaser.Math.Between(2, 4))
+    }
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     for (const x of [380, 1200, 2050, 3000]) {
@@ -1500,8 +1677,14 @@ export class GameScene extends Phaser.Scene {
     if (!item.active) return
     item.disableBody(true, true)
     this.honeyGot = Math.min(3, this.honeyGot + 1)
+    // Pack3 J: honey pickup grants 1 special charge (max 1).
+    if (this.specialCharges < 1) {
+      this.specialCharges = 1
+      floatText(this, item.x, item.y - 36, '絕招＋１（撳Ｔ／；）', '#ffcc44')
+    } else {
+      floatText(this, item.x, item.y - 18, '春蜜＋１', '#ffcc44')
+    }
     SFX.kill(); burst(this, item.x, item.y, 0xffc050, 12)
-    floatText(this, item.x, item.y - 18, '春蜜＋１', '#ffcc44')
   }
 
   private takeCoin(coin: Phaser.Physics.Arcade.Sprite) {
@@ -1511,7 +1694,7 @@ export class GameScene extends Phaser.Scene {
     SFX.coin()
     burst(this, coin.x, coin.y, 0xffe08a, 8)
     floatText(this, coin.x, coin.y - 16, '＋1幣', '#ffe08a')
-    this.refreshCoins()
+    this.tryAutoHealFromCoins()
   }
 
   private checkWin() {
@@ -1670,7 +1853,7 @@ export class GameScene extends Phaser.Scene {
     // Wave 1 — 開場走一陣（約 x≥620）先打，清咗先繼續。
     const w1 = [
       this.mkEnemy(780, GROUND_Y, 'blocker', undefined, 'fish', 1),
-      this.mkEnemy(860, GROUND_Y, 'blocker', undefined, 'fish', 2),
+      this.mkEnemy(860, GROUND_Y, 'blocker', undefined, 'fish', 3),
       this.mkEnemy(940, GROUND_Y, 'chaser', undefined, 'fish', 0),
     ]
     for (const e of w1) this.deferEnemy(e, 620, 'wave1')

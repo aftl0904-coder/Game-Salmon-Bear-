@@ -393,6 +393,48 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
+  // Pack3: elephant puppet (replaces bee combat look)
+  paint(scene, 'art-enemy-elephant', 48, 44, (set) => {
+    const ink: RGB = [18, 12, 14]
+    rect(set, 8, 40, 32, 3, ink, 130)
+    // body
+    for (let y = 14; y < 40; y++) {
+      for (let x = 8; x < 40; x++) {
+        const nx = (x - 24) / 15
+        const ny = (y - 27) / 13
+        if (nx * nx + ny * ny < 1) {
+          if (nx * nx + ny * ny > 0.82) set(x, y, ink)
+          else set(x, y, shadeRGB([160, 160, 168], 1.1 - nx * 0.3))
+        }
+      }
+    }
+    // head
+    for (let y = 6; y < 22; y++) {
+      for (let x = 28; x < 46; x++) {
+        const nx = (x - 36) / 8
+        const ny = (y - 14) / 8
+        if (nx * nx + ny * ny < 1) {
+          if (nx * nx + ny * ny > 0.8) set(x, y, ink)
+          else set(x, y, shadeRGB([175, 175, 182], 1.15 - nx * 0.25))
+        }
+      }
+    }
+    // trunk
+    rect(set, 40, 18, 6, 14, ink)
+    rect(set, 41, 19, 4, 12, [150, 150, 158])
+    // ear
+    rect(set, 26, 8, 8, 10, ink)
+    rect(set, 27, 9, 6, 8, [140, 140, 150])
+    // eye
+    rect(set, 34, 12, 3, 3, ink)
+    set(35, 12, [255, 240, 200])
+    // legs
+    rect(set, 12, 34, 6, 8, ink)
+    rect(set, 13, 35, 4, 6, [130, 130, 140])
+    rect(set, 30, 34, 6, 8, ink)
+    rect(set, 31, 35, 4, 6, [130, 130, 140])
+  })
+
   paint(scene, 'art-enemy-barrel', 40, 48, (set) => {
     rect(set, 6, 44, 28, 3, [18, 12, 16], 125)
     rect(set, 10, 36, 6, 10, [70, 48, 32])

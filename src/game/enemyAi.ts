@@ -14,7 +14,7 @@ export type EnemyKind =
  * Round-1 visual species (must be visually distinct — not only tinted fish):
  * fish = 醃魚雜兵 chase/patrol；barrel = 木桶武者 hop/lunge
  */
-export type EnemySpecies = 'fish' | 'barrel'
+export type EnemySpecies = 'fish' | 'barrel' | 'elephant'
 
 /** Goemon cadence: patrol → detect → chase/hop → windup → lunge/charge → recover */
 export type EnemyState =
@@ -107,13 +107,22 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     chargePrefer: true,
     scaleMul: 1,
   },
+  elephant: {
+    tex: 'art-enemy-elephant',
+    label: '大象傀儡',
+    style: 'chase',
+    hopMul: 1,
+    chargePrefer: false,
+    scaleMul: 1.15,
+  },
 }
 
-/** Default species per AI role — Round 1 mix of fish + barrel */
+/** Default species — Pack3 mixes fish / barrel / elephant */
 export function defaultSpecies(kind: EnemyKind): EnemySpecies {
   if (kind === 'boss') return 'fish'
-  if (kind === 'ambusher' || kind === 'interrupter' || kind === 'guardian') return 'barrel'
-  return 'fish' // blocker / chaser
+  if (kind === 'guardian') return 'elephant'
+  if (kind === 'ambusher' || kind === 'interrupter') return 'barrel'
+  return 'fish'
 }
 
 /** All kinds walk/chase at ~0.3× 倫寶. */

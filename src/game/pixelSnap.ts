@@ -457,20 +457,24 @@ function bakeWarpFrame(
 }
 
 /**
- * 3 run frames: continuous vertical falloff so feet lead — whole sprite remapped.
+ * Walk frames with clear opposite foot poses (Pack3 G):
+ * even = left foot forward / right back；odd = right forward / left back.
+ * Full-body remap — no waist cut.
  */
 export function registerWalkCycle(scene: TexScene, baseKey: string, frames = WALK_FRAMES) {
   const packed = readBaseImageData(scene, baseKey)
   if (!packed) return
   const { w, h, base } = packed
-  const waist = Math.floor(h * 0.52)
-  // Max foot lead (px) per frame — plant / push / reach
-  const leads = [3, 5, 2]
+  const waist = Math.floor(h * 0.5)
+  const midX = w / 2
   for (let f = 0; f < frames; f++) {
-    const lead = leads[f % leads.length]!
+    // Alternate stride: + = left side of sprite pushes forward on even frames
+    const leftLead = f % 2 === 0 ? 5 : -4
+    const rightLead = f % 2 === 0 ? -4 : 5
     const out = bakeWarpFrame(base, w, h, (x, y) => {
-      const t = y <= waist ? 0 : (y - waist) / Math.max(1, h - 1 - waist)
-      // Sample from the left so feet appear further forward (sprite-right).
+      if (y <= waist) return { sx: x, sy: y }
+      const t = (y - waist) / Math.max(1, h - 1 - waist)
+      const lead = x < midX ? leftLead : rightLead
       const sx = x - Math.round(lead * t * t)
       return { sx, sy: y }
     })

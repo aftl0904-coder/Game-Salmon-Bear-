@@ -131,9 +131,12 @@ export class PatrolEnemy extends Enemy {
 
   override canHurtPlayer(): boolean {
     if (!this.active || this.fsm === 'DEAD' || this.fsm === 'HURT') return false
-    // Pack2 H: only hurt during active attack strike — no passive contact damage.
+    // Only during attack action (no passive bump) — late windup + full strike window.
     if (this.fsm !== 'ATTACK') return false
-    if (this.atkPhase === 'recover' || this.atkPhase === 'windup' || this.atkPhase === 'pause') return false
+    if (this.atkPhase === 'recover') return false
+    if (this.atkPhase === 'windup' || this.atkPhase === 'pause') {
+      return this.windup <= 120 && !this.hitThis
+    }
     if (this.atkPhase === 'strike' || this.atkPhase === 'charge') return !this.hitThis
     return false
   }
@@ -143,22 +146,28 @@ export class PatrolEnemy extends Enemy {
       this.applyPose()
       return
     }
-    if (isActorFrozen(this, this.scene.time.now)) {
-      this.setVelocity(0, 0)
-      this.applyPose()
-      this.syncWeapon()
-      return
-    }
     const st = this.effectiveStats()
     const sp = SPECIES_STATS[this.species]
     this.syncBossPhase()
     const mul = this.phaseMul()
+    // Timers always tick — actor freeze must not stall attack windup/strike.
     this.think = Math.max(0, this.think - dt)
     this.atkCd = Math.max(0, this.atkCd - dt)
     this.windup = Math.max(0, this.windup - dt)
     this.detectT = Math.max(0, this.detectT - dt)
     this.hopCd = Math.max(0, this.hopCd - dt)
     this.contactCd = Math.max(0, this.contactCd - dt)
+    if (isActorFrozen(this, this.scene.time.now)) {
+      this.setVelocity(0, 0)
+      if (this.fsm === 'ATTACK' && this.atkPhase === 'windup' && this.windup <= 0) {
+        this.atkPhase = 'strike'
+        this.hitThis = false
+        this.think = 320
+      }
+      this.applyPose()
+      this.syncWeapon()
+      return
+    }
     const target = pickTarget(this, ctx.boy, ctx.girl)
     const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y)
     const aggro = st.aggro * mul.aggro
@@ -262,7 +271,7 @@ export class PatrolEnemy extends Enemy {
     // Legacy pause/charge → treat as strike while walking
     if (this.atkPhase === 'pause' || this.atkPhase === 'charge') {
       this.atkPhase = 'strike'
-      this.think = 180
+      this.think = 320
       this.hitThis = false
       this.chargeDir = dir
     }
@@ -274,7 +283,7 @@ export class PatrolEnemy extends Enemy {
       if (this.windup <= 0) {
         this.atkPhase = 'strike'
         this.hitThis = false
-        this.think = 180
+        this.think = 320
         this.chargeDir = dir
         if (this.attackMode === 'projectile') this.hooks.spawnProjectile?.(this, dir)
       }

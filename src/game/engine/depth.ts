@@ -61,7 +61,7 @@ const ACTOR_SLOT: Record<ActorKind, number> = {
  * draw in front. Pass live `y` each update so jump arcs sort correctly.
  */
 export function actorDepth(kind: ActorKind, lane: number, y?: number): number {
-  const laneId = Math.max(0, Math.min(2, Math.round(lane))) as LaneId
+  const laneId = Math.max(0, Math.min(4, Math.round(lane))) as LaneId
   const feet = Math.round(y ?? LANE_Y[laneId])
   return laneId * 1000 + feet + ACTOR_SLOT[kind]
 }

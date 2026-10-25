@@ -1,24 +1,33 @@
-/** Side-view dual co-op lanes (上／中／下) — same X progress, different Y tracks. */
+/** Side-view dual co-op lanes — Pack3: 5 rows (上→下). */
 
 import { GROUND_Y } from './constants'
 
-export const LANE_COUNT = 3
+export const LANE_COUNT = 5
 
-/** Feet Y for 上=0／中=1／下=2 (classic beat-em-up tracks). */
-export const LANE_Y = [GROUND_Y - 36, GROUND_Y, GROUND_Y + 36] as const
+/**
+ * Feet Y for lanes 0..4 (top→bottom).
+ * Clear spacing so row swaps read; tied to lowered GROUND_Y.
+ */
+export const LANE_Y = [
+  GROUND_Y - 72,
+  GROUND_Y - 36,
+  GROUND_Y,
+  GROUND_Y + 36,
+  GROUND_Y + 72,
+] as const
 
-export const LANE_DEFAULT = 1 as LaneId
+export const LANE_DEFAULT = 2 as LaneId
 
-/** Same-lane hit / hurt: exact id match, or feet Y within this tolerance (jump arcs). */
-export const LANE_HIT_Y_TOL = 28
+/** Same-lane hit tolerance only used as Y fallback. */
+export const LANE_HIT_Y_TOL = 20
 
 /** Cooldown between discrete lane switches (ms). */
 export const LANE_SWITCH_MS = 140
 
 /** Soft lerp toward target lane Y while grounded (px/s). */
-export const LANE_SNAP_SPEED = 520
+export const LANE_SNAP_SPEED = 580
 
-export type LaneId = 0 | 1 | 2
+export type LaneId = 0 | 1 | 2 | 3 | 4
 
 export function clampLane(n: number): LaneId {
   return Math.max(0, Math.min(LANE_COUNT - 1, Math.round(n))) as LaneId
@@ -33,7 +42,7 @@ export function nearestLane(y: number): LaneId {
   let best: LaneId = LANE_DEFAULT
   let bestD = Infinity
   for (let i = 0; i < LANE_COUNT; i++) {
-    const d = Math.abs(y - LANE_Y[i])
+    const d = Math.abs(y - LANE_Y[i]!)
     if (d < bestD) {
       bestD = d
       best = i as LaneId
@@ -49,28 +58,21 @@ export function sameLaneId(a: number, b: number, tol = 0): boolean {
 type LaneActor = { lane?: number; y: number }
 
 /**
- * Hits connect only on shared lane (or overlapping Y while jumping).
- * Wrong lane = miss.
+ * Hits connect only on shared lane id — sprite height irrelevant (Pack3).
  */
-export function sameLane(a: LaneActor, b: LaneActor, yTol = LANE_HIT_Y_TOL): boolean {
-  if (a.lane !== undefined && b.lane !== undefined && sameLaneId(a.lane, b.lane)) return true
-  return Math.abs(a.y - b.y) <= yTol
+export function sameLane(a: LaneActor, b: LaneActor, _yTol = LANE_HIT_Y_TOL): boolean {
+  void _yTol
+  if (a.lane !== undefined && b.lane !== undefined) return sameLaneId(a.lane, b.lane)
+  return nearestLane(a.y) === nearestLane(b.y)
 }
 
-/**
- * Draw order: 下 in front of 中 in front of 上.
- * Prefer `actorDepth` from ./depth for heroes/enemies/pet — larger stride so
- * lane layers never collapse into prop/sign bands.
- */
 export function laneDepth(base: number, lane: LaneId): number {
-  return base + lane * 12
+  return base + lane * 10
 }
 
-/** Lowest walk surface — physical floor that catches hop landings. */
-export const LANE_FLOOR_Y = LANE_Y[LANE_COUNT - 1]
+export const LANE_FLOOR_Y = LANE_Y[LANE_COUNT - 1]!
 
-/** Top of the lane walk band (anything above is elevated platform territory). */
-export const LANE_BAND_TOP = LANE_Y[0] - 24
+export const LANE_BAND_TOP = LANE_Y[0]! - 28
 
 export function inLaneBand(y: number): boolean {
   return y >= LANE_BAND_TOP

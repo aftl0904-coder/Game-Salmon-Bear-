@@ -18,19 +18,20 @@ export function buildStageHud(
 ) {
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 40)
 
+  // Taller top bar so title text never clips (Pack3 C).
   if (scene.textures.exists('ui-hud-wood')) {
     for (let x = 32; x < 960; x += 64) {
-      root.add(scene.add.image(x, 28, 'ui-hud-wood').setAlpha(0.92))
+      root.add(scene.add.image(x, 34, 'ui-hud-wood').setScale(1, 1.35).setAlpha(0.92))
     }
   } else {
-    root.add(scene.add.rectangle(480, 28, 960, 56, 0x5a3820, 0.88).setOrigin(0.5))
+    root.add(scene.add.rectangle(480, 34, 960, 72, 0x5a3820, 0.88).setOrigin(0.5))
   }
   root.add(scene.add.rectangle(480, 2, 960, 3, 0xe8c878, 1).setOrigin(0.5))
-  root.add(scene.add.rectangle(480, 54, 960, 3, 0x8a5828, 1).setOrigin(0.5))
+  root.add(scene.add.rectangle(480, 68, 960, 3, 0x8a5828, 1).setOrigin(0.5))
 
   const bannerKey = scene.textures.exists('ui-stage-banner') ? 'ui-stage-banner' : 'ui-scroll'
   root.add(
-    scene.add.image(480, 26, bannerKey).setScale(bannerKey === 'ui-stage-banner' ? 1.05 : 1.0),
+    scene.add.image(480, 30, bannerKey).setScale(bannerKey === 'ui-stage-banner' ? 1.15 : 1.2, 1.35),
   )
   root.add(
     scene.add

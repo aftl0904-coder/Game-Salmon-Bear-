@@ -3,11 +3,15 @@
 export const WORLD_W = 3800
 export const WORLD_H = 540
 
-/** Shared mid-lane walk surface (feet origin). Side-view dual uses LANE_Y[3]. */
-export const GROUND_Y = 400
+/** Shared mid-lane walk surface (feet origin). Lowered for more playable ground (Pack3). */
+export const GROUND_Y = 428
 
-/** Pack2: heroes have 7 HP; 1 enemy hit = −1. */
+/** Pack2/3: heroes have 7 HP; 1 enemy hit = −1. */
 export const MAX_HP = 7
+/** 噗噗反擊半傷 */
+export const BEAR_ASSIST_DMG = 1
+/** 10 金幣自動換 +1 HP（雙方） */
+export const COINS_PER_HP = 10
 export const BOY_SPEED = 280
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（慢行進攻） */
