@@ -69,45 +69,15 @@ export class MainMenuScene extends Phaser.Scene {
 
   private buildAtmosphere(width: number, height: number) {
     const g = this.add.graphics().setDepth(0)
-    g.fillGradientStyle(0x7ec4e8, 0x7ec4e8, 0xffe2b0, 0xffd090, 1)
+    g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    g.fillStyle(0xfff4c8, 0.55)
-    g.fillCircle(width * 0.86, 64, 78)
-    g.fillStyle(0xffe08a, 1)
-    g.fillCircle(width * 0.86, 64, 30)
-
-    if (this.textures.exists('bg-sky')) {
-      this.add.tileSprite(width / 2, 120, width, 240, 'bg-sky').setDepth(0).setAlpha(0.45)
-    }
-    if (this.textures.exists('bg-horizon')) {
-      this.add.tileSprite(width / 2, 268, width, 32, 'bg-horizon').setDepth(1).setAlpha(0.5)
-    }
-    const clouds: Array<[string, number, number, number, boolean?]> = [
-      ['lm-cloud-1', width * 0.16, 46, 1.3],
-      ['lm-cloud-2', width * 0.48, 34, 1.15, true],
-      ['lm-cloud-3', width * 0.78, 52, 1.2],
-      ['lm-cloud-1', width * 0.92, 40, 0.95, true],
-    ]
-    for (const [key, x, y, s, flip] of clouds) {
-      if (!this.textures.exists(key)) continue
-      const c = this.add.image(x, y, key).setDepth(1).setScale(s).setAlpha(0.88).setFlipX(!!flip)
-      this.tweens.add({ targets: c, x: x + 28, duration: 26000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
-    }
-    const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.18, 300, 2.5],
-      ['lm-mount-1', width * 0.52, 310, 2.3, true],
-      ['lm-mount-4', width * 0.88, 318, 2.4],
-    ]
-    for (const [key, x, y, s, flip] of mounts) {
-      if (!this.textures.exists(key)) continue
+    // Pretty wallpaper 貼圖 — skip hand-built mountains/clouds
+    if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(x, y, key)
-        .setOrigin(0.5, 1)
-        .setDepth(2)
-        .setScale(s)
-        .setAlpha(0.5)
-        .setTint(0xc8d8e8)
-        .setFlipX(!!flip)
+        .image(width / 2, height * 0.4, 'bg-wallpaper')
+        .setDepth(0)
+        .setDisplaySize(width * 1.1, height * 0.9)
+        .setAlpha(0.98)
     }
 
     if (this.textures.exists('water-deep')) {

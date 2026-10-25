@@ -1599,25 +1599,13 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts = []
 
     if (this.textures.exists('bg-wallpaper')) {
-      // Single pretty wallpaper 貼圖 — light scroll only (no hand-built mountains).
+      // Full pretty wallpaper 貼圖 — covers sky/mountains; road stays separate.
       this.add
-        .image(480, 210, 'bg-wallpaper')
-        .setScrollFactor(0.03, 0)
+        .image(480, 200, 'bg-wallpaper')
+        .setScrollFactor(0.025, 0)
         .setDepth(DEPTH.SKY_BAND)
-        .setDisplaySize(1100, 460)
-        .setAlpha(0.96)
-      if (this.textures.exists('bg-sky-wallpaper')) {
-        this.add
-          .image(480, 88, 'bg-sky-wallpaper')
-          .setScrollFactor(0)
-          .setDepth(DEPTH.CLOUD)
-          .setDisplaySize(980, 210)
-          .setAlpha(0.5)
-      }
-      this.placeBgDecor(stageX(700), 'prop-tree3d', 1.0, true)
-      this.placeBgDecor(stageX(1400), 'prop-tree3d', 1.1)
-      this.placeBgDecor(stageX(2500), 'prop-tree3d', 1.05)
-      this.placeBgDecor(stageX(3800), 'prop-tree3d', 1.1, true)
+        .setDisplaySize(1200, 480)
+        .setAlpha(1)
       this.placeCampsite(stageX(520))
       this.placeCampsite(stageX(2100))
       this.placeCampsite(stageX(4200))

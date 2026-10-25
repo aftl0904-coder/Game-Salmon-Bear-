@@ -13,41 +13,14 @@ export class LogoScene extends Phaser.Scene {
     this.cameras.main.fadeIn(420, 50, 90, 130)
 
     const g = this.add.graphics()
-    g.fillGradientStyle(0x7ec8f0, 0x7ec8f0, 0xffe6b0, 0xffd090, 1)
+    g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    g.fillStyle(0xfff0c0, 0.55)
-    g.fillCircle(width * 0.16, 68, 60)
-    g.fillStyle(0xffe08a, 1)
-    g.fillCircle(width * 0.16, 68, 28)
-
-    // Sparse landmarks only — soft base already drawn above; no tiled mountain strips.
-    if (this.textures.exists('bg-horizon')) {
-      this.add.tileSprite(width / 2, 250, width, 32, 'bg-horizon').setAlpha(0.5)
-    }
-    const clouds: Array<[string, number, number, number, boolean?]> = [
-      ['lm-cloud-1', width * 0.18, 48, 1.2],
-      ['lm-cloud-2', width * 0.52, 36, 1.1, true],
-      ['lm-cloud-3', width * 0.82, 54, 1.25],
-    ]
-    for (const [key, x, y, s, flip] of clouds) {
-      if (!this.textures.exists(key)) continue
-      const c = this.add.image(x, y, key).setScale(s).setAlpha(0.88).setFlipX(!!flip)
-      this.tweens.add({ targets: c, x: x + 24, duration: 22000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
-    }
-    const mounts: Array<[string, number, number, number, boolean?]> = [
-      ['lm-mount-2', width * 0.22, 300, 2.4],
-      ['lm-mount-1', width * 0.75, 310, 2.2, true],
-      ['lm-mount-3', width * 0.5, 318, 2.0],
-    ]
-    for (const [key, x, y, s, flip] of mounts) {
-      if (!this.textures.exists(key)) continue
+    // Pretty wallpaper 貼圖 — no hand-built mountains/clouds
+    if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(x, y, key)
-        .setOrigin(0.5, 1)
-        .setScale(s)
-        .setAlpha(0.5)
-        .setTint(0xc8d8e8)
-        .setFlipX(!!flip)
+        .image(width / 2, height * 0.38, 'bg-wallpaper')
+        .setDisplaySize(width * 1.08, height * 0.85)
+        .setAlpha(0.98)
     }
 
     if (this.textures.exists('ui-noren')) {
