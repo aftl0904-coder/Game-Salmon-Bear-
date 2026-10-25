@@ -4,65 +4,275 @@
     "C1": {
       "title": "第 1 關前・野餐日",
       "steps": [
-        { "bg": "day" },
-        { "music": "title" },
-        { "prop": "cart", "kind": "cart", "x": 560 },
-        { "prop": "picnic", "kind": "picnic", "x": 300 },
-        { "actor": "lunbo", "x": 244 },
-        { "actor": "pupu", "x": 306 },
-        { "actor": "kibobo", "x": 372, "flip": true },
-        { "wait": 700 },
-        { "say": "narr", "text": "野餐日。百畝樹林，天氣好好。" },
-        { "say": "kibobo", "text": "噗噗，今日有你最鍾意嘅嘢！", "face": 1 },
-        { "prop": "jar", "kind": "jar-fake", "x": 336, "drop": true },
-        { "say": "lunbo", "text": "咦？邊個放低咗呢罐蜂蜜？" },
-        { "hop": "pupu" },
-        { "say": "pupu", "text": "噗！噗噗！", "face": 1 },
-        { "move": "pupu", "x": 330, "ms": 300 },
-        { "sfx": "gulp" },
-        { "remove": "jar" },
-        { "wait": 600 },
-        { "grey": "pupu", "ms": 2000 },
-        { "droop": "pupu" },
-        { "say": "kibobo", "text": "噗噗……？你點解變晒灰色？", "face": 2 },
-        { "music": "stop" },
-        { "fx": "shadow" },
-        { "say": "narr", "text": "一個三角形嘅影，喺森林上面掠過。" },
-        { "say": "mama", "text": "唔好再俾佢食！", "face": 2 },
-        { "say": "mama", "text": "嗰啲唔係真蜂蜜，係假蜜。", "face": 0 },
-        { "say": "mama", "text": "要五罐真蜂蜜，先救得返佢。" },
-        { "say": "lunbo", "text": "五罐……喺邊度？", "face": 2 },
-        { "say": "mama", "text": "俾三角組織搶晒。第一罐喺樹頂蜂巢。" },
-        { "say": "kibobo", "text": "噗噗，等我哋，好快返嚟！" },
-        { "card": "第一關", "sub": "百畝樹林" }
+        {
+          "bg": "day"
+        },
+        {
+          "music": "title"
+        },
+        {
+          "prop": "cart",
+          "kind": "cart",
+          "x": 560
+        },
+        {
+          "prop": "picnic",
+          "kind": "picnic",
+          "x": 300
+        },
+        {
+          "actor": "lunbo",
+          "x": 244
+        },
+        {
+          "actor": "pupu",
+          "x": 306
+        },
+        {
+          "actor": "kibobo",
+          "x": 372,
+          "flip": true
+        },
+        {
+          "wait": 700
+        },
+        {
+          "still": "c1-picnic"
+        },
+        {
+          "say": "narr",
+          "text": "野餐日。百畝樹林，天氣好好。"
+        },
+        {
+          "still": null
+        },
+        {
+          "say": "kibobo",
+          "text": "噗噗，今日有你最鍾意嘅嘢！",
+          "face": 1
+        },
+        {
+          "prop": "jar",
+          "kind": "jar-fake",
+          "x": 336,
+          "drop": true
+        },
+        {
+          "say": "lunbo",
+          "text": "咦？邊個放低咗呢罐蜂蜜？"
+        },
+        {
+          "hop": "pupu"
+        },
+        {
+          "say": "pupu",
+          "text": "噗！噗噗！",
+          "face": 1
+        },
+        {
+          "move": "pupu",
+          "x": 330,
+          "ms": 300
+        },
+        {
+          "sfx": "gulp"
+        },
+        {
+          "remove": "jar"
+        },
+        {
+          "wait": 600
+        },
+        {
+          "grey": "pupu",
+          "ms": 2000
+        },
+        {
+          "droop": "pupu"
+        },
+        {
+          "say": "kibobo",
+          "text": "噗噗……？你點解變晒灰色？",
+          "face": 2
+        },
+        {
+          "music": "stop"
+        },
+        {
+          "fx": "shadow"
+        },
+        {
+          "still": "c1-hollow"
+        },
+        {
+          "say": "narr",
+          "text": "一個三角形嘅影，喺森林上面掠過。"
+        },
+        {
+          "still": null
+        },
+        {
+          "actor": "mama",
+          "x": 610,
+          "flip": true
+        },
+        {
+          "move": "mama",
+          "x": 450,
+          "ms": 900
+        },
+        {
+          "say": "mama",
+          "text": "唔好再俾佢食！",
+          "face": 2
+        },
+        {
+          "still": "c1-mama"
+        },
+        {
+          "say": "mama",
+          "text": "嗰啲唔係真蜂蜜，係假蜜。",
+          "face": 0
+        },
+        {
+          "say": "mama",
+          "text": "要五罐真蜂蜜，先救得返佢。"
+        },
+        {
+          "say": "lunbo",
+          "text": "五罐……喺邊度？",
+          "face": 2
+        },
+        {
+          "say": "mama",
+          "text": "俾三角組織搶晒。第一罐喺樹頂蜂巢。"
+        },
+        {
+          "still": null
+        },
+        {
+          "say": "kibobo",
+          "text": "噗噗，等我哋，好快返嚟！"
+        },
+        {
+          "card": "第一關",
+          "sub": "百畝樹林"
+        }
       ]
     },
     "C2": {
       "title": "第 1 關後・第一罐",
       "steps": [
-        { "bg": "day" },
-        { "music": "stop" },
-        { "prop": "picnic", "kind": "picnic", "x": 300 },
-        { "actor": "lunbo", "x": 244 },
-        { "actor": "pupu", "x": 306, "grey": true },
-        { "actor": "kibobo", "x": 372, "flip": true },
-        { "wait": 500 },
-        { "prop": "jar", "kind": "jar-real", "x": 330, "drop": true },
-        { "sfx": "sparkle" },
-        { "say": "kibobo", "text": "第一罐真蜂蜜，攞返嚟喇！", "face": 1 },
-        { "move": "pupu", "x": 326, "ms": 400 },
-        { "sfx": "gulp" },
-        { "remove": "jar" },
-        { "colour": "pupu", "amount": 0.25, "ms": 1400 },
-        { "ear": "pupu" },
-        { "say": "lunbo", "text": "佢隻耳仔……郁咗！", "face": 2 },
-        { "say": "pupu", "text": "……噗。" },
-        { "prop": "note", "kind": "note", "x": 420, "drop": true },
-        { "say": "narr", "text": "罐底貼住一張便條：" },
-        { "say": "narr", "text": "「夏蜜已押——女王蜂・蜜樹丘」" },
-        { "say": "mama", "text": "鎖匙俾你哋，騎單車去快啲。", "face": 1 },
-        { "say": "lunbo", "text": "下一站，蜜樹丘。" },
-        { "card": "第一關・完", "sub": "下一站：蜜樹丘" }
+        {
+          "bg": "day"
+        },
+        {
+          "music": "stop"
+        },
+        {
+          "prop": "picnic",
+          "kind": "picnic",
+          "x": 300
+        },
+        {
+          "actor": "lunbo",
+          "x": 244
+        },
+        {
+          "actor": "pupu",
+          "x": 306,
+          "grey": true
+        },
+        {
+          "actor": "kibobo",
+          "x": 372,
+          "flip": true
+        },
+        {
+          "actor": "mama",
+          "x": 460,
+          "flip": true
+        },
+        {
+          "wait": 500
+        },
+        {
+          "prop": "jar",
+          "kind": "jar-real",
+          "x": 330,
+          "drop": true
+        },
+        {
+          "sfx": "sparkle"
+        },
+        {
+          "say": "kibobo",
+          "text": "第一罐真蜂蜜，攞返嚟喇！",
+          "face": 1
+        },
+        {
+          "move": "pupu",
+          "x": 326,
+          "ms": 400
+        },
+        {
+          "sfx": "gulp"
+        },
+        {
+          "remove": "jar"
+        },
+        {
+          "colour": "pupu",
+          "amount": 0.25,
+          "ms": 1400
+        },
+        {
+          "ear": "pupu"
+        },
+        {
+          "say": "lunbo",
+          "text": "佢隻耳仔……郁咗！",
+          "face": 2
+        },
+        {
+          "say": "pupu",
+          "text": "……噗。"
+        },
+        {
+          "prop": "note",
+          "kind": "note",
+          "x": 420,
+          "drop": true
+        },
+        {
+          "say": "narr",
+          "text": "罐底貼住一張便條："
+        },
+        {
+          "still": "c2-note",
+          "text": "夏蜜已押——\n女王蜂・蜜樹丘"
+        },
+        {
+          "say": "lunbo",
+          "text": "女王蜂……蜜樹丘？",
+          "face": 2
+        },
+        {
+          "still": null
+        },
+        {
+          "say": "mama",
+          "text": "鎖匙俾你哋，騎單車去快啲。",
+          "face": 1
+        },
+        {
+          "say": "lunbo",
+          "text": "下一站，蜜樹丘。"
+        },
+        {
+          "card": "第一關・完",
+          "sub": "下一站：蜜樹丘"
+        }
       ]
     }
   }

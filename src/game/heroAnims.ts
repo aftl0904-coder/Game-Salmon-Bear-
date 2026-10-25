@@ -2,6 +2,9 @@ import Phaser from 'phaser'
 import lunboMeta from '../../data/anim/lunbo.json'
 import kiboboMeta from '../../data/anim/kibobo.json'
 import pupuMeta from '../../data/anim/pupu.json'
+import fishMeta from '../../data/anim/fish.json'
+import hatsoldierMeta from '../../data/anim/hatsoldier.json'
+import mechpigMeta from '../../data/anim/mechpig.json'
 
 /**
  * Frame-by-frame hero / companion animation from Cursor's action sheets
@@ -11,7 +14,7 @@ import pupuMeta from '../../data/anim/pupu.json'
  * Animation keys: `<set>-<anim>` e.g. `lunbo-walk`, `kibobo-slash2`, `pupu-tackle`.
  */
 
-export type AnimSetId = 'lunbo' | 'kibobo' | 'pupu'
+export type AnimSetId = 'lunbo' | 'kibobo' | 'pupu' | 'fish' | 'hatsoldier' | 'mechpig'
 type Meta = {
   frameWidth: number
   frameHeight: number
@@ -22,6 +25,16 @@ export const ANIM_SETS: Record<AnimSetId, Meta> = {
   lunbo: lunboMeta as Meta,
   kibobo: kiboboMeta as Meta,
   pupu: pupuMeta as Meta,
+  fish: fishMeta as Meta,
+  hatsoldier: hatsoldierMeta as Meta,
+  mechpig: mechpigMeta as Meta,
+}
+
+/** Enemy species (enemyAi) → animation set. */
+export const SPECIES_ANIM: Record<string, AnimSetId> = {
+  fish: 'fish',
+  barrel: 'hatsoldier',
+  elephant: 'mechpig',
 }
 
 /** Old single-image keys → the set whose idle frame replaces them (menus, HUD, clear card…). */
@@ -41,7 +54,14 @@ export function portraitTex(id: string) {
   return `portrait-${id}`
 }
 
+/** Story stills used so far (public/art/story, 640×360). Later stages add theirs here. */
+export const STORY_STILLS = ['cover', 'c1-picnic', 'c1-hollow', 'c1-mama', 'c2-note', 'credits-bg'] as const
+export function stillTex(id: string) {
+  return `story-${id}`
+}
+
 export function preloadHeroAnims(scene: Phaser.Scene) {
+  for (const id of STORY_STILLS) scene.load.image(stillTex(id), `/art/story/${id}.png`)
   for (const id of PORTRAITS) {
     scene.load.spritesheet(portraitTex(id), `/art/portraits/${id}.png`, { frameWidth: 72, frameHeight: 72 })
   }
@@ -54,7 +74,8 @@ export function preloadHeroAnims(scene: Phaser.Scene) {
 }
 
 export function hasAnimSet(scene: Phaser.Scene, set: AnimSetId) {
-  return scene.textures.exists(animTex(set)) && scene.anims.exists(`${set}-idle`)
+  const first = Object.keys(ANIM_SETS[set].anims)[0]
+  return scene.textures.exists(animTex(set)) && !!first && scene.anims.exists(`${set}-${first}`)
 }
 
 /** Register every animation + replace the legacy still textures with the new idle frame. */

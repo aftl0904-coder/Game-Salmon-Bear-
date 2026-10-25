@@ -1,0 +1,43 @@
+{
+ "frameWidth": 86,
+ "frameHeight": 66,
+ "anchorX": 43,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 7,
+   "loop": true
+  },
+  "windup": {
+   "start": 4,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "lunge": {
+   "start": 7,
+   "count": 3,
+   "fps": 14,
+   "loop": true
+  },
+  "opening": {
+   "start": 10,
+   "count": 3,
+   "fps": 8,
+   "loop": true
+  },
+  "block": {
+   "start": 13,
+   "count": 2,
+   "fps": 14,
+   "loop": false
+  },
+  "die": {
+   "start": 15,
+   "count": 5,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

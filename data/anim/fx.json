@@ -1,0 +1,92 @@
+{
+ "hit-spark": {
+  "frameWidth": 36,
+  "frameHeight": 31,
+  "count": 4,
+  "fps": 24
+ },
+ "enemy-poof": {
+  "frameWidth": 54,
+  "frameHeight": 44,
+  "count": 5,
+  "fps": 16
+ },
+ "roe-splash": {
+  "frameWidth": 26,
+  "frameHeight": 28,
+  "count": 4,
+  "fps": 22
+ },
+ "muzzle-flash": {
+  "frameWidth": 24,
+  "frameHeight": 24,
+  "count": 3,
+  "fps": 30
+ },
+ "slash-arc-1": {
+  "frameWidth": 72,
+  "frameHeight": 71,
+  "count": 4,
+  "fps": 30
+ },
+ "slash-arc-2": {
+  "frameWidth": 72,
+  "frameHeight": 60,
+  "count": 4,
+  "fps": 30
+ },
+ "slash-arc-3": {
+  "frameWidth": 80,
+  "frameHeight": 82,
+  "count": 5,
+  "fps": 30
+ },
+ "lantern-break": {
+  "frameWidth": 44,
+  "frameHeight": 52,
+  "count": 4,
+  "fps": 16
+ },
+ "pot-break": {
+  "frameWidth": 44,
+  "frameHeight": 40,
+  "count": 4,
+  "fps": 16
+ },
+ "coin-spin": {
+  "frameWidth": 17,
+  "frameHeight": 18,
+  "count": 4,
+  "fps": 12
+ },
+ "power-up": {
+  "frameWidth": 58,
+  "frameHeight": 47,
+  "count": 4,
+  "fps": 16
+ },
+ "dust-step": {
+  "frameWidth": 20,
+  "frameHeight": 8,
+  "count": 3,
+  "fps": 18
+ },
+ "land-dust": {
+  "frameWidth": 36,
+  "frameHeight": 25,
+  "count": 4,
+  "fps": 18
+ },
+ "honey-sparkle": {
+  "frameWidth": 28,
+  "frameHeight": 24,
+  "count": 4,
+  "fps": 12
+ },
+ "armour-clank": {
+  "frameWidth": 32,
+  "frameHeight": 29,
+  "count": 3,
+  "fps": 24
+ }
+}

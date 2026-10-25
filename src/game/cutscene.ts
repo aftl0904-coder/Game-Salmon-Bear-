@@ -5,7 +5,7 @@ import { GAME_W, GAME_H } from './engine/constants'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
-import { animTex, hasAnimSet, portraitTex, type AnimSetId } from './heroAnims'
+import { animTex, hasAnimSet, portraitTex, stillTex, type AnimSetId } from './heroAnims'
 
 /**
  * In-engine cutscene player (SNES style): a small stage in the top two thirds,
@@ -30,6 +30,8 @@ type Step =
   | { fx: 'shadow' | 'flash' | 'shake' }
   | { sfx: 'gulp' | 'sparkle' | 'dread' | 'coin' }
   | { card: string; sub?: string }
+  /** Full-screen illustration over the stage (dialogue stays on top). `null` fades it out. */
+  | { still: string | null; text?: string }
 
 type Scene = { title: string; steps: Step[] }
 const STORY = storyRaw as unknown as { scenes: Record<string, Scene> }
@@ -43,7 +45,7 @@ const CAST: Record<string, CastEntry> = {
   lunbo: { name: '倫寶', set: 'lunbo', tex: 'art-salmon', portrait: 'lunbo', pitch: 300, color: '#ffb070' },
   kibobo: { name: '琪寶寶', set: 'kibobo', tex: 'art-girl', portrait: 'kibobo', pitch: 560, color: '#ffd0e0' },
   pupu: { name: '噗噗', set: 'pupu', tex: 'art-bear', portrait: 'pupu', pitch: 760, color: '#ffe08a' },
-  mama: { name: '咖啡媽媽', set: null, tex: null, portrait: 'coffee-mama', pitch: 440, color: '#b0e0d0' },
+  mama: { name: '咖啡媽媽', set: null, tex: 'cs-mama', portrait: 'coffee-mama', pitch: 440, color: '#b0e0d0' },
 }
 
 const PROP_TEX: Record<string, string> = {
@@ -87,7 +89,9 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   const actorLayer = scene.add.container(0, 0)
   const tint = scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 0).setOrigin(0)
   const fxLayer = scene.add.container(0, 0)
-  root.add([propLayer, actorLayer, tint, fxLayer])
+  const stillLayer = scene.add.container(0, 0)
+  root.add([propLayer, actorLayer, tint, fxLayer, stillLayer])
+  let still: Phaser.GameObjects.Container | null = null
 
   // ── Dialogue box ───────────────────────────────────────────────────────
   const box = scene.add.rectangle(8, BOX_Y, GAME_W - 16, GAME_H - BOX_Y - 8, 0x1a1210, 0.94).setOrigin(0).setStrokeStyle(2, 0xe0b86a)
@@ -329,6 +333,28 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       }
     } else if ('sfx' in s) {
       SFX[s.sfx]()
+    } else if ('still' in s) {
+      if (still) {
+        const old = still
+        still = null
+        await tween({ targets: old, alpha: 0, duration: 350 })
+        old.destroy()
+      }
+      if (s.still && scene.textures.exists(stillTex(s.still))) {
+        const c = scene.add.container(0, 0).setAlpha(0)
+        c.add(scene.add.image(GAME_W / 2, GAME_H / 2, stillTex(s.still)))
+        if (s.text) {
+          // Words written on the illustration (e.g. the note) — never baked into the art.
+          c.add(
+            scene.add
+              .text(GAME_W / 2, GAME_H / 2 - 8, s.text, { fontFamily: FONT_UI, fontSize: '20px', color: '#3a2414', align: 'center', lineSpacing: 10 })
+              .setOrigin(0.5),
+          )
+        }
+        stillLayer.add(c)
+        still = c
+        await tween({ targets: c, alpha: 1, duration: 450 })
+      }
     } else if ('card' in s) {
       dialog.setVisible(false)
       const black = scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 0).setOrigin(0)
