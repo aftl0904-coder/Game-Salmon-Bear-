@@ -394,7 +394,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private goMenu() {
+    try {
+      if (this.physics?.world) this.physics.resume()
+    } catch {
+      /* world may already be torn down */
+    }
+    this.registry.set('winScreenShown', false)
     this.stopUi()
+    // From play: start('menu') shuts play down and boots cast select.
+    // Do NOT stop('play') first — that can abort the transition mid-callback.
     this.scene.start('menu')
   }
 
@@ -460,7 +468,16 @@ export class GameScene extends Phaser.Scene {
 
     if (this.ended) {
       if (this.awaitingContinue && this.coinJust()) this.insertCoinContinue()
-      else if (Phaser.Input.Keyboard.JustDown(this.keyR)) this.goMenu()
+      else if (
+        this.registry.get('winScreenShown') &&
+        (Phaser.Input.Keyboard.JustDown(this.keyR) ||
+          Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
+          Phaser.Input.Keyboard.JustDown(this.keySpace))
+      ) {
+        this.goMenu()
+      } else if (Phaser.Input.Keyboard.JustDown(this.keyR)) {
+        this.goMenu()
+      }
       this.debugOverlay.draw({
         heroes: [this.boy, this.girl].filter(Boolean) as Hero[],
         enemies: (this.enemies?.getChildren() ?? []) as Creep[],
@@ -1067,10 +1084,13 @@ export class GameScene extends Phaser.Scene {
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (!sameLane(h, pe)) return
-    // Elephant trunk strike: allow hit if within extended nose reach (0.7× body).
+    // Elephant nose strike: hit if within 1.5× body length forward.
     if (pe.species === 'elephant' && pe.fsm === 'ATTACK' && (pe.atkPhase === 'strike' || pe.atkPhase === 'charge')) {
-      const reach = Math.max(40, pe.displayWidth) * 0.7 + 28
-      if (Math.abs(h.x - pe.x) > reach) return
+      const reach = Math.max(56, pe.displayWidth) * 1.5
+      const face = pe.flipX ? -1 : 1
+      const dx = h.x - pe.x
+      // Must be in front of the trunk and inside reach.
+      if (Math.sign(dx) !== face || Math.abs(dx) > reach) return
     }
     if (pe.fsm === 'ATTACK') pe.hitThis = true
     else pe.contactCd = 650
@@ -1982,9 +2002,8 @@ export class GameScene extends Phaser.Scene {
     )
 
     const btnBg = this.add
-      .rectangle(0, 182, 300, 52, 0xe07a4f, 1)
+      .rectangle(0, 182, 320, 56, 0xe07a4f, 1)
       .setStrokeStyle(3, 0xffe08a)
-      .setInteractive({ useHandCursor: true })
     const btnTx = this.add
       .text(0, 182, '回角色選擇', {
         fontFamily: 'Noto Sans TC, sans-serif',
@@ -1995,16 +2014,33 @@ export class GameScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
     overlay.add([btnBg, btnTx])
+    // Hit target after container add — more reliable than pre-add interactive.
+    btnBg.setInteractive({ useHandCursor: true })
+    btnTx.setInteractive({ useHandCursor: true })
+    let left = false
     const toSelect = () => {
+      if (left) return
+      left = true
       btnBg.disableInteractive()
-      this.registry.set('winScreenShown', false)
+      btnTx.disableInteractive()
       this.goMenu()
     }
     btnBg.on('pointerover', () => btnBg.setFillStyle(0xf09060))
     btnBg.on('pointerout', () => btnBg.setFillStyle(0xe07a4f))
-    btnBg.on('pointerdown', toSelect)
-    this.input.keyboard?.once('keydown-ENTER', toSelect)
-    this.input.keyboard?.once('keydown-SPACE', toSelect)
+    btnBg.on('pointerup', toSelect)
+    btnTx.on('pointerup', toSelect)
+    // Also accept click anywhere on the lower third of the panel as fallback.
+    const hitPad = this.add.rectangle(0, 182, 640, 90, 0x000000, 0.001).setInteractive({ useHandCursor: true })
+    overlay.add(hitPad)
+    hitPad.on('pointerup', toSelect)
+    this.input.keyboard?.on('keydown-ENTER', toSelect)
+    this.input.keyboard?.on('keydown-SPACE', toSelect)
+    this.input.keyboard?.on('keydown-R', toSelect)
+    this.events.once('shutdown', () => {
+      this.input.keyboard?.off('keydown-ENTER', toSelect)
+      this.input.keyboard?.off('keydown-SPACE', toSelect)
+      this.input.keyboard?.off('keydown-R', toSelect)
+    })
   }
 
   private lose(msg: string) {

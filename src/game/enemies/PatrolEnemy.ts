@@ -85,9 +85,12 @@ export class PatrolEnemy extends Enemy {
     e.baseScale = st.scale * sp.scaleMul
     e.detectRadius = st.detect
     e.aggroRadius = st.aggro
-    // Elephant trunk strike reaches ~0.7× body length further.
-    e.meleeRadius = spKey === 'elephant' ? Math.round(st.melee * 1.7) : st.melee
+    // Elephant nose hit range ≈ 1.5× own body length (fighter-forward extend).
+    const bodyW = 56 * e.baseScale
+    e.meleeRadius =
+      spKey === 'elephant' ? Math.round(Math.max(st.melee * 2.4, bodyW * 1.5)) : st.melee
     e.attackMode = 'melee'
+    e.setData('spdMul', sp.spdMul ?? 1)
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
     e.setCollideWorldBounds(true)
@@ -184,8 +187,9 @@ export class PatrolEnemy extends Enemy {
     const target = pickTarget(this, ctx.boy, ctx.girl)
     const dist = Phaser.Math.Distance.Between(this.x, this.y, target.x, target.y)
     const aggro = st.aggro * mul.aggro
-    const melee = st.melee
-    const spd = st.spd * mul.spd
+    const spMul = (this.getData('spdMul') as number) || sp.spdMul || 1
+    const melee = this.species === 'elephant' ? this.meleeRadius : st.melee
+    const spd = st.spd * mul.spd * spMul
     const body = this.body as Phaser.Physics.Arcade.Body | null
     if (!body) return
 
@@ -446,24 +450,25 @@ export class PatrolEnemy extends Enemy {
     const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
     const trunk = !!w.getData('isTrunk') || this.species === 'elephant'
     if (trunk) {
-      // 2-frame nose: curled (0) → extended (1) ~0.7× body length
-      const bodyLen = Math.max(48, this.displayWidth)
-      const reach = bodyLen * 0.7
+      // Nose action frames: curl → thrust extend 1.5× body (fighter forward).
+      const bodyLen = Math.max(56, this.displayWidth)
+      const reach = bodyLen * 1.5
       if (wind) {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
-        w.setPosition(this.x + face * 14, this.y - 30)
-        w.setScale(1.1)
-        w.setAngle(face * -25)
+        w.setPosition(this.x + face * 16, this.y - 32)
+        w.setScale(1.25)
+        w.setAngle(face * -40)
       } else if (strike) {
         if (this.scene.textures.exists('fx-elephant-trunk-1')) w.setTexture('fx-elephant-trunk-1')
-        w.setPosition(this.x + face * (22 + reach * 0.35), this.y - 18)
-        w.setScale(1.25)
-        w.setAngle(face * 5)
+        // Tip sits ~1.5 body lengths ahead of feet.
+        w.setPosition(this.x + face * (bodyLen * 0.55 + reach * 0.45), this.y - 20)
+        w.setScale(1.55)
+        w.setAngle(face * 2)
       } else {
         if (this.scene.textures.exists('fx-elephant-trunk-0')) w.setTexture('fx-elephant-trunk-0')
-        w.setPosition(this.x + face * 18, this.y - 18)
-        w.setScale(0.95)
-        w.setAngle(face * 20)
+        w.setPosition(this.x + face * 20, this.y - 20)
+        w.setScale(1.05)
+        w.setAngle(face * 18)
       }
       w.setFlipX(this.flipX)
       w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)

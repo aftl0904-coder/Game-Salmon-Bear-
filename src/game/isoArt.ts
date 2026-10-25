@@ -393,92 +393,102 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
-  // Bad-guy elephant puppet — fish-style ink silhouette, stripes, angry face, contact shadow.
+  // Evil elephant puppet — darker hide, red eyes, horns, spikes, heavy shadow.
   paint(scene, 'art-enemy-elephant', 56, 52, (set) => {
-    const ink: RGB = [14, 8, 12]
-    const hide: RGB = [92, 78, 108]
-    const hideL: RGB = [130, 110, 145]
-    const hideD: RGB = [58, 48, 72]
-    const stripe: RGB = [210, 48, 62]
-    // ground shadow
-    rect(set, 8, 48, 40, 3, ink, 140)
-    // body mass
+    const ink: RGB = [10, 4, 8]
+    const hide: RGB = [62, 42, 72]
+    const hideL: RGB = [95, 70, 105]
+    const hideD: RGB = [38, 24, 48]
+    const stripe: RGB = [190, 28, 48]
+    const glow: RGB = [255, 40, 30]
+    rect(set, 6, 48, 44, 3, ink, 155)
     for (let y = 16; y < 46; y++) {
       for (let x = 6; x < 42; x++) {
         const nx = (x - 24) / 17
         const ny = (y - 30) / 15
         if (nx * nx + ny * ny < 1) {
           if (nx * nx + ny * ny > 0.86) set(x, y, ink)
-          else set(x, y, shadeRGB(hide, 1.12 - nx * 0.35))
+          else set(x, y, shadeRGB(hide, 1.1 - nx * 0.4))
         }
       }
     }
-    // villain stripes / pattern
-    for (const y of [22, 28, 34]) {
-      rect(set, 12, y, 20, 2, stripe)
-      rect(set, 12, y, 20, 1, [255, 120, 90])
+    for (const y of [20, 26, 32, 38]) {
+      rect(set, 11, y, 22, 2, stripe)
+      rect(set, 11, y, 22, 1, glow)
     }
-    // scar mark
-    rect(set, 18, 24, 8, 1, ink)
-    // head
-    for (let y = 4; y < 24; y++) {
+    // spikes on back
+    for (const [sx, sy] of [[14, 16], [20, 14], [26, 16]] as const) {
+      rect(set, sx, sy, 3, 6, ink)
+      set(sx + 1, sy, glow)
+    }
+    for (let y = 2; y < 24; y++) {
       for (let x = 30; x < 52; x++) {
         const nx = (x - 40) / 10
-        const ny = (y - 14) / 10
+        const ny = (y - 13) / 10
         if (nx * nx + ny * ny < 1) {
           if (nx * nx + ny * ny > 0.82) set(x, y, ink)
-          else set(x, y, shadeRGB(hideL, 1.18 - nx * 0.3))
+          else set(x, y, shadeRGB(hideL, 1.15 - nx * 0.35))
         }
       }
     }
+    // horns
+    rect(set, 34, 0, 3, 8, ink)
+    rect(set, 35, 1, 1, 6, [220, 200, 160])
+    rect(set, 44, 0, 3, 8, ink)
+    rect(set, 45, 1, 1, 6, [220, 200, 160])
     // ear
-    rect(set, 26, 6, 10, 14, ink)
-    rect(set, 27, 7, 8, 12, hideD)
-    rect(set, 28, 9, 5, 8, [160, 70, 90])
-    // angry eye + brow
-    rect(set, 36, 9, 8, 2, ink)
-    rect(set, 38, 12, 5, 4, ink)
-    rect(set, 39, 13, 3, 2, [255, 60, 40])
-    set(40, 13, [255, 220, 80])
+    rect(set, 24, 5, 10, 14, ink)
+    rect(set, 25, 6, 8, 12, hideD)
+    rect(set, 26, 8, 5, 8, [120, 30, 50])
+    // evil brow + glowing eye
+    rect(set, 35, 7, 10, 3, ink)
+    rect(set, 37, 11, 6, 5, ink)
+    rect(set, 38, 12, 4, 3, glow)
+    set(40, 12, [255, 230, 80])
+    // grin / fangs
+    rect(set, 40, 18, 8, 3, ink)
+    set(42, 19, [255, 245, 220])
+    set(45, 19, [255, 245, 220])
     // tusks
-    rect(set, 46, 18, 3, 8, ink)
-    rect(set, 47, 19, 1, 6, [255, 245, 210])
-    // default trunk (short)
+    rect(set, 46, 17, 3, 10, ink)
+    rect(set, 47, 18, 1, 8, [255, 240, 200])
+    // idle short trunk
     rect(set, 44, 20, 6, 12, ink)
     rect(set, 45, 21, 4, 10, hide)
-    // legs with boots
     rect(set, 10, 38, 8, 10, ink)
     rect(set, 11, 39, 6, 8, hideD)
-    rect(set, 10, 46, 8, 2, [40, 28, 20])
+    rect(set, 10, 46, 8, 2, [30, 16, 20])
     rect(set, 28, 38, 8, 10, ink)
     rect(set, 29, 39, 6, 8, hideD)
-    rect(set, 28, 46, 8, 2, [40, 28, 20])
+    rect(set, 28, 46, 8, 2, [30, 16, 20])
   })
 
-  // Trunk attack frame 0 — curled (原卷起)
-  paint(scene, 'fx-elephant-trunk-0', 16, 18, (set) => {
-    const ink: RGB = [14, 8, 12]
-    const hide: RGB = [110, 95, 125]
-    rect(set, 4, 2, 8, 10, ink)
-    rect(set, 5, 3, 6, 8, hide)
-    rect(set, 2, 8, 6, 6, ink)
-    rect(set, 3, 9, 4, 4, hide)
-    rect(set, 1, 12, 5, 4, ink)
-    rect(set, 2, 13, 3, 2, [90, 75, 105])
+  // Trunk frame 0 — curled windup
+  paint(scene, 'fx-elephant-trunk-0', 18, 20, (set) => {
+    const ink: RGB = [10, 4, 8]
+    const hide: RGB = [90, 70, 105]
+    rect(set, 5, 1, 9, 11, ink)
+    rect(set, 6, 2, 7, 9, hide)
+    rect(set, 2, 8, 7, 7, ink)
+    rect(set, 3, 9, 5, 5, hide)
+    rect(set, 1, 13, 6, 5, ink)
+    rect(set, 2, 14, 4, 3, [70, 50, 85])
+    set(3, 16, [255, 40, 30])
   })
-  // Trunk attack frame 1 — extended forward
-  paint(scene, 'fx-elephant-trunk-1', 36, 12, (set) => {
-    const ink: RGB = [14, 8, 12]
-    const hide: RGB = [110, 95, 125]
-    const tip: RGB = [70, 55, 85]
-    for (let x = 2; x < 32; x++) {
-      const t = x / 32
-      const thick = 2 + Math.floor((1 - t) * 3)
-      rect(set, x, 6 - thick, 1, thick * 2, ink)
-      rect(set, x, 7 - thick + 1, 1, Math.max(1, thick * 2 - 2), t > 0.75 ? tip : hide)
+  // Trunk frame 1 — fighter forward thrust, long tip (~1.5 body visual)
+  paint(scene, 'fx-elephant-trunk-1', 56, 14, (set) => {
+    const ink: RGB = [10, 4, 8]
+    const hide: RGB = [90, 70, 105]
+    const tip: RGB = [55, 35, 70]
+    for (let x = 2; x < 50; x++) {
+      const t = x / 50
+      const thick = 2 + Math.floor((1 - t) * 4)
+      rect(set, x, 7 - thick, 1, thick * 2, ink)
+      rect(set, x, 8 - thick + 1, 1, Math.max(1, thick * 2 - 2), t > 0.8 ? tip : hide)
     }
-    rect(set, 30, 3, 5, 6, ink)
-    rect(set, 31, 4, 3, 4, tip)
+    rect(set, 48, 3, 7, 8, ink)
+    rect(set, 49, 4, 5, 6, tip)
+    set(52, 6, [255, 50, 40])
   })
 
   // Ground sushi pickup — +2 HP when eaten
