@@ -1,4 +1,4 @@
 {
-  "install": "npm ci || npm install",
-  "start": "npm run play"
+  "install": "npm ci",
+  "start": "npm run build && exec npx vite preview --host 0.0.0.0 --port 4741 --strictPort"
 }

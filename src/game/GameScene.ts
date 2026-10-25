@@ -65,12 +65,13 @@ import {
   SWORD_HIT_MS,
   PET_FOLLOW_BEHIND,
   ACTOR_DISPLAY_SCALE,
+  HERO_SIZE_MUL,
   GIRL_SCALE_MUL,
   PET_HEIGHT_FRAC,
-  BG_FOG_TINT,
-  BG_FOG_ALPHA_FAR,
-  BG_FOG_ALPHA_MID,
-  BG_FOG_ALPHA_NEAR,
+  BG_PALE_TINT,
+  BG_MOUNT_TINT,
+  BG_MID_TINT,
+  BG_NEAR_TINT,
   clampLane,
   laneY,
   sameLane,
@@ -1013,13 +1014,13 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Sword grip at waist / forward hand — not floating at chest. */
+  /** Sword from hand at chest height, close to the body. */
   private girlSwordAnchor(h: Hero, swinging = false) {
-    const hgt = Math.max(40, h.displayHeight || 64)
+    const hgt = Math.max(24, h.displayHeight || 64)
     return {
-      x: h.x + h.facing * (swinging ? hgt * 0.32 : hgt * 0.24),
-      y: h.y - hgt * 0.36,
-      scale: h.baseScale * 1.05,
+      x: h.x + h.facing * (swinging ? hgt * 0.18 : hgt * 0.12),
+      y: h.y - hgt * 0.58,
+      scale: h.baseScale * 0.95,
     }
   }
 
@@ -1431,13 +1432,9 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Pale fog wash — BG reads farther / hazier than the playfield. */
-  private styleBgFog(
-    img: Phaser.GameObjects.Image,
-    alpha: number,
-    tint: number = BG_FOG_TINT,
-  ) {
-    img.setAlpha(alpha).setTint(tint)
+  /** Pale opaque BG — colour-shift only (no transparency), so far objects look distant. */
+  private styleBgPale(img: Phaser.GameObjects.Image, tint: number = BG_MID_TINT) {
+    img.setAlpha(1).setTint(tint)
   }
 
   /**
@@ -1453,7 +1450,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(DEPTH.VILLAGE)
       .setScale(scale)
       .setFlipX(flip)
-    this.styleBgFog(img, BG_FOG_ALPHA_MID)
+    this.styleBgPale(img, BG_MID_TINT)
     img.setData('baseX', x)
     img.setData('parallax', 0.14)
     enablePixelSprite(img)
@@ -1469,7 +1466,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(DEPTH.PROP)
       .setScale(scale)
       .setFlipX(flip)
-    this.styleBgFog(img, BG_FOG_ALPHA_NEAR, 0xd2dde8)
+    this.styleBgPale(img, BG_NEAR_TINT)
     enablePixelSprite(img)
   }
 
@@ -1499,8 +1496,8 @@ export class GameScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(DEPTH.SKY + 2)
       .setScale(Phaser.Math.FloatBetween(1.2, 1.7))
-      .setAlpha(0.55)
-      .setTint(BG_FOG_TINT)
+      .setAlpha(1)
+      .setTint(BG_PALE_TINT)
     const vx = fromLeft
       ? Phaser.Math.FloatBetween(55, 95)
       : -Phaser.Math.FloatBetween(55, 95)
@@ -1568,8 +1565,8 @@ export class GameScene extends Phaser.Scene {
         .tileSprite(480, 262, 960, 32, 'bg-horizon')
         .setScrollFactor(0)
         .setDepth(DEPTH.SKY_BAND + 1)
-        .setAlpha(0.35)
-        .setTint(BG_FOG_TINT)
+        .setAlpha(1)
+        .setTint(BG_PALE_TINT)
       enablePixelSprite(hz)
     }
 
@@ -1634,7 +1631,7 @@ export class GameScene extends Phaser.Scene {
         .setDepth(DEPTH.CLOUD)
         .setScale(c.s)
         .setFlipX(!!c.flip)
-      this.styleBgFog(img, BG_FOG_ALPHA_FAR + 0.08, 0xd8e4f0)
+      this.styleBgPale(img, BG_PALE_TINT)
       img.setData('baseX', c.x)
       img.setData('parallax', c.p)
       enablePixelSprite(img)
@@ -1657,7 +1654,7 @@ export class GameScene extends Phaser.Scene {
         .setDepth(m.d)
         .setScale(m.s)
         .setFlipX(!!m.flip)
-      this.styleBgFog(img, BG_FOG_ALPHA_FAR)
+      this.styleBgPale(img, BG_MOUNT_TINT)
       img.setData('baseX', m.x)
       img.setData('parallax', m.p)
       enablePixelSprite(img)
@@ -1691,19 +1688,12 @@ export class GameScene extends Phaser.Scene {
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
         .setScale(1.15)
-      this.styleBgFog(arch, BG_FOG_ALPHA_MID)
+      this.styleBgPale(arch, BG_MID_TINT)
       arch.setData('baseX', 400)
       arch.setData('parallax', 0.1)
       enablePixelSprite(arch)
       this.bgMounts.push(arch)
     }
-
-    // Soft mist veil over the backdrop band (not over heroes / road).
-    const mist = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.MOUNT_NEAR + 1)
-    mist.fillStyle(0xb8cce0, 0.18)
-    mist.fillRect(0, 120, 960, 220)
-    mist.fillStyle(0xd0dce8, 0.12)
-    mist.fillRect(0, 200, 960, 140)
   }
 
   private buildLevel() {
@@ -1833,7 +1823,11 @@ export class GameScene extends Phaser.Scene {
       })
       this.boy.snapToLane(lane, x)
       this.entities.add(this.boy, 'player')
-      this.boyShadow = this.add.image(x, y + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
+      this.boyShadow = this.add
+        .image(x, y + 4, shad)
+        .setDepth(DEPTH.SHADOW)
+        .setAlpha(0.55)
+        .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
       this.attachGirlGear(this.boy, lane)
       return
     }
@@ -1846,7 +1840,11 @@ export class GameScene extends Phaser.Scene {
     })
     this.boy.snapToLane(boyLane, boyX)
     this.entities.add(this.boy, 'player')
-    this.boyShadow = this.add.image(boyX, boyY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
+    this.boyShadow = this.add
+      .image(boyX, boyY + 4, shad)
+      .setDepth(DEPTH.SHADOW)
+      .setAlpha(0.55)
+      .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
 
     if (this.mode !== '2p') return
 
@@ -1858,7 +1856,11 @@ export class GameScene extends Phaser.Scene {
     })
     this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.girl, 'player')
-    this.girlShadow = this.add.image(girlX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
+    this.girlShadow = this.add
+      .image(girlX, girlY + 4, shad)
+      .setDepth(DEPTH.SHADOW)
+      .setAlpha(0.55)
+      .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
     this.attachGirlGear(this.girl, girlLane)
   }
 

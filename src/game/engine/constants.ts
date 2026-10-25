@@ -15,18 +15,22 @@ export const LANE_HIT_TOL = 1
  * Actors bake at 3× with LINEAR AA; display scale keeps on-screen size ≈ old 2× NEAREST.
  */
 export const ACTOR_DISPLAY_SCALE = 2 / 3
-/** 琪寶寶 smaller than 倫寶 (art sheet reads oversized at 1×). */
-export const GIRL_SCALE_MUL = 0.72
+/**
+ * Heroes are ~30% of the previous on-screen size (enemies keep ACTOR_DISPLAY_SCALE).
+ */
+export const HERO_SIZE_MUL = 0.3
+/** 琪寶寶 slightly smaller than 倫寶 after HERO_SIZE_MUL. */
+export const GIRL_SCALE_MUL = 0.92
 /** 噗噗 always ≈ half 琪寶寶 height. */
 export const PET_HEIGHT_FRAC = 0.5
-/** Far BG fog wash — pale tint so landmarks read distant. */
-export const BG_FOG_TINT = 0xc5d4e4
-/** Far mountains / clouds alpha under fog. */
-export const BG_FOG_ALPHA_FAR = 0.38
-/** Mid BG (trees / houses / torii) alpha under fog. */
-export const BG_FOG_ALPHA_MID = 0.48
-/** Soft roadside scenery (campsite) — still behind playfield. */
-export const BG_FOG_ALPHA_NEAR = 0.58
+/** Pale BG tint (opaque sprites — colour shift only, not transparency). */
+export const BG_PALE_TINT = 0xd8e6f0
+/** Pale green for distant mountains (opaque). */
+export const BG_MOUNT_TINT = 0xa8c9a0
+/** Mid BG trees/houses pale (opaque). */
+export const BG_MID_TINT = 0xc5d8c8
+/** Near roadside scenery pale (opaque). */
+export const BG_NEAR_TINT = 0xd2e0d4
 /** 噗噗反擊半傷 */
 export const BEAR_ASSIST_DMG = 1
 /** 10 金幣自動換 +1 HP（雙方） */

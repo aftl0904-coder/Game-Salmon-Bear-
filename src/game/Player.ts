@@ -19,6 +19,7 @@ import {
   MAX_FALL,
   MAX_HP,
   ACTOR_DISPLAY_SCALE,
+  HERO_SIZE_MUL,
   RUN_ACCEL,
   RUN_FRICTION,
   actorDepth,
@@ -139,7 +140,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = 0
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
-    this.baseScale = (cfg.scale ?? 1) * ACTOR_DISPLAY_SCALE
+    this.baseScale = (cfg.scale ?? 1) * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL
     this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
     this.coyote = 0
     this.jumpBuf = 0
