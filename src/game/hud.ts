@@ -83,7 +83,8 @@ export function buildStageHud(
   const pipFull = scene.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
   const pipEmpty = scene.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
 
-  const row1Y = 2
+  // Two 16px bands: 0–16 / 16–32 (edges may touch; boundsOverlap treats touch as OK)
+  const row1Y = 0
   const row2Y = 16
 
   // —— Row 1: face | name | hearts ——

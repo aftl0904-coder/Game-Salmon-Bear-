@@ -33,6 +33,8 @@ export class UIScene extends Phaser.Scene {
   private pipFull = 'heart-full'
   private pipEmpty = 'heart-empty'
   private fullBlink = 0
+  /** When true, ignore EventBus HP and keep dispHp frozen (QA). */
+  private freezeHp = false
 
   banner!: Phaser.GameObjects.Text
 
@@ -72,6 +74,20 @@ export class UIScene extends Phaser.Scene {
       this.targetMp = this.dispMp = 0
 
       mountMuteButton(this, hud.muteAnchor.x + 11, hud.muteAnchor.y + 8)
+
+      // QA / debug: force HP pip textures without going through EventBus
+      ;(
+        window as unknown as {
+          __SAKE_HUD_SET_HP__?: (hp: number) => void
+        }
+      ).__SAKE_HUD_SET_HP__ = (hp: number) => {
+        const n = Math.max(0, Math.min(this.maxHp, Math.round(hp)))
+        this.freezeHp = true
+        this.targetHpL = this.dispHpL = n
+        for (let i = 0; i < this.maxHp; i++) {
+          this.heartsL[i]?.setTexture(i < n ? this.pipFull : this.pipEmpty)
+        }
+      }
     }
 
     // Wait for Fusion Pixel so first paint uses correct metrics (no font swap jump).
@@ -163,6 +179,7 @@ export class UIScene extends Phaser.Scene {
   }
 
   private onHealth(p: GameEventMap['PLAYER_HEALTH_CHANGED']) {
+    if (this.freezeHp) return
     if (isAggregateHealth(p)) {
       this.targetHpL = p.boyHp
       this.targetHpR = p.girlHp

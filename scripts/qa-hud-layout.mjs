@@ -93,25 +93,21 @@ try {
   say(`overlaps ${JSON.stringify(overlap)}`)
 
   // Damage hearts for empty-slot proof (dark pips)
-  await page.evaluate(() => {
-    const g = window.__SAKE_GAME__
-    const sc = g?.scene?.getScene('UIScene')
-    if (sc) {
-      sc.targetHpL = Math.max(0, (sc.targetHpL ?? 6) - 2)
-      sc.dispHpL = sc.targetHpL
-      const full = sc.pipFull || 'pip-full'
-      const empty = sc.pipEmpty || 'pip-empty'
-      const max = sc.maxHp || 6
-      const hp = Math.round(sc.dispHpL)
-      for (let i = 0; i < max; i++) {
-        sc.heartsL?.[i]?.setTexture(i < hp ? full : empty)
-      }
+  const hurtOk = await page.evaluate(() => {
+    const setHp = window.__SAKE_HUD_SET_HP__
+    if (typeof setHp === 'function') {
+      setHp(4)
+      return true
     }
+    return false
   })
-  await page.waitForTimeout(300)
+  say(`hurt apply: ${hurtOk}`)
+  if (!hurtOk) say('未能實測: __SAKE_HUD_SET_HP__ missing')
+  await page.waitForTimeout(400)
   if (box) {
+    const hurt1 = path.join(OUT, 'hud_hurt_1x.png')
     await page.screenshot({
-      path: path.join(OUT, 'hud_hurt_1x.png'),
+      path: hurt1,
       clip: {
         x: Math.max(0, box.x),
         y: Math.max(0, box.y),
@@ -119,6 +115,11 @@ try {
         height: box.h,
       },
     })
+    await sharp(hurt1)
+      .resize({ width: Math.round(box.w * 4), kernel: 'nearest' })
+      .png()
+      .toFile(path.join(OUT, 'hud_hurt_4x.png'))
+    say('wrote hud_hurt_1x + hud_hurt_4x')
   }
 
   const report = {
