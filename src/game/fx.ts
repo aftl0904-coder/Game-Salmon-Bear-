@@ -90,7 +90,8 @@ export function scorePop(scene: Phaser.Scene, x: number, y: number, pts: number)
 
 /** Pause physics + tweens on solid hits (hit freeze).
  * Tweens must freeze too — otherwise mid-squash/angle frames capture as 撕裂.
- * Non-reentrant: stacked hits must not leave world paused forever. */
+ * Non-reentrant: stacked hits must not leave world paused forever.
+ * Prefer {@link freezeActors} for attack commit so projectiles keep flying. */
 let hitstopLock = false
 export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
   if (hitstopLock) return
@@ -103,6 +104,32 @@ export function hitstop(scene: Phaser.Scene, ms = HITFREEZE_MS) {
     if (scene.physics.world.isPaused) scene.physics.world.resume()
     scene.tweens.resumeAll()
   })
+}
+
+const FREEZE_KEY = 'actorFreezeUntil'
+
+/** Freeze only listed actors (velocity zeroed). Projectiles / world keep running. */
+export function freezeActors(
+  scene: Phaser.Scene,
+  actors: Array<Phaser.Physics.Arcade.Sprite | null | undefined>,
+  ms: number,
+) {
+  const until = scene.time.now + ms
+  for (const a of actors) {
+    if (!a || !a.active) continue
+    const prev = (a.getData(FREEZE_KEY) as number) || 0
+    a.setData(FREEZE_KEY, Math.max(prev, until))
+    const body = a.body as Phaser.Physics.Arcade.Body | null
+    if (body) body.setVelocity(0, 0)
+  }
+}
+
+export function isActorFrozen(
+  a: Phaser.GameObjects.GameObject | null | undefined,
+  now: number,
+): boolean {
+  if (!a) return false
+  return now < ((a.getData(FREEZE_KEY) as number) || 0)
 }
 
 export type JuiceKind = 'damage' | 'heavy' | 'land' | 'run' | 'break' | 'hit'

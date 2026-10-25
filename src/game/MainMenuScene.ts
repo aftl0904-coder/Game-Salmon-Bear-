@@ -150,10 +150,10 @@ export class MainMenuScene extends Phaser.Scene {
     const brand = this.add
       .text(width / 2, 68, '鮭鮭熊', {
         fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
-        fontSize: '58px',
+        fontSize: '64px',
         color: '#2a1408',
         stroke: '#fff6d0',
-        strokeThickness: 5,
+        strokeThickness: 6,
       })
       .setOrigin(0.5)
       .setDepth(11)
@@ -161,8 +161,10 @@ export class MainMenuScene extends Phaser.Scene {
     const sub = this.add
       .text(width / 2, 112, '第一關・溪流小路　｜　奪回春蜜與鮭供', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '15px',
+        fontSize: '18px',
         color: '#5a3820',
+        backgroundColor: '#ffe8b088',
+        padding: { x: 12, y: 4 },
       })
       .setOrigin(0.5)
       .setDepth(11)
@@ -230,8 +232,10 @@ export class MainMenuScene extends Phaser.Scene {
         this.add
           .text(width / 2, y, item.text, {
             fontFamily: 'Noto Sans TC, sans-serif',
-            fontSize: '22px',
+            fontSize: '28px',
             color: '#2a1810',
+            backgroundColor: '#00000000',
+            padding: { x: 8, y: 4 },
           })
           .setOrigin(0.5)
           .setDepth(13),
@@ -261,9 +265,10 @@ export class MainMenuScene extends Phaser.Scene {
     this.startLabel = this.add
       .text(width / 2, startY, '開始', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '26px',
+        fontSize: '32px',
         color: '#2a1810',
         fontStyle: 'bold',
+        padding: { x: 12, y: 6 },
       })
       .setOrigin(0.5)
       .setDepth(13)
@@ -284,10 +289,10 @@ export class MainMenuScene extends Phaser.Scene {
     this.add
       .text(width / 2, 318, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '11px',
+        fontSize: '15px',
         color: '#f7e7c0',
         backgroundColor: '#3a2210cc',
-        padding: { x: 14, y: 6 },
+        padding: { x: 18, y: 10 },
         align: 'center',
       })
       .setOrigin(0.5, 0)
@@ -300,11 +305,11 @@ export class MainMenuScene extends Phaser.Scene {
         '上下揀模式　撳「開始」或空白／Enter 開局\n倫寶：ＡＤ左右　ＷＳ換線　ＪＫＵＩ　｜　琪寶寶：←→　↑↓換線　１２４５',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '11px',
+          fontSize: '14px',
           color: '#3a2818',
           align: 'center',
           backgroundColor: '#ffe8b0aa',
-          padding: { x: 10, y: 3 },
+          padding: { x: 14, y: 6 },
         },
       )
       .setOrigin(0.5)

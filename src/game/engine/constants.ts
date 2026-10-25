@@ -6,7 +6,8 @@ export const WORLD_H = 540
 /** Shared mid-lane walk surface (feet origin). Side-view dual uses LANE_Y[3]. */
 export const GROUND_Y = 400
 
-export const MAX_HP = 10
+/** Pack2: heroes have 7 HP; 1 enemy hit = −1. */
+export const MAX_HP = 7
 export const BOY_SPEED = 280
 export const GIRL_SPEED = Math.round(BOY_SPEED * 1.5)
 /** 敵人接近／追擊速度 = 倫寶 × 0.3（慢行進攻） */
@@ -14,9 +15,21 @@ export const ENEMY_SPEED = Math.round(BOY_SPEED * 0.3)
 /** 每隔幾秒隨機定住一個敵人（ms 範圍） */
 export const ENEMY_STAGGER_EVERY_MIN_MS = 3000
 export const ENEMY_STAGGER_EVERY_MAX_MS = 4000
+/** 每次定敵時長隨機 0.5–1.0s */
+export const ENEMY_STAGGER_HOLD_MIN_MS = 500
+export const ENEMY_STAGGER_HOLD_MAX_MS = 1000
+/** @deprecated use HOLD_MIN/MAX */
 export const ENEMY_STAGGER_HOLD_MS = 700
-/** 任何人出招瞬間世界定格 */
-export const ATTACK_COMMIT_FREEZE_MS = 200
+
+/** 出招 commit：只凍角色 0.1s（子彈繼續飛） */
+export const ATTACK_COMMIT_FREEZE_MS = 100
+/** 命中 confirm：全員角色再凍 0.2s */
+export const HIT_CONFIRM_FREEZE_MS = 200
+
+/** 主角攻擊傷害（槍／劍） */
+export const PLAYER_ATTACK_DMG = 3
+/** 敵人攻擊傷害 */
+export const ENEMY_ATTACK_DMG = 1
 
 /**
  * World Arcade gravity (px/s²).

@@ -403,173 +403,117 @@ export function setPixelPose(
 /** Walk cycle length — 3 frames per body-step; feet lead the stride. */
 export const WALK_FRAMES = 3
 
+function readBaseImageData(scene: TexScene, baseKey: string): { w: number; h: number; base: ImageData } | null {
+  if (!scene.textures.exists(baseKey)) return null
+  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const w = (src as { width: number }).width | 0
+  const h = (src as { height: number }).height | 0
+  const tmp = document.createElement('canvas')
+  tmp.width = w
+  tmp.height = h
+  const tctx = tmp.getContext('2d')!
+  tctx.imageSmoothingEnabled = false
+  tctx.drawImage(src as CanvasImageSource, 0, 0)
+  return { w, h, base: tctx.getImageData(0, 0, w, h) }
+}
+
+function putFrame(scene: TexScene, key: string, w: number, h: number, out: ImageData) {
+  const canvas = document.createElement('canvas')
+  canvas.width = w
+  canvas.height = h
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.putImageData(out, 0, 0)
+  if (scene.textures.exists(key)) scene.textures.remove(key)
+  scene.textures.addCanvas(key, canvas)
+  scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
 /**
- * Build 3 run frames: feet lead each 身位 (plant → push → reach).
- * Keeps scale===1 / angle===0 (no shear tear) while feet visibly step ahead.
+ * Full-body remap (no cut-and-paste waist seam).
+ * sampleDx/Dy(y) return source offset; feet can lead without clearing a band.
+ */
+function bakeWarpFrame(
+  base: ImageData,
+  w: number,
+  h: number,
+  sampleAt: (x: number, y: number) => { sx: number; sy: number },
+): ImageData {
+  const out = new ImageData(w, h)
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const { sx, sy } = sampleAt(x, y)
+      if (sx < 0 || sy < 0 || sx >= w || sy >= h) continue
+      const si = (sy * w + sx) * 4
+      if (base.data[si + 3] < 160) continue
+      const di = (y * w + x) * 4
+      out.data[di] = base.data[si]
+      out.data[di + 1] = base.data[si + 1]
+      out.data[di + 2] = base.data[si + 2]
+      out.data[di + 3] = base.data[si + 3]
+    }
+  }
+  return out
+}
+
+/**
+ * 3 run frames: continuous vertical falloff so feet lead — whole sprite remapped.
  */
 export function registerWalkCycle(scene: TexScene, baseKey: string, frames = WALK_FRAMES) {
-  if (!scene.textures.exists(baseKey)) return
-  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
-  const w = (src as { width: number }).width | 0
-  const h = (src as { height: number }).height | 0
-  const tmp = document.createElement('canvas')
-  tmp.width = w
-  tmp.height = h
-  const tctx = tmp.getContext('2d')!
-  tctx.imageSmoothingEnabled = false
-  tctx.clearRect(0, 0, w, h)
-  tctx.drawImage(src as CanvasImageSource, 0, 0)
-  const base = tctx.getImageData(0, 0, w, h)
-  const legY0 = Math.floor(h * 0.58)
-  // Feet lead body: plant L → mid push → reach R (positive = sprite-right = face-forward when unflipped)
-  const shifts = [4, 6, 2]
+  const packed = readBaseImageData(scene, baseKey)
+  if (!packed) return
+  const { w, h, base } = packed
+  const waist = Math.floor(h * 0.52)
+  // Max foot lead (px) per frame — plant / push / reach
+  const leads = [3, 5, 2]
   for (let f = 0; f < frames; f++) {
-    const key = `${baseKey}-run-${f}`
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext('2d')!
-    ctx.imageSmoothingEnabled = false
-    const out = ctx.createImageData(w, h)
-    out.data.set(base.data)
-    const shift = shifts[f % shifts.length]!
-    // Clear leg band then blit shifted opaque feet (always shift so lead is visible).
-    for (let y = legY0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const i = (y * w + x) * 4
-        out.data[i + 3] = 0
-      }
-    }
-    for (let y = legY0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const si = (y * w + x) * 4
-        if (base.data[si + 3] < 160) continue
-        const dx = x + shift
-        if (dx < 0 || dx >= w) continue
-        const di = (y * w + dx) * 4
-        out.data[di] = base.data[si]
-        out.data[di + 1] = base.data[si + 1]
-        out.data[di + 2] = base.data[si + 2]
-        out.data[di + 3] = base.data[si + 3]
-      }
-    }
-    ctx.putImageData(out, 0, 0)
-    if (scene.textures.exists(key)) scene.textures.remove(key)
-    scene.textures.addCanvas(key, canvas)
-    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    const lead = leads[f % leads.length]!
+    const out = bakeWarpFrame(base, w, h, (x, y) => {
+      const t = y <= waist ? 0 : (y - waist) / Math.max(1, h - 1 - waist)
+      // Sample from the left so feet appear further forward (sprite-right).
+      const sx = x - Math.round(lead * t * t)
+      return { sx, sy: y }
+    })
+    putFrame(scene, `${baseKey}-run-${f}`, w, h, out)
   }
 }
 
 /**
- * 2-frame idle breath for heroes (tiny torso bob). Enemies skip this.
+ * 2-frame idle breath — full-body 1px bob (complete frames, no torso cut).
  */
 export function registerIdleBreath(scene: TexScene, baseKey: string) {
-  if (!scene.textures.exists(baseKey)) return
-  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
-  const w = (src as { width: number }).width | 0
-  const h = (src as { height: number }).height | 0
-  const tmp = document.createElement('canvas')
-  tmp.width = w
-  tmp.height = h
-  const tctx = tmp.getContext('2d')!
-  tctx.imageSmoothingEnabled = false
-  tctx.drawImage(src as CanvasImageSource, 0, 0)
-  const base = tctx.getImageData(0, 0, w, h)
-  const chestY1 = Math.floor(h * 0.62)
-  const bobs = [-1, 1] as const
+  const packed = readBaseImageData(scene, baseKey)
+  if (!packed) return
+  const { w, h, base } = packed
+  const bobs = [0, -1] as const
   for (let f = 0; f < 2; f++) {
-    const key = `${baseKey}-idle-${f}`
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext('2d')!
-    ctx.imageSmoothingEnabled = false
-    const out = ctx.createImageData(w, h)
-    for (let i = 3; i < out.data.length; i += 4) out.data[i] = 0
     const bob = bobs[f]!
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const si = (y * w + x) * 4
-        if (base.data[si + 3] < 160) continue
-        const dy = y < chestY1 ? bob : 0
-        const yy = y + dy
-        if (yy < 0 || yy >= h) continue
-        const di = (yy * w + x) * 4
-        out.data[di] = base.data[si]
-        out.data[di + 1] = base.data[si + 1]
-        out.data[di + 2] = base.data[si + 2]
-        out.data[di + 3] = base.data[si + 3]
-      }
-    }
-    ctx.putImageData(out, 0, 0)
-    if (scene.textures.exists(key)) scene.textures.remove(key)
-    scene.textures.addCanvas(key, canvas)
-    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    const out = bakeWarpFrame(base, w, h, (x, y) => ({ sx: x, sy: y - bob }))
+    putFrame(scene, `${baseKey}-idle-${f}`, w, h, out)
   }
 }
 
 /**
- * Enemy walk + attack poses (scale 1 / angle 0).
- * - run-0..2: footstep (3 frames, feet lead)
- * - atk-windup: lean back + raise arms (telegraph while still walking)
- * - atk-strike: lunge forward
+ * Enemy walk + attack poses — smooth full-body warps (no mid-cut gaps).
  */
 export function registerEnemyCombatFrames(scene: TexScene, baseKey: string) {
   registerWalkCycle(scene, baseKey, WALK_FRAMES)
-  if (!scene.textures.exists(baseKey)) return
-  const src = scene.textures.get(baseKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
-  const w = (src as { width: number }).width | 0
-  const h = (src as { height: number }).height | 0
-  const tmp = document.createElement('canvas')
-  tmp.width = w
-  tmp.height = h
-  const tctx = tmp.getContext('2d')!
-  tctx.imageSmoothingEnabled = false
-  tctx.drawImage(src as CanvasImageSource, 0, 0)
-  const base = tctx.getImageData(0, 0, w, h)
+  const packed = readBaseImageData(scene, baseKey)
+  if (!packed) return
+  const { w, h, base } = packed
+  const mid = Math.floor(h * 0.42)
 
-  const bakeShift = (key: string, mode: 'windup' | 'strike') => {
-    const canvas = document.createElement('canvas')
-    canvas.width = w
-    canvas.height = h
-    const ctx = canvas.getContext('2d')!
-    ctx.imageSmoothingEnabled = false
-    const out = ctx.createImageData(w, h)
-    // clear
-    for (let i = 3; i < out.data.length; i += 4) out.data[i] = 0
-    const midY = Math.floor(h * 0.42)
-    for (let y = 0; y < h; y++) {
-      for (let x = 0; x < w; x++) {
-        const si = (y * w + x) * 4
-        if (base.data[si + 3] < 160) continue
-        let dx = 0
-        let dy = 0
-        if (mode === 'windup') {
-          // Pull torso back, lift upper pixels (raise weapon / arms)
-          if (y < midY) { dx = -3; dy = -2 }
-          else { dx = -1 }
-        } else {
-          // Strike: whole body lunges forward; arms stretch
-          if (y < midY) { dx = 5; dy = 1 }
-          else { dx = 4 }
-        }
-        const xx = x + dx
-        const yy = y + dy
-        if (xx < 0 || yy < 0 || xx >= w || yy >= h) continue
-        const di = (yy * w + xx) * 4
-        out.data[di] = base.data[si]
-        out.data[di + 1] = base.data[si + 1]
-        out.data[di + 2] = base.data[si + 2]
-        out.data[di + 3] = base.data[si + 3]
-      }
-    }
-    ctx.putImageData(out, 0, 0)
-    if (scene.textures.exists(key)) scene.textures.remove(key)
-    scene.textures.addCanvas(key, canvas)
-    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
-  }
-  bakeShift(`${baseKey}-atk-windup`, 'windup')
-  bakeShift(`${baseKey}-atk-strike`, 'strike')
+  const windup = bakeWarpFrame(base, w, h, (x, y) => {
+    const t = y < mid ? 1 : 0.35
+    return { sx: x + Math.round(3 * t), sy: y + (y < mid ? 2 : 0) }
+  })
+  putFrame(scene, `${baseKey}-atk-windup`, w, h, windup)
+
+  const strike = bakeWarpFrame(base, w, h, (x, y) => {
+    const t = y < mid ? 1.15 : 1
+    return { sx: x - Math.round(5 * t), sy: y - (y < mid ? 1 : 0) }
+  })
+  putFrame(scene, `${baseKey}-atk-strike`, w, h, strike)
 }
 
 function stripAnimSuffix(key: string) {

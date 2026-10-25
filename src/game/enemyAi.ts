@@ -120,35 +120,36 @@ export function defaultSpecies(kind: EnemyKind): EnemySpecies {
 const E_SPD = ENEMY_SPEED
 const E_PATROL = Math.round(ENEMY_SPEED * 0.9)
 
+/** Pack2: slower enemy attacks vs heroes; HP tuned for PLAYER_ATTACK_DMG=3. */
 export const KIND_STATS: Record<EnemyKind, KindStats> = {
   blocker: {
-    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 50,
-    windupMs: 140, recoverMs: 180, atkCdMs: 700, scale: 1, tint: 0x88aacc,
+    hp: 6, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 50,
+    windupMs: 320, recoverMs: 280, atkCdMs: 1100, scale: 1, tint: 0x88aacc,
     label: '路障', chargePrefer: false, hopChance: 0,
   },
   chaser: {
-    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 980, detect: 1100, melee: 52,
-    windupMs: 120, recoverMs: 160, atkCdMs: 640, scale: 1, tint: 0xff9977,
+    hp: 6, spd: E_SPD, patrolSpd: E_PATROL, aggro: 980, detect: 1100, melee: 52,
+    windupMs: 300, recoverMs: 260, atkCdMs: 1000, scale: 1, tint: 0xff9977,
     label: '追擊', chargePrefer: false, hopChance: 0,
   },
   ambusher: {
-    hp: 2, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 56,
-    windupMs: 140, recoverMs: 180, atkCdMs: 700, scale: 1, tint: 0xaa88ff,
+    hp: 6, spd: E_SPD, patrolSpd: E_PATROL, aggro: 900, detect: 980, melee: 56,
+    windupMs: 340, recoverMs: 280, atkCdMs: 1100, scale: 1, tint: 0xaa88ff,
     label: '伏兵', chargePrefer: false, hopChance: 0,
   },
   guardian: {
-    hp: 3, spd: E_SPD, patrolSpd: E_PATROL, aggro: 920, detect: 1000, melee: 52,
-    windupMs: 140, recoverMs: 180, atkCdMs: 720, scale: 1, tint: 0xffcc44,
+    hp: 9, spd: E_SPD, patrolSpd: E_PATROL, aggro: 920, detect: 1000, melee: 52,
+    windupMs: 340, recoverMs: 300, atkCdMs: 1150, scale: 1, tint: 0xffcc44,
     label: '守蜜', chargePrefer: false, hopChance: 0,
   },
   interrupter: {
-    hp: 3, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1000, detect: 1200, melee: 56,
-    windupMs: 120, recoverMs: 150, atkCdMs: 600, scale: 1, tint: 0xff6644,
+    hp: 9, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1000, detect: 1200, melee: 56,
+    windupMs: 300, recoverMs: 260, atkCdMs: 980, scale: 1, tint: 0xff6644,
     label: '精銳', chargePrefer: false, hopChance: 0,
   },
   boss: {
-    hp: 12, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1200, detect: 1400, melee: 70,
-    windupMs: 160, recoverMs: 200, atkCdMs: 700, scale: 1, tint: 0xffaa77,
+    hp: 18, spd: E_SPD, patrolSpd: E_PATROL, aggro: 1200, detect: 1400, melee: 70,
+    windupMs: 380, recoverMs: 320, atkCdMs: 1200, scale: 1, tint: 0xffaa77,
     label: '武者', chargePrefer: false, hopChance: 0,
   },
 }

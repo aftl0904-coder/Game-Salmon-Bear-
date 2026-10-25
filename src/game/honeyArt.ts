@@ -79,16 +79,33 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     set(12, 2, [255, 255, 220])
   })
 
-  // 醃魚雜兵：木柄魚槍
-  paint(scene, 'prop-enemy-spear', 40, 12, (set) => {
-    const ink: RGB = [18, 12, 14]
-    rect(set, 0, 3, 40, 6, ink)
-    rect(set, 1, 4, 22, 4, [120, 75, 40])
-    rect(set, 1, 4, 22, 1, [180, 120, 70])
-    rect(set, 22, 2, 16, 8, ink)
-    rect(set, 23, 3, 14, 6, [70, 150, 210])
-    rect(set, 23, 3, 14, 2, [160, 210, 255])
-    rect(set, 34, 4, 5, 4, [255, 240, 200])
+  // 醃魚雜兵：小刀（刺擊）— Pack2 換走魚槍
+  paint(scene, 'prop-enemy-knife', 28, 12, (set) => {
+    const ink: RGB = [16, 10, 12]
+    // handle
+    rect(set, 0, 3, 10, 6, ink)
+    rect(set, 1, 4, 8, 4, [90, 55, 35])
+    rect(set, 1, 4, 8, 1, [150, 100, 55])
+    // guard
+    rect(set, 9, 1, 3, 10, ink)
+    rect(set, 10, 2, 1, 8, [180, 175, 190])
+    // blade
+    rect(set, 12, 3, 15, 6, ink)
+    rect(set, 13, 4, 13, 4, [210, 220, 235])
+    rect(set, 13, 4, 13, 1, [255, 255, 250])
+    rect(set, 13, 7, 13, 1, [140, 150, 170])
+    // tip
+    rect(set, 25, 4, 3, 4, ink)
+    rect(set, 26, 5, 2, 2, [245, 248, 255])
+  })
+  // keep spear key as alias for any leftover refs
+  paint(scene, 'prop-enemy-spear', 28, 12, (set) => {
+    const ink: RGB = [16, 10, 12]
+    rect(set, 0, 3, 10, 6, ink)
+    rect(set, 1, 4, 8, 4, [90, 55, 35])
+    rect(set, 9, 1, 3, 10, ink)
+    rect(set, 12, 3, 15, 6, ink)
+    rect(set, 13, 4, 13, 4, [210, 220, 235])
   })
 
   // 木桶武者：釘棒

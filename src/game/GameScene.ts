@@ -1,6 +1,6 @@
 /** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
-import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, hitstop } from './fx'
+import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen } from './fx'
 import {
   enablePixelSprite,
   snapCameraScroll,
@@ -43,8 +43,12 @@ import {
   ENEMY_SPEED,
   ENEMY_STAGGER_EVERY_MIN_MS,
   ENEMY_STAGGER_EVERY_MAX_MS,
-  ENEMY_STAGGER_HOLD_MS,
+  ENEMY_STAGGER_HOLD_MIN_MS,
+  ENEMY_STAGGER_HOLD_MAX_MS,
   ATTACK_COMMIT_FREEZE_MS,
+  HIT_CONFIRM_FREEZE_MS,
+  PLAYER_ATTACK_DMG,
+  ENEMY_ATTACK_DMG,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -96,8 +100,8 @@ export class GameScene extends Phaser.Scene {
   private sword: Phaser.GameObjects.Image | null = null
   private boyShadow!: Phaser.GameObjects.Image
   private girlShadow: Phaser.GameObjects.Image | null = null
-  /** Max X gap between duo before camera/lead clamp (2P). */
-  private static readonly MAX_PAIR_SEP = 360
+  /** Soft margin inside camera for duo same-screen walls (2P). */
+  private static readonly CAM_EDGE_PAD = 48
   private ground!: Phaser.Physics.Arcade.StaticGroup
   private hazards!: Phaser.Physics.Arcade.StaticGroup
   private enemies!: Phaser.Physics.Arcade.Group
@@ -235,11 +239,11 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setDeadzone(this.girl ? 90 : 120, 56)
   }
 
-  /** 雙人：唔准一個角色把鏡頭／進度拉開；單人跟倫寶。 */
+  /** 雙人：鏡頭跟中點；兩人可左右分邊，但唔准單獨行出畫面。 */
   private updateCameraFollow() {
     if (!this.camTarget || !this.boy) return
     if (this.girl && this.girl.active) {
-      this.clampPairSeparation()
+      this.clampDuoToCamera()
       const midX = (this.boy.x + this.girl.x) / 2
       this.camTarget.setPosition(
         Math.round(Phaser.Math.Clamp(midX, 480, WORLD_W - 480)),
@@ -253,22 +257,36 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private clampPairSeparation() {
+  /** Keep both heroes inside the current screen; camera only advances with the pair mid. */
+  private clampDuoToCamera() {
     const g = this.girl
     if (!g || !g.active) return
-    const maxSep = GameScene.MAX_PAIR_SEP
-    const dx = this.boy.x - g.x
-    if (Math.abs(dx) <= maxSep) return
-    // Pull the one further ahead back onto the shared camera window.
-    if (dx > maxSep) {
-      this.boy.x = g.x + maxSep
-      const b = this.boy.body as Phaser.Physics.Arcade.Body
-      if (b.velocity.x > 0) b.velocity.x = 0
-    } else {
-      g.x = this.boy.x + maxSep
-      const gb = g.body as Phaser.Physics.Arcade.Body
-      if (gb.velocity.x > 0) gb.velocity.x = 0
+    const cam = this.cameras.main
+    const pad = GameScene.CAM_EDGE_PAD
+    const left = cam.scrollX + pad
+    const right = cam.scrollX + cam.width - pad
+    for (const h of [this.boy, g]) {
+      if (h.x < left) {
+        h.x = left
+        const b = h.body as Phaser.Physics.Arcade.Body
+        if (b.velocity.x < 0) b.velocity.x = 0
+      } else if (h.x > right) {
+        h.x = right
+        const b = h.body as Phaser.Physics.Arcade.Body
+        if (b.velocity.x > 0) b.velocity.x = 0
+      }
     }
+  }
+
+  /** All living heroes + enemies — for actor-only freeze (ammo keeps flying). */
+  private combatActors(): Phaser.Physics.Arcade.Sprite[] {
+    const list: Phaser.Physics.Arcade.Sprite[] = [this.boy]
+    if (this.girl?.active) list.push(this.girl)
+    for (const o of this.enemies?.getChildren() ?? []) {
+      const e = o as PatrolEnemy
+      if (e.active && e.fsm !== 'DEAD') list.push(e)
+    }
+    return list
   }
 
   private leadX() {
@@ -436,8 +454,12 @@ export class GameScene extends Phaser.Scene {
       this.girl.atkCd = Math.max(0, this.girl.atkCd - dt)
     }
 
-    this.moveBoy(dt)
-    if (this.mode === '2p' && this.girl) this.moveGirl(dt)
+    if (!isActorFrozen(this.boy, this.time.now)) this.moveBoy(dt)
+    else this.boy.setVelocity(0, 0)
+    if (this.mode === '2p' && this.girl) {
+      if (!isActorFrozen(this.girl, this.time.now)) this.moveGirl(dt)
+      else this.girl.setVelocity(0, 0)
+    }
 
     this.updatePet()
     this.activateDeferredEnemies()
@@ -703,10 +725,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fireSalmon(h: Hero) {
-    // 2.5 shots / sec
     h.atkCd = SALMON_SHOT_COOLDOWN_MS
     h.pose = 'idle'
-    hitstop(this, ATTACK_COMMIT_FREEZE_MS)
+    // Commit freeze actors only — salmon shot keeps flying (Pack2 G).
+    freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     this.tweens.killTweensOf(h)
     h.setAngle(0)
@@ -735,7 +757,7 @@ export class GameScene extends Phaser.Scene {
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
     h.atkCd = 220
-    hitstop(this, ATTACK_COMMIT_FREEZE_MS)
+    freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     burst(this, h.x + h.facing * 50, h.y - 28, 0xe8f0ff, 10)
     h.setAngle(0)
@@ -754,7 +776,7 @@ export class GameScene extends Phaser.Scene {
         },
       })
     }
-    this.spawnAttackHitbox(h, 2, SWORD_HIT_W, SWORD_HIT_H, SWORD_HIT_MS)
+    this.spawnAttackHitbox(h, PLAYER_ATTACK_DMG, SWORD_HIT_W, SWORD_HIT_H, SWORD_HIT_MS)
     this.smashBreakablesInFront(h)
   }
 
@@ -815,8 +837,11 @@ export class GameScene extends Phaser.Scene {
     const result = pe.receiveHit(dmg, dir)
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
     SFX.hit()
-    // Goemon one-blade: hitstop + shake + white flash + knockback lean
-    this.juice.solidHit(pe.x, pe.y - 18, heavy, pe, dir)
+    // Hit confirm: freeze all characters 0.2s; do NOT pause world (ammo free).
+    freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
+    this.juice.shakeDamage()
+    burst(this, pe.x, pe.y - 18, 0xffe8a0, heavy ? 8 : 6)
+    impactRing(this, pe.x, pe.y - 12, heavy ? 0xffcc66 : 0xffe8a0, 8)
     this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
     if (result.killed) {
       SFX.kill()
@@ -838,7 +863,7 @@ export class GameScene extends Phaser.Scene {
     else pe.contactCd = 650
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     const hpLeft = applyDamage(h, {
-      amount: 1,
+      amount: ENEMY_ATTACK_DMG,
       knockbackX: away * 340,
       knockbackY: -320,
       now: this.time.now,
@@ -849,12 +874,12 @@ export class GameScene extends Phaser.Scene {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
     SFX.hurt()
+    freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
     burst(this, h.x, h.y - 24, 0xff4466, 8)
-    floatText(this, h.x, h.y - 40, '-1', '#ff6677')
+    floatText(this, h.x, h.y - 40, `-${ENEMY_ATTACK_DMG}`, '#ff6677')
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
-    // Primary bugfix: knockOut must run when HP hits 0 (old guard was `hp <= 0 → return`).
     if (hpLeft <= 0) this.knockOut(h)
   }
 
@@ -903,6 +928,7 @@ export class GameScene extends Phaser.Scene {
    */
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
+    SFX.die()
     beginDeathPose(h)
     this.tweens.add({
       targets: h,
@@ -1337,7 +1363,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.add.overlap(hero.attackHitbox, this.enemies, (_a, enemy) => {
         const e = enemy as PatrolEnemy
         if (!hero.isMeleeActive() || !e.active || e.isDead) return
-        this.damageEnemy(e, hero.role === 'girl' ? 2 : 1, hero.facing, hero)
+        this.damageEnemy(e, PLAYER_ATTACK_DMG, hero.facing, hero)
       })
       this.physics.add.overlap(hero.attackHitbox, this.pots, (_a, pot) => {
         if (!hero.isMeleeActive()) return
@@ -1368,7 +1394,7 @@ export class GameScene extends Phaser.Scene {
       const fromY = (s.getData('fromY') as number | undefined) ?? this.boy.y
       if (!sameLane({ lane: fromLane, y: fromY }, e)) return
       s.destroy()
-      this.damageEnemy(e, 1, Math.sign(e.x - this.boy.x) || 1, { lane: fromLane, y: fromY })
+      this.damageEnemy(e, PLAYER_ATTACK_DMG, Math.sign(e.x - this.boy.x) || 1, { lane: fromLane, y: fromY })
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
       const j = jet as Phaser.Physics.Arcade.Sprite
@@ -1693,7 +1719,7 @@ export class GameScene extends Phaser.Scene {
     }) as PatrolEnemy[]
     if (!live.length) return
     const pick = live[Phaser.Math.Between(0, live.length - 1)]
-    pick.staggerUntil = this.time.now + ENEMY_STAGGER_HOLD_MS
+    pick.staggerUntil = this.time.now + Phaser.Math.Between(ENEMY_STAGGER_HOLD_MIN_MS, ENEMY_STAGGER_HOLD_MAX_MS)
     pick.setVelocityX(0)
     pick.setTint(0xaaccff)
   }

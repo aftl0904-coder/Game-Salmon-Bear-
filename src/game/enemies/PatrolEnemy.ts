@@ -5,7 +5,7 @@ import {
 } from '../engine/lanes'
 import { actorDepth } from '../engine/depth'
 import { enablePixelSprite, WALK_FRAMES } from '../pixelSnap'
-import { hitstop } from '../fx'
+import { freezeActors, isActorFrozen } from '../fx'
 import { ATTACK_COMMIT_FREEZE_MS } from '../engine/constants'
 import {
   type EnemyKind,
@@ -96,7 +96,11 @@ export class PatrolEnemy extends Enemy {
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     const wKey = spKey === 'barrel'
       ? (scene.textures.exists('prop-enemy-club') ? 'prop-enemy-club' : 'prop-sword')
-      : (scene.textures.exists('prop-enemy-spear') ? 'prop-enemy-spear' : 'fx-salmon-shot')
+      : (scene.textures.exists('prop-enemy-knife')
+        ? 'prop-enemy-knife'
+        : scene.textures.exists('prop-enemy-spear')
+          ? 'prop-enemy-spear'
+          : 'prop-sword')
     e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
     enablePixelSprite(e.weapon)
     bindFootBody(e, {
@@ -127,19 +131,22 @@ export class PatrolEnemy extends Enemy {
 
   override canHurtPlayer(): boolean {
     if (!this.active || this.fsm === 'DEAD' || this.fsm === 'HURT') return false
-    if (this.fsm === 'ATTACK') {
-      if (this.atkPhase === 'recover') return false
-      if (this.atkPhase === 'strike' || this.atkPhase === 'charge') return !this.hitThis
-      if (this.atkPhase === 'windup' && this.windup <= 60) return !this.hitThis
-      return false
-    }
-    if (this.fsm === 'PATROL' || this.fsm === 'CHASE') return this.contactCd <= 0
+    // Pack2 H: only hurt during active attack strike — no passive contact damage.
+    if (this.fsm !== 'ATTACK') return false
+    if (this.atkPhase === 'recover' || this.atkPhase === 'windup' || this.atkPhase === 'pause') return false
+    if (this.atkPhase === 'strike' || this.atkPhase === 'charge') return !this.hitThis
     return false
   }
 
   override tick(dt: number, ctx: EnemyTickCtx) {
     if (!this.active || this.fsm === 'DEAD') {
       this.applyPose()
+      return
+    }
+    if (isActorFrozen(this, this.scene.time.now)) {
+      this.setVelocity(0, 0)
+      this.applyPose()
+      this.syncWeapon()
       return
     }
     const st = this.effectiveStats()
@@ -216,9 +223,10 @@ export class PatrolEnemy extends Enemy {
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    this.windup = Math.min(160, Math.max(90, ms))
+    // Slower enemy attack telegraph than heroes (Pack2 H-04).
+    this.windup = Math.min(420, Math.max(220, ms))
     this.hitThis = false
-    hitstop(this.scene, ATTACK_COMMIT_FREEZE_MS)
+    freezeActors(this.scene, [this], ATTACK_COMMIT_FREEZE_MS)
     this.setTint(0xff1111)
     this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
@@ -401,11 +409,13 @@ export class PatrolEnemy extends Enemy {
     const face = this.flipX ? -1 : 1
     const strike = this.atkPhase === 'strike' || this.atkPhase === 'charge'
     const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
-    const ox = strike ? 34 : wind ? 14 : 22
-    const oy = strike ? -22 : wind ? -40 : -28
+    const knife = (w.texture?.key || '').includes('knife')
+    const ox = strike ? (knife ? 38 : 34) : wind ? (knife ? 10 : 14) : 22
+    const oy = strike ? (knife ? -26 : -22) : wind ? -40 : -28
     w.setPosition(this.x + face * ox, this.y + oy)
     w.setFlipX(this.flipX)
-    w.setAngle(strike ? face * 25 : wind ? face * -35 : face * -8)
+    // Knife stab: windup raise, strike thrust forward
+    w.setAngle(strike ? face * (knife ? 5 : 25) : wind ? face * (knife ? -55 : -35) : face * -8)
     w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)
   }
 }

@@ -1,11 +1,11 @@
 import { DEPTH } from './engine/depth'
 import type Phaser from 'phaser'
 
-const MAX_HP = 10
+import { MAX_HP } from './engine/constants'
 
 /**
  * Goemon SNES-like top HUD:
- * wood bar, portrait boxes, 10 heart pips, mode, centered stage scroll,
+ * wood bar, portrait boxes, heart pips (MAX_HP), mode, centered stage scroll,
  * koban coin (投幣續關), score. 繁中 only.
  */
 export function buildStageHud(
@@ -34,9 +34,9 @@ export function buildStageHud(
   )
   root.add(
     scene.add
-      .text(480, 16, opts.stageTitle, {
+      .text(480, 14, opts.stageTitle, {
         fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '16px',
+        fontSize: '22px',
         color: '#2a1810',
       })
       .setOrigin(0.5),
@@ -45,7 +45,7 @@ export function buildStageHud(
     scene.add
       .text(480, 36, opts.stageSub, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '11px',
+        fontSize: '14px',
         color: '#5a4030',
       })
       .setOrigin(0.5),
@@ -69,18 +69,18 @@ export function buildStageHud(
     root.add(face)
   }
   root.add(
-    scene.add.text(58, 4, '1P 倫寶', {
+    scene.add.text(58, 2, '1P 倫寶', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '12px',
+      fontSize: '16px',
       color: '#fff4d0',
       stroke: '#2a1810',
-      strokeThickness: 3,
+      strokeThickness: 4,
     }),
   )
   const pipFull = scene.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
   const heartsL: Phaser.GameObjects.Image[] = []
   for (let i = 0; i < MAX_HP; i++) {
-    const h = scene.add.image(64 + i * 11, 30, pipFull)
+    const h = scene.add.image(64 + i * 14, 30, pipFull).setScale(1.15)
     heartsL.push(h)
     root.add(h)
   }
@@ -106,17 +106,17 @@ export function buildStageHud(
     }
     root.add(
       scene.add
-        .text(902, 4, '2P 琪寶寶', {
+        .text(902, 2, '2P 琪寶寶', {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '12px',
+          fontSize: '16px',
           color: '#fff0f6',
           stroke: '#2a1810',
-          strokeThickness: 3,
+          strokeThickness: 4,
         })
         .setOrigin(1, 0),
     )
     for (let i = 0; i < MAX_HP; i++) {
-      const h = scene.add.image(792 + i * 11, 30, pipFull)
+      const h = scene.add.image(830 + i * 14, 30, pipFull).setScale(1.15)
       heartsR.push(h)
       root.add(h)
     }
@@ -124,56 +124,56 @@ export function buildStageHud(
 
   root.add(
     scene.add
-      .text(300, 58, opts.mode === '1p' ? '單人模式' : '雙人模式', {
+      .text(300, 60, opts.mode === '1p' ? '單人模式' : '雙人模式', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '11px',
+        fontSize: '15px',
         color: '#2a1810',
         backgroundColor: '#ffe08a',
-        padding: { x: 8, y: 2 },
+        padding: { x: 12, y: 5 },
       })
       .setOrigin(0.5),
   )
 
-  root.add(scene.add.image(400, 58, 'coin').setScale(1.25))
+  root.add(scene.add.image(400, 60, 'coin').setScale(1.4))
   const coinText = scene.add
-    .text(412, 58, '×5', {
+    .text(416, 60, '×5', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '14px',
+      fontSize: '18px',
       color: '#ffe08a',
       stroke: '#2a1810',
-      strokeThickness: 3,
+      strokeThickness: 4,
     })
     .setOrigin(0, 0.5)
   root.add(coinText)
   root.add(
     scene.add
-      .text(458, 58, '投幣', {
+      .text(470, 60, '投幣', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '10px',
+        fontSize: '14px',
         color: '#f7e7c0',
       })
       .setOrigin(0, 0.5),
   )
 
   if (scene.textures.exists('ui-score-plate')) {
-    root.add(scene.add.image(720, 58, 'ui-score-plate').setScale(1.15, 1))
+    root.add(scene.add.image(720, 60, 'ui-score-plate').setScale(1.35, 1.15))
   }
   const scoreText = scene.add
-    .text(720, 58, '得分 0', {
+    .text(720, 60, '得分 0', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '13px',
+      fontSize: '17px',
       color: '#ffe08a',
     })
     .setOrigin(0.5)
   root.add(scoreText)
 
   const info = scene.add
-    .text(480, 522, '', {
+    .text(480, 518, '', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '12px',
+      fontSize: '16px',
       color: '#fff8e0',
       backgroundColor: '#4a2a18cc',
-      padding: { x: 10, y: 4 },
+      padding: { x: 16, y: 8 },
     })
     .setOrigin(0.5)
   root.add(info)
