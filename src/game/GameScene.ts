@@ -99,6 +99,8 @@ import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
 import { addGroundShadow } from './shadow'
+import { addStageLighting, addPointLights } from './lighting'
+import { environmentById } from './config/gameData'
 import {
   createRound1Tilemap,
   hitBreakable,

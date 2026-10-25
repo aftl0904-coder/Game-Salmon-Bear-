@@ -67,6 +67,13 @@ if (!Array.isArray(raw.stages)) {
       if (st.lighting.ambient && !/^#[0-9a-fA-F]{6}$/.test(st.lighting.ambient)) {
         fail(errors, `${label}.lighting.ambient invalid hex`)
       }
+      for (const k of ['lightX', 'lightY']) {
+        if (st.lighting[k] == null) fail(errors, `${label}.lighting missing ${k}`)
+        else if (typeof st.lighting[k] !== 'number') fail(errors, `${label}.lighting.${k} must be number`)
+      }
+      if (!st.lighting.shadeColor || typeof st.lighting.shadeColor !== 'string') {
+        fail(errors, `${label}.lighting.shadeColor required (css rgb/rgba)`)
+      }
       if (st.lighting.flicker) {
         requireKeys(st.lighting.flicker, ['everyMs', 'durationMs'], `${label}.flicker`, errors)
       }
