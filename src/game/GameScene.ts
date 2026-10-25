@@ -214,6 +214,7 @@ export class GameScene extends Phaser.Scene {
     this.startedAt = this.time.now
     this.registry.set('wave1Announced', false)
     this.registry.set('winScreenShown', false)
+    this.registry.set('leavingToMenu', false)
     this.entities.clear()
     this.ambientBees = []
     this.specialCharges = 0
@@ -325,15 +326,17 @@ export class GameScene extends Phaser.Scene {
     this.resetPhysicsDebug(false)
     if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
     this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
-    this.cameras.main.off(
+    this.cameras?.main?.off(
       Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE,
       this.onCameraFollowUpdate,
       this,
     )
     this.time.removeAllEvents()
     this.tweens.killAll()
-    this.input.keyboard?.removeAllListeners()
-    this.input.removeAllListeners()
+    // Do NOT keyboard.removeAllListeners() — KeyboardPlugin is shared across
+    // scenes; nuking it mid-transition can drop the menu's fresh key binds
+    // (Enter on clear screen then never reaches cast select).
+    this.input?.removeAllListeners()
     this.entities.destroy()
     this.debugOverlay?.destroy()
   }
@@ -394,6 +397,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private goMenu() {
+    // Guard: Enter/Space can fire both keydown listener + JustDown in the same frame.
+    if (this.registry.get('leavingToMenu')) return
+    this.registry.set('leavingToMenu', true)
     try {
       if (this.physics?.world) this.physics.resume()
     } catch {
@@ -401,9 +407,23 @@ export class GameScene extends Phaser.Scene {
     }
     this.registry.set('winScreenShown', false)
     this.stopUi()
-    // From play: start('menu') shuts play down and boots cast select.
-    // Do NOT stop('play') first — that can abort the transition mid-callback.
-    this.scene.start('menu')
+    // Must use ScenePlugin.start from play so THIS scene shuts down.
+    // game.scene.start('menu') only launches menu in parallel → clear screen sticks.
+    // Defer off the keydown/JustDown stack so the transition is not aborted.
+    const play = this
+    window.setTimeout(() => {
+      try {
+        if (play.sys?.isActive()) {
+          play.scene.start('menu')
+        } else {
+          play.game.scene.stop('UIScene')
+          play.game.scene.stop('play')
+          play.game.scene.start('menu')
+        }
+      } finally {
+        play.game.registry.set('leavingToMenu', false)
+      }
+    }, 0)
   }
 
   private emitHealth() {
@@ -2017,21 +2037,31 @@ export class GameScene extends Phaser.Scene {
     // Hit target after container add — more reliable than pre-add interactive.
     btnBg.setInteractive({ useHandCursor: true })
     btnTx.setInteractive({ useHandCursor: true })
+    // Click anywhere on the lower third of the panel as fallback.
+    const hitPad = this.add
+      .rectangle(0, 182, 640, 90, 0x000000, 0.001)
+      .setInteractive({ useHandCursor: true })
+    overlay.add(hitPad)
     let left = false
     const toSelect = () => {
-      if (left) return
+      if (left || this.registry.get('leavingToMenu')) return
       left = true
       btnBg.disableInteractive()
       btnTx.disableInteractive()
+      hitPad.disableInteractive()
+      this.input.keyboard?.off('keydown-ENTER', toSelect)
+      this.input.keyboard?.off('keydown-SPACE', toSelect)
+      this.input.keyboard?.off('keydown-R', toSelect)
+      // Clear sticky key state so cast select does not see Enter still down.
+      this.keyEnter?.reset()
+      this.keySpace?.reset()
+      this.keyR?.reset()
       this.goMenu()
     }
     btnBg.on('pointerover', () => btnBg.setFillStyle(0xf09060))
     btnBg.on('pointerout', () => btnBg.setFillStyle(0xe07a4f))
     btnBg.on('pointerup', toSelect)
     btnTx.on('pointerup', toSelect)
-    // Also accept click anywhere on the lower third of the panel as fallback.
-    const hitPad = this.add.rectangle(0, 182, 640, 90, 0x000000, 0.001).setInteractive({ useHandCursor: true })
-    overlay.add(hitPad)
     hitPad.on('pointerup', toSelect)
     this.input.keyboard?.on('keydown-ENTER', toSelect)
     this.input.keyboard?.on('keydown-SPACE', toSelect)

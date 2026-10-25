@@ -159,11 +159,16 @@ export class LogoScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0.85)
 
+    let left = false
     const go = () => {
-      this.input.off('pointerdown', go)
-      this.input.keyboard?.off('keydown', go)
-      this.cameras.main.fadeOut(280, 40, 28, 16)
-      this.time.delayedCall(280, () => this.scene.start('menu'))
+      if (left) return
+      left = true
+      this.input?.off('pointerdown', go)
+      this.input?.keyboard?.off('keydown', go)
+      this.cameras?.main?.fadeOut(280, 40, 28, 16)
+      this.time.delayedCall(280, () => {
+        if (this.sys.isActive()) this.scene.start('menu')
+      })
     }
 
     this.time.delayedCall(3200, go)

@@ -22,6 +22,9 @@ export class MainMenuScene extends Phaser.Scene {
   private previewBearShad: Phaser.GameObjects.Image | null = null
   private previewBoy: Phaser.GameObjects.Image | null = null
   private previewBoyShad: Phaser.GameObjects.Image | null = null
+  /** Ignore Enter/Space/click-start until this time — same key that left the win screen. */
+  private inputReadyAt = 0
+  private starting = false
 
   constructor() {
     super('menu')
@@ -32,6 +35,10 @@ export class MainMenuScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor('#6a9ec8')
     this.cameras.main.fadeIn(360, 70, 120, 150)
     this.cursor = 0
+    this.starting = false
+    this.registry.set('leavingToMenu', false)
+    // Block the Return/Space that just dismissed the clear screen from also hitting「開始」.
+    this.inputReadyAt = this.time.now + 450
 
     this.buildAtmosphere(width, height)
     this.buildBrandHero(width, height)
@@ -337,10 +344,10 @@ export class MainMenuScene extends Phaser.Scene {
     kb.on('keydown-ENTER', onStart)
     kb.on('keydown-SPACE', onStart)
     this.events.once('shutdown', () => {
-      kb.off('keydown-UP', onUp)
-      kb.off('keydown-DOWN', onDown)
-      kb.off('keydown-ENTER', onStart)
-      kb.off('keydown-SPACE', onStart)
+      kb?.off('keydown-UP', onUp)
+      kb?.off('keydown-DOWN', onDown)
+      kb?.off('keydown-ENTER', onStart)
+      kb?.off('keydown-SPACE', onStart)
     })
 
     kb.once('keydown', () => {
@@ -383,7 +390,11 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private confirmStart() {
-    const choice = this.choices[this.cursor]!
+    if (this.starting) return
+    if (this.time.now < this.inputReadyAt) return
+    const choice = this.choices[this.cursor]
+    if (!choice) return
+    this.starting = true
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.cameras.main.fadeOut(220, 40, 28, 16)
