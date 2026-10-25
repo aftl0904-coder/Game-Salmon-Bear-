@@ -416,9 +416,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Attack pose — squash only (no continuous lean shear under NEAREST).
     if (this.atkCd > 80 || this.isMeleeActive()) {
       if (this.role === 'boy') {
-        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: this.facing * 8 })
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: 0 })
       } else {
-        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: this.facing * 6 })
+        setPixelPose(this, this.baseScale, { squashX: 1, squashY: 1, angle: 0 })
       }
       if (!grounded) this.pose = 'jump'
       else if (Math.abs(vx) > 12) this.pose = 'run'

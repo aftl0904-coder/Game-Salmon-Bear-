@@ -82,13 +82,13 @@ export function setIdlePose(spr: Phaser.GameObjects.Sprite, baseScale: number, _
   setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
-export function setJumpPose(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {
-  // Tiny discrete lean only — keep scale at integer base.
-  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: facing * -6 })
+export function setJumpPose(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
-export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {
-  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: facing * -18 })
+export function setHurtPoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, _facing: number) {
+  // Tint handles hurt read — rotation shears NEAREST even at integer scale.
+  setPixelPose(spr, baseScale, { squashX: 1, squashY: 1, angle: 0 })
 }
 
 export function setDiePoseVisual(spr: Phaser.GameObjects.Sprite, baseScale: number, facing: number) {

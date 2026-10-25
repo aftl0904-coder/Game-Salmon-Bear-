@@ -1164,7 +1164,7 @@ export class GameScene extends Phaser.Scene {
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
     this.fan = this.add.image(330, GROUND_Y - 36, fanKey).setDepth(10).setScale(2)
     this.fanGlow = this.add.circle(330, GROUND_Y - 36, 15, 0x88ddff, 0.2).setDepth(9)
-    this.tweens.add({ targets: this.fan, angle: { from: -28, to: 28 }, duration: 80, yoyo: true, repeat: -1 })
+    this.fan.setAngle(0)
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.boyShadow = this.add.image(250, GROUND_Y + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.2, 0.75)
