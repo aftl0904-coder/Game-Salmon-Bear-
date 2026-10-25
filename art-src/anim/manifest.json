@@ -1118,5 +1118,125 @@
     "rows": 1,
     "facing": "right",
     "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
+  },
+  {
+    "file": "art-src/props/stage2/bark-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-ground tileable strip magenta moss lip. Ref tree-tiles."
+  },
+  {
+    "file": "art-src/props/stage2/bark-platform.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-platform horizontal branch one-way magenta."
+  },
+  {
+    "file": "art-src/props/stage2/bark-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-wall tileable vertical magenta."
+  },
+  {
+    "file": "art-src/props/stage2/honeycomb-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honeycomb-wall tileable magenta."
+  },
+  {
+    "file": "art-src/props/stage2/mushroom-shelf.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 mushroom-shelf bracket fungus platform magenta."
+  },
+  {
+    "file": "art-src/props/stage2/triangle-mark.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 triangle △ carved in bark magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-far 16:9 inside honey tree light shafts no characters."
+  },
+  {
+    "file": "art-src/props/stage2/wind-vent.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 wind-vent 3 frames magenta knot-hole updraft leaves."
+  },
+  {
+    "file": "art-src/props/stage2/honey-drip.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honey-drip 3 frames magenta dripping."
+  },
+  {
+    "file": "art-src/props/stage2/vine-a.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 vine-a hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/vine-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 vine-b hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-hanging.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-hanging intact magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-broken magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-mid tileable leaves branches magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-front.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-front foreground leaf strip magenta."
   }
 ]
