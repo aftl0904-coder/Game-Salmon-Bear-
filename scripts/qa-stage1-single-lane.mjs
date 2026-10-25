@@ -29,12 +29,20 @@ try {
     await page.keyboard.press(k)
     await page.waitForTimeout(500)
   }
-  // skip story
-  for (let i = 0; i < 8; i++) {
-    await page.keyboard.press('F')
-    await page.waitForTimeout(280)
+  // Story intro: 3 acts — skip with keyboard A (not F); wait for started
+  for (let i = 0; i < 12; i++) {
+    await page.keyboard.press('KeyA')
+    await page.waitForTimeout(400)
+    const started = await page.evaluate(() => {
+      const sc = window.__SAKE_GAME__?.scene?.getScene('play')
+      return !!sc?.started
+    })
+    if (started) {
+      say(`story skipped after ${i + 1} A-presses`)
+      break
+    }
   }
-  await page.waitForTimeout(600)
+  await page.waitForTimeout(800)
   await page.screenshot({ path: path.join(OUT, '01_play_start.png') })
 
   const baseline = await page.evaluate(() => {

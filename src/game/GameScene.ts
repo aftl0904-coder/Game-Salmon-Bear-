@@ -33,7 +33,6 @@ import {
   LANE_FLOOR_Y,
   LANE_Y,
   MAX_HP,
-  BOY_SPEED,
   GIRL_SPEED,
   HURT_LOCK_MS,
   HURT_IFRAME_MS,
@@ -97,6 +96,7 @@ import {
   type LaneId,
 } from './engine'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { PLAYER } from './config/playerData'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -893,7 +893,7 @@ export class GameScene extends Phaser.Scene {
     const ax = this.padAxis(this.pad1, true)
     const left = this.keyA.isDown || ax < -0.45 || TouchInput.isDown('left')
     const right = this.keyD.isDown || ax > 0.45 || TouchInput.isDown('right')
-    const spd = this.boy.role === 'girl' ? GIRL_SPEED : BOY_SPEED
+    const spd = this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed
     this.steerHero(
       this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), spd,
@@ -1925,7 +1925,7 @@ export class GameScene extends Phaser.Scene {
     const boyY = laneY(boyLane)
     const boyX = 220
     this.boy = Player.spawn(this, boyX, boyY, {
-      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: BOY_SPEED,
+      role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: PLAYER.moveSpeed,
     })
     this.boy.snapToLane(boyLane, boyX)
     this.entities.add(this.boy, 'player')
@@ -2139,8 +2139,8 @@ export class GameScene extends Phaser.Scene {
         this.startedAt = this.time.now
         this.emitScore(
           this.mode === '1p'
-            ? '單人：ＷＳ換線　Ｇ跳　Ｆ鮭槍　Ｔ絕招（食蜂蜜）｜Ｒ回選單'
-            : '雙人：Ｆ／，攻擊　Ｇ／．跳　Ｔ／；絕招｜食蜂蜜充藍條',
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Ｒ回選單'
+            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
         )
       },
     })
