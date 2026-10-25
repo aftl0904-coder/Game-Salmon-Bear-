@@ -47,21 +47,13 @@
     "source": "enemies/E-01.png",
     "output": "enemies/E-01.png",
     "targetHeightPx": 40,
-    "frameWidth": 36,
+    "frameWidth": 50,
     "frameHeight": 40,
     "colors": 64,
-    "license": "project-owned-placeholder",
+    "license": "project-owned (AI-generated lineup by owner)",
     "role": "enemy-small",
     "runtimeTex": "art-enemy",
-    "frames": {
-      "idle": 4,
-      "walk": 4,
-      "telegraph": 2,
-      "attack": 3,
-      "hurt": 1,
-      "die": 3
-    },
-    "note": "剪影佔位；待正式原畫"
+    "note": "由 enemy-lineup-five.png 切出；面向右；runtime scale 1"
   },
   {
     "id": "E-02",
@@ -69,21 +61,13 @@
     "source": "enemies/E-02.png",
     "output": "enemies/E-02.png",
     "targetHeightPx": 72,
-    "frameWidth": 64,
+    "frameWidth": 70,
     "frameHeight": 72,
     "colors": 64,
-    "license": "project-owned-placeholder",
+    "license": "project-owned (AI-generated lineup by owner)",
     "role": "enemy-heavy",
-    "runtimeTex": "art-enemy-barrel",
-    "frames": {
-      "idle": 4,
-      "walk": 4,
-      "telegraph": 2,
-      "attack": 3,
-      "hurt": 1,
-      "die": 3
-    },
-    "note": "剪影佔位；待正式原畫"
+    "runtimeTex": "art-enemy-elephant",
+    "note": "由 enemy-lineup-five.png 切出；重型 species elephant"
   },
   {
     "id": "E-03",
@@ -91,63 +75,40 @@
     "source": "enemies/E-03.png",
     "output": "enemies/E-03.png",
     "targetHeightPx": 56,
-    "frameWidth": 40,
+    "frameWidth": 43,
     "frameHeight": 56,
     "colors": 64,
-    "license": "project-owned-placeholder",
+    "license": "project-owned (AI-generated lineup by owner)",
     "role": "enemy-mid",
-    "runtimeTex": "art-enemy-elephant",
-    "frames": {
-      "idle": 4,
-      "walk": 4,
-      "telegraph": 2,
-      "attack": 3,
-      "hurt": 1,
-      "die": 3
-    },
-    "note": "剪影佔位（暫接重型 runtime key）；待正式原畫"
+    "runtimeTex": "art-enemy-barrel",
+    "note": "由 enemy-lineup-five.png 切出；快速 species barrel"
   },
   {
     "id": "E-04",
     "name": "刺球",
     "source": "enemies/E-04.png",
     "output": "enemies/E-04.png",
-    "targetHeightPx": 40,
-    "frameWidth": 40,
-    "frameHeight": 40,
+    "targetHeightPx": 28,
+    "frameWidth": 28,
+    "frameHeight": 28,
     "colors": 64,
-    "license": "project-owned-placeholder",
-    "role": "enemy-small",
-    "frames": {
-      "idle": 4,
-      "walk": 4,
-      "telegraph": 2,
-      "attack": 3,
-      "hurt": 1,
-      "die": 3
-    },
-    "note": "剪影佔位；尚未接入 runtime"
+    "license": "project-owned (AI-generated lineup by owner)",
+    "role": "hazard",
+    "note": "由 enemy-lineup-five.png 切出；刺球陷阱",
+    "runtimeTex": "hazard-durian"
   },
   {
     "id": "E-05",
     "name": "蜜蜂",
     "source": "enemies/E-05.png",
     "output": "enemies/E-05.png",
-    "targetHeightPx": 40,
-    "frameWidth": 40,
-    "frameHeight": 40,
+    "targetHeightPx": 38,
+    "frameWidth": 35,
+    "frameHeight": 38,
     "colors": 64,
-    "license": "project-owned-placeholder",
+    "license": "project-owned (AI-generated lineup by owner)",
     "role": "enemy-flyer",
-    "frames": {
-      "idle": 4,
-      "walk": 4,
-      "telegraph": 2,
-      "attack": 3,
-      "hurt": 1,
-      "die": 3
-    },
-    "note": "剪影佔位；ambient critter 尚未換圖"
+    "note": "由 enemy-lineup-five.png 切出；飛行敵人未接 AI；裝飾版見 E-05-ambient"
   },
   {
     "id": "E-06",
@@ -216,5 +177,19 @@
     "role": "ui-font",
     "note": "繁體中文像素字；HUD 僅用 12px／16px；作者 TakWolf / Fusion Pixel",
     "skipNormalize": true
+  },
+  {
+    "id": "E-05-ambient",
+    "name": "蜜蜂（背景裝飾）",
+    "source": "enemies/E-05-ambient.png",
+    "output": "enemies/E-05-ambient.png",
+    "targetHeightPx": 16,
+    "frameWidth": 15,
+    "frameHeight": 16,
+    "colors": 16,
+    "license": "project-owned (AI-generated lineup by owner)",
+    "runtimeTex": "fx-ambient-bee",
+    "role": "decor",
+    "note": "由 enemy-lineup-five.png 切出"
   }
 ]

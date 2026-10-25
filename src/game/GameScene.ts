@@ -1509,7 +1509,8 @@ export class GameScene extends Phaser.Scene {
   private spawnAmbientCritters() {
     this.ambientCritters = []
     // Bees dominate the sky traffic
-    for (let i = 0; i < 10; i++) this.spawnOneCritter('bee', true)
+    // 4 decorative bees (was 10) — less sky clutter now that bees use real art.
+    for (let i = 0; i < 4; i++) this.spawnOneCritter('bee', true)
     for (let i = 0; i < 3; i++) this.spawnOneCritter('butterfly', true)
     for (let i = 0; i < 2; i++) this.spawnOneCritter('bird', true)
   }
