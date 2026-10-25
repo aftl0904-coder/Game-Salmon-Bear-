@@ -76,27 +76,27 @@ export class MainMenuScene extends Phaser.Scene {
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     if (this.textures.exists('prop-torii')) {
-      this.add.image(width / 2, height - 42, shad).setDepth(4).setAlpha(0.45).setScale(2.2, 0.7)
+      this.add.image(width / 2, height - 42, shad).setDepth(5).setAlpha(0.6).setScale(2.4, 0.85)
       this.add.image(width / 2, height - 50, 'prop-torii').setOrigin(0.5, 1).setDepth(5).setScale(1.15).setAlpha(0.95)
     }
     if (this.textures.exists('prop-banner')) {
-      this.add.image(70, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.5, 0.5)
+      this.add.image(70, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(0.65, 0.55)
       this.add.image(70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(1.5)
-      this.add.image(width - 70, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.5, 0.5)
+      this.add.image(width - 70, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(0.65, 0.55)
       this.add.image(width - 70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(1.5)
     }
     if (this.textures.exists('prop-lantern3d')) {
       const L = this.add.image(130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(1.6)
       const R = this.add.image(width - 130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(1.6)
-      this.add.image(130, height - 42, shad).setDepth(4).setAlpha(0.3).setScale(0.45, 0.45)
-      this.add.image(width - 130, height - 42, shad).setDepth(4).setAlpha(0.3).setScale(0.45, 0.45)
+      this.add.image(130, height - 42, shad).setDepth(5).setAlpha(0.45).setScale(0.55, 0.5)
+      this.add.image(width - 130, height - 42, shad).setDepth(5).setAlpha(0.45).setScale(0.55, 0.5)
       this.tweens.add({ targets: L, angle: { from: -4, to: 4 }, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
       this.tweens.add({ targets: R, angle: { from: 4, to: -4 }, duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     if (this.textures.exists('prop-honey-stack')) {
-      this.add.image(200, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.7, 0.5)
+      this.add.image(200, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(0.85, 0.6)
       this.add.image(200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1.3)
-      this.add.image(width - 200, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.7, 0.5)
+      this.add.image(width - 200, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(0.85, 0.6)
       this.add.image(width - 200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1.3).setFlipX(true)
     }
     if (this.textures.exists('prop-bridge')) {
@@ -174,11 +174,11 @@ export class MainMenuScene extends Phaser.Scene {
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const ly = height - 100
-    this.add.image(150, ly + 10, shad).setDepth(5).setAlpha(0.5).setScale(1.4, 0.7)
+    this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
     this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(2.5)
-    this.add.image(270, ly + 8, shad).setDepth(5).setAlpha(0.45).setScale(1.5, 0.7)
+    this.add.image(270, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.7, 0.85)
     this.add.image(270, ly - 4, 'art-bear').setDepth(7).setScale(2.55)
-    this.add.image(width - 150, ly + 8, shad).setDepth(5).setAlpha(0.45).setScale(1.3, 0.7)
+    this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
     this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(2.3)
     if (this.textures.exists('pot3d')) {
       this.add.image(width / 2 + 90, ly + 28, 'pot3d').setDepth(6).setScale(1.7)
