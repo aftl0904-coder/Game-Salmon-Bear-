@@ -100,6 +100,7 @@ import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
 import { addGroundShadow } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
+import { layoutClearCard } from './layoutClearCard'
 import { ENVIRONMENT, environmentById } from './config/gameData'
 import {
   createRound1Tilemap,
@@ -2315,30 +2316,33 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(0.5)
     overlay.add(title)
 
-    // Always show both characters + bear hugging together.
-    const hugY = 4
-    const boy = this.add.image(-52, hugY, 'art-salmon').setScale(1.6).setOrigin(0.5, 1)
-    const girl = this.add.image(52, hugY, 'art-girl').setScale(1.6).setOrigin(0.5, 1)
-    const bear = this.add.image(0, hugY + 6, 'art-bear').setScale(1.7).setOrigin(0.5, 1)
+    // Integer-scale cast under title (no overlap with headline).
+    const [boy, girl, bear] = layoutClearCard(this, panel, title, [
+      'art-salmon',
+      'art-girl',
+      'art-bear',
+    ])
     enableActorSprite(boy)
     enableActorSprite(girl)
     enableActorSprite(bear)
     overlay.add([boy, girl, bear])
     this.tweens.add({
       targets: [boy, girl, bear],
-      y: '-=8',
+      y: '-=6',
       duration: 520,
       yoyo: true,
       repeat: -1,
       ease: 'Sine.inOut',
     })
-    this.tweens.add({ targets: boy, angle: -8, duration: 480, yoyo: true, repeat: -1 })
-    this.tweens.add({ targets: girl, angle: 8, duration: 480, yoyo: true, repeat: -1 })
-    this.tweens.add({ targets: bear, scale: 1.85, duration: 560, yoyo: true, repeat: -1 })
+    // Angle-only juice — keep setScale integer (no fractional scale tween).
+    this.tweens.add({ targets: boy, angle: -6, duration: 480, yoyo: true, repeat: -1 })
+    this.tweens.add({ targets: girl, angle: 6, duration: 480, yoyo: true, repeat: -1 })
 
+    const castBottom = Math.max(boy!.y, girl!.y, bear!.y)
+    const captionY = Math.round(castBottom + 14)
     overlay.add(
       this.add
-        .text(0, 58, '倫寶・琪寶寶・噗噗　開心擁抱！', {
+        .text(0, captionY, '倫寶・琪寶寶・噗噗　開心擁抱！', {
           fontFamily: FONT_UI,
           fontSize: '12px',
           color: '#5a3020',
@@ -2346,9 +2350,10 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5),
     )
 
+    const stage2Y = captionY + 22
     overlay.add(
       this.add
-        .text(0, 80, '第２關　・　待續', {
+        .text(0, stage2Y, '第２關　・　待續', {
           fontFamily: FONT_TITLE,
           fontSize: '12px',
           color: '#1a6088',
@@ -2358,11 +2363,12 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5),
     )
 
+    const btnY = stage2Y + 28
     const btnBg = this.add
-      .rectangle(0, 108, 180, 32, 0xe07a4f, 1)
+      .rectangle(0, btnY, 180, 32, 0xe07a4f, 1)
       .setStrokeStyle(2, 0xffe08a)
     const btnTx = this.add
-      .text(0, 108, '回角色選擇', {
+      .text(0, btnY, '回角色選擇', {
         fontFamily: FONT_UI,
         fontSize: '12px',
         color: '#fff8e0',
@@ -2376,7 +2382,7 @@ export class GameScene extends Phaser.Scene {
     btnTx.setInteractive({ useHandCursor: true })
     // Click anywhere on the lower third of the panel as fallback.
     const hitPad = this.add
-      .rectangle(0, 108, 420, 56, 0x000000, 0.001)
+      .rectangle(0, btnY, 420, 56, 0x000000, 0.001)
       .setInteractive({ useHandCursor: true })
     overlay.add(hitPad)
     let left = false
