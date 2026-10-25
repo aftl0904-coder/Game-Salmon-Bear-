@@ -24,6 +24,7 @@ import {
   resolveStick,
   type LaneId,
 } from './engine'
+import { FSM_TIMEOUT_MS, type PlayerFsm } from './engine/playerFsm'
 import { EventBus, GameEvents } from './EventBus'
 import {
   enablePixelSprite,
@@ -105,6 +106,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
    * (held S cannot skip 中 → 下).
    */
   private laneHeldLock = false
+  /** Explicit FSM — JUMP/LANE_SWAP timeout-guarded (~800ms). */
+  fsm: PlayerFsm = 'IDLE'
+  private fsmEnterAt = 0
+  private laneSwapUntil = 0
 
   static preloadHitboxTexture(scene: Phaser.Scene) {
     if (scene.textures.exists('__atk-hitbox')) return
@@ -146,6 +151,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.walkPhase = 0
     this.wasGrounded = true
     this.pose = 'idle'
+    this.enterFsm('IDLE')
     this.alive = true
     this.awaitingContinue = false
     this.justLanded = false
@@ -154,11 +160,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.laneJumping = false
     this.laneBuf = 0
     this.laneHeldLock = false
+    this.fsm = 'IDLE'
+    this.fsmEnterAt = 0
+    this.laneSwapUntil = 0
 
     this.setCollideWorldBounds(true)
     this.setDragX(0)
     this.setMaxVelocity(this.moveSpeed + 60, 1200)
-    this.setDepth(actorDepth('hero', this.lane))
+    this.syncActorDepth()
     this.setScale(this.baseScale)
     enablePixelSprite(this)
     bindFootBody(this, {
@@ -176,7 +185,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackHitbox = this.scene.physics.add.image(this.x, this.y, '__atk-hitbox')
     this.attackHitbox.setVisible(false)
     this.attackHitbox.setActive(false)
-    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
+    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane, this.y))
     enablePixelSprite(this.attackHitbox)
     const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
     hb.allowGravity = false
@@ -234,6 +243,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
       if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * 0.82)
       this.holdLaneFloor(body, dt)
+      this.tickFsmGuards(opts.now ?? this.scene.time.now, grounded, body, 0)
+      this.syncActorDepth()
       this.applyPose(grounded, 0)
       return
     }
@@ -251,13 +262,18 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.laneCd <= 0 &&
       inLaneBand(this.y)
     ) {
+      const nowLane = opts.now ?? this.scene.time.now
       if (this.laneBuf < 0 && this.lane > 0) {
         this.lane = clampLane(this.lane - 1)
         this.laneCd = LANE_SWITCH_MS
+        this.enterFsm('LANE_SWAP', nowLane)
+        this.laneSwapUntil = nowLane + FSM_TIMEOUT_MS
         opts.onLane?.(this.lane)
       } else if (this.laneBuf > 0 && this.lane < 2) {
         this.lane = clampLane(this.lane + 1)
         this.laneCd = LANE_SWITCH_MS
+        this.enterFsm('LANE_SWAP', nowLane)
+        this.laneSwapUntil = nowLane + FSM_TIMEOUT_MS
         opts.onLane?.(this.lane)
       }
       this.laneBuf = 0
@@ -288,15 +304,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.laneJumping = true
       this.setVelocityY(JUMP_V)
       this.jumpBuf = 0; this.coyote = 0; this.jumpConsumed = true
+      this.enterFsm('JUMP', opts.now ?? this.scene.time.now)
       opts.onJump?.()
     }
     if (!opts.jumpHeld && body.velocity.y < -120) this.setVelocityY(body.velocity.y * 0.55)
     this.holdLaneFloor(body, dt)
     if (!this.wasGrounded && grounded) this.justLanded = true
     this.wasGrounded = grounded
-    this.setDepth(actorDepth('hero', this.lane))
-    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
-    if (this.atkCd <= 0 && opts.attackJust) { this.startMelee(opts.now ?? this.scene.time.now); opts.onAttack?.() }
+    const nowEnd = opts.now ?? this.scene.time.now
+    if (this.atkCd <= 0 && opts.attackJust) {
+      this.startMelee(nowEnd)
+      this.enterFsm('ATTACK', nowEnd)
+      opts.onAttack?.()
+    }
+    this.tickFsmGuards(nowEnd, grounded, body, vx)
+    this.syncActorDepth()
     this.applyPose(grounded, vx)
   }
   private canStartLaneJump(body: Phaser.Physics.Arcade.Body): boolean {
@@ -336,8 +358,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setY(laneY(this.lane)); this.setVelocity(0, 0)
     const body = this.body as Phaser.Physics.Arcade.Body | null
     if (body) { body.allowGravity = false; body.blocked.down = true }
-    this.setDepth(actorDepth('hero', this.lane))
-    this.attackHitbox.setDepth(actorDepth('hitbox', this.lane))
+    this.syncActorDepth()
   }
   startMelee(now = this.scene.time.now) {
     this.atkCd = Math.max(this.atkCd, MELEE_MS + 40)
@@ -384,6 +405,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtCd = opts.iframeMs ?? HURT_IFRAME_MS
     this.hurtLock = opts.lockMs ?? HURT_LOCK_MS
     this.pose = 'hurt'
+    this.enterFsm('HURT')
     if (opts.knockbackX !== undefined) this.setVelocityX(opts.knockbackX)
     if (opts.knockbackY !== undefined) this.setVelocityY(opts.knockbackY)
     this.setTint(0xff4444)
@@ -417,6 +439,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const prev = this.hp
     this.alive = false
     this.pose = 'die'
+    this.enterFsm('DIE')
     this.hp = 0
     this.hurtLock = 99999
     this.stopIFrameFlash()
@@ -436,6 +459,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   revive(x: number, y: number, now = this.scene.time.now, graceMs = 2000) {
     this.hp = MAX_HP
     this.pose = 'idle'
+    this.enterFsm('IDLE')
     this.alive = true
     this.awaitingContinue = false
     this.hurtCd = 0
@@ -538,6 +562,83 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       gfx.lineStyle(2, HITBOX_DEBUG, 0.95)
       gfx.strokeRect(hb.x, hb.y, hb.width, hb.height)
     }
+  }
+
+
+  private enterFsm(next: PlayerFsm, now = this.scene.time.now) {
+    if (this.fsm === next) return
+    this.fsm = next
+    this.fsmEnterAt = now
+  }
+
+  private syncActorDepth() {
+    this.setDepth(actorDepth('hero', this.lane, this.y))
+    if (this.attackHitbox) this.attackHitbox.setDepth(actorDepth('hitbox', this.lane, this.y))
+  }
+
+  /**
+   * JUMP / LANE_SWAP timeout ~800ms → force IDLE + snap to lane floor.
+   * Prevents soft-lock / frozen mid-air (never hang at bad Y).
+   */
+  private tickFsmGuards(
+    now: number,
+    grounded: boolean,
+    body: Phaser.Physics.Arcade.Body,
+    vx: number,
+  ) {
+    if (this.hp <= 0 || !this.alive) {
+      this.enterFsm('DIE', now)
+      return
+    }
+    if (this.hurtLock > 0) {
+      this.enterFsm('HURT', now)
+      return
+    }
+    if (this.fsm === 'LANE_SWAP') {
+      const target = laneY(this.lane)
+      if (
+        Math.abs(this.y - target) < 2 ||
+        now >= this.laneSwapUntil ||
+        now - this.fsmEnterAt >= FSM_TIMEOUT_MS
+      ) {
+        this.setY(target)
+        body.velocity.y = 0
+        body.allowGravity = false
+        this.laneJumping = false
+        this.laneCd = 0
+        this.laneBuf = 0
+        this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
+      }
+      return
+    }
+    if (this.fsm === 'JUMP' || this.laneJumping) {
+      if (grounded && !this.laneJumping) {
+        this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
+        return
+      }
+      if (this.fsmEnterAt > 0 && now - this.fsmEnterAt >= FSM_TIMEOUT_MS) {
+        const target = laneY(this.lane)
+        this.setY(target)
+        body.velocity.y = 0
+        body.allowGravity = false
+        this.laneJumping = false
+        this.jumpConsumed = false
+        this.justLanded = true
+        this.enterFsm('IDLE', now)
+      }
+      return
+    }
+    if (this.fsm === 'ATTACK') {
+      if (!this.isMeleeActive() && this.atkCd <= 80) {
+        this.enterFsm(grounded ? (Math.abs(vx) > 12 ? 'MOVE' : 'IDLE') : 'JUMP', now)
+      }
+      return
+    }
+    if (!grounded || this.laneJumping) {
+      this.enterFsm('JUMP', now)
+      return
+    }
+    this.enterFsm(Math.abs(vx) > 12 ? 'MOVE' : 'IDLE', now)
   }
 
   destroy(fromScene?: boolean) {
