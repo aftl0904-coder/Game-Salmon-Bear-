@@ -22,11 +22,15 @@
 
 注意：非機械豬嘅前搖，程式仍然限制喺 220–420ms 之間；機械豬最少 500ms。
 
-## 未接入（寫咗喺 JSON，但程式未用）
+## 行為（2026-10-26 起）
 
-`frontArmor`、`vulnerableAfterSlamMs`、`dashSpeed`、`dashMs`、`stunMs`、`throwIntervalMs`、`throwHeights`、`retreatWithinPx`、`patrolTiles`。
+| 敵人 | 打法 | 玩家應對 | 用到嘅 JSON |
+|---|---|---|---|
+| 紅魚 E-01 | 喺 150px 內停定蓄力，再直線衝刺，衝完暈 | 跳過佢，趁暈打 | `ai.telegraphMs`、`ai.dashSpeed`、`ai.dashMs`、`ai.stunMs` |
+| 帽仔兵 E-03 | 保持 110–190px 距離，230px 內拋石；一嚿低（膝頭高）一嚿高（胸口高）輪流 | 低石要跳，高石要蹲；衝埋去打 | `ai.throwIntervalMs` |
+| 機械豬 E-02 | 正面鐵甲打唔入；重擊落空後有破綻時間 | 等「破綻！」先打，或者繞去背脊 | `ai.slamTelegraphMs`、`ai.vulnerableAfterSlamMs` |
 
-E-04 刺球、E-05 蜜蜂、E-06 滾動怪未有對應 AI。
+未接入：`patrolTiles`、`throwHeights`（固定高低輪流）、`retreatWithinPx`（用固定 110px）、`slamRange`。
 
 ## 目前數值
 
