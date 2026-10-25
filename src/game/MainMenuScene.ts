@@ -150,28 +150,28 @@ export class MainMenuScene extends Phaser.Scene {
   private buildBrandHero(width: number, height: number) {
     const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
     const plaque = this.add
-      .image(width / 2, 78, plaqueKey)
+      .image(width / 2, 36, plaqueKey)
       .setDepth(10)
-      .setScale(plaqueKey === 'ui-title-plaque' ? 1.15 : 1.5)
+      .setScale(plaqueKey === 'ui-title-plaque' ? 0.52 : 0.7)
 
     const brand = this.add
-      .text(width / 2, 68, '鮭鮭熊', {
+      .text(width / 2, 32, '鮭鮭熊', {
         fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
-        fontSize: '64px',
+        fontSize: '28px',
         color: '#2a1408',
         stroke: '#fff6d0',
-        strokeThickness: 6,
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setDepth(11)
 
     const sub = this.add
-      .text(width / 2, 112, '第一關・百畝樹林　｜　奪回蜂蜜・野餐之路', {
+      .text(width / 2, 54, '第一關・百畝樹林　｜　奪回蜂蜜・野餐之路', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '18px',
+        fontSize: '10px',
         color: '#5a3820',
         backgroundColor: '#ffe8b088',
-        padding: { x: 12, y: 4 },
+        padding: { x: 6, y: 2 },
       })
       .setOrigin(0.5)
       .setDepth(11)
@@ -194,16 +194,17 @@ export class MainMenuScene extends Phaser.Scene {
     })
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    const ly = height - 100
-    this.previewBoyShad = this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
-    this.previewBoy = this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25)
+    // Keep previews under the title band so they don't cover 副標題 (480×270).
+    const ly = height - 28
+    this.previewBoyShad = this.add.image(70, ly + 4, shad).setDepth(6).setAlpha(0.6).setScale(0.7, 0.4)
+    this.previewBoy = this.add.image(70, ly, 'art-salmon').setDepth(7).setScale(0.55)
     enableActorSprite(this.previewBoy)
-    this.previewGirlShad = this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
-    this.previewGirl = this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15)
+    this.previewGirlShad = this.add.image(width - 70, ly + 4, shad).setDepth(6).setAlpha(0.55).setScale(0.65, 0.4)
+    this.previewGirl = this.add.image(width - 70, ly, 'art-girl').setDepth(7).setScale(0.5)
     enableActorSprite(this.previewGirl)
-    this.previewBearShad = this.add.image(width - 220, ly + 8, shad).setDepth(6).setAlpha(0.5).setScale(1.15, 0.75)
-    // 噗噗 Pooh-style — readable on menu
-    this.previewBear = this.add.image(width - 220, ly + 6, 'art-bear').setDepth(7).setScale(1.45)
+    this.previewBearShad = this.add.image(width - 110, ly + 4, shad).setDepth(6).setAlpha(0.5).setScale(0.55, 0.35)
+    // 噗噗 Pooh-style — readable on menu, below subtitle
+    this.previewBear = this.add.image(width - 110, ly + 2, 'art-bear').setDepth(7).setScale(0.42)
     enableActorSprite(this.previewBear)
     this.previewGirl.setVisible(false)
     this.previewBear.setVisible(false)
@@ -222,12 +223,12 @@ export class MainMenuScene extends Phaser.Scene {
     this.cursorsGfx = []
 
     this.choices.forEach((item, i) => {
-      const y = 150 + i * 48
+      const y = 78 + i * 28
       const panelKey = this.textures.exists('ui-wood-panel') ? 'ui-wood-panel' : 'ui-scroll'
       const panel = this.add
         .image(width / 2, y, panelKey)
         .setDepth(12)
-        .setScale(panelKey === 'ui-wood-panel' ? 0.88 : 1.0)
+        .setScale(panelKey === 'ui-wood-panel' ? 0.42 : 0.5)
       panel.setInteractive({ useHandCursor: true })
       panel.on('pointerover', () => {
         this.cursor = i
@@ -245,9 +246,9 @@ export class MainMenuScene extends Phaser.Scene {
         this.add
           .text(width / 2, y, item.text, {
             fontFamily: 'Noto Sans TC, sans-serif',
-            fontSize: '24px',
+            fontSize: '12px',
             color: '#2a1810',
-            padding: { x: 8, y: 4 },
+            padding: { x: 4, y: 2 },
           })
           .setOrigin(0.5)
           .setDepth(13),
@@ -255,7 +256,7 @@ export class MainMenuScene extends Phaser.Scene {
 
       if (this.textures.exists('ui-cursor')) {
         this.cursorsGfx.push(
-          this.add.image(width / 2 - 190, y, 'ui-cursor').setDepth(13).setScale(1.4).setVisible(false),
+          this.add.image(width / 2 - 95, y, 'ui-cursor').setDepth(13).setScale(0.7).setVisible(false),
         )
       }
     })
@@ -275,12 +276,12 @@ export class MainMenuScene extends Phaser.Scene {
             )
             .join('\n')
     this.add
-      .text(width / 2, 310, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width / 2, 168, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '14px',
+        fontSize: '10px',
         color: '#f7e7c0',
         backgroundColor: '#3a2210cc',
-        padding: { x: 16, y: 8 },
+        padding: { x: 8, y: 4 },
         align: 'center',
       })
       .setOrigin(0.5, 0)
@@ -289,15 +290,15 @@ export class MainMenuScene extends Phaser.Scene {
     this.add
       .text(
         width / 2,
-        height - 28,
+        height - 14,
         '點選模式即開始　｜　上下揀　空白／Enter確認\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '13px',
+          fontSize: '9px',
           color: '#3a2818',
           align: 'center',
           backgroundColor: '#ffe8b0aa',
-          padding: { x: 12, y: 5 },
+          padding: { x: 6, y: 3 },
         },
       )
       .setOrigin(0.5)
