@@ -448,41 +448,35 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(32, 5, [255, 240, 160])
   })
 
-  // Simple camp tent
-  paint(scene, 'prop-tent', 56, 48, (set) => {
+  // Minimal A-frame tent (flat silhouette — roadside read, not clutter).
+  paint(scene, 'prop-tent', 40, 36, (set) => {
     const ink: RGB = [16, 10, 12]
-    rect(set, 6, 44, 44, 3, ink, 100)
-    // triangle body
-    for (let i = 0; i < 22; i++) {
-      const w = 4 + i * 2
-      const x0 = 28 - Math.floor(w / 2)
+    rect(set, 4, 33, 32, 2, ink, 90)
+    for (let i = 0; i < 16; i++) {
+      const w = 2 + i * 2
+      const x0 = 20 - Math.floor(w / 2)
       rect(set, x0 - 1, 4 + i, w + 2, 1, ink)
-      const c: RGB = i < 4 ? [200, 70, 55] : i % 3 === 0 ? [180, 55, 45] : [220, 90, 70]
-      rect(set, x0, 4 + i, w, 1, c)
-      if (i < 6) set(x0 + 1, 4 + i, [255, 160, 120])
+      rect(set, x0, 4 + i, w, 1, i < 3 ? [190, 75, 55] : [210, 95, 70])
     }
-    // flap opening
-    rect(set, 24, 24, 10, 20, ink)
-    rect(set, 25, 25, 8, 18, [40, 28, 22])
-    rect(set, 26, 26, 3, 16, [70, 50, 35])
-    // pole
-    rect(set, 27, 2, 2, 8, [90, 70, 40])
+    // dark door slit
+    rect(set, 17, 18, 6, 15, ink)
+    rect(set, 18, 19, 4, 13, [36, 24, 18])
   })
 
-  // Campfire ring
-  paint(scene, 'prop-campfire', 32, 28, (set) => {
+  // Minimal campfire — three stones + one flame stack.
+  paint(scene, 'prop-campfire', 24, 22, (set) => {
     const ink: RGB = [18, 12, 10]
-    rect(set, 4, 22, 24, 4, ink, 100)
-    for (const [x, y] of [[6, 20], [22, 20], [8, 24], [20, 24], [14, 18]] as const) {
-      rect(set, x, y, 5, 4, ink)
-      rect(set, x + 1, y + 1, 3, 2, [120, 120, 130])
-    }
-    // flames
-    rect(set, 12, 8, 8, 12, ink)
-    rect(set, 13, 9, 6, 10, [255, 140, 40])
-    rect(set, 14, 6, 4, 8, [255, 200, 60])
-    set(15, 4, [255, 255, 180])
-    set(17, 10, [255, 80, 30])
+    rect(set, 3, 17, 18, 3, ink, 90)
+    rect(set, 4, 16, 5, 4, ink)
+    rect(set, 5, 17, 3, 2, [130, 125, 120])
+    rect(set, 15, 16, 5, 4, ink)
+    rect(set, 16, 17, 3, 2, [130, 125, 120])
+    rect(set, 9, 15, 6, 4, ink)
+    rect(set, 10, 16, 4, 2, [120, 118, 115])
+    rect(set, 9, 6, 6, 10, ink)
+    rect(set, 10, 7, 4, 8, [255, 140, 40])
+    rect(set, 11, 5, 2, 6, [255, 210, 70])
+    set(11, 3, [255, 250, 180])
   })
 
   // Friendly owl silhouette (tree friend — original woodland, not a trademark design)

@@ -6,7 +6,6 @@ import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
 import { GRAVITY_Y } from './game/engine/constants'
-import { isPhonePlay } from './game/touchInput'
 
 const GAME_W = 960
 const GAME_H = 540
@@ -14,40 +13,37 @@ const GAME_H = 540
 const root = document.querySelector<HTMLDivElement>('#game-root')!
 
 /**
- * Desktop: integer CSS zoom (NEAREST-safe).
- * Phone landscape: fractional fit so 960×540 fills the screen.
+ * Portrait lock — do not crush 16:9 into a skinny vertical strip.
+ * Landscape: Phaser Scale.FIT contain-scales into #game-root.
  */
-function fitGameScale() {
-  const phone = isPhonePlay()
-  document.body.classList.toggle('phone-play', phone)
-  const padX = phone ? 0 : 16
-  const padY = phone ? 0 : 28
-  const availW = Math.max(1, window.innerWidth - padX)
-  const availH = Math.max(1, window.innerHeight - padY)
-  let zoom = Math.min(availW / GAME_W, availH / GAME_H)
-  if (!phone && zoom >= 1) zoom = Math.floor(zoom)
-  zoom = Math.max(phone ? 0.2 : 1, zoom)
-  root.style.width = `${GAME_W * zoom}px`
-  root.style.height = `${GAME_H * zoom}px`
+function updateOrientationUi() {
+  const portrait = window.innerHeight > window.innerWidth
+  document.body.classList.toggle('portrait', portrait)
+  const hint = document.getElementById('rotate-hint')
+  if (hint) hint.setAttribute('aria-hidden', portrait ? 'false' : 'true')
 }
 
-fitGameScale()
-window.addEventListener('resize', fitGameScale)
-window.addEventListener('orientationchange', () => setTimeout(fitGameScale, 120))
+updateOrientationUi()
 
 const game = new Phaser.Game({
   type: Phaser.AUTO,
   parent: root,
   width: GAME_W,
   height: GAME_H,
-  backgroundColor: '#1a1428',
+  backgroundColor: '#1a1420',
   pixelArt: true,
   roundPixels: true,
   antialias: false,
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: GRAVITY_Y }, debug: false } },
   input: { gamepad: true, activePointers: 3 },
   scene: [BootScene, LogoScene, MenuScene, GameScene, UIScene],
-  scale: { mode: Phaser.Scale.NONE, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: GAME_W,
+    height: GAME_H,
+    parent: root,
+  },
   render: {
     pixelArt: true,
     roundPixels: true,
@@ -58,11 +54,19 @@ const game = new Phaser.Game({
 })
 ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
 
+function onViewportChange() {
+  updateOrientationUi()
+  game.scale.refresh()
+}
+
+window.addEventListener('resize', onViewportChange)
+window.addEventListener('orientationchange', () => setTimeout(onViewportChange, 120))
+
 game.events.once('ready', () => {
   for (const scene of game.scene.getScenes(false)) {
     scene.cameras?.cameras?.forEach((c) => c.setRoundPixels(true))
   }
   const splash = document.getElementById('boot-splash')
   if (splash) splash.remove()
-  fitGameScale()
+  onViewportChange()
 })

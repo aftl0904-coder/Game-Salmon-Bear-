@@ -12,8 +12,8 @@
     <meta name="description" content="鮭鮭熊 — 超任風雙人過關（手機瀏覽器可玩）" />
     <title>鮭鮭熊</title>
     <style>
-      html, body { margin: 0; padding: 0; background: #1a1428; overflow: hidden; touch-action: none; height: 100%; height: 100dvh; }
-      #game-root { touch-action: none; }
+      html, body { margin: 0; padding: 0; background: #1a1420; overflow: hidden; touch-action: none; height: 100%; height: 100dvh; }
+      #game-root { touch-action: none; width: 100%; height: 100%; }
     </style>
   </head>
   <body>
@@ -22,6 +22,12 @@
       <div style="text-align:center">
         <div style="font-size:42px;font-weight:700;letter-spacing:0.08em">鮭鮭熊</div>
         <div id="boot-splash-msg" style="margin-top:14px;font-size:15px;color:#f3e6c8">載入中…</div>
+      </div>
+    </div>
+    <div id="rotate-hint" aria-hidden="true">
+      <div>
+        <p class="rotate-title">鮭鮭熊</p>
+        <p class="rotate-msg">請將裝置橫向遊玩<br />Please rotate to landscape</p>
       </div>
     </div>
     <div id="game-root"></div>

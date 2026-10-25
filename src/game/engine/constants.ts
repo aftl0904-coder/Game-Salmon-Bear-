@@ -22,8 +22,9 @@ export const LANE_HIT_TOL = 1
 /**
  * Actors bake at 3× with LINEAR AA.
  * Tuned so heroes/enemies read clearly vs world props (not microscopic).
+ * ×1.11 — cast readability pack (all characters).
  */
-export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55
+export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55 * 1.11
 /**
  * Heroes slightly under enemy size (readable co-op cast).
  */

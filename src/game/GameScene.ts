@@ -1484,15 +1484,10 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(img)
   }
 
-  /** Picnic table + tent + fire — roadside campsite beats. */
+  /** Simple roadside camp — tent + fire only (no clutter table/blanket/basket). */
   private placeCampsite(x: number) {
-    this.placeCampProp(x - 40, 'prop-tent', 1.35)
-    this.placeCampProp(x, 'prop-picnic-table', 1.25)
-    this.placeCampProp(x + 30, 'prop-campfire', 1.15)
-    this.placeCampProp(x + 12, 'prop-picnic', 1.2)
-    if (this.textures.exists('prop-shrine')) {
-      this.placeCampProp(x - 64, 'prop-shrine', 1.1)
-    }
+    this.placeCampProp(x - 18, 'prop-tent', 1.2)
+    this.placeCampProp(x + 28, 'prop-campfire', 1.05)
   }
 
   /**
@@ -1626,9 +1621,9 @@ export class GameScene extends Phaser.Scene {
       mist.fillRect(0, roadTop - 70, 960, 36)
       mist.fillStyle(0xf4f0e6, 0.4)
       mist.fillRect(0, roadTop - 40, 960, 44)
-      this.placeCampsite(stageX(520))
-      this.placeCampsite(stageX(2100))
-      this.placeCampsite(stageX(4200))
+      this.placeCampsite(stageX(700))
+      this.placeCampsite(stageX(2800))
+      this.placeCampsite(stageX(4600))
       this.spawnAmbientCritters()
     } else {
       g.fillStyle(0xa8d8f5, 1)
@@ -1766,10 +1761,9 @@ export class GameScene extends Phaser.Scene {
     this.placeBgDecor(stageX(5200), 'prop-house3d', 1.3)
     this.placeBgDecor(stageX(6400), 'prop-tree3d', 1.2)
 
-    this.placeCampsite(stageX(520))
-    this.placeCampsite(stageX(2100))
-    this.placeCampsite(stageX(4200))
-    this.placeCampsite(stageX(6000))
+    this.placeCampsite(stageX(700))
+    this.placeCampsite(stageX(2800))
+    this.placeCampsite(stageX(4600))
 
     this.placeBgDecor(stageX(900), 'prop-owl', 1.15)
     this.placeBgDecor(stageX(3400), 'prop-owl', 1.1, true)
