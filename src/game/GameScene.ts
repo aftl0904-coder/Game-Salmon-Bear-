@@ -96,7 +96,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
-import { addGroundShadow } from './shadow'
+import { addGroundShadow, addContactShadowBand } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
 import { layoutClearCard } from './layoutClearCard'
 import { ENVIRONMENT, environmentById } from './config/gameData'
@@ -1693,6 +1693,8 @@ export class GameScene extends Phaser.Scene {
           .setOrigin(0.5)
       }
     }
+    // 2px contact shadow where feet meet the ground band
+    addContactShadowBand(this, 0, GROUND_Y, WORLD_W, DEPTH.GROUND + 1)
   }
 
   /** Layered creek under the road — flowing water + foam + sparkle. */
@@ -1912,6 +1914,7 @@ export class GameScene extends Phaser.Scene {
     jar.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(jar)
     ;(jar.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    addGroundShadow(this, jar, () => y, 0.55)
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
   }
 
@@ -1921,6 +1924,7 @@ export class GameScene extends Phaser.Scene {
     s.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    addGroundShadow(this, s, () => y, 0.5)
     this.tweens.add({ targets: s, y: y - 6, yoyo: true, repeat: -1, duration: 700 })
   }
 
@@ -1949,6 +1953,7 @@ export class GameScene extends Phaser.Scene {
     c.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    addGroundShadow(this, c, () => y, 0.45)
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
   }
 
@@ -2768,6 +2773,14 @@ export class GameScene extends Phaser.Scene {
     })
     this.entities.add(e, 'enemy')
     addGroundShadow(this, e, (t) => this.groundYFor(t), 0.65)
+    try {
+      if (this.lights?.active) {
+        const pipe = e as unknown as { setPipeline?: (n: string) => void }
+        pipe.setPipeline?.('Light2D')
+      }
+    } catch {
+      /* Light2D unavailable */
+    }
     return e
   }
 

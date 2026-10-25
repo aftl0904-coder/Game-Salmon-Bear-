@@ -1,20 +1,34 @@
-# Visual style & proportion table（階段 1–5 · 已確認）
+# Visual style & proportion table（640×360 · 已確認）
 
-> 資料圖鑑（terrain／hazards／enemies／camera／signs）：見 [`data-catalog.md`](./data-catalog.md) · 頁面 `/bible`。
+> 資料圖鑑：[`data-catalog.md`](./data-catalog.md) · 頁面 `/bible`。  
+> 細節缺口：[`art-detail-gaps.md`](./art-detail-gaps.md)。
 
-> 來源：`art-src/` → `npm run art:normalize`（`scripts/art-normalize.mjs`）→ `public/art/` · 清單 `data/assets.json`。  
-> **遊戲內部解像度 640×360**（`src/game/display.ts`）。CSS：`fitCanvas`。整數 scale：`?debug=1`。  
-> 比例：主角 **72**／噗噗 **56**／小敵 **40**／中 **56**／重 **72**／物品 **20–28**。細節缺口見 [`art-detail-gaps.md`](./art-detail-gaps.md)。  
+> 來源：`art-src/` → `npm run art:normalize` → `public/art/` · 清單 `data/assets.json`。  
+> 內部解像度 **640×360**（`display.ts`）· CSS：`fitCanvas` · 整數 scale：`?debug=1`。
 
 ---
 
-## 已確認（階段 2 → 執行）
+## 已確認規格（新圖必須跟）
 
-1. 比例表目標高度：主角 **48**、噗噗 **40**、小敵 **32**、中敵 **48**、重敵 **64**、Boss **96+**、物品 **16–24**。
-2. PNG nearest-neighbor 縮到目標高（`art-normalize`）。
-3. 色板上限 **32 色**，角色＋道具＋背景共用；統一 **1px** 外框（`OUTLINE_INK` `#12100e`）。
-4. UI 字體：**Fusion Pixel 12**（zh-HK／zh-Hant，自託管 `public/fonts/`）；字號倍數 12／24。
-5. Bake：**NEAREST ×1**，取消 soft AA／LINEAR actor bake。
+1. **內部解像度 640×360**；CSS 整數倍優先（浪費過多則平滑）。
+2. **遊戲內 sprite scale 只准 1／2／3**；禁止 `setScale(小數)` 同 `setDisplaySize` 縮像素圖；尺寸喺 normalize 預先做好。
+3. **每 sprite 各自 ≤64 色**（取消全域 32 色）；唔加 dither；alpha 二值化；**1px 外框**用相鄰像素變深，**唔用純黑**。
+4. **比例表（以 640×360 為準）**
+
+| 類別 | 目標高度 |
+|------|----------|
+| 主角 | **72px** |
+| 噗噗 | **56px** |
+| 小敵人 | **40px** |
+| 中型 | **56px** |
+| 重型 | **72px** |
+| Boss | **128px+** |
+| 物品 | **20–28px** |
+
+5. 原圖要喺目標尺寸畫／生成，唔好超大圖大幅縮細。
+6. 每種材質（皮膚、頭髮、衫、鞋）**3–4 階明暗**；光源統一**左上**；頭髮／眼睛有高光；衫有摺痕；武器有反光。
+7. 三個角色同一套比例（頭身約 **3**）、同一種明暗做法。
+8. 細節不足 → 列入 [`art-detail-gaps.md`](./art-detail-gaps.md) 等重畫；**唔好用濾鏡假裝有細節**。
 
 ---
 
@@ -25,80 +39,55 @@
 | 內部解像度 | **640×360**（16:9） | `display.ts` |
 | pixelArt / roundPixels | true | `phaserConfig` |
 | antialias | false | `phaserConfig` |
-| 縮放 | Scale.NONE + CSS（整數倍優先；浪費過多則平滑） | `fitCanvas.ts` / `installFit` |
-| 整數 scale 檢查 | `?debug=1` → console + `__SAKE_PIXEL_SCALE__` | `assertIntegerScale.ts` |
-| canvas CSS | `image-rendering: pixelated` | `style.css` |
-| Actor bake | `bakePixelTexture` ×`BAKE_RES_FACTOR=1` | `BootScene` |
-| Outline | `OUTLINE_WIDTH=1` | `constants.ts` |
-| Actor filter | NEAREST | `setActorNearestFilter` |
+| 縮放 | Scale.NONE + `fitCanvas` | `fitCanvas.ts` |
+| 整數 scale 檢查 | `?debug=1` → `__SAKE_PIXEL_SCALE__` | `assertIntegerScale.ts` |
+| Actor bake | `bakePixelTexture` ×1 NEAREST | `BootScene` |
+| 地面陰影 | `addGroundShadow`（跳起縮細變淡） | `shadow.ts` |
+| 接觸陰影 | 地面頂 **2px** 暗帶 | `addContactShadowBand` |
+| 關卡光暗 | multiply veil + 可選 Light2D | `lighting.ts` + `environment.json` |
 
 ---
 
-## 2. 比例表（落地）
+## 2. 資源尺寸（normalize 後）
 
-基準：**480×270**。錨點：**origin (0.5, 1)** 腳底。`ACTOR_DISPLAY_SCALE=1`。
-
-| 類別 | 目標高度 | 落地 |
-|------|----------|------|
-| 主角 | **48px** | `salmon-boy`／`bear-girl` normalize |
-| 夥伴 噗噗 | **40px** | `kind-bear`；`PET_HEIGHT_FRAC=40/48` |
-| 小型敵人 | **32px** | `fish-enemy` |
-| 中型敵人 | **48px** | `art-enemy-barrel` nearest-fit @ boot |
-| 重型敵人 | **64px** | `art-enemy-elephant` nearest-fit @ boot |
-| 物品／金幣 | **16–24px** | `coin` 20；honey／durian fit |
-| 陷阱尖刺 | **20–24px** | tiles 近規格 |
-
----
-
-## 3. 資源尺寸（normalize 後）
-
-| 檔案 | 像素 | 用途 |
+| 檔案 | 高度 | 用途 |
 |------|------|------|
-| `salmon-boy.png` | ~24×48 | 倫寶 |
-| `bear-girl.png` | ~24×48 | 琪寶寶 |
-| `kind-bear.png` | ~22×40 | 噗噗 |
-| `fish-enemy.png` | ~34×32 | 刺刺魚 |
-| `coin.png` | 20×20 | 金幣 cel |
-| `bg-wallpaper.jpg` | 640×360 | 遠景（desaturate + palette） |
-| `bg-sky-wallpaper.jpg` | 480×150 | 天空 |
+| `salmon-boy.png` | 72 | 倫寶 |
+| `bear-girl.png` | 72 | 琪寶寶 |
+| `kind-bear.png` | 56 | 噗噗 |
+| `fish-enemy.png` | 40 | 刺刺魚 |
+| `coin.png` | 24 | 金幣 |
+| `bg-wallpaper-px.png` | 360 | 遠景 ≤64c |
 
-色板：`docs/bible/palette.json`（32 RGB）。
+錨點：**origin (0.5, 1)** 腳底。`ACTOR_DISPLAY_SCALE=1`。
 
 ---
 
-## 4. 字體（階段 4）
+## 3. 字體
 
 | 用途 | 字族 | 字號 |
 |------|------|------|
-| 標題／品牌 | Fusion Pixel | **24px** |
-| 正文／HUD | Fusion Pixel | **12px** |
-| 提示 | Fusion Pixel | **12px** |
+| 標題 | Fusion Pixel | **16／24px** |
+| HUD／正文 | Fusion Pixel | **12px**（最小） |
 
-檔案：`public/fonts/fusion-pixel-12-zh-hk.woff2`（優先）、`…-zh-hant.woff2`、OFL。
-
----
-
-## 5. 背景（階段 5）
-
-- Wallpaper nearest 縮到 ≤640×360／480×160，共用 32 色，略降飽和。
-- 遠景 tint／fog 常數維持（`BG_PALE_TINT` 等）。
+`public/fonts/fusion-pixel-12-zh-hk.woff2`（SIL OFL）。
 
 ---
 
-## 6. 管線指令
+## 4. 管線
 
 ```bash
-python3 scripts/art-normalize/run.py
-# → public/art/* + docs/bible/palette.json + /opt/cursor/artifacts/qa-visual-unify/
+npm run art:normalize
+# art-src/* → public/art/*（lanczos3、二值 alpha、1px 鄰色外框、≤64c）
 ```
 
 ---
 
-## 7. 驗收
+## 5. 驗收
 
 | 視窗 | 期望 |
 |------|------|
-| 844×390 | 整數 **1×**（480×270）+ 深色邊 |
-| 1280×720 | 整數 **2×**（960×540 CSS） |
-| 角色高度 | 倫寶／琪寶寶 ≈ **48**；噗噗 ≈ **40**；魚 ≈ **32** |
-| 放大 400% | 清晰像素格、無 LINEAR 糊邊 |
+| 844×390／1280×720／1920×1080 | 像素格一致、無撕裂 |
+| `?debug=1` | 非整數縮放物件 = **0** |
+| 通關 card | cast 喺標題下、唔重疊 |
+| contact sheet | 全部 sprite 1:1 同 4× |
