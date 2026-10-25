@@ -26,6 +26,7 @@
 | pixelArt / roundPixels | true | `phaserConfig` |
 | antialias | false | `phaserConfig` |
 | 縮放 | Scale.NONE + CSS（整數倍優先；浪費過多則平滑） | `fitCanvas.ts` / `installFit` |
+| 整數 scale 檢查 | `?debug=1` → console + `__SAKE_PIXEL_SCALE__` | `assertIntegerScale.ts` |
 | canvas CSS | `image-rendering: pixelated` | `style.css` |
 | Actor bake | `bakePixelTexture` ×`BAKE_RES_FACTOR=1` | `BootScene` |
 | Outline | `OUTLINE_WIDTH=1` | `constants.ts` |

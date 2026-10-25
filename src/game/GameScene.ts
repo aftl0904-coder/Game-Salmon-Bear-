@@ -98,6 +98,7 @@ import {
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
+import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -261,6 +262,14 @@ export class GameScene extends Phaser.Scene {
     this.wirePhysics()
     this.setupCameraFollow()
     this.bindKeys()
+    if (isDebugQuery() || DEBUG_MODE) {
+      this.time.delayedCall(400, () => {
+        const bad = assertIntegerScale(this)
+        ;(
+          window as unknown as { __SAKE_PIXEL_SCALE__: typeof bad }
+        ).__SAKE_PIXEL_SCALE__ = bad
+      })
+    }
     this.debugOverlay = new DebugOverlay(this)
     this.juice = new JuiceManager(this)
     // Snap AFTER Arcade step — update() runs before worldstep, so in-update
