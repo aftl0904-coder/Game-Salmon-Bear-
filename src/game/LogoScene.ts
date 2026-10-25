@@ -15,12 +15,13 @@ export class LogoScene extends Phaser.Scene {
     const g = this.add.graphics()
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    // Pretty wallpaper 貼圖 — no hand-built mountains/clouds
+    // Far upper wallpaper only (above the stage floor strip)
     if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(width / 2, height * 0.38, 'bg-wallpaper')
-        .setDisplaySize(width * 1.08, height * 0.85)
-        .setAlpha(0.98)
+        .image(width / 2, height * 0.28, 'bg-wallpaper')
+        .setDisplaySize(width * 1.05, height * 0.55)
+        .setAlpha(0.55)
+        .setTint(0xc8d8e0)
     }
 
     if (this.textures.exists('ui-noren')) {

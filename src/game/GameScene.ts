@@ -1601,13 +1601,22 @@ export class GameScene extends Phaser.Scene {
     this.bgMounts = []
 
     if (this.textures.exists('bg-wallpaper')) {
-      // Full pretty wallpaper 貼圖 — covers sky/mountains; road stays separate.
+      // Wallpaper only ABOVE the road — far foggy strip so play lanes stay focus.
+      // Top lane feet ≈ GROUND_Y-72; keep art ending well above that.
+      const roadTop = GROUND_Y - 80
       this.add
-        .image(480, 200, 'bg-wallpaper')
-        .setScrollFactor(0.025, 0)
+        .image(480, Math.round(roadTop * 0.42), 'bg-wallpaper')
+        .setScrollFactor(0.02, 0)
         .setDepth(DEPTH.SKY_BAND)
-        .setDisplaySize(1200, 480)
-        .setAlpha(1)
+        .setDisplaySize(1020, Math.round(roadTop * 0.92))
+        .setAlpha(0.55)
+        .setTint(0xc8d8e0)
+      // Soft wash so wallpaper reads farther / less competing with road
+      const wash = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1)
+      wash.fillStyle(0xb8cce0, 0.28)
+      wash.fillRect(0, 0, 960, roadTop)
+      wash.fillStyle(0xd8e6f0, 0.35)
+      wash.fillRect(0, roadTop - 36, 960, 40)
       this.placeCampsite(stageX(520))
       this.placeCampsite(stageX(2100))
       this.placeCampsite(stageX(4200))

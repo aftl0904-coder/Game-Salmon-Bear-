@@ -71,13 +71,14 @@ export class MainMenuScene extends Phaser.Scene {
     const g = this.add.graphics().setDepth(0)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, width, height)
-    // Pretty wallpaper 貼圖 — skip hand-built mountains/clouds
+    // Far upper wallpaper only — keep floor/UI readable
     if (this.textures.exists('bg-wallpaper')) {
       this.add
-        .image(width / 2, height * 0.4, 'bg-wallpaper')
+        .image(width / 2, height * 0.3, 'bg-wallpaper')
         .setDepth(0)
-        .setDisplaySize(width * 1.1, height * 0.9)
-        .setAlpha(0.98)
+        .setDisplaySize(width * 1.05, height * 0.58)
+        .setAlpha(0.55)
+        .setTint(0xc8d8e0)
     }
 
     if (this.textures.exists('water-deep')) {

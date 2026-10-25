@@ -42,8 +42,14 @@ export class PatrolEnemy extends Enemy {
   walkPhase = 0
   /** Random brief freeze (ms timestamp). */
   staggerUntil = 0
-  /** Cooldown between vertical lane steps while chasing. */
+  /** Cooldown before next lane-step decision (per-enemy, staggered). */
   laneSwitchCd = 0
+  /** Lane we're smoothly walking toward (may differ from committed `lane`). */
+  desiredLane: LaneId = LANE_DEFAULT
+  /** True while lerping Y between rows — holdLaneFloor must not hard-snap. */
+  laneSliding = false
+  /** Extra reaction lag after hero changes row (ms, individual). */
+  laneReactLag = 0
   weapon: Phaser.GameObjects.Image | null = null
 
   static spawn(
@@ -70,6 +76,11 @@ export class PatrolEnemy extends Enemy {
     e.kind = kind
     e.species = spKey
     e.lane = lane
+    e.desiredLane = lane
+    e.laneSliding = false
+    // Stagger so the pack doesn't all hop rows the same frame.
+    e.laneSwitchCd = Phaser.Math.Between(80, 720)
+    e.laneReactLag = Phaser.Math.Between(120, 520)
     const hp = Math.max(1, Math.round(st.hp * (sp.hpMul ?? 1)))
     e.hp = hp
     e.maxHp = hp
@@ -233,13 +244,13 @@ export class PatrolEnemy extends Enemy {
       return
     }
 
-    // Seek hero lane first — don't stand on a different row swinging into air.
+    // Seek hero lane first — smooth per-enemy row walk (no pack teleport).
     const targetLane = clampLane(
       target.lane !== undefined ? target.lane : nearestLane(target.y),
     )
-    this.seekHeroLane(targetLane)
+    this.seekHeroLane(targetLane, Math.abs(target.x - this.x))
 
-    const onHeroLane = sameLaneId(this.lane, targetLane, 0)
+    const onHeroLane = sameLaneId(this.lane, targetLane, 0) && !this.laneSliding
     if (onHeroLane && dist < melee && this.atkCd <= 0 && this.fsm === 'CHASE') {
       const wind =
         st.windupMs * mul.windup * (sp.windupMul ?? 1) * (sp.style === 'hop' ? 0.85 : 1)
@@ -264,18 +275,61 @@ export class PatrolEnemy extends Enemy {
     }
   }
 
-  /** Step toward hero's lane (one row at a time) so melee can connect. */
-  private seekHeroLane(targetLane: LaneId) {
-    if (this.lane === targetLane) return
+  /**
+   * Smoothly walk toward hero's lane — one row at a time, per-enemy timing.
+   * No synchronized jumps: each creep has its own react lag + switch CD.
+   */
+  private seekHeroLane(targetLane: LaneId, distX: number) {
+    // Finish in-progress slide every frame.
+    if (this.laneSliding) {
+      this.smoothLaneSlide()
+      return
+    }
+    if (this.lane === targetLane) {
+      this.desiredLane = targetLane
+      return
+    }
     if (this.laneSwitchCd > 0) return
+    // Far away: keep own row and approach on X first (no telepathic pack hop).
+    if (distX > Math.max(220, this.aggroRadius * 0.85)) return
+
     const step = Math.sign(targetLane - this.lane)
     if (!step) return
-    this.lane = clampLane(this.lane + step)
-    this.laneSwitchCd = 150
-    // Nudge feet toward new lane immediately; holdLaneFloor finishes the snap.
-    const ty = laneY(this.lane)
-    this.setY(this.y + (ty - this.y) * 0.55)
+    this.desiredLane = clampLane(this.lane + step)
+    this.laneSliding = true
+    // Individual cadence — elephants slower, fish snappier; + personal react lag.
+    const base =
+      this.species === 'elephant'
+        ? Phaser.Math.Between(560, 920)
+        : this.species === 'fish'
+          ? Phaser.Math.Between(300, 520)
+          : Phaser.Math.Between(380, 700)
+    this.laneSwitchCd = base + this.laneReactLag
+    this.smoothLaneSlide()
+  }
+
+  /** Lerp feet Y toward desiredLane; commit `lane` only when arrived. */
+  private smoothLaneSlide() {
+    const ty = laneY(this.desiredLane)
+    const dy = ty - this.y
+    if (Math.abs(dy) < 1.2) {
+      this.setY(ty)
+      this.lane = this.desiredLane
+      this.homeY = ty
+      this.laneSliding = false
+      this.setDepth(actorDepth('enemy', this.lane, this.y))
+      const body = this.body as Phaser.Physics.Arcade.Body | null
+      if (body) {
+        body.velocity.y = 0
+        body.allowGravity = false
+      }
+      return
+    }
+    // Smooth ease — ~180–260 px/s equivalent at 60fps, not a teleport.
+    const step = Math.sign(dy) * Math.min(Math.abs(dy), 3.6 + Math.random() * 1.4)
+    this.setY(this.y + step)
     this.homeY = ty
+    this.setDepth(actorDepth('enemy', this.desiredLane, this.y))
   }
 
   /** Face the side we're actually moving (forward or back). */
@@ -408,6 +462,12 @@ export class PatrolEnemy extends Enemy {
   }
 
   private holdLaneFloor(body: Phaser.Physics.Arcade.Body) {
+    // While sliding between rows, don't hard-snap — seekHeroLane owns Y.
+    if (this.laneSliding) {
+      body.velocity.y = 0
+      body.allowGravity = false
+      return
+    }
     if (!inLaneBand(this.homeY) && !inLaneBand(this.y)) return
     const target = laneY(this.lane)
     // Never freefall off the lane plane (was melting FPS / soft-freezing play).
