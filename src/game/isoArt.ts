@@ -435,6 +435,31 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 31, 35, 4, 6, [130, 130, 140])
   })
 
+  // Ground sushi pickup — +2 HP when eaten
+  paint(scene, 'pickup-sushi', 22, 14, (set) => {
+    const ink: RGB = [28, 18, 12]
+    const rice: RGB = [250, 246, 236]
+    const riceD: RGB = [230, 220, 200]
+    const fish: RGB = [255, 120, 110]
+    const fishD: RGB = [220, 70, 70]
+    const nori: RGB = [40, 70, 48]
+    // plate / shadow
+    rect(set, 2, 11, 18, 2, ink, 100)
+    // rice mound
+    rect(set, 4, 6, 14, 5, ink)
+    rect(set, 5, 7, 12, 3, rice)
+    set(6, 8, riceD)
+    set(14, 8, riceD)
+    // nori strip
+    rect(set, 4, 9, 14, 1, nori)
+    // fish sashimi on top
+    rect(set, 5, 3, 12, 4, ink)
+    rect(set, 6, 4, 10, 2, fish)
+    set(8, 4, fishD)
+    set(12, 4, [255, 200, 180])
+    set(7, 5, fishD)
+  })
+
   // Elephant trunk tip — used as extendable nose weapon
   paint(scene, 'fx-elephant-trunk', 28, 12, (set) => {
     const ink: RGB = [18, 12, 14]

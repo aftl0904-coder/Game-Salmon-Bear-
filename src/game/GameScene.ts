@@ -114,6 +114,7 @@ export class GameScene extends Phaser.Scene {
   private pots!: Phaser.Physics.Arcade.Group
   private coinPickups!: Phaser.Physics.Arcade.Group
   private honeyPickups!: Phaser.Physics.Arcade.Group
+  private sushiPickups!: Phaser.Physics.Arcade.Group
   private goal!: Phaser.Physics.Arcade.Sprite
   private levelMap: LevelMapHandle | null = null
   private camTarget!: Phaser.GameObjects.Zone
@@ -1485,6 +1486,7 @@ export class GameScene extends Phaser.Scene {
     this.pots = this.physics.add.group()
     this.coinPickups = this.physics.add.group()
     this.honeyPickups = this.physics.add.group()
+    this.sushiPickups = this.physics.add.group()
     this.levelMap = createRound1Tilemap(this, this.pots, this.hazards)
     if (this.levelMap?.solids) {
       this.levelMap.solids.setCollisionByExclusion([-1])
@@ -1504,6 +1506,13 @@ export class GameScene extends Phaser.Scene {
     }
     for (const x of [640, 1600, 2800, 4200, 5600, 6800]) {
       this.spawnHoneyJar(x, laneY(LANE_DEFAULT) - 36)
+    }
+
+    // Exactly 1 sushi on a random road lane — eat for +2 HP.
+    {
+      const sx = Phaser.Math.Between(500, WORLD_W - 400)
+      const sl = clampLane(Phaser.Math.Between(0, 4)) as LaneId
+      this.spawnSushi(sx, laneY(sl) - 20)
     }
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
@@ -1535,6 +1544,35 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(jar)
     ;(jar.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
+  }
+
+  private spawnSushi(x: number, y: number) {
+    const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
+    const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
+    s.setScale(1.6).setDepth(DEPTH.PICKUP)
+    enablePixelSprite(s)
+    ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    this.tweens.add({ targets: s, y: y - 6, yoyo: true, repeat: -1, duration: 700 })
+  }
+
+  private takeSushi(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
+    if (!item.active || !h.alive) return
+    item.disableBody(true, true)
+    const before = h.hp
+    h.hp = Math.min(MAX_HP, h.hp + 2)
+    const gained = h.hp - before
+    SFX.coin()
+    burst(this, item.x, item.y, 0xff8899, 10)
+    if (gained > 0) {
+      floatText(this, h.x, h.y - 56, '+2HP', '#ff6688', {
+        size: 26,
+        rise: 28,
+        dur: 1500,
+      })
+      this.emitHealth()
+    } else {
+      floatText(this, h.x, h.y - 48, 'HP已滿', '#aaaaaa', { size: 18, dur: 900 })
+    }
   }
 
   private spawnCoin(x: number, y: number) {
@@ -1688,6 +1726,7 @@ export class GameScene extends Phaser.Scene {
     })
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.sushiPickups, (_b, s) => this.takeSushi(this.boy, s as Phaser.Physics.Arcade.Sprite))
     if (this.girl) {
       const g = this.girl
       this.physics.add.overlap(g, this.enemies, (_g, e) => this.hurtHero(g, e as PatrolEnemy))
@@ -1698,6 +1737,7 @@ export class GameScene extends Phaser.Scene {
       })
       this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
+      this.physics.add.overlap(g, this.sushiPickups, (_g, s) => this.takeSushi(g, s as Phaser.Physics.Arcade.Sprite))
     }
   }
 
