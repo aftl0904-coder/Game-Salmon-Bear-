@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { enablePixelSprite } from './pixelSnap'
 
 /** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
@@ -60,11 +61,11 @@ export class LogoScene extends Phaser.Scene {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const lineupY = height - 150
     this.add.image(width / 2 - 130, lineupY + 12, shad).setAlpha(0.5).setScale(1.4, 0.7)
-    this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(2.4)
+    enablePixelSprite(this.add.image(width / 2 - 130, lineupY, 'art-salmon').setScale(2.4))
     this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
-    this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55)
+    enablePixelSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
     this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
-    this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(2.2)
+    enablePixelSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(2.2))
     if (this.textures.exists('fan3d')) {
       this.add.image(width / 2 + 170, lineupY - 20, 'fan3d').setScale(2.2).setAngle(-18)
     }
