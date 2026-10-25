@@ -4,9 +4,8 @@ import type Phaser from 'phaser'
 import { MAX_HP } from './engine/constants'
 
 /**
- * Goemon SNES-like top HUD:
- * wood bar, portrait boxes, heart pips (MAX_HP), mode, centered stage scroll,
- * koban coin (投幣續關), score. 繁中 only.
+ * Top HUD: wood bar, portraits, heart pips, coins, and blue 絕招 MP bar.
+ * No red HP strip / no score plate (hearts = HP; MP = honey special).
  */
 export function buildStageHud(
   scene: Phaser.Scene,
@@ -18,7 +17,6 @@ export function buildStageHud(
 ) {
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 40)
 
-  // Taller top bar so title text never clips (Pack3 C).
   if (scene.textures.exists('ui-hud-wood')) {
     for (let x = 32; x < 960; x += 64) {
       root.add(scene.add.image(x, 34, 'ui-hud-wood').setScale(1, 1.35).setAlpha(0.92))
@@ -52,14 +50,17 @@ export function buildStageHud(
       .setOrigin(0.5),
   )
 
-  // Portrait frame 44×44 — face must stay INSIDE the inner ~30px window.
+  const soloCast = (scene.registry.get('soloCast') as 'boy' | 'girl') || 'boy'
+  const mode1p = opts.mode === '1p'
+  const p1Name = mode1p && soloCast === 'girl' ? '1P 琪寶寶' : '1P 倫寶'
+  const p1Face = mode1p && soloCast === 'girl' ? 'art-girl' : 'art-salmon'
   if (scene.textures.exists('ui-portrait')) {
     root.add(scene.add.image(30, 28, 'ui-portrait').setScale(1))
   } else {
     root.add(scene.add.rectangle(30, 28, 44, 44, 0x243048, 0.95).setStrokeStyle(2, 0xe0b86a))
   }
   {
-    const face = scene.add.image(30, 28, 'art-salmon')
+    const face = scene.add.image(30, 28, p1Face)
     face.setDisplaySize(24, 24)
     face.setScrollFactor(0)
     const g = scene.make.graphics({ x: 0, y: 0 })
@@ -70,7 +71,7 @@ export function buildStageHud(
     root.add(face)
   }
   root.add(
-    scene.add.text(58, 2, '1P 倫寶', {
+    scene.add.text(58, 2, p1Name, {
       fontFamily: 'Noto Sans TC, sans-serif',
       fontSize: '16px',
       color: '#fff4d0',
@@ -81,12 +82,11 @@ export function buildStageHud(
   const pipFull = scene.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
   const heartsL: Phaser.GameObjects.Image[] = []
   for (let i = 0; i < MAX_HP; i++) {
-    const h = scene.add.image(64 + i * 14, 30, pipFull).setScale(1.15)
+    const h = scene.add.image(64 + i * 14, 26, pipFull).setScale(1.15)
     heartsL.push(h)
     root.add(h)
   }
 
-  // 1P：完全唔顯示 2P 頭像／血條（單人只有倫寶）
   const heartsR: Phaser.GameObjects.Image[] = []
   if (opts.mode === '2p') {
     if (scene.textures.exists('ui-portrait')) {
@@ -117,7 +117,7 @@ export function buildStageHud(
         .setOrigin(1, 0),
     )
     for (let i = 0; i < MAX_HP; i++) {
-      const h = scene.add.image(830 + i * 14, 30, pipFull).setScale(1.15)
+      const h = scene.add.image(830 + i * 14, 26, pipFull).setScale(1.15)
       heartsR.push(h)
       root.add(h)
     }
@@ -125,47 +125,58 @@ export function buildStageHud(
 
   root.add(
     scene.add
-      .text(300, 60, opts.mode === '1p' ? '單人模式' : '雙人模式', {
+      .text(200, 58, opts.mode === '1p' ? '單人' : '雙人', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '15px',
+        fontSize: '14px',
         color: '#2a1810',
         backgroundColor: '#ffe08a',
-        padding: { x: 12, y: 5 },
+        padding: { x: 10, y: 4 },
       })
       .setOrigin(0.5),
   )
 
-  root.add(scene.add.image(400, 60, 'coin').setScale(1.4))
+  root.add(scene.add.image(280, 58, 'coin').setScale(1.25))
   const coinText = scene.add
-    .text(416, 60, '×5', {
+    .text(294, 58, '×5', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '18px',
+      fontSize: '16px',
       color: '#ffe08a',
       stroke: '#2a1810',
       strokeThickness: 4,
     })
     .setOrigin(0, 0.5)
   root.add(coinText)
+
+  // Blue MP bar — honey special charges (like classic magic power).
   root.add(
     scene.add
-      .text(470, 60, '投幣', {
+      .text(420, 50, '絕招', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '14px',
-        color: '#f7e7c0',
+        fontSize: '13px',
+        color: '#c8e8ff',
+        stroke: '#102030',
+        strokeThickness: 3,
       })
       .setOrigin(0, 0.5),
   )
-
-  if (scene.textures.exists('ui-score-plate')) {
-    root.add(scene.add.image(720, 60, 'ui-score-plate').setScale(1.35, 1.15))
-  }
-  const scoreText = scene.add
-    .text(720, 60, '得分 0', {
+  const mpTrack = scene.add.rectangle(460, 58, 160, 12, 0x102838, 0.95).setOrigin(0, 0.5)
+  mpTrack.setStrokeStyle(2, 0x4a80a8)
+  root.add(mpTrack)
+  const mpBar = scene.add.rectangle(462, 58, 0, 8, 0x3ec8ff, 1).setOrigin(0, 0.5)
+  root.add(mpBar)
+  const mpText = scene.add
+    .text(628, 58, '空', {
       fontFamily: 'Noto Sans TC, sans-serif',
-      fontSize: '17px',
-      color: '#ffe08a',
+      fontSize: '13px',
+      color: '#a8d8ff',
+      stroke: '#102030',
+      strokeThickness: 3,
     })
-    .setOrigin(0.5)
+    .setOrigin(0, 0.5)
+  root.add(mpText)
+
+  // Dummy score text kept off-screen for UIScene type compat (hidden).
+  const scoreText = scene.add.text(-999, -999, '').setVisible(false)
   root.add(scoreText)
 
   const info = scene.add
@@ -179,5 +190,16 @@ export function buildStageHud(
     .setOrigin(0.5)
   root.add(info)
 
-  return { root, heartsL, heartsR, info, coinText, scoreText, maxHp: MAX_HP }
+  return {
+    root,
+    heartsL,
+    heartsR,
+    info,
+    coinText,
+    scoreText,
+    mpBar,
+    mpText,
+    mpMaxW: 156,
+    maxHp: MAX_HP,
+  }
 }

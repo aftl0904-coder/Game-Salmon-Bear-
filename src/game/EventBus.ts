@@ -18,6 +18,10 @@ export type AggregateHealthPayload = {
 export type ScorePayload = {
   score: number
   coins?: number
+  /** Honey special MP charges (0–1). */
+  special?: number
+  /** Stage honey collected (quest count). */
+  honey?: number
   info?: string
   instant?: boolean
 }

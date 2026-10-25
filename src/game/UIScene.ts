@@ -9,8 +9,7 @@ import {
 } from './EventBus'
 
 /**
- * HUD overlay — launched in parallel with GameScene via scene.launch('UIScene').
- * Draws hearts / score / coins / game-over banners; listens on EventBus only.
+ * HUD overlay — hearts + blue 絕招 MP; no red HP strip / no score plate.
  */
 export class UIScene extends Phaser.Scene {
   private heartsL: Phaser.GameObjects.Image[] = []
@@ -18,17 +17,17 @@ export class UIScene extends Phaser.Scene {
   private coinText!: Phaser.GameObjects.Text
   private scoreText!: Phaser.GameObjects.Text
   private hudInfo!: Phaser.GameObjects.Text
+  private mpBar!: Phaser.GameObjects.Rectangle
+  private mpText!: Phaser.GameObjects.Text
+  private mpMaxW = 156
   private maxHp = 10
   private targetHpL = 10
   private targetHpR = 10
   private dispHpL = 10
   private dispHpR = 10
-  private targetScore = 0
-  private dispScore = 0
-  private barL!: Phaser.GameObjects.Rectangle
-  private barR!: Phaser.GameObjects.Rectangle
+  private targetMp = 0
+  private dispMp = 0
 
-  /** Public for smoke / GameScene continueBox alias. */
   banner!: Phaser.GameObjects.Text
 
   constructor() {
@@ -55,26 +54,13 @@ export class UIScene extends Phaser.Scene {
     this.hudInfo = hud.info
     this.coinText = hud.coinText
     this.scoreText = hud.scoreText
+    this.mpBar = hud.mpBar
+    this.mpText = hud.mpText
+    this.mpMaxW = hud.mpMaxW
     this.maxHp = hud.maxHp
-    this.add.rectangle(118, 42, 110, 5, 0x2a1810, 0.85).setOrigin(0.5).setScrollFactor(0).setDepth(DEPTH.UI + 40)
-    this.barL = this.add.rectangle(63, 42, 110, 5, 0xe07a4f, 1).setOrigin(0, 0.5).setScrollFactor(0).setDepth(DEPTH.UI + 41)
-    if (mode === '2p') {
-      this.add
-        .rectangle(846, 42, 110, 5, 0x2a1810, 0.85)
-        .setOrigin(0.5)
-        .setScrollFactor(0)
-        .setDepth(DEPTH.UI + 40)
-      this.barR = this.add
-        .rectangle(791, 42, 110, 5, 0xe89ab8, 1)
-        .setOrigin(0, 0.5)
-        .setScrollFactor(0)
-        .setDepth(DEPTH.UI + 41)
-    } else {
-      // 1P：唔顯示 2P 血條
-      this.barR = this.add.rectangle(0, 0, 0, 0, 0xe89ab8, 0).setVisible(false)
-    }
     this.targetHpL = this.dispHpL = this.maxHp
     this.targetHpR = this.dispHpR = this.maxHp
+    this.targetMp = this.dispMp = 0
 
     this.banner = this.add
       .text(480, 270, '', {
@@ -92,7 +78,6 @@ export class UIScene extends Phaser.Scene {
       .setDepth(DEPTH.UI + 50)
       .setVisible(false)
 
-    // GameScene registers under key 'play' (smoke / menu compat).
     const game = this.scene.get('play') as Phaser.Scene & {
       banner?: Phaser.GameObjects.Text
       continueBox?: Phaser.GameObjects.Text
@@ -113,22 +98,23 @@ export class UIScene extends Phaser.Scene {
   update(_t: number, dt: number) {
     const drain = Math.min(1, (dt / 1000) * 8)
     const recover = Math.min(1, (dt / 1000) * 6)
-    const sk = Math.min(1, (dt / 1000) * 4)
     this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)
     this.dispHpR += (this.targetHpR - this.dispHpR) * (this.targetHpR < this.dispHpR ? drain : recover)
-    if (this.targetScore > this.dispScore) {
-      this.dispScore += Math.max(1, (this.targetScore - this.dispScore) * sk)
-      if (this.dispScore > this.targetScore - 0.5) this.dispScore = this.targetScore
-    } else this.dispScore += (this.targetScore - this.dispScore) * sk
+    this.dispMp += (this.targetMp - this.dispMp) * Math.min(1, (dt / 1000) * 10)
     const full = this.textures.exists('pip-full') ? 'pip-full' : 'heart-full'
     const empty = this.textures.exists('pip-empty') ? 'pip-empty' : 'heart-empty'
     for (let i = 0; i < this.maxHp; i++) {
       this.heartsL[i]?.setTexture(i < Math.round(this.dispHpL) ? full : empty)
       this.heartsR[i]?.setTexture(i < Math.round(this.dispHpR) ? full : empty)
     }
-    this.barL.width = Math.max(0, (this.dispHpL / this.maxHp) * 110)
-    this.barR.width = Math.max(0, (this.dispHpR / this.maxHp) * 110)
-    this.scoreText?.setText(`得分 ${Math.round(this.dispScore)}`)
+    if (this.mpBar) {
+      this.mpBar.width = Math.max(0, this.dispMp * this.mpMaxW)
+      this.mpBar.fillColor = this.dispMp > 0.55 ? 0x3ec8ff : 0x2a7098
+    }
+    if (this.mpText) {
+      this.mpText.setText(this.targetMp >= 1 ? '滿・Ｔ放招' : '食春蜜')
+      this.mpText.setColor(this.targetMp >= 1 ? '#66eeff' : '#88aacc')
+    }
   }
 
   private unbind() {
@@ -148,12 +134,11 @@ export class UIScene extends Phaser.Scene {
   }
 
   private onScore(p: GameEventMap['SCORE_UPDATED']) {
-    this.targetScore = p.score
-    if (p.instant) this.dispScore = p.score
     if (p.coins !== undefined) this.coinText?.setText(`×${p.coins}`)
+    if (p.special !== undefined) this.targetMp = Phaser.Math.Clamp(p.special, 0, 1)
     if (p.info !== undefined) this.hudInfo?.setText(p.info)
+    void this.scoreText
   }
-
 
   private onGameOver(p: GameEventMap['GAME_OVER']) {
     this.tweens.killTweensOf(this.banner)
@@ -161,7 +146,6 @@ export class UIScene extends Phaser.Scene {
       this.banner.setVisible(false).setScale(1).setAlpha(1)
       return
     }
-    // Punchier arcade banner — win gold / continue insert-coin pulse
     if (p.win) {
       this.banner.setStyle({
         fontSize: '28px',

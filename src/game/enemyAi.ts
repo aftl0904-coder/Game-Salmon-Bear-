@@ -87,9 +87,11 @@ type SpeciesStats = {
   hopMul: number
   chargePrefer: boolean
   scaleMul: number
+  /** HP multiplier vs fish baseline (elephant harder to beat). */
+  hpMul: number
 }
 
-/** Two visually distinct Round-1 forms */
+/** Visually distinct Round-1 forms */
 export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
   fish: {
     tex: 'art-enemy',
@@ -98,6 +100,7 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     hopMul: 1,
     chargePrefer: false,
     scaleMul: 1,
+    hpMul: 1,
   },
   barrel: {
     tex: 'art-enemy-barrel',
@@ -106,6 +109,7 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     hopMul: 3.2,
     chargePrefer: true,
     scaleMul: 1,
+    hpMul: 1.35,
   },
   elephant: {
     tex: 'art-enemy-elephant',
@@ -113,7 +117,8 @@ export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
     style: 'chase',
     hopMul: 1,
     chargePrefer: false,
-    scaleMul: 1.15,
+    scaleMul: 1.2,
+    hpMul: 2,
   },
 }
 

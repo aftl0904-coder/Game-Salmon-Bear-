@@ -1,6 +1,7 @@
 /** Shared stage / physics constants — 超任 SNES weight (Goemon / classic platformer). */
 
-export const WORLD_W = 3800
+/** Doubled stage length (Pack polish — longer run, more enemies). */
+export const WORLD_W = 7600
 export const WORLD_H = 540
 
 /** Shared mid-lane walk surface (feet origin). Lowered for more playable ground (Pack3). */

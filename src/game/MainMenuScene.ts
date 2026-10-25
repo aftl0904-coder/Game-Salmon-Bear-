@@ -4,6 +4,8 @@ import { loadScores } from './score'
 import { enablePixelSprite } from './pixelSnap'
 
 type Mode = '1p' | '2p'
+type SoloCast = 'boy' | 'girl'
+type MenuChoice = { mode: Mode; solo?: SoloCast; text: string }
 
 /** Title / 1P·2P select — brand-first creek shrine atmosphere */
 export class MainMenuScene extends Phaser.Scene {
@@ -11,13 +13,15 @@ export class MainMenuScene extends Phaser.Scene {
   private labels: Phaser.GameObjects.Text[] = []
   private panels: Phaser.GameObjects.Image[] = []
   private cursorsGfx: Phaser.GameObjects.Image[] = []
-  private modes: Mode[] = ['1p', '2p']
+  private choices: MenuChoice[] = []
   private startBtn: Phaser.GameObjects.Image | null = null
   private startLabel: Phaser.GameObjects.Text | null = null
   private previewGirl: Phaser.GameObjects.Image | null = null
   private previewBear: Phaser.GameObjects.Image | null = null
   private previewGirlShad: Phaser.GameObjects.Image | null = null
   private previewBearShad: Phaser.GameObjects.Image | null = null
+  private previewBoy: Phaser.GameObjects.Image | null = null
+  private previewBoyShad: Phaser.GameObjects.Image | null = null
 
   constructor() {
     super('menu')
@@ -37,7 +41,6 @@ export class MainMenuScene extends Phaser.Scene {
     this.refresh()
   }
 
-  /** Full-bleed creek / shrine / honey sky — one composition */
   private buildAtmosphere(width: number, height: number) {
     const g = this.add.graphics().setDepth(0)
     g.fillGradientStyle(0x7ec4e8, 0x7ec4e8, 0xffe2b0, 0xffd090, 1)
@@ -53,7 +56,6 @@ export class MainMenuScene extends Phaser.Scene {
     if (this.textures.exists('bg-horizon')) {
       this.add.tileSprite(width / 2, 268, width, 32, 'bg-horizon').setDepth(1).setAlpha(0.5)
     }
-    // Sparse discrete landmarks (not tiled mountain / village bands).
     const clouds: Array<[string, number, number, number, boolean?]> = [
       ['lm-cloud-1', width * 0.16, 46, 1.3],
       ['lm-cloud-2', width * 0.48, 34, 1.15, true],
@@ -192,9 +194,9 @@ export class MainMenuScene extends Phaser.Scene {
 
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const ly = height - 100
-    this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
-    enablePixelSprite(this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25))
-    // 2P preview: girl + bear at gameplay size (bear ~half human) — toggled in refresh.
+    this.previewBoyShad = this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
+    this.previewBoy = this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25)
+    enablePixelSprite(this.previewBoy)
     this.previewGirlShad = this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
     this.previewGirl = this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15)
     enablePixelSprite(this.previewGirl)
@@ -205,29 +207,25 @@ export class MainMenuScene extends Phaser.Scene {
     this.previewBear.setVisible(false)
     this.previewGirlShad.setVisible(false)
     this.previewBearShad.setVisible(false)
-    if (this.textures.exists('pot3d')) {
-      this.add.image(width / 2 + 90, ly + 28, 'pot3d').setDepth(6).setScale(1.7)
-    }
   }
 
   private buildModeSelect(width: number) {
-    // GDD K/B: simple 單人／雙人; click only selects; grey = not selected.
-    const items = [
-      { mode: '1p' as Mode, text: '單人　—　只玩倫寶' },
-      { mode: '2p' as Mode, text: '雙人　—　倫寶＋琪寶寶' },
+    this.choices = [
+      { mode: '1p', solo: 'boy', text: '單人　—　倫寶' },
+      { mode: '1p', solo: 'girl', text: '單人　—　琪寶寶' },
+      { mode: '2p', text: '雙人　—　倫寶＋琪寶寶' },
     ]
-    this.modes = items.map((i) => i.mode)
     this.panels = []
     this.labels = []
     this.cursorsGfx = []
 
-    items.forEach((item, i) => {
-      const y = 158 + i * 58
+    this.choices.forEach((item, i) => {
+      const y = 150 + i * 48
       const panelKey = this.textures.exists('ui-wood-panel') ? 'ui-wood-panel' : 'ui-scroll'
       const panel = this.add
         .image(width / 2, y, panelKey)
         .setDepth(12)
-        .setScale(panelKey === 'ui-wood-panel' ? 0.95 : 1.1)
+        .setScale(panelKey === 'ui-wood-panel' ? 0.88 : 1.0)
       panel.setInteractive({ useHandCursor: true })
       panel.on('pointerover', () => {
         this.cursor = i
@@ -243,9 +241,8 @@ export class MainMenuScene extends Phaser.Scene {
         this.add
           .text(width / 2, y, item.text, {
             fontFamily: 'Noto Sans TC, sans-serif',
-            fontSize: '28px',
+            fontSize: '24px',
             color: '#2a1810',
-            backgroundColor: '#00000000',
             padding: { x: 8, y: 4 },
           })
           .setOrigin(0.5)
@@ -254,21 +251,18 @@ export class MainMenuScene extends Phaser.Scene {
 
       if (this.textures.exists('ui-cursor')) {
         this.cursorsGfx.push(
-          this.add.image(width / 2 - 190, y, 'ui-cursor').setDepth(13).setScale(1.5).setVisible(false),
+          this.add.image(width / 2 - 190, y, 'ui-cursor').setDepth(13).setScale(1.4).setVisible(false),
         )
       }
     })
 
-    const startY = 278
+    const startY = 300
     const startKey = this.textures.exists('ui-wood-panel-on')
       ? 'ui-wood-panel-on'
       : this.textures.exists('ui-wood-panel')
         ? 'ui-wood-panel'
         : 'ui-scroll'
-    this.startBtn = this.add
-      .image(width / 2, startY, startKey)
-      .setDepth(12)
-      .setScale(0.85)
+    this.startBtn = this.add.image(width / 2, startY, startKey).setDepth(12).setScale(0.85)
     this.startBtn.setInteractive({ useHandCursor: true })
     this.startBtn.on('pointerdown', () => this.confirmStart())
     this.startBtn.on('pointerover', () => this.startLabel?.setColor('#1a1008'))
@@ -298,12 +292,12 @@ export class MainMenuScene extends Phaser.Scene {
             )
             .join('\n')
     this.add
-      .text(width / 2, 318, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width / 2, 338, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '15px',
+        fontSize: '14px',
         color: '#f7e7c0',
         backgroundColor: '#3a2210cc',
-        padding: { x: 18, y: 10 },
+        padding: { x: 16, y: 8 },
         align: 'center',
       })
       .setOrigin(0.5, 0)
@@ -313,14 +307,14 @@ export class MainMenuScene extends Phaser.Scene {
       .text(
         width / 2,
         height - 28,
-        '上下揀模式　撳「開始」或空白／Enter 開局\n倫寶：ＡＤ左右　ＷＳ換線　ＪＫＵＩ　｜　琪寶寶：←→　↑↓換線　１２４５',
+        '上下揀模式　「開始」／空白／Enter\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食春蜜充藍條）',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '14px',
+          fontSize: '13px',
           color: '#3a2818',
           align: 'center',
           backgroundColor: '#ffe8b0aa',
-          padding: { x: 14, y: 6 },
+          padding: { x: 12, y: 5 },
         },
       )
       .setOrigin(0.5)
@@ -330,11 +324,11 @@ export class MainMenuScene extends Phaser.Scene {
   private wireInput() {
     const kb = this.input.keyboard!
     const onUp = () => {
-      this.cursor = (this.cursor + this.modes.length - 1) % this.modes.length
+      this.cursor = (this.cursor + this.choices.length - 1) % this.choices.length
       this.refresh()
     }
     const onDown = () => {
-      this.cursor = (this.cursor + 1) % this.modes.length
+      this.cursor = (this.cursor + 1) % this.choices.length
       this.refresh()
     }
     const onStart = () => this.confirmStart()
@@ -362,9 +356,8 @@ export class MainMenuScene extends Phaser.Scene {
   private refresh() {
     this.labels.forEach((t, i) => {
       const on = i === this.cursor
-      // Selected = warm ink; unselected = grey (AC-14)
       t.setColor(on ? '#1a1008' : '#8a8a8a')
-      t.setScale(on ? 1.06 : 1)
+      t.setScale(on ? 1.05 : 1)
       const panel = this.panels[i]
       if (panel) {
         if (this.textures.exists('ui-wood-panel')) {
@@ -377,16 +370,22 @@ export class MainMenuScene extends Phaser.Scene {
       const cur = this.cursorsGfx[i]
       if (cur) cur.setVisible(on)
     })
-    const duo = this.modes[this.cursor] === '2p'
-    this.previewGirl?.setVisible(duo)
-    this.previewBear?.setVisible(duo)
-    this.previewGirlShad?.setVisible(duo)
-    this.previewBearShad?.setVisible(duo)
+    const choice = this.choices[this.cursor]
+    const duo = choice?.mode === '2p'
+    const soloGirl = choice?.mode === '1p' && choice.solo === 'girl'
+    const soloBoy = choice?.mode === '1p' && choice.solo === 'boy'
+    this.previewBoy?.setVisible(duo || soloBoy)
+    this.previewBoyShad?.setVisible(duo || soloBoy)
+    this.previewGirl?.setVisible(duo || soloGirl)
+    this.previewGirlShad?.setVisible(duo || soloGirl)
+    this.previewBear?.setVisible(duo || soloGirl)
+    this.previewBearShad?.setVisible(duo || soloGirl)
   }
 
   private confirmStart() {
-    const mode = this.modes[this.cursor]!
-    this.registry.set('playMode', mode)
+    const choice = this.choices[this.cursor]!
+    this.registry.set('playMode', choice.mode)
+    this.registry.set('soloCast', choice.solo ?? 'boy')
     this.cameras.main.fadeOut(220, 40, 28, 16)
     this.time.delayedCall(220, () => this.scene.start('play'))
   }

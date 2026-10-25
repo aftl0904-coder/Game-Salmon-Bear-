@@ -435,21 +435,54 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 31, 35, 4, 6, [130, 130, 140])
   })
 
-  // Pack3 A-03: ambient bees (decor only — no combat / no collision)
-  paint(scene, 'fx-ambient-bee', 12, 10, (set) => {
-    const ink: RGB = [28, 18, 10]
-    const gold: RGB = [240, 190, 40]
-    const dark: RGB = [50, 36, 20]
-    rect(set, 3, 4, 6, 4, ink)
-    rect(set, 4, 5, 4, 2, gold)
-    set(5, 5, dark)
-    set(7, 5, dark)
-    set(4, 3, [220, 240, 255])
-    set(5, 2, [200, 230, 255])
-    set(7, 3, [220, 240, 255])
-    set(8, 2, [200, 230, 255])
-    set(3, 6, ink)
-    set(9, 6, ink)
+  // Elephant trunk tip — used as extendable nose weapon
+  paint(scene, 'fx-elephant-trunk', 28, 12, (set) => {
+    const ink: RGB = [18, 12, 14]
+    const grey: RGB = [150, 150, 158]
+    const greyD: RGB = [120, 120, 128]
+    for (let x = 2; x < 26; x++) {
+      const t = x / 26
+      const thick = 2 + Math.floor((1 - t) * 3)
+      rect(set, x, 6 - thick, 1, thick * 2, ink)
+      rect(set, x, 7 - thick + 1, 1, Math.max(1, thick * 2 - 2), t > 0.7 ? greyD : grey)
+    }
+    rect(set, 24, 4, 3, 4, ink)
+    rect(set, 25, 5, 2, 2, grey)
+  })
+
+  // Pack3 A-03: ambient bees — thin outline, readable bee detail (no combat)
+  paint(scene, 'fx-ambient-bee', 16, 14, (set) => {
+    const ink: RGB = [40, 28, 16]
+    const gold: RGB = [250, 200, 50]
+    const goldD: RGB = [210, 150, 30]
+    const stripe: RGB = [36, 28, 18]
+    const wing: RGB = [210, 235, 255]
+    // thin body outline
+    rect(set, 5, 5, 7, 5, ink)
+    rect(set, 6, 6, 5, 3, gold)
+    set(7, 6, stripe)
+    set(9, 6, stripe)
+    set(7, 7, goldD)
+    set(8, 7, gold)
+    set(9, 7, goldD)
+    // head
+    rect(set, 11, 5, 3, 3, ink)
+    set(12, 6, gold)
+    set(12, 5, [255, 250, 220])
+    // antennae (1px thin)
+    set(12, 3, ink)
+    set(13, 2, ink)
+    set(11, 3, ink)
+    set(10, 2, ink)
+    // wings thin
+    set(4, 4, wing)
+    set(3, 3, wing)
+    set(5, 3, wing)
+    set(10, 4, wing)
+    set(11, 3, wing)
+    set(9, 3, wing)
+    // stinger tip
+    set(5, 9, ink)
   })
 
   paint(scene, 'art-enemy-barrel', 40, 48, (set) => {

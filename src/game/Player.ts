@@ -12,6 +12,7 @@ import {
   JUMP_BUF_MS,
   JUMP_CUT,
   JUMP_V,
+  LANE_COUNT,
   LANE_DEFAULT,
   LANE_SNAP_SPEED,
   LANE_SWITCH_MS,
@@ -262,10 +263,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     const laneUp = !!opts.laneUpJust
     const laneDown = !!opts.laneDownJust
+    const laneMax = LANE_COUNT - 1
     if (!laneUp && !laneDown) this.laneHeldLock = false
     else if (!this.laneHeldLock) {
       if (laneUp && this.lane > 0) this.laneBuf = -1
-      else if (laneDown && this.lane < 2) this.laneBuf = 1
+      else if (laneDown && this.lane < laneMax) this.laneBuf = 1
     }
     if (
       this.laneBuf !== 0 &&
@@ -279,7 +281,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.laneCd = LANE_SWITCH_MS
         fsmEnter(this, 'LANE_SWAP', now)
         opts.onLane?.(this.lane)
-      } else if (this.laneBuf > 0 && this.lane < 2) {
+      } else if (this.laneBuf > 0 && this.lane < laneMax) {
         this.lane = clampLane(this.lane + 1)
         this.laneCd = LANE_SWITCH_MS
         fsmEnter(this, 'LANE_SWAP', now)

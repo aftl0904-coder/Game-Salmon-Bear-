@@ -68,8 +68,9 @@ export class PatrolEnemy extends Enemy {
     e.kind = kind
     e.species = spKey
     e.lane = lane
-    e.hp = st.hp
-    e.maxHp = st.hp
+    const hp = Math.max(1, Math.round(st.hp * (sp.hpMul ?? 1)))
+    e.hp = hp
+    e.maxHp = hp
     e.atkCd = Phaser.Math.Between(300, 800)
     e.patrolDir = Math.random() > 0.5 ? 1 : -1
     const span = kind === 'guardian' ? 90 : kind === 'ambusher' ? 48 : 70
@@ -84,7 +85,8 @@ export class PatrolEnemy extends Enemy {
     e.baseScale = st.scale * sp.scaleMul
     e.detectRadius = st.detect
     e.aggroRadius = st.aggro
-    e.meleeRadius = st.melee
+    // Elephant trunk strike reaches ~0.7× body length further.
+    e.meleeRadius = spKey === 'elephant' ? Math.round(st.melee * 1.7) : st.melee
     e.attackMode = 'melee'
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
@@ -94,18 +96,27 @@ export class PatrolEnemy extends Enemy {
     enablePixelSprite(e)
     e.setData('baseTex', tex)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
-    const wKey = spKey === 'barrel'
-      ? (scene.textures.exists('prop-enemy-club') ? 'prop-enemy-club' : 'prop-sword')
-      : (scene.textures.exists('prop-enemy-knife')
-        ? 'prop-enemy-knife'
-        : scene.textures.exists('prop-enemy-spear')
-          ? 'prop-enemy-spear'
-          : 'prop-sword')
-    e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
-    enablePixelSprite(e.weapon)
+    if (spKey === 'elephant') {
+      // Trunk weapon — curled in windup, extends 0.7× body on strike.
+      e.weapon = scene.add
+        .image(x + 22, feetY - 22, scene.textures.exists('fx-elephant-trunk') ? 'fx-elephant-trunk' : 'fx-salmon-shot')
+        .setDepth(actorDepth('enemy', lane, feetY) + 0.25)
+      enablePixelSprite(e.weapon)
+      e.weapon.setData('isTrunk', true)
+    } else {
+      const wKey = spKey === 'barrel'
+        ? (scene.textures.exists('prop-enemy-club') ? 'prop-enemy-club' : 'prop-sword')
+        : (scene.textures.exists('prop-enemy-knife')
+          ? 'prop-enemy-knife'
+          : scene.textures.exists('prop-enemy-spear')
+            ? 'prop-enemy-spear'
+            : 'prop-sword')
+      e.weapon = scene.add.image(x + 18, feetY - 28, wKey).setDepth(actorDepth('enemy', lane, feetY) + 0.2)
+      enablePixelSprite(e.weapon)
+    }
     bindFootBody(e, {
-      bodyW: spKey === 'barrel' ? 44 : 40,
-      bodyH: spKey === 'barrel' ? 56 : 44,
+      bodyW: spKey === 'elephant' ? 52 : spKey === 'barrel' ? 44 : 40,
+      bodyH: spKey === 'elephant' ? 52 : spKey === 'barrel' ? 56 : 44,
     })
     const body = e.body as Phaser.Physics.Arcade.Body
     if (inLaneBand(feetY)) {
@@ -418,12 +429,33 @@ export class PatrolEnemy extends Enemy {
     const face = this.flipX ? -1 : 1
     const strike = this.atkPhase === 'strike' || this.atkPhase === 'charge'
     const wind = this.atkPhase === 'windup' || this.atkPhase === 'pause'
+    const trunk = !!w.getData('isTrunk') || this.species === 'elephant'
+    if (trunk) {
+      // 原卷起 (windup) → strike extend nose ~0.7× body length forward
+      const bodyLen = Math.max(40, this.displayWidth)
+      const reach = bodyLen * 0.7
+      if (wind) {
+        w.setPosition(this.x + face * 10, this.y - 28)
+        w.setScale(0.55, 0.9)
+        w.setAngle(face * -110)
+      } else if (strike) {
+        w.setPosition(this.x + face * (18 + reach * 0.45), this.y - 18)
+        w.setScale(1.15 + reach / 80, 0.85)
+        w.setAngle(face * 8)
+      } else {
+        w.setPosition(this.x + face * 20, this.y - 16)
+        w.setScale(0.85, 0.85)
+        w.setAngle(face * 35)
+      }
+      w.setFlipX(this.flipX)
+      w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)
+      return
+    }
     const knife = (w.texture?.key || '').includes('knife')
     const ox = strike ? (knife ? 38 : 34) : wind ? (knife ? 10 : 14) : 22
     const oy = strike ? (knife ? -26 : -22) : wind ? -40 : -28
     w.setPosition(this.x + face * ox, this.y + oy)
     w.setFlipX(this.flipX)
-    // Knife stab: windup raise, strike thrust forward
     w.setAngle(strike ? face * (knife ? 5 : 25) : wind ? face * (knife ? -55 : -35) : face * -8)
     w.setDepth(actorDepth('enemy', this.lane, this.y) + 0.25)
   }

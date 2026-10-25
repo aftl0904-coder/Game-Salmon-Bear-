@@ -206,8 +206,8 @@ export const SFX = {
 }
 
 /**
- * Japanese riverside stage BGM — shamisen-ish pentatonic melody + taiko pulse.
- * (Chip approximation; original composition, not a rip.)
+ * 熱血 chip BGM — denser notes, snare drive, bass + harmony + call-response.
+ * Original chip composition (not a rip).
  */
 export function startBgm() {
   if (bgmPlaying || muted) return
@@ -215,63 +215,74 @@ export function startBgm() {
   bgmPlaying = true
   bgmNodes = []
 
-  const tempo = 118
+  const tempo = 148
   const beat = 60 / tempo
-  // Min'yo-ish pentatonic (C D F G A) — warm festival walk
-  const melody = [
-    [0, 392],
-    [1, 440],
-    [2, 523],
-    [3, 440],
-    [4, 349],
-    [5, 392],
-    [6, 294],
-    [7, 349],
-    [8, 440],
-    [9, 523],
-    [10, 587],
-    [11, 523],
-    [12, 440],
-    [13, 392],
-    [14, 349],
-    [15, 330],
-  ] as const
-  const bass = [196, 196, 175, 196, 220, 196, 165, 196] as const
+  // Energetic minor/pentatonic rush — more notes per bar
+  const melody: Array<[number, number]> = [
+    [0, 523], [0.5, 587], [1, 698], [1.5, 784],
+    [2, 698], [2.5, 587], [3, 523], [3.5, 466],
+    [4, 523], [4.5, 698], [5, 784], [5.5, 880],
+    [6, 784], [6.5, 698], [7, 587], [7.5, 523],
+    [8, 659], [8.5, 784], [9, 880], [9.5, 988],
+    [10, 880], [10.5, 784], [11, 698], [11.5, 659],
+    [12, 523], [12.5, 587], [13, 698], [13.5, 784],
+    [14, 932], [14.5, 880], [15, 784], [15.5, 698],
+  ]
+  const counter: Array<[number, number]> = [
+    [0, 392], [2, 349], [4, 440], [6, 392],
+    [8, 466], [10, 440], [12, 392], [14, 349],
+  ]
+  const bass = [130.81, 130.81, 146.83, 130.81, 174.61, 164.81, 146.83, 130.81] as const
 
   const scheduleLoop = (startAt: number) => {
     if (!bgmPlaying || !master) return
     const bar = beat * 16
     const duck = startAt < fanfareUntil
-    const melVol = duck ? 0.02 : 0.085
-    const bassVol = duck ? 0.015 : 0.05
+    const melVol = duck ? 0.02 : 0.1
+    const bassVol = duck ? 0.02 : 0.07
+    const ctrVol = duck ? 0.01 : 0.055
 
     for (const [i, f] of melody) {
       const t = startAt + i * beat
       const o = c.createOscillator()
       const g = c.createGain()
-      o.type = 'triangle'
+      o.type = 'square'
       o.frequency.value = f
       g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(melVol, t + 0.02)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.8)
+      g.gain.exponentialRampToValueAtTime(melVol, t + 0.012)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.45)
       o.connect(g)
       g.connect(master)
       o.start(t)
-      o.stop(t + beat)
+      o.stop(t + beat * 0.5)
       bgmNodes.push(o, g)
-      // light 5th harmony (koto-ish stack)
       const h = c.createOscillator()
       const hg = c.createGain()
-      h.type = 'square'
-      h.frequency.value = f * 1.498
+      h.type = 'triangle'
+      h.frequency.value = f * 1.5
       hg.gain.setValueAtTime(0.0001, t)
-      hg.gain.exponentialRampToValueAtTime(melVol * 0.35, t + 0.02)
-      hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.7)
+      hg.gain.exponentialRampToValueAtTime(melVol * 0.4, t + 0.012)
+      hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.4)
       h.connect(hg)
       hg.connect(master)
       h.start(t)
-      h.stop(t + beat)
+      h.stop(t + beat * 0.45)
       bgmNodes.push(h, hg)
+    }
+    for (const [i, f] of counter) {
+      const t = startAt + i * beat
+      const o = c.createOscillator()
+      const g = c.createGain()
+      o.type = 'sawtooth'
+      o.frequency.value = f
+      g.gain.setValueAtTime(0.0001, t)
+      g.gain.exponentialRampToValueAtTime(ctrVol, t + 0.02)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.4)
+      o.connect(g)
+      g.connect(master)
+      o.start(t)
+      o.stop(t + beat * 1.5)
+      bgmNodes.push(o, g)
     }
     for (let i = 0; i < bass.length; i++) {
       const t = startAt + i * beat * 2
@@ -280,19 +291,18 @@ export function startBgm() {
       o.type = 'square'
       o.frequency.value = bass[i]!
       g.gain.setValueAtTime(0.0001, t)
-      g.gain.exponentialRampToValueAtTime(bassVol, t + 0.02)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.5)
+      g.gain.exponentialRampToValueAtTime(bassVol, t + 0.015)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 1.6)
       o.connect(g)
       g.connect(master)
       o.start(t)
-      o.stop(t + beat * 1.6)
+      o.stop(t + beat * 1.7)
       bgmNodes.push(o, g)
     }
-    // Taiko-ish pulse on 1 & 3
+    // Kick + snare drive
     for (let i = 0; i < 16; i++) {
-      if (i % 4 !== 0) continue
       const t = startAt + i * beat
-      const n = Math.floor(c.sampleRate * 0.06)
+      const n = Math.floor(c.sampleRate * (i % 2 === 0 ? 0.07 : 0.045))
       const buf = c.createBuffer(1, n, c.sampleRate)
       const data = buf.getChannelData(0)
       for (let k = 0; k < n; k++) data[k] = (Math.random() * 2 - 1) * (1 - k / n)
@@ -300,15 +310,15 @@ export function startBgm() {
       src.buffer = buf
       const g = c.createGain()
       const f = c.createBiquadFilter()
-      f.type = 'lowpass'
-      f.frequency.value = i % 8 === 0 ? 180 : 280
-      g.gain.setValueAtTime(duck ? 0.03 : 0.1, t)
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.08)
+      f.type = i % 2 === 0 ? 'lowpass' : 'bandpass'
+      f.frequency.value = i % 2 === 0 ? (i % 4 === 0 ? 160 : 220) : 1800
+      g.gain.setValueAtTime(duck ? 0.03 : i % 2 === 0 ? 0.12 : 0.08, t)
+      g.gain.exponentialRampToValueAtTime(0.0001, t + (i % 2 === 0 ? 0.09 : 0.06))
       src.connect(f)
       f.connect(g)
       g.connect(master)
       src.start(t)
-      src.stop(t + 0.1)
+      src.stop(t + 0.12)
       bgmNodes.push(src, g)
     }
     const next = startAt + bar
