@@ -366,5 +366,125 @@
     "rows": 1,
     "facing": "right",
     "prompt": "E-02 die 5 frames magenta barrel break apart. Same design. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/fx/slash-arc-1.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "White/blue horizontal sword slash arc 4 frames magenta #FF00FF FX only no characters."
+  },
+  {
+    "file": "art-src/anim/fx/slash-arc-2.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "White/cyan upward slash arc 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/slash-arc-3.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "White/blue spinning slash trails 5 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/muzzle-flash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Orange muzzle flash burst 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/roe-splash.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Orange salmon-roe droplet splash 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/hit-spark.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Yellow-white hit spark 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/enemy-poof.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Cartoon smoke puff defeat 5 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/armour-clank.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Metal armour clank sparks 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/lantern-break.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Red paper lantern tearing 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/pot-break.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Clay honey pot shatter 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/power-up.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Golden ring burst power-up 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/honey-sparkle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Golden honey sparkles 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/coin-spin.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Gold coin spin 4 frames magenta FX only no text."
+  },
+  {
+    "file": "art-src/anim/fx/dust-step.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Small footstep dust 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/land-dust.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Landing dust cloud 4 frames magenta FX only."
   }
 ]
