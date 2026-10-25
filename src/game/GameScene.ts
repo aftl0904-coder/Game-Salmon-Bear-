@@ -2322,11 +2322,11 @@ export class GameScene extends Phaser.Scene {
       })
     }
 
-    const panel = this.add.rectangle(0, 4, 420, 230, 0xfff8ec, 0.98).setStrokeStyle(3, 0xe8a040)
+    const panel = this.add.rectangle(0, 10, 440, 250, 0xfff8ec, 0.98).setStrokeStyle(3, 0xe8a040)
     overlay.add(panel)
 
     const title = this.add
-      .text(0, -96, '◆ 第１關　通關！◆', {
+      .text(0, -108, '◆ 第１關　通關！◆', {
         fontFamily: FONT_TITLE,
         fontSize: '24px',
         color: '#c44828',

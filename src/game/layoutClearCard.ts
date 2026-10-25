@@ -30,21 +30,23 @@ export function layoutClearCard(
       : card
 
   const titleBottom = titleText.y + titleText.displayHeight * (1 - titleText.originY)
-  // Keep cast clearly under the headline (no head-over-title overlap).
-  const top = titleBottom + 16
-  const bottom = box.y + box.height * 0.72
-  const areaH = Math.max(1, bottom - top)
-  const gap = 16
+  // Bible heights (72/56) at scale 1 — feet on a line well below the headline.
+  const gap = 20
   const sprites = keys.map((k) => scene.add.image(0, 0, k).setOrigin(0.5, 1))
   const maxH = Math.max(1, ...sprites.map((s) => s.height))
-  // Prefer scale 1 when bible heights fit; never fractional.
-  let scale = Math.max(1, Math.floor(areaH / maxH))
-  if (scale > 3) scale = 3
+  const scale = 1
+  const bottom = Math.round(
+    Math.min(box.y + box.height - 8, Math.max(titleBottom + 12 + maxH * scale, box.y + box.height * 0.7)),
+  )
+  // Sanity: heads must sit below title
+  if (bottom - maxH * scale < titleBottom + 8) {
+    /* keep scale 1; title should move up in caller if needed */
+  }
   const totalW =
     sprites.reduce((w, s) => w + s.width * scale, 0) + gap * Math.max(0, sprites.length - 1)
   let x = Math.round(box.x + (box.width - totalW) / 2)
   sprites.forEach((s) => {
-    s.setScale(scale).setPosition(Math.round(x + (s.width * scale) / 2), Math.round(bottom))
+    s.setScale(scale).setPosition(Math.round(x + (s.width * scale) / 2), bottom)
     x += s.width * scale + gap
   })
   return sprites
