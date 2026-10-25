@@ -1511,8 +1511,7 @@ export class GameScene extends Phaser.Scene {
     // Bees dominate the sky traffic
     // 4 decorative bees (was 10) — less sky clutter now that bees use real art.
     for (let i = 0; i < 4; i++) this.spawnOneCritter('bee', true)
-    for (let i = 0; i < 3; i++) this.spawnOneCritter('butterfly', true)
-    for (let i = 0; i < 2; i++) this.spawnOneCritter('bird', true)
+    // Butterflies / birds were procedural purple blocks — off until real art exists.
   }
 
   private spawnOneCritter(kind: 'bee' | 'butterfly' | 'bird', initial = false) {
@@ -2567,42 +2566,40 @@ export class GameScene extends Phaser.Scene {
   private placeEnemies() {
     // Wave 1 — elephant early; unlock after short walk. X scaled −25% stage.
     const w1 = [
+      // Teach first: fish only, then one 帽仔兵. Heavy 機械豬 appears later, alone.
       this.mkEnemy(stageX(780), GROUND_Y, 'blocker', undefined, 'fish', 1),
-      this.mkEnemy(stageX(860), GROUND_Y, 'chaser', undefined, 'elephant', 3),
       this.mkEnemy(stageX(940), GROUND_Y, 'chaser', undefined, 'fish', 0),
-      this.mkEnemy(stageX(1020), GROUND_Y, 'blocker', undefined, 'fish', 4),
-      this.mkEnemy(stageX(1100), GROUND_Y, 'chaser', undefined, 'elephant', 2),
-      this.mkEnemy(stageX(1180), GROUND_Y, 'chaser', undefined, 'fish', 3),
+      this.mkEnemy(stageX(1100), GROUND_Y, 'chaser', undefined, 'barrel', 2),
     ]
     for (const e of w1) this.deferEnemy(e, stageX(620), 'wave1')
 
     const later: Array<[number, EnemyKind, EnemySpecies | undefined, LaneId, number]> = [
       [1280, 'chaser', 'fish', 2, 1100],
-      [1500, 'blocker', 'elephant', 4, 1100],
+      [1500, 'blocker', 'fish', 4, 1100],
       [1180, 'ambusher', 'barrel', 0, 1100],
       [1380, 'chaser', 'fish', 1, 1200],
       [1750, 'ambusher', 'barrel', 0, 1550],
-      [1980, 'chaser', 'elephant', 1, 1700],
+      [1980, 'chaser', 'barrel', 1, 1700],
       [2080, 'guardian', 'elephant', 2, 1850],
       [2200, 'ambusher', 'barrel', 3, 1950],
       [2400, 'interrupter', 'barrel', 1, 2100],
       [2680, 'guardian', 'elephant', 3, 2400],
       [2900, 'chaser', 'fish', 4, 2600],
       [3100, 'chaser', 'fish', 0, 2800],
-      [3300, 'blocker', 'elephant', 2, 2900],
+      [3300, 'blocker', 'fish', 2, 2900],
       [3500, 'ambusher', 'barrel', 4, 3100],
       [3650, 'chaser', 'fish', 2, 3300],
-      [3800, 'chaser', 'elephant', 1, 3400],
+      [3800, 'chaser', 'barrel', 1, 3400],
       [4100, 'guardian', 'elephant', 3, 3700],
       [4400, 'interrupter', 'barrel', 0, 4000],
       [4550, 'ambusher', 'barrel', 2, 4150],
       [4700, 'chaser', 'fish', 2, 4300],
-      [5000, 'blocker', 'elephant', 4, 4600],
+      [5000, 'blocker', 'fish', 4, 4600],
       [5300, 'ambusher', 'barrel', 1, 4900],
       [5450, 'chaser', 'fish', 0, 5050],
       [5600, 'guardian', 'elephant', 2, 5200],
       [5900, 'chaser', 'fish', 3, 5500],
-      [6200, 'blocker', 'elephant', 0, 5800],
+      [6200, 'blocker', 'barrel', 0, 5800],
     ]
     for (const [x, kind, sp, lane, unlock] of later) {
       const xx = stageX(x)
@@ -2676,7 +2673,7 @@ export class GameScene extends Phaser.Scene {
       const fromLeft = allowLeft && stagger % 2 === 1
       const enterX = fromLeft
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
-        : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 72)
+        : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
       stagger += 1
       const enterY = laneY(e.lane)
       e.setPosition(enterX, enterY)
@@ -2690,8 +2687,6 @@ export class GameScene extends Phaser.Scene {
       e.setVisible(true)
       e.setAlpha(1)
       e.clearTint()
-      const tint = e.species === 'fish' ? 0x88aacc : undefined
-      if (tint) e.setTint(tint)
       e.setScale(e.baseScale || 1)
       e.setDepth(actorDepth('enemy', e.lane, enterY))
       e.weapon?.setVisible(true)
