@@ -1,12 +1,14 @@
 import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager } from './fx'
 import {
+  enablePixelSprite,
   setDiePoseVisual,
   setHurtPoseVisual,
   setIdlePose,
   setJumpPose,
   setRunPose,
   snapCameraScroll,
+  snapTilePosition,
   snapWorldActors,
 } from './pixelSnap'
 import { SFX, startBgm, unlockAudio } from './audio'
@@ -42,6 +44,8 @@ import {
   clampLane,
   laneY,
   sameLane,
+  actorDepth,
+  DEPTH,
   applyDamage,
   applyHurtPose,
   beginDeathPose,
@@ -195,6 +199,11 @@ export class GameScene extends Phaser.Scene {
     // Snap AFTER Arcade step — update() runs before worldstep, so in-update
     // snaps get overwritten by fractional velocity before render.
     this.events.on(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
+    this.cameras.main.on(
+      Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE,
+      this.onCameraFollowUpdate,
+      this,
+    )
     this.launchUi()
     this.showIntro()
     this.emitHealth()
@@ -207,7 +216,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
     this.cameras.main.setRoundPixels(true)
     this.camTarget = this.add.zone((this.boy.x + this.girl.x) / 2, WORLD_H / 2, 1, 1)
-    this.cameras.main.startFollow(this.camTarget, true, 0.12, 0.12)
+    this.cameras.main.startFollow(this.camTarget, true, 0.18, 0.18)
     this.cameras.main.setDeadzone(110, 56)
   }
 
@@ -218,7 +227,11 @@ export class GameScene extends Phaser.Scene {
       Math.round(Phaser.Math.Clamp(midX, 480, WORLD_W - 480)),
       WORLD_H / 2,
     )
+  }
+
+  private onCameraFollowUpdate() {
     snapCameraScroll(this.cameras.main)
+    this.animateBg()
   }
 
   private onSceneShutdown() {
@@ -227,6 +240,11 @@ export class GameScene extends Phaser.Scene {
     this.resetPhysicsDebug(false)
     if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
     this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
+    this.cameras.main.off(
+      Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE,
+      this.onCameraFollowUpdate,
+      this,
+    )
     this.time.removeAllEvents()
     this.tweens.killAll()
     this.input.keyboard?.removeAllListeners()
@@ -619,7 +637,7 @@ export class GameScene extends Phaser.Scene {
       shadowSources: [
         { x: this.boy.x, y: this.boy.y, oy: 4 },
         { x: this.girl.x, y: this.girl.y, oy: 4 },
-        { x: this.pet.x, y: this.pet.y, oy: 42 },
+        { x: this.pet.x, y: this.pet.y, oy: 4 },
       ],
       extras: [this.fan, this.fanGlow],
     })
@@ -677,20 +695,13 @@ export class GameScene extends Phaser.Scene {
     h.atkCd = 220
     h.pose = 'idle'
     SFX.swing()
-    // Clear 倫寶 salmon-gun attack pose (lean + recoil) — owned for ~atkCd window.
-    h.setScale(h.baseScale * 1.14, h.baseScale * 0.88)
-    h.setAngle(h.facing * 14)
+    // Attack juice without rotation/non-uniform scale — those shear NEAREST columns.
     this.tweens.killTweensOf(h)
-    this.tweens.add({
-      targets: h,
-      scaleX: h.baseScale * 0.96,
-      scaleY: h.baseScale * 1.06,
-      angle: h.facing * -6,
-      duration: 110,
-      yoyo: true,
-    })
+    h.setAngle(0)
+    h.setScale(h.baseScale)
     const shot = this.shots.create(h.x + h.facing * 36, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.5).setDepth(11).setFlipX(h.facing < 0)
+    shot.setScale(1.5).setDepth(actorDepth('shot', h.lane)).setFlipX(h.facing < 0)
+    enablePixelSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * 560)
     shot.setData('lane', h.lane)
@@ -707,10 +718,8 @@ export class GameScene extends Phaser.Scene {
     burst(this, h.x + h.facing * 44, h.y - 28, 0xffc0d0, 8)
     this.fanGlow.setAlpha(0.6)
     this.tweens.add({ targets: this.fanGlow, alpha: 0.15, duration: 160 })
-    this.tweens.add({
-      targets: h, scaleX: h.baseScale * 1.14, scaleY: h.baseScale * 0.88,
-      angle: h.facing * 10, yoyo: true, duration: 80,
-    })
+    h.setAngle(0)
+    h.setScale(h.baseScale)
     this.spawnAttackHitbox(h, 2, 84, 56, 150)
     this.smashBreakablesInFront(h)
   }
@@ -723,7 +732,7 @@ export class GameScene extends Phaser.Scene {
       h.y - 28,
       key,
     ) as Phaser.Physics.Arcade.Sprite
-    box.setAlpha(0).setDepth(12)
+    box.setAlpha(0).setDepth(actorDepth('hitbox', h.lane))
     const body = box.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
     body.setSize(w, ht)
@@ -751,7 +760,8 @@ export class GameScene extends Phaser.Scene {
 
   private honeyJet(dir: number) {
     const jet = this.honeys.create(this.pet.x + dir * 16, this.pet.y - 20, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.55).setDepth(11)
+    jet.setScale(1.55).setDepth(actorDepth('shot', this.girl.lane))
+    enablePixelSprite(jet)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     jet.setVelocityX(dir * 480)
     jet.setData('lane', this.girl.lane)
@@ -888,11 +898,13 @@ export class GameScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** 噗噗 AI: always trail 琪寶寶's lane */
+  /** 噗噗 AI: trail 琪寶寶 beside/behind — never stacked in her/倫寶 feet. */
   private updatePet() {
     const g = this.girl
-    const followX = g.x - g.facing * 58
-    const followY = laneY(g.lane) + 2
+    const awayFromBoy = Math.sign(g.x - this.boy.x) || -g.facing
+    const side = awayFromBoy !== 0 ? awayFromBoy : -g.facing
+    const followX = g.x + side * 70
+    const followY = laneY(g.lane)
     const dx = followX - this.pet.x
     const dy = followY - this.pet.y
     const speed = this.petJetting ? 220 : 340
@@ -911,7 +923,7 @@ export class GameScene extends Phaser.Scene {
     this.pet.setAlpha(this.petJetting ? 1 : 0.85)
     this.pet.setVisible(true)
     this.pet.setActive(true)
-    this.pet.setDepth(g.depth - 0.1)
+    this.pet.setDepth(actorDepth('pet', g.lane))
     this.pet.setData('lane', g.lane)
   }
 
@@ -919,42 +931,49 @@ export class GameScene extends Phaser.Scene {
     this.boyShadow.setPosition(this.boy.x, laneY(this.boy.lane) + 4)
     this.petShadow.setPosition(this.pet.x, laneY(this.girl.lane) + 4)
     this.girlShadow.setPosition(this.girl.x, laneY(this.girl.lane) + 4)
-    this.fan.setPosition(this.girl.x - this.girl.facing * 28, this.girl.y - 36)
+    this.fan.setPosition(this.girl.x - this.girl.facing * 22, this.girl.y - 52)
     this.fan.setFlipX(this.girl.facing < 0)
+    this.fan.setDepth(actorDepth('fan', this.girl.lane))
     this.fanGlow.setPosition(this.fan.x, this.fan.y)
+    this.fanGlow.setDepth(actorDepth('fan', this.girl.lane) - 0.1)
+    this.boyShadow.setDepth(DEPTH.SHADOW)
+    this.girlShadow.setDepth(DEPTH.SHADOW)
+    this.petShadow.setDepth(DEPTH.SHADOW)
   }
 
   private animateBg() {
+    if (!this.water) return
     const sx = this.cameras.main.scrollX
     const t = this.time.now
-    this.water.tilePositionX = sx * 0.45 + t * 0.025
-    if (this.waterMid) this.waterMid.tilePositionX = sx * 0.5 + t * 0.032
-    if (this.waterFoam) this.waterFoam.tilePositionX = sx * 0.55 + t * 0.04
-    this.clouds.tilePositionX = sx * 0.08 + t * 0.005
-    if (this.mountFar) this.mountFar.tilePositionX = sx * 0.12
-    if (this.villageBand) this.villageBand.tilePositionX = sx * 0.18
-    if (this.mountNear) this.mountNear.tilePositionX = sx * 0.28
+    snapTilePosition(this.water, sx * 0.45 + t * 0.025)
+    snapTilePosition(this.waterMid, sx * 0.5 + t * 0.032)
+    snapTilePosition(this.waterFoam, sx * 0.55 + t * 0.04)
+    snapTilePosition(this.clouds, sx * 0.08 + t * 0.005)
+    snapTilePosition(this.mountFar, sx * 0.12)
+    snapTilePosition(this.villageBand, sx * 0.18)
+    snapTilePosition(this.mountNear, sx * 0.28)
   }
 
   private placeDecor(x: number, key: string, scale: number, shadScale = 1, flip = false) {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    // Depth above bank tiles (3) so contact shadows stay visible / stable.
-    this.add
+    const sh = this.add
       .image(x + 4, GROUND_Y + 6, shad)
-      .setDepth(3.4)
+      .setDepth(DEPTH.PROP_SHADOW)
       .setAlpha(0.55)
       .setScale(shadScale * 1.05, shadScale * 0.65)
+    enablePixelSprite(sh)
     if (!this.textures.exists(key)) return
-    this.add
+    const img = this.add
       .image(x, GROUND_Y, key)
       .setOrigin(0.5, 1)
-      .setDepth(3.6)
+      .setDepth(DEPTH.PROP)
       .setScale(scale)
       .setFlipX(flip)
+    enablePixelSprite(img)
   }
 
   private drawWorld() {
-    const g = this.add.graphics().setDepth(-50)
+    const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
     g.fillStyle(0xa8d8f5, 1)
@@ -966,31 +985,42 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(0xffe08a, 1)
     g.fillCircle(160, 70, 30)
 
+    // Parallax bands stacked without Y overlap so different scroll rates cannot
+    // shear a shared horizontal cut through hills / village / water.
     if (this.textures.exists('bg-sky')) {
-      this.add.tileSprite(480, 100, 960, 200, 'bg-sky').setScrollFactor(0).setDepth(-48).setAlpha(0.5)
+      const sky = this.add
+        .tileSprite(480, 96, 960, 192, 'bg-sky')
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND)
+        .setAlpha(0.5)
+      enablePixelSprite(sky)
     }
 
     this.clouds = this.add
-      .tileSprite(480, 52, 960, 56, 'bg-cloud')
+      .tileSprite(480, 48, 960, 64, 'bg-cloud')
       .setScrollFactor(0)
-      .setDepth(-42)
+      .setDepth(DEPTH.CLOUD)
       .setAlpha(0.82)
+    enablePixelSprite(this.clouds)
     this.mountFar = this.add
-      .tileSprite(480, 235, 960, 96, 'bg-mount-far')
+      .tileSprite(480, 200, 960, 128, 'bg-mount-far')
       .setScrollFactor(0)
-      .setDepth(-38)
+      .setDepth(DEPTH.MOUNT_FAR)
       .setAlpha(0.92)
+    enablePixelSprite(this.mountFar)
     if (this.textures.exists('bg-village')) {
       this.villageBand = this.add
-        .tileSprite(480, 285, 960, 56, 'bg-village')
+        .tileSprite(480, 268, 960, 64, 'bg-village')
         .setScrollFactor(0)
-        .setDepth(-34)
+        .setDepth(DEPTH.VILLAGE)
         .setAlpha(0.85)
+      enablePixelSprite(this.villageBand)
     }
     this.mountNear = this.add
-      .tileSprite(480, 318, 960, 88, 'bg-mount-near')
+      .tileSprite(480, 332, 960, 64, 'bg-mount-near')
       .setScrollFactor(0)
-      .setDepth(-30)
+      .setDepth(DEPTH.MOUNT_NEAR)
+    enablePixelSprite(this.mountNear)
 
     for (let x = 140; x < WORLD_W; x += 220) {
       this.placeDecor(x, 'prop-tree3d', 1.15 + ((x / 220) % 3) * 0.08, 1.15)
@@ -1013,34 +1043,44 @@ export class GameScene extends Phaser.Scene {
     }
     for (let x = 200; x < WORLD_W; x += 290) {
       if (this.textures.exists('fg-rock')) {
-        this.add.image(x, GROUND_Y + 5, 'shad').setDepth(3.4).setAlpha(0.4).setScale(0.65, 0.45)
-        this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(3.7).setScale(1.3)
+        this.add.image(x, GROUND_Y + 5, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.4).setScale(0.65, 0.45)
+        const rock = this.add.image(x, GROUND_Y + 2, 'fg-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP_FG).setScale(1.3)
+        enablePixelSprite(rock)
       }
       if (this.textures.exists('fg-reed')) {
-        this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(3.8).setScale(1.2)
+        const reed = this.add.image(x + 40, GROUND_Y + 2, 'fg-reed').setOrigin(0.5, 1).setDepth(DEPTH.PROP_FG).setScale(1.2)
+        enablePixelSprite(reed)
       }
     }
     if (this.textures.exists('prop-bridge')) {
       for (const bx of [520, 920, 1860, 2740]) {
-        this.add.image(bx, GROUND_Y + 7, 'shad').setDepth(3.4).setAlpha(0.45).setScale(1.9, 0.5)
-        this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(3.55).setScale(1.6)
+        this.add.image(bx, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.45).setScale(1.9, 0.5)
+        const br = this.add.image(bx, GROUND_Y + 2, 'prop-bridge').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setScale(1.6)
+        enablePixelSprite(br)
       }
     }
 
-    this.water = this.add.tileSprite(480, 522, 960, 52, 'water-deep').setScrollFactor(0).setDepth(1)
+    // Water stack: deep → mid → foam, integer heights matching POT textures.
+    this.water = this.add
+      .tileSprite(480, 520, 960, 64, 'water-deep')
+      .setScrollFactor(0)
+      .setDepth(DEPTH.WATER_DEEP)
+    enablePixelSprite(this.water)
     if (this.textures.exists('water-mid')) {
       this.waterMid = this.add
-        .tileSprite(480, 505, 960, 28, 'water-mid')
+        .tileSprite(480, 500, 960, 32, 'water-mid')
         .setScrollFactor(0)
-        .setDepth(1.5)
+        .setDepth(DEPTH.WATER_MID)
         .setAlpha(0.75)
+      enablePixelSprite(this.waterMid)
     }
     if (this.textures.exists('water-foam')) {
       this.waterFoam = this.add
-        .tileSprite(480, 494, 960, 12, 'water-foam')
+        .tileSprite(480, 488, 960, 16, 'water-foam')
         .setScrollFactor(0)
-        .setDepth(2)
+        .setDepth(DEPTH.WATER_FOAM)
         .setAlpha(0.9)
+      enablePixelSprite(this.waterFoam)
     }
   }
 
@@ -1083,9 +1123,10 @@ export class GameScene extends Phaser.Scene {
     // First pot near spawn so early smash juice lands in the opening seconds.
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     for (const x of [380, 1200, 2050, 3000]) {
-      this.add.image(x, GROUND_Y + 5, shadKey).setDepth(3.5).setAlpha(0.5).setScale(0.85, 0.55)
+      this.add.image(x, GROUND_Y + 5, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.5).setScale(0.85, 0.55)
       const pot = this.pots.create(x, GROUND_Y - 40, 'pot3d') as Phaser.Physics.Arcade.Sprite
-      pot.setScale(1.45).setDepth(4)
+      pot.setScale(1.45).setDepth(DEPTH.BREAKABLE)
+      enablePixelSprite(pot)
       ;(pot as Breakable).breakKind = 'pot'
       ;(pot as Breakable).loot = 'coin'
       ;(pot.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -1095,9 +1136,10 @@ export class GameScene extends Phaser.Scene {
     this.spawnCoin(760, 240 - 36)
     this.spawnCoin(1720, 250 - 36)
 
-    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(3.5).setAlpha(0.55).setScale(1.7, 0.7)
+    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7, 0.7)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
-    this.goal.setImmovable(true).setScale(1.35).setDepth(4)
+    this.goal.setImmovable(true).setScale(1.35).setDepth(DEPTH.BREAKABLE)
+    enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
       .text(WORLD_W - 140, GROUND_Y - 130, '祭壇・春蜜', {
@@ -1108,9 +1150,9 @@ export class GameScene extends Phaser.Scene {
         padding: { x: 6, y: 2 },
       })
       .setOrigin(0.5)
-      .setDepth(8)
+      .setDepth(DEPTH.SIGN)
 
-    // Readable stage-beat signs (~3 min pacing: flat → platforms → ambush → altar)
+    // Readable stage-beat signs — prop band, never pierce heroes or mountain BG.
     const signs: Array<[number, string]> = [
       [180, '平地・溪流'],
       [780, '平台帶'],
@@ -1119,7 +1161,7 @@ export class GameScene extends Phaser.Scene {
     ]
     for (const [sx, label] of signs) {
       this.add
-        .text(sx, GROUND_Y - 110, label, {
+        .text(sx, GROUND_Y - 96, label, {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '13px',
           color: '#3a2818',
@@ -1127,14 +1169,15 @@ export class GameScene extends Phaser.Scene {
           padding: { x: 8, y: 3 },
         })
         .setOrigin(0.5)
-        .setDepth(5)
+        .setDepth(DEPTH.SIGN)
         .setAlpha(0.9)
     }
   }
 
   private spawnCoin(x: number, y: number) {
     const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
-    c.setScale(1.55).setDepth(5)
+    c.setScale(1.55).setDepth(DEPTH.PICKUP)
+    enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
   }
@@ -1152,21 +1195,24 @@ export class GameScene extends Phaser.Scene {
     this.girl.snapToLane(LANE_DEFAULT, 330)
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
-    this.pet = this.physics.add.sprite(280, midY, 'art-bear')
+    // Spawn 噗噗 beside 琪寶寶 (not between her and 倫寶).
+    this.pet = this.physics.add.sprite(400, midY, 'art-bear')
     this.pet.setOrigin(0.5, 1)
-    this.pet.setScale(1).setAlpha(0.85).setDepth(7).setVisible(true)
+    this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', LANE_DEFAULT)).setVisible(true)
+    enablePixelSprite(this.pet)
     this.pet.setCollideWorldBounds(false)
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.pet.setData('lane', LANE_DEFAULT)
     this.entities.add(this.pet, 'pet')
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(330, midY - 36, fanKey).setDepth(10).setScale(2)
-    this.fanGlow = this.add.circle(330, midY - 36, 15, 0x88ddff, 0.2).setDepth(9)
+    this.fan = this.add.image(330, midY - 52, fanKey).setDepth(actorDepth('fan', LANE_DEFAULT)).setScale(1.6)
+    enablePixelSprite(this.fan)
+    this.fanGlow = this.add.circle(330, midY - 52, 12, 0x88ddff, 0.2).setDepth(actorDepth('fan', LANE_DEFAULT) - 0.1)
     this.fan.setAngle(0)
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.boyShadow = this.add.image(250, midY + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.2, 0.75)
-    this.girlShadow = this.add.image(330, midY + 4, shad).setDepth(5).setAlpha(0.55).setScale(1.15, 0.75)
-    this.petShadow = this.add.image(280, midY + 4, shad).setDepth(5).setAlpha(0.35).setScale(0.55, 0.45)
+    this.boyShadow = this.add.image(250, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.2, 0.75)
+    this.girlShadow = this.add.image(330, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1.15, 0.75)
+    this.petShadow = this.add.image(400, midY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(0.55, 0.45)
   }
 
   private wirePhysics() {
@@ -1456,7 +1502,8 @@ export class GameScene extends Phaser.Scene {
     const t = this.ground.create(x, surfaceY, tex) as Phaser.Physics.Arcade.Sprite
     t.setOrigin(0.5, 0)
     t.refreshBody()
-    t.setDepth(3)
+    t.setDepth(DEPTH.GROUND)
+    enablePixelSprite(t)
     return t
   }
 
@@ -1481,7 +1528,8 @@ export class GameScene extends Phaser.Scene {
       const s = this.hazards.create(x + i * 26 + 12, LANE_FLOOR_Y + 8, tex) as Phaser.Physics.Arcade.Sprite
       s.setOrigin(0.5, 0)
       s.refreshBody()
-      s.setDepth(2)
+      s.setDepth(DEPTH.HAZARD)
+      enablePixelSprite(s)
     }
   }
 

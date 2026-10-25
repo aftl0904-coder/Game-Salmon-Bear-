@@ -51,6 +51,8 @@ export class BootScene extends Phaser.Scene {
       bar.width = Math.max(4, 332 * p)
     })
 
+    // Single-frame hero/enemy art (not spritesheets). Wrong frameWidth/Height
+    // would waist-cut 琪寶寶 — keep as full-image textures.
     this.load.image('art-salmon', '/art/salmon-boy.png')
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
@@ -64,6 +66,7 @@ export class BootScene extends Phaser.Scene {
     registerHoneyArt(this)
     registerIsoArt(this)
     registerUiArt(this)
+    this.lockCastTextureFrames()
 
     this.registry.set('gameConfig', {
       round: 1,
@@ -76,5 +79,31 @@ export class BootScene extends Phaser.Scene {
     })
 
     this.scene.start('logo')
+  }
+
+  /**
+   * Guarantee cast/enemy textures stay one full-frame image.
+   * If anything re-sliced them (e.g. 64×36 half-height), mid-body would show
+   * a rectangular blank cut — the classic spritesheet waist fault.
+   */
+  private lockCastTextureFrames() {
+    const expected: Record<string, { w: number; h: number }> = {
+      'art-salmon': { w: 72, h: 72 },
+      'art-girl': { w: 64, h: 72 },
+      'art-bear': { w: 72, h: 72 },
+      'art-enemy': { w: 56, h: 56 },
+    }
+    for (const [key, size] of Object.entries(expected)) {
+      if (!this.textures.exists(key)) continue
+      const tex = this.textures.get(key)
+      tex.setFilter(Phaser.Textures.FilterMode.NEAREST)
+      const frame = tex.get()
+      // Source PNGs are single frames; refuse half-height sheet mis-slices.
+      if (frame.width !== size.w || frame.height !== size.h) {
+        console.warn(
+          `[boot] texture ${key} frame ${frame.width}x${frame.height} ≠ expected ${size.w}x${size.h}`,
+        )
+      }
+    }
   }
 }

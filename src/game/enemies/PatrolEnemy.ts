@@ -1,8 +1,10 @@
 import Phaser from 'phaser'
 import { bindFootBody } from '../footBody'
 import {
-  LANE_DEFAULT, clampLane, inLaneBand, laneDepth, laneY, type LaneId,
+  LANE_DEFAULT, clampLane, inLaneBand, laneY, type LaneId,
 } from '../engine/lanes'
+import { actorDepth } from '../engine/depth'
+import { enablePixelSprite } from '../pixelSnap'
 import {
   type EnemyKind,
   type EnemySpecies,
@@ -81,8 +83,9 @@ export class PatrolEnemy extends Enemy {
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
     e.setCollideWorldBounds(true)
-    e.setDepth(laneDepth(6, lane))
+    e.setDepth(actorDepth('enemy', lane))
     e.setScale(e.baseScale)
+    enablePixelSprite(e)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     bindFootBody(e, {
       bodyW: spKey === 'barrel' ? 22 : 20,
@@ -446,7 +449,7 @@ export class PatrolEnemy extends Enemy {
     if (this.y > target + 2 || (body.velocity.y >= 0 && this.y >= target - 2)) {
       this.setY(target); body.velocity.y = 0; body.allowGravity = false
     }
-    this.setDepth(laneDepth(6, this.lane))
+    this.setDepth(actorDepth('enemy', this.lane))
   }
   private applyPose() {
     // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
