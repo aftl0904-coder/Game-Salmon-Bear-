@@ -20,22 +20,29 @@ export const MAX_HP = 6
 /** Combat: hits connect on same lane OR ±1 adjacent lane. */
 export const LANE_HIT_TOL = 1
 /**
- * Actors bake at 3× with LINEAR AA; then −60% on-screen vs prior pack.
- * Was 2/3; now (2/3)×0.4.
+ * Actors bake at 3× with LINEAR AA.
+ * Tuned so heroes/enemies read clearly vs world props (not microscopic).
  */
-export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.4
+export const ACTOR_DISPLAY_SCALE = (2 / 3) * 0.55
 /**
- * Heroes are ~30% of the enemy on-screen size (after ACTOR_DISPLAY_SCALE).
+ * Heroes slightly under enemy size (readable co-op cast).
  */
-export const HERO_SIZE_MUL = 0.3
+export const HERO_SIZE_MUL = 0.85
 /** 琪寶寶 slightly smaller than 倫寶 after HERO_SIZE_MUL. */
 export const GIRL_SCALE_MUL = 0.92
 /** 噗噗 always ≈ half 琪寶寶 height. */
 export const PET_HEIGHT_FRAC = 0.5
-/** Projectiles / ammo display scale (−60% vs prior 1.0 pack). */
-export const PROJ_DISPLAY_SCALE = 0.4
-/** Held weapons (sword, trunk, clubs) (−60%). */
-export const WEAPON_DISPLAY_SCALE = 0.4
+/** Projectiles / ammo — sit under character scale. */
+export const PROJ_DISPLAY_SCALE = 0.55
+/** Held weapons (sword, trunk, clubs). */
+export const WEAPON_DISPLAY_SCALE = 0.55
+/**
+ * World interactables (honey / sushi / coin / durian / goal) — smaller than heroes
+ * so pickups don't dwarf the cast.
+ */
+export const PROP_DISPLAY_SCALE = 0.55
+/** Roadside scenery (tent / picnic) — a bit larger than pickups, still under old 1.x. */
+export const SCENERY_DISPLAY_SCALE = 0.62
 /** Pale BG tint (opaque sprites — colour shift only, not transparency). */
 export const BG_PALE_TINT = 0xd8e6f0
 /** Washed fog green for distant mountains (paired with BG_MOUNT_ALPHA). */
@@ -163,5 +170,5 @@ export const SWORD_HIT_W = Math.round(120 * WEAPON_DISPLAY_SCALE)
 /** Tall for ±1 lane reach */
 export const SWORD_HIT_H = Math.round(96 * WEAPON_DISPLAY_SCALE)
 export const SWORD_HIT_MS = 160
-/** 噗噗跟在琪寶寶身後的水平距離（scales with tiny heroes） */
-export const PET_FOLLOW_BEHIND = Math.round(78 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL * 3)
+/** 噗噗跟在琪寶寶身後的水平距離 */
+export const PET_FOLLOW_BEHIND = Math.round(36 + 42 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL)

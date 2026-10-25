@@ -69,6 +69,8 @@ import {
   GIRL_SCALE_MUL,
   PET_HEIGHT_FRAC,
   PROJ_DISPLAY_SCALE,
+  PROP_DISPLAY_SCALE,
+  SCENERY_DISPLAY_SCALE,
   BG_PALE_TINT,
   BG_MOUNT_TINT,
   BG_MOUNT_ALPHA,
@@ -1468,7 +1470,7 @@ export class GameScene extends Phaser.Scene {
       .image(x, GROUND_Y - 2, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.PROP)
-      .setScale(scale)
+      .setScale(scale * SCENERY_DISPLAY_SCALE)
       .setFlipX(flip)
     this.styleBgPale(img, BG_NEAR_TINT)
     enablePixelSprite(img)
@@ -1476,12 +1478,12 @@ export class GameScene extends Phaser.Scene {
 
   /** Picnic table + tent + fire — roadside campsite beats. */
   private placeCampsite(x: number) {
-    this.placeCampProp(x - 56, 'prop-tent', 1.35)
+    this.placeCampProp(x - 40, 'prop-tent', 1.35)
     this.placeCampProp(x, 'prop-picnic-table', 1.25)
-    this.placeCampProp(x + 42, 'prop-campfire', 1.15)
-    this.placeCampProp(x + 16, 'prop-picnic', 1.2)
+    this.placeCampProp(x + 30, 'prop-campfire', 1.15)
+    this.placeCampProp(x + 12, 'prop-picnic', 1.2)
     if (this.textures.exists('prop-shrine')) {
-      this.placeCampProp(x - 90, 'prop-shrine', 1.1)
+      this.placeCampProp(x - 64, 'prop-shrine', 1.1)
     }
   }
 
@@ -1776,10 +1778,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7, 0.7)
+    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7 * PROP_DISPLAY_SCALE, 0.7)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 10, 'goal3d')
     this.goal.setOrigin(0.5, 1)
-    this.goal.setImmovable(true).setScale(1.25).setDepth(DEPTH.BREAKABLE)
+    this.goal.setImmovable(true).setScale(1.25 * PROP_DISPLAY_SCALE).setDepth(DEPTH.BREAKABLE)
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
@@ -1801,7 +1803,7 @@ export class GameScene extends Phaser.Scene {
         ? 'fx-honey'
         : 'coin'
     const jar = this.honeyPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    jar.setScale(key === 'coin' ? 1.6 : 1.25).setDepth(DEPTH.PICKUP)
+    jar.setScale((key === 'coin' ? 1.6 : 1.25) * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(jar)
     ;(jar.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
@@ -1810,7 +1812,7 @@ export class GameScene extends Phaser.Scene {
   private spawnSushi(x: number, y: number) {
     const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
     const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    s.setScale(1.6).setDepth(DEPTH.PICKUP)
+    s.setScale(1.6 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: s, y: y - 6, yoyo: true, repeat: -1, duration: 700 })
@@ -1838,7 +1840,7 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCoin(x: number, y: number) {
     const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
-    c.setScale(1.55).setDepth(DEPTH.PICKUP)
+    c.setScale(1.55 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
@@ -1868,7 +1870,7 @@ export class GameScene extends Phaser.Scene {
         .image(x, y + 4, shad)
         .setDepth(DEPTH.SHADOW)
         .setAlpha(0.55)
-        .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
+        .setScale(0.55 * HERO_SIZE_MUL, 0.32)
       this.attachGirlGear(this.boy, lane)
       return
     }
@@ -1885,7 +1887,7 @@ export class GameScene extends Phaser.Scene {
       .image(boyX, boyY + 4, shad)
       .setDepth(DEPTH.SHADOW)
       .setAlpha(0.55)
-      .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
+      .setScale(0.55 * HERO_SIZE_MUL, 0.32)
 
     if (this.mode !== '2p') return
 
@@ -1901,7 +1903,7 @@ export class GameScene extends Phaser.Scene {
       .image(girlX, girlY + 4, shad)
       .setDepth(DEPTH.SHADOW)
       .setAlpha(0.55)
-      .setScale(0.45 * HERO_SIZE_MUL * 3, 0.35)
+      .setScale(0.55 * HERO_SIZE_MUL, 0.32)
     this.attachGirlGear(this.girl, girlLane)
   }
 
@@ -2437,7 +2439,7 @@ export class GameScene extends Phaser.Scene {
       tex,
     ) as Phaser.Physics.Arcade.Sprite
     s.setOrigin(0.5, 1)
-    s.setScale(1.15)
+    s.setScale(1.15 * PROP_DISPLAY_SCALE)
     s.refreshBody()
     s.setDepth(DEPTH.HAZARD)
     s.setData('hazardKind', 'durian')

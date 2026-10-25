@@ -1,5 +1,5 @@
 import type Phaser from 'phaser'
-import { WORLD_W, WORLD_H, GROUND_Y } from './constants'
+import { WORLD_W, WORLD_H, GROUND_Y, PROP_DISPLAY_SCALE } from './constants'
 
 export const ROUND1_MAP_KEY = 'map-round1-stream'
 export const ROUND1_TILESET_KEY = 'tileset-stream'
@@ -76,7 +76,7 @@ export function createRound1Tilemap(
         const spr = breakables.create(cx, bottom - 8, tex) as Breakable
         spr.breakKind = name as BreakableKind
         spr.loot = loot
-        spr.setScale(name === 'chest' ? 1.35 : 1.45).setDepth(4)
+        spr.setScale((name === 'chest' ? 1.35 : 1.45) * PROP_DISPLAY_SCALE).setDepth(4)
         ;(spr.body as Phaser.Physics.Arcade.Body).allowGravity = false
         scene.tweens.add({ targets: spr, y: spr.y - 5, yoyo: true, repeat: -1, duration: 700 })
       } else if (name === 'goal') goalFromMap = { x: cx, y: GROUND_Y - 50 }
