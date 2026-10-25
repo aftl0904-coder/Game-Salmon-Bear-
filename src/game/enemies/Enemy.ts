@@ -69,7 +69,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0xffffff)
     this.poseAngle = 0
     this.setAngle(0)
-    this.setScale(this.baseScale)
+    this.setScale(Math.round(this.baseScale) || 1)
     this.think = this.hurtMs
     this.hitThis = false
     this.setFsm('HURT')
@@ -92,8 +92,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   protected die(dir: number) {
     this.hp = 0
-    this.poseAngle = dir * 85
-    this.setAngle(this.poseAngle)
+    // No death rotation — angled NEAREST quads smear mid-body.
+    this.poseAngle = 0
+    this.setAngle(0)
     this.setTint(0x884444)
     this.setVelocity(dir * 80, -120)
     this.setFsm('DEAD')

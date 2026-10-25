@@ -1,3 +1,4 @@
+import { DEPTH } from './depth'
 import Phaser from 'phaser'
 import { isGrounded } from './collision'
 import { enemyFsmLabel, type Creep } from '../enemyAi'
@@ -23,7 +24,7 @@ export class DebugOverlay {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene
-    this.gfx = scene.add.graphics().setDepth(90).setScrollFactor(1)
+    this.gfx = scene.add.graphics().setDepth(DEPTH.DEBUG).setScrollFactor(1)
     this.hint = scene.add
       .text(8, 64, '', {
         fontFamily: 'Noto Sans TC, monospace, sans-serif',
@@ -33,7 +34,7 @@ export class DebugOverlay {
         padding: { x: 6, y: 3 },
       })
       .setScrollFactor(0)
-      .setDepth(91)
+      .setDepth(DEPTH.DEBUG + 1)
       .setVisible(false)
   }
 
@@ -67,7 +68,7 @@ export class DebugOverlay {
         backgroundColor: '#101820aa',
         padding: { x: 3, y: 1 },
       })
-      .setDepth(91)
+      .setDepth(DEPTH.DEBUG + 1)
       .setOrigin(0.5, 1)
     this.labels.push(t)
   }
@@ -76,6 +77,8 @@ export class DebugOverlay {
     heroes: DebugHero[]
     enemies: Creep[]
     pet?: Phaser.Physics.Arcade.Sprite
+    /** World zone signs — F1-only; never shown in normal player view. */
+    zoneSigns?: Array<{ x: number; y: number; label: string }>
   }) {
     if (!this.gfx?.active) return
     this.gfx.clear()
@@ -83,6 +86,10 @@ export class DebugOverlay {
     if (!this.enabled) return
 
     this.hint.setText('DEBUG　F1 / ` 關閉　｜　綠=腳底　紅=身體　黃=敵人狀態')
+
+    for (const z of opts.zoneSigns ?? []) {
+      this.label(z.x, z.y, z.label, '#ffe8c0')
+    }
 
     for (const h of opts.heroes) {
       if (!h?.active) continue

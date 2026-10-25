@@ -63,76 +63,65 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
-  paint(scene, 'blk-grass', 40, 44, (set) => {
-    for (let y = 14; y < 40; y++) {
-      const t = (y - 14) / 26
-      rect(set, 28, y, 12, 1, shadeRGB([100, 68, 40], 1 - t * 0.25))
+  // Seamless flat bank tile — full width fills so abutting placements leave no gap.
+  paint(scene, 'blk-grass', 32, 40, (set) => {
+    for (let y = 12; y < 36; y++) {
+      const t = (y - 12) / 24
+      rect(set, 0, y, 32, 1, shadeRGB([145, 95, 55], 1.05 - t * 0.35))
     }
-    rect(set, 28, 14, 12, 3, [135, 95, 55])
-    rect(set, 28, 14, 2, 26, [150, 110, 65])
-    for (let y = 16; y < 42; y++) {
-      const t = (y - 16) / 26
-      rect(set, 2, y, 28, 1, shadeRGB([145, 95, 55], 1.05 - t * 0.35))
-    }
-    for (let y = 20; y < 40; y += 4) {
-      rect(set, 4, y, 24, 1, [100, 65, 38], 200)
-      rect(set, 5, y + 1, 8, 1, [160, 110, 65], 120)
-    }
-    for (let y = 6; y < 16; y++) {
-      const t = (y - 6) / 10
-      rect(set, 0, y, 30, 1, shadeRGB([75, 175, 85], 1.15 - t * 0.4))
-    }
-    rect(set, 2, 6, 26, 3, [130, 210, 110])
-    rect(set, 0, 14, 30, 3, [42, 115, 50])
-    rect(set, 1, 7, 2, 10, [175, 230, 140])
-    rect(set, 0, 7, 1, 10, [210, 245, 180], 180)
-    set(8, 10, [255, 255, 255])
-    set(18, 9, [255, 160, 190])
-    set(22, 11, [255, 220, 80])
-    rect(set, 2, 40, 36, 3, [32, 22, 14], 190)
-    rect(set, 4, 42, 32, 1, [20, 14, 10], 140)
-  })
-
-  paint(scene, 'blk-wood', 40, 22, (set) => {
-    for (let y = 2; y < 12; y++) {
-      const t = (y - 2) / 10
-      rect(set, 0, y, 34, 1, shadeRGB([205, 145, 82], 1.12 - t * 0.28))
-    }
-    rect(set, 0, 2, 34, 2, [240, 195, 135])
-    rect(set, 0, 2, 2, 10, [255, 220, 170])
-    for (let y = 12; y < 20; y++) {
-      const t = (y - 12) / 8
-      rect(set, 0, y, 34, 1, shadeRGB([155, 100, 50], 1 - t * 0.3))
-    }
-    rect(set, 0, 12, 34, 2, [115, 70, 32])
-    rect(set, 34, 4, 6, 14, [100, 62, 30])
-    rect(set, 34, 4, 2, 14, [140, 90, 48])
-    for (let x = 6; x < 30; x += 8) rect(set, x, 4, 1, 8, [160, 105, 55], 160)
-    set(8, 6, [60, 60, 70])
-    set(24, 6, [60, 60, 70])
-    set(9, 6, [180, 180, 190])
-    rect(set, 2, 19, 36, 2, [28, 18, 10], 170)
-  })
-
-  paint(scene, 'blk-stone', 36, 36, (set) => {
-    for (let y = 10; y < 32; y++) {
-      const t = (y - 10) / 22
-      rect(set, 26, y, 10, 1, shadeRGB([105, 105, 112], 1 - t * 0.2))
-    }
-    for (let y = 12; y < 34; y++) {
-      const t = (y - 12) / 22
-      rect(set, 2, y, 26, 1, shadeRGB([155, 155, 162], 1.05 - t * 0.3))
+    for (let y = 16; y < 34; y += 4) {
+      rect(set, 2, y, 28, 1, [100, 65, 38], 160)
+      rect(set, 4, y + 1, 10, 1, [160, 110, 65], 100)
     }
     for (let y = 4; y < 14; y++) {
       const t = (y - 4) / 10
-      rect(set, 0, y, 28, 1, shadeRGB([190, 190, 198], 1.1 - t * 0.25))
+      rect(set, 0, y, 32, 1, shadeRGB([75, 175, 85], 1.15 - t * 0.4))
     }
-    rect(set, 0, 4, 28, 2, [230, 230, 238])
-    rect(set, 1, 5, 2, 8, [245, 245, 250])
-    rect(set, 4, 16, 10, 6, [118, 118, 128])
-    rect(set, 5, 17, 3, 2, [180, 180, 190])
-    rect(set, 2, 32, 32, 3, [36, 32, 36], 175)
+    rect(set, 0, 4, 32, 3, [130, 210, 110])
+    rect(set, 0, 12, 32, 3, [42, 115, 50])
+    rect(set, 1, 5, 2, 8, [175, 230, 140])
+    set(8, 8, [255, 255, 255])
+    set(18, 7, [255, 160, 190])
+    set(24, 9, [255, 220, 80])
+    rect(set, 0, 36, 32, 3, [32, 22, 14], 190)
+    rect(set, 0, 38, 32, 1, [20, 14, 10], 140)
   })
+
+  // Seamless wood plank — no iso side-face (that painted vertical seams every stride).
+  paint(scene, 'blk-wood', 32, 16, (set) => {
+    for (let y = 0; y < 12; y++) {
+      const t = y / 12
+      rect(set, 0, y, 32, 1, shadeRGB([205, 145, 82], 1.1 - t * 0.28))
+    }
+    rect(set, 0, 0, 32, 2, [240, 195, 135])
+    for (let y = 12; y < 16; y++) {
+      const t = (y - 12) / 4
+      rect(set, 0, y, 32, 1, shadeRGB([155, 100, 50], 1 - t * 0.3))
+    }
+    rect(set, 0, 11, 32, 2, [115, 70, 32])
+    for (let x = 4; x < 28; x += 8) rect(set, x, 2, 1, 8, [160, 105, 55], 140)
+    set(10, 4, [60, 60, 70])
+    set(22, 4, [60, 60, 70])
+    set(11, 4, [180, 180, 190])
+    rect(set, 0, 14, 32, 2, [28, 18, 10], 160)
+  })
+
+  paint(scene, 'blk-stone', 32, 28, (set) => {
+    for (let y = 8; y < 26; y++) {
+      const t = (y - 8) / 18
+      rect(set, 0, y, 32, 1, shadeRGB([155, 155, 162], 1.05 - t * 0.3))
+    }
+    for (let y = 2; y < 10; y++) {
+      const t = (y - 2) / 8
+      rect(set, 0, y, 32, 1, shadeRGB([190, 190, 198], 1.1 - t * 0.25))
+    }
+    rect(set, 0, 2, 32, 2, [230, 230, 238])
+    rect(set, 2, 4, 2, 6, [245, 245, 250])
+    rect(set, 6, 12, 10, 5, [118, 118, 128])
+    rect(set, 7, 13, 3, 2, [180, 180, 190])
+    rect(set, 0, 25, 32, 3, [36, 32, 36], 175)
+  })
+
 
   paint(scene, 'prop-torii', 72, 80, (set) => {
     const ink: RGB = [18, 10, 12]
@@ -243,18 +232,19 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(7, 11, [255, 255, 220])
   })
 
-  paint(scene, 'blk-spike', 28, 28, (set) => {
-    for (let i = 0; i < 3; i++) {
-      const ox = 2 + i * 9
-      for (let y = 0; y < 22; y++) {
-        const half = Math.max(0, 3 - Math.floor(y / 5))
-        rect(set, ox + 3 - half, y, 1 + half * 2, 1, y < 6 ? [240, 245, 255] : [140, 150, 165])
-        if (half > 0) set(ox + 3 + half, y, [85, 95, 115])
-        if (half > 0) set(ox + 3 - half, y, [200, 210, 225])
-      }
+  // One spike tile, edge-to-edge — stride = width leaves no gap between hazards.
+  paint(scene, 'blk-spike', 16, 24, (set) => {
+    for (let y = 0; y < 20; y++) {
+      const half = Math.max(0, 5 - Math.floor(y / 3.2))
+      rect(set, 8 - half, y, 1 + half * 2, 1, y < 5 ? [240, 245, 255] : [140, 150, 165])
+      if (half > 0) set(8 + half, y, [85, 95, 115])
+      if (half > 0) set(8 - half, y, [200, 210, 225])
     }
-    rect(set, 2, 24, 24, 3, [28, 28, 36], 155)
+    set(8, 1, [255, 255, 255])
+    rect(set, 0, 20, 16, 4, [28, 28, 36], 200)
+    rect(set, 0, 20, 16, 1, [60, 60, 72], 220)
   })
+
 
   paint(scene, 'crate3d', 28, 28, (set) => {
     rect(set, 3, 25, 22, 3, [18, 12, 10], 125)

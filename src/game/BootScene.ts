@@ -5,6 +5,8 @@ import { registerHoneyArt } from './honeyArt'
 import { registerIsoArt } from './isoArt'
 import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
+import { bakePixelTexture, hardenTextureAlpha } from './pixelSnap'
+
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
 export class BootScene extends Phaser.Scene {
@@ -66,7 +68,8 @@ export class BootScene extends Phaser.Scene {
     registerHoneyArt(this)
     registerIsoArt(this)
     registerUiArt(this)
-    this.lockCastTextureFrames()
+    this.bakeCastTextures()
+    this.hardenSeamTiles()
 
     this.registry.set('gameConfig', {
       round: 1,
@@ -82,28 +85,46 @@ export class BootScene extends Phaser.Scene {
   }
 
   /**
-   * Guarantee cast/enemy textures stay one full-frame image.
-   * If anything re-sliced them (e.g. 64×36 half-height), mid-body would show
-   * a rectangular blank cut — the classic spritesheet waist fault.
+   * Bake 2× NEAREST into cast/enemy textures so gameplay sprites run at scale 1.
+   * Phaser 4 fullAuto on scale≠1 independently snaps quad corners → waist cuts;
+   * soft source alpha washes into horizontal slices under NEAREST — harden it.
+   * 噗噗 stays 1× (smaller companion) with hardened alpha only.
    */
-  private lockCastTextureFrames() {
-    const expected: Record<string, { w: number; h: number }> = {
-      'art-salmon': { w: 72, h: 72 },
-      'art-girl': { w: 64, h: 72 },
-      'art-bear': { w: 72, h: 72 },
-      'art-enemy': { w: 56, h: 56 },
-    }
-    for (const [key, size] of Object.entries(expected)) {
-      if (!this.textures.exists(key)) continue
-      const tex = this.textures.get(key)
-      tex.setFilter(Phaser.Textures.FilterMode.NEAREST)
-      const frame = tex.get()
-      // Source PNGs are single frames; refuse half-height sheet mis-slices.
+  private bakeCastTextures() {
+    const baked = [
+      ['art-salmon', 2] as const,
+      ['art-girl', 2] as const,
+      ['art-enemy', 2] as const,
+      ['art-enemy-barrel', 2] as const,
+    ]
+    for (const [key, factor] of baked) {
+      const size = bakePixelTexture(this, key, factor, 100)
+      if (!size) continue
+      const frame = this.textures.get(key).get()
       if (frame.width !== size.w || frame.height !== size.h) {
         console.warn(
-          `[boot] texture ${key} frame ${frame.width}x${frame.height} ≠ expected ${size.w}x${size.h}`,
+          `[boot] baked ${key} frame ${frame.width}x${frame.height} ≠ ${size.w}x${size.h}`,
         )
       }
+    }
+    hardenTextureAlpha(this, 'art-bear', 100)
+    for (const key of [
+      'art-salmon',
+      'art-girl',
+      'art-bear',
+      'art-enemy',
+      'art-enemy-barrel',
+    ]) {
+      if (this.textures.exists(key)) {
+        this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+      }
+    }
+  }
+
+  /** Harden alpha on water/grass tiles to kill NEAREST seam wash. */
+  private hardenSeamTiles() {
+    for (const key of ['water-deep', 'water-mid', 'water-foam', 'blk-grass', 'til-grass', 'blk-wood', 'til-wood']) {
+      hardenTextureAlpha(this, key, 80)
     }
   }
 }

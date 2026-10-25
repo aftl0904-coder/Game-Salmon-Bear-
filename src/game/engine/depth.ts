@@ -1,58 +1,67 @@
 /**
- * Draw-order bands for Round 1.
- * BG < ground/water < props/signs < shadows < actors (lane-sorted) < FX < HUD.
+ * Draw-order bands for Round 1 (Strict QA 2.5D).
  *
- * Lane stride must be > 1 so same-lane heroes/enemies/pet never z-fight with
- * props or with each other when Y overlaps.
+ *   Background …… 0–99
+ *   Tilemap ……… ~100
+ *   Props ……… 110–199
+ *   WorldEntity … dynamic via actorDepth = laneIndex * 1000 + y (+ kind slot)
+ *   FX …………… 9000+
+ *   UI …………… 10000+
+ *
+ * Actor formula sorts primarily by lane (下 in front), then by feet Y so
+ * overlapping cast/enemies never z-fight or stack feet visually.
  */
 
+import { LANE_Y, type LaneId } from './lanes'
+
 export const DEPTH = {
-  SKY: -50,
-  SKY_BAND: -48,
-  CLOUD: -42,
-  MOUNT_FAR: -38,
-  VILLAGE: -34,
-  MOUNT_NEAR: -30,
-  WATER_DEEP: 1,
-  WATER_MID: 1.5,
-  WATER_FOAM: 2,
-  HAZARD: 2,
-  GROUND: 3,
-  PROP_SHADOW: 3.4,
-  PROP: 3.6,
-  PROP_FG: 3.8,
-  BREAKABLE: 4,
-  SIGN: 4.5,
-  PICKUP: 5,
-  SHADOW: 5.5,
-  /** Actors start here; lane adds LANE_STRIDE each. */
-  ACTOR: 20,
-  ACTOR_LANE_STRIDE: 12,
-  /** Within a lane: enemy < pet < hero < hero-fx. */
-  ACTOR_ENEMY: 0,
-  ACTOR_PET: 2,
-  ACTOR_HERO: 4,
-  ACTOR_FAN: 5,
-  ACTOR_SHOT: 8,
-  ACTOR_HITBOX: 9,
-  FX: 60,
-  HUD: 100,
-  DEBUG: 200,
+  SKY: 0,
+  SKY_BAND: 2,
+  CLOUD: 8,
+  MOUNT_FAR: 16,
+  VILLAGE: 22,
+  MOUNT_NEAR: 28,
+  /** Tilemap / solids / hazard strip */
+  TILEMAP: 100,
+  WATER_DEEP: 102,
+  WATER_MID: 103,
+  WATER_FOAM: 104,
+  HAZARD: 106,
+  GROUND: 108,
+  /** Props sit under all WorldEntity actors (lane0 starts ~364). */
+  PROP_SHADOW: 120,
+  PROP: 130,
+  PROP_FG: 140,
+  BREAKABLE: 150,
+  SIGN: 160,
+  PICKUP: 170,
+  SHADOW: 180,
+  /** Conceptual WorldEntity band start (actors use lane*1000+y). */
+  WORLD_ENTITY: 200,
+  FX: 9000,
+  UI: 10000,
+  DEBUG: 11000,
 } as const
 
 export type ActorKind = 'enemy' | 'pet' | 'hero' | 'fan' | 'shot' | 'hitbox'
 
+/** Within a lane+Y cell: enemy < pet < hero < hero-fx. */
 const ACTOR_SLOT: Record<ActorKind, number> = {
-  enemy: DEPTH.ACTOR_ENEMY,
-  pet: DEPTH.ACTOR_PET,
-  hero: DEPTH.ACTOR_HERO,
-  fan: DEPTH.ACTOR_FAN,
-  shot: DEPTH.ACTOR_SHOT,
-  hitbox: DEPTH.ACTOR_HITBOX,
+  enemy: 0,
+  pet: 2,
+  hero: 4,
+  fan: 5,
+  shot: 8,
+  hitbox: 9,
 }
 
-/** Lane-aware actor depth. Higher lane (下) draws in front. */
-export function actorDepth(kind: ActorKind, lane: number): number {
-  const laneId = Math.max(0, Math.min(2, Math.round(lane)))
-  return DEPTH.ACTOR + laneId * DEPTH.ACTOR_LANE_STRIDE + ACTOR_SLOT[kind]
+/**
+ * Dynamic 2.5D actor depth.
+ * `laneIndex * 1000 + y` (+ small kind slot) — higher lane (下) and lower feet
+ * draw in front. Pass live `y` each update so jump arcs sort correctly.
+ */
+export function actorDepth(kind: ActorKind, lane: number, y?: number): number {
+  const laneId = Math.max(0, Math.min(2, Math.round(lane))) as LaneId
+  const feet = Math.round(y ?? LANE_Y[laneId])
+  return laneId * 1000 + feet + ACTOR_SLOT[kind]
 }

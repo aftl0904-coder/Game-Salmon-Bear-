@@ -185,11 +185,11 @@ export class MainMenuScene extends Phaser.Scene {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const ly = height - 100
     this.add.image(150, ly + 10, shad).setDepth(6).setAlpha(0.6).setScale(1.6, 0.85)
-    enablePixelSprite(this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(2.5))
+    enablePixelSprite(this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(1.25))
     this.add.image(270, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.7, 0.85)
     enablePixelSprite(this.add.image(270, ly - 4, 'art-bear').setDepth(7).setScale(2.55))
     this.add.image(width - 150, ly + 8, shad).setDepth(6).setAlpha(0.55).setScale(1.5, 0.85)
-    enablePixelSprite(this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(2.3))
+    enablePixelSprite(this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(1.15))
     if (this.textures.exists('pot3d')) {
       this.add.image(width / 2 + 90, ly + 28, 'pot3d').setDepth(6).setScale(1.7)
     }

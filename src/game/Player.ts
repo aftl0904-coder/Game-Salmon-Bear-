@@ -74,7 +74,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   hurtLock = 0
   grace = 0
   role: PlayerRole = 'boy'
-  baseScale = 1.8
+  baseScale = 1
   coyote = 0
   jumpBuf = 0
   /** Latched after jump until true landing (prevents sticky mid-air re-arm). */
@@ -137,8 +137,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.hurtLock = 0
     this.grace = cfg.graceUntil ?? 0
     // Integer scale keeps NEAREST sampling stable (Phaser 4 safeAuto only
-    // rounds when scale===1; non-integer scale shreds columns during motion).
-    this.baseScale = cfg.scale ?? (cfg.role === 'girl' ? 2 : 2)
+    // Cast textures are 2× baked at boot — gameplay scale stays 1 (safeAuto).
+    this.baseScale = cfg.scale ?? 1
     this.moveSpeed = cfg.speed ?? (cfg.role === 'girl' ? GIRL_SPEED : BOY_SPEED)
     this.coyote = 0
     this.jumpBuf = 0
@@ -309,6 +309,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const target = laneY(this.lane)
     if (isGrounded(body) && this.y < laneY(0) - 20) { this.laneJumping = false; body.velocity.y = 0; return }
     if (body.velocity.y >= 0 && this.y >= target) {
+      this.setY(target); body.velocity.y = 0; body.allowGravity = false
+      this.laneJumping = false; this.justLanded = true
+    }
+    // Failsafe: if somehow hovering near lane Y with no upward velocity, clear jump lock
+    // (prevents stuck jump-pose / teammate desync with feet frozen mid-air).
+    if (this.laneJumping && body.velocity.y >= -20 && Math.abs(this.y - target) < 3) {
       this.setY(target); body.velocity.y = 0; body.allowGravity = false
       this.laneJumping = false; this.justLanded = true
     }
