@@ -66,20 +66,41 @@ export function registerHoneyArt(scene: Phaser.Scene) {
   })
 
   paint(scene, 'prop-fan', 24, 28, (set) => {
-    // electric fan on girl's back (cyan blades + motor)
+    // electric fan on girl's back (cyan blades + motor) — mobility, not weapon
     rect(set, 9, 18, 6, 8, [70, 80, 95])
     rect(set, 10, 10, 4, 10, [90, 100, 120])
-    // hub
     rect(set, 10, 8, 4, 4, [200, 220, 240])
-    // blades
     for (let i = 0; i < 6; i++) {
       const c: RGB = i % 2 === 0 ? [120, 220, 255] : [200, 245, 255]
       rect(set, 2 + i * 3, 2 + (i % 3), 3, 10 - (i % 3), c)
     }
-    // electric spark dots
     set(4, 4, [255, 255, 180])
     set(18, 6, [180, 255, 255])
     set(12, 2, [255, 255, 220])
+  })
+
+  // 琪寶寶近戰短刀／劍（黑色描邊＋頂光三階）
+  paint(scene, 'prop-sword', 36, 14, (set) => {
+    rect(set, 2, 4, 8, 6, [90, 55, 35])
+    rect(set, 3, 5, 6, 4, [140, 90, 50])
+    rect(set, 8, 2, 4, 10, [60, 50, 55])
+    rect(set, 9, 3, 2, 8, [120, 110, 120])
+    for (let x = 12; x < 34; x++) {
+      const t = (x - 12) / 22
+      rect(set, x, 4, 1, 6, [
+        Math.floor(210 + t * 35),
+        Math.floor(220 + t * 25),
+        Math.floor(230 + t * 20),
+      ])
+      set(x, 4, [255, 255, 245])
+      set(x, 9, [140, 150, 165])
+    }
+    rect(set, 32, 5, 3, 4, [245, 248, 255])
+    // outline dots
+    for (let x = 12; x < 34; x++) {
+      set(x, 3, [20, 16, 22])
+      set(x, 10, [20, 16, 22])
+    }
   })
 
   paint(scene, 'shadow-blob', 48, 16, (set) => {

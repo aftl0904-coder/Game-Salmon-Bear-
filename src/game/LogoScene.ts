@@ -115,7 +115,7 @@ export class LogoScene extends Phaser.Scene {
       .setAlpha(0)
 
     const sub = this.add
-      .text(width / 2, 160, '鮭之力・蜜之心', {
+      .text(width / 2, 160, '奪回蜂蜜與鮭魚　｜　對抗△三角組織', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '20px',
         color: '#5a3820',
@@ -166,7 +166,7 @@ export class LogoScene extends Phaser.Scene {
       this.time.delayedCall(280, () => this.scene.start('menu'))
     }
 
-    this.time.delayedCall(5000, go)
+    this.time.delayedCall(3200, go)
     this.input.once('pointerdown', go)
     this.input.keyboard?.once('keydown', go)
   }

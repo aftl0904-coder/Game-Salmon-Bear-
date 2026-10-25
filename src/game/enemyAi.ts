@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 
-/** Existence objective: 阻止玩家奪回春蜜／抵達祭壇 */
+/** Existence objective: 三角組織傀儡 — 阻止玩家奪回蜂蜜／鮭魚／抵達祭壇 */
 export type EnemyKind =
   | 'blocker'
   | 'chaser'

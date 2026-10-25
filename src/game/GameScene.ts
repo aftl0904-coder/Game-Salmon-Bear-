@@ -42,6 +42,12 @@ import {
   SCORE_KILL,
   SCORE_BOSS_KILL,
   SCORE_BREAK,
+  SALMON_SHOT_RANGE,
+  SALMON_SHOT_SPEED,
+  SWORD_HIT_W,
+  SWORD_HIT_H,
+  SWORD_HIT_MS,
+  PET_FOLLOW_BEHIND,
   clampLane,
   laneY,
   sameLane,
@@ -82,8 +88,10 @@ export class GameScene extends Phaser.Scene {
   private girl!: Hero
   private pet!: Phaser.Physics.Arcade.Sprite
   private petShadow!: Phaser.GameObjects.Image
+  /** Back fan = mobility FX only; sword = 琪寶寶武器 */
   private fan!: Phaser.GameObjects.Image
   private fanGlow!: Phaser.GameObjects.Arc
+  private sword!: Phaser.GameObjects.Image
   private boyShadow!: Phaser.GameObjects.Image
   private girlShadow!: Phaser.GameObjects.Image
   private ground!: Phaser.Physics.Arcade.StaticGroup
@@ -395,6 +403,7 @@ export class GameScene extends Phaser.Scene {
 
     this.updatePet()
     this.updateEnemies(dt)
+    this.cullSalmonShots()
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
     this.animateBg()
@@ -415,7 +424,7 @@ export class GameScene extends Phaser.Scene {
       this.bossOn = true
       this.spawnBoss(WORLD_W - 420, GROUND_Y)
       SFX.boss()
-      this.emitScore('關底・醃鮭魚武者！合力奪回春蜜')
+      this.emitScore('關底・三角傀儡武者！奪回春蜜與鮭供')
     }
 
     this.updateCameraFollow()
@@ -655,7 +664,7 @@ export class GameScene extends Phaser.Scene {
         { x: this.girl.x, y: this.girl.y, oy: 4 },
         { x: this.pet.x, y: this.pet.y, oy: 4 },
       ],
-      extras: [this.fan, this.fanGlow],
+      extras: [this.fan, this.fanGlow, this.sword],
     })
   }
 
@@ -672,7 +681,7 @@ export class GameScene extends Phaser.Scene {
     this.steerHero(
       this.girl, dt, !!this.cursors.left?.isDown, !!this.cursors.right?.isDown,
       this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED,
-      this.p2AttackJust(), () => this.fanSlash(this.girl),
+      this.p2AttackJust(), () => this.swordSlash(this.girl),
       this.p2LaneUpHeld(), this.p2LaneDownHeld(),
     )
   }
@@ -699,7 +708,7 @@ export class GameScene extends Phaser.Scene {
         const e = o as Creep
         return e.active && Math.abs(e.x - g.x) < 78 && sameLane(g, e)
       })
-      if (near) this.fanSlash(g)
+      if (near) this.swordSlash(g)
     }
   }
 
@@ -714,35 +723,54 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fireSalmon(h: Hero) {
-    h.atkCd = 220
+    h.atkCd = 260
     h.pose = 'idle'
     SFX.swing()
-    // Attack juice without rotation/non-uniform scale — those shear NEAREST columns.
+    // Ranged only — no free melee box (balance vs 琪寶寶劍).
     this.tweens.killTweensOf(h)
     h.setAngle(0)
     h.setScale(h.baseScale)
-    const shot = this.shots.create(h.x + h.facing * 36, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
+    const originX = h.x + h.facing * 36
+    const shot = this.shots.create(originX, h.y - 36, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enablePixelSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    shot.setVelocityX(h.facing * 560)
+    shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)
-    this.spawnAttackHitbox(h, 1, 72, 48, 150)
+    shot.setData('originX', originX)
+    shot.setData('maxRange', SALMON_SHOT_RANGE)
     this.smashBreakablesInFront(h)
     this.entities.add(shot, 'projectile')
-    this.time.delayedCall(850, () => shot.destroy())
+    // Hard cap by distance; also failsafe timeout.
+    const maxMs = Math.ceil((SALMON_SHOT_RANGE / SALMON_SHOT_SPEED) * 1000) + 80
+    this.time.delayedCall(maxMs, () => {
+      if (shot.active) shot.destroy()
+    })
   }
 
-  private fanSlash(h: Hero) {
-    h.atkCd = 240
+  /** 琪寶寶劍撃 — 近戰主力 */
+  private swordSlash(h: Hero) {
+    h.atkCd = 220
     SFX.swing()
-    burst(this, h.x + h.facing * 44, h.y - 28, 0xffc0d0, 8)
-    this.fanGlow.setAlpha(0.6)
-    this.tweens.add({ targets: this.fanGlow, alpha: 0.15, duration: 160 })
+    burst(this, h.x + h.facing * 50, h.y - 28, 0xe8f0ff, 10)
     h.setAngle(0)
     h.setScale(h.baseScale)
-    this.spawnAttackHitbox(h, 2, 84, 56, 150)
+    if (this.sword) {
+      this.sword.setAlpha(1)
+      this.tweens.add({
+        targets: this.sword,
+        angle: h.facing > 0 ? 55 : -55,
+        x: h.x + h.facing * 42,
+        duration: 90,
+        yoyo: true,
+        onComplete: () => {
+          if (!this.sword) return
+          this.sword.setAngle(h.facing > 0 ? -12 : 12)
+        },
+      })
+    }
+    this.spawnAttackHitbox(h, 2, SWORD_HIT_W, SWORD_HIT_H, SWORD_HIT_MS)
     this.smashBreakablesInFront(h)
   }
 
@@ -920,23 +948,17 @@ export class GameScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** 噗噗 AI: trail 琪寶寶 beside/behind — never stacked in her/倫寶 feet. */
+  /** 噗噗：永遠跟在琪寶寶身後，不站前排；受傷才噴蜜。 */
   private updatePet() {
     const g = this.girl
-    const awayFromBoy = Math.sign(g.x - this.boy.x) || -g.facing
-    const side = awayFromBoy !== 0 ? awayFromBoy : -g.facing
-    let followX = g.x + side * 120
-    // Keep clear of 倫寶 silhouette so 噗噗 never draws through legs.
-    if (Math.abs(followX - this.boy.x) < 90) {
-      followX = this.boy.x + side * 130
-    }
-    if (Math.abs(followX - g.x) < 64) {
-      followX = g.x + side * 120
+    let followX = g.x - g.facing * PET_FOLLOW_BEHIND
+    if (Math.abs(followX - this.boy.x) < 56) {
+      followX = g.x - g.facing * (PET_FOLLOW_BEHIND + 40)
     }
     const followY = laneY(g.lane)
     const dx = followX - this.pet.x
     const dy = followY - this.pet.y
-    const speed = this.petJetting ? 220 : 340
+    const speed = this.petJetting ? 260 : 360
     const dist = Math.hypot(dx, dy)
     if (dist > 6) {
       const nx = dx / dist
@@ -961,18 +983,40 @@ export class GameScene extends Phaser.Scene {
     this.boyShadow.setPosition(this.boy.x, laneY(this.boy.lane) + 4)
     this.petShadow.setPosition(this.pet.x, laneY(this.girl.lane) + 4)
     this.girlShadow.setPosition(this.girl.x, laneY(this.girl.lane) + 4)
-    // Fan well clear of torso — overlapping blue glow reads as a false waist slice.
-    this.fan.setPosition(this.girl.x - this.girl.facing * 58, this.girl.y - 52)
+    // Back fan = mobility only; sword is the weapon.
+    this.fan.setPosition(this.girl.x - this.girl.facing * 48, this.girl.y - 48)
     this.fan.setFlipX(this.girl.facing < 0)
-    this.fan.setScale(1)
+    this.fan.setScale(0.85)
     this.fan.setAngle(0)
     this.fan.setDepth(actorDepth('fan', this.girl.lane, this.girl.y))
     this.fanGlow.setPosition(this.fan.x, this.fan.y)
     this.fanGlow.setDepth(actorDepth('fan', this.girl.lane, this.girl.y) - 0.1)
     this.fanGlow.setAlpha(0.08)
+    if (this.sword) {
+      const swing = this.girl.atkCd > 80
+      this.sword.setPosition(
+        this.girl.x + this.girl.facing * (swing ? 40 : 26),
+        this.girl.y - 30,
+      )
+      this.sword.setFlipX(this.girl.facing < 0)
+      this.sword.setScale(1.15)
+      if (!swing) this.sword.setAngle(this.girl.facing > 0 ? -12 : 12)
+      this.sword.setDepth(actorDepth('hitbox', this.girl.lane, this.girl.y) + 0.2)
+    }
     this.boyShadow.setDepth(DEPTH.SHADOW)
     this.girlShadow.setDepth(DEPTH.SHADOW)
     this.petShadow.setDepth(DEPTH.SHADOW)
+  }
+
+  /** Cull salmon shots past max range (distance balance). */
+  private cullSalmonShots() {
+    this.shots?.getChildren().forEach((o) => {
+      const s = o as Phaser.Physics.Arcade.Sprite
+      if (!s.active) return
+      const origin = s.getData('originX') as number | undefined
+      const maxR = (s.getData('maxRange') as number | undefined) ?? SALMON_SHOT_RANGE
+      if (origin != null && Math.abs(s.x - origin) >= maxR) s.destroy()
+    })
   }
 
   private animateBg() {
@@ -1269,7 +1313,6 @@ export class GameScene extends Phaser.Scene {
     const girlY = laneY(girlLane)
     const boyX = 220
     const girlX = 380
-    const petX = 520
     // scale 1 — cast textures are 2× baked at boot (scale≠1 shears NEAREST quads).
     this.boy = Player.spawn(this, boyX, boyY, {
       role: 'boy', texture: 'art-salmon', graceUntil: grace, scale: 1, speed: BOY_SPEED,
@@ -1281,8 +1324,9 @@ export class GameScene extends Phaser.Scene {
     this.girl.snapToLane(girlLane, girlX)
     this.entities.add(this.boy, 'player')
     this.entities.add(this.girl, 'player')
-    // 噗噗 ahead of 琪寶寶, clear of 倫寶 (never through legs).
-    this.pet = this.physics.add.sprite(petX, girlY, 'art-bear')
+    // 噗噗 starts behind 琪寶寶 (facing right → left of her).
+    const petStartX = girlX - PET_FOLLOW_BEHIND
+    this.pet = this.physics.add.sprite(petStartX, girlY, 'art-bear')
     this.pet.setOrigin(0.5, 1)
     this.pet.setScale(1).setAlpha(0.85).setDepth(actorDepth('pet', girlLane, girlY)).setVisible(true)
     enablePixelSprite(this.pet)
@@ -1291,15 +1335,21 @@ export class GameScene extends Phaser.Scene {
     this.pet.setData('lane', girlLane)
     this.entities.add(this.pet, 'pet')
     const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    // Fan well clear of torso — blue glow across waist reads as a false waist slice.
-    this.fan = this.add.image(girlX - 56, girlY - 52, fanKey).setDepth(actorDepth('fan', girlLane, girlY)).setScale(1)
+    this.fan = this.add.image(girlX - 48, girlY - 48, fanKey).setDepth(actorDepth('fan', girlLane, girlY)).setScale(0.85)
     enablePixelSprite(this.fan)
-    this.fanGlow = this.add.circle(girlX - 56, girlY - 52, 6, 0x88ddff, 0.08).setDepth(actorDepth('fan', girlLane, girlY) - 0.1)
+    this.fanGlow = this.add.circle(girlX - 48, girlY - 48, 6, 0x88ddff, 0.08).setDepth(actorDepth('fan', girlLane, girlY) - 0.1)
     this.fan.setAngle(0)
+    const swordKey = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
+    this.sword = this.add
+      .image(girlX + 26, girlY - 30, swordKey)
+      .setDepth(actorDepth('hitbox', girlLane, girlY) + 0.2)
+      .setScale(1.15)
+      .setAngle(-12)
+    enablePixelSprite(this.sword)
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.boyShadow = this.add.image(boyX, boyY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
     this.girlShadow = this.add.image(girlX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.55).setScale(1, 0.75)
-    this.petShadow = this.add.image(petX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
+    this.petShadow = this.add.image(petStartX, girlY + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
   }
 
   private wirePhysics() {
@@ -1399,7 +1449,7 @@ export class GameScene extends Phaser.Scene {
       .text(
         480,
         200,
-        '第１關・奪回春蜜\n倫寶・鮭魚槍　｜　琪寶寶・電風扇×１.５速\n上／中／下三線　｜　ＷＳ／↑↓換線　｜　Ｋ／２跳躍\n同線先打得到　｜　噗噗跟琪寶寶線\n琪寶寶受傷 → 噗噗噴蜜\n\n按空白鍵或點擊畫面開始',
+        '第１關・奪回春蜜與鮭供\n△三角組織雇來的傀儡擋路\n倫寶・鮭魚槍（有射程）｜琪寶寶・劍×１.５速\n噗噗跟在琪寶寶身後；她受傷才噴蜜反擊\n上／中／下三線　ＷＳ／↑↓換線　同線先打到\n\n按空白鍵／點擊　或稍候自動開始',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
           fontSize: '15px',
@@ -1427,10 +1477,12 @@ export class GameScene extends Phaser.Scene {
           : '雙人：ＷＳ／↑↓換線　Ｋ／２跳｜噗噗跟線｜Ｒ回選單',
       )
     }
-    this.time.delayedCall(180, () => {
+    this.time.delayedCall(120, () => {
       this.input.keyboard?.once('keydown', go)
       this.input.once('pointerdown', go)
     })
+    // Auto-start so「載入後沒反應」不會卡在說明框。
+    this.time.delayedCall(4200, go)
   }
 
   private breakPot(pot: Breakable) {

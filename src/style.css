@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@500;700&family=Zen+Maru+Gothic:wght@700&display=swap');
+/* System / local CJK stacks only — avoid Google Fonts network hang on load. */
 
 :root {
   color-scheme: dark;
@@ -25,7 +25,7 @@ body {
     radial-gradient(ellipse at 15% 85%, rgba(232, 120, 60, 0.22) 0%, transparent 45%),
     radial-gradient(ellipse at 85% 70%, rgba(255, 200, 80, 0.15) 0%, transparent 40%),
     linear-gradient(180deg, #5a88a8 0%, #3a2818 100%);
-  font-family: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  font-family: 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', 'Hiragino Sans GB', sans-serif;
   color: #f7e7c0;
 }
 
