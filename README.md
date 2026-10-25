@@ -29,9 +29,17 @@
 
 ## 執行
 
+開發（Vite HMR；經 Cursor 代理有時會卡住／空白）：
+
 ```bash
 npm install
-npm run dev -- --host 127.0.0.1 --port 4521
+npm run dev -- --host 0.0.0.0 --port 4637
 ```
 
-[http://127.0.0.1:4521](http://127.0.0.1:4521)
+**建議遊玩（正式包，單一 JS，較穩）：**
+
+```bash
+npm run play
+```
+
+然後開 [http://127.0.0.1:4741](http://127.0.0.1:4741)

@@ -57,4 +57,6 @@ game.events.once('ready', () => {
   for (const scene of game.scene.getScenes(false)) {
     scene.cameras?.cameras?.forEach((c) => c.setRoundPixels(true))
   }
+  const splash = document.getElementById('boot-splash')
+  if (splash) splash.remove()
 })

@@ -7,7 +7,24 @@
     <title>鮭鮭熊</title>
   </head>
   <body>
+    <!-- Visible before JS bundle arrives (slow proxies otherwise look “blank forever”). -->
+    <div id="boot-splash" style="position:fixed;inset:0;display:grid;place-items:center;background:#3a2818;color:#ffe08a;font-family:sans-serif;z-index:9999">
+      <div style="text-align:center">
+        <div style="font-size:42px;font-weight:700;letter-spacing:0.08em">鮭鮭熊</div>
+        <div id="boot-splash-msg" style="margin-top:14px;font-size:15px;color:#f3e6c8">載入中…</div>
+      </div>
+    </div>
     <div id="game-root"></div>
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      // If main bundle never boots (proxy hang), surface a real error instead of blank.
+      setTimeout(function () {
+        var s = document.getElementById('boot-splash-msg')
+        if (!window.__SAKE_GAME__ && s) {
+          s.textContent = '載入逾時。請重新整理，或用 npm run preview 開正式包。'
+          s.style.color = '#ff8866'
+        }
+      }, 20000)
+    </script>
   </body>
 </html>
