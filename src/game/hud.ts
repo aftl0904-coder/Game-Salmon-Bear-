@@ -14,7 +14,7 @@ import { isDebugQuery } from './assertIntegerScale'
 const HUD_H = 32
 const GAP = 6
 const PAD = 4
-const HEART = 8
+const HEART = 10
 const FACE = 16
 const MP_W = 64
 const MP_H = 6
@@ -89,8 +89,13 @@ export function buildStageHud(
 
   // —— Row 1: face | name | hearts ——
   const heartsL: Phaser.GameObjects.Image[] = []
-  const face = scene.add.image(0, 0, p1Face).setOrigin(0, 0).setScrollFactor(0)
-  face.setDisplaySize(FACE, FACE)
+  const faceKey =
+    p1Face === 'art-girl' && scene.textures.exists('hud-face-girl')
+      ? 'hud-face-girl'
+      : scene.textures.exists('hud-face-boy')
+        ? 'hud-face-boy'
+        : p1Face
+  const face = scene.add.image(0, 0, faceKey).setOrigin(0, 0).setScrollFactor(0).setScale(1)
   root.add(face)
 
   const nameTx = scene.add
@@ -100,8 +105,7 @@ export function buildStageHud(
   root.add(nameTx)
 
   for (let i = 0; i < MAX_HP; i++) {
-    const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0)
-    h.setDisplaySize(HEART, HEART)
+    const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0).setScale(1)
     heartsL.push(h)
     root.add(h)
   }
@@ -164,8 +168,8 @@ export function buildStageHud(
     .setVisible(false)
   root.add(mpText)
 
-  const coinIcon = scene.add.image(0, 0, 'coin').setOrigin(0, 0).setScrollFactor(0)
-  coinIcon.setDisplaySize(12, 12)
+  const coinKey = scene.textures.exists('hud-coin') ? 'hud-coin' : 'coin'
+  const coinIcon = scene.add.image(0, 0, coinKey).setOrigin(0, 0).setScrollFactor(0).setScale(1)
   root.add(coinIcon)
   const coinText = scene.add
     .text(0, 0, '×5', textStyle(12, '#ffe08a'))
@@ -227,8 +231,8 @@ export function buildStageHud(
   const heartsR: Phaser.GameObjects.Image[] = []
   let p2Left = muteX
   if (opts.mode === '2p') {
-    const p2Face = scene.add.image(0, 0, 'art-girl').setOrigin(0, 0).setScrollFactor(0)
-    p2Face.setDisplaySize(FACE, FACE)
+    const p2FaceKey = scene.textures.exists('hud-face-girl') ? 'hud-face-girl' : 'art-girl'
+    const p2Face = scene.add.image(0, 0, p2FaceKey).setOrigin(0, 0).setScrollFactor(0).setScale(1)
     root.add(p2Face)
     const p2Name = scene.add
       .text(0, 0, '琪寶寶', textStyle(12, '#fff0f6'))
@@ -236,8 +240,7 @@ export function buildStageHud(
       .setScrollFactor(0)
     root.add(p2Name)
     for (let i = 0; i < MAX_HP; i++) {
-      const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0)
-      h.setDisplaySize(HEART, HEART)
+      const h = scene.add.image(0, 0, pipFull).setOrigin(0, 0).setScrollFactor(0).setScale(1)
       heartsR.push(h)
       root.add(h)
     }

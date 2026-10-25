@@ -30,6 +30,18 @@
     "note": "原創夥伴；來源現為 40px，待重畫至 56px 細節"
   },
   {
+    "id": "E-fish",
+    "name": "刺刺魚（runtime art-enemy）",
+    "source": "fish-enemy.png",
+    "output": "fish-enemy.png",
+    "targetHeightPx": 40,
+    "colors": 64,
+    "license": "project-owned",
+    "role": "enemy-small",
+    "runtimeTex": "art-enemy",
+    "note": "BootScene 載入 /art/fish-enemy.png"
+  },
+  {
     "id": "E-01",
     "name": "紅魚",
     "source": "enemies/E-01.png",
@@ -37,7 +49,7 @@
     "targetHeightPx": 40,
     "frameWidth": 36,
     "frameHeight": 40,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-small",
     "runtimeTex": "art-enemy",
@@ -59,7 +71,7 @@
     "targetHeightPx": 72,
     "frameWidth": 64,
     "frameHeight": 72,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-heavy",
     "runtimeTex": "art-enemy-barrel",
@@ -81,7 +93,7 @@
     "targetHeightPx": 56,
     "frameWidth": 40,
     "frameHeight": 56,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-mid",
     "runtimeTex": "art-enemy-elephant",
@@ -103,7 +115,7 @@
     "targetHeightPx": 40,
     "frameWidth": 40,
     "frameHeight": 40,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-small",
     "frames": {
@@ -124,7 +136,7 @@
     "targetHeightPx": 40,
     "frameWidth": 40,
     "frameHeight": 40,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-flyer",
     "frames": {
@@ -145,7 +157,7 @@
     "targetHeightPx": 56,
     "frameWidth": 48,
     "frameHeight": 56,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned-placeholder",
     "role": "enemy-mid",
     "frames": {
@@ -164,7 +176,7 @@
     "source": "coin.png",
     "output": "coin.png",
     "targetHeightPx": 24,
-    "colors": 32,
+    "colors": 64,
     "license": "project-owned",
     "role": "item"
   },
@@ -188,7 +200,8 @@
     "variants": 4,
     "colors": 16,
     "license": "project-owned",
-    "note": "頂草／中泥／底暗；腳底對齊 GROUND_Y"
+    "note": "頂草／中泥／底暗；腳底對齊 GROUND_Y",
+    "skipNormalize": true
   },
   {
     "id": "F-fusion-pixel-12",
@@ -201,6 +214,7 @@
     "license": "SIL Open Font License 1.1",
     "licenseFile": "fonts/OFL-fusion-pixel.txt",
     "role": "ui-font",
-    "note": "繁體中文像素字；HUD 僅用 12px／16px；作者 TakWolf / Fusion Pixel"
+    "note": "繁體中文像素字；HUD 僅用 12px／16px；作者 TakWolf / Fusion Pixel",
+    "skipNormalize": true
   }
 ]

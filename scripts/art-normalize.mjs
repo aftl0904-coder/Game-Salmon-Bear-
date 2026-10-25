@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * Per-sprite normalize for 640×360 bible heights.
- * Sources: art-src/ → public/art/ (lanczos3 height, binary alpha, 1px neighbor-dark outline, ≤64 palette, no dither).
+ * Sources: art-src/ → public/art/
+ * lanczos3 height (optional width), binary alpha, 1px neighbor-dark outline,
+ * per-sprite palette ≤64, no dither. Skips fonts / tile globs / non-raster.
  */
 import sharp from 'sharp'
 import fs from 'node:fs/promises'
@@ -21,13 +23,29 @@ if (!Array.isArray(assets) || assets.length < 1) {
 
 await fs.mkdir(outDir, { recursive: true })
 
+const RASTER = /\.(png|jpe?g|webp|gif)$/i
+let done = 0
+let skipped = 0
+
 for (const a of assets) {
-  if (!a?.source || !a?.output || !a?.targetHeightPx) {
-    console.error('asset missing source/output/targetHeightPx', a)
-    process.exit(1)
+  if (a?.skipNormalize) {
+    console.log(`· skip ${a.id} (skipNormalize)`)
+    skipped++
+    continue
   }
-  if (!a.license) {
-    console.warn(`⚠ ${a.id ?? a.output}: missing license field`)
+  if (!a?.source || typeof a.source !== 'string' || a.source.includes('*')) {
+    console.log(`· skip ${a.id ?? '?'} (glob / missing source)`)
+    skipped++
+    continue
+  }
+  if (!RASTER.test(a.source)) {
+    console.log(`· skip ${a.id} (non-raster ${a.source})`)
+    skipped++
+    continue
+  }
+  if (!a.output || typeof a.output !== 'string' || !a.targetHeightPx) {
+    console.error('asset missing output/targetHeightPx', a)
+    process.exit(1)
   }
 
   const srcPath = path.join(srcDir, a.source)
@@ -38,10 +56,22 @@ for (const a of assets) {
     process.exit(1)
   }
 
-  // 1. 一次過縮放到目標高度（之後遊戲入面 scale = 1）
-  const { data, info } = await sharp(srcPath)
-    .trim()
-    .resize({ height: a.targetHeightPx, kernel: 'lanczos3' })
+  const colors = Math.min(64, Math.max(2, a.colors ?? 64))
+  // Final bitmap (incl. 1px outline) must equal targetHeightPx (± width).
+  const bodyH = Math.max(2, a.targetHeightPx - 2)
+  const bodyW = a.targetWidthPx ? Math.max(2, a.targetWidthPx - 2) : undefined
+
+  // 1. Resize once to body size, then pad 1px for outline room
+  let pipeline = sharp(srcPath).ensureAlpha()
+  if (a.trim !== false) pipeline = pipeline.trim()
+  const resizeOpts = {
+    height: bodyH,
+    kernel: 'lanczos3',
+    fit: bodyW ? 'fill' : 'inside',
+  }
+  if (bodyW) resizeOpts.width = bodyW
+  const { data, info } = await pipeline
+    .resize(resizeOpts)
     .extend({
       top: 1,
       bottom: 1,
@@ -49,7 +79,6 @@ for (const a of assets) {
       right: 1,
       background: { r: 0, g: 0, b: 0, alpha: 0 },
     })
-    .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true })
 
@@ -57,10 +86,10 @@ for (const a of assets) {
   const H = info.height
   const at = (x, y) => (y * W + x) * 4
 
-  // 2. alpha 二值化，去走半透明毛邊
+  // 2. Binary alpha
   for (let i = 3; i < data.length; i += 4) data[i] = data[i] >= 128 ? 255 : 0
 
-  // 3. 1px 外框：顏色取相鄰像素加深，唔用純黑
+  // 3. 1px outline from darkened neighbor (not pure black)
   const out = Buffer.from(data)
   const dirs = [
     [1, 0],
@@ -89,13 +118,14 @@ for (const a of assets) {
     }
   }
 
-  // 4. 每個 sprite 各自量化（唔用全域 32 色）
   const dest = path.join(outDir, a.output)
+  await fs.mkdir(path.dirname(dest), { recursive: true })
   await sharp(out, { raw: { width: W, height: H, channels: 4 } })
-    .png({ palette: true, colors: a.colors ?? 64, dither: 0 })
+    .png({ palette: true, colors, dither: 0 })
     .toFile(dest)
 
-  console.log(`✓ ${a.id} ${a.output} ${W}x${H}`)
+  console.log(`✓ ${a.id} ${a.output} ${W}x${H} ≤${colors}c`)
+  done++
 }
 
-console.log(`\nNormalized ${assets.length} assets → public/art/`)
+console.log(`\nNormalized ${done} assets (${skipped} skipped) → public/art/`)

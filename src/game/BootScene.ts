@@ -7,6 +7,7 @@ import { registerUiArt } from './uiArt'
 import { preloadRound1Map } from './levelMap'
 import {
   bakePixelTexture,
+  bakeFixedSizeTexture,
   hardenTextureAlpha,
   sealTextureSeamsX,
   thickenSpriteOutline,
@@ -216,6 +217,11 @@ export class BootScene extends Phaser.Scene {
     registerEnemyCombatFrames(this, 'art-enemy-elephant')
 
     for (const key of actors) setActorNearestFilter(this, key)
+
+    // HUD faces / coin at exact px — game uses scale 1 (no setDisplaySize).
+    bakeFixedSizeTexture(this, 'art-salmon', 'hud-face-boy', 16)
+    bakeFixedSizeTexture(this, 'art-girl', 'hud-face-girl', 16)
+    bakeFixedSizeTexture(this, 'coin', 'hud-coin', 12)
   }
 
   /**

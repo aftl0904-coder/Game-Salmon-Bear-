@@ -76,7 +76,7 @@ export function createRound1Tilemap(
         const spr = breakables.create(cx, bottom - 8, tex) as Breakable
         spr.breakKind = name as BreakableKind
         spr.loot = loot
-        spr.setScale((name === 'chest' ? 1.35 : 1.45) * PROP_DISPLAY_SCALE).setDepth(4)
+        spr.setScale(PROP_DISPLAY_SCALE).setDepth(4)
         ;(spr.body as Phaser.Physics.Arcade.Body).allowGravity = false
         scene.tweens.add({ targets: spr, y: spr.y - 5, yoyo: true, repeat: -1, duration: 700 })
       } else if (name === 'goal') goalFromMap = { x: cx, y: GROUND_Y - 50 }

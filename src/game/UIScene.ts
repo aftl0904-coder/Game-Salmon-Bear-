@@ -208,7 +208,7 @@ export class UIScene extends Phaser.Scene {
       backgroundColor: p.win ? '#1a2810f5' : '#280810f5',
       shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
     })
-    this.banner.setText(p.message ?? '').setVisible(true).setScale(0.86).setAlpha(1)
+    this.banner.setText(p.message ?? '').setVisible(true).setScale(1).setAlpha(1)
     this.tweens.add({
       targets: this.banner,
       scale: 1,

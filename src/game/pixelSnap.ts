@@ -20,6 +20,39 @@ type TexScene = Phaser.Scene
  * NEAREST-upsample a texture by an integer factor, harden alpha, replace in-place.
  * Returns the baked display size (source × factor).
  */
+/** Nearest-neighbor copy into a fixed square (HUD faces / pips). Scale in-game = 1. */
+export function bakeFixedSizeTexture(
+  scene: TexScene,
+  srcKey: string,
+  destKey: string,
+  size: number,
+): boolean {
+  if (!scene.textures.exists(srcKey)) return false
+  const src = scene.textures.get(srcKey).getSourceImage() as
+    | HTMLImageElement
+    | HTMLCanvasElement
+    | ImageBitmap
+  const sw = (src as { width: number }).width | 0
+  const sh = (src as { height: number }).height | 0
+  if (sw < 1 || sh < 1) return false
+  const canvas = document.createElement('canvas')
+  canvas.width = size
+  canvas.height = size
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0, 0, size, size)
+  // Fit height into square, center horizontally
+  const scale = size / sh
+  const dw = Math.max(1, Math.round(sw * scale))
+  const dh = size
+  const ox = Math.floor((size - dw) / 2)
+  ctx.drawImage(src as CanvasImageSource, 0, 0, sw, sh, ox, 0, dw, dh)
+  if (scene.textures.exists(destKey)) scene.textures.remove(destKey)
+  scene.textures.addCanvas(destKey, canvas)
+  scene.textures.get(destKey).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  return true
+}
+
 export function bakePixelTexture(
   scene: TexScene,
   key: string,

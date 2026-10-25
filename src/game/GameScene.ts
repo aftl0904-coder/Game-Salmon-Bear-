@@ -66,9 +66,7 @@ import {
   SWORD_HIT_H,
   SWORD_HIT_MS,
   PET_FOLLOW_BEHIND,
-  ACTOR_DISPLAY_SCALE,
   GIRL_SCALE_MUL,
-  PET_HEIGHT_FRAC,
   PROJ_DISPLAY_SCALE,
   PROP_DISPLAY_SCALE,
   SCENERY_DISPLAY_SCALE,
@@ -189,6 +187,7 @@ export class GameScene extends Phaser.Scene {
   awaitingContinue = false
   started = false
   private startedAt = 0
+  private storyIntro: { destroy: () => void } | null = null
   private boyGoal = false
   private girlGoal = false
   private bossOn = false
@@ -976,7 +975,7 @@ export class GameScene extends Phaser.Scene {
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     const jet = this.honeys.create(h.x, h.y - 28, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(1.7 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y))
+    jet.setScale(2 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y))
     enableActorSprite(jet)
     ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     const ang = Phaser.Math.Angle.Between(h.x, h.y - 28, best.x, best.y - 20)
@@ -1030,7 +1029,7 @@ export class GameScene extends Phaser.Scene {
     const muzzleX = h.x + h.facing * hgt * 0.55
     const muzzleY = h.y - hgt * 0.55
     const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.5 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    shot.setScale(2 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocityX(h.facing * SALMON_SHOT_SPEED)
@@ -1053,17 +1052,13 @@ export class GameScene extends Phaser.Scene {
     return {
       x: h.x + h.facing * (swinging ? hgt * 0.18 : hgt * 0.12),
       y: h.y - hgt * 0.58,
-      scale: h.baseScale * 0.95,
+      scale: h.baseScale,
     }
   }
 
-  /** 噗噗 display scale so height ≈ bible 40/48 of 琪寶寶. */
-  private petScaleForGirl(g: Hero) {
-    const pet = this.pet
-    if (!pet) return ACTOR_DISPLAY_SCALE * PET_HEIGHT_FRAC
-    const girlH = Math.max(40, g.displayHeight || 48)
-    const frameH = Math.max(1, pet.frame?.height || pet.height || 40)
-    return (girlH * PET_HEIGHT_FRAC) / frameH
+  /** 噗噗 at bible height (56px bake) → integer scale 1. */
+  private petScaleForGirl(_g: Hero) {
+    return 1
   }
 
   /** 琪寶寶劍撃 — 近戰主力 */
@@ -1332,8 +1327,7 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({
       targets: h,
       angle: h.facing * 95,
-      scaleX: h.baseScale * 1.15,
-      scaleY: h.baseScale * 0.45,
+      alpha: 0.35,
       duration: 520,
       ease: 'Cubic.in',
       onComplete: () => {
@@ -1474,11 +1468,12 @@ export class GameScene extends Phaser.Scene {
   private placeBgDecor(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
     const y = GROUND_Y - 40
+    const s = Math.max(1, Math.min(3, Math.round(scale)))
     const img = this.add
       .image(x, y, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.VILLAGE)
-      .setScale(scale)
+      .setScale(s)
       .setFlipX(flip)
     this.styleBgPale(img, BG_MID_TINT)
     img.setData('baseX', x)
@@ -1490,11 +1485,12 @@ export class GameScene extends Phaser.Scene {
   /** World-space campsite props — foggy roadside scenery (not playfield-sharp). */
   private placeCampProp(x: number, key: string, scale: number, flip = false) {
     if (!this.textures.exists(key)) return
+    const s = Math.max(1, Math.min(3, Math.round(scale * SCENERY_DISPLAY_SCALE)))
     const img = this.add
       .image(x, GROUND_Y - 2, key)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.PROP)
-      .setScale(scale * SCENERY_DISPLAY_SCALE)
+      .setScale(s)
       .setFlipX(flip)
     this.styleBgPale(img, BG_NEAR_TINT)
     enablePixelSprite(img)
@@ -1502,8 +1498,8 @@ export class GameScene extends Phaser.Scene {
 
   /** Simple roadside camp — tent + fire only (no clutter table/blanket/basket). */
   private placeCampsite(x: number) {
-    this.placeCampProp(x - 18, 'prop-tent', 1.2)
-    this.placeCampProp(x + 28, 'prop-campfire', 1.05)
+    this.placeCampProp(x - 18, 'prop-tent', 1)
+    this.placeCampProp(x + 28, 'prop-campfire', 1)
   }
 
   /**
@@ -1534,12 +1530,7 @@ export class GameScene extends Phaser.Scene {
     const fromLeft = Math.random() < 0.5
     const yMin = kind === 'bird' ? 18 : kind === 'butterfly' ? 40 : 28
     const yMax = kind === 'bird' ? 70 : kind === 'butterfly' ? 130 : 120
-    const scale =
-      kind === 'bird'
-        ? Phaser.Math.FloatBetween(0.85, 1.25)
-        : kind === 'butterfly'
-          ? Phaser.Math.FloatBetween(1.0, 1.45)
-          : Phaser.Math.FloatBetween(1.15, 1.65)
+    const scale = 1
     const critter = this.add
       .image(fromLeft ? -40 : 1000, Phaser.Math.Between(yMin, yMax), key)
       .setScrollFactor(0)
@@ -1598,9 +1589,8 @@ export class GameScene extends Phaser.Scene {
       c.y = baseY + Math.sin(t * wobble + phase) * amp
       c.setFlipX(vx < 0)
       if (kind === 'butterfly') {
-        if (!c.getData('baseScale')) c.setData('baseScale', Math.abs(c.scaleX))
-        const flap = 1 + Math.sin(t * 0.018 + phase) * 0.1
-        c.setScale((c.getData('baseScale') as number) * flap)
+        // Angle-only flap — keep integer scale (no fractional setScale).
+        c.setAngle(Math.sin(t * 0.018 + phase) * 8)
       }
       if (c.x < -70 || c.x > 1040) {
         c.destroy()
@@ -1659,7 +1649,7 @@ export class GameScene extends Phaser.Scene {
         .image(GAME_W / 2, Math.round(roadTop * 0.42), 'bg-wallpaper')
         .setScrollFactor(0.018, 0)
         .setDepth(DEPTH.SKY_BAND)
-        .setDisplaySize(GAME_W + L(80), Math.round(roadTop * 0.9))
+        .setScale(1)
         .setAlpha(0.85)
       bg.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
       // Warm mist only near the road edge — blends into play space, not a blue wash.
@@ -1777,12 +1767,12 @@ export class GameScene extends Phaser.Scene {
   private placeSparseLandmarks() {
     // --- 6 clouds (3 unique textures × flip/scale) ---
     const cloudSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number }> = [
-      { key: 'lm-cloud-1', x: 120, y: 52, s: 1.35, p: 0.05 },
-      { key: 'lm-cloud-2', x: 340, y: 38, s: 1.15, flip: true, p: 0.07 },
-      { key: 'lm-cloud-3', x: 560, y: 60, s: 1.25, p: 0.06 },
-      { key: 'lm-cloud-1', x: 780, y: 44, s: 1.05, flip: true, p: 0.08 },
-      { key: 'lm-cloud-2', x: 980, y: 56, s: 1.4, p: 0.05 },
-      { key: 'lm-cloud-3', x: 1180, y: 36, s: 1.2, flip: true, p: 0.09 },
+      { key: 'lm-cloud-1', x: 120, y: 52, s: 1, p: 0.05 },
+      { key: 'lm-cloud-2', x: 340, y: 38, s: 1, flip: true, p: 0.07 },
+      { key: 'lm-cloud-3', x: 560, y: 60, s: 1, p: 0.06 },
+      { key: 'lm-cloud-1', x: 780, y: 44, s: 1, flip: true, p: 0.08 },
+      { key: 'lm-cloud-2', x: 980, y: 56, s: 1, p: 0.05 },
+      { key: 'lm-cloud-3', x: 1180, y: 36, s: 1, flip: true, p: 0.09 },
     ]
     for (const c of cloudSpecs) {
       if (!this.textures.exists(c.key)) continue
@@ -1801,10 +1791,10 @@ export class GameScene extends Phaser.Scene {
 
     // Far mountains — fog alpha + slow parallax so they read farther behind the road.
     const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number; a: number }> = [
-      { key: 'lm-mount-2', x: 210, y: 268, s: 1.6 * 2.4, p: 0.02, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.85 },
-      { key: 'lm-mount-1', x: 520, y: 278, s: 1.4 * 2.4, flip: true, p: 0.03, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.9 },
-      { key: 'lm-mount-4', x: 820, y: 298, s: 1.5 * 2.3, p: 0.05, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA },
-      { key: 'lm-mount-3', x: 1120, y: 308, s: 1.3 * 2.3, flip: true, p: 0.06, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA * 1.05 },
+      { key: 'lm-mount-2', x: 210, y: 268, s: 3, p: 0.02, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.85 },
+      { key: 'lm-mount-1', x: 520, y: 278, s: 3, flip: true, p: 0.03, d: DEPTH.MOUNT_FAR, a: BG_MOUNT_ALPHA * 0.9 },
+      { key: 'lm-mount-4', x: 820, y: 298, s: 3, p: 0.05, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA },
+      { key: 'lm-mount-3', x: 1120, y: 308, s: 3, flip: true, p: 0.06, d: DEPTH.MOUNT_NEAR, a: BG_MOUNT_ALPHA * 1.05 },
     ]
     for (const m of mountSpecs) {
       if (!this.textures.exists(m.key)) continue
@@ -1846,7 +1836,7 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
-        .setScale(1.15)
+        .setScale(1)
       this.styleBgPale(arch, BG_MID_TINT)
       arch.setData('baseX', 400)
       arch.setData('parallax', 0.1)
@@ -1894,10 +1884,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7 * PROP_DISPLAY_SCALE, 0.7)
+    this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(2 * PROP_DISPLAY_SCALE, 1)
     this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 10, 'goal3d')
     this.goal.setOrigin(0.5, 1)
-    this.goal.setImmovable(true).setScale(0.85 * PROP_DISPLAY_SCALE).setDepth(DEPTH.BREAKABLE)
+    this.goal.setImmovable(true).setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.BREAKABLE)
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
@@ -1919,7 +1909,7 @@ export class GameScene extends Phaser.Scene {
         ? 'fx-honey'
         : 'coin'
     const jar = this.honeyPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    jar.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    jar.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(jar)
     ;(jar.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
@@ -1928,7 +1918,7 @@ export class GameScene extends Phaser.Scene {
   private spawnSushi(x: number, y: number) {
     const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
     const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    s.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    s.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: s, y: y - 6, yoyo: true, repeat: -1, duration: 700 })
@@ -1956,7 +1946,7 @@ export class GameScene extends Phaser.Scene {
 
   private spawnCoin(x: number, y: number) {
     const c = this.coinPickups.create(x, y, 'coin') as Phaser.Physics.Arcade.Sprite
-    c.setScale(1 * PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
+    c.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
     ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
@@ -2129,7 +2119,7 @@ export class GameScene extends Phaser.Scene {
     const x = e.x + dir * 28
     const y = e.y - 36
     const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    shot.setScale(1.4 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
+    shot.setScale(PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
     enableActorSprite(shot)
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
@@ -2188,6 +2178,7 @@ export class GameScene extends Phaser.Scene {
         if (this.started) return
         this.started = true
         this.startedAt = this.time.now
+        this.storyIntro = null
         this.emitScore(
           this.mode === '1p'
             ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Ｒ回選單'
@@ -2207,6 +2198,7 @@ export class GameScene extends Phaser.Scene {
         }
       },
     })
+    this.storyIntro = handle
     this.events.once('shutdown', () => handle.destroy())
   }
 
@@ -2278,6 +2270,9 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('winScreenShown', true)
     this.ended = true
     this.awaitingContinue = false
+    // Drop story intro if still open so it never covers the clear card.
+    this.storyIntro?.destroy()
+    this.storyIntro = null
     this.physics.pause()
     this.boy.setVelocity(0, 0)
     this.girl?.setVelocity(0, 0)
@@ -2331,12 +2326,11 @@ export class GameScene extends Phaser.Scene {
     overlay.add(panel)
 
     const title = this.add
-      .text(0, -88, '◆ 第１關　通關！◆', {
+      .text(0, -96, '◆ 第１關　通關！◆', {
         fontFamily: FONT_TITLE,
         fontSize: '24px',
         color: '#c44828',
-        stroke: '#ffe8a0',
-        strokeThickness: 4,
+        shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
       })
       .setOrigin(0.5)
     overlay.add(title)
@@ -2553,7 +2547,7 @@ export class GameScene extends Phaser.Scene {
       tex,
     ) as Phaser.Physics.Arcade.Sprite
     s.setOrigin(0.5, 1)
-    s.setScale(1.15 * PROP_DISPLAY_SCALE)
+    s.setScale(PROP_DISPLAY_SCALE)
     s.refreshBody()
     s.setDepth(DEPTH.HAZARD)
     s.setData('hazardKind', 'durian')

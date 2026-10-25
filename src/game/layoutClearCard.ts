@@ -30,13 +30,16 @@ export function layoutClearCard(
       : card
 
   const titleBottom = titleText.y + titleText.displayHeight * (1 - titleText.originY)
-  const top = titleBottom + 8
-  const bottom = box.y + box.height * 0.62
+  // Keep cast clearly under the headline (no head-over-title overlap).
+  const top = titleBottom + 16
+  const bottom = box.y + box.height * 0.72
   const areaH = Math.max(1, bottom - top)
   const gap = 16
   const sprites = keys.map((k) => scene.add.image(0, 0, k).setOrigin(0.5, 1))
   const maxH = Math.max(1, ...sprites.map((s) => s.height))
-  const scale = Math.max(1, Math.floor(areaH / maxH))
+  // Prefer scale 1 when bible heights fit; never fractional.
+  let scale = Math.max(1, Math.floor(areaH / maxH))
+  if (scale > 3) scale = 3
   const totalW =
     sprites.reduce((w, s) => w + s.width * scale, 0) + gap * Math.max(0, sprites.length - 1)
   let x = Math.round(box.x + (box.width - totalW) / 2)

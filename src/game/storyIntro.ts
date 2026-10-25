@@ -108,7 +108,7 @@ export function playStoryIntro(opts: IntroOpts): { destroy: () => void } {
     const img = scene.add
       .image(L(300) + i * L(180), L(320), key)
       .setOrigin(0.5, 1)
-      .setScale(key === 'art-bear' ? 1.4 : 1.35)
+      .setScale(1)
       .setScrollFactor(0)
       .setAlpha(0)
     faces.push(img)

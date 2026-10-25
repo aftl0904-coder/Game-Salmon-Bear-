@@ -20,19 +20,19 @@ export class LogoScene extends Phaser.Scene {
     if (this.textures.exists('bg-wallpaper')) {
       this.add
         .image(width / 2, height * 0.28, 'bg-wallpaper')
-        .setDisplaySize(width * 1.02, height * 0.52)
+        .setScale(1)
         .setAlpha(0.7)
     }
 
     if (this.textures.exists('ui-noren')) {
-      this.add.image(36, 120, 'ui-noren').setScale(1.4)
-      this.add.image(width - 36, 120, 'ui-noren').setScale(1.4).setFlipX(true)
+      this.add.image(36, 120, 'ui-noren').setScale(1)
+      this.add.image(width - 36, 120, 'ui-noren').setScale(1).setFlipX(true)
     }
     if (this.textures.exists('ui-corner')) {
-      this.add.image(28, 28, 'ui-corner').setScale(1.4)
-      this.add.image(width - 28, 28, 'ui-corner').setScale(1.4).setFlipX(true)
-      this.add.image(28, height - 28, 'ui-corner').setScale(1.4).setFlipY(true)
-      this.add.image(width - 28, height - 28, 'ui-corner').setScale(1.4).setFlipX(true).setFlipY(true)
+      this.add.image(28, 28, 'ui-corner').setScale(1)
+      this.add.image(width - 28, 28, 'ui-corner').setScale(1).setFlipX(true)
+      this.add.image(28, height - 28, 'ui-corner').setScale(1).setFlipY(true)
+      this.add.image(width - 28, height - 28, 'ui-corner').setScale(1).setFlipX(true).setFlipY(true)
     }
 
     g.fillStyle(0xc48a48, 1)
@@ -51,30 +51,30 @@ export class LogoScene extends Phaser.Scene {
     const lineupY = Math.round(height * 0.62)
     const gap = 56
     const cx = width / 2
-    const boyS = 1.35
-    const girlS = 1.35
-    const bearS = 1.35
-    this.add.image(cx - gap, lineupY + 4, shad).setAlpha(0.45).setScale(0.9, 0.45)
+    const boyS = 1
+    const girlS = 1
+    const bearS = 1
+    this.add.image(cx - gap, lineupY + 4, shad).setAlpha(0.45).setScale(1, 1)
     enableActorSprite(
       this.add.image(cx - gap, lineupY, 'art-salmon').setOrigin(0.5, 1).setScale(boyS),
     )
-    this.add.image(cx, lineupY + 5, shad).setAlpha(0.4).setScale(0.85, 0.4)
+    this.add.image(cx, lineupY + 5, shad).setAlpha(0.4).setScale(1, 1)
     enableActorSprite(
       this.add.image(cx, lineupY + 2, 'art-bear').setOrigin(0.5, 1).setScale(bearS),
     )
-    this.add.image(cx + gap, lineupY + 4, shad).setAlpha(0.4).setScale(0.85, 0.4)
+    this.add.image(cx + gap, lineupY + 4, shad).setAlpha(0.4).setScale(1, 1)
     enableActorSprite(
       this.add.image(cx + gap, lineupY, 'art-girl').setOrigin(0.5, 1).setScale(girlS),
     )
     if (this.textures.exists('pot3d')) {
-      this.add.image(cx - 22, lineupY + 2, 'pot3d').setOrigin(0.5, 1).setScale(0.55)
+      this.add.image(cx - 22, lineupY + 2, 'pot3d').setOrigin(0.5, 1).setScale(1)
     }
     if (this.textures.exists('prop-banner')) {
-      this.add.image(70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(0.85)
-      this.add.image(width - 70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(0.85)
+      this.add.image(70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(1)
+      this.add.image(width - 70, height - 54, 'prop-banner').setOrigin(0.5, 1).setScale(1)
     }
     if (this.textures.exists('prop-lantern3d')) {
-      const L = this.add.image(120, height - 54, 'prop-lantern3d').setOrigin(0.5, 1).setScale(0.95)
+      const L = this.add.image(120, height - 54, 'prop-lantern3d').setOrigin(0.5, 1).setScale(1)
       this.tweens.add({
         targets: L,
         angle: { from: -5, to: 5 },
@@ -88,7 +88,7 @@ export class LogoScene extends Phaser.Scene {
     const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
     const plaque = this.add
       .image(width / 2, 56, plaqueKey)
-      .setScale(plaqueKey === 'ui-title-plaque' ? 0.48 : 0.62)
+      .setScale(1)
       .setAlpha(0)
 
     const logo = this.add
