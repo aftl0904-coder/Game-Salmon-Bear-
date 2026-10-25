@@ -30,6 +30,18 @@ export const ENEMY_STAGGER_HOLD_MS = 700
 export const ATTACK_COMMIT_FREEZE_MS = 100
 /** 命中 confirm：全員角色再凍 0.2s */
 export const HIT_CONFIRM_FREEZE_MS = 200
+/** 主角被打：本人 freeze 0.3s */
+export const PLAYER_HURT_FREEZE_MS = 300
+/** 大象蓄力鼻擊 */
+export const ELEPHANT_WINDUP_MS = 500
+/** 大象打中後短暫「霸體」——別人打唔入 */
+export const ELEPHANT_DOMINATE_MS = 1200
+/** 刺刺魚小彈傷害（低） */
+export const FISH_BULLET_DMG = 1
+/** 刺刺魚彈命中 freeze */
+export const FISH_BULLET_FREEZE_MS = 180
+/** 噗噗可愛 pose 停頓 */
+export const BEAR_POSE_MS = 1000
 
 /** 主角攻擊傷害（槍／劍） */
 export const PLAYER_ATTACK_DMG = 3
@@ -102,8 +114,12 @@ export const SCORE_BREAK = 80
 export const SALMON_SHOT_RANGE = 260
 /** 鮭彈飛行速度（0.7× 原 520） */
 export const SALMON_SHOT_SPEED = Math.round(520 * 0.7)
-/** 鮭魚槍射速：0.7× 原再射速度 → CD = 400 / 0.7 */
-export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7)
+/**
+ * 攻擊頻率：現有再 ×0.8 → CD ÷0.8
+ * 鮭魚槍基底：400/0.7；劍撃基底：220
+ */
+export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8)
+export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8)
 /** 琪寶寶劍撃 hitbox 寬／高／持續 */
 export const SWORD_HIT_W = 120
 export const SWORD_HIT_H = 58

@@ -91,39 +91,58 @@ type SpeciesStats = {
   hpMul: number
   /** Move speed vs fish (1 = same as kind spd). */
   spdMul: number
+  /** Attack cooldown multiplier (<1 = attacks more often). */
+  atkCdMul: number
+  /** Windup telegraph multiplier (<1 = snappier). */
+  windupMul: number
+  /** Contact / strike knockback vs baseline. */
+  knockMul: number
 }
 
-/** Visually distinct Round-1 forms */
+/**
+ * Three named species with distinct kits:
+ * 刺刺魚 — shoot tiny bullets; 疾風桶 — fast hop/lunge; 霸鼻象 — slow tank nose.
+ */
 export const SPECIES_STATS: Record<EnemySpecies, SpeciesStats> = {
   fish: {
     tex: 'art-enemy',
-    label: '醃魚雜兵',
+    label: '刺刺魚',
     style: 'chase',
     hopMul: 1,
     chargePrefer: false,
     scaleMul: 1,
     hpMul: 1,
     spdMul: 1,
+    atkCdMul: 1,
+    windupMul: 1,
+    knockMul: 1,
   },
   barrel: {
     tex: 'art-enemy-barrel',
-    label: '木桶武者',
+    label: '疾風桶',
     style: 'hop',
-    hopMul: 3.2,
+    // Faster move + hop + attack cadence; fragile + soft knock (weaker punch).
+    hopMul: 5.2,
     chargePrefer: true,
     scaleMul: 1,
-    hpMul: 1.35,
-    spdMul: 1,
+    hpMul: 0.6,
+    spdMul: 2.05,
+    atkCdMul: 0.5,
+    windupMul: 0.62,
+    knockMul: 0.4,
   },
   elephant: {
     tex: 'art-enemy-elephant',
-    label: '大象傀儡',
+    label: '霸鼻象',
     style: 'chase',
     hopMul: 1,
     chargePrefer: false,
     scaleMul: 1.55,
     hpMul: 2,
-    spdMul: 1.2,
+    spdMul: 0.85,
+    atkCdMul: 1,
+    windupMul: 1,
+    knockMul: 1.15,
   },
 }
 
@@ -188,6 +207,8 @@ function effectiveStats(e: Creep): KindStats {
     hopChance: st.hopChance * sp.hopMul,
     chargePrefer: st.chargePrefer || sp.chargePrefer,
     label: sp.label,
+    windupMs: Math.round(st.windupMs * (sp.windupMul ?? 1)),
+    atkCdMs: Math.round(st.atkCdMs * (sp.atkCdMul ?? 1)),
   }
 }
 

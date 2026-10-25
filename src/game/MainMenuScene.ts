@@ -189,7 +189,7 @@ export class MainMenuScene extends Phaser.Scene {
       .setDepth(11)
 
     const sub = this.add
-      .text(width / 2, 112, '第一關・溪流小路　｜　奪回蜂蜜與鮭供', {
+      .text(width / 2, 112, '第一關・百畝樹林　｜　奪回蜂蜜・野餐之路', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '18px',
         color: '#5a3820',

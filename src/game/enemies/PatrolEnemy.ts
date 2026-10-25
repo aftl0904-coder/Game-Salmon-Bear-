@@ -89,7 +89,8 @@ export class PatrolEnemy extends Enemy {
     const bodyW = 56 * e.baseScale
     e.meleeRadius =
       spKey === 'elephant' ? Math.round(Math.max(st.melee * 2.4, bodyW * 1.5)) : st.melee
-    e.attackMode = 'melee'
+    // 刺刺魚：遠程小彈；其餘近戰
+    e.attackMode = spKey === 'fish' ? 'projectile' : 'melee'
     e.setData('spdMul', sp.spdMul ?? 1)
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
@@ -230,7 +231,9 @@ export class PatrolEnemy extends Enemy {
     }
 
     if (dist < melee && this.atkCd <= 0 && this.fsm === 'CHASE') {
-      this.beginWindup(st.windupMs * mul.windup * (sp.style === 'hop' ? 0.85 : 1))
+      const wind =
+        st.windupMs * mul.windup * (sp.windupMul ?? 1) * (sp.style === 'hop' ? 0.85 : 1)
+      this.beginWindup(wind)
       return
     }
 
@@ -259,14 +262,29 @@ export class PatrolEnemy extends Enemy {
   private beginWindup(ms: number) {
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // Slower enemy attack telegraph than heroes (Pack2 H-04).
-    this.windup = Math.min(420, Math.max(220, ms))
+    // 霸鼻象：蓄力至少 0.5s；其他種保持原 telegraph。
+    if (this.species === 'elephant') {
+      this.windup = Math.max(500, ms)
+    } else {
+      this.windup = Math.min(420, Math.max(220, ms))
+    }
     this.hitThis = false
     freezeActors(this.scene, [this], ATTACK_COMMIT_FREEZE_MS)
     this.setTint(0xff1111)
     this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
     this.syncWeapon()
+  }
+
+  /** 霸鼻象打中後短暫霸體 */
+  isDominating(now: number) {
+    return this.species === 'elephant' && now < ((this.getData('dominateUntil') as number) || 0)
+  }
+
+  grantDominate(now: number, ms: number) {
+    if (this.species !== 'elephant') return
+    this.setData('dominateUntil', now + ms)
+    this.setTint(0xffee88)
   }
 
   private tickAttack(
@@ -298,7 +316,7 @@ export class PatrolEnemy extends Enemy {
     // Legacy pause/charge → treat as strike while walking
     if (this.atkPhase === 'pause' || this.atkPhase === 'charge') {
       this.atkPhase = 'strike'
-      this.think = 320
+      this.think = this.species === 'barrel' ? 160 : 320
       this.hitThis = false
       this.chargeDir = dir
     }
@@ -310,14 +328,15 @@ export class PatrolEnemy extends Enemy {
       if (this.windup <= 0) {
         this.atkPhase = 'strike'
         this.hitThis = false
-        this.think = 320
+        this.think = this.species === 'barrel' ? 160 : 320
         this.chargeDir = dir
         if (this.attackMode === 'projectile') this.hooks.spawnProjectile?.(this, dir)
       }
       return
     }
     if (this.atkPhase === 'strike') {
-      walkIn(1.35)
+      // 疾風桶衝刺更快但命中窗較短（攻擊力弱）
+      walkIn(this.species === 'barrel' ? 1.7 : 1.35)
       this.applyPose()
       this.syncWeapon()
       if (this.think <= 0) {
@@ -325,7 +344,8 @@ export class PatrolEnemy extends Enemy {
         const t = this.defaultTint()
         if (t) this.setTint(t)
         this.atkPhase = 'recover'
-        this.think = Math.min(160, st.recoverMs)
+        this.think = Math.min(this.species === 'barrel' ? 90 : 160, st.recoverMs)
+        // atkCdMs already includes species atkCdMul via effectiveStats()
         this.atkCd = st.atkCdMs
       }
       return
@@ -341,6 +361,8 @@ export class PatrolEnemy extends Enemy {
       tint: this.species === 'fish' ? st.tint : undefined,
       scale: st.scale * sp.scaleMul,
       hopChance: st.hopChance * sp.hopMul,
+      windupMs: Math.round(st.windupMs * (sp.windupMul ?? 1)),
+      atkCdMs: Math.round(st.atkCdMs * (sp.atkCdMul ?? 1)),
       chargePrefer: st.chargePrefer || sp.chargePrefer,
       label: sp.label,
     }

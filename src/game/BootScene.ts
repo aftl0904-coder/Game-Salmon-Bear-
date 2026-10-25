@@ -15,6 +15,8 @@ import {
   registerWalkCycle,
   registerIdleBreath,
   registerEnemyCombatFrames,
+  stampFanOntoGirl,
+  stampCasualClothes,
   WALK_FRAMES,
 } from './pixelSnap'
 
@@ -86,8 +88,8 @@ export class BootScene extends Phaser.Scene {
     this.registry.set('gameConfig', {
       round: 1,
       stageId: 'creek-path',
-      stageTitle: '第一關・溪流小路',
-      stageSub: '奪回蜂蜜與鮭供',
+      stageTitle: '第一關・百畝樹林',
+      stageSub: '奪回蜂蜜・野餐之路',
       cast: ['倫寶', '琪寶寶', '噗噗'] as const,
       maxHp: 10,
       coinsStart: 5,
@@ -103,6 +105,11 @@ export class BootScene extends Phaser.Scene {
    * 噗噗 stays 1× (smaller companion) with hardened alpha only.
    */
   private bakeCastTextures() {
+    // Fan is part of 琪寶寶's body art (back-mounted), not a floating prop.
+    stampFanOntoGirl(this)
+    // Both heroes in casual picnic-day clothes (woodland theme).
+    stampCasualClothes(this)
+
     const baked = [
       ['art-salmon', 2] as const,
       ['art-girl', 2] as const,
@@ -141,6 +148,8 @@ export class BootScene extends Phaser.Scene {
     registerWalkCycle(this, 'art-girl', WALK_FRAMES)
     registerIdleBreath(this, 'art-salmon')
     registerIdleBreath(this, 'art-girl')
+    registerIdleBreath(this, 'art-bear')
+    registerWalkCycle(this, 'art-bear', WALK_FRAMES)
     registerEnemyCombatFrames(this, 'art-enemy')
     registerEnemyCombatFrames(this, 'art-enemy-barrel')
     registerEnemyCombatFrames(this, 'art-enemy-elephant')
@@ -164,6 +173,9 @@ export class BootScene extends Phaser.Scene {
       'prop-banner',
       'prop-lantern3d',
       'prop-honey-stack',
+      'prop-picnic',
+      'prop-owl',
+      'prop-shrine',
       'lm-mount-1',
       'lm-mount-2',
       'lm-mount-4',
@@ -172,6 +184,8 @@ export class BootScene extends Phaser.Scene {
       'lm-cloud-3',
       'lm-river',
       'fx-salmon-shot',
+      'fx-fish-bullet',
+      'hazard-durian',
       'blk-spike',
     ]) {
       thickenSpriteOutline(this, key, 2)

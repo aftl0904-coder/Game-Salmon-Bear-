@@ -156,6 +156,46 @@ export function registerHoneyArt(scene: Phaser.Scene) {
     rect(set, 68, 7, 3, 4, [245, 248, 255])
   })
 
+  // 刺刺魚 tiny bullet
+  paint(scene, 'fx-fish-bullet', 10, 6, (set) => {
+    const ink: RGB = [20, 12, 16]
+    rect(set, 0, 1, 10, 4, ink)
+    rect(set, 1, 2, 8, 2, [255, 170, 90])
+    set(2, 2, [255, 230, 160])
+    set(7, 2, [220, 80, 60])
+  })
+
+  // 榴槤陷阱 — 踩到拮腳 −1HP
+  paint(scene, 'hazard-durian', 28, 26, (set) => {
+    const ink: RGB = [18, 12, 10]
+    // oval body
+    for (let y = 6; y < 24; y++) {
+      for (let x = 4; x < 24; x++) {
+        const nx = (x - 14) / 10
+        const ny = (y - 15) / 9
+        if (nx * nx + ny * ny <= 1) {
+          set(x, y, ink)
+          set(x, y, [70, 120, 45])
+          if (ny < -0.2) set(x, y, [95, 155, 55])
+          if (ny > 0.35) set(x, y, [45, 85, 30])
+        }
+      }
+    }
+    // thorns
+    const tips: Array<[number, number]> = [
+      [14, 2], [8, 5], [20, 5], [5, 12], [23, 12], [7, 20], [21, 20], [14, 24],
+      [11, 4], [17, 4], [4, 16], [24, 16],
+    ]
+    for (const [tx, ty] of tips) {
+      rect(set, tx - 1, ty - 1, 3, 3, ink)
+      set(tx, ty, [210, 200, 90])
+      set(tx, ty - 1, [240, 230, 140])
+    }
+    // stem
+    rect(set, 13, 0, 3, 5, ink)
+    rect(set, 13, 1, 3, 3, [90, 55, 25])
+  })
+
   paint(scene, 'shadow-blob', 48, 16, (set) => {
     const cx = 24
     const cy = 8

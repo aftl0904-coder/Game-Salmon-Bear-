@@ -74,10 +74,8 @@ export class LogoScene extends Phaser.Scene {
     this.add.image(width / 2 + 10, lineupY + 14, shad).setAlpha(0.45).setScale(1.5, 0.7)
     enablePixelSprite(this.add.image(width / 2 + 10, lineupY + 8, 'art-bear').setScale(2.55))
     this.add.image(width / 2 + 130, lineupY + 10, shad).setAlpha(0.45).setScale(1.3, 0.7)
+    // Fan is baked onto art-girl's back — no floating prop.
     enablePixelSprite(this.add.image(width / 2 + 130, lineupY, 'art-girl').setScale(1.1))
-    if (this.textures.exists('fan3d')) {
-      this.add.image(width / 2 + 170, lineupY - 20, 'fan3d').setScale(2.2).setAngle(-18)
-    }
     if (this.textures.exists('pot3d')) {
       this.add.image(width / 2 - 40, lineupY + 36, 'pot3d').setScale(1.85)
     }
@@ -115,7 +113,7 @@ export class LogoScene extends Phaser.Scene {
       .setAlpha(0)
 
     const sub = this.add
-      .text(width / 2, 160, '奪回蜂蜜與鮭魚　｜　對抗△三角組織', {
+      .text(width / 2, 160, '百畝樹林野餐　｜　奪回蜂蜜與朋友', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '20px',
         color: '#5a3820',

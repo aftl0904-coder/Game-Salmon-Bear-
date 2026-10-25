@@ -121,31 +121,30 @@ export function registerIsoArt(scene: Phaser.Scene) {
   })
 
 
+  // Woodland picnic arch (was torii) — oak posts + leafy beam, PD-forest vibe.
   paint(scene, 'prop-torii', 72, 80, (set) => {
-    const ink: RGB = [18, 10, 12]
+    const ink: RGB = [18, 12, 10]
     rect(set, 8, 72, 56, 6, ink, 110)
-    // black silhouette posts + beams
-    for (const ox of [11, 47]) rect(set, ox - 1, 27, 12, 48, ink)
-    rect(set, 0, 9, 72, 12, ink)
-    rect(set, 3, 17, 66, 12, ink)
     for (const ox of [12, 48]) {
-      for (let y = 28; y < 74; y++) {
-        rect(set, ox, y, 10, 1, [175, 55, 48])
-        rect(set, ox, y, 3, 1, [230, 110, 85])
-        rect(set, ox + 7, y, 3, 1, [110, 32, 28])
+      rect(set, ox - 1, 28, 12, 48, ink)
+      for (let y = 29; y < 74; y++) {
+        rect(set, ox, y, 10, 1, shadeRGB([120, 78, 42], 1.05 - (y - 29) / 90))
+        rect(set, ox, y, 2, 1, [170, 120, 70])
+        rect(set, ox + 8, y, 2, 1, [80, 50, 28])
       }
-      rect(set, ox - 2, 70, 14, 4, [140, 140, 148])
-      rect(set, ox - 2, 70, 14, 1, [190, 190, 200])
     }
-    rect(set, 0, 10, 72, 10, [185, 50, 42])
-    rect(set, 0, 10, 72, 3, [255, 145, 105])
-    rect(set, 0, 17, 72, 3, [120, 30, 28])
-    rect(set, 4, 18, 64, 10, [205, 68, 52])
-    rect(set, 4, 18, 64, 3, [245, 125, 95])
-    rect(set, 4, 25, 64, 3, [140, 40, 35])
-    rect(set, 30, 28, 12, 10, [240, 220, 160])
-    rect(set, 31, 29, 10, 8, [255, 240, 190])
-    rect(set, 33, 31, 6, 4, [180, 50, 40])
+    // leafy crossbeam
+    rect(set, 2, 18, 68, 14, ink)
+    rect(set, 4, 20, 64, 10, [55, 120, 55])
+    rect(set, 4, 20, 64, 3, [95, 170, 80])
+    rect(set, 4, 27, 64, 3, [35, 85, 40])
+    // hanging picnic bunting
+    for (let i = 0; i < 5; i++) {
+      const cx = 12 + i * 12
+      const c: RGB = i % 2 === 0 ? [240, 210, 90] : [230, 120, 90]
+      rect(set, cx, 32, 8, 10, ink)
+      rect(set, cx + 1, 33, 6, 8, c)
+    }
   })
 
   paint(scene, 'prop-tree3d', 48, 72, (set) => {
@@ -211,23 +210,26 @@ export function registerIsoArt(scene: Phaser.Scene) {
     rect(set, 29, 38, 2, 14, [150, 95, 50])
   })
 
+  // Hanging honey pot (was lantern) — picnic woodland prop.
   paint(scene, 'prop-lantern3d', 20, 36, (set) => {
-    rect(set, 2, 32, 16, 3, [18, 12, 16], 110)
-    rect(set, 8, 18, 4, 16, [85, 85, 95])
-    rect(set, 9, 18, 1, 16, [130, 130, 145])
-    for (let y = 8; y < 20; y++) {
-      for (let x = 4; x < 16; x++) {
-        const nx = (x - 10) / 6
-        const ny = (y - 14) / 6
-        if (nx * nx + ny * ny < 1.1) {
-          set(x, y, shadeRGB([255, 175, 75], 1.15 - Math.abs(nx) * 0.3))
+    const ink: RGB = [18, 12, 10]
+    rect(set, 2, 32, 16, 3, ink, 110)
+    rect(set, 8, 2, 4, 12, [90, 70, 40])
+    rect(set, 9, 2, 1, 12, [140, 110, 60])
+    for (let y = 12; y < 32; y++) {
+      for (let x = 3; x < 17; x++) {
+        const nx = (x - 10) / 7
+        const ny = (y - 22) / 9
+        if (nx * nx + ny * ny <= 1) {
+          set(x, y, ink)
+          set(x, y, shadeRGB([220, 160, 50], 1.1 - ny * 0.25))
+          if (ny < -0.3) set(x, y, [255, 210, 100])
         }
       }
     }
-    rect(set, 5, 9, 10, 3, [255, 230, 150])
-    rect(set, 6, 6, 8, 3, [210, 210, 220])
-    rect(set, 6, 18, 8, 2, [180, 180, 190])
-    set(7, 11, [255, 255, 220])
+    rect(set, 5, 12, 10, 3, ink)
+    rect(set, 6, 13, 8, 2, [160, 100, 40])
+    set(10, 20, [255, 240, 160])
   })
 
   // Spike tile fills full width at base so stride=width leaves zero gap.
@@ -324,50 +326,125 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(8, 6, [255, 255, 180])
   })
 
-  // Graphic-pass altar: red pillars, gold honey jar, ink frame.
-  paint(scene, 'goal3d', 52, 76, (set) => {
+  // Goal: tree with beehive (蜂巢) — not a shrine altar.
+  paint(scene, 'goal3d', 56, 88, (set) => {
     const ink: RGB = [16, 10, 12]
-    rect(set, 6, 70, 40, 5, ink, 140)
-    for (const ox of [8, 34]) {
-      rect(set, ox - 1, 28, 12, 44, ink)
-      for (let y = 30; y < 70; y++) {
-        rect(set, ox, y, 10, 1, shadeRGB([210, 55, 48], 1.05 - (y - 30) / 80))
-        rect(set, ox, y, 3, 1, [255, 140, 105])
-        rect(set, ox + 7, y, 3, 1, [130, 28, 28])
-      }
+    const bark: RGB = [110, 70, 40]
+    const barkL: RGB = [160, 110, 60]
+    const leaf: RGB = [60, 140, 70]
+    const leafL: RGB = [110, 190, 90]
+    const honey: RGB = [255, 200, 70]
+    const honeyL: RGB = [255, 230, 140]
+    // ground shadow
+    rect(set, 10, 84, 36, 3, ink, 130)
+    // trunk
+    rect(set, 24, 40, 10, 44, ink)
+    for (let y = 42; y < 82; y++) {
+      rect(set, 25, y, 8, 1, shadeRGB(bark, 1.05 - (y - 42) / 90))
+      rect(set, 25, y, 2, 1, barkL)
     }
-    rect(set, 2, 20, 48, 12, ink)
-    rect(set, 3, 21, 46, 10, [220, 68, 52])
-    rect(set, 3, 21, 46, 3, [255, 155, 115])
-    rect(set, 3, 28, 46, 3, [140, 35, 32])
-    rect(set, 0, 12, 52, 12, ink)
-    rect(set, 1, 13, 50, 10, [200, 50, 42])
-    rect(set, 1, 13, 50, 3, [255, 160, 120])
-    rect(set, 1, 20, 50, 3, [120, 28, 26])
-    for (let y = 38; y < 64; y++) {
-      for (let x = 20; x < 32; x++) {
-        const nx = (x - 26) / 6
-        set(x, y, shadeRGB([240, 190, 60], 1.15 - nx * 0.3))
+    // canopy
+    for (const [cx, cy, r] of [
+      [28, 28, 18],
+      [18, 34, 14],
+      [40, 32, 15],
+      [28, 18, 12],
+    ] as const) {
+      for (let y = cy - r; y <= cy + r; y++) {
+        for (let x = cx - r; x <= cx + r; x++) {
+          const nx = (x - cx) / r
+          const ny = (y - cy) / r
+          if (nx * nx + ny * ny < 1) {
+            if (nx * nx + ny * ny > 0.82) set(x, y, ink)
+            else set(x, y, shadeRGB(leaf, 1.1 - nx * 0.25))
+          }
+        }
       }
+      rect(set, cx - 4, cy - 4, 6, 5, leafL)
     }
-    rect(set, 19, 37, 14, 8, ink)
-    rect(set, 20, 38, 12, 6, [255, 236, 145])
-    set(23, 40, [255, 252, 210])
-    rect(set, 22, 34, 8, 5, ink)
-    rect(set, 23, 35, 6, 3, [255, 210, 80])
+    // beehive hanging from branch
+    rect(set, 34, 36, 16, 3, ink)
+    rect(set, 35, 37, 14, 1, barkL)
+    for (let y = 40; y < 62; y++) {
+      const t = (y - 40) / 22
+      const half = Math.floor(7 - t * 2)
+      rect(set, 42 - half - 1, y, half * 2 + 2, 1, ink)
+      rect(set, 42 - half, y, half * 2, 1, shadeRGB(honey, 1.15 - t * 0.3))
+    }
+    rect(set, 38, 44, 8, 2, ink)
+    rect(set, 39, 45, 6, 1, [40, 28, 16])
+    set(41, 48, honeyL)
+    set(45, 52, honeyL)
+    // tiny bees
+    set(32, 38, [255, 220, 40])
+    set(50, 42, [255, 220, 40])
   })
 
+  // Picnic basket (replaces shrine) — woodland Western picnic.
   paint(scene, 'prop-shrine', 40, 48, (set) => {
-    rect(set, 6, 44, 28, 3, [18, 12, 16], 110)
-    rect(set, 10, 34, 20, 12, [150, 150, 158])
-    rect(set, 10, 34, 20, 2, [200, 200, 210])
-    rect(set, 12, 36, 16, 8, [120, 120, 130])
-    for (let i = 0; i < 10; i++) {
-      rect(set, 6 + i, 28 - i, 28 - i * 2, 2, i < 3 ? [255, 140, 90] : [200, 60, 48])
+    const ink: RGB = [18, 12, 10]
+    rect(set, 6, 44, 28, 3, ink, 110)
+    // woven basket body
+    rect(set, 6, 22, 28, 22, ink)
+    for (let y = 23; y < 43; y++) {
+      for (let x = 7; x < 33; x++) {
+        const weave = ((x + y) % 4 === 0) ? [170, 120, 55] as RGB : [140, 95, 42] as RGB
+        set(x, y, weave)
+      }
     }
-    rect(set, 16, 18, 8, 10, [255, 190, 80])
-    rect(set, 17, 19, 6, 4, [255, 230, 150])
-    rect(set, 14, 16, 12, 3, [180, 180, 190])
+    rect(set, 7, 23, 26, 3, [200, 150, 80])
+    // cloth lid
+    rect(set, 8, 16, 24, 8, ink)
+    rect(set, 9, 17, 22, 6, [240, 230, 200])
+    rect(set, 9, 17, 22, 2, [255, 120, 110])
+    // handle
+    rect(set, 12, 8, 3, 12, ink)
+    rect(set, 25, 8, 3, 12, ink)
+    rect(set, 12, 6, 16, 4, ink)
+    rect(set, 13, 7, 14, 2, [180, 130, 70])
+  })
+
+  // Checkered picnic blanket
+  paint(scene, 'prop-picnic', 48, 20, (set) => {
+    for (let y = 2; y < 18; y++) {
+      for (let x = 2; x < 46; x++) {
+        const c: RGB = ((Math.floor(x / 4) + Math.floor(y / 4)) % 2 === 0)
+          ? [240, 235, 220]
+          : [210, 70, 70]
+        set(x, y, c)
+      }
+    }
+    rect(set, 2, 2, 44, 1, [18, 12, 10])
+    rect(set, 2, 17, 44, 1, [18, 12, 10])
+  })
+
+  // Friendly owl silhouette (tree friend — original woodland, not a trademark design)
+  paint(scene, 'prop-owl', 24, 28, (set) => {
+    const ink: RGB = [18, 12, 10]
+    for (let y = 6; y < 26; y++) {
+      for (let x = 4; x < 20; x++) {
+        const nx = (x - 12) / 8
+        const ny = (y - 16) / 10
+        if (nx * nx + ny * ny <= 1) {
+          set(x, y, ink)
+          set(x, y, shadeRGB([150, 110, 70], 1.05 - ny * 0.2))
+        }
+      }
+    }
+    // eyes
+    rect(set, 7, 10, 4, 4, ink)
+    rect(set, 13, 10, 4, 4, ink)
+    rect(set, 8, 11, 2, 2, [255, 240, 180])
+    rect(set, 14, 11, 2, 2, [255, 240, 180])
+    set(9, 12, [40, 30, 20])
+    set(15, 12, [40, 30, 20])
+    // beak
+    rect(set, 11, 14, 2, 2, [220, 150, 50])
+    // ears
+    rect(set, 6, 4, 3, 5, ink)
+    rect(set, 15, 4, 3, 5, ink)
+    rect(set, 7, 5, 1, 3, [170, 120, 70])
+    rect(set, 16, 5, 1, 3, [170, 120, 70])
   })
 
   paint(scene, 'prop-honey-stack', 36, 40, (set) => {

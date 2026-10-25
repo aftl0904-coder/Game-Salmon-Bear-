@@ -233,14 +233,22 @@ export function startBgm() {
     [8, 466], [10, 440], [12, 392], [14, 349],
   ]
   const bass = [130.81, 130.81, 146.83, 130.81, 174.61, 164.81, 146.83, 130.81] as const
+  // Held triad pads (root–third–fifth) so it isn't a bare monophonic line.
+  const chords: Array<[number, number, number, number]> = [
+    [0, 261.63, 329.63, 392.0],
+    [4, 220.0, 277.18, 329.63],
+    [8, 293.66, 349.23, 440.0],
+    [12, 246.94, 311.13, 369.99],
+  ]
 
   const scheduleLoop = (startAt: number) => {
     if (!bgmPlaying || !master) return
     const bar = beat * 16
     const duck = startAt < fanfareUntil
-    const melVol = duck ? 0.02 : 0.1
+    const melVol = duck ? 0.02 : 0.09
     const bassVol = duck ? 0.02 : 0.07
-    const ctrVol = duck ? 0.01 : 0.055
+    const ctrVol = duck ? 0.01 : 0.05
+    const padVol = duck ? 0.008 : 0.035
 
     for (const [i, f] of melody) {
       const t = startAt + i * beat
@@ -261,13 +269,30 @@ export function startBgm() {
       h.type = 'triangle'
       h.frequency.value = f * 1.5
       hg.gain.setValueAtTime(0.0001, t)
-      hg.gain.exponentialRampToValueAtTime(melVol * 0.4, t + 0.012)
+      hg.gain.exponentialRampToValueAtTime(melVol * 0.35, t + 0.012)
       hg.gain.exponentialRampToValueAtTime(0.0001, t + beat * 0.4)
       h.connect(hg)
       hg.connect(master)
       h.start(t)
       h.stop(t + beat * 0.45)
       bgmNodes.push(h, hg)
+    }
+    for (const [i, r, third, fifth] of chords) {
+      const t = startAt + i * beat
+      for (const f of [r, third, fifth]) {
+        const o = c.createOscillator()
+        const g = c.createGain()
+        o.type = 'triangle'
+        o.frequency.value = f
+        g.gain.setValueAtTime(0.0001, t)
+        g.gain.exponentialRampToValueAtTime(padVol, t + 0.05)
+        g.gain.exponentialRampToValueAtTime(0.0001, t + beat * 3.6)
+        o.connect(g)
+        g.connect(master)
+        o.start(t)
+        o.stop(t + beat * 3.8)
+        bgmNodes.push(o, g)
+      }
     }
     for (const [i, f] of counter) {
       const t = startAt + i * beat

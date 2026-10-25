@@ -59,11 +59,13 @@ export type PlayerConfig = {
 export const HURTBOX_DEBUG = 0x4488ff
 export const HITBOX_DEBUG = 0x44ff66
 
-const MELEE_MS = 150
-const MELEE_W = 36
-const MELEE_H = 40
-const MELEE_OFFSET_X = 34
-const MELEE_OFFSET_Y = -28
+/** Melee commit window — attack rate 0.8× → longer lock */
+const MELEE_MS = Math.round(150 / 0.8)
+const MELEE_W = 48
+const MELEE_H = 56
+const MELEE_OFFSET_X = 40
+/** Torso height from feet — was -28 (too low → bottom-lane misses). */
+const MELEE_OFFSET_Y = -40
 
 /**
  * Arcade player (倫寶 / 琪寶寶) — 超任 SNES weight on Phaser Arcade.

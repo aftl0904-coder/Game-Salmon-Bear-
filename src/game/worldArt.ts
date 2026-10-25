@@ -236,18 +236,22 @@ export function registerWorldArt(scene: Phaser.Scene) {
     rect(set, 8, 25, 20, 2, [20, 16, 18], 90)
   })
 
+  // Picnic bunting pole (was shrine banner)
   paint(scene, 'prop-banner', 24, 56, (set) => {
     rect(set, 4, 52, 16, 3, [20, 14, 16], 100)
     rect(set, 10, 2, 3, 52, [120, 80, 40])
     rect(set, 11, 2, 1, 52, [180, 130, 70])
-    rect(set, 2, 6, 18, 36, [230, 90, 55])
-    rect(set, 2, 6, 18, 4, [255, 160, 100])
-    rect(set, 2, 38, 18, 4, [170, 50, 35])
-    rect(set, 5, 14, 12, 8, [255, 200, 150])
-    rect(set, 6, 15, 10, 6, [255, 140, 90])
-    set(14, 17, [80, 150, 210])
-    rect(set, 4, 26, 14, 3, [255, 210, 80])
-    rect(set, 5, 32, 12, 4, [255, 240, 180])
+    const flags: Array<[number, RGB]> = [
+      [6, [240, 200, 80]],
+      [16, [120, 170, 220]],
+      [26, [230, 120, 100]],
+      [36, [140, 190, 110]],
+    ]
+    for (const [y, c] of flags) {
+      rect(set, 2, y, 14, 8, [20, 14, 16])
+      rect(set, 3, y + 1, 12, 6, c)
+      set(5, y + 2, [255, 255, 230])
+    }
   })
 
   paint(scene, 'prop-bridge', 64, 28, (set) => {

@@ -400,8 +400,135 @@ export function setPixelPose(
   void opts.angle
 }
 
-/** Walk cycle length — 3 frames per body-step; feet lead the stride. */
-export const WALK_FRAMES = 3
+/** Walk cycle length — more frames = Goemon-ish readable stride. */
+export const WALK_FRAMES = 5
+
+/**
+ * Stamp an electric fan onto 琪寶寶's back so it's part of the character art
+ * (not a floating separate prop). Call AFTER honey/iso art registers fan textures,
+ * BEFORE bakePixelTexture / walk-cycle registration.
+ */
+export function stampFanOntoGirl(scene: TexScene) {
+  if (!scene.textures.exists('art-girl')) return
+  const fanKey = scene.textures.exists('fan3d')
+    ? 'fan3d'
+    : scene.textures.exists('prop-fan')
+      ? 'prop-fan'
+      : null
+  if (!fanKey) return
+  const girl = scene.textures.get('art-girl').getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const fan = scene.textures.get(fanKey).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+  const gw = (girl as { width: number }).width | 0
+  const gh = (girl as { height: number }).height | 0
+  const fw = (fan as { width: number }).width | 0
+  const fh = (fan as { height: number }).height | 0
+  if (gw < 8 || gh < 8 || fw < 4 || fh < 4) return
+
+  const canvas = document.createElement('canvas')
+  canvas.width = gw
+  canvas.height = gh
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  ctx.clearRect(0, 0, gw, gh)
+  ctx.drawImage(girl as CanvasImageSource, 0, 0)
+
+  // Fan sits on upper-back, slightly left of torso center (facing right default).
+  const destW = Math.max(14, Math.round(gw * 0.42))
+  const destH = Math.max(16, Math.round(gh * 0.38))
+  const dx = Math.round(gw * 0.08)
+  const dy = Math.round(gh * 0.12)
+  ctx.drawImage(fan as CanvasImageSource, 0, 0, fw, fh, dx, dy, destW, destH)
+
+  // Soft cyan glow ring behind blades for SNES pop
+  ctx.globalAlpha = 0.35
+  ctx.fillStyle = '#88e8ff'
+  const cx = dx + destW * 0.5
+  const cy = dy + destH * 0.32
+  ctx.beginPath()
+  ctx.arc(cx, cy, Math.max(3, destW * 0.18), 0, Math.PI * 2)
+  ctx.fill()
+  ctx.globalAlpha = 1
+
+  if (scene.textures.exists('art-girl')) scene.textures.remove('art-girl')
+  scene.textures.addCanvas('art-girl', canvas)
+  scene.textures.get('art-girl').setFilter(Phaser.Textures.FilterMode.NEAREST)
+}
+
+/**
+ * Stamp casual Western-woodland outfits onto both heroes (soft sweater / blouse + trousers).
+ * Call after fan stamp, before bake.
+ */
+export function stampCasualClothes(scene: TexScene) {
+  const paintClothes = (
+    key: string,
+    opts: { top: string; topHi: string; pants: string; pantsHi: string; collar?: string },
+  ) => {
+    if (!scene.textures.exists(key)) return
+    const src = scene.textures.get(key).getSourceImage() as HTMLImageElement | HTMLCanvasElement
+    const w = (src as { width: number }).width | 0
+    const h = (src as { height: number }).height | 0
+    if (w < 8 || h < 8) return
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(src as CanvasImageSource, 0, 0)
+    const img = ctx.getImageData(0, 0, w, h)
+    const data = img.data
+    const torsoTop = Math.floor(h * 0.32)
+    const waist = Math.floor(h * 0.52)
+    const pantBottom = Math.floor(h * 0.88)
+    const mid = w * 0.5
+    for (let y = torsoTop; y < pantBottom; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4
+        if (data[i + 3] < 140) continue
+        // Keep face / snout / paws roughly: only recolor mid-body column
+        const nx = Math.abs(x - mid) / (w * 0.42)
+        if (nx > 1) continue
+        const isTop = y < waist
+        const hex = isTop
+          ? y < torsoTop + 4
+            ? opts.collar || opts.topHi
+            : y < torsoTop + 10
+              ? opts.topHi
+              : opts.top
+          : y < waist + 3
+            ? opts.pantsHi
+            : opts.pants
+        const r = parseInt(hex.slice(1, 3), 16)
+        const g = parseInt(hex.slice(3, 5), 16)
+        const b = parseInt(hex.slice(5, 7), 16)
+        // Soft blend so fur edges remain
+        data[i] = Math.round(data[i] * 0.28 + r * 0.72)
+        data[i + 1] = Math.round(data[i + 1] * 0.28 + g * 0.72)
+        data[i + 2] = Math.round(data[i + 2] * 0.28 + b * 0.72)
+      }
+    }
+    ctx.putImageData(img, 0, 0)
+    if (scene.textures.exists(key)) scene.textures.remove(key)
+    scene.textures.addCanvas(key, canvas)
+    scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  }
+
+  // 倫寶 — soft yellow sweater + brown trousers (woodland picnic casual)
+  paintClothes('art-salmon', {
+    top: '#e8c86a',
+    topHi: '#f3dea0',
+    pants: '#6b4a2e',
+    pantsHi: '#8a6340',
+    collar: '#fff6d8',
+  })
+  // 琪寶寶 — soft sky blouse + denim-ish trousers (fan already on back)
+  paintClothes('art-girl', {
+    top: '#7eb7d8',
+    topHi: '#a8d4ec',
+    pants: '#4a5f78',
+    pantsHi: '#627890',
+    collar: '#f0f6fa',
+  })
+}
 
 function readBaseImageData(scene: TexScene, baseKey: string): { w: number; h: number; base: ImageData } | null {
   if (!scene.textures.exists(baseKey)) return null

@@ -70,7 +70,6 @@ export function registerUiArt(scene: Phaser.Scene) {
   const parchment: RGB = [248, 228, 176]
   const parchmentD: RGB = [220, 190, 130]
   const redLacquer: RGB = [196, 48, 42]
-  const ink: RGB = [48, 28, 16]
 
   // Big title plaque (wood outer + gold rim + parchment face)
   paint(scene, 'ui-title-plaque', 420, 110, (set) => {
@@ -221,17 +220,20 @@ export function registerUiArt(scene: Phaser.Scene) {
     }
   })
 
-  // Packaging noren / curtain stripe for menus
+  // Leafy vine curtain (was noren) — woodland menu frame
   paint(scene, 'ui-noren', 48, 80, (set) => {
-    rect(set, 0, 0, 48, 80, redLacquer)
     rect(set, 0, 0, 48, 10, woodD)
-    rect(set, 4, 14, 40, 50, [220, 70, 55])
-    rect(set, 10, 24, 28, 8, parchment)
-    rect(set, 14, 26, 20, 4, ink)
-    for (let y = 66; y < 80; y++) {
-      for (let x = 4; x < 44; x += 8) {
-        if ((x + y) % 3 === 0) set(x, y, [160, 40, 35])
+    rect(set, 2, 2, 44, 6, [90, 140, 70])
+    for (let y = 10; y < 80; y++) {
+      for (let x = 4; x < 44; x++) {
+        const wave = Math.sin(y * 0.2 + x * 0.15)
+        if ((x + y) % 5 === 0 || wave > 0.55) {
+          set(x, y, [40, 100, 50])
+          if (wave > 0.75) set(x, y, [90, 160, 70])
+        }
       }
     }
+    rect(set, 14, 28, 20, 10, parchment)
+    rect(set, 16, 30, 16, 6, [180, 140, 60])
   })
 }

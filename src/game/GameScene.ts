@@ -41,6 +41,7 @@ import {
   SALMON_SHOT_RANGE,
   SALMON_SHOT_SPEED,
   SALMON_SHOT_COOLDOWN_MS,
+  SWORD_COOLDOWN_MS,
   ENEMY_SPEED,
   ENEMY_STAGGER_EVERY_MIN_MS,
   ENEMY_STAGGER_EVERY_MAX_MS,
@@ -48,6 +49,11 @@ import {
   ENEMY_STAGGER_HOLD_MAX_MS,
   ATTACK_COMMIT_FREEZE_MS,
   HIT_CONFIRM_FREEZE_MS,
+  PLAYER_HURT_FREEZE_MS,
+  ELEPHANT_DOMINATE_MS,
+  FISH_BULLET_DMG,
+  FISH_BULLET_FREEZE_MS,
+  BEAR_POSE_MS,
   PLAYER_ATTACK_DMG,
   ENEMY_ATTACK_DMG,
   BEAR_ASSIST_DMG,
@@ -97,10 +103,10 @@ export class GameScene extends Phaser.Scene {
   private girl: Hero | null = null
   private pet: Phaser.Physics.Arcade.Sprite | null = null
   private petShadow: Phaser.GameObjects.Image | null = null
-  /** Back fan = mobility FX only; sword = 琪寶寶武器（2P） */
-  private fan: Phaser.GameObjects.Image | null = null
-  private fanGlow: Phaser.GameObjects.Arc | null = null
+  /** 琪寶寶長劍（電風扇已 bake 喺角色背脊，唔再用獨立 fan sprite） */
   private sword: Phaser.GameObjects.Image | null = null
+  /** 刺刺魚小彈 */
+  private enemyShots!: Phaser.Physics.Arcade.Group
   private boyShadow!: Phaser.GameObjects.Image
   private girlShadow: Phaser.GameObjects.Image | null = null
   /** Soft margin inside camera for duo same-screen walls (2P). */
@@ -592,7 +598,7 @@ export class GameScene extends Phaser.Scene {
       { x: 180, y: GROUND_Y - 96, label: '平地・溪流' },
       { x: 780, y: GROUND_Y - 96, label: '平台帶' },
       { x: 1750, y: GROUND_Y - 96, label: '伏兵區' },
-      { x: 3000, y: GROUND_Y - 96, label: '祭壇前' },
+      { x: 3000, y: GROUND_Y - 96, label: '蜂巢前' },
     ]
   }
 
@@ -614,7 +620,7 @@ export class GameScene extends Phaser.Scene {
     const beats: Array<{ x: number; title: string }> = [
       { x: 720, title: '木橋・平台帶' },
       { x: 1680, title: '伏兵出現！' },
-      { x: 2880, title: '祭壇前方・決戰' },
+      { x: 2880, title: '森林深處・決戰' },
     ]
     const next = this.stageBeat
     if (next < beats.length && lead >= beats[next].x) {
@@ -860,9 +866,7 @@ export class GameScene extends Phaser.Scene {
         ...(this.girl ? [{ x: this.girl.x, y: this.girl.y, oy: 4 }] : []),
         ...(this.pet ? [{ x: this.pet.x, y: this.pet.y, oy: 4 }] : []),
       ],
-      extras: [this.fan, this.sword].filter(
-        (o): o is Phaser.GameObjects.Image => !!o,
-      ),
+      extras: [this.sword].filter((o): o is Phaser.GameObjects.Image => !!o),
     })
   }
 
@@ -976,9 +980,9 @@ export class GameScene extends Phaser.Scene {
     this.tweens.killTweensOf(h)
     h.setAngle(0)
     h.setScale(h.baseScale)
-    // Muzzle = salmon-gun tip on 2× baked feet-origin sprite (~52px forward, ~88px up).
-    const muzzleX = h.x + h.facing * 52
-    const muzzleY = h.y - 88
+    // Muzzle at torso — was y-88 (missed bottom-lane bodies).
+    const muzzleX = h.x + h.facing * 48
+    const muzzleY = h.y - 42
     const shot = this.shots.create(muzzleX, muzzleY, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     shot.setScale(1.5).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     enablePixelSprite(shot)
@@ -999,7 +1003,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
-    h.atkCd = 220
+    h.atkCd = SWORD_COOLDOWN_MS
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
     burst(this, h.x + h.facing * 50, h.y - 28, 0xe8f0ff, 10)
@@ -1009,15 +1013,15 @@ export class GameScene extends Phaser.Scene {
       this.sword.setVisible(true)
       this.sword.setAlpha(1)
       this.sword.setOrigin(h.facing < 0 ? 0.88 : 0.12, 0.5)
-      this.sword.setPosition(h.x + h.facing * 22, h.y - 30)
+      this.sword.setPosition(h.x + h.facing * 20, h.y - 52)
       this.tweens.add({
         targets: this.sword,
-        angle: h.facing > 0 ? 62 : -62,
-        duration: 100,
+        angle: h.facing > 0 ? 70 : -70,
+        duration: 110,
         yoyo: true,
         onComplete: () => {
           if (!this.sword) return
-          this.sword.setAngle(h.facing > 0 ? -18 : 18)
+          this.sword.setAngle(h.facing > 0 ? -22 : 22)
         },
       })
     }
@@ -1030,7 +1034,7 @@ export class GameScene extends Phaser.Scene {
     const key = this.textures.exists('fx-salmon-shot') ? 'fx-salmon-shot' : 'coin'
     const box = this.attackHitboxes.create(
       h.x + h.facing * (w * 0.45),
-      h.y - 28,
+      h.y - 40,
       key,
     ) as Phaser.Physics.Arcade.Sprite
     box.setAlpha(0).setDepth(actorDepth('hitbox', h.lane, h.y))
@@ -1047,62 +1051,84 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Pack3 E: rush to girl's front, one melee hit (half dmg), hit-confirm freeze. */
+  /** 噗噗：可愛 pose hold 1s，再短衝半傷. */
   private summonBearAssist() {
     const g = this.girlHero()
     if (!g || !this.pet || this.petJetting || g.hp <= 0) return
     const pet = this.pet
     this.petJetting = true
     SFX.swing()
-    floatText(this, pet.x, pet.y - 50, '噗噗衝擊！', '#ffcc44')
-
-    const frontX = g.x + g.facing * 52
-    const frontY = laneY(g.lane)
+    floatText(this, pet.x, pet.y - 50, '噗噗～！', '#ffcc44')
+    this.tweens.killTweensOf(pet)
+    pet.setAngle(0)
     this.tweens.add({
       targets: pet,
-      x: frontX,
-      y: frontY,
-      duration: 140,
-      ease: 'Cubic.out',
-      onComplete: () => {
-        if (!this.girlHero() || !this.pet) {
-          this.petJetting = false
-          return
-        }
-        // Nearest enemy on girl's lane (else nearest overall).
-        let best: PatrolEnemy | null = null
-        let bestD = Infinity
-        for (const o of this.enemies.getChildren()) {
-          const e = o as PatrolEnemy
-          if (!e.active || e.fsm === 'DEAD') continue
-          const same = e.lane === g.lane
-          const d = Phaser.Math.Distance.Between(frontX, frontY, e.x, e.y)
-          const score = same ? d : d + 400
-          if (score < bestD) {
-            bestD = score
-            best = e
+      angle: { from: -14, to: 14 },
+      scaleX: 1.15,
+      scaleY: 0.88,
+      duration: 220,
+      yoyo: true,
+      repeat: Math.max(1, Math.floor(BEAR_POSE_MS / 440)),
+      ease: 'Sine.inOut',
+    })
+    this.time.delayedCall(BEAR_POSE_MS, () => {
+      if (!this.girlHero() || !this.pet) {
+        this.petJetting = false
+        return
+      }
+      pet.setAngle(0)
+      pet.setScale(1)
+      const frontX = g.x + g.facing * 52
+      const frontY = laneY(g.lane)
+      this.tweens.add({
+        targets: pet,
+        x: frontX,
+        y: frontY,
+        duration: 140,
+        ease: 'Cubic.out',
+        onComplete: () => {
+          if (!this.girlHero() || !this.pet) {
+            this.petJetting = false
+            return
           }
-        }
-        if (best && bestD < 220) {
-          const dir = (Math.sign(best.x - pet.x) || g.facing) as 1 | -1
-          this.damageEnemy(best, BEAR_ASSIST_DMG, dir, { lane: g.lane, y: g.y })
-          burst(this, best.x, best.y - 20, 0xffc050, 12)
-          floatText(this, best.x, best.y - 44, '半傷！', '#ffe08a')
-        } else {
-          burst(this, frontX, frontY - 16, 0xffc050, 8)
-        }
-        this.time.delayedCall(180, () => {
-          this.petJetting = false
-        })
-      },
+          let best: PatrolEnemy | null = null
+          let bestD = Infinity
+          for (const o of this.enemies.getChildren()) {
+            const e = o as PatrolEnemy
+            if (!e.active || e.fsm === 'DEAD') continue
+            const same = e.lane === g.lane
+            const d = Phaser.Math.Distance.Between(frontX, frontY, e.x, e.y)
+            const score = same ? d : d + 400
+            if (score < bestD) {
+              bestD = score
+              best = e
+            }
+          }
+          if (best && bestD < 220) {
+            const dir = (Math.sign(best.x - pet.x) || g.facing) as 1 | -1
+            this.damageEnemy(best, BEAR_ASSIST_DMG, dir, { lane: g.lane, y: g.y })
+            burst(this, best.x, best.y - 20, 0xffc050, 12)
+            floatText(this, best.x, best.y - 44, '半傷！', '#ffe08a')
+          } else {
+            burst(this, frontX, frontY - 16, 0xffc050, 8)
+          }
+          this.time.delayedCall(180, () => {
+            this.petJetting = false
+          })
+        },
+      })
     })
   }
 
   private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number, _from?: { lane?: number; y: number }) {
     const pe = e as PatrolEnemy
     if (pe.isDead || pe.fsm === 'DEAD') return
-    // Crash/reach hit: ignore sprite height / lane Y — physics overlap already proved contact.
     void _from
+    // 霸鼻象打中人後短暫霸體：其他人打唔入，佢仲可以打人
+    if (typeof pe.isDominating === 'function' && pe.isDominating(this.time.now)) {
+      floatText(this, pe.x, pe.y - 48, '霸體！', '#ffe08a', { size: 16, dur: 500 })
+      return
+    }
     const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
@@ -1119,7 +1145,7 @@ export class GameScene extends Phaser.Scene {
       impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
       const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
       this.addScorePop(pe.x, pe.y - 72, bonus)
-      if (pe.kind === 'boss') this.emitScore('武者倒下！兩人一起站上祭壇')
+      if (pe.kind === 'boss') this.emitScore('武者倒下！搶回樹頂蜂巢！')
     }
   }
 
@@ -1129,21 +1155,21 @@ export class GameScene extends Phaser.Scene {
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (!sameLane(h, pe)) return
-    // Elephant nose strike: hit if within 1.5× body length forward.
     if (pe.species === 'elephant' && pe.fsm === 'ATTACK' && (pe.atkPhase === 'strike' || pe.atkPhase === 'charge')) {
       const reach = Math.max(56, pe.displayWidth) * 1.5
       const face = pe.flipX ? -1 : 1
       const dx = h.x - pe.x
-      // Must be in front of the trunk and inside reach.
       if (Math.sign(dx) !== face || Math.abs(dx) > reach) return
     }
     if (pe.fsm === 'ATTACK') pe.hitThis = true
     else pe.contactCd = 650
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
+    // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
+    const knockMul = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
     const hpLeft = applyDamage(h, {
       amount: ENEMY_ATTACK_DMG,
-      knockbackX: away * 340,
-      knockbackY: -320,
+      knockbackX: away * Math.round(340 * knockMul),
+      knockbackY: -Math.round(320 * Math.max(0.45, knockMul)),
       now: this.time.now,
     })
     applyHurtPose(h, -away)
@@ -1152,9 +1178,19 @@ export class GameScene extends Phaser.Scene {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
     SFX.hurt()
-    freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
+    freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
+    freezeActors(this, this.combatActors().filter((a) => a !== h), HIT_CONFIRM_FREEZE_MS)
+    if (pe.species === 'elephant' && typeof pe.grantDominate === 'function') {
+      pe.grantDominate(this.time.now, ELEPHANT_DOMINATE_MS)
+    }
     burst(this, h.x, h.y - 24, 0xff4466, 8)
-    floatText(this, h.x, h.y - 40, `-${ENEMY_ATTACK_DMG}`, '#ff6677')
+    floatText(
+      this,
+      h.x,
+      h.y - 40,
+      pe.species === 'barrel' ? `輕傷 -${ENEMY_ATTACK_DMG}` : `-${ENEMY_ATTACK_DMG}`,
+      pe.species === 'barrel' ? '#ffaa77' : '#ff6677',
+    )
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
@@ -1164,13 +1200,27 @@ export class GameScene extends Phaser.Scene {
   private spike(h: Hero) {
     this.hazardHit(h, { knockX: h.facing * -180, knockY: -560, label: '尖刺' })
   }
+  private durian(h: Hero) {
+    this.hazardHit(h, {
+      knockX: h.facing * -160,
+      knockY: -480,
+      label: '榴槤！腳痛！',
+    })
+  }
   private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string } = { knockX: 0, knockY: -560 }) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    const hpLeft = applyDamage(h, { amount: 1, knockbackX: opts.knockX, knockbackY: opts.knockY, iframeMs: HURT_IFRAME_MS, now: this.time.now })
+    const hpLeft = applyDamage(h, {
+      amount: 1,
+      knockbackX: opts.knockX,
+      knockbackY: opts.knockY,
+      iframeMs: HURT_IFRAME_MS,
+      now: this.time.now,
+    })
     applyHurtPose(h, -h.facing)
     startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
-    SFX.spike(); burst(this, h.x, h.y - 16, 0xff6633, 10)
+    SFX.spike()
+    burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
@@ -1291,28 +1341,18 @@ export class GameScene extends Phaser.Scene {
       this.petShadow.setPosition(this.pet.x, laneY(g.lane) + 4)
       this.petShadow.setDepth(DEPTH.SHADOW)
     }
-    if (this.fan && this.fanGlow) {
-      this.fan.setPosition(g.x - g.facing * 48, g.y - 48)
-      this.fan.setFlipX(g.facing < 0)
-      this.fan.setScale(0.85)
-      this.fan.setAngle(0)
-      this.fan.setDepth(actorDepth('fan', g.lane, g.y))
-      this.fanGlow.setPosition(this.fan.x, this.fan.y)
-      this.fanGlow.setDepth(actorDepth('fan', g.lane, g.y) - 0.1)
-      this.fanGlow.setAlpha(0.08)
-    }
     if (this.sword) {
       const swing = g.atkCd > 80
-      // Keep grip glued to her hand; blade extends forward.
-      const handX = g.x + g.facing * (swing ? 22 : 16)
-      const handY = g.y - (swing ? 30 : 34)
+      // Hand height (~chest), never at feet.
+      const handX = g.x + g.facing * (swing ? 20 : 14)
+      const handY = g.y - (swing ? 50 : 54)
       this.sword.setVisible(true)
       this.sword.setAlpha(1)
       this.sword.setOrigin(g.facing < 0 ? 0.88 : 0.12, 0.5)
       this.sword.setPosition(handX, handY)
       this.sword.setFlipX(g.facing < 0)
-      this.sword.setScale(1.35)
-      if (!swing) this.sword.setAngle(g.facing > 0 ? -18 : 18)
+      this.sword.setScale(1.4)
+      if (!swing) this.sword.setAngle(g.facing > 0 ? -22 : 22)
       this.sword.setDepth(actorDepth('hitbox', g.lane, g.y) + 0.2)
     }
   }
@@ -1558,19 +1598,26 @@ export class GameScene extends Phaser.Scene {
     this.placeBgDecor(3800, 'prop-tree3d', 1.1, true)
     this.placeBgDecor(5200, 'prop-house3d', 1.3)
     this.placeBgDecor(6400, 'prop-tree3d', 1.2)
+    // Picnic + woodland friends (original forest cast silhouettes)
+    this.placeBgDecor(520, 'prop-picnic', 1.4)
+    this.placeBgDecor(560, 'prop-shrine', 1.1)
+    this.placeBgDecor(900, 'prop-owl', 1.2)
+    this.placeBgDecor(1900, 'prop-picnic', 1.2)
+    this.placeBgDecor(3200, 'prop-owl', 1.15, true)
+    this.placeBgDecor(4500, 'prop-shrine', 1.05)
     this.spawnAmbientBees()
     if (this.textures.exists('prop-torii')) {
-      const torii = this.add
+      const arch = this.add
         .image(400, 300, 'prop-torii')
         .setOrigin(0.5, 1)
         .setScrollFactor(0)
         .setDepth(DEPTH.VILLAGE)
         .setScale(1)
         .setAlpha(0.92)
-      torii.setData('baseX', 400)
-      torii.setData('parallax', 0.12)
-      enablePixelSprite(torii)
-      this.bgMounts.push(torii)
+      arch.setData('baseX', 400)
+      arch.setData('parallax', 0.12)
+      enablePixelSprite(arch)
+      this.bgMounts.push(arch)
     }
   }
 
@@ -1594,9 +1641,12 @@ export class GameScene extends Phaser.Scene {
 
     this.layGroundRibbon(LANE_FLOOR_Y)
 
-    // Sparse spikes + honey jars（絕招 MP）along longer stage — no pot/coin clutter.
-    for (const x of [920, 1860, 2720, 3600, 4800, 6000]) {
+    // Sparse spikes + 榴槤 traps（踩到 −1HP）+ honey jars along stage.
+    for (const x of [920, 2720, 4800]) {
       this.spikes(x, 3)
+    }
+    for (const x of [1180, 2100, 3320, 4200, 5400, 6400]) {
+      this.placeDurian(x)
     }
     for (const x of [640, 1600, 2800, 4200, 5600, 6800]) {
       this.spawnHoneyJar(x, laneY(LANE_DEFAULT) - 36)
@@ -1611,12 +1661,13 @@ export class GameScene extends Phaser.Scene {
 
     const shadKey = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.add.image(WORLD_W - 140, GROUND_Y + 7, shadKey).setDepth(DEPTH.PROP_SHADOW).setAlpha(0.55).setScale(1.7, 0.7)
-    this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 50, 'goal3d')
-    this.goal.setImmovable(true).setScale(1.35).setDepth(DEPTH.BREAKABLE)
+    this.goal = this.physics.add.sprite(WORLD_W - 140, GROUND_Y - 10, 'goal3d')
+    this.goal.setOrigin(0.5, 1)
+    this.goal.setImmovable(true).setScale(1.25).setDepth(DEPTH.BREAKABLE)
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
-      .text(WORLD_W - 140, GROUND_Y - 130, '祭壇・蜂蜜', {
+      .text(WORLD_W - 140, GROUND_Y - 140, '樹頂・蜂巢', {
         fontFamily: 'Noto Sans TC, sans-serif',
         fontSize: '14px',
         color: '#2a1a10',
@@ -1661,7 +1712,7 @@ export class GameScene extends Phaser.Scene {
       floatText(this, h.x, h.y - 56, '+2HP', '#ff6688', {
         size: 26,
         rise: 28,
-        dur: 1500,
+        dur: 2500,
       })
       this.emitHealth()
     } else {
@@ -1683,8 +1734,6 @@ export class GameScene extends Phaser.Scene {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     this.girl = null
     this.pet = null
-    this.fan = null
-    this.fanGlow = null
     this.sword = null
     this.girlShadow = null
     this.petShadow = null
@@ -1728,7 +1777,7 @@ export class GameScene extends Phaser.Scene {
     this.attachGirlGear(this.girl, girlLane)
   }
 
-  /** 琪寶寶 fan／sword／噗噗 — works for 1P girl or 2P girl. */
+  /** 琪寶寶 sword／噗噗 — 電風扇已 stamp 喺 art-girl 背脊. */
   private attachGirlGear(g: Hero, lane: LaneId) {
     const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
     const petStartX = g.x - PET_FOLLOW_BEHIND
@@ -1740,18 +1789,13 @@ export class GameScene extends Phaser.Scene {
     ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.pet.setData('lane', lane)
     this.entities.add(this.pet, 'pet')
-    const fanKey = this.textures.exists('fan3d') ? 'fan3d' : 'prop-fan'
-    this.fan = this.add.image(g.x - 48, g.y - 48, fanKey).setDepth(actorDepth('fan', lane, g.y)).setScale(0.85)
-    enablePixelSprite(this.fan)
-    this.fanGlow = this.add.circle(g.x - 48, g.y - 48, 6, 0x88ddff, 0.08).setDepth(actorDepth('fan', lane, g.y) - 0.1)
     const swordKey = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
-    // Long sword — origin at grip so it stays in her hand while swinging.
     this.sword = this.add
-      .image(g.x + 18, g.y - 34, swordKey)
+      .image(g.x + 14, g.y - 54, swordKey)
       .setOrigin(0.12, 0.5)
       .setDepth(actorDepth('hitbox', lane, g.y) + 0.2)
-      .setScale(1.35)
-      .setAngle(-18)
+      .setScale(1.4)
+      .setAngle(-22)
     enablePixelSprite(this.sword)
     this.petShadow = this.add.image(petStartX, g.y + 4, shad).setDepth(DEPTH.SHADOW).setAlpha(0.35).setScale(1, 0.45)
   }
@@ -1760,6 +1804,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies = this.physics.add.group()
     this.attackHitboxes = this.physics.add.group()
     this.shots = this.physics.add.group()
+    this.enemyShots = this.physics.add.group()
     this.honeys = this.physics.add.group()
     this.placeEnemies()
 
@@ -1818,23 +1863,75 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.boy, this.hazards, (_b, hz) => {
       const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
       if (kind === 'lava') this.hazardHit(this.boy, { knockX: this.boy.facing * -220, knockY: -600, label: '熔岩' })
+      else if (kind === 'durian') this.durian(this.boy)
       else this.spike(this.boy)
     })
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.sushiPickups, (_b, s) => this.takeSushi(this.boy, s as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.enemyShots, (_b, s) => this.hitByFishBullet(this.boy, s as Phaser.Physics.Arcade.Sprite))
     if (this.girl) {
       const g = this.girl
       this.physics.add.overlap(g, this.enemies, (_g, e) => this.hurtHero(g, e as PatrolEnemy))
       this.physics.add.overlap(g, this.hazards, (_g, hz) => {
         const kind = (hz as Phaser.Physics.Arcade.Sprite).getData('hazardKind') as string | undefined
         if (kind === 'lava') this.hazardHit(g, { knockX: g.facing * -220, knockY: -600, label: '熔岩' })
+        else if (kind === 'durian') this.durian(g)
         else this.spike(g)
       })
       this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.sushiPickups, (_g, s) => this.takeSushi(g, s as Phaser.Physics.Arcade.Sprite))
+      this.physics.add.overlap(g, this.enemyShots, (_g, s) => this.hitByFishBullet(g, s as Phaser.Physics.Arcade.Sprite))
     }
+  }
+
+  /** 刺刺魚小彈 — 低傷 + 短 freeze */
+  private spawnFishBullet(e: PatrolEnemy, dir: 1 | -1) {
+    const key = this.textures.exists('fx-fish-bullet') ? 'fx-fish-bullet' : 'coin'
+    const x = e.x + dir * 28
+    const y = e.y - 36
+    const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
+    shot.setScale(1.4).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
+    enablePixelSprite(shot)
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(10, 6)
+    shot.setVelocityX(dir * 260)
+    shot.setData('lane', e.lane)
+    shot.setData('dmg', FISH_BULLET_DMG)
+    this.entities.add(shot, 'projectile')
+    this.time.delayedCall(1400, () => {
+      if (shot.active) shot.destroy()
+    })
+  }
+
+  private hitByFishBullet(h: Hero, shot: Phaser.Physics.Arcade.Sprite) {
+    if (!shot.active || this.ended || !this.started) return
+    if (!canTakeDamage(h, this.time.now)) {
+      shot.destroy()
+      return
+    }
+    const lane = shot.getData('lane') as number | undefined
+    if (lane !== undefined && h.lane !== undefined && lane !== h.lane) return
+    shot.destroy()
+    const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
+    const dmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
+    const hpLeft = applyDamage(h, {
+      amount: dmg,
+      knockbackX: away * 180,
+      knockbackY: -160,
+      now: this.time.now,
+    })
+    applyHurtPose(h, -away)
+    freezeActors(this, [h], FISH_BULLET_FREEZE_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    SFX.hurt()
+    burst(this, h.x, h.y - 20, 0xffaa66, 5)
+    floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
+    this.refreshHearts()
+    if (h.role === 'girl') this.summonBearAssist()
+    if (hpLeft <= 0) this.knockOut(h)
   }
 
 
@@ -1972,7 +2069,6 @@ export class GameScene extends Phaser.Scene {
     this.boyShadow?.setVisible(false)
     this.girlShadow?.setVisible(false)
     this.petShadow?.setVisible(false)
-    this.fan?.setVisible(false)
     this.sword?.setVisible(false)
     this.enemies?.setVisible(false)
     // Hide in-game HUD so only the clear screen shows.
@@ -2220,8 +2316,25 @@ export class GameScene extends Phaser.Scene {
       s.setAngle(0)
       s.refreshBody()
       s.setDepth(DEPTH.HAZARD)
+      s.setData('hazardKind', 'spike')
       enablePixelSprite(s)
     }
+  }
+
+  /** 榴槤陷阱 — 主角踩到會拮腳，減 1 格生命 */
+  private placeDurian(x: number) {
+    const tex = this.textures.exists('hazard-durian') ? 'hazard-durian' : 'blk-spike'
+    const s = this.hazards.create(
+      Math.round(x),
+      Math.round(LANE_FLOOR_Y + 2),
+      tex,
+    ) as Phaser.Physics.Arcade.Sprite
+    s.setOrigin(0.5, 1)
+    s.setScale(1.15)
+    s.refreshBody()
+    s.setDepth(DEPTH.HAZARD)
+    s.setData('hazardKind', 'durian')
+    enablePixelSprite(s)
   }
 
   /**
@@ -2304,7 +2417,8 @@ export class GameScene extends Phaser.Scene {
   private activateDeferredEnemies() {
     const lead = this.leadX()
     const cam = this.cameras.main
-    // Gate wave2 until wave1 cleared.
+    const elapsed = this.started ? this.time.now - this.startedAt : 0
+    const allowLeft = elapsed >= 10_000
     const wave1Alive = this.enemies.getChildren().some((o) => {
       const e = o as PatrolEnemy
       return e.active && e.getData('wave') === 'wave1' && e.fsm !== 'DEAD'
@@ -2321,11 +2435,11 @@ export class GameScene extends Phaser.Scene {
       const wave = e.getData('wave') as string
       if (lead < unlock) return
       if (wave !== 'wave1' && (wave1Alive || wave1Pending)) return
-      // 從畫面右邊外走入 — 唔憑空彈出。
-      const enterX = Math.min(
-        WORLD_W - 24,
-        cam.scrollX + cam.width + 48 + stagger * 72,
-      )
+      // 開始 10 秒後：左右兩邊都可走入；之前淨係右邊。
+      const fromLeft = allowLeft && stagger % 2 === 1
+      const enterX = fromLeft
+        ? Math.max(24, cam.scrollX - 48 - stagger * 36)
+        : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 72)
       stagger += 1
       e.setPosition(enterX, laneY(e.lane))
       e.homeX = enterX
@@ -2339,11 +2453,18 @@ export class GameScene extends Phaser.Scene {
       e.detectRadius = 1200
       e.aggroRadius = 1200
       e.setFsm('CHASE')
-      e.setFlipX(true) // face left toward player
-      e.setVelocityX(-ENEMY_SPEED)
+      if (fromLeft) {
+        e.setFlipX(false)
+        e.setVelocityX(ENEMY_SPEED)
+        e.patrolDir = 1
+      } else {
+        e.setFlipX(true)
+        e.setVelocityX(-ENEMY_SPEED)
+        e.patrolDir = -1
+      }
       if (wave === 'wave1' && !this.registry.get('wave1Announced')) {
         this.registry.set('wave1Announced', true)
-        floatText(this, cam.scrollX + 720, 120, '傀儡來襲！', '#ff6644')
+        floatText(this, cam.scrollX + 480, 120, '傀儡來襲！', '#ff6644')
       }
     })
   }
@@ -2353,8 +2474,8 @@ export class GameScene extends Phaser.Scene {
     this.altarAmbushOn = true
     SFX.boss()
     this.cameras.main.flash(160, 255, 120, 80)
-    this.emitScore('祭壇伏兵！木桶武者突襲')
-    floatText(this, this.cameras.main.scrollX + 480, 120, '祭壇伏兵！', '#ff6644')
+    this.emitScore('蜂巢伏兵！疾風桶突襲')
+    floatText(this, this.cameras.main.scrollX + 480, 120, '蜂巢伏兵！', '#ff6644')
     this.enemies.getChildren().forEach((o) => {
       const e = o as PatrolEnemy
       if (!e.active || !e.altarAmbush || e.fsm === 'DEAD') return
@@ -2382,7 +2503,6 @@ export class GameScene extends Phaser.Scene {
         spawnCoin: (cx, cy) => this.spawnCoin(cx, cy),
         floatBang: (bx, by, msg) => floatText(this, bx, by, msg ?? '！', '#ff3333'),
         telegraph: (en, kindT) => {
-          // Bigger / brighter windup ring so attack intent reads before the lunge.
           impactRing(
             this,
             en.x,
@@ -2391,6 +2511,10 @@ export class GameScene extends Phaser.Scene {
             kindT === 'ambush' ? 18 : 14,
           )
           en.setTint(kindT === 'ambush' ? 0xff2222 : 0xff8866)
+        },
+        spawnProjectile: (en, dir) => {
+          const pe = en as PatrolEnemy
+          if (pe.species === 'fish') this.spawnFishBullet(pe, dir)
         },
       },
     })
