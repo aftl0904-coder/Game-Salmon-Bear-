@@ -63,15 +63,14 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
   })
 
-  // Seamless flat bank tile — full width fills so abutting placements leave no gap.
+  // Seamless flat bank tile — wrap-safe L/R (no left-only highlight that reads as a seam).
   paint(scene, 'blk-grass', 32, 40, (set) => {
     for (let y = 12; y < 36; y++) {
       const t = (y - 12) / 24
       rect(set, 0, y, 32, 1, shadeRGB([145, 95, 55], 1.05 - t * 0.35))
     }
     for (let y = 16; y < 34; y += 4) {
-      rect(set, 2, y, 28, 1, [100, 65, 38], 160)
-      rect(set, 4, y + 1, 10, 1, [160, 110, 65], 100)
+      rect(set, 0, y, 32, 1, [100, 65, 38], 120)
     }
     for (let y = 4; y < 14; y++) {
       const t = (y - 4) / 10
@@ -79,12 +78,12 @@ export function registerIsoArt(scene: Phaser.Scene) {
     }
     rect(set, 0, 4, 32, 3, [130, 210, 110])
     rect(set, 0, 12, 32, 3, [42, 115, 50])
-    rect(set, 1, 5, 2, 8, [175, 230, 140])
+    // Speckles inset from edges so abutting tiles don't invent a vertical joint.
     set(8, 8, [255, 255, 255])
-    set(18, 7, [255, 160, 190])
+    set(16, 7, [255, 160, 190])
     set(24, 9, [255, 220, 80])
-    rect(set, 0, 36, 32, 3, [32, 22, 14], 190)
-    rect(set, 0, 38, 32, 1, [20, 14, 10], 140)
+    rect(set, 0, 36, 32, 3, [32, 22, 14], 255)
+    rect(set, 0, 38, 32, 1, [20, 14, 10], 255)
   })
 
   // Seamless wood plank — horizontal grain only (vertical ticks read as tile seams).

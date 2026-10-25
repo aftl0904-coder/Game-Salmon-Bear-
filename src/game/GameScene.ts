@@ -685,11 +685,12 @@ export class GameScene extends Phaser.Scene {
       this.applyHeroPose(g, grounded, 0)
       return
     }
-    const dx = this.boy.x - 72 - g.x
+    // Hold ~160px ahead of 倫寶 so cast silhouettes never pile (was boy-72 → stacked).
+    const dx = this.boy.x + 160 - g.x
     // Stay on an adjacent lane so cast feet never stack on one Y.
     const preferLane = this.boy.lane >= 2 ? this.boy.lane - 1 : this.boy.lane + 1
     this.steerHero(
-      g, dt, dx < -20, dx > 20, false, false, GIRL_SPEED * 0.9, false, () => {},
+      g, dt, dx < -28, dx > 28, false, false, GIRL_SPEED * 0.9, false, () => {},
       preferLane < g.lane && g.laneCd <= 0,
       preferLane > g.lane && g.laneCd <= 0,
     )

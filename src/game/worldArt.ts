@@ -135,10 +135,10 @@ export function registerWorldArt(scene: Phaser.Scene) {
   paint(scene, 'water-foam', 64, 16, (set, w, h) => {
     for (let y = 0; y < h; y++) {
       for (let x = 0; x < w; x++) {
-        // Continuous wrap-safe foam band (no hard blob edges at tile boundary).
+        // Soft continuous foam — fully opaque (soft alpha seams under NEAREST).
         const wave = Math.sin((x / w) * Math.PI * 2 * 2 + y * 0.7) * 0.5 + 0.5
-        const a = Math.floor(40 + wave * 180)
-        set(x, y, wave > 0.72 ? [255, 255, 255] : [220, 245, 255], a)
+        const c: RGB = wave > 0.65 ? [245, 252, 255] : [170, 215, 240]
+        set(x, y, c, 255)
       }
     }
   })
