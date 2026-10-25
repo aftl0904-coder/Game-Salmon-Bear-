@@ -100,7 +100,7 @@ import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
 import { addGroundShadow } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
-import { environmentById } from './config/gameData'
+import { ENVIRONMENT, environmentById } from './config/gameData'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -1620,13 +1620,14 @@ export class GameScene extends Phaser.Scene {
       shadeColor?: string
       pointLights?: { x: number; y: number; radius: number; color: number; intensity: number }[]
     }
-    if (lit.shadeColor != null && lit.lightX != null && lit.lightY != null) {
-      addStageLighting(this, {
-        id: env.id,
-        lightX: lit.lightX,
-        lightY: lit.lightY,
-        shadeColor: lit.shadeColor,
-      })
+    // Prefer top-level environment.lighting[] overlay when present.
+    const overlay =
+      ENVIRONMENT.lighting?.find((l) => l.id === env.id) ??
+      (lit.lightX != null && lit.lightY != null && lit.shadeColor
+        ? { id: env.id, lightX: lit.lightX, lightY: lit.lightY, shadeColor: lit.shadeColor }
+        : null)
+    if (overlay) {
+      addStageLighting(this, overlay)
     }
     const sprites: Phaser.GameObjects.GameObject[] = []
     if (this.boy) sprites.push(this.boy)

@@ -6,6 +6,14 @@ const errors = []
 const raw = loadJson('environment.json')
 
 requireKeys(raw, ['style', 'stages'], 'environment', errors)
+if (raw.lighting != null) {
+  if (!Array.isArray(raw.lighting)) fail(errors, 'environment.lighting must be array')
+  else {
+    for (const L of raw.lighting) {
+      requireKeys(L, ['id', 'lightX', 'lightY', 'shadeColor'], 'environment.lighting[]', errors)
+    }
+  }
+}
 if (!Array.isArray(raw.stages)) {
   fail(errors, 'environment.stages must be array')
 } else {

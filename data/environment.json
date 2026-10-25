@@ -1,5 +1,12 @@
 {
   "style": "16-bit side-scroller, pixel art, layered parallax",
+  "lighting": [
+    { "id": "ST-01", "lightX": 0.2, "lightY": 0.1, "shadeColor": "rgb(170,160,185)" },
+    { "id": "ST-02", "lightX": 0.5, "lightY": 0.0, "shadeColor": "rgb(90,95,130)" },
+    { "id": "ST-03", "lightX": 0.35, "lightY": 0.15, "shadeColor": "rgb(140,100,110)" },
+    { "id": "ST-04", "lightX": 0.15, "lightY": 0.2, "shadeColor": "rgb(70,80,100)" },
+    { "id": "ST-05", "lightX": 0.4, "lightY": 0.1, "shadeColor": "rgb(150,165,180)" }
+  ],
   "stages": [
     {
       "id": "ST-01",
