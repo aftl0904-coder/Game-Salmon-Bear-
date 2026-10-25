@@ -204,6 +204,18 @@ export function applyEnemyJsonTuning(defs: readonly EnemyJson[]): string[] {
 
 applyEnemyJsonTuning(ENEMIES as unknown as readonly EnemyJson[])
 
+/** Raw `ai` block from data/enemies.json for a species (dash / throw / armor numbers). */
+export function speciesAi(species: EnemySpecies): Record<string, unknown> {
+  const def = (ENEMIES as unknown as readonly EnemyJson[]).find((d) => d.id === SPECIES_DATA_ID[species])
+  return def?.ai ?? {}
+}
+
+/** Number from a species' ai block, with a fallback. */
+export function aiNum(species: EnemySpecies, key: string, fallback: number): number {
+  const v = speciesAi(species)[key]
+  return typeof v === 'number' ? v : fallback
+}
+
 /** Default species — Pack3 mixes fish / barrel / elephant */
 export function defaultSpecies(kind: EnemyKind): EnemySpecies {
   if (kind === 'boss') return 'fish'

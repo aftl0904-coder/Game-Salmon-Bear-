@@ -49,4 +49,14 @@ def ikura(size=11):
 ikura(11).save(OUT + 'salmon-roe.png')
 # fish spit bubble: pale blue water bead
 bead(8, (52, 86, 120), (120, 170, 210), (160, 206, 236), (214, 238, 252), (255, 255, 255)).save(OUT + 'fish-bubble.png')
+# 帽仔兵's rock: lumpy grey stone, light top-left
+def rock(size=9):
+    im = Image.new('RGBA', (size, size)); px = im.load()
+    pts = [(1,3),(2,1),(5,0),(7,2),(8,5),(6,8),(3,8),(0,6)]
+    from PIL import ImageDraw
+    d = ImageDraw.Draw(im); d.polygon(pts, fill=(112, 104, 96, 255), outline=(52, 46, 42, 255))
+    for (x, y) in [(3,2),(4,2),(2,3),(3,3),(5,1)]: px[x, y] = (168, 158, 146, 255)
+    for (x, y) in [(6,6),(5,7),(7,5),(4,7)]: px[x, y] = (78, 72, 66, 255)
+    return im
+rock().save(OUT + 'rock.png')
 print('items written')

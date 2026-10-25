@@ -8,6 +8,8 @@ import type Phaser from 'phaser'
 export const ART_OVERRIDES: Record<string, string> = {
   'fx-salmon-shot': '/art/items/salmon-roe.png',
   'fx-fish-bullet': '/art/items/fish-bubble.png',
+  // New key (no procedural original): 帽仔兵 thrown rock.
+  'fx-rock': '/art/items/rock.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {

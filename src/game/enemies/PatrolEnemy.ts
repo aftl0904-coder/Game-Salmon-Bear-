@@ -13,6 +13,7 @@ import {
   type EnemyState,
   KIND_STATS,
   SPECIES_STATS,
+  aiNum,
   defaultSpecies,
   pickTarget,
 } from '../enemyAi'
@@ -21,6 +22,14 @@ import { Enemy, type EnemyFsm, type EnemyHooks, type EnemyTickCtx } from './Enem
 type AtkPhase = 'none' | 'windup' | 'strike' | 'recover' | 'pause' | 'charge'
 
 /** Round-1 patrol enemy — 醃魚雜兵 / 木桶武者 (+ boss / guardian kinds). */
+/** 帽仔兵 throws when the hero is within this distance (px). */
+const THROW_RANGE = 230
+/** 帽仔兵 keeps the hero between these distances. */
+const KEEP_AWAY_MIN = 110
+const KEEP_AWAY_MAX = 190
+/** 紅魚 starts its dash wind-up from this far away. */
+const DASH_TRIGGER = 150
+
 export class PatrolEnemy extends Enemy {
   kind: EnemyKind = 'blocker'
   species: EnemySpecies = 'fish'
@@ -42,6 +51,8 @@ export class PatrolEnemy extends Enemy {
   walkPhase = 0
   /** Random brief freeze (ms timestamp). */
   staggerUntil = 0
+  /** 機械豬: armour is open (full damage from the front) until this time. */
+  vulnerableUntil = 0
   /** Cooldown before next lane-step decision (per-enemy, staggered). */
   laneSwitchCd = 0
   /** Lane we're smoothly walking toward (may differ from committed `lane`). */
@@ -103,7 +114,8 @@ export class PatrolEnemy extends Enemy {
     e.meleeRadius =
       spKey === 'elephant' ? Math.round(Math.max(st.melee * 2.4, bodyW * 1.5)) : st.melee
     // 刺刺魚：遠程小彈；其餘近戰
-    e.attackMode = spKey === 'fish' ? 'projectile' : 'melee'
+    // 紅魚 = charger (dash), 帽仔兵 = thrower (arcing rocks), 機械豬 = heavy slam.
+    e.attackMode = spKey === 'barrel' ? 'projectile' : 'melee'
     e.setData('spdMul', sp.spdMul ?? 1)
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
@@ -145,6 +157,8 @@ export class PatrolEnemy extends Enemy {
 
   override canHurtPlayer(): boolean {
     if (!this.active || this.fsm === 'DEAD' || this.fsm === 'HURT') return false
+    // 帽仔兵 only hurts with thrown rocks.
+    if (this.species === 'barrel') return false
     // Only during attack action (no passive bump) — late windup + full strike window.
     if (this.fsm !== 'ATTACK') return false
     if (this.atkPhase === 'recover') return false
@@ -232,7 +246,10 @@ export class PatrolEnemy extends Enemy {
     this.seekHeroLane(targetLane, Math.abs(target.x - this.x))
 
     const onHeroLane = sameLaneId(this.lane, targetLane, 0) && !this.laneSliding
-    if (onHeroLane && dist < melee && this.atkCd <= 0 && this.fsm === 'CHASE') {
+    // Species trigger range: 帽仔兵 throws from afar, 紅魚 starts its dash run-up early.
+    const trigger =
+      this.species === 'barrel' ? THROW_RANGE : this.species === 'fish' ? Math.max(melee, DASH_TRIGGER) : melee
+    if (onHeroLane && dist < trigger && this.atkCd <= 0 && this.fsm === 'CHASE') {
       const wind =
         st.windupMs * mul.windup * (sp.windupMul ?? 1) * (sp.style === 'hop' ? 0.85 : 1)
       this.beginWindup(wind)
@@ -247,9 +264,18 @@ export class PatrolEnemy extends Enemy {
       // While off-lane, still close X but keep pressure so hero can dodge/row-swap.
       const arrive = Math.abs(dx) < 12
       const xMul = onHeroLane ? 1 : 0.85
-      this.setVelocityX(arrive ? dir * spd * 0.45 * xMul : dir * spd * xMul)
-      this.patrolDir = dir
-      this.faceMoveDir()
+      if (this.species === 'barrel') {
+        // Thrower keeps a throwing distance: back off when crowded, close in when far.
+        const adx = Math.abs(dx)
+        const vx = adx < KEEP_AWAY_MIN ? -dir * spd * 0.8 : adx > KEEP_AWAY_MAX ? dir * spd : 0
+        this.setVelocityX(vx)
+        this.patrolDir = dir
+        this.setFlipX(dir < 0) // always face the hero, even while backing off
+      } else {
+        this.setVelocityX(arrive ? dir * spd * 0.45 * xMul : dir * spd * xMul)
+        this.patrolDir = dir
+        this.faceMoveDir()
+      }
       // Advance walk frames by distance moved (~10px per frame) — no treadmill when slow.
       this.walkPhase += (Math.abs(body.velocity.x) * dt) / 1000 / 10
       this.applyPose()
@@ -327,6 +353,9 @@ export class PatrolEnemy extends Enemy {
     // 霸鼻象：蓄力至少 0.5s；其他種保持原 telegraph。
     if (this.species === 'elephant') {
       this.windup = Math.max(500, ms)
+    } else if (this.species === 'fish') {
+      // Charger: long, readable run-up so the hero can jump the dash.
+      this.windup = aiNum('fish', 'telegraphMs', 500)
     } else {
       this.windup = Math.min(420, Math.max(220, ms))
     }
@@ -358,56 +387,70 @@ export class PatrolEnemy extends Enemy {
     _sp: (typeof SPECIES_STATS)[EnemySpecies],
   ) {
     const dir = (Math.sign(target.x - this.x) || this.patrolDir) as 1 | -1
-    const walkIn = (mul: number) => {
-      this.setVelocityX(dir * spd * mul)
-      this.patrolDir = dir
-      this.faceMoveDir()
-      this.walkPhase += 0.2 * mul
-    }
+    const now = this.scene.time.now
     if (this.atkPhase === 'recover') {
-      // Keep closing — no stand-still recover.
-      walkIn(0.7)
+      // Punish window: stand still (紅魚 dizzy after dash, 機械豬 exposed after slam).
+      this.setVelocityX(0)
       this.applyPose()
       this.syncWeapon()
       if (this.think <= 0) {
         this.hitThis = false
+        this.clearTint()
         this.setFsm('CHASE')
       }
       return
     }
-    // Legacy pause/charge → treat as strike while walking
-    if (this.atkPhase === 'pause' || this.atkPhase === 'charge') {
-      this.atkPhase = 'strike'
-      this.think = this.species === 'barrel' ? 160 : 320
-      this.hitThis = false
-      this.chargeDir = dir
-    }
+    if (this.atkPhase === 'pause' || this.atkPhase === 'charge') this.atkPhase = 'windup'
     if (this.atkPhase === 'windup') {
+      // Telegraph: plant feet and face the hero.
       this.setTint(0xff3333)
-      walkIn(0.85)
+      this.setVelocityX(0)
+      this.patrolDir = dir
+      this.setFlipX(dir < 0)
       this.applyPose()
       this.syncWeapon()
       if (this.windup <= 0) {
-        this.atkPhase = 'strike'
         this.hitThis = false
-        this.think = this.species === 'barrel' ? 160 : 320
         this.chargeDir = dir
-        if (this.attackMode === 'projectile') this.hooks.spawnProjectile?.(this, dir)
+        if (this.species === 'barrel') {
+          // 帽仔兵: lob a rock and step back into range.
+          this.hooks.spawnProjectile?.(this, dir)
+          this.atkPhase = 'recover'
+          this.think = 260
+          this.atkCd = aiNum('barrel', 'throwIntervalMs', 1800)
+          this.clearTint()
+        } else if (this.species === 'fish') {
+          this.atkPhase = 'strike'
+          this.think = aiNum('fish', 'dashMs', 600)
+        } else {
+          this.atkPhase = 'strike'
+          this.think = 260
+        }
       }
       return
     }
     if (this.atkPhase === 'strike') {
-      // 疾風桶衝刺更快但命中窗較短（攻擊力弱）
-      walkIn(this.species === 'barrel' ? 1.7 : 1.35)
+      if (this.species === 'fish') {
+        // Straight dash along the floor (keepEnemyOnTerrain stops it at pit edges).
+        this.setVelocityX(this.chargeDir * aiNum('fish', 'dashSpeed', 180))
+      } else {
+        // 機械豬: short heavy lunge.
+        this.setVelocityX(this.chargeDir * spd * 2.2)
+      }
       this.applyPose()
       this.syncWeapon()
       if (this.think <= 0) {
         this.clearTint()
-        const t = this.defaultTint()
-        if (t) this.setTint(t)
         this.atkPhase = 'recover'
-        this.think = Math.min(this.species === 'barrel' ? 90 : 160, st.recoverMs)
-        // atkCdMs already includes species atkCdMul via effectiveStats()
+        if (this.species === 'fish') {
+          this.think = aiNum('fish', 'stunMs', 1000)
+          this.hooks.floatBang?.(this.x, this.y - 44, '暈～')
+        } else {
+          const ms = aiNum('elephant', 'vulnerableAfterSlamMs', 1200)
+          this.think = ms
+          this.vulnerableUntil = now + ms
+          this.hooks.floatBang?.(this.x, this.y - 60, '破綻！')
+        }
         this.atkCd = st.atkCdMs
       }
       return

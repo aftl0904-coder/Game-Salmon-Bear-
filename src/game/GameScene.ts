@@ -1227,6 +1227,16 @@ export class GameScene extends Phaser.Scene {
       floatText(this, pe.x, pe.y - 48, '霸體！', '#ffe08a', { size: 16, dur: 500 })
       return
     }
+    // 機械豬 front armour: hits on its face clang off unless the slam left it open.
+    if (pe.species === 'elephant' && this.time.now >= (pe.vulnerableUntil ?? 0)) {
+      const face = pe.flipX ? -1 : 1
+      if (dir === -face) {
+        floatText(this, pe.x, pe.y - 52, '鐵甲！打背脊', '#cfd8e0', { size: 12, dur: 600 })
+        burst(this, pe.x + face * 14, pe.y - 30, 0xe8f0ff, 5)
+        SFX.hit()
+        return
+      }
+    }
     const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
@@ -2289,21 +2299,30 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** 刺刺魚小彈 — 低傷 + 短 freeze */
-  private spawnFishBullet(e: PatrolEnemy, dir: 1 | -1) {
-    const key = this.textures.exists('fx-fish-bullet') ? 'fx-fish-bullet' : 'coin'
-    const x = e.x + dir * 28
-    const y = e.y - 36
-    const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
-    shot.setScale(PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', e.lane, e.y)).setFlipX(dir < 0)
+  /**
+   * 帽仔兵 rock — alternates LOW (knee height, jump it) and HIGH (chest height,
+   * crouch under it). Straight throw with a slight drop so it reads as thrown.
+   */
+  private spawnRock(e: PatrolEnemy, dir: 1 | -1) {
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const n = ((e.getData('throwN') as number) || 0) + 1
+    e.setData('throwN', n)
+    const high = n % 2 === 0
+    const feet = e.y
+    const y = feet - (high ? 19 : 7)
+    const shot = this.enemyShots.create(e.x + dir * 18, y, key) as Phaser.Physics.Arcade.Sprite
+    shot.setDepth(actorDepth('shot', e.lane, e.y))
     enableActorSprite(shot)
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
-    body.setSize(10, 6)
-    shot.setVelocityX(dir * 260)
+    body.setSize(8, 8)
+    shot.setVelocity(dir * 170, 0)
     shot.setData('lane', e.lane)
-    shot.setData('dmg', FISH_BULLET_DMG)
+    shot.setData('dmg', 1)
+    this.tweens.add({ targets: shot, angle: dir * 360, duration: 500, repeat: -1 })
+    floatText(this, e.x, e.y - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
-    this.time.delayedCall(1400, () => {
+    this.time.delayedCall(1800, () => {
       if (shot.active) shot.destroy()
     })
   }
@@ -2922,7 +2941,7 @@ export class GameScene extends Phaser.Scene {
         },
         spawnProjectile: (en, dir) => {
           const pe = en as PatrolEnemy
-          if (pe.species === 'fish') this.spawnFishBullet(pe, dir)
+          if (pe.species === 'barrel') this.spawnRock(pe, dir)
         },
       },
     })
