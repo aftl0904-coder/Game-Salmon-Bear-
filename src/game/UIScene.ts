@@ -8,6 +8,7 @@ import {
   type GameEventMap,
 } from './EventBus'
 import { mountTouchControls } from './TouchControls'
+import { mountMuteButton } from './muteButton'
 
 /**
  * HUD overlay — hearts + blue 絕招 MP; no red HP strip / no score plate.
@@ -93,6 +94,7 @@ export class UIScene extends Phaser.Scene {
     EventBus.on(GameEvents.GAME_OVER, this.onGameOver, this)
 
     mountTouchControls(this)
+    mountMuteButton(this, 28, 16)
 
     this.events.once('shutdown', this.unbind, this)
     this.events.once('destroy', this.unbind, this)

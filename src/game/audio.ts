@@ -12,11 +12,46 @@ let bgmTimer: number | null = null
 /** Suppress loop BGM while fanfare plays. */
 let fanfareUntil = 0
 
+const MUTE_KEY = 'sake-kuma-muted'
+
+try {
+  muted = localStorage.getItem(MUTE_KEY) === '1'
+} catch {
+  /* ignore */
+}
+
+export function isMuted() {
+  return muted
+}
+
+/** Mute / unmute SFX + BGM. Persists in localStorage. */
+export function setMuted(next: boolean) {
+  muted = next
+  try {
+    localStorage.setItem(MUTE_KEY, muted ? '1' : '0')
+  } catch {
+    /* ignore */
+  }
+  if (master) {
+    master.gain.value = muted ? 0 : 0.45
+  }
+  if (muted) stopBgm()
+  else {
+    ensureRunning()
+    startBgm()
+  }
+}
+
+export function toggleMute() {
+  setMuted(!muted)
+  return muted
+}
+
 function ac(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext()
     master = ctx.createGain()
-    master.gain.value = 0.45
+    master.gain.value = muted ? 0 : 0.45
     master.connect(ctx.destination)
   }
   return ctx

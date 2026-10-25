@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { unlockAudio, startBgm } from './audio'
+import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
 import { enableActorSprite } from './pixelSnap'
 import { mountTouchControls } from './TouchControls'
@@ -48,6 +49,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.buildFooter(width, height)
     this.wireInput()
     mountTouchControls(this)
+    mountMuteButton(this, 28, 16)
     this.refresh()
   }
 
