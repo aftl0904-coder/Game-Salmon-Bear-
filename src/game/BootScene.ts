@@ -14,8 +14,6 @@ import {
   registerWalkCycle,
   registerIdleBreath,
   registerEnemyCombatFrames,
-  stampFanOntoGirl,
-  stampCasualClothes,
   setActorLinearFilter,
   WALK_FRAMES,
 } from './pixelSnap'
@@ -114,8 +112,8 @@ export class BootScene extends Phaser.Scene {
    * Same bake factor + same outline width so nothing looks sharper/softer alone.
    */
   private bakeCastTextures() {
-    stampFanOntoGirl(this)
-    stampCasualClothes(this)
+    // Cel hero PNGs already include casual outfits + 琪寶寶背風扇 —
+    // do NOT stampCasualClothes / stampFanOntoGirl (would muddy the rebuild).
 
     const actors = [
       'art-salmon',
