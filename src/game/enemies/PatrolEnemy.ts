@@ -112,7 +112,7 @@ export class PatrolEnemy extends Enemy {
     e.setScale(e.baseScale)
     enableActorSprite(e)
     e.setData('baseTex', tex)
-    if (spKey === 'fish' && st.tint) e.setTint(st.tint)
+    // Real painted art — no role tint (was turning 紅魚 blue/orange).
     if (spKey === 'elephant') {
       const trunkKey = scene.textures.exists('fx-elephant-trunk-0')
         ? 'fx-elephant-trunk-0'
@@ -152,7 +152,7 @@ export class PatrolEnemy extends Enemy {
   }
 
   protected override defaultTint(): number | undefined {
-    return this.species === 'fish' ? KIND_STATS[this.kind].tint : undefined
+    return undefined
   }
 
   protected override onEnterFsm(next: EnemyFsm, _prev: EnemyFsm) {
@@ -269,7 +269,8 @@ export class PatrolEnemy extends Enemy {
       this.setVelocityX(arrive ? dir * spd * 0.45 * xMul : dir * spd * xMul)
       this.patrolDir = dir
       this.faceMoveDir()
-      this.walkPhase += arrive ? 0.16 : 0.22
+      // Advance walk frames by distance moved (~10px per frame) — no treadmill when slow.
+      this.walkPhase += (Math.abs(body.velocity.x) * dt) / 1000 / 10
       this.applyPose()
       this.syncWeapon()
     }
@@ -525,9 +526,7 @@ export class PatrolEnemy extends Enemy {
     }
     const vx = Math.abs((this.body as Phaser.Physics.Arcade.Body | null)?.velocity.x ?? 0)
     if (vx > 8 && (this.fsm === 'CHASE' || this.fsm === 'PATROL' || this.atkPhase === 'recover')) {
-      if (this.atkPhase === 'none' || this.atkPhase === 'recover') {
-        this.walkPhase += 0.18
-      }
+      // walkPhase is advanced by distance in tick() — nothing extra here.
       // At least 2 distinct walk frames.
       const frame = Math.floor(this.walkPhase) % Math.max(2, WALK_FRAMES)
       setTex(`${base}-run-${frame}`)
@@ -556,6 +555,11 @@ export class PatrolEnemy extends Enemy {
   private syncWeapon() {
     const w = this.weapon
     if (!w) return
+    // Deferred / hidden enemy → weapon must stay hidden too (was floating on the ground).
+    if (!this.active || !this.visible) {
+      w.setVisible(false)
+      return
+    }
     // Allow re-show after defer (setActive false on weapon)
     if (!w.active) w.setActive(true)
     if (this.fsm === 'DEAD') {

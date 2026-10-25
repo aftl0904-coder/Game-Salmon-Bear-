@@ -4,7 +4,7 @@
     "name": "紅魚",
     "role": "charger",
     "hp": 2,
-    "speed": 30,
+    "speed": 48,
     "ai": {
       "patrolTiles": 6,
       "telegraphMs": 500,
@@ -20,7 +20,7 @@
     "name": "機械豬",
     "role": "heavy",
     "hp": 4,
-    "speed": 25.5,
+    "speed": 34,
     "ai": {
       "frontArmor": true,
       "slamTelegraphMs": 500,
@@ -35,7 +35,7 @@
     "name": "帽仔兵",
     "role": "thrower",
     "hp": 1.2,
-    "speed": 61.5,
+    "speed": 72,
     "ai": {
       "throwIntervalMs": 1800,
       "throwHeights": [
