@@ -1,0 +1,234 @@
+[
+  {
+    "file": "art-src/anim/lunbo/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Top-tier 16-bit SNES pixel art character MODEL SHEET on flat solid magenta background #FF00FF only. No floor, no shadow, no scenery, no text, no labels, no watermark. Character 倫寶 (Lunbo): young East Asian man, short messy black hair with highlight bands, warm fair skin, calm slightly clumsy face, 1-pixel eye catch lights. Wearing warm SALMON-ORANGE zip hoodie (visible metal zipper glint, drawstrings, sleeve folds), white tee underneath, blue jeans with denim seams, sneakers with sole detail. Holds a salmon-shaped water-gun (orange-pink salmon body, scales, glossy eye, fin, tail as grip, mouth as muzzle). Layout: ONE image with four views left to right with ≥24px magenta gap: front, side facing RIGHT, back, three-quarter. Feet on same baseline. Native 72px tall upscaled 8× nearest-neighbour. Clean 1px dark outlines, ≤24 colours, light top-left, thin warm rim on right, 3–4 shade steps per material. Casual clothes only — NO kung-fu outfit. Refs: art-src/bear-girl.png, art-src/gen/heroes.png, art-src/gen/lunbo-poses.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET on flat solid magenta #FF00FF. Side view facing RIGHT. Equal cells, ≥24px gap, shared baseline. 倫寶 exact model-sheet match: short messy black hair, salmon-orange zip hoodie, white tee, blue jeans, sneakers, salmon water-gun. IDLE breathing 3 frames: neutral, inhale chest rise, exhale settle. Native 72px tall 8× NN. 1px dark outlines ≤24 colours light top-left. Refs: lunbo/model-sheet.png, bear-girl.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 CLEARLY DIFFERENT walk frames ≥40px gaps shared baseline. 倫寶 locked: spiky black hair, salmon-orange zip hoodie white drawstrings, white tee, blue jeans, black sneakers, salmon water-gun. Classic walk: L plant, mid pass UP, R plant, mid pass UP. Hoodie strings swing. NO duplicates. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-idle."
+  },
+  {
+    "file": "art-src/anim/lunbo/jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 DISTINCT jump frames: rise stretch take-off, apex tuck, fall reach down. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/crouch.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 crouch frames: going down, full crouch, crouched aiming gun. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/shoot.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 shoot frames: raise aim, FIRE with orange muzzle flash + recoil, stronger recoil, recover. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/shoot-crouch.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 shoot-crouch frames: crouched aim, fire muzzle flash + recoil crouched, recover crouched. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-crouch."
+  },
+  {
+    "file": "art-src/anim/lunbo/hurt.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 hurt frames: flinch lean back eyes shut, deeper bend, stagger wince. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/ko.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 5 KO frames: knockback X eyes, mid fall, more horizontal, ground impact, lying defeated with gun. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/win.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Facing RIGHT. 3 win frames: smile gun at side, raise salmon gun overhead, hold victory. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET on magenta #FF00FF. 琪寶寶: young woman, long dark hair HIGH PONYTAIL, cream/pastel short top (not purple), dark slim trousers, sneakers, short straight sword, round paper fan with ribs+tassel on back. Four views: front, side RIGHT, back showing fan, 3/4. Native 72px 8× NN. Refs: salmon-boy.png, heroes.png, kibobo-poses.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 idle breathe. 琪寶寶 locked: high ponytail purple tie, cream top, dark slim trousers, purple sneakers, sword, paper fan on BACK. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/run.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 DISTINCT run frames, ponytail/tassel follow-through. 琪寶寶 locked cream top + sword + fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 jump: rise, apex tuck, fall. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/crouch.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 crouch: going down, full crouch, crouched ready sword. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/slash1.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash1 horizontal: wind-up, smear slash, follow-through, recover. 琪寶寶 locked cream top sword fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/slash2.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash2 upward: wind-up low, upward slash, follow-through high, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/slash3.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 slash3 spinning finisher: crouch wind-up, spin start, smear spin, slash finish, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/fan-glide.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 fan-glide: high float fan overhead, mid descent, near land squat. OPEN paper fan held overhead. 琪寶寶 locked cream top. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/hurt.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hurt: flinch, deeper recoil, stagger wince. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/ko.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 KO: knockback, mid fall, horizontal, impact, lying. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/win.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Facing RIGHT. 3 win: smile ready, raise sword/fan cheer, hold victory. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET magenta #FF00FF. 噗噗 ORIGINAL round bear — NOT Winnie the Pooh, NO red shirt. Honey-brown fur, cream oval belly, blue neck ribbon bow, small ears, tiny eyes catch light. Four views front/side RIGHT/back/3-4. Native 56px tall 8× NN. Refs: kind-bear.png, bear-poses.png, heroes.png."
+  },
+  {
+    "file": "art-src/anim/pupu/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. ALL frames side profile facing RIGHT. 3 idle breathe. 噗噗 locked: honey-brown, cream belly, blue ribbon — NOT Pooh NO red shirt. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 DISTINCT walk frames different legs. 噗噗 locked original bear blue ribbon. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/cute-pose.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. 3 cute poses: tilt smile, paws together, happy bounce. 噗噗 locked original bear blue ribbon NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/tackle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 tackle: crouch anticipation, launch stretch, smear dash, impact/recover. 噗噗 locked. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/hollow-idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hollow idle. 噗噗 HOLLOW: grey fur, pale grey belly, faded grey ribbon, limp, empty void eyes. Atmosphere horror no gore. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/wake-up.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 wake-up: grey hollow limp → stir → colour returning → full warm colour → jump celebrate. 噗噗 original bear NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png, hollow-idle."
+  }
+]
