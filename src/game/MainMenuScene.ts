@@ -4,7 +4,7 @@ import { loadScores } from './score'
 
 type Mode = '1p' | '2p'
 
-/** Title / 1P·2P select — Goemon SNES player-select packaging */
+/** Title / 1P·2P select — brand-first creek shrine atmosphere */
 export class MainMenuScene extends Phaser.Scene {
   private cursor = 0
   private labels: Phaser.GameObjects.Text[] = []
@@ -18,55 +18,174 @@ export class MainMenuScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale
-    this.cameras.main.setBackgroundColor('#5aa0d0')
-    this.cameras.main.fadeIn(320, 50, 90, 130)
+    this.cameras.main.setBackgroundColor('#6a9ec8')
+    this.cameras.main.fadeIn(360, 70, 120, 150)
     this.cursor = 0
 
-    const g = this.add.graphics()
-    g.fillGradientStyle(0x8ed0f5, 0x8ed0f5, 0xffe8b8, 0xffd8a0, 1)
+    this.buildAtmosphere(width, height)
+    this.buildBrandHero(width, height)
+    this.buildModeSelect(width)
+    this.buildFooter(width, height)
+    this.wireInput()
+    this.refresh()
+  }
+
+  /** Full-bleed creek / shrine / honey sky — one composition */
+  private buildAtmosphere(width: number, height: number) {
+    const g = this.add.graphics().setDepth(0)
+    g.fillGradientStyle(0x7ec4e8, 0x7ec4e8, 0xffe2b0, 0xffd090, 1)
     g.fillRect(0, 0, width, height)
-    g.fillStyle(0xfff3c8, 0.5)
-    g.fillCircle(width * 0.82, 70, 70)
+    g.fillStyle(0xfff4c8, 0.55)
+    g.fillCircle(width * 0.86, 64, 78)
+    g.fillStyle(0xffe08a, 1)
+    g.fillCircle(width * 0.86, 64, 30)
+
+    if (this.textures.exists('bg-sky')) {
+      this.add.tileSprite(width / 2, 120, width, 240, 'bg-sky').setDepth(0).setAlpha(0.55)
+    }
+    if (this.textures.exists('bg-cloud')) {
+      const c1 = this.add.tileSprite(width / 2, 48, width, 40, 'bg-cloud').setDepth(1).setAlpha(0.85)
+      this.tweens.add({ targets: c1, tilePositionX: 120, duration: 28000, repeat: -1 })
+    }
+    if (this.textures.exists('bg-mount-far')) {
+      this.add.image(width * 0.3, 210, 'bg-mount-far').setDepth(1).setScale(2.2).setAlpha(0.85)
+      this.add.image(width * 0.75, 220, 'bg-mount-far').setDepth(1).setScale(2.0).setAlpha(0.75).setFlipX(true)
+    }
+    if (this.textures.exists('bg-village')) {
+      this.add.image(width / 2, 268, 'bg-village').setDepth(2).setScale(3.2).setAlpha(0.7)
+    }
+    if (this.textures.exists('bg-mount-near')) {
+      this.add.image(width * 0.2, 300, 'bg-mount-near').setDepth(2).setScale(2.4).setAlpha(0.9)
+      this.add.image(width * 0.82, 305, 'bg-mount-near').setDepth(2).setScale(2.2).setAlpha(0.85).setFlipX(true)
+    }
+
+    if (this.textures.exists('water-deep')) {
+      const water = this.add.tileSprite(width / 2, height - 70, width, 56, 'water-deep').setDepth(3)
+      this.tweens.add({ targets: water, tilePositionX: 64, duration: 6000, repeat: -1 })
+    }
+    if (this.textures.exists('water-foam')) {
+      this.add.tileSprite(width / 2, height - 96, width, 12, 'water-foam').setDepth(4).setAlpha(0.9)
+    }
+
     g.fillStyle(0xc48a48, 1)
-    g.fillRect(0, height - 130, width, 130)
+    g.fillRect(0, height - 48, width, 48)
     g.fillStyle(0x9a6838, 1)
-    for (let x = 0; x < width; x += 40) g.fillRect(x, height - 130, 3, 130)
+    for (let x = 0; x < width; x += 36) g.fillRect(x, height - 48, 3, 48)
+    g.fillStyle(0xe0b070, 0.45)
+    g.fillRect(0, height - 48, width, 5)
+
+    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
+    if (this.textures.exists('prop-torii')) {
+      this.add.image(width / 2, height - 42, shad).setDepth(4).setAlpha(0.45).setScale(2.2, 0.7)
+      this.add.image(width / 2, height - 50, 'prop-torii').setOrigin(0.5, 1).setDepth(5).setScale(1.15).setAlpha(0.95)
+    }
+    if (this.textures.exists('prop-banner')) {
+      this.add.image(70, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.5, 0.5)
+      this.add.image(70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(1.5)
+      this.add.image(width - 70, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.5, 0.5)
+      this.add.image(width - 70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(1.5)
+    }
+    if (this.textures.exists('prop-lantern3d')) {
+      const L = this.add.image(130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(1.6)
+      const R = this.add.image(width - 130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(1.6)
+      this.add.image(130, height - 42, shad).setDepth(4).setAlpha(0.3).setScale(0.45, 0.45)
+      this.add.image(width - 130, height - 42, shad).setDepth(4).setAlpha(0.3).setScale(0.45, 0.45)
+      this.tweens.add({ targets: L, angle: { from: -4, to: 4 }, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      this.tweens.add({ targets: R, angle: { from: 4, to: -4 }, duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    }
+    if (this.textures.exists('prop-honey-stack')) {
+      this.add.image(200, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.7, 0.5)
+      this.add.image(200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1.3)
+      this.add.image(width - 200, height - 42, shad).setDepth(4).setAlpha(0.35).setScale(0.7, 0.5)
+      this.add.image(width - 200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1.3).setFlipX(true)
+    }
+    if (this.textures.exists('prop-bridge')) {
+      this.add.image(width / 2, height - 38, 'prop-bridge').setDepth(4).setScale(2.4).setAlpha(0.85)
+    }
 
     if (this.textures.exists('ui-noren')) {
-      this.add.image(40, 100, 'ui-noren').setScale(1.3)
-      this.add.image(width - 40, 100, 'ui-noren').setScale(1.3).setFlipX(true)
+      this.add.image(28, 90, 'ui-noren').setDepth(8).setScale(1.25)
+      this.add.image(width - 28, 90, 'ui-noren').setDepth(8).setScale(1.25).setFlipX(true)
     }
     if (this.textures.exists('ui-corner')) {
-      this.add.image(24, 24, 'ui-corner').setScale(1.2)
-      this.add.image(width - 24, 24, 'ui-corner').setScale(1.2).setFlipX(true)
+      this.add.image(22, 22, 'ui-corner').setDepth(9).setScale(1.2)
+      this.add.image(width - 22, 22, 'ui-corner').setDepth(9).setScale(1.2).setFlipX(true)
     }
 
+    for (let i = 0; i < 8; i++) {
+      const sx = 80 + i * 110 + (i % 3) * 20
+      const sy = 40 + (i % 4) * 28
+      const spark = this.add.circle(sx, sy, 2 + (i % 3), 0xffe08a, 0.55).setDepth(7)
+      this.tweens.add({
+        targets: spark,
+        y: sy - 14,
+        alpha: { from: 0.2, to: 0.85 },
+        duration: 1600 + i * 120,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+    }
+  }
+
+  private buildBrandHero(width: number, height: number) {
     const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
-    this.add.image(width / 2, 70, plaqueKey).setScale(plaqueKey === 'ui-title-plaque' ? 0.95 : 1.35)
-    this.add
-      .text(width / 2, 62, '鮭鮭熊', {
-        fontFamily: 'Mochiy Pop One, Noto Sans TC, sans-serif',
-        fontSize: '48px',
-        color: '#2a1810',
-        stroke: '#fff6d8',
-        strokeThickness: 3,
+    const plaque = this.add
+      .image(width / 2, 78, plaqueKey)
+      .setDepth(10)
+      .setScale(plaqueKey === 'ui-title-plaque' ? 1.15 : 1.5)
+
+    const brand = this.add
+      .text(width / 2, 68, '鮭鮭熊', {
+        fontFamily: 'Mochiy Pop One, Zen Maru Gothic, Noto Sans TC, sans-serif',
+        fontSize: '58px',
+        color: '#2a1408',
+        stroke: '#fff6d0',
+        strokeThickness: 5,
       })
       .setOrigin(0.5)
-    this.add
-      .text(width / 2, 102, '第一關・溪流小路　｜　奪回春蜜', {
+      .setDepth(11)
+
+    const sub = this.add
+      .text(width / 2, 112, '第一關・溪流小路　｜　奪回春蜜', {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '14px',
+        fontSize: '15px',
         color: '#5a3820',
       })
       .setOrigin(0.5)
+      .setDepth(11)
 
-    this.add.image(160, height - 95, 'art-salmon').setScale(2.4)
-    this.add.image(280, height - 105, 'art-bear').setScale(2.5)
-    this.add.image(width - 150, height - 100, 'art-girl').setScale(2.2)
-    if (this.textures.exists('prop-torii')) {
-      this.add.image(width / 2, height - 95, 'prop-torii').setScale(0.85).setAlpha(0.9)
+    this.tweens.add({
+      targets: [plaque, brand],
+      y: '+=4',
+      duration: 2200,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.inOut',
+    })
+    this.tweens.add({
+      targets: sub,
+      alpha: { from: 0.75, to: 1 },
+      duration: 1800,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.inOut',
+    })
+
+    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
+    const ly = height - 100
+    this.add.image(150, ly + 10, shad).setDepth(5).setAlpha(0.5).setScale(1.4, 0.7)
+    this.add.image(150, ly, 'art-salmon').setDepth(7).setScale(2.5)
+    this.add.image(270, ly + 8, shad).setDepth(5).setAlpha(0.45).setScale(1.5, 0.7)
+    this.add.image(270, ly - 4, 'art-bear').setDepth(7).setScale(2.55)
+    this.add.image(width - 150, ly + 8, shad).setDepth(5).setAlpha(0.45).setScale(1.3, 0.7)
+    this.add.image(width - 150, ly, 'art-girl').setDepth(7).setScale(2.3)
+    if (this.textures.exists('pot3d')) {
+      this.add.image(width / 2 + 90, ly + 28, 'pot3d').setDepth(6).setScale(1.7)
     }
+  }
 
+  private buildModeSelect(width: number) {
     const items = [
       { mode: '1p' as Mode, text: '１Ｐ　單人（琪寶寶＋噗噗同行）' },
       { mode: '2p' as Mode, text: '２Ｐ　雙人鍵盤同行同行' },
@@ -77,10 +196,11 @@ export class MainMenuScene extends Phaser.Scene {
     this.cursorsGfx = []
 
     items.forEach((item, i) => {
-      const y = 168 + i * 72
+      const y = 168 + i * 68
       const panelKey = this.textures.exists('ui-wood-panel') ? 'ui-wood-panel' : 'ui-scroll'
       const panel = this.add
         .image(width / 2, y, panelKey)
+        .setDepth(12)
         .setScale(panelKey === 'ui-wood-panel' ? 1.05 : 1.2)
       panel.setInteractive({ useHandCursor: true })
       panel.on('pointerover', () => {
@@ -97,54 +217,61 @@ export class MainMenuScene extends Phaser.Scene {
             fontSize: '22px',
             color: '#2a1810',
           })
-          .setOrigin(0.5),
+          .setOrigin(0.5)
+          .setDepth(13),
       )
 
       if (this.textures.exists('ui-cursor')) {
         this.cursorsGfx.push(
-          this.add.image(width / 2 - 200, y, 'ui-cursor').setScale(1.6).setVisible(false),
+          this.add.image(width / 2 - 200, y, 'ui-cursor').setDepth(13).setScale(1.6).setVisible(false),
         )
       }
     })
+  }
 
+  private buildFooter(width: number, height: number) {
     const scores = loadScores()
     const scoreLines =
       scores.length === 0
         ? '尚無紀錄'
         : scores
-            .slice(0, 5)
+            .slice(0, 4)
             .map(
               (s, i) =>
                 `${i + 1}. ${s.score}分　${s.timeSec.toFixed(0)}秒　蜜${s.honey}　${s.mode === '1p' ? '單人' : '雙人'}`,
             )
             .join('\n')
     this.add
-      .text(width / 2, 320, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width / 2, 308, `★ 高分榜 ★\n${scoreLines}`, {
         fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: '13px',
+        fontSize: '12px',
         color: '#f7e7c0',
-        backgroundColor: '#4a2a18dd',
-        padding: { x: 16, y: 10 },
+        backgroundColor: '#3a2210cc',
+        padding: { x: 14, y: 8 },
         align: 'center',
       })
       .setOrigin(0.5, 0)
+      .setDepth(12)
 
     this.add
       .text(
         width / 2,
-        height - 36,
-        '上下選擇　空白／Enter 開始\n倫寶：ＷＡＳＤ＋ＪＫＵＩ　｜　琪寶寶：方向鍵＋數字鍵１２４５　｜　噗噗：ＡＩ跟隨',
+        height - 22,
+        '上下選擇　空白／Enter 開始　｜　倫寶 WASD＋ＪＫ　琪寶寶 方向鍵＋１２　噗噗 跟隨',
         {
           fontFamily: 'Noto Sans TC, sans-serif',
-          fontSize: '12px',
+          fontSize: '11px',
           color: '#3a2818',
           align: 'center',
           backgroundColor: '#ffe8b0aa',
-          padding: { x: 10, y: 4 },
+          padding: { x: 10, y: 3 },
         },
       )
       .setOrigin(0.5)
+      .setDepth(12)
+  }
 
+  private wireInput() {
     const kb = this.input.keyboard!
     const onUp = () => {
       this.cursor = (this.cursor + this.modes.length - 1) % this.modes.length
@@ -174,8 +301,6 @@ export class MainMenuScene extends Phaser.Scene {
       unlockAudio()
       startBgm()
     })
-
-    this.refresh()
   }
 
   private refresh() {

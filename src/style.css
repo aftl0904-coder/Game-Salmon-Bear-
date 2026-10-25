@@ -1,12 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Noto+Sans+TC:wght@500;700&family=Zen+Maru+Gothic:wght@700&display=swap');
 
 :root {
   color-scheme: dark;
   --bg-deep: #2a1a10;
-  --bg-mid: #4a6a88;
+  --bg-mid: #4a7a98;
   --frame: #e8c070;
   --frame-inner: #8a4a24;
   --frame-outer: #3a2010;
+  --honey: #ffe08a;
+  --salmon: #e07a4f;
+  --creek: #6ab4e0;
 }
 
 * {
