@@ -418,13 +418,12 @@ export function registerIsoArt(scene: Phaser.Scene) {
 function registerLandmarkArt(scene: Phaser.Scene) {
   const ink: RGB = [22, 16, 20]
 
+  /** Multi-lobe mountain: unique silhouette, black outline, 3+ shade top-light. */
   function paintPeak(
     key: string,
     w: number,
     h: number,
-    peakX: number,
-    peakTop: number,
-    halfBase: number,
+    lobes: Array<{ px: number; top: number; half: number }>,
     lit: RGB,
     mid: RGB,
     shade: RGB,
@@ -432,53 +431,108 @@ function registerLandmarkArt(scene: Phaser.Scene) {
   ) {
     paint(scene, key, w, h, (set) => {
       const baseY = h - 4
-      // soft contact shadow
-      rect(set, peakX - halfBase + 4, h - 5, halfBase * 2 - 8, 4, ink, 90)
-      // silhouette (outline)
-      for (let y = peakTop; y < baseY; y++) {
-        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
-        const half = Math.max(2, Math.floor(halfBase * t) + 1)
-        rect(set, peakX - half - 1, y, half * 2 + 2, 1, ink)
+      const cover = (x: number, y: number) => {
+        for (const L of lobes) {
+          const t = (y - L.top) / Math.max(1, baseY - L.top)
+          if (t < 0 || t > 1) continue
+          const half = Math.max(1, Math.floor(L.half * t))
+          if (Math.abs(x - L.px) <= half) return { L, t, half, nx: (x - L.px) / Math.max(1, half) }
+        }
+        return null
       }
-      // body with top-light 3+ shades
-      for (let y = peakTop; y < baseY; y++) {
-        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
-        const half = Math.max(1, Math.floor(halfBase * t))
-        for (let x = peakX - half; x <= peakX + half; x++) {
-          const nx = (x - peakX) / Math.max(1, half)
+      // contact shadow under widest base
+      const minX = Math.min(...lobes.map((L) => L.px - L.half))
+      const maxX = Math.max(...lobes.map((L) => L.px + L.half))
+      rect(set, minX + 4, h - 5, maxX - minX - 8, 4, ink, 90)
+      // outline
+      for (let y = 0; y < baseY; y++) {
+        for (let x = 0; x < w; x++) {
+          if (!cover(x, y)) continue
+          if (!cover(x - 1, y) || !cover(x + 1, y) || !cover(x, y - 1) || !cover(x, y + 1)) {
+            set(x, y, ink)
+          }
+        }
+      }
+      // fill
+      for (let y = 0; y < baseY; y++) {
+        for (let x = 0; x < w; x++) {
+          const hit = cover(x, y)
+          if (!hit) continue
+          if (!cover(x - 1, y) || !cover(x + 1, y) || !cover(x, y - 1) || !cover(x, y + 1)) continue
           let c = mid
-          if (t < 0.18) c = lit
-          else if (t > 0.72) c = shade
-          else if (nx < -0.35) c = lit
-          else if (nx > 0.45) c = shade
-          const ridge = Math.abs(nx) < 0.12 && t < 0.55 ? 1.12 : 1
-          set(x, y, shadeRGB(c, ridge - t * 0.08))
+          if (hit.t < 0.16) c = lit
+          else if (hit.t > 0.7) c = shade
+          else if (hit.nx < -0.35) c = lit
+          else if (hit.nx > 0.42) c = shade
+          const ridge = Math.abs(hit.nx) < 0.1 && hit.t < 0.5 ? 1.14 : 1
+          set(x, y, shadeRGB(c, ridge - hit.t * 0.1))
         }
       }
       if (snow) {
-        const snowH = Math.max(4, Math.floor((baseY - peakTop) * 0.16))
-        for (let y = peakTop; y < peakTop + snowH; y++) {
-          const t = (y - peakTop) / snowH
-          const half = Math.max(1, Math.floor(halfBase * ((y - peakTop) / Math.max(1, baseY - peakTop))))
-          rect(set, peakX - half, y, half * 2 + 1, 1, shadeRGB([245, 250, 255], 1.05 - t * 0.15))
-          set(peakX - half, y, [210, 220, 230])
+        for (const L of lobes) {
+          const snowH = Math.max(5, Math.floor((baseY - L.top) * 0.18))
+          for (let y = L.top; y < L.top + snowH; y++) {
+            const t = (y - L.top) / Math.max(1, baseY - L.top)
+            const half = Math.max(1, Math.floor(L.half * t) - 1)
+            for (let x = L.px - half; x <= L.px + half; x++) {
+              if (!cover(x, y)) continue
+              const st = (y - L.top) / snowH
+              set(x, y, shadeRGB([248, 252, 255], 1.05 - st * 0.2))
+            }
+          }
         }
-      }
-      // left highlight rim / right dark rim
-      for (let y = peakTop + 2; y < baseY - 2; y++) {
-        const t = (y - peakTop) / Math.max(1, baseY - peakTop)
-        const half = Math.max(1, Math.floor(halfBase * t))
-        set(peakX - half, y, shadeRGB(lit, 1.15))
-        set(peakX + half, y, shadeRGB(shade, 0.85))
       }
     })
   }
 
-  // Four unique mountains (far→near hues / silhouettes)
-  paintPeak('lm-mount-1', 96, 88, 48, 10, 40, [150, 190, 175], [110, 155, 145], [70, 110, 115])
-  paintPeak('lm-mount-2', 112, 96, 58, 6, 48, [165, 185, 200], [120, 150, 165], [75, 105, 125])
-  paintPeak('lm-mount-3', 80, 72, 38, 12, 34, [130, 185, 120], [85, 150, 95], [45, 105, 70], false)
-  paintPeak('lm-mount-4', 100, 80, 52, 8, 42, [145, 175, 130], [95, 145, 105], [55, 100, 75])
+  // Four unique mountains — different lobe layouts / hues
+  paintPeak(
+    'lm-mount-1',
+    104,
+    88,
+    [
+      { px: 36, top: 22, half: 28 },
+      { px: 68, top: 10, half: 34 },
+    ],
+    [150, 190, 175],
+    [110, 155, 145],
+    [70, 110, 115],
+  )
+  paintPeak(
+    'lm-mount-2',
+    120,
+    96,
+    [{ px: 60, top: 6, half: 52 }],
+    [165, 185, 200],
+    [120, 150, 165],
+    [75, 105, 125],
+  )
+  paintPeak(
+    'lm-mount-3',
+    88,
+    72,
+    [
+      { px: 28, top: 14, half: 26 },
+      { px: 58, top: 24, half: 22 },
+    ],
+    [130, 185, 120],
+    [85, 150, 95],
+    [45, 105, 70],
+    false,
+  )
+  paintPeak(
+    'lm-mount-4',
+    108,
+    84,
+    [
+      { px: 30, top: 28, half: 24 },
+      { px: 55, top: 8, half: 30 },
+      { px: 82, top: 20, half: 26 },
+    ],
+    [145, 175, 130],
+    [95, 145, 105],
+    [55, 100, 75],
+  )
 
   function paintCloud(
     key: string,

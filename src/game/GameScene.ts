@@ -949,23 +949,21 @@ export class GameScene extends Phaser.Scene {
     snapTilePosition(this.water, sx * 0.45 + t * 0.025)
     snapTilePosition(this.waterMid, sx * 0.5 + t * 0.032)
     snapTilePosition(this.waterFoam, sx * 0.55 + t * 0.04)
-    // Discrete landmarks stay in the sky band (scrollFactor 0) with soft wrap.
-    const wrap = (base: number, rate: number, span: number) => {
-      let x = base - sx * rate
-      x = ((x % span) + span) % span
-      return Math.round(x)
-    }
+    // Discrete landmarks stay in the sky band (scrollFactor 0).
+    // Clouds soft-wrap; mountains drift slowly without re-tiling into a band.
     for (let i = 0; i < this.bgClouds.length; i++) {
       const c = this.bgClouds[i]
       const base = (c.getData('baseX') as number) ?? c.x
       const rate = (c.getData('parallax') as number) ?? 0.08
-      c.x = wrap(base + Math.sin(t * 0.00035 + i) * 6, rate, 1200) - 80
+      let x = base - sx * rate + Math.sin(t * 0.00035 + i) * 6
+      x = ((x % 1200) + 1200) % 1200 - 80
+      c.x = Math.round(x)
     }
     for (let i = 0; i < this.bgMounts.length; i++) {
       const m = this.bgMounts[i]
       const base = (m.getData('baseX') as number) ?? m.x
-      const rate = (m.getData('parallax') as number) ?? 0.18
-      m.x = wrap(base, rate, 1400) - 100
+      const rate = (m.getData('parallax') as number) ?? 0.12
+      m.x = Math.round(base - sx * rate)
     }
   }
 
@@ -1081,12 +1079,12 @@ export class GameScene extends Phaser.Scene {
       this.bgClouds.push(img)
     }
 
-    // --- 4 unique mountains (far→near) ---
+    // --- 4 unique mountains (far→near), spaced so they never read as a tiled strip ---
     const mountSpecs: Array<{ key: string; x: number; y: number; s: number; flip?: boolean; p: number; d: number }> = [
-      { key: 'lm-mount-2', x: 180, y: 268, s: 1.55, p: 0.1, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-1', x: 520, y: 278, s: 1.35, flip: true, p: 0.12, d: DEPTH.MOUNT_FAR },
-      { key: 'lm-mount-4', x: 860, y: 300, s: 1.45, p: 0.2, d: DEPTH.MOUNT_NEAR },
-      { key: 'lm-mount-3', x: 1180, y: 312, s: 1.25, flip: true, p: 0.24, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-2', x: 210, y: 270, s: 1.6, p: 0.07, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-1', x: 520, y: 282, s: 1.4, flip: true, p: 0.09, d: DEPTH.MOUNT_FAR },
+      { key: 'lm-mount-4', x: 820, y: 305, s: 1.5, p: 0.14, d: DEPTH.MOUNT_NEAR },
+      { key: 'lm-mount-3', x: 1120, y: 318, s: 1.3, flip: true, p: 0.17, d: DEPTH.MOUNT_NEAR },
     ]
     for (const m of mountSpecs) {
       if (!this.textures.exists(m.key)) continue
@@ -1105,32 +1103,32 @@ export class GameScene extends Phaser.Scene {
     }
 
     // --- Ground landmarks (world-space, with contact shadows) ---
-    // Few trees
-    this.placeDecor(160, 'prop-tree3d', 1.2, 1.15)
-    this.placeDecor(680, 'prop-tree3d', 1.05, 1.0, true)
-    this.placeDecor(1480, 'prop-tree3d', 1.25, 1.2)
-    this.placeDecor(2480, 'prop-tree3d', 1.1, 1.05)
-    // 1 torii
-    this.placeDecor(420, 'prop-torii', 1.15, 1.7)
+    // Few trees (4)
+    this.placeDecor(150, 'prop-tree3d', 1.25, 1.2)
+    this.placeDecor(620, 'prop-tree3d', 1.05, 1.0, true)
+    this.placeDecor(1320, 'prop-tree3d', 1.2, 1.15)
+    this.placeDecor(2360, 'prop-tree3d', 1.1, 1.05)
+    // 1 torii — near opening beat so it reads as a landmark
+    this.placeDecor(455, 'prop-torii', 1.2, 1.75)
     // 1 house
-    this.placeDecor(980, 'prop-house3d', 1.25, 1.4)
-    // Optional: 1 bridge + little river
+    this.placeDecor(1050, 'prop-house3d', 1.3, 1.45)
+    // Optional: 1 bridge + little river (mid opening)
     if (this.textures.exists('lm-river')) {
       const river = this.add
-        .image(720, GROUND_Y + 10, 'lm-river')
+        .image(760, GROUND_Y + 12, 'lm-river')
         .setOrigin(0.5, 0.5)
         .setDepth(DEPTH.PROP_SHADOW - 0.1)
-        .setScale(1.8, 1.1)
-        .setAlpha(0.85)
+        .setScale(1.9, 1.15)
+        .setAlpha(0.88)
       enablePixelSprite(river)
     }
     if (this.textures.exists('prop-bridge')) {
-      this.add.image(720, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.45).setScale(1.9, 0.5)
+      this.add.image(760, GROUND_Y + 7, 'shad').setDepth(DEPTH.PROP_SHADOW).setAlpha(0.5).setScale(2.0, 0.55)
       const br = this.add
-        .image(720, GROUND_Y + 2, 'prop-bridge')
+        .image(760, GROUND_Y + 2, 'prop-bridge')
         .setOrigin(0.5, 1)
         .setDepth(DEPTH.PROP)
-        .setScale(1.65)
+        .setScale(1.75)
       enablePixelSprite(br)
     }
   }
