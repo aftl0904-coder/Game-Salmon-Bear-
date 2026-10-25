@@ -37,7 +37,7 @@ try {
     if (!sc) return
     sc.started = true
     sc.children?.list?.forEach?.((o) => {
-      if (o.type === 'Container' && o.depth > 1000) o.destroy(true)
+      if (o.type === 'Container' && o.depth > 1000) o.setVisible(false)
     })
   })
   say('force-started play (story A-skip: 未能實測 headless JustDown)')
@@ -45,16 +45,16 @@ try {
   await page.screenshot({ path: path.join(OUT, '01_play_start.png') })
 
   const standing = await page.evaluate(() => {
-    const b = window.__SAKE_GAME__?.scene?.getScene('play')?.boy
-    const g = window.__SAKE_GAME__
+    const sc = window.__SAKE_GAME__?.scene?.getScene('play')
+    const b = sc?.boy
     return {
       bodyH: b?.body?.height,
       bodyW: b?.body?.width,
       crouching: !!b?.crouching,
       moveSpeed: b?.moveSpeed,
       lane: b?.lane,
-      gravity: g?.physics?.world?.gravity?.y,
-      game: { w: g?.scale?.width, h: g?.scale?.height },
+      gravity: sc?.physics?.world?.gravity?.y,
+      game: { w: window.__SAKE_GAME__?.scale?.width, h: window.__SAKE_GAME__?.scale?.height },
     }
   })
   say(`standing ${JSON.stringify(standing)}`)
@@ -62,7 +62,10 @@ try {
   // Crouch via player API (authoritative) + screenshot
   await page.evaluate(() => {
     const sc = window.__SAKE_GAME__?.scene?.getScene('play')
-    sc?.boy?.updatePlayer(16, {
+    const b = sc?.boy
+    if (!b) return
+    b.snapToLane(0, b.x)
+    b.updatePlayer(16, {
       left: false, right: false, jumpJust: false, jumpHeld: false,
       attackJust: false, crouchHeld: true, now: sc.time.now,
     })

@@ -328,11 +328,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       // Early release → tap height (~24px). Hold through apex → full (~48px).
       if (!opts.jumpHeld && !this.jumpCutApplied && body.velocity.y < -40) {
         const tapV = tapApexVelocity()
-        const cutV = body.velocity.y * PLAYER.jump.releaseCut
-        // Prefer targetHeightPx.tap; releaseCut softens only if higher than tap.
-        this.setVelocityY(Math.max(cutV, tapV))
+        // Mario-style: clamp upward speed so remaining apex ≈ targetHeightPx.tap
+        if (body.velocity.y < tapV) this.setVelocityY(tapV)
         this.jumpCutApplied = true
       }
+      void PLAYER.jump.releaseCut
       void PLAYER.jump.holdMaxMs
     }
 
