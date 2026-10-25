@@ -72,6 +72,9 @@ export class BootScene extends Phaser.Scene {
     this.load.image('art-girl', '/art/bear-girl.png')
     this.load.image('art-bear', '/art/kind-bear.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')
+    // Pretty wallpaper 貼圖 — Flash/phone look without hand-building mountains
+    this.load.image('bg-wallpaper', '/art/bg-wallpaper.jpg')
+    this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
     preloadRound1Map(this)
   }
 

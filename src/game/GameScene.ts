@@ -1590,45 +1590,43 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawWorld() {
-    // Layer 0 — soft base only: gradient sky + sun + horizon wash (no tiled mountain strips).
+    // Prefer generated wallpaper 貼圖 (pretty Flash/phone look) over hand-built mountains.
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x6ab4e0, 1)
     g.fillRect(0, 0, WORLD_W, WORLD_H)
-    g.fillStyle(0xa8d8f5, 1)
-    g.fillRect(0, 0, WORLD_W, 160)
-    g.fillStyle(0xffe8b0, 0.42)
-    g.fillRect(0, 170, WORLD_W, 180)
-    g.fillStyle(0xfff6d0, 0.55)
-    g.fillCircle(160, 70, 78)
-    g.fillStyle(0xffe08a, 1)
-    g.fillCircle(160, 70, 30)
-    // Simple horizon line washes (not a busy mountain band).
-    g.fillStyle(0xc8dce8, 0.35)
-    g.fillRect(0, 248, WORLD_W, 10)
-    g.fillStyle(0xb8c8a8, 0.28)
-    g.fillRect(0, 256, WORLD_W, 18)
-
-    if (this.textures.exists('bg-sky')) {
-      const sky = this.add
-        .tileSprite(480, 100, 960, 200, 'bg-sky')
-        .setScrollFactor(0)
-        .setDepth(DEPTH.SKY_BAND)
-        .setAlpha(0.4)
-      enablePixelSprite(sky)
-    }
-    if (this.textures.exists('bg-horizon')) {
-      const hz = this.add
-        .tileSprite(480, 262, 960, 32, 'bg-horizon')
-        .setScrollFactor(0)
-        .setDepth(DEPTH.SKY_BAND + 1)
-        .setAlpha(1)
-        .setTint(BG_PALE_TINT)
-      enablePixelSprite(hz)
-    }
 
     this.bgClouds = []
     this.bgMounts = []
-    this.placeSparseLandmarks()
+
+    if (this.textures.exists('bg-wallpaper')) {
+      // Single pretty wallpaper 貼圖 — light scroll only (no hand-built mountains).
+      this.add
+        .image(480, 210, 'bg-wallpaper')
+        .setScrollFactor(0.03, 0)
+        .setDepth(DEPTH.SKY_BAND)
+        .setDisplaySize(1100, 460)
+        .setAlpha(0.96)
+      if (this.textures.exists('bg-sky-wallpaper')) {
+        this.add
+          .image(480, 88, 'bg-sky-wallpaper')
+          .setScrollFactor(0)
+          .setDepth(DEPTH.CLOUD)
+          .setDisplaySize(980, 210)
+          .setAlpha(0.5)
+      }
+      this.placeBgDecor(stageX(700), 'prop-tree3d', 1.0, true)
+      this.placeBgDecor(stageX(1400), 'prop-tree3d', 1.1)
+      this.placeBgDecor(stageX(2500), 'prop-tree3d', 1.05)
+      this.placeBgDecor(stageX(3800), 'prop-tree3d', 1.1, true)
+      this.placeCampsite(stageX(520))
+      this.placeCampsite(stageX(2100))
+      this.placeCampsite(stageX(4200))
+      this.spawnAmbientCritters()
+    } else {
+      g.fillStyle(0xa8d8f5, 1)
+      g.fillRect(0, 0, WORLD_W, 160)
+      this.placeSparseLandmarks()
+    }
 
     // Background creek band — taller + layered so it reads as a flowing river.
     const bank = this.add.graphics().setScrollFactor(0).setDepth(DEPTH.WATER_DEEP - 1)
