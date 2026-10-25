@@ -862,5 +862,125 @@
     "rows": 1,
     "facing": "front",
     "prompt": "magenta portraits 3 expr 蜜冠女王蜂."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 beesoldier fly 4 frames magenta #FF00FF facing RIGHT. Yellow+purple striped bee white wings purple stinger. Wing flap only no weapon. Native 40px 8× NN. Same size every sheet. Ref: art-src/gen/bee-soldier.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/aim.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 aim 3 frames magenta facing RIGHT. Stinger lowers body tilts down. Same 40px bee design/size. Ref bee-soldier + fly sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/dive.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 dive 3 frames magenta facing RIGHT. Dive diagonally down-right speed lines. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/stuck.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 stuck 3 frames magenta facing RIGHT. Stinger stuck in ground wiggling. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 hit 2 frames magenta facing RIGHT. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 die 4 frames magenta facing RIGHT. Spin fall then poof. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 zombiesquirrel walk 4 frames magenta facing RIGHT. Brown squirrel glowing yellow eyes dripping fake honey shambling. Native 44px 8× NN. Ref zombie-squirrel.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/lunge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 lunge 3 frames magenta facing RIGHT. Arms out. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 hit 2 frames magenta facing RIGHT. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 die 4 frames magenta facing RIGHT. Collapse into honey puddle then dries. Same 44px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/fly.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee fly 3 frames magenta facing RIGHT. Tiny yellow-purple bee native 20px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/die.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee die 3 frames magenta facing RIGHT. Same 20px size."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/idle.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Fake-honey egg idle 2 frames magenta pulsing amber egg purple spots."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/hatch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg hatch 4 frames magenta. Cracks mini bee pops facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/break.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg break 3 frames magenta shattered by attack."
   }
 ]
