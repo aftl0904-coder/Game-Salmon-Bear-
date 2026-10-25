@@ -48,7 +48,7 @@ try {
   await page.waitForSelector('[data-testid="sec-palette"]')
   const awaiting = await page.locator('[data-testid="palette-awaiting"]').count()
   say(`palette awaiting badge: ${awaiting > 0}`)
-  const swatches = await page.locator('[data-testid^="swatch-"]').count()
+  const swatches = await page.locator('.swatch-grid .swatch').count()
   say(`swatch count: ${swatches}`)
   if (swatches !== 32) throw new Error(`expected 32 swatches, got ${swatches}`)
   for (const id of ['ST-01', 'ST-02', 'ST-03', 'ST-04', 'ST-05']) {
