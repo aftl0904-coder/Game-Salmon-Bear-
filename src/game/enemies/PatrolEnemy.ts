@@ -1,6 +1,9 @@
 import Phaser from 'phaser'
 import { bindFootBody } from '../footBody'
 import {
+  LANE_DEFAULT, clampLane, inLaneBand, laneDepth, laneY, type LaneId,
+} from '../engine/lanes'
+import {
   type EnemyKind,
   type EnemySpecies,
   type EnemyState,
@@ -44,15 +47,19 @@ export class PatrolEnemy extends Enemy {
       species?: EnemySpecies
       ground?: Phaser.Physics.Arcade.StaticGroup
       hooks?: EnemyHooks
+      lane?: LaneId
     } = {},
   ): PatrolEnemy {
     const st = KIND_STATS[kind]
     const spKey = opts.species ?? defaultSpecies(kind)
     const sp = SPECIES_STATS[spKey]
     const tex = scene.textures.exists(sp.tex) ? sp.tex : 'art-enemy'
-    const e = new PatrolEnemy(scene, x, y, tex)
+    const lane = clampLane(opts.lane ?? (inLaneBand(y) ? LANE_DEFAULT : 0))
+    const feetY = inLaneBand(y) ? laneY(lane) : y
+    const e = new PatrolEnemy(scene, x, feetY, tex)
     e.kind = kind
     e.species = spKey
+    e.lane = lane
     e.hp = st.hp
     e.maxHp = st.hp
     e.atkCd = Phaser.Math.Between(300, 800)
@@ -61,7 +68,7 @@ export class PatrolEnemy extends Enemy {
     e.patrolMin = x - span
     e.patrolMax = x + span
     e.homeX = x
-    e.homeY = y
+    e.homeY = feetY
     e.guardX = opts.guardX ?? x
     e.hopCd = Phaser.Math.Between(200, 600)
     e.boss = kind === 'boss'
@@ -74,26 +81,21 @@ export class PatrolEnemy extends Enemy {
     e.groundGroup = opts.ground ?? null
     e.hooks = opts.hooks ?? {}
     e.setCollideWorldBounds(true)
-    e.setDepth(6)
+    e.setDepth(laneDepth(6, lane))
     e.setScale(e.baseScale)
     if (spKey === 'fish' && st.tint) e.setTint(st.tint)
     bindFootBody(e, {
       bodyW: spKey === 'barrel' ? 22 : 20,
       bodyH: spKey === 'barrel' ? 28 : 22,
     })
+    const body = e.body as Phaser.Physics.Arcade.Body
+    if (inLaneBand(feetY)) {
+      body.allowGravity = false
+      e.setY(laneY(lane))
+    }
     e.setFsm('PATROL')
     group.add(e)
-    const labelText = kind === 'boss' ? st.label : sp.label
-    e.label = scene.add
-      .text(x, y - 44, labelText, {
-        fontFamily: 'Noto Sans TC, sans-serif',
-        fontSize: kind === 'boss' ? '14px' : '11px',
-        color: '#fff4e0',
-        backgroundColor: spKey === 'barrel' ? '#3a2818cc' : '#301820cc',
-        padding: { x: 4, y: 1 },
-      })
-      .setOrigin(0.5)
-      .setDepth(12)
+    e.label = undefined
     return e
   }
 
@@ -146,18 +148,7 @@ export class PatrolEnemy extends Enemy {
     const body = this.body as Phaser.Physics.Arcade.Body | null
     if (!body) return
 
-    if (this.label?.active) {
-      this.label.setPosition(this.x, this.y - (this.kind === 'boss' ? 56 : 40))
-      this.label.setText(
-        this.kind === 'boss'
-          ? this.phase === 1
-            ? '武者・壹'
-            : this.phase === 2
-              ? '武者・貳'
-              : '武者・參'
-          : sp.label,
-      )
-    }
+    this.holdLaneFloor(body)
 
     if (this.fsm === 'HURT') {
       this.applyPose()
@@ -447,6 +438,16 @@ export class PatrolEnemy extends Enemy {
     }
   }
 
+  private holdLaneFloor(body: Phaser.Physics.Arcade.Body) {
+    if (!inLaneBand(this.homeY) && !inLaneBand(this.y)) return
+    const airborne = Math.abs(body.velocity.y) > 40 || body.velocity.y < -10
+    if (airborne) { body.allowGravity = true; return }
+    const target = laneY(this.lane)
+    if (this.y > target + 2 || (body.velocity.y >= 0 && this.y >= target - 2)) {
+      this.setY(target); body.velocity.y = 0; body.allowGravity = false
+    }
+    this.setDepth(laneDepth(6, this.lane))
+  }
   private applyPose() {
     // Integer baseScale + angle-only feedback — NEAREST shreds non-uniform scale.
     const q = (ang = 0) => {

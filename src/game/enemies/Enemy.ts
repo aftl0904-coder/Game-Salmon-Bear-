@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { LANE_DEFAULT, type LaneId } from '../engine/lanes'
 
 /** Expandable enemy FSM (macro states). */
 export type EnemyFsm = 'PATROL' | 'CHASE' | 'ATTACK' | 'HURT' | 'DEAD'
@@ -32,6 +33,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   think = 0
   poseAngle = 0
   label?: Phaser.GameObjects.Text
+  lane: LaneId = LANE_DEFAULT
   hooks: EnemyHooks = {}
   groundGroup: Phaser.Physics.Arcade.StaticGroup | null = null
   /** Opening blocker: auto-aggro when heroes enter radius. */
@@ -137,7 +139,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected reverseIfBlockedOrCliff() {
-    if (this.hitWallAhead() || !this.hasGroundAhead()) {
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    const laneWalk = body && !body.allowGravity
+    if (this.hitWallAhead() || (!laneWalk && !this.hasGroundAhead())) {
       this.patrolDir = (this.patrolDir === 1 ? -1 : 1) as 1 | -1
     }
   }
@@ -146,8 +150,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 }
 
 export type EnemyTickCtx = {
-  boy: { x: number; y: number; active: boolean }
-  girl: { x: number; y: number; active: boolean }
+  boy: { x: number; y: number; active: boolean; lane?: number }
+  girl: { x: number; y: number; active: boolean; lane?: number }
   leadX: number
   prevLeadX: number
 }

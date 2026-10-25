@@ -55,11 +55,12 @@ export type Creep = Phaser.Physics.Arcade.Sprite & {
   baseScale: number
   poseAngle: number
   label?: Phaser.GameObjects.Text
+  lane?: number
   boss?: boolean
   elite?: boolean
 }
 
-export type HeroRef = { x: number; y: number; active: boolean }
+export type HeroRef = { x: number; y: number; active: boolean; lane?: number }
 
 type KindStats = {
   hp: number
@@ -167,12 +168,16 @@ function effectiveStats(e: Creep): KindStats {
 }
 
 export function pickTarget(
-  e: { x: number; y: number },
+  e: { x: number; y: number; lane?: number },
   boy: HeroRef,
   girl: HeroRef,
 ): HeroRef {
-  const db = Phaser.Math.Distance.Between(e.x, e.y, boy.x, boy.y)
-  const dg = Phaser.Math.Distance.Between(e.x, e.y, girl.x, girl.y)
+  const laneScore = (h: HeroRef) => {
+    if (e.lane === undefined || h.lane === undefined) return 0
+    return e.lane === h.lane ? -80 : 40
+  }
+  const db = Phaser.Math.Distance.Between(e.x, e.y, boy.x, boy.y) + laneScore(boy)
+  const dg = Phaser.Math.Distance.Between(e.x, e.y, girl.x, girl.y) + laneScore(girl)
   if (Math.abs(db - dg) < 40) return boy.x >= girl.x ? boy : girl
   return db < dg ? boy : girl
 }
@@ -294,14 +299,7 @@ export function tickEnemy(e: Creep, ctx: AiCtx) {
   const patrolSpd = st.patrolSpd * mul.spd
   const body = e.body as Phaser.Physics.Arcade.Body
 
-  if (e.label?.active) {
-    e.label.setPosition(e.x, e.y - (e.kind === 'boss' ? 56 : 40))
-    if (e.kind === 'boss') {
-      e.label.setText(e.phase === 1 ? '武者・壹' : e.phase === 2 ? '武者・貳' : '武者・參')
-    } else {
-      e.label.setText(sp.label)
-    }
-  }
+  // Enemy names hidden.
 
   if (e.state === 'hurt') {
     applyPose(e)
