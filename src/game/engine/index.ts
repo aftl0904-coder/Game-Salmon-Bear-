@@ -1,4 +1,5 @@
 export * from './constants'
+export * from './lanes'
 export * from './collision'
 export * from './combat'
 export * from './entities'

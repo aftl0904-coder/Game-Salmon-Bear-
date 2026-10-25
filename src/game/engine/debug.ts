@@ -91,10 +91,11 @@ export class DebugOverlay {
       const vx = body?.velocity.x ?? 0
       const vy = body?.velocity.y ?? 0
       const g = body ? isGrounded(body) : false
+      const lane = (h as { lane?: number }).lane
       this.label(
         h.x,
         h.y - 52,
-        `${h.role ?? 'hero'} ${h.pose ?? '?'} hp${h.hp ?? '?'} ${g ? 'G' : 'A'}\nv=(${vx.toFixed(0)},${vy.toFixed(0)})`,
+        `${h.role ?? 'hero'} L${lane ?? '?'} ${h.pose ?? '?'} hp${h.hp ?? '?'} ${g ? 'G' : 'A'}\nv=(${vx.toFixed(0)},${vy.toFixed(0)})`,
         '#a8ffc8',
       )
     }
@@ -113,7 +114,7 @@ export class DebugOverlay {
       this.label(
         e.x,
         e.y - 58,
-        `${e.kind}/${e.species} ${enemyFsmLabel(e)}/${e.state}\nhp${e.hp}/${e.maxHp} v=(${vx.toFixed(0)},${vy.toFixed(0)})`,
+        `${e.kind}/${e.species} L${e.lane ?? '?'}\n${enemyFsmLabel(e)}/${e.state} hp${e.hp}/${e.maxHp}\nv=(${vx.toFixed(0)},${vy.toFixed(0)})`,
         '#ffe08a',
       )
     }

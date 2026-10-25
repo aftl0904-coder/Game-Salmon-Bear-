@@ -1,10 +1,26 @@
 import type Phaser from 'phaser'
 import { GROUND_Y } from './constants'
+import { inLaneBand } from './lanes'
 
 /** True when arcade body is supported from below (tile / static collider). */
 export function isGrounded(body: Phaser.Physics.Arcade.Body | null | undefined): boolean {
   if (!body) return false
   return body.blocked.down || body.touching.down
+}
+
+/**
+ * Lane-floor grounded: collider under feet OR lane-walk mode (gravity off on band).
+ */
+export function isLaneGrounded(
+  body: Phaser.Physics.Arcade.Body | null | undefined,
+  feetYVal: number,
+  laneJumping: boolean,
+): boolean {
+  if (!body) return false
+  if (laneJumping) return false
+  if (isGrounded(body)) return true
+  if (!body.allowGravity && inLaneBand(feetYVal)) return true
+  return false
 }
 
 /** Feet Y for a foot-origin sprite (originY === 1 → sprite.y is feet). */
@@ -18,8 +34,8 @@ export function bodyBottom(body: Phaser.Physics.Arcade.Body): number {
 }
 
 /**
- * Snap a foot-origin actor onto the shared ground plane and zero vertical velocity.
- * Used after fall-respawn / coin-continue so heroes & enemies share the same plane.
+ * Snap a foot-origin actor onto a walk surface and zero vy.
+ * Used after fall-respawn / coin-continue.
  */
 export function snapToGroundPlane(
   sprite: Phaser.Physics.Arcade.Sprite,
@@ -31,6 +47,7 @@ export function snapToGroundPlane(
   if (body) {
     body.velocity.y = 0
     body.blocked.down = true
+    if (inLaneBand(surfaceY)) body.allowGravity = false
   }
 }
 

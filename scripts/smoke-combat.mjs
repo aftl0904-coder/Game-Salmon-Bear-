@@ -112,21 +112,31 @@ try {
   if (!plane.textures.includes('art-enemy') || !plane.textures.includes('art-enemy-barrel')) {
     throw new Error(`need two enemy textures, got ${JSON.stringify(plane.textures)}`)
   }
-  if (!plane.labels.some((t) => t.includes('醃魚')) || !plane.labels.some((t) => t.includes('木桶'))) {
-    throw new Error(`need 繁中 labels 醃魚/木桶, got ${JSON.stringify(plane.labels)}`)
+  if (plane.labels && plane.labels.length > 0) {
+    throw new Error(`enemy names must be hidden, got ${JSON.stringify(plane.labels)}`)
   }
-  console.log('two enemy types ok', plane.species, plane.textures)
+  console.log('two enemy types ok (names hidden)', plane.species, plane.textures)
 
+  const laneInfo = await page.evaluate(() => {
+    const play = window.__SAKE_GAME__.scene.getScene('play')
+    const all = play.enemies.getChildren().filter((e) => e.active)
+    return {
+      boyLane: play.boy.lane,
+      girlLane: play.girl.lane,
+      boyY: play.boy.y,
+      enemyLanes: [...new Set(all.map((e) => e.lane))],
+      anyLabel: all.some((e) => e.label?.active && e.label?.text),
+    }
+  })
+  console.log('lanes', JSON.stringify(laneInfo))
   if (plane.boy.originY !== 1 || plane.girl.originY !== 1) throw new Error('foot origin missing')
   if (plane.boy.hp !== 10 || plane.girl.hp !== 10) throw new Error(`HP expected 10 got ${plane.boy.hp}/${plane.girl.hp}`)
-  if (!plane.boy.blockedDown || !plane.girl.blockedDown) throw new Error('heroes not grounded')
-  // only compare grounded foes (barrels may be mid-hop)
-  const groundedE = plane.enemies.filter((e) => e.blockedDown)
-  const bottoms = [plane.boy.bodyBottom, plane.girl.bodyBottom, ...groundedE.map((e) => e.bodyBottom)]
-  const span = Math.max(...bottoms) - Math.min(...bottoms)
-  if (span > 10) throw new Error(`ground plane mismatch span=${span}`)
-  if (plane.boy.bodyBottom > 500) throw new Error('hero on world floor')
-  console.log('ground plane ok span', span.toFixed(2), 'groundedEnemies', groundedE.length)
+  if (laneInfo.boyLane !== 1 || laneInfo.girlLane !== 1) throw new Error(`heroes should start mid lane`)
+  if (laneInfo.enemyLanes.length < 2) throw new Error(`need multi-lane enemies`)
+  if (laneInfo.anyLabel) throw new Error('enemy label still visible')
+  if (Math.abs(laneInfo.boyY - 400) > 8) throw new Error(`boy not on mid lane Y=${laneInfo.boyY}`)
+  if (plane.boy.bodyBottom > 520) throw new Error('hero on world floor')
+  console.log('lane system ok', laneInfo.enemyLanes)
 
   const hurt = await page.evaluate(() => {
     const play = window.__SAKE_GAME__.scene.getScene('play')

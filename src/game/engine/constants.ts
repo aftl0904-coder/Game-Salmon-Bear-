@@ -3,7 +3,7 @@
 export const WORLD_W = 3800
 export const WORLD_H = 540
 
-/** Shared walk surface — heroes & enemies share this Y (feet origin). */
+/** Shared mid-lane walk surface (feet origin). Side-view dual uses LANE_Y[3]. */
 export const GROUND_Y = 400
 
 export const MAX_HP = 10
