@@ -1,0 +1,55 @@
+{
+ "frameWidth": 172,
+ "frameHeight": 157,
+ "anchorX": 86,
+ "anims": {
+  "hover": {
+   "start": 0,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "summon": {
+   "start": 4,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "land": {
+   "start": 8,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "lay-eggs": {
+   "start": 11,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "spray": {
+   "start": 15,
+   "count": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "weak": {
+   "start": 19,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "hurt": {
+   "start": 22,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "defeat": {
+   "start": 24,
+   "count": 5,
+   "fps": 6,
+   "loop": false
+  }
+ }
+}

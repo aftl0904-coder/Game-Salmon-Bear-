@@ -274,6 +274,230 @@
           "sub": "下一站：蜜樹丘"
         }
       ]
+    },
+    "C3": {
+      "title": "第 2 關前・上山",
+      "stage": "tree",
+      "steps": [
+        {
+          "music": "stop"
+        },
+        {
+          "still": "c2-bike"
+        },
+        {
+          "say": "narr",
+          "text": "咖啡媽媽借咗兩架單車俾佢哋。一路踩，一路上斜。"
+        },
+        {
+          "say": "kibobo",
+          "text": "噗噗，坐穩啲呀，就快到喇。",
+          "face": 1
+        },
+        {
+          "say": "pupu",
+          "text": "……"
+        },
+        {
+          "say": "lunbo",
+          "text": "前面嗰棵大樹……發緊光？",
+          "face": 2
+        },
+        {
+          "still": null
+        },
+        {
+          "actor": "lunbo",
+          "x": 220
+        },
+        {
+          "actor": "pupu",
+          "x": 300,
+          "grey": true
+        },
+        {
+          "actor": "kibobo",
+          "x": 360,
+          "flip": true
+        },
+        {
+          "sfx": "dread"
+        },
+        {
+          "fx": "shadow"
+        },
+        {
+          "say": "narr",
+          "text": "樹身入面成片嗡嗡聲。啲蜂巢流出嚟嘅蜜，黃得好唔自然。"
+        },
+        {
+          "say": "kibobo",
+          "text": "係假蜂蜜……好似黐住噗噗嗰啲一樣。",
+          "face": 2
+        },
+        {
+          "say": "lunbo",
+          "text": "睇住頭頂啲蜜滴，黐到腳就行唔郁。"
+        },
+        {
+          "say": "kibobo",
+          "text": "風口我嚟！把扇一開，我飄得上最高嗰格。",
+          "face": 1
+        },
+        {
+          "card": "第二關",
+          "sub": "蜜樹丘"
+        }
+      ]
+    },
+    "B2": {
+      "title": "女王蜂現身",
+      "stage": "tree",
+      "steps": [
+        {
+          "music": "stop"
+        },
+        {
+          "sfx": "dread"
+        },
+        {
+          "still": "s2-boss-intro"
+        },
+        {
+          "say": "queenEvil",
+          "text": "邊個夠膽入嚟我個蜂巢？"
+        },
+        {
+          "say": "queenEvil",
+          "text": "呢度每一滴蜜，都係三角大人嘅！"
+        },
+        {
+          "say": "lunbo",
+          "text": "佢對眼……同啲蜜一樣咁黃。",
+          "face": 2
+        },
+        {
+          "say": "kibobo",
+          "text": "打甩佢個皇冠！",
+          "face": 0
+        },
+        {
+          "still": null
+        }
+      ]
+    },
+    "C4": {
+      "title": "第 2 關後・第二罐",
+      "stage": "tree",
+      "steps": [
+        {
+          "music": "stop"
+        },
+        {
+          "actor": "lunbo",
+          "x": 200
+        },
+        {
+          "actor": "pupu",
+          "x": 270,
+          "grey": true
+        },
+        {
+          "actor": "kibobo",
+          "x": 330
+        },
+        {
+          "actor": "queen",
+          "x": 470,
+          "flip": true
+        },
+        {
+          "anim": "queen",
+          "name": "defeat"
+        },
+        {
+          "wait": 900
+        },
+        {
+          "sfx": "sparkle"
+        },
+        {
+          "still": "c3-queen"
+        },
+        {
+          "say": "narr",
+          "text": "皇冠一跌落地，女王蜂眼入面嘅假蜜就散晒。"
+        },
+        {
+          "say": "queen",
+          "text": "……我個頭好痛。我頭先做咗啲咩？",
+          "face": 2
+        },
+        {
+          "say": "queen",
+          "text": "有班戴三角面具嘅人，送咗個皇冠俾我……之後我就乜都唔記得。",
+          "face": 0
+        },
+        {
+          "still": null
+        },
+        {
+          "say": "queen",
+          "text": "呢罐係我哋一直收埋嘅真蜂蜜，拎去俾小熊啦。",
+          "face": 1
+        },
+        {
+          "prop": "jar",
+          "kind": "jar-real",
+          "x": 300,
+          "drop": true
+        },
+        {
+          "sfx": "sparkle"
+        },
+        {
+          "say": "kibobo",
+          "text": "多謝你！噗噗，飲啦。",
+          "face": 1
+        },
+        {
+          "move": "pupu",
+          "x": 296,
+          "ms": 380
+        },
+        {
+          "sfx": "gulp"
+        },
+        {
+          "remove": "jar"
+        },
+        {
+          "colour": "pupu",
+          "amount": 0.5,
+          "ms": 1400
+        },
+        {
+          "hop": "pupu"
+        },
+        {
+          "say": "pupu",
+          "text": "噗噗！"
+        },
+        {
+          "say": "lunbo",
+          "text": "佢識跳喇！仲差三罐。",
+          "face": 1
+        },
+        {
+          "say": "queen",
+          "text": "嗰班三角面具，往山下個城市走咗。小心啲。",
+          "face": 0
+        },
+        {
+          "card": "第二關・完",
+          "sub": "多謝遊玩・待續"
+        }
+      ]
     }
   }
 }

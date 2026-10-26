@@ -5,6 +5,11 @@ import pupuMeta from '../../data/anim/pupu.json'
 import fishMeta from '../../data/anim/fish.json'
 import hatsoldierMeta from '../../data/anim/hatsoldier.json'
 import mechpigMeta from '../../data/anim/mechpig.json'
+import beesoldierMeta from '../../data/anim/beesoldier.json'
+import squirrelMeta from '../../data/anim/squirrel.json'
+import minibeeMeta from '../../data/anim/minibee.json'
+import eggMeta from '../../data/anim/egg.json'
+import queenMeta from '../../data/anim/queen.json'
 
 /**
  * Frame-by-frame hero / companion animation from Cursor's action sheets
@@ -14,7 +19,9 @@ import mechpigMeta from '../../data/anim/mechpig.json'
  * Animation keys: `<set>-<anim>` e.g. `lunbo-walk`, `kibobo-slash2`, `pupu-tackle`.
  */
 
-export type AnimSetId = 'lunbo' | 'kibobo' | 'pupu' | 'fish' | 'hatsoldier' | 'mechpig'
+export type AnimSetId =
+  | 'lunbo' | 'kibobo' | 'pupu' | 'fish' | 'hatsoldier' | 'mechpig'
+  | 'beesoldier' | 'squirrel' | 'minibee' | 'egg' | 'queen'
 type Meta = {
   frameWidth: number
   frameHeight: number
@@ -28,6 +35,11 @@ export const ANIM_SETS: Record<AnimSetId, Meta> = {
   fish: fishMeta as Meta,
   hatsoldier: hatsoldierMeta as Meta,
   mechpig: mechpigMeta as Meta,
+  beesoldier: beesoldierMeta as Meta,
+  squirrel: squirrelMeta as Meta,
+  minibee: minibeeMeta as Meta,
+  egg: eggMeta as Meta,
+  queen: queenMeta as Meta,
 }
 
 /** Enemy species (enemyAi) → animation set. */
@@ -55,7 +67,7 @@ export function portraitTex(id: string) {
 }
 
 /** Story stills used so far (public/art/story, 640×360). Later stages add theirs here. */
-export const STORY_STILLS = ['cover', 'c1-picnic', 'c1-hollow', 'c1-mama', 'c2-note', 'credits-bg'] as const
+export const STORY_STILLS = ['cover', 'c1-picnic', 'c1-hollow', 'c1-mama', 'c2-note', 'credits-bg', 'c2-bike', 's2-boss-intro', 'c3-queen', 'canopy-far'] as const
 export function stillTex(id: string) {
   return `story-${id}`
 }

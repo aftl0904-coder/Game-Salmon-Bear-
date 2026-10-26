@@ -1,0 +1,43 @@
+{
+ "frameWidth": 54,
+ "frameHeight": 49,
+ "anchorX": 27,
+ "anims": {
+  "fly": {
+   "start": 0,
+   "count": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "aim": {
+   "start": 4,
+   "count": 3,
+   "fps": 10,
+   "loop": false
+  },
+  "dive": {
+   "start": 7,
+   "count": 3,
+   "fps": 14,
+   "loop": true
+  },
+  "stuck": {
+   "start": 10,
+   "count": 3,
+   "fps": 8,
+   "loop": true
+  },
+  "hit": {
+   "start": 13,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 15,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

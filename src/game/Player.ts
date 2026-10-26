@@ -402,9 +402,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private applyAirGravity(body: Phaser.Physics.Arcade.Body) {
     if (!this.laneJumping || !body.allowGravity) {
       body.setGravity(0, 0)
+      this.floating = false
       return
     }
     const g = jumpGravity()
+    // 琪寶寶's fan: after an updraft she glides down slowly (cancel most of gravity, cap the fall).
+    if (this.floating && body.velocity.y > 0) {
+      body.setGravity(0, -g * 0.82)
+      if (body.velocity.y > 40) body.velocity.y = 40
+      return
+    }
     // Rising: world gravity only (via allowGravity + scene gravity). Falling: extra mul.
     if (body.velocity.y > 0) {
       body.setGravity(0, g * (FALL_GRAVITY_MUL - 1))
@@ -675,6 +682,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.alive) this.setAlpha(1)
   }
 
+  /** Riding an updraft (wind vent): 琪寶寶 holds her fan overhead. Set by GameScene each frame. */
+  floating = false
+
+  /** External launch (wind vent / spring): start an airborne arc without the tap-height cut. */
+  launch(vy: number) {
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (!body || !this.alive) return
+    this.laneJumping = true
+    this.jumpCutApplied = true
+    this.jumpConsumed = true
+    body.allowGravity = true
+    this.setVelocityY(Math.min(body.velocity.y, vy))
+    fsmEnter(this, 'JUMP', this.scene.time.now)
+  }
+
   /** Play a one-shot action (shoot / slash1…3 / shoot-crouch) and let it own the sprite. */
   playAction(name: string) {
     if (!this.animSet) return
@@ -726,6 +748,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!grounded) {
       this.pose = 'jump'
       if (now < this.actionUntil && this.anims.isPlaying) return
+      if (this.floating && ANIM_SETS[set].anims['fan-float']) {
+        this.animTo('fan-float')
+        return
+      }
       // rise / apex / fall frames picked from vertical speed
       const vy = body?.velocity.y ?? 0
       const j = ANIM_SETS[set].anims.jump

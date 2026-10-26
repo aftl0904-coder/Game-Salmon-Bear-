@@ -56,6 +56,18 @@
    "count": 3,
    "fps": 6,
    "loop": true
+  },
+  "bike-ride": {
+   "start": 31,
+   "count": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "bike-jump": {
+   "start": 35,
+   "count": 3,
+   "fps": 8,
+   "loop": false
   }
  }
 }
