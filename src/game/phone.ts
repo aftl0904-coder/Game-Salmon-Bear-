@@ -178,7 +178,7 @@ export function micLevel(): number {
 export class BlowMeter {
   private t = 0
   update(dt: number, level = micLevel()) {
-    if (level > 0.08) this.t += dt / 1000
+    if (level > 0.05) this.t += dt / 1000
     else this.t = Math.max(0, this.t - dt / 2000)
     return this.t
   }

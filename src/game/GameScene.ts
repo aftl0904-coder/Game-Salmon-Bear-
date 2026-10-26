@@ -2862,10 +2862,40 @@ export class GameScene extends Phaser.Scene {
     shot.setData('lane', e.lane)
     shot.setData('dmg', 1)
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 500, repeat: -1 })
+    this.markShot(shot, high ? 0xff9a50 : 0xffd060)
     floatText(this, e.x, e.y - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
     this.time.delayedCall(1800, () => {
       if (shot.active) shot.destroy()
+    })
+  }
+
+  /**
+   * Enemy projectiles are only ~9 px, which reads as a speck on a phone: give each one a
+   * pulsing halo, a short trail and a bigger sprite so it is never missed.
+   */
+  private markShot(shot: Phaser.Physics.Arcade.Sprite, color = 0xffd060) {
+    shot.setScale(1.7)
+    const halo = this.add.circle(shot.x, shot.y, 11, color, 0.6).setDepth(shot.depth - 0.1).setBlendMode(Phaser.BlendModes.ADD)
+    const core = this.add.circle(shot.x, shot.y, 3, 0xffffff, 0.9).setDepth(shot.depth + 0.1).setBlendMode(Phaser.BlendModes.ADD)
+    this.tweens.add({ targets: halo, scale: { from: 0.9, to: 1.6 }, alpha: { from: 0.7, to: 0.25 }, duration: 240, yoyo: true, repeat: -1 })
+    let t = 0
+    const follow = (_tm: number, dt: number) => {
+      if (!shot.active) return
+      halo.setPosition(shot.x, shot.y)
+      core.setPosition(shot.x, shot.y)
+      t += dt
+      if (t > 60) {
+        t = 0
+        const dot = this.add.circle(shot.x, shot.y, 3, color, 0.5).setDepth(shot.depth - 0.2).setBlendMode(Phaser.BlendModes.ADD)
+        this.tweens.add({ targets: dot, alpha: 0, scale: 0.3, duration: 220, onComplete: () => dot.destroy() })
+      }
+    }
+    this.events.on('update', follow)
+    shot.once('destroy', () => {
+      this.events.off('update', follow)
+      halo.destroy()
+      core.destroy()
     })
   }
 

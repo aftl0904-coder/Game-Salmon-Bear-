@@ -296,8 +296,8 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
       if (anyPress()) cool += 0.12
       const lv = micReady() ? micLevel() : 0
       const secs = blow.update(dt, lv)
-      if (holding) cool += dt / 1400
-      cool = Math.max(cool, secs / 1.3)
+      if (holding) cool += dt / 900
+      cool = Math.max(cool, secs / 0.7)
       ui.bar.width = 216 * Math.min(1, cool)
       if (lv > 0.08 && scene.time.now % 3 < 1) buzz(10)
       // Steam: thinner as it cools.
@@ -306,8 +306,8 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
         steam.add(s)
         scene.tweens.add({ targets: s, y: s.y - 70, x: s.x + (lv > 0.08 || holding ? 40 : Phaser.Math.Between(-10, 10)), alpha: 0, scale: 1.8, duration: 1100, onComplete: () => s.destroy() })
       }
-      timer.setText(`${(Math.max(0, 6000 - (scene.time.now - blowAt)) / 1000).toFixed(1)}秒`)
-      if (cool >= 1 || scene.time.now - blowAt > 6000) finish()
+      timer.setText(`${(Math.max(0, 4000 - (scene.time.now - blowAt)) / 1000).toFixed(1)}秒`)
+      if (cool >= 1 || scene.time.now - blowAt > 4000) finish()
     }
   }
   const startBlow = () => {
