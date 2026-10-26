@@ -12,6 +12,7 @@ import { MapScene } from './game/WorldMapScene'
 import { BikeScene } from './game/BikeScene'
 import { installGamepadBridge } from './game/gamepadBridge'
 import { installFullscreen } from './game/phone'
+import { terrainSolids, terrainPits, supportTopAt } from './game/engine/terrain'
 import { GAME_W, GAME_H, phaserConfig } from './game/display'
 import { installFit } from './game/fitCanvas'
 import { jumpGravity } from './game/config/playerData'
@@ -59,6 +60,8 @@ function bootGame() {
   ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
   installGamepadBridge(game)
   installFullscreen()
+  // Test hook (bots): read the live collision terrain.
+  ;(window as unknown as { __SAKE_TERRAIN__: unknown }).__SAKE_TERRAIN__ = { terrainSolids, terrainPits, supportTopAt }
   void import('./game/audio').then((m) => {
     ;(window as unknown as { __SAKE_AUDIO__: unknown }).__SAKE_AUDIO__ = { playSong: m.playSong, stopBgm: m.stopBgm, peak: m.debugPeak, unlock: m.unlockAudio }
   })
