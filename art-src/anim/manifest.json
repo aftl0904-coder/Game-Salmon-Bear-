@@ -181,7 +181,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET magenta #FF00FF. 噗噗 ORIGINAL round bear — NOT Winnie the Pooh, NO red shirt. Honey-brown fur, cream oval belly, blue neck ribbon bow, small ears, tiny eyes catch light. Four views front/side RIGHT/back/3-4. Native 56px tall 8× NN. Refs: kind-bear.png, bear-poses.png, heroes.png."
+    "prompt": "噗噗 model — no blue scarf, uniform brown fur (no light belly/muzzle), smaller eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/idle.png",
@@ -189,7 +189,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. ALL frames side profile facing RIGHT. 3 idle breathe. 噗噗 locked: honey-brown, cream belly, blue ribbon — NOT Pooh NO red shirt. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "噗噗 idle 3 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/walk.png",
@@ -197,7 +197,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 DISTINCT walk frames different legs. 噗噗 locked original bear blue ribbon. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "噗噗 walk 4 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/cute-pose.png",
@@ -205,7 +205,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. 3 cute poses: tilt smile, paws together, happy bounce. 噗噗 locked original bear blue ribbon NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "噗噗 cute-pose 3 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/tackle.png",
@@ -213,7 +213,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 tackle: crouch anticipation, launch stretch, smear dash, impact/recover. 噗噗 locked. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "噗噗 tackle 4 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/hollow-idle.png",
@@ -221,7 +221,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hollow idle. 噗噗 HOLLOW: grey fur, pale grey belly, faded grey ribbon, limp, empty void eyes. Atmosphere horror no gore. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "噗噗 hollow-idle 3 grey — no scarf, uniform grey, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/pupu/wake-up.png",
@@ -229,7 +229,7 @@
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 wake-up: grey hollow limp → stir → colour returning → full warm colour → jump celebrate. 噗噗 original bear NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png, hollow-idle."
+    "prompt": "噗噗 wake-up 5 — no scarf, uniform fur, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/enemies/E-01-fish/walk.png",
@@ -837,7 +837,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "magenta portraits 3 expr 噗噗 original bear blue ribbon."
+    "prompt": "pupu portrait 3 — no scarf, uniform brown chest, smaller eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/portraits/pupu-hollow.png",
@@ -845,7 +845,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "magenta portraits 3 expr 噗噗 hollow grey."
+    "prompt": "pupu-hollow portrait 3 — no scarf, uniform grey, small eyes. Magenta SNES pixel."
   },
   {
     "file": "art-src/portraits/coffee-mama.png",
@@ -2253,7 +2253,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear model — small grey round-head teddy no clothes. Magenta #FF00FF SNES pixel plush."
+    "prompt": "patbear/大pat熊 model — small round-head grey-beige teddy pale pink shirt. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/friends/patbear/idle.png",
@@ -2261,7 +2261,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear idle 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
+    "prompt": "patbear idle 3 — small grey-beige pink shirt. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/friends/patbear/cheer.png",
@@ -2269,7 +2269,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear cheer 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
+    "prompt": "patbear cheer 3 — small grey-beige pink shirt. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/friends/patbear/walk.png",
@@ -2277,7 +2277,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear walk 4 — small grey round-head. Magenta #FF00FF SNES pixel plush."
+    "prompt": "patbear walk 4 — small grey-beige pink shirt. Magenta SNES pixel."
   },
   {
     "file": "art-src/portraits/friend-patbear.png",
@@ -2285,7 +2285,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-patbear portrait 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
+    "prompt": "friend-patbear portrait 3 — small grey-beige pink shirt. Magenta SNES pixel."
   },
   {
     "file": "art-src/anim/friends/giraffe/model-sheet.png",
