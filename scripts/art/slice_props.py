@@ -44,14 +44,33 @@ PROPS = {
     's2-canopy-mid': ('props/stage2/canopy-mid.png', 80, 'all'),
     's2-canopy-front': ('props/stage2/canopy-front.png', 46, 'all'),
     's2-vine-lattice': ('props/stage2/canopy-mid-front-sheet.png', 34, 0),
+    # stage 3 · 月影夜市 (pick = (x0, y0, x1, y1): blobs centred inside that box of a combined sheet)
+    's3-lantern-on': ('props/stage3/lanterns-wok-steam-items-sheet.png', 30, (220, 90, 350, 340)),
+    's3-lantern-off': ('props/stage3/lanterns-wok-steam-items-sheet.png', 24, (420, 90, 545, 290)),
+    's3-wok-stall': ('props/stage3/lanterns-wok-steam-items-sheet.png', 72, (700, 25, 1045, 315)),
+    's3-steam': ('props/stage3/lanterns-wok-steam-items-sheet.png', 64, (800, 320, 950, 665)),
+    's3-sashimi': ('props/stage3/lanterns-wok-steam-items-sheet.png', 12, (220, 555, 410, 655)),
+    's3-lobster': ('props/stage3/lanterns-wok-steam-items-sheet.png', 12, (470, 560, 660, 650)),
+    's3-stall': ('props/stage3/props-sheet.png', 64, (15, 210, 310, 470)),
+    's3-stall-broken': ('props/stage3/stall.png', 44, (70, 490, 427, 700)),
+    's3-knife': ('anim/enemies/E-09-stallkeeper/knife.png', 14, (140, 60, 305, 212)),
+    's3-feather': ('anim/boss/mirror-owl/feather.png', 22, 0),
+    's3-market-mid': ('props/stage3/market-mid.png', 100, 'all'),
+    's3-hotspring-rock': ('props/stage3/hotspring-rock.png', 40, 'all'),
+    's3-wood-bridge': ('props/stage3/wood-bridge.png', 56, 'all'),
+    's3-market-ground': ('props/stage3/market-ground.png', 40, 'all'),
     'mama': ('gen/coffee-mama.png', 64, 0),
     'mama-offer': ('gen/coffee-mama.png', 64, 1),
 }
 
+TRIM = {'s3-market-ground': (10, 3, 10, 2), 's3-market-mid': (4, 0, 4, 0)}
+
 def main():
     root = sys.argv[1] if len(sys.argv) > 1 else '.'
     os.makedirs('public/art/props', exist_ok=True)
+    only = [x for x in os.environ.get('ONLY', '').split(',') if x]
     for name, (src, target, pick) in PROPS.items():
+        if only and not any(name.startswith(o) for o in only): continue
         im = Image.open(os.path.join(root, 'art-src', src))
         if im.mode == 'RGBA':  # already cut out (gen sheets)
             arr = np.array(im)
@@ -66,6 +85,13 @@ def main():
             keep = [int(np.argmax(sizes)) + 1]
         elif pick == 'all':
             keep = big
+        elif isinstance(pick, tuple):
+            bx0, by0, bx1, by1 = pick
+            keep = []
+            for k in range(1, n + 1):
+                ys, xs = np.where(lab == k)
+                cx, cy = (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2
+                if bx0 <= cx <= bx1 and by0 <= cy <= by1 and sizes[k - 1] > 200: keep.append(k)
         else:
             # n-th big blob from the left
             order = sorted(big, key=lambda k: np.where(lab == k)[1].min())
@@ -81,6 +107,9 @@ def main():
         alpha = out.split()[3]
         q = out.convert('RGB').quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
         q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+        if name in TRIM:  # strips meant to tile: cut the rounded ends / soft top
+            l, t, r, b = TRIM[name]
+            q = q.crop((l, t, q.width - r, q.height - b))
         q.save(f'public/art/props/{name}.png')
         print(name, q.size)
 

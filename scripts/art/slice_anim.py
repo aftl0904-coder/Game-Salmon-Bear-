@@ -9,7 +9,7 @@ game-ready sprite atlases: public/art/anim/<char>.png + data/anim/<char>.json.
 - premultiplied downscale (no magenta fringe), alpha threshold, one shared palette
 - feet on the bottom row, body centred, uniform cell size per character
 
-Run: python3 scripts/art/slice_anim.py [art-root]
+Run: python3 scripts/art/slice_anim.py [art-root]   (ONLY=lobster,mirrorowl to re-slice some sets)
 """
 import sys, json, os
 import numpy as np
@@ -46,6 +46,19 @@ def squirrel_fur(a):  # 蜜僵松鼠 brown fur
     r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
     return (r > 110) & (r < 210) & (g > 55) & (g < 130) & (b < 80) & (r - b > 60)
 
+def lobster_red(a):  # 龍蝦兵 shell
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 150) & (g < 90) & (b < 80) & (r - g > 80)
+def fish_gold(a):  # 油甘魚攤主 yellow skin
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 150) & (g > 120) & (b < 90) & (r - b > 80)
+def mirror_white(a):  # 鏡影雜兵 mask
+    mx = a.max(-1).astype(int); mn = a.min(-1).astype(int)
+    return (mn > 165) & (mx - mn < 50)
+def owl_silver(a):  # 月橋鏡鴞 feathers
+    mx = a.max(-1).astype(int); mn = a.min(-1).astype(int)
+    return (mx > 120) & (mx - mn < 45)
+
 CHARS = {
     'lunbo': dict(height=72, ref='walk', key=hair_black, anims={
         'idle': (6, True), 'walk': (10, True), 'jump': (8, False), 'crouch': (14, False), 'shoot': (16, False),
@@ -77,6 +90,22 @@ CHARS = {
     'queen': dict(height=128, ref='hover', key=bee_yellow, dir='boss/queen-bee', ref_scale=['defeat'], anims={
         'hover': (8, True), 'summon': (8, False), 'land': (8, False), 'lay-eggs': (8, False), 'spray': (10, True),
         'weak': (6, True), 'hurt': (12, False), 'defeat': (6, False)}),
+    # Stage 3 (batch M). `src`: anim → (sheet, frames on it, picked frame indices, (row, rows) band).
+    # Cursor shipped a few combined sheets (duck+hit+die on one row, 3 owl actions on 3 rows).
+    'lobster': dict(height=56, ref='walk', key=lobster_red, dir='enemies/E-08-lobsterguard', ref_scale=['die', 'turn'], anims={
+        'walk': (6, True), 'block': (8, False), 'turn': (8, True), 'hit': (12, False), 'die': (10, False)}),
+    'stallkeeper': dict(height=56, ref='idle', key=fish_gold, dir='enemies/E-09-stallkeeper', clip=(0.7, 3.2), scale_as={'die': 'hit'}, anims={
+        'idle': (6, True), 'throw': (12, False), 'duck': (8, False), 'hit': (12, False), 'die': (10, False)},
+        src={'duck': ('duck-hit-die-sheet', 8, [0, 1], None), 'hit': ('duck-hit-die-sheet', 8, [2, 3], None),
+             'die': ('duck-hit-die-sheet', 8, [4, 5, 6, 7], None)}),
+    'mirrorshade': dict(height=48, ref='float', key=mirror_white, dir='enemies/E-10-mirrorshade', clip=(0.7, 3.2), scale_as={'die': 'hit'}, fit_height=['hit'], anims={
+        'float': (8, True), 'dash': (12, True), 'split': (10, False), 'hit': (12, False), 'die': (10, False)},
+        src={'hit': ('hit-die-sheet', 11, [4, 5], None), 'die': ('hit-die-sheet', 11, [6, 7, 8, 9], None)}),
+    'mirrorowl': dict(height=112, ref='perch', key=owl_silver, dir='boss/mirror-owl', ref_scale=['defeat', 'hurt'], clip=(0.7, 3.2), keep_largest=['guard', 'feather-curtain', 'split'], anims={
+        'perch': (6, True), 'fly': (10, True), 'feather-curtain': (8, False), 'split': (8, False), 'guard': (6, True),
+        'hurt': (12, False), 'defeat': (6, False)},
+        src={'feather-curtain': ('feather-curtain', 4, None, (0, 3)), 'split': ('feather-curtain', 4, None, (1, 3)),
+             'guard': ('feather-curtain', 3, None, (2, 3)), 'hurt': ('hurt', 3, [1, 2], None)}),
 }
 
 def fg_mask(a):
@@ -110,9 +139,26 @@ def largest_blob_bbox(m):
     if not len(ys): return None
     return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
 
-def frames_of(path, n, keep_largest=False):
+def row_band(m, row, rows):
+    """(y0, y1) of the row-th of `rows` figure rows, cut at the widest empty-row gaps."""
+    r = m.sum(1) > 2
+    ys = np.where(r)[0]
+    gaps, run = [], None
+    for y in range(ys.min(), ys.max() + 1):
+        if not r[y]:
+            run = run or [y, y]; run[1] = y
+        elif run:
+            gaps.append((run[1] - run[0] + 1, run[0], run[1])); run = None
+    gaps = sorted(sorted(gaps, reverse=True)[: rows - 1], key=lambda g: g[1])
+    edges = [ys.min()] + [(g[1] + g[2]) // 2 for g in gaps] + [ys.max() + 1]
+    return edges[row], edges[row + 1]
+
+def frames_of(path, n, keep_largest=False, band=None):
     a = np.array(Image.open(path).convert('RGB'))
     m = fg_mask(a)
+    if band:
+        y0, y1 = row_band(m, *band)
+        a, m = a[y0:y1], m[y0:y1]
     out = []
     for (x0, x1) in split(m, n):
         sm = m[:, x0:x1]
@@ -146,12 +192,17 @@ def main():
     os.makedirs('data/anim', exist_ok=True)
     MAN = {m['file']: m for m in json.load(open(os.path.join(ROOT, 'art-src/anim/manifest.json')))}
     report = {}
+    only = [x for x in os.environ.get('ONLY', '').split(',') if x]
     for ch, cfg in CHARS.items():
+        if only and ch not in only: continue
         sheets = {}
         for anim in cfg['anims']:
-            rel = f"art-src/anim/{cfg.get('dir', ch)}/{anim}.png"
+            spec = cfg.get('src', {}).get(anim)
+            rel = f"art-src/anim/{cfg.get('dir', ch)}/{spec[0] if spec else anim}.png"
             if rel not in MAN or not os.path.exists(os.path.join(ROOT, rel)): continue
-            frs = frames_of(os.path.join(ROOT, rel), MAN[rel]['frames'], anim in cfg.get('keep_largest', []))
+            n = spec[1] if spec else MAN[rel]['frames']
+            frs = frames_of(os.path.join(ROOT, rel), n, anim in cfg.get('keep_largest', []), spec[3] if spec else None)
+            if spec and spec[2]: frs = [frs[i] for i in spec[2] if i < len(frs)]
             if anim in cfg.get('flip', []):
                 frs = [(rgb[:, ::-1], m[:, ::-1]) for rgb, m in frs]
             sheets[anim] = frs
@@ -161,8 +212,13 @@ def main():
         ref_scale = cfg['height'] / ref_h
         ref_key = np.median([cfg['key'](f[0])[f[1]].sum() for f in ref])
         scaled = {}
-        for anim, frs in sheets.items():
-            if anim in cfg.get('ref_scale', []):
+        scales = {}
+        lo, hi = cfg.get('clip', (0.7, 1.7))
+        for anim, frs in sorted(sheets.items(), key=lambda kv: kv[0] in cfg.get('scale_as', {})):
+            if anim in cfg.get('scale_as', {}):
+                # same combined sheet as another anim: reuse its scale (debris frames fool the key)
+                s = scales[cfg['scale_as'][anim]]
+            elif anim in cfg.get('ref_scale', []):
                 # debris / smoke frames confuse both cues: just reuse the reference scale
                 s = ref_scale
             elif anim in cfg.get('fit_height', []):
@@ -172,12 +228,13 @@ def main():
                 k = np.median([max(1, cfg['key'](f[0])[f[1]].sum()) for f in frs])
                 s = ref_scale * float(np.sqrt(ref_key / k))
             # guard against a bad key read: stay within 0.7–1.7× of the reference scale
-            s = float(np.clip(s, ref_scale * 0.7, ref_scale * 1.7))
+            s = float(np.clip(s, ref_scale * lo, ref_scale * hi))
+            scales[anim] = s
             scaled[anim] = [downscale(rgb, m, s) for rgb, m in frs]
             report[f'{ch}/{anim}'] = round(s / ref_scale, 3)
         # anchor: x = median of foreground in the lower 45 % (legs), y = bottom
         items = []
-        for anim, frs in scaled.items():
+        for anim, frs in [(k, scaled[k]) for k in cfg['anims'] if k in scaled]:
             for C, A in frs:
                 h, w = A.shape
                 ys, xs = np.where(A[int(h * 0.55):])

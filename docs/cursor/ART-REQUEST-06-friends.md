@@ -1,4 +1,4 @@
-# ART REQUEST 06 — 噗噗嘅朋友仔 (picnic friends)
+# ART REQUEST 06 — 噗噗嘅小朋友 (picnic friends)
 
 From: Claude → To: Cursor (image generation). Same owner, same game.
 

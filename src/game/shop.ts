@@ -9,7 +9,7 @@ import { GEAR, buy, nextPrice, tierOf, type GearDef, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
 
 /**
- * 朋友仔檔口 (docs/bible/story.md §5): the friends you freed set up a stall beside the
+ * 小朋友檔口 (docs/bible/story.md §5): the friends you freed set up a stall beside the
  * food stall and trade the odds and ends they salvaged. More friends freed = better stock.
  *
  * Overlay, not a Scene: GameScene pauses physics and awaits `done`, same as the minigames.
@@ -47,10 +47,10 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
 
   // ── Chrome ──────────────────────────────────────────────────────────────
   const title = scene.add
-    .text(GAME_W / 2, 72, '朋友仔檔口', { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+    .text(GAME_W / 2, 72, '小朋友檔口', { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
     .setOrigin(0.5)
   const sub = scene.add
-    .text(GAME_W / 2, 92, freed.length ? `${freed.length} 個朋友仔幫手睇檔` : '未救到朋友仔 — 得基本貨', {
+    .text(GAME_W / 2, 92, freed.length ? `${freed.length} 個小朋友幫手睇檔` : '未救到小朋友 — 得基本貨', {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#e8d8b0',
@@ -151,7 +151,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     }
     if (t >= limit) {
       SFX.blip(220)
-      blurb.setText('呢級仲未入到貨 — 救多啲朋友仔先有。')
+      blurb.setText('呢級仲未入到貨 — 救多啲小朋友先有。')
       return
     }
     if (hooks.purse(who) < p) {

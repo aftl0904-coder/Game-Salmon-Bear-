@@ -55,6 +55,21 @@ export const ART_OVERRIDES: Record<string, string> = {
   's2-canopy-mid': '/art/props/s2-canopy-mid.png',
   's2-canopy-front': '/art/props/s2-canopy-front.png',
   's2-vine-lattice': '/art/props/s2-vine-lattice.png',
+  // Stage 3 · 月影夜市 (data/levels/stage3.json)
+  's3-lantern-on': '/art/props/s3-lantern-on.png',
+  's3-lantern-off': '/art/props/s3-lantern-off.png',
+  's3-wok-stall': '/art/props/s3-wok-stall.png',
+  's3-steam': '/art/props/s3-steam.png',
+  's3-sashimi': '/art/props/s3-sashimi.png',
+  's3-lobster': '/art/props/s3-lobster.png',
+  's3-stall': '/art/props/s3-stall.png',
+  's3-stall-broken': '/art/props/s3-stall-broken.png',
+  's3-knife': '/art/props/s3-knife.png',
+  's3-feather': '/art/props/s3-feather.png',
+  's3-market-mid': '/art/props/s3-market-mid.png',
+  's3-hotspring-rock': '/art/props/s3-hotspring-rock.png',
+  's3-wood-bridge': '/art/props/s3-wood-bridge.png',
+  's3-market-ground': '/art/props/s3-market-ground.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {

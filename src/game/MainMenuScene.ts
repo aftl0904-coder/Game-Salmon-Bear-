@@ -3,6 +3,10 @@ import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
 import { maxStage } from './progress'
+
+/** Stages that exist so far (picker + progress). */
+const LAST_STAGE = 3
+const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市' }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -58,7 +62,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.shade = {}
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
-    this.stageSel = maxStage() >= 2 ? 2 : 1
+    this.stageSel = Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
     this.code = []
 
@@ -93,12 +97,12 @@ export class MainMenuScene extends Phaser.Scene {
 
   private onUp() {
     this.feedCode('U')
-    if (maxStage() >= 2) this.toggleStage()
+    if (maxStage() >= 2) this.toggleStage(-1)
     else this.move(-1)
   }
   private onDown() {
     this.feedCode('D')
-    if (maxStage() >= 2) this.toggleStage()
+    if (maxStage() >= 2) this.toggleStage(1)
     else this.move(1)
   }
   private onLeft() {
@@ -151,18 +155,19 @@ export class MainMenuScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
-    this.stageText.on('pointerdown', () => this.toggleStage())
+    this.stageText.on('pointerdown', () => this.toggleStage(1))
     this.drawStage()
   }
 
   private drawStage() {
-    const name = this.stageSel === 2 ? '第二關・蜜樹丘' : '第一關・百畝樹林'
+    const name = STAGE_NAMES[this.stageSel] ?? STAGE_NAMES[1]
     this.stageText?.setText(`▲▼　由 ${name} 開始`)
   }
 
-  private toggleStage() {
-    if (maxStage() < 2) return
-    this.stageSel = this.stageSel === 2 ? 1 : 2
+  private toggleStage(dir: 1 | -1) {
+    const n = Math.min(maxStage(), LAST_STAGE)
+    if (n < 2) return
+    this.stageSel = ((this.stageSel - 1 + dir + n) % n) + 1
     SFX.blip(520)
     this.drawStage()
   }
