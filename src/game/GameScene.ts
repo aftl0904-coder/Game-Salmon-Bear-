@@ -354,14 +354,15 @@ export class GameScene extends Phaser.Scene {
       this.clampDuoToCamera()
       const midX = (this.boy.x + this.girl.x) / 2
       this.camTarget.setPosition(
-        Math.round(Phaser.Math.Clamp(midX, 480, WORLD_W - 480)),
+        Math.round(Phaser.Math.Clamp(midX, GAME_W / 2, WORLD_W - GAME_W / 2)),
         WORLD_H / 2,
       )
     } else {
       const face = this.boy.facing || 1
       const targetX = this.boy.x + face * ahead
       this.camTarget.setPosition(
-        Math.round(Phaser.Math.Clamp(targetX, 480, WORLD_W - 480)),
+        // Clamp to half the 640px view (was 480 from the 960px era — hid the last 160px and the goal).
+        Math.round(Phaser.Math.Clamp(targetX, GAME_W / 2, WORLD_W - GAME_W / 2)),
         WORLD_H / 2,
       )
     }
@@ -650,11 +651,21 @@ export class GameScene extends Phaser.Scene {
       this.triggerAltarAmbush()
     }
 
-    if (!this.bossOn && this.leadX() > WORLD_W - 780) {
-      this.bossOn = true
-      this.spawnBoss(WORLD_W - 420, GROUND_Y)
-      SFX.boss()
-      this.emitScore('關底・三角傀儡武者！奪回蜂蜜與鮭供')
+    // Stage 1 has no boss (design bible): beat the altar ambush, then the honey tree opens.
+    if (!this.bossOn && this.altarAmbushOn) {
+      const ambushLeft = this.enemies.getChildren().some((o) => {
+        const e = o as PatrolEnemy
+        // Deferred (not yet walked in) ambushers count as still to beat.
+        return e.altarAmbush && e.fsm !== 'DEAD'
+      })
+      if (!ambushLeft) {
+        this.bossOn = true
+        SFX.powerUp()
+        playSong('stage1')
+        this.cameras.main.flash(200, 255, 230, 150)
+        floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '伏兵退散！去蜂巢樹！', '#ffe08a', { size: 18, dur: 2200 })
+        this.emitScore('伏兵退散！去蜂巢樹拎第一罐真蜂蜜')
+      }
     }
 
     this.updateCameraFollow()
@@ -1431,20 +1442,24 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Pit fall respawn: last checkpoint passed, else start; always on solid base floor. */
+  /**
+   * Pit fall respawn: on base floor just before the pit that was missed (nearest pit within 80px,
+   * knockback can carry the hero past its edge). Never further back than the last checkpoint passed.
+   */
   private respawnXFor(fallX: number): number {
-    // Prefer solid floor just before the pit that was missed (keeps the retry loop short).
-    const pit = terrainPits().find((p) => fallX >= p.x0 - 8 && fallX <= p.x1 + 8)
-    if (pit) {
-      // ~80px run-up so a held → doesn't walk straight back into the pit.
-      for (let x = pit.x0 - 80; x > pit.x0 - 240; x -= 8) {
-        if (supportTopAt(x, LANE_FLOOR_Y, 8) !== null) return x
-      }
+    const onBase = (x: number) => supportTopAt(x, LANE_FLOOR_Y, 8) !== null && wallClampX(x, LANE_FLOOR_Y, 1, 8) === null
+    let best: { x0: number; x1: number } | null = null
+    for (const p of terrainPits()) {
+      const d = fallX < p.x0 ? p.x0 - fallX : fallX > p.x1 ? fallX - p.x1 : 0
+      if (d <= 80 && (!best || d < (fallX < best.x0 ? best.x0 - fallX : fallX > best.x1 ? fallX - best.x1 : 0))) best = p
     }
-    let x = this.lastCheckpointX
-    if (x > fallX) x = 220
-    if (supportTopAt(x, LANE_FLOOR_Y) === null) x = 220
-    return x
+    const from = best ? best.x0 - 70 : fallX - 40
+    for (let x = from; x > from - 420; x -= 6) {
+      if (x < this.lastCheckpointX - 10) break
+      if (onBase(x)) return x
+    }
+    const cp = this.lastCheckpointX
+    return onBase(cp) ? cp : 220
   }
 
   /**
@@ -2030,7 +2045,7 @@ export class GameScene extends Phaser.Scene {
     enablePixelSprite(this.goal)
     ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
     this.add
-      .text(WORLD_W - 140, GROUND_Y - 140, '樹頂・蜂巢', {
+      .text(WORLD_W - 140, GROUND_Y - 226, '樹頂・蜂巢', {
         fontFamily: FONT_UI,
         fontSize: '14px',
         color: '#2a1a10',
@@ -3234,10 +3249,13 @@ export class GameScene extends Phaser.Scene {
       if (lead < unlock) return
       if (wave !== 'wave1' && !wave1GateOpen) return
       // 開始 10 秒後：左右兩邊都可走入；之前淨係右邊。
-      const fromLeft = allowLeft && stagger % 2 === 1
+      // Altar ambushers always come from the honey tree side — the moving-plank pit sits behind the hero.
+      const fromLeft = allowLeft && stagger % 2 === 1 && wave !== 'altar'
       let enterX = fromLeft
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
-        : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
+        : wave === 'altar'
+          ? WORLD_W - 30 - (stagger % 4) * 46
+          : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
       stagger += 1
       if (terrainEnabled()) enterX = this.nearestBaseFloorX(enterX, fromLeft ? 1 : -1)
       const enterY = laneY(e.lane)
@@ -3355,7 +3373,4 @@ export class GameScene extends Phaser.Scene {
     return e
   }
 
-  private spawnBoss(x: number, y: number) {
-    this.mkEnemy(x, y, 'boss', undefined, undefined, LANE_DEFAULT)
-  }
 }
