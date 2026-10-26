@@ -7,10 +7,10 @@
 
 | id | 名 | role | hp | moveSpeed | jumpVelocity | 武器 |
 |----|----|------|----|-----------|--------------|------|
-| P-01 | 倫寶 | ranged | 6 | 95 | 260 | 鮭魚槍 → 鮭魚籽 |
-| P-02 | 琪寶寶 | melee | 5 | 115 | 270 | 劍（3 段 combo）＋背脊風扇滑翔 |
+| P-01 | 倫寶 | ranged | 6 | 95 | 290 | 鮭魚槍 → 鮭魚籽 |
+| P-02 | 琪寶寶 | melee | 5 | 115 | 300 | 劍（3 段 combo）＋背脊風扇滑翔 |
 
-共用：hitbox／jump（gravity 700、coyote 90、buffer 110、tap 24／full 48）／crouch 0.5／hurt／fall。
+共用：hitbox／jump（gravity 700、coyote 90、buffer 110、tap 28／full 60）／crouch 0.5／hurt／fall。
 
 平衡目標：`dpsRatioGirlToBoy` 1.0–1.5；bot 通關率 倫寶 55–70%、琪寶寶 70–85%。
 

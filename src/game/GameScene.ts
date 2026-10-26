@@ -298,6 +298,8 @@ export class GameScene extends Phaser.Scene {
   private bossFight = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
+  /** The stir-the-coffee minigame runs at the first cart of each stage only. */
+  private coffeeDone = false
   private bossBar: { fill: Phaser.GameObjects.Rectangle; root: Phaser.GameObjects.Container; w: number } | null = null
 
   constructor() {
@@ -317,6 +319,7 @@ export class GameScene extends Phaser.Scene {
     this.queen = null
     this.bossFight = false
     this.friendsSaved = []
+    this.coffeeDone = false
     this.bossBar = null
     this.clearCardAction = null
     this.ended = false
@@ -2546,17 +2549,27 @@ export class GameScene extends Phaser.Scene {
         const i = this.checkpointXs.indexOf(x)
         const mama = this.checkpointMamas[i]
         if (mama && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
-        // Stir the cup (circles on the screen), blow on it, then drink: +1 HP.
+        // Once per stage: stir the cup (circles + sugar cubes), blow on it, then drink. Later carts: a quick cup.
+        if (this.coffeeDone) {
+          this.drinkCoffee()
+          return
+        }
+        this.coffeeDone = true
         this.physics.pause()
         for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
         const mini = stirCoffee(this)
         this.storyIntro = mini
-        void mini.done.then(() => {
+        void mini.done.then((r) => {
           if (this.storyIntro === mini) this.storyIntro = null
           if (this.ended || !this.scene.isActive()) return
           this.physics.resume()
           this.keyEnter?.reset()
           this.drinkCoffee()
+          const pts = r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)
+          if (pts > 0) {
+            this.killBonus += pts
+            this.addScorePop(this.boy.x, this.boy.y - 80, pts)
+          }
         })
         return
       }
@@ -3743,21 +3756,27 @@ export class GameScene extends Phaser.Scene {
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
     const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
-      // Cut the ribbon at pits: crop the tile to the part outside any pit.
-      let x0 = x
-      let x1 = x + stride
+      // Cut the ribbon at pits: one cropped copy of the tile per piece left between pits
+      // (a wide tile can hold a whole pit — the ground after it must still be drawn).
+      let segs: Array<[number, number]> = [[x, x + stride]]
       for (const p of pits) {
-        if (p.x0 <= x0 && p.x1 >= x1) { x1 = x0; break }
-        if (p.x0 > x0 && p.x0 < x1) x1 = p.x0
-        if (p.x1 > x0 && p.x1 < x1 && p.x0 <= x0) x0 = p.x1
+        segs = segs.flatMap(([a0, a1]): Array<[number, number]> => {
+          if (p.x1 <= a0 || p.x0 >= a1) return [[a0, a1]]
+          const out: Array<[number, number]> = []
+          if (p.x0 > a0) out.push([a0, p.x0])
+          if (p.x1 < a1) out.push([p.x1, a1])
+          return out
+        })
       }
-      if (x1 - x0 < 1) continue
-      const t = this.placeSurfaceTile(x, surfaceY, tex)
-      if (x0 !== x || x1 !== x + stride) {
-        t.setCrop(x0 - x, 0, x1 - x0, t.height)
-        const b = t.body as Phaser.Physics.Arcade.StaticBody
-        b.setSize(x1 - x0, t.height, false)
-        b.setOffset(x0 - x, 0)
+      for (const [x0, x1] of segs) {
+        if (x1 - x0 < 1) continue
+        const t = this.placeSurfaceTile(x, surfaceY, tex)
+        if (x0 !== x || x1 !== x + stride) {
+          t.setCrop(x0 - x, 0, x1 - x0, t.height)
+          const b = t.body as Phaser.Physics.Arcade.StaticBody
+          b.setSize(x1 - x0, t.height, false)
+          b.setOffset(x0 - x, 0)
+        }
       }
     }
   }
