@@ -1,0 +1,297 @@
+{
+  "id": "ST-03",
+  "name": "月影夜市",
+  "theme": "market",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "segments": [
+    {
+      "id": "S1",
+      "role": "teach",
+      "x0": 0,
+      "x1": 600,
+      "note": "燈籠自己熄；打燈籠著燈。第一隻龍蝦兵：跳過頭打背脊。"
+    },
+    {
+      "id": "S2",
+      "role": "test",
+      "x0": 600,
+      "x1": 1300,
+      "note": "攤檔街：油甘魚攤主掟刀（高低交替），攤檔打得爛。40px 坑。"
+    },
+    {
+      "id": "S3",
+      "role": "rest",
+      "x0": 1300,
+      "x1": 1460,
+      "note": "咖啡車。"
+    },
+    {
+      "id": "S4",
+      "role": "test",
+      "x0": 1460,
+      "x1": 2200,
+      "note": "暗巷熄燈區，鏡影雜兵（真身有倒影）。3 秒彩蛋：最後一隻龍蝦。"
+    },
+    {
+      "id": "S5",
+      "role": "rest",
+      "x0": 2200,
+      "x1": 2360,
+      "note": "咖啡車。"
+    },
+    {
+      "id": "S6",
+      "role": "twist",
+      "x0": 2360,
+      "x1": 3040,
+      "note": "溪橋 → 溫泉滑地、蒸氣口、移動踏腳石。隱藏高台蜂蜜。"
+    },
+    {
+      "id": "S7",
+      "role": "rest",
+      "x0": 3040,
+      "x1": 3180,
+      "note": "咖啡車＋油甘魚刺身。"
+    },
+    {
+      "id": "S8",
+      "role": "boss",
+      "x0": 3160,
+      "x1": 3800,
+      "note": "月橋鏡鴞。"
+    }
+  ],
+  "pits": [
+    {
+      "x": 1040,
+      "w": 40
+    },
+    {
+      "x": 2560,
+      "w": 96,
+      "note": "溫泉坑：移動踏腳石"
+    },
+    {
+      "x": 2860,
+      "w": 56
+    }
+  ],
+  "steps": [
+    {
+      "x": 820,
+      "w": 96,
+      "h": 16
+    },
+    {
+      "x": 2420,
+      "w": 110,
+      "h": 24,
+      "note": "溪橋拱位"
+    }
+  ],
+  "platforms": [
+    {
+      "x": 2700,
+      "w": 80,
+      "h": 60,
+      "note": "蒸氣口上面"
+    },
+    {
+      "x": 2790,
+      "w": 60,
+      "h": 104,
+      "note": "隱藏高台（琪寶寶）"
+    }
+  ],
+  "movingPlatforms": [
+    {
+      "x": 2580,
+      "w": 48,
+      "h": 10,
+      "range": 24,
+      "periodMs": 2400,
+      "note": "踏腳石"
+    }
+  ],
+  "crushers": [],
+  "spikes": [],
+  "durians": [],
+  "darkZones": [
+    {
+      "x0": 1480,
+      "x1": 2180
+    },
+    {
+      "x0": 200,
+      "x1": 560,
+      "startLit": true
+    }
+  ],
+  "lanterns": [
+    {
+      "x": 240
+    },
+    {
+      "x": 330
+    },
+    {
+      "x": 420
+    },
+    {
+      "x": 1560
+    },
+    {
+      "x": 1760
+    },
+    {
+      "x": 1960
+    },
+    {
+      "x": 2120
+    }
+  ],
+  "slippery": [
+    {
+      "x0": 2480,
+      "x1": 3040
+    }
+  ],
+  "steamVents": [
+    {
+      "x": 2650,
+      "periodMs": 2600
+    },
+    {
+      "x": 2740,
+      "periodMs": 3000
+    }
+  ],
+  "stalls": [
+    {
+      "x": 760
+    },
+    {
+      "x": 1180
+    }
+  ],
+  "honey": [
+    {
+      "x": 700,
+      "h": 36
+    },
+    {
+      "x": 2050,
+      "h": 36,
+      "note": "暗巷盡頭"
+    },
+    {
+      "x": 2815,
+      "h": 124,
+      "note": "隱藏高台"
+    }
+  ],
+  "checkpoints": [
+    1340,
+    2240,
+    3080
+  ],
+  "breakables": [
+    {
+      "x": 480,
+      "kind": "lantern",
+      "loot": "coin"
+    },
+    {
+      "x": 1400,
+      "kind": "pot",
+      "loot": "food"
+    },
+    {
+      "x": 2300,
+      "kind": "lantern",
+      "loot": "power"
+    },
+    {
+      "x": 3120,
+      "kind": "pot",
+      "loot": "food"
+    }
+  ],
+  "enemies": [
+    {
+      "x": 520,
+      "species": "lobster",
+      "unlockX": 320
+    },
+    {
+      "x": 800,
+      "species": "stallkeeper",
+      "unlockX": 620
+    },
+    {
+      "x": 1200,
+      "species": "stallkeeper",
+      "unlockX": 980
+    },
+    {
+      "x": 1250,
+      "species": "lobster",
+      "unlockX": 1080
+    },
+    {
+      "x": 1640,
+      "species": "mirrorshade",
+      "unlockX": 1500
+    },
+    {
+      "x": 1900,
+      "species": "mirrorshade",
+      "unlockX": 1760
+    },
+    {
+      "x": 2000,
+      "species": "lobster",
+      "unlockX": 1860
+    },
+    {
+      "x": 2520,
+      "species": "lobster",
+      "unlockX": 2400
+    },
+    {
+      "x": 2950,
+      "species": "mirrorshade",
+      "unlockX": 2800
+    }
+  ],
+  "easterEgg": {
+    "x": 1820,
+    "kind": "last-lobster",
+    "windowMs": 3000
+  },
+  "altarAmbush": [],
+  "altarTriggerX": 99999,
+  "boss": {
+    "kind": "mirrorowl",
+    "triggerX": 3260,
+    "arenaX0": 3160,
+    "arenaX1": 3800
+  },
+  "decor": {
+    "back": [
+      {
+        "x": 120,
+        "kind": "s3-wok-stall"
+      },
+      {
+        "x": 900,
+        "kind": "s3-wok-stall"
+      },
+      {
+        "x": 1500,
+        "kind": "s3-wok-stall"
+      }
+    ],
+    "hang": []
+  }
+}
