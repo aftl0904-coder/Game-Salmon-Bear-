@@ -2878,5 +2878,61 @@
     "rows": 1,
     "facing": "front",
     "prompt": "white timing pointer. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/shop/sword.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "sword 3 tiers wood/steel/gold. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/gun.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "salmon gun 3 tiers, tier3 triple barrel. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/armour.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "armour cloth/leather/gold-trim. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/boots.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "boots sneakers/hiking/winged. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/charm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "charm wood/jade/gold honeycomb no letters. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/coin-stack.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "coin stacks few/small/big. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/shop-board.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "blank wooden shop board no letters. Magenta shop prop."
   }
 ]
