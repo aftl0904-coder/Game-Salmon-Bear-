@@ -2253,7 +2253,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear model-sheet 4. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "patbear model — small grey round-head teddy no clothes. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/patbear/idle.png",
@@ -2261,7 +2261,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear idle 3. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "patbear idle 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/patbear/cheer.png",
@@ -2269,7 +2269,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear cheer 3. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "patbear cheer 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/patbear/walk.png",
@@ -2277,7 +2277,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear walk 4. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "patbear walk 4 — small grey round-head. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/portraits/friend-patbear.png",
@@ -2285,7 +2285,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-patbear portrait 3 expressions neutral/happy/surprised. 大pat熊 honey-yellow chubby bear red shirt original. Magenta bust."
+    "prompt": "friend-patbear portrait 3 — small grey round-head. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/giraffe/model-sheet.png",
@@ -2493,7 +2493,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "stripebus model-sheet 4. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "stripebus model — yellow and brown striped multi-leg smile bus plush. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/stripebus/idle.png",
@@ -2501,7 +2501,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "stripebus idle 3. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "stripebus idle 3 — yellow brown stripes. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/stripebus/cheer.png",
@@ -2509,7 +2509,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "stripebus cheer 3. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "stripebus cheer 3 — yellow brown stripes. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/stripebus/walk.png",
@@ -2517,7 +2517,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "stripebus walk 4. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "stripebus walk 4 — yellow brown stripes long body. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/portraits/friend-stripebus.png",
@@ -2525,7 +2525,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-stripebus portrait 3 expressions neutral/happy/surprised. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta bust."
+    "prompt": "friend-stripebus portrait 3 — yellow brown striped smile bus. Magenta."
   },
   {
     "file": "art-src/anim/friends/berry/model-sheet.png",
@@ -2573,7 +2573,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "tigercub model-sheet 4. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "tigercub model — lanky orange striped tiger plush pink nose NO blue hat. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/tigercub/idle.png",
@@ -2581,7 +2581,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "tigercub idle 3. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "tigercub idle 3 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/tigercub/cheer.png",
@@ -2589,7 +2589,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "tigercub cheer 3. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "tigercub cheer 3 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/anim/friends/tigercub/walk.png",
@@ -2597,7 +2597,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "tigercub walk 4. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+    "prompt": "tigercub walk 4 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
   },
   {
     "file": "art-src/portraits/friend-tigercub.png",
@@ -2605,6 +2605,6 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-tigercub portrait 3 expressions neutral/happy/surprised. 橙色老虎 round baby tiger blue beanie original. Magenta bust."
+    "prompt": "friend-tigercub portrait 3 — orange striped no blue hat. Magenta #FF00FF SNES pixel plush."
   }
 ]
