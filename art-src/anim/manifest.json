@@ -2885,7 +2885,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "Big red-white checked picnic blanket side strip. Magenta."
+    "prompt": "picnic-blanket-big red-white checked side strip. Magenta."
   },
   {
     "file": "art-src/story/ending-picnic.png",
@@ -2893,7 +2893,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "ending-picnic sunrise forest picnic heroes pupu friends coffee-mama queen owl. 16:9 no text."
+    "prompt": "ending-picnic sunrise picnic still 16:9 no text."
   },
   {
     "file": "art-src/props/minigames/waffle-iron.png",
@@ -2966,5 +2966,29 @@
     "rows": 1,
     "facing": "front",
     "prompt": "wide-mouth glass cup front. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/shop/friends-stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friends-stall makeshift crate cloth stall with hanging gear, no people ~72px. Magenta."
+  },
+  {
+    "file": "art-src/ui/boss-card-bg.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "boss-card-bg 640x360 dark wood navy plaque empty center no text."
+  },
+  {
+    "file": "art-src/story/c0-church.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "c0-church Sunday morning small forest-edge church sunlight no people no text 16:9."
   }
 ]
