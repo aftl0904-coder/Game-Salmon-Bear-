@@ -102,9 +102,9 @@ Other rules:
 
 睇 `docs/bible/story.md`。
 
-### E1. 朋友仔檔口 → `art-src/props/shop/`
+### E1. 小朋友檔口 → `art-src/props/shop/`
 - `friends-stall.png`: 一個好細、臨時搭嘅檔口，用木箱同布搭成，掛住幾件裝備（劍、護甲、鞋）。
-  **冇人喺度**（救返嘅朋友仔係由遊戲擺上去）。大約 72 px 高。
+  **冇人喺度**（救返嘅小朋友係由遊戲擺上去）。大約 72 px 高。
 
 ### E2. Boss 來歷卡底圖 → `art-src/ui/`
 - `boss-card-bg.png` **640×360**: 一張深色嘅卡底，四邊有少少花紋，中間留白俾字。

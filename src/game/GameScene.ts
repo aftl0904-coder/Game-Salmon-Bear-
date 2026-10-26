@@ -3599,7 +3599,7 @@ export class GameScene extends Phaser.Scene {
       { label: '剩餘生命', detail: `♥ ${hpLeft}`, pts: hpLeft * 150 },
       { label: '擊倒', detail: '', pts: this.killBonus },
       ...(ST.friends?.length
-        ? [{ label: '朋友仔', detail: `${this.friendsSaved.length} / ${ST.friends.length}`, pts: this.friendsSaved.length * 400 }]
+        ? [{ label: '小朋友', detail: `${this.friendsSaved.length} / ${ST.friends.length}`, pts: this.friendsSaved.length * 400 }]
         : []),
       { label: '續關', detail: `× ${this.deaths}`, pts: -this.deaths * 200 },
     ]
