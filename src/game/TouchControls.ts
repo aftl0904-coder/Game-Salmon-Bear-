@@ -65,6 +65,8 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
   mkBtn({ btn: 'jump', x: rx, y: ry, label: '跳', w: 48, h: 48 })
   mkBtn({ btn: 'attack', x: rx - 52, y: ry - 8, label: '攻', w: 44, h: 44 })
   mkBtn({ btn: 'special', x: rx, y: ry - 56, label: '絕', w: 44, h: 40 })
+  // Start: pause in play, insert coin on the continue screen, skip in menus.
+  mkBtn({ btn: 'start', x: GAME_W - 30, y: 52, label: 'Ⅱ', w: 40, h: 28 })
 
   scene.events.once('shutdown', () => {
     TouchInput.clearAll()

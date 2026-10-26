@@ -196,7 +196,7 @@ export class MainMenuScene extends Phaser.Scene {
       this.arrows.push(a)
     }
     this.add
-      .text(width / 2, height - 6, '←→ 揀　Enter／F 開始', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
+      .text(width / 2, height - 6, '←→ 揀　Enter／F／手掣 A 開始', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
       .setOrigin(0.5, 1)
       .setAlpha(0.8)
   }
@@ -240,6 +240,8 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private move(d: number) {
+    unlockAudio()
+    playSong('title')
     this.cursor = (this.cursor + this.choices.length + d) % this.choices.length
     SFX.blip(660)
     this.refresh()
@@ -304,6 +306,7 @@ export class MainMenuScene extends Phaser.Scene {
     const choice = this.choices[this.cursor]
     if (!choice) return
     this.starting = true
+    unlockAudio()
     SFX.powerUp()
     const p = this.plaques[this.cursor]
     if (p) this.tweens.add({ targets: p.label, alpha: 0.2, duration: 70, yoyo: true, repeat: 3 })

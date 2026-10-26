@@ -7,6 +7,7 @@ import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
 import { PauseScene } from './game/PauseScene'
+import { installGamepadBridge } from './game/gamepadBridge'
 import { GAME_W, GAME_H, phaserConfig } from './game/display'
 import { installFit } from './game/fitCanvas'
 import { jumpGravity } from './game/config/playerData'
@@ -52,6 +53,7 @@ function bootGame() {
     },
   })
   ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
+  installGamepadBridge(game)
 
   game.events.once('ready', () => {
     for (const scene of game.scene.getScenes(false)) {

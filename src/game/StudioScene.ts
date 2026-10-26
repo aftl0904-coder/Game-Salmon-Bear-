@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 /**
@@ -61,6 +62,10 @@ export class StudioScene extends Phaser.Scene {
 
     this.input.keyboard?.once('keydown', () => this.leave())
     this.input.once('pointerdown', () => this.leave())
+  }
+
+  update() {
+    if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.leave()
   }
 
   private leave() {
