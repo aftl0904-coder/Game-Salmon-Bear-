@@ -24,6 +24,8 @@ type Rider = {
   air: boolean
   hurtUntil: number
   jumpKeys: () => boolean
+  /** Mash this to pedal faster (攻擊鍵). */
+  pedalKeys: () => boolean
 }
 
 const ROAD_Y = 316
@@ -52,6 +54,11 @@ export class BikeScene extends Phaser.Scene {
   private far!: Phaser.GameObjects.Image
   private coins = 0
   private crashes = 0
+  /** Mashing the attack button pedals harder: more speed, and a rising coin multiplier. */
+  private mash = 0
+  private mult = 1
+  private multText!: Phaser.GameObjects.Text
+  private speedLines: Phaser.GameObjects.Rectangle[] = []
   private coinText!: Phaser.GameObjects.Text
   private marker!: Phaser.GameObjects.Rectangle
   private finished = false
@@ -80,6 +87,9 @@ export class BikeScene extends Phaser.Scene {
     this.finished = false
     this.speedMul = 1
     this.slowUntil = 0
+    this.mash = 0
+    this.mult = 1
+    this.speedLines = []
     const W = this.scale.width
     this.cameras.main.fadeIn(400, 255, 250, 235)
     unlockAudio()
@@ -103,18 +113,23 @@ export class BikeScene extends Phaser.Scene {
     const G2 = [k(Phaser.Input.Keyboard.KeyCodes.PERIOD), k(Phaser.Input.Keyboard.KeyCodes.UP), k(Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO)]
     const p1 = () => G1.some((x) => Phaser.Input.Keyboard.JustDown(x)) || TouchInput.justPressed('jump')
     const p2 = () => G2.some((x) => Phaser.Input.Keyboard.JustDown(x)) || this.padJust(0)
-    const add = (set: AnimSetId, x: number, keys: () => boolean) => {
+    // Pedal (mash): 1P 攻擊鍵 F／J，2P 方向鍵右／手掣 B。
+    const A1 = [k(Phaser.Input.Keyboard.KeyCodes.F), k(Phaser.Input.Keyboard.KeyCodes.J), k(Phaser.Input.Keyboard.KeyCodes.D)]
+    const A2 = [k(Phaser.Input.Keyboard.KeyCodes.RIGHT), k(Phaser.Input.Keyboard.KeyCodes.NUMPAD_THREE)]
+    const a1 = () => A1.some((x) => Phaser.Input.Keyboard.JustDown(x)) || TouchInput.justPressed('attack')
+    const a2 = () => A2.some((x) => Phaser.Input.Keyboard.JustDown(x)) || this.padJust(1)
+    const add = (set: AnimSetId, x: number, keys: () => boolean, pedal: () => boolean) => {
       const ok = hasAnimSet(this, set)
       const spr = this.add.sprite(x, ROAD_Y, ok ? animTex(set) : 'art-salmon').setOrigin(0.5, 1).setScale(set === 'kibobo' ? 1.05 : 1.35)
       if (ok) spr.play(`${set}-bike-ride`)
       const shadow = this.add.ellipse(x, ROAD_Y + 2, 46, 6, 0x1a1008, 0.35)
-      this.riders.push({ set, spr, shadow, x, y: ROAD_Y, vy: 0, air: false, hurtUntil: 0, jumpKeys: keys })
+      this.riders.push({ set, spr, shadow, x, y: ROAD_Y, vy: 0, air: false, hurtUntil: 0, jumpKeys: keys, pedalKeys: pedal })
     }
     if (mode === '2p') {
-      add('kibobo', 130, p2)
-      add('lunbo', 230, p1)
+      add('kibobo', 130, p2, a2)
+      add('lunbo', 230, p1, a1)
     } else {
-      add(solo === 'girl' ? 'kibobo' : 'lunbo', 190, p1)
+      add(solo === 'girl' ? 'kibobo' : 'lunbo', 190, p1, a1)
     }
 
     // HUD: progress road to the honey tree + coins.
@@ -126,12 +141,15 @@ export class BikeScene extends Phaser.Scene {
     this.coinText = this.add
       .text(12, 8, '◎ 0', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
       .setDepth(51)
+    this.multText = this.add
+      .text(12, 26, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ff9a3a', stroke: '#1a0e06', strokeThickness: 3 })
+      .setDepth(51)
     this.add
       .text(W - 6, 26, 'Start／Enter　略過', { fontFamily: FONT_UI, fontSize: '9px', color: '#fff', backgroundColor: '#00000066', padding: { x: 4, y: 2 } })
       .setOrigin(1, 0)
       .setDepth(51)
     const title = this.add
-      .text(W / 2, 130, '單車追逐！跳過障礙　蜂群要伏低', { fontFamily: FONT_TITLE, fontSize: '16px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+      .text(W / 2, 130, '單車追逐！跳過障礙　蜂群要伏低\n狂撳 攻擊鍵 踩快啲，金幣加倍', { fontFamily: FONT_TITLE, fontSize: '16px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
       .setOrigin(0.5)
       .setDepth(51)
     this.tweens.add({ targets: title, alpha: 0, delay: 2600, duration: 600 })
@@ -176,8 +194,21 @@ export class BikeScene extends Phaser.Scene {
     if (TouchInput.justPressed('start')) return this.skipAll()
     const dt = Math.min(dtMs, 50) / 1000
     const now = this.time.now
-    const target = now < this.slowUntil ? 0.55 : 1
+    // Pedalling: each press tops the mash meter up, it bleeds away on its own.
+    for (const r of this.riders) {
+      if (r.pedalKeys()) {
+        this.mash = Math.min(8, this.mash + 1)
+        SFX.step()
+      }
+    }
+    this.mash = Math.max(0, this.mash - dt * 2.6)
+    const boost = Phaser.Math.Clamp(this.mash / 6, 0, 1)
+    this.mult = 1 + boost
+    const target = (now < this.slowUntil ? 0.55 : 1) + boost * 0.5
     this.speedMul += (target - this.speedMul) * Math.min(1, dt * 4)
+    this.multText.setText(boost > 0.05 ? `踩！ ×${this.mult.toFixed(1)}` : '')
+    this.multText.setColor(boost > 0.7 ? '#ffd040' : boost > 0.35 ? '#ff9a3a' : '#c88050')
+    this.drawSpeedLines(boost)
     const v = SPEED * this.speedMul
     this.dist += v * dt
     this.far.setScale(1 + Math.min(1, this.dist / LENGTH) * 0.18)
@@ -228,6 +259,24 @@ export class BikeScene extends Phaser.Scene {
     if (this.dist >= LENGTH) this.finish(false)
   }
 
+  /** Streaks along the road edge so the speed is felt, not just counted. */
+  private drawSpeedLines(boost: number) {
+    const want = Math.round(boost * 7)
+    while (this.speedLines.length < want) {
+      const y = Phaser.Math.Between(120, ROAD_Y - 10)
+      const line = this.add.rectangle(Phaser.Math.Between(0, 640), y, Phaser.Math.Between(20, 60), 2, 0xfff0d0, 0.5).setOrigin(0, 0.5).setDepth(49)
+      this.speedLines.push(line)
+    }
+    while (this.speedLines.length > want) this.speedLines.pop()?.destroy()
+    for (const l of this.speedLines) {
+      l.x -= 14 + boost * 22
+      if (l.x < -70) {
+        l.x = 660
+        l.y = Phaser.Math.Between(120, ROAD_Y - 10)
+      }
+    }
+  }
+
   private collide(r: Rider, o: Obj, sx: number) {
     if (o.done) return
     const dx = Math.abs(sx - r.x)
@@ -238,9 +287,11 @@ export class BikeScene extends Phaser.Scene {
         if (dx < 18 && feet - 60 < o.y && feet > o.y - 34) {
           o.done = true
           o.spr.destroy()
-          this.coins++
+          const got = Math.max(1, Math.round(this.mult))
+          this.coins += got
           this.coinText.setText(`◎ ${this.coins}`)
           SFX.coin()
+          if (got > 1) this.floatAt(o.spr.x, o.y - 30, `×${got}`, '#ffd040')
         }
         break
       case 'ramp':
@@ -268,6 +319,9 @@ export class BikeScene extends Phaser.Scene {
   }
 
   private crash(r: Rider, msg: string) {
+    // Crashing costs the speed you built up — that is the whole tension of mashing.
+    this.mash = 0
+    this.mult = 1
     r.hurtUntil = this.time.now + 1100
     this.crashes++
     this.slowUntil = this.time.now + 600

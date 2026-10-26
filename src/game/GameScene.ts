@@ -3963,15 +3963,27 @@ export class GameScene extends Phaser.Scene {
    */
   private placeEnemies() {
     // data/levels/stage1.json — each enemy walks in from the screen edge once lead ≥ unlockX.
-    for (const en of ST.enemies) {
+    // 單打少啲怪，雙打多啲 (Alan, 2026-10-27): one hero drops every 4th enemy past the first
+    // wave; two heroes get an extra copy of every 3rd, a little behind it.
+    const solo = this.mode === '1p'
+    const place = (en: Stage1['enemies'][number], dx = 0) => {
       if (en.species === 'bee' || en.species === 'squirrel') {
-        this.s2Pending.push({ x: en.x, species: en.species, unlockX: en.unlockX })
-        continue
+        this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX })
+        return
       }
       const kind = (en.kind ?? 'chaser') as EnemyKind
       const sp = en.species as EnemySpecies
-      const e = this.mkEnemy(en.x, GROUND_Y, kind, kind === 'guardian' ? en.x : undefined, sp, 0)
+      const guard = kind === 'guardian' ? en.x + dx : undefined
+      const e = this.mkEnemy(en.x + dx, GROUND_Y, kind, guard, sp, 0)
       this.deferEnemy(e, en.unlockX, en.unlockX <= 400 ? 'wave1' : 'later')
+    }
+    let n = 0
+    for (const en of ST.enemies) {
+      n++
+      // Never thin out the first wave — that is the stage teaching you.
+      if (solo && en.unlockX > 400 && n % 4 === 0) continue
+      place(en)
+      if (!solo && n % 3 === 0) place(en, 58)
     }
     for (const en of ST.altarAmbush) {
       const a = this.mkEnemy(en.x, GROUND_Y, 'ambusher', undefined, en.species as EnemySpecies, 0)
