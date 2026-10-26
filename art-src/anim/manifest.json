@@ -1725,7 +1725,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "Mirror owl dialogue portraits 3 busts magenta: neutral / calm-smile / shocked. Soft yellow eyes with pupils, yin-yang mirror disc. Kind uncorrupted."
+    "prompt": "Mirror owl dialogue portraits EXACTLY 3 busts magenta: neutral / calm-smile / shocked. Soft yellow eyes with pupils, yin-yang disc. Kind. v3."
   },
   {
     "file": "art-src/portraits/mirror-owl-evil.png",
