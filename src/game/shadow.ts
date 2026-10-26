@@ -1,18 +1,27 @@
 import Phaser from 'phaser'
 
+export type GroundShadow = Phaser.GameObjects.Ellipse | Phaser.GameObjects.Image
+
+/** Hand-painted soft shadow, when the art for it has loaded. */
+const SHADOW_TEX = 'fx-shadow-soft'
+
 /**
  * Ground blob shadow that shrinks / fades when the target leaves the ground.
- * Uses ellipse size + alpha (never fractional setScale) so ?debug=1 stays clean.
+ * With the painted texture it scales smoothly; without it, an ellipse sized in
+ * whole pixels (never a fractional setScale, so ?debug=1 stays clean).
  */
 export function addGroundShadow(
   scene: Phaser.Scene,
   target: Phaser.GameObjects.Sprite | Phaser.Physics.Arcade.Sprite,
   getGroundY: (target: Phaser.GameObjects.Sprite | Phaser.Physics.Arcade.Sprite) => number,
   ratio = 0.7,
-): Phaser.GameObjects.Ellipse {
+): GroundShadow {
   const baseW = Math.max(6, Math.round(target.displayWidth * ratio))
   const baseH = Math.max(3, Math.round(baseW * 0.25))
-  const sh = scene.add.ellipse(0, 0, baseW, baseH, 0x1a1008, 0.35)
+  const painted = scene.textures.exists(SHADOW_TEX)
+  const sh: GroundShadow = painted
+    ? scene.add.image(0, 0, SHADOW_TEX).setAlpha(0.5)
+    : scene.add.ellipse(0, 0, baseW, baseH, 0x1a1008, 0.35)
   const update = () => {
     if (!target.active) {
       sh.destroy()
@@ -22,13 +31,17 @@ export function addGroundShadow(
     const gy = getGroundY(target)
     const lift = Math.max(0, gy - target.y)
     const k = Phaser.Math.Clamp(1 - lift / 90, 0.45, 1)
-    // Integer pixel size — no fractional setScale
-    const w = Math.max(4, Math.round(baseW * k))
-    const h = Math.max(2, Math.round(baseH * k))
     sh.setPosition(Math.round(target.x), Math.round(gy))
-    sh.setSize(w, h)
-    sh.setScale(1)
-    sh.setAlpha(0.35 * k)
+    if (painted) {
+      const img = sh as Phaser.GameObjects.Image
+      img.setDisplaySize(Math.max(4, Math.round(baseW * 1.25 * k)), Math.max(3, Math.round(baseH * 1.5 * k)))
+      img.setAlpha(0.5 * k)
+    } else {
+      const el = sh as Phaser.GameObjects.Ellipse
+      el.setSize(Math.max(4, Math.round(baseW * k)), Math.max(2, Math.round(baseH * k)))
+      el.setScale(1)
+      el.setAlpha(0.35 * k)
+    }
     sh.setDepth(target.depth - 1)
     sh.setVisible(target.visible)
   }

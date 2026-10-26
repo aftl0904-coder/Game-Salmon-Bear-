@@ -1,243 +1,251 @@
 [
   {
-    "file": "art-src/anim/lunbo/model-sheet.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Top-tier 16-bit SNES pixel art character MODEL SHEET on flat solid magenta background #FF00FF only. No floor, no shadow, no scenery, no text, no labels, no watermark. Character 倫寶 (Lunbo): young East Asian man, short messy black hair with highlight bands, warm fair skin, calm slightly clumsy face, 1-pixel eye catch lights. Wearing warm SALMON-ORANGE zip hoodie (visible metal zipper glint, drawstrings, sleeve folds), white tee underneath, blue jeans with denim seams, sneakers with sole detail. Holds a salmon-shaped water-gun (orange-pink salmon body, scales, glossy eye, fin, tail as grip, mouth as muzzle). Layout: ONE image with four views left to right with ≥24px magenta gap: front, side facing RIGHT, back, three-quarter. Feet on same baseline. Native 72px tall upscaled 8× nearest-neighbour. Clean 1px dark outlines, ≤24 colours, light top-left, thin warm rim on right, 3–4 shade steps per material. Casual clothes only — NO kung-fu outfit. Refs: art-src/bear-girl.png, art-src/gen/heroes.png, art-src/gen/lunbo-poses.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/idle.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET on flat solid magenta #FF00FF. Side view facing RIGHT. Equal cells, ≥24px gap, shared baseline. 倫寶 exact model-sheet match: short messy black hair, salmon-orange zip hoodie, white tee, blue jeans, sneakers, salmon water-gun. IDLE breathing 3 frames: neutral, inhale chest rise, exhale settle. Native 72px tall 8× NN. 1px dark outlines ≤24 colours light top-left. Refs: lunbo/model-sheet.png, bear-girl.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 CLEARLY DIFFERENT walk frames ≥40px gaps shared baseline. 倫寶 locked: spiky black hair, salmon-orange zip hoodie white drawstrings, white tee, blue jeans, black sneakers, salmon water-gun. Classic walk: L plant, mid pass UP, R plant, mid pass UP. Hoodie strings swing. NO duplicates. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-idle."
-  },
-  {
-    "file": "art-src/anim/lunbo/jump.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 DISTINCT jump frames: rise stretch take-off, apex tuck, fall reach down. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/crouch.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 crouch frames: going down, full crouch, crouched aiming gun. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/shoot.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 shoot frames: raise aim, FIRE with orange muzzle flash + recoil, stronger recoil, recover. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/shoot-crouch.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 shoot-crouch frames: crouched aim, fire muzzle flash + recoil crouched, recover crouched. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-crouch."
-  },
-  {
-    "file": "art-src/anim/lunbo/hurt.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 hurt frames: flinch lean back eyes shut, deeper bend, stagger wince. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/lunbo/ko.png",
+    "file": "art-src/anim/boss/mirror-owl/defeat.png",
     "frames": 5,
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 5 KO frames: knockback X eyes, mid fall, more horizontal, ground impact, lying defeated with gun. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+    "prompt": "Owl defeat 5 mirror cracks calm."
   },
   {
-    "file": "art-src/anim/lunbo/win.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Facing RIGHT. 3 win frames: smile gun at side, raise salmon gun overhead, hold victory. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/kibobo/model-sheet.png",
+    "file": "art-src/anim/boss/mirror-owl/feather-curtain.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET on magenta #FF00FF. 琪寶寶: young woman, long dark hair HIGH PONYTAIL, cream/pastel short top (not purple), dark slim trousers, sneakers, short straight sword, round paper fan with ribs+tassel on back. Four views: front, side RIGHT, back showing fan, 3/4. Native 72px 8× NN. Refs: salmon-boy.png, heroes.png, kibobo-poses.png."
+    "prompt": "Owl feather-curtain (from combined sheet)."
   },
   {
-    "file": "art-src/anim/kibobo/idle.png",
+    "file": "art-src/anim/boss/mirror-owl/feather.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 idle breathe. 琪寶寶 locked: high ponytail purple tie, cream top, dark slim trousers, purple sneakers, sword, paper fan on BACK. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Feather FX 3."
   },
   {
-    "file": "art-src/anim/kibobo/run.png",
+    "file": "art-src/anim/boss/mirror-owl/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl fly 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/guard.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl guard honey crate."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl hurt 2 magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl model sheet 4 views ~128px."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/perch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl perch 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl split three copies."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/charge.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane charge 4 bike mud wave. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/defeat.png",
     "frames": 5,
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 DISTINCT run frames, ponytail/tassel follow-through. 琪寶寶 locked cream top + sword + fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Mudmane defeat 5 △ seal cracks glow fades tired kind old worker. Magenta facing RIGHT."
   },
   {
-    "file": "art-src/anim/kibobo/jump.png",
-    "frames": 3,
-    "cols": 3,
+    "file": "art-src/anim/boss/mudmane/hurt.png",
+    "frames": 2,
+    "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 jump: rise, apex tuck, fall. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Mudmane hurt 2. Magenta facing RIGHT."
   },
   {
-    "file": "art-src/anim/kibobo/crouch.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 crouch: going down, full crouch, crouched ready sword. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/kibobo/slash1.png",
+    "file": "art-src/anim/boss/mudmane/model-sheet.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash1 horizontal: wind-up, smear slash, follow-through, recover. 琪寶寶 locked cream top sword fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Mudmane model sheet 4 views ~110px. Hard hat mud cape △ seal. Magenta."
   },
   {
-    "file": "art-src/anim/kibobo/slash2.png",
+    "file": "art-src/anim/boss/mudmane/nail.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane nail FX 2. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/nailgun.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash2 upward: wind-up low, upward slash, follow-through high, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Mudmane nailgun 4 standing on beam firing. Magenta facing RIGHT."
   },
   {
-    "file": "art-src/anim/kibobo/slash3.png",
+    "file": "art-src/anim/boss/mudmane/punch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane punch 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane ride 4 on dirt motorbike. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/summon.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane summon 3 whistle calling zombies. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane walk 4 off bike. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/defeat.png",
     "frames": 5,
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 slash3 spinning finisher: crouch wind-up, spin start, smear spin, slash finish, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "Queen defeat 5 frames magenta facing RIGHT. Crown falls shrink wakes kind. Same design family."
   },
   {
-    "file": "art-src/anim/kibobo/fan-glide.png",
+    "file": "art-src/anim/boss/queen-bee/honey-puddle.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 fan-glide: high float fan overhead, mid descent, near land squat. OPEN paper fan held overhead. 琪寶寶 locked cream top. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "FX honey-puddle 3 frames magenta sticky floor."
   },
   {
-    "file": "art-src/anim/kibobo/hurt.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hurt: flinch, deeper recoil, stagger wince. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/kibobo/ko.png",
-    "frames": 5,
-    "cols": 5,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 KO: knockback, mid fall, horizontal, impact, lying. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/kibobo/win.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Facing RIGHT. 3 win: smile ready, raise sword/fan cheer, hold victory. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/pupu/model-sheet.png",
+    "file": "art-src/anim/boss/queen-bee/honey-stream.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET magenta #FF00FF. 噗噗 ORIGINAL round bear — NOT Winnie the Pooh, NO red shirt. Honey-brown fur, cream oval belly, blue neck ribbon bow, small ears, tiny eyes catch light. Four views front/side RIGHT/back/3-4. Native 56px tall 8× NN. Refs: kind-bear.png, bear-poses.png, heroes.png."
+    "prompt": "FX honey-stream 4 frames magenta L→R spray. No characters."
   },
   {
-    "file": "art-src/anim/pupu/idle.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. ALL frames side profile facing RIGHT. 3 idle breathe. 噗噗 locked: honey-brown, cream belly, blue ribbon — NOT Pooh NO red shirt. Native 56px 8× NN. Refs: pupu/model-sheet.png."
-  },
-  {
-    "file": "art-src/anim/pupu/walk.png",
+    "file": "art-src/anim/boss/queen-bee/hover.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 DISTINCT walk frames different legs. 噗噗 locked original bear blue ribbon. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "Queen hover 4 frames magenta facing RIGHT. Wing flap bob. Same 128px scale as model."
   },
   {
-    "file": "art-src/anim/pupu/cute-pose.png",
+    "file": "art-src/anim/boss/queen-bee/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen hurt 2 frames magenta facing RIGHT. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/land.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. 3 cute poses: tilt smile, paws together, happy bounce. 噗噗 locked original bear blue ribbon NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "Queen land 3 frames magenta facing RIGHT. Heavy landing wings fold. Same scale."
   },
   {
-    "file": "art-src/anim/pupu/tackle.png",
+    "file": "art-src/anim/boss/queen-bee/lay-eggs.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 tackle: crouch anticipation, launch stretch, smear dash, impact/recover. 噗噗 locked. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "Queen lay-eggs 4 frames magenta facing RIGHT. Bend drop eggs. Same scale."
   },
   {
-    "file": "art-src/anim/pupu/hollow-idle.png",
+    "file": "art-src/anim/boss/queen-bee/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Boss queen-bee model sheet 4 views magenta #FF00FF. Yellow+purple stripes pink eyes golden crown. ~128px native 8× NN. Side/3-4 facing RIGHT. Same size. Refs queen-bee.png portraits."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/spray.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen spray 4 frames magenta facing RIGHT. Fake honey stream. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/summon.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen summon 4 frames magenta facing RIGHT. Raises sceptre-stinger. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/swarm.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hollow idle. 噗噗 HOLLOW: grey fur, pale grey belly, faded grey ribbon, limp, empty void eyes. Atmosphere horror no gore. Native 56px 8× NN. Refs: pupu/model-sheet.png."
+    "prompt": "FX swarm 3 frames magenta facing RIGHT. Line of 3 mini bees."
   },
   {
-    "file": "art-src/anim/pupu/wake-up.png",
-    "frames": 5,
-    "cols": 5,
+    "file": "art-src/anim/boss/queen-bee/weak.png",
+    "frames": 3,
+    "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 wake-up: grey hollow limp → stir → colour returning → full warm colour → jump celebrate. 噗噗 original bear NOT Pooh. Native 56px 8× NN. Refs: pupu/model-sheet.png, hollow-idle."
-  },
-  {
-    "file": "art-src/anim/enemies/E-01-fish/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-01 red piranha walk/swim 4 frames magenta #FF00FF facing RIGHT. Design from enemy-lineup-five: red-pink aggressive fish sharp teeth bulging eyes fins. Native 40px 8× NN. Refs: enemy-lineup-five.png."
+    "prompt": "Queen weak 3 frames magenta facing RIGHT. Exhausted glowing head weak point. Same scale."
   },
   {
     "file": "art-src/anim/enemies/E-01-fish/charge.png",
@@ -256,6 +264,14 @@
     "prompt": "E-01 dash stretch forward 3 frames magenta. Same design. Native 40px 8× NN."
   },
   {
+    "file": "art-src/anim/enemies/E-01-fish/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-01 die 4 frames magenta cartoon dissolve. Same design. Native 40px 8× NN."
+  },
+  {
     "file": "art-src/anim/enemies/E-01-fish/dizzy.png",
     "frames": 3,
     "cols": 3,
@@ -272,68 +288,28 @@
     "prompt": "E-01 hit flinch 2 frames magenta. Same design. Native 40px 8× NN."
   },
   {
-    "file": "art-src/anim/enemies/E-01-fish/die.png",
+    "file": "art-src/anim/enemies/E-01-fish/walk.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-01 die 4 frames magenta cartoon dissolve. Same design. Native 40px 8× NN."
+    "prompt": "E-01 red piranha walk/swim 4 frames magenta #FF00FF facing RIGHT. Design from enemy-lineup-five: red-pink aggressive fish sharp teeth bulging eyes fins. Native 40px 8× NN. Refs: enemy-lineup-five.png."
   },
   {
-    "file": "art-src/anim/enemies/E-03-hatsoldier/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-03 hatsoldier walk 4 frames magenta facing RIGHT. Wooden mannequin straw hat purple accents holding rock. Native 56px 8× NN. Refs: enemy-lineup-five.png."
-  },
-  {
-    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-low.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-03 throw-low 4 frames magenta underhand rock throw. Same hatsoldier design. Native 56px 8× NN."
-  },
-  {
-    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-high.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-03 throw-high 4 frames magenta overhead rock throw. Same design. Native 56px 8× NN."
-  },
-  {
-    "file": "art-src/anim/enemies/E-03-hatsoldier/hit.png",
+    "file": "art-src/anim/enemies/E-02-mechpig/block.png",
     "frames": 2,
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-03 hit 2 frames magenta. Same design. Native 56px 8× NN."
+    "prompt": "E-02 block 2 frames magenta sparks on front armour. Same design. Native 72px 8× NN."
   },
   {
-    "file": "art-src/anim/enemies/E-03-hatsoldier/die.png",
-    "frames": 4,
-    "cols": 4,
+    "file": "art-src/anim/enemies/E-02-mechpig/die.png",
+    "frames": 5,
+    "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-03 die 4 frames magenta wooden collapse. Same design. Native 56px 8× NN."
-  },
-  {
-    "file": "art-src/anim/enemies/E-02-mechpig/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-02 mechpig walk 4 frames magenta facing RIGHT. Barrel body metal bands pig head red eyes golden wind-up key four mech legs. Native 72px 8× NN. Refs: enemy-lineup-five.png."
-  },
-  {
-    "file": "art-src/anim/enemies/E-02-mechpig/windup.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-02 windup 3 frames magenta compress key winds. Same mechpig. Native 72px 8× NN."
+    "prompt": "E-02 die 5 frames magenta barrel break apart. Same design. Native 72px 8× NN."
   },
   {
     "file": "art-src/anim/enemies/E-02-mechpig/lunge.png",
@@ -352,20 +328,1036 @@
     "prompt": "E-02 opening weak moment gears pop loose 3 frames magenta. Same design. Native 72px 8× NN."
   },
   {
-    "file": "art-src/anim/enemies/E-02-mechpig/block.png",
+    "file": "art-src/anim/enemies/E-02-mechpig/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 mechpig walk 4 frames magenta facing RIGHT. Barrel body metal bands pig head red eyes golden wind-up key four mech legs. Native 72px 8× NN. Refs: enemy-lineup-five.png."
+  },
+  {
+    "file": "art-src/anim/enemies/E-02-mechpig/windup.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-02 windup 3 frames magenta compress key winds. Same mechpig. Native 72px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 die 4 frames magenta wooden collapse. Same design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/hit.png",
     "frames": 2,
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-02 block 2 frames magenta sparks on front armour. Same design. Native 72px 8× NN."
+    "prompt": "E-03 hit 2 frames magenta. Same design. Native 56px 8× NN."
   },
   {
-    "file": "art-src/anim/enemies/E-02-mechpig/die.png",
+    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-high.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 throw-high 4 frames magenta overhead rock throw. Same design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/throw-low.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 throw-low 4 frames magenta underhand rock throw. Same hatsoldier design. Native 56px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-03-hatsoldier/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-03 hatsoldier walk 4 frames magenta facing RIGHT. Wooden mannequin straw hat purple accents holding rock. Native 56px 8× NN. Refs: enemy-lineup-five.png."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/aim.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 aim 3 frames magenta facing RIGHT. Stinger lowers body tilts down. Same 40px bee design/size. Ref bee-soldier + fly sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 die 4 frames magenta facing RIGHT. Spin fall then poof. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/dive.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 dive 3 frames magenta facing RIGHT. Dive diagonally down-right speed lines. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 beesoldier fly 4 frames magenta #FF00FF facing RIGHT. Yellow+purple striped bee white wings purple stinger. Wing flap only no weapon. Native 40px 8× NN. Same size every sheet. Ref: art-src/gen/bee-soldier.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 hit 2 frames magenta facing RIGHT. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/stuck.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 stuck 3 frames magenta facing RIGHT. Stinger stuck in ground wiggling. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 die 4 frames magenta facing RIGHT. Collapse into honey puddle then dries. Same 44px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 hit 2 frames magenta facing RIGHT. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/lunge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 lunge 3 frames magenta facing RIGHT. Arms out. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 zombiesquirrel walk 4 frames magenta facing RIGHT. Brown squirrel glowing yellow eyes dripping fake honey shambling. Native 44px 8× NN. Ref zombie-squirrel.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/die.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee die 3 frames magenta facing RIGHT. Same 20px size."
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/fly.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee fly 3 frames magenta facing RIGHT. Tiny yellow-purple bee native 20px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/block.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 block 3 claws up. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 die 4 shell crack poof."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 hit 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/snap.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 lobsterguard SNAP redraw: red lobster soldier claw strike 4 frames magenta #FF00FF facing RIGHT. Same model as walk.png (navy vest gold studs). Not wolf."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/turn.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 turn 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 lobster walk 4 magenta facing RIGHT ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 die (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck-hit-die-sheet.png",
+    "frames": 8,
+    "cols": 8,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck+hit+die combined sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck (from duck-hit-die sheet; Claude slice)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 hit (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 idle chopping 3. Yellowtail stallkeeper ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/knife.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Knife FX spinning 4 magenta."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/throw.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 throw knife 4. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/dash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 dash 3. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 die 4 mirror shatter."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/float.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 float 4. Hooded mirror face ~48px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit-die-sheet.png",
+    "frames": 6,
+    "cols": 6,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit+die sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit 2."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 split 4 into two copies."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 die 4 melts to honey puddle then animal wakes runs away. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 hit 2. Honeyzombie flinch. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/reach.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 reach 3 arms forward. Same honeyzombie. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 honeyzombie badger walk 4. Grey fur empty yellow eyes honey drip. Magenta facing RIGHT ~52px. Atmosphere horror never gore."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/crash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 crash 3 dizzy steam bonnet. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/dash.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 dash 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 die 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/flash.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 flash 2 headlights blink warning. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/idle.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 taximonster idle 2. Small angry taxi headlight eyes grille mouth no letters. Magenta facing RIGHT ~48px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/burst.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 burst 4 papers fly out blank. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 die 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 hit 2. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/paper.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 paper FX 3 spinning blank sheets. Magenta."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/tick.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 tick 3 shaking about to burst. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 punchclock walk 4. Walking time clock stubby legs blank face preferred. Magenta facing RIGHT ~44px."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/break.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg break 3 frames magenta shattered by attack."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/hatch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg hatch 4 frames magenta. Cracks mini bee pops facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/idle.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Fake-honey egg idle 2 frames magenta pulsing amber egg purple spots."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub cheer — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub idle — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub/熊仔 — small grey-beige round-head pale PINK shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub walk — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/berry/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry cheer 3. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry idle 3. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry model-sheet 4. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry walk 4. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie cheer 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie idle 3 plain black shirt. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "brownie model sheet 4 views. Small brown teddy white muzzle/paws plain black T-shirt no letters. Magenta. Original ~34px."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie walk 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim cheer 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim idle 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "denim model sheet 4 views. Light-tan teddy cream muzzle dark-blue dungarees. Magenta. Original ~36px."
+  },
+  {
+    "file": "art-src/anim/friends/denim/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim walk 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/forest/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest cheer 3. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest idle 3. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest model-sheet 4. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest walk 4. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe cheer 3. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe idle 3. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe model-sheet 4. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe walk 4. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/guard/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard cheer 3. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/guard/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard idle 3. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/guard/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard model-sheet 4. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/guard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard walk 4. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui cheer 3 arms up hop. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui idle 3 breathe. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "huihui model sheet 4 views. Grey-beige pilled teddy pale pink shirt pink nose brown foot pads. Magenta. Original unbranded ~36px."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui walk 4 waddle. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro cheer 3. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro idle 3. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro model-sheet 4. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro walk 4. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear cheer — white shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear idle — white shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear/大pat白衫 — small grey round-head WHITE shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear walk — white shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/polar/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar cheer 3. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar idle 3. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar model-sheet 4. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar walk 4. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba cheer 3. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba idle 3. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba model-sheet 4. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba walk 4. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus cheer 3 — yellow brown stripes. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus idle 3 — yellow brown stripes. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus model — yellow and brown striped multi-leg smile bus plush. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus walk 4 — yellow brown stripes long body. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub cheer 3 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub idle 3 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub model — lanky orange striped tiger plush pink nose NO blue hat. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub walk 4 — orange striped lanky. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/fx/armour-clank.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Metal armour clank sparks 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/coin-spin.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Gold coin spin 4 frames magenta FX only no text."
+  },
+  {
+    "file": "art-src/anim/fx/dust-puff.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "dust-puff 4 small dust ~40px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/dust-step.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Small footstep dust 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/enemy-poof.png",
     "frames": 5,
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-02 die 5 frames magenta barrel break apart. Same design. Native 72px 8× NN."
+    "prompt": "Cartoon smoke puff defeat 5 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/glass-shards.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glass-shards 4 mirror shards ~64px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/hit-spark.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Yellow-white hit spark 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/honey-sparkle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Golden honey sparkles 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/impact-big.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "impact-big 5 heavy hit flash shards fade ~96px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/land-dust.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Landing dust cloud 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/lantern-break.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Red paper lantern tearing 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/leaf-bits.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "leaf-bits 4 leaf fragments ~48px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/muzzle-flash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Orange muzzle flash burst 3 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/pot-break.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Clay honey pot shatter 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/power-up.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Golden ring burst power-up 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/roe-splash.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Orange salmon-roe droplet splash 4 frames magenta FX only."
+  },
+  {
+    "file": "art-src/anim/fx/shockwave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shockwave 4 expanding ring ~128px magenta"
   },
   {
     "file": "art-src/anim/fx/slash-arc-1.png",
@@ -392,108 +1384,1036 @@
     "prompt": "White/blue spinning slash trails 5 frames magenta FX only."
   },
   {
-    "file": "art-src/anim/fx/muzzle-flash.png",
+    "file": "art-src/anim/fx/sparkle-trail.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "sparkle-trail 4 gold glitter ~48px magenta"
+  },
+  {
+    "file": "art-src/anim/kibobo/bike-jump.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "Orange muzzle flash burst 3 frames magenta FX only."
+    "prompt": "琪寶寶 bike-jump 3 frames magenta facing RIGHT. Same scale."
   },
   {
-    "file": "art-src/anim/fx/roe-splash.png",
+    "file": "art-src/anim/kibobo/bike-ride.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Orange salmon-roe droplet splash 4 frames magenta FX only."
+    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top fan on back city bike. Same 72px scale."
   },
   {
-    "file": "art-src/anim/fx/hit-spark.png",
-    "frames": 4,
-    "cols": 4,
+    "file": "art-src/anim/kibobo/crouch.png",
+    "frames": 3,
+    "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "Yellow-white hit spark 4 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 crouch: going down, full crouch, crouched ready sword. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/enemy-poof.png",
+    "file": "art-src/anim/kibobo/fan-float.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
+  },
+  {
+    "file": "art-src/anim/kibobo/fan-glide.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 fan-glide: high float fan overhead, mid descent, near land squat. OPEN paper fan held overhead. 琪寶寶 locked cream top. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/hurt.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 hurt: flinch, deeper recoil, stagger wince. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 idle breathe. 琪寶寶 locked: high ponytail purple tie, cream top, dark slim trousers, purple sneakers, sword, paper fan on BACK. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 jump: rise, apex tuck, fall. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/ko.png",
     "frames": 5,
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "Cartoon smoke puff defeat 5 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 KO: knockback, mid fall, horizontal, impact, lying. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/armour-clank.png",
+    "file": "art-src/anim/kibobo/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET on magenta #FF00FF. 琪寶寶: young woman, long dark hair HIGH PONYTAIL, cream/pastel short top (not purple), dark slim trousers, sneakers, short straight sword, round paper fan with ribs+tassel on back. Four views: front, side RIGHT, back showing fan, 3/4. Native 72px 8× NN. Refs: salmon-boy.png, heroes.png, kibobo-poses.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/moto-jump.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "Metal armour clank sparks 3 frames magenta FX only."
+    "prompt": "Kibobo moto-jump 3 rain. Magenta facing RIGHT."
   },
   {
-    "file": "art-src/anim/fx/lantern-break.png",
+    "file": "art-src/anim/kibobo/moto-ride.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Red paper lantern tearing 4 frames magenta FX only."
+    "prompt": "Kibobo moto-ride 4 electric scooter rain. Magenta facing RIGHT."
   },
   {
-    "file": "art-src/anim/fx/pot-break.png",
+    "file": "art-src/anim/kibobo/run.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 DISTINCT run frames, ponytail/tassel follow-through. 琪寶寶 locked cream top + sword + fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/kibobo/slash1.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Clay honey pot shatter 4 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash1 horizontal: wind-up, smear slash, follow-through, recover. 琪寶寶 locked cream top sword fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/power-up.png",
+    "file": "art-src/anim/kibobo/slash2.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Golden ring burst power-up 4 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash2 upward: wind-up low, upward slash, follow-through high, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/honey-sparkle.png",
-    "frames": 4,
-    "cols": 4,
+    "file": "art-src/anim/kibobo/slash3.png",
+    "frames": 5,
+    "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "Golden honey sparkles 4 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 slash3 spinning finisher: crouch wind-up, spin start, smear spin, slash finish, recover. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/coin-spin.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Gold coin spin 4 frames magenta FX only no text."
-  },
-  {
-    "file": "art-src/anim/fx/dust-step.png",
+    "file": "art-src/anim/kibobo/win.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "Small footstep dust 3 frames magenta FX only."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Facing RIGHT. 3 win: smile ready, raise sword/fan cheer, hold victory. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
-    "file": "art-src/anim/fx/land-dust.png",
+    "file": "art-src/anim/lunbo/bike-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "倫寶 bike-jump 3 frames magenta facing RIGHT. Same scale design."
+  },
+  {
+    "file": "art-src/anim/lunbo/bike-ride.png",
     "frames": 4,
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Landing dust cloud 4 frames magenta FX only."
+    "prompt": "倫寶 bike-ride 4 frames magenta facing RIGHT. Orange hoodie salmon gun on casual city bike. Same 72px scale as model. Refs lunbo model-sheet."
   },
   {
-    "file": "art-src/props/stage3/props-sheet.png",
+    "file": "art-src/anim/lunbo/crouch.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 crouch frames: going down, full crouch, crouched aiming gun. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/hurt.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 hurt frames: flinch lean back eyes shut, deeper bend, stagger wince. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET on flat solid magenta #FF00FF. Side view facing RIGHT. Equal cells, ≥24px gap, shared baseline. 倫寶 exact model-sheet match: short messy black hair, salmon-orange zip hoodie, white tee, blue jeans, sneakers, salmon water-gun. IDLE breathing 3 frames: neutral, inhale chest rise, exhale settle. Native 72px tall 8× NN. 1px dark outlines ≤24 colours light top-left. Refs: lunbo/model-sheet.png, bear-girl.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 DISTINCT jump frames: rise stretch take-off, apex tuck, fall reach down. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/ko.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 5 KO frames: knockback X eyes, mid fall, more horizontal, ground impact, lying defeated with gun. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Top-tier 16-bit SNES pixel art character MODEL SHEET on flat solid magenta background #FF00FF only. No floor, no shadow, no scenery, no text, no labels, no watermark. Character 倫寶 (Lunbo): young East Asian man, short messy black hair with highlight bands, warm fair skin, calm slightly clumsy face, 1-pixel eye catch lights. Wearing warm SALMON-ORANGE zip hoodie (visible metal zipper glint, drawstrings, sleeve folds), white tee underneath, blue jeans with denim seams, sneakers with sole detail. Holds a salmon-shaped water-gun (orange-pink salmon body, scales, glossy eye, fin, tail as grip, mouth as muzzle). Layout: ONE image with four views left to right with ≥24px magenta gap: front, side facing RIGHT, back, three-quarter. Feet on same baseline. Native 72px tall upscaled 8× nearest-neighbour. Clean 1px dark outlines, ≤24 colours, light top-left, thin warm rim on right, 3–4 shade steps per material. Casual clothes only — NO kung-fu outfit. Refs: art-src/bear-girl.png, art-src/gen/heroes.png, art-src/gen/lunbo-poses.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/moto-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Lunbo moto-jump 3 rain. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/lunbo/moto-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Lunbo moto-ride 4 electric scooter rain streaks. Magenta facing RIGHT. Refs lunbo model."
+  },
+  {
+    "file": "art-src/anim/lunbo/shoot-crouch.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 3 shoot-crouch frames: crouched aim, fire muzzle flash + recoil crouched, recover crouched. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-crouch."
+  },
+  {
+    "file": "art-src/anim/lunbo/shoot.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 shoot frames: raise aim, FIRE with orange muzzle flash + recoil, stronger recoil, recover. 倫寶 locked orange hoodie + salmon gun. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/lunbo/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Side facing RIGHT. 4 CLEARLY DIFFERENT walk frames ≥40px gaps shared baseline. 倫寶 locked: spiky black hair, salmon-orange zip hoodie white drawstrings, white tee, blue jeans, black sneakers, salmon water-gun. Classic walk: L plant, mid pass UP, R plant, mid pass UP. Hoodie strings swing. NO duplicates. Native 72px 8× NN. Refs: lunbo/model-sheet.png, lunbo-idle."
+  },
+  {
+    "file": "art-src/anim/lunbo/win.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16-bit SNES pixel art SPRITE SHEET, magenta #FF00FF. Facing RIGHT. 3 win frames: smile gun at side, raise salmon gun overhead, hold victory. 倫寶 locked. Native 72px 8× NN. Refs: lunbo/model-sheet.png."
+  },
+  {
+    "file": "art-src/anim/pupu/cute-pose.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 cute-pose 3 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/hollow-idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 hollow-idle 3 grey — no scarf, uniform grey, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 idle 3 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 model — no blue scarf, uniform brown fur (no light belly/muzzle), smaller eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/tackle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 tackle 4 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/wake-up.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 wake-up 5 — no scarf, uniform fur, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/pupu/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "噗噗 walk 4 — no scarf, uniform brown, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut idle 3. 椰青泰國人 straw hat cleaver down. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut model-sheet 4. 椰青泰國人 straw hat cleaver down. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut serve 4. 椰青泰國人 straw hat cleaver down. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi idle 3. 刺身師傅 headband navy apron. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi model-sheet 4. 刺身師傅 headband navy apron. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi serve 4. 刺身師傅 headband navy apron. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart idle 3. 蛋撻哥哥 baker whites paper hat. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart model-sheet 4. 蛋撻哥哥 baker whites paper hat. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart serve 4. 蛋撻哥哥 baker whites paper hat. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle idle 3. 夾餅叔叔 apron white vest towel. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle model-sheet 4. 夾餅叔叔 apron white vest towel. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle serve 4. 夾餅叔叔 apron white vest towel. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/bike/bee-swarm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bee swarm 3 frames magenta flying left obstacle."
+  },
+  {
+    "file": "art-src/bike/bike-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike far BG 16:9 countryside honey tree on hill NO characters. Match c2-bike mood."
+  },
+  {
+    "file": "art-src/bike/bike-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike mid tileable strip hills fences flowers. Magenta/sky."
+  },
+  {
+    "file": "art-src/bike/bike-road.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike road tileable dirt strip grass edges magenta."
+  },
+  {
+    "file": "art-src/bike/cone.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike traffic cone magenta."
+  },
+  {
+    "file": "art-src/bike/honey-puddle.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fake-honey puddle glossy yellow magenta."
+  },
+  {
+    "file": "art-src/bike/log.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fallen log magenta."
+  },
+  {
+    "file": "art-src/bike/obstacles-sheet.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike obstacles sheet rock/log/honey/cone/ramp."
+  },
+  {
+    "file": "art-src/bike/ramp.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike wooden ramp magenta."
+  },
+  {
+    "file": "art-src/bike/rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike rock obstacle magenta side view."
+  },
+  {
+    "file": "art-src/fx/light/glow-cone.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage3/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+    "prompt": "glow-cone 256x256 streetlamp cone top-narrow bottom-wide PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/glow-ring.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glow-ring 128x128 hollow soft ring PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/glow-round.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glow-round 256x256 soft white radial on PURE BLACK additive. Section A."
+  },
+  {
+    "file": "art-src/fx/light/grade-cold.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "grade-cold 640x360 faint cold blue wash RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/light/grade-warm.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "grade-warm 640x360 faint warm orange wash RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/light/shaft-soft.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shaft-soft 128x360 diagonal soft shaft denser top PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/vignette.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "vignette 640x360 black edges transparent center RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-long.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-long 256x64 elongated white ellipse on PURE BLACK dusk. Section B."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-soft.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-soft 128x64 soft white ellipse on PURE BLACK (white=density). Section B."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-tight.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-tight 128x64 harder-edge white ellipse on PURE BLACK. Section B."
+  },
+  {
+    "file": "art-src/fx/weather/fog-band.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "fog-band 640x120 tileable L-R fade top/bottom on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/mist-puff.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "mist-puff 4 frames 128x128 each expanding mist on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/rain-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "rain-sheet 640x360 tileable diagonal rain on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/water-ripple.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "water-ripple 256x64 tileable L-R on magenta. Section C."
+  },
+  {
+    "file": "art-src/map/map-icons.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta sheet 5 round place icons L→R: forest, honey tree, lantern market, crane fog, dark tower △. ~32px 8× NN."
+  },
+  {
+    "file": "art-src/map/map-walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta walk[4] facing RIGHT. Tiny chibi 倫寶+琪寶寶+噗噗 ~24px. Refs hero model-sheets."
+  },
+  {
+    "file": "art-src/map/world-map.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "map",
+    "prompt": "SNES world map 16:9 NO text/characters. Dirt road BL→TR: forest picnic, honey tree hill, night market+hotspring, construction fog, dark tower with △. Darker 1→5."
+  },
+  {
+    "file": "art-src/portraits/coffee-mama.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 咖啡媽媽."
+  },
+  {
+    "file": "art-src/portraits/friend-bearcub.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-bearcub/熊仔 portrait 3 — pink shirt. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-berry.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-berry portrait 3 expressions neutral/happy/surprised. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-brownie.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-brownie portrait 3 busts plain black shirt. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-denim.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-denim portrait 3 busts. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-forest.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-forest portrait 3 expressions neutral/happy/surprised. 龍貓 original grey forest spirit plush leaf belly. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-giraffe.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-giraffe portrait 3 expressions neutral/happy/surprised. 長頸鹿 yellow spotted chubby giraffe plush. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-guard.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-guard portrait 3 expressions neutral/happy/surprised. 英國熊 brown shaggy royal guard tall black hat. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-huihui.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-huihui portrait 3 busts neutral/happy/surprised. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-kuro.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-kuro portrait 3 expressions neutral/happy/surprised. 黑貓 black kitten white socks blue collar gold bell. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-patbear.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-patbear portrait — white shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/portraits/friend-polar.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-polar portrait 3 expressions neutral/happy/surprised. 北極熊 fluffy white polar bear plush. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-shiba.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-shiba portrait 3 expressions neutral/happy/surprised. 柴犬 chubby shiba tan white curled tail. Magenta bust."
+  },
+  {
+    "file": "art-src/portraits/friend-stripebus.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-stripebus portrait 3 — yellow brown striped smile bus. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-tigercub.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-tigercub portrait 3 — orange striped no blue hat. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/portraits/kibobo.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 琪寶寶 cream top ponytail."
+  },
+  {
+    "file": "art-src/portraits/lunbo.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr neutral/happy/shocked 倫寶 orange hoodie."
+  },
+  {
+    "file": "art-src/portraits/mirror-owl-evil.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl EVIL dialogue portraits 3 busts magenta: cold / sneer / angry. Glowing fake-honey yellow eyes. Same owl design."
+  },
+  {
+    "file": "art-src/portraits/mirror-owl.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl KIND portraits exactly 3 busts magenta: neutral / calm-smile / shocked. Soft yellow eyes with black pupils, yin-yang disc. Not evil. v4."
+  },
+  {
+    "file": "art-src/portraits/pupu-hollow.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "pupu-hollow portrait 3 — no scarf, uniform grey, small eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/portraits/pupu.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "pupu portrait 3 — no scarf, uniform brown chest, smaller eyes. Magenta SNES pixel."
+  },
+  {
+    "file": "art-src/portraits/queen-bee.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "magenta portraits 3 expr 蜜冠女王蜂."
+  },
+  {
+    "file": "art-src/props/friends/cage.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Honey-crate cage 3 states closed/cracked/broken, wooden bars honey △ padlock. Magenta."
+  },
+  {
+    "file": "art-src/props/friends/picnic-blanket-big.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "picnic-blanket-big red-white checked side strip. Magenta."
+  },
+  {
+    "file": "art-src/props/minigames/batter-jug.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "batter jug pouring stream down. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-cup.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "wide-mouth glass cup front. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-drop.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "falling coconut water drop 3. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-pour.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "opened green coconut tilted pouring water. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/honey-drop.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "falling honey drop 3. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/oven-gauge.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "vertical heat gauge red-orange-yellow. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/oven-pointer.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "small pointer for vertical gauge. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/salmon-fillet.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "salmon fillet whole/half/sliced. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/sushi-knife.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "long knife blade left. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/tart-oven.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "open oven with tart tray warm glow. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/tart-tray.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "tart tray six tarts pale/golden/burnt top-down. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/timing-bar.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "timing bar red|green|red. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/timing-pointer.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "white timing pointer. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-done.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "egg waffle pale/golden/burnt. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-iron.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "waffle-iron top-down open mold empty/half/full batter. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/shop/armour.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "armour cloth/leather/gold-trim. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/boots.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "boots sneakers/hiking/winged. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/charm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "charm wood/jade/gold honeycomb no letters. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/coin-stack.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "coin stacks few/small/big. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/friends-stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friends-stall makeshift crate cloth stall with hanging gear, no people ~72px. Magenta."
+  },
+  {
+    "file": "art-src/props/shop/gun.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "salmon gun 3 tiers, tier3 triple barrel. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/shop-board.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "blank wooden shop board no letters. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/shop/sword.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "sword 3 tiers wood/steel/gold. Magenta shop prop."
   },
   {
     "file": "art-src/props/stage1/billboard-blank.png",
@@ -688,20 +2608,92 @@
     "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage1/stump-b.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
   },
   {
-    "file": "art-src/props/stage5/props-sheet.png",
+    "file": "art-src/props/stage2/bark-ground.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage5/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+    "prompt": "Stage2 bark-ground tileable strip magenta moss lip. Ref tree-tiles."
   },
   {
-    "file": "art-src/props/stage4/props-sheet.png",
+    "file": "art-src/props/stage2/bark-platform.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage4/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+    "prompt": "Stage2 bark-platform horizontal branch one-way magenta."
+  },
+  {
+    "file": "art-src/props/stage2/bark-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-wall tileable vertical magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-far 16:9 inside honey tree light shafts no characters."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-front.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-front foreground leaf strip magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-mid tileable leaves branches magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-broken magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-hanging.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-hanging intact magenta."
+  },
+  {
+    "file": "art-src/props/stage2/honey-drip.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honey-drip 3 frames magenta dripping."
+  },
+  {
+    "file": "art-src/props/stage2/honeycomb-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honeycomb-wall tileable magenta."
+  },
+  {
+    "file": "art-src/props/stage2/mushroom-shelf.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 mushroom-shelf bracket fungus platform magenta."
   },
   {
     "file": "art-src/props/stage2/props-sheet.png",
@@ -712,20 +2704,284 @@
     "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage2/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
   },
   {
-    "file": "art-src/story/cover.png",
+    "file": "art-src/props/stage2/triangle-mark.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16:9 title key art: 倫寶 orange hoodie salmon gun + 琪寶寶 cream top sword fan + 噗噗 original bear before 百畝樹林 golden hour faint triangle shadow; top 35% empty for logo; NO TEXT. Refs model-sheets."
+    "prompt": "Stage2 triangle △ carved in bark magenta."
   },
   {
-    "file": "art-src/story/c1-picnic.png",
+    "file": "art-src/props/stage2/vine-a.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16:9 cutscene picnic 噗噗 tasting honey. NO TEXT."
+    "prompt": "Stage2 vine-a hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/vine-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 vine-b hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/wind-vent.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 wind-vent 3 frames magenta knot-hole updraft leaves."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-far 16:9 misty moon."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-rock."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-off.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-off.png."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-on.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-on.png."
+  },
+  {
+    "file": "art-src/props/stage3/lanterns-wok-steam-items-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 props sheet lanterns wok steam sashimi lobster."
+  },
+  {
+    "file": "art-src/props/stage3/lobster.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lobster.png."
+  },
+  {
+    "file": "art-src/props/stage3/market-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-far 16:9 night market NO characters."
+  },
+  {
+    "file": "art-src/props/stage3/market-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-ground tileable."
+  },
+  {
+    "file": "art-src/props/stage3/market-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-mid tileable stalls lanterns NO letters."
+  },
+  {
+    "file": "art-src/props/stage3/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage3/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage3/sashimi.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 sashimi.png."
+  },
+  {
+    "file": "art-src/props/stage3/stall-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Broken stall prop magenta."
+  },
+  {
+    "file": "art-src/props/stage3/stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Food stall prop magenta."
+  },
+  {
+    "file": "art-src/props/stage3/steam.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 steam.png."
+  },
+  {
+    "file": "art-src/props/stage3/wok-stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wok-stall.png."
+  },
+  {
+    "file": "art-src/props/stage3/wood-bridge.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wood-bridge."
+  },
+  {
+    "file": "art-src/props/stage4/barrier.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 barrier road obstacle no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/bulldozer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 bulldozer 3 silhouette driving left ~140px. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/container.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 shipping container no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/crane-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 crane-far 1920x1080 foggy night construction rain no characters."
+  },
+  {
+    "file": "art-src/props/stage4/night-bus.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 night-bus calm fog left soft windows no people no text. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/paper-stack.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 paper-stack step blank papers. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage4/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/props/stage4/road-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 road-far 1920x1080 midnight highway rain chase."
+  },
+  {
+    "file": "art-src/props/stage4/sign.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 sign road obstacle no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/site-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 muddy gravel ground strip puddles. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/site-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 site-mid fences cones barriers generator lights tileable."
+  },
+  {
+    "file": "art-src/props/stage4/steel-beam.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 steel girder platform. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/warning-light.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 warning-light 2 rotating amber. Magenta."
+  },
+  {
+    "file": "art-src/props/stage5/props-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16-bit SNES pixel art prop on magenta #FF00FF. File art-src/props/stage5/props-sheet.png. Stage prop cutout, no text, no characters. Detail: bark/moss/paper/clay texture, AO at ground contact."
+  },
+  {
+    "file": "art-src/story/c0-church.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "c0-church Sunday morning small forest-edge church sunlight no people no text 16:9."
   },
   {
     "file": "art-src/story/c1-hollow.png",
@@ -744,12 +3000,36 @@
     "prompt": "16:9 咖啡媽媽 at coffee cart serious. NO TEXT."
   },
   {
+    "file": "art-src/story/c1-picnic.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 cutscene picnic 噗噗 tasting honey. NO TEXT."
+  },
+  {
+    "file": "art-src/story/c2-bike.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 cutscene NO TEXT. 倫寶+琪寶寶 bike uphill to honey tree; grey hollow 噗噗 (empty eyes, no gore drips) in 琪寶寶 basket. Refs model-sheets. v2."
+  },
+  {
     "file": "art-src/story/c2-note.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
     "prompt": "16:9 blank paper note with triangle pin. NO TEXT on note."
+  },
+  {
+    "file": "art-src/story/c3-market.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 c3-market empty night market heroes+half 噗噗. NO TEXT."
   },
   {
     "file": "art-src/story/c3-queen.png",
@@ -792,6 +3072,30 @@
     "prompt": "16:9 suit silhouette triangle mask control room. NO TEXT."
   },
   {
+    "file": "art-src/story/c7-site.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Story c7-site: taxi at foggy rainy construction; Lunbo Kibobo 30%-colour Pupu look at bulldozed stumps. 16:9 no text."
+  },
+  {
+    "file": "art-src/story/cover.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 title key art: 倫寶 orange hoodie salmon gun + 琪寶寶 cream top sword fan + 噗噗 original bear before 百畝樹林 golden hour faint triangle shadow; top 35% empty for logo; NO TEXT. Refs model-sheets."
+  },
+  {
+    "file": "art-src/story/credits-bg.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "16:9 calm forest night fireflies empty centre. NO TEXT."
+  },
+  {
     "file": "art-src/story/ending-1.png",
     "frames": 1,
     "cols": 1,
@@ -808,444 +3112,12 @@
     "prompt": "16:9 three picnic sunset warm happy. NO TEXT."
   },
   {
-    "file": "art-src/story/credits-bg.png",
+    "file": "art-src/story/ending-picnic.png",
     "frames": 1,
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16:9 calm forest night fireflies empty centre. NO TEXT."
-  },
-  {
-    "file": "art-src/portraits/lunbo.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr neutral/happy/shocked 倫寶 orange hoodie."
-  },
-  {
-    "file": "art-src/portraits/kibobo.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr 琪寶寶 cream top ponytail."
-  },
-  {
-    "file": "art-src/portraits/pupu.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr 噗噗 original bear blue ribbon."
-  },
-  {
-    "file": "art-src/portraits/pupu-hollow.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr 噗噗 hollow grey."
-  },
-  {
-    "file": "art-src/portraits/coffee-mama.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr 咖啡媽媽."
-  },
-  {
-    "file": "art-src/portraits/queen-bee.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "magenta portraits 3 expr 蜜冠女王蜂."
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/fly.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 beesoldier fly 4 frames magenta #FF00FF facing RIGHT. Yellow+purple striped bee white wings purple stinger. Wing flap only no weapon. Native 40px 8× NN. Same size every sheet. Ref: art-src/gen/bee-soldier.png"
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/aim.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 aim 3 frames magenta facing RIGHT. Stinger lowers body tilts down. Same 40px bee design/size. Ref bee-soldier + fly sheet."
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/dive.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 dive 3 frames magenta facing RIGHT. Dive diagonally down-right speed lines. Same 40px bee."
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/stuck.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 stuck 3 frames magenta facing RIGHT. Stinger stuck in ground wiggling. Same 40px bee."
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/hit.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 hit 2 frames magenta facing RIGHT. Same 40px bee."
-  },
-  {
-    "file": "art-src/anim/enemies/E-05-beesoldier/die.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-05 die 4 frames magenta facing RIGHT. Spin fall then poof. Same 40px bee."
-  },
-  {
-    "file": "art-src/anim/enemies/E-06-zombiesquirrel/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-06 zombiesquirrel walk 4 frames magenta facing RIGHT. Brown squirrel glowing yellow eyes dripping fake honey shambling. Native 44px 8× NN. Ref zombie-squirrel.png"
-  },
-  {
-    "file": "art-src/anim/enemies/E-06-zombiesquirrel/lunge.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-06 lunge 3 frames magenta facing RIGHT. Arms out. Same 44px squirrel."
-  },
-  {
-    "file": "art-src/anim/enemies/E-06-zombiesquirrel/hit.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-06 hit 2 frames magenta facing RIGHT. Same 44px squirrel."
-  },
-  {
-    "file": "art-src/anim/enemies/E-06-zombiesquirrel/die.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-06 die 4 frames magenta facing RIGHT. Collapse into honey puddle then dries. Same 44px."
-  },
-  {
-    "file": "art-src/anim/enemies/E-07-minibee/fly.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-07 minibee fly 3 frames magenta facing RIGHT. Tiny yellow-purple bee native 20px 8× NN."
-  },
-  {
-    "file": "art-src/anim/enemies/E-07-minibee/die.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-07 minibee die 3 frames magenta facing RIGHT. Same 20px size."
-  },
-  {
-    "file": "art-src/anim/enemies/egg/idle.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Fake-honey egg idle 2 frames magenta pulsing amber egg purple spots."
-  },
-  {
-    "file": "art-src/anim/enemies/egg/hatch.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Egg hatch 4 frames magenta. Cracks mini bee pops facing RIGHT."
-  },
-  {
-    "file": "art-src/anim/enemies/egg/break.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Egg break 3 frames magenta shattered by attack."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/model-sheet.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Boss queen-bee model sheet 4 views magenta #FF00FF. Yellow+purple stripes pink eyes golden crown. ~128px native 8× NN. Side/3-4 facing RIGHT. Same size. Refs queen-bee.png portraits."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/hover.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen hover 4 frames magenta facing RIGHT. Wing flap bob. Same 128px scale as model."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/summon.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen summon 4 frames magenta facing RIGHT. Raises sceptre-stinger. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/land.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen land 3 frames magenta facing RIGHT. Heavy landing wings fold. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/lay-eggs.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen lay-eggs 4 frames magenta facing RIGHT. Bend drop eggs. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/spray.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen spray 4 frames magenta facing RIGHT. Fake honey stream. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/weak.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen weak 3 frames magenta facing RIGHT. Exhausted glowing head weak point. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/hurt.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen hurt 2 frames magenta facing RIGHT. Same scale."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/defeat.png",
-    "frames": 5,
-    "cols": 5,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Queen defeat 5 frames magenta facing RIGHT. Crown falls shrink wakes kind. Same design family."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/honey-stream.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "FX honey-stream 4 frames magenta L→R spray. No characters."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/honey-puddle.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "FX honey-puddle 3 frames magenta sticky floor."
-  },
-  {
-    "file": "art-src/anim/boss/queen-bee/swarm.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "FX swarm 3 frames magenta facing RIGHT. Line of 3 mini bees."
-  },
-  {
-    "file": "art-src/anim/lunbo/bike-ride.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "倫寶 bike-ride 4 frames magenta facing RIGHT. Orange hoodie salmon gun on casual city bike. Same 72px scale as model. Refs lunbo model-sheet."
-  },
-  {
-    "file": "art-src/anim/lunbo/bike-jump.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "倫寶 bike-jump 3 frames magenta facing RIGHT. Same scale design."
-  },
-  {
-    "file": "art-src/anim/kibobo/bike-ride.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top fan on back city bike. Same 72px scale."
-  },
-  {
-    "file": "art-src/anim/kibobo/bike-jump.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "琪寶寶 bike-jump 3 frames magenta facing RIGHT. Same scale."
-  },
-  {
-    "file": "art-src/anim/kibobo/fan-float.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
-  },
-  {
-    "file": "art-src/props/stage2/bark-ground.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 bark-ground tileable strip magenta moss lip. Ref tree-tiles."
-  },
-  {
-    "file": "art-src/props/stage2/bark-platform.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 bark-platform horizontal branch one-way magenta."
-  },
-  {
-    "file": "art-src/props/stage2/bark-wall.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 bark-wall tileable vertical magenta."
-  },
-  {
-    "file": "art-src/props/stage2/honeycomb-wall.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 honeycomb-wall tileable magenta."
-  },
-  {
-    "file": "art-src/props/stage2/mushroom-shelf.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 mushroom-shelf bracket fungus platform magenta."
-  },
-  {
-    "file": "art-src/props/stage2/triangle-mark.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 triangle △ carved in bark magenta."
-  },
-  {
-    "file": "art-src/props/stage2/canopy-far.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 canopy-far 16:9 inside honey tree light shafts no characters."
-  },
-  {
-    "file": "art-src/props/stage2/wind-vent.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 wind-vent 3 frames magenta knot-hole updraft leaves."
-  },
-  {
-    "file": "art-src/props/stage2/honey-drip.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 honey-drip 3 frames magenta dripping."
-  },
-  {
-    "file": "art-src/props/stage2/vine-a.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 vine-a hanging magenta."
-  },
-  {
-    "file": "art-src/props/stage2/vine-b.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 vine-b hanging magenta."
-  },
-  {
-    "file": "art-src/props/stage2/hive-hanging.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 hive-hanging intact magenta."
-  },
-  {
-    "file": "art-src/props/stage2/hive-broken.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 hive-broken magenta."
-  },
-  {
-    "file": "art-src/props/stage2/canopy-mid.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 canopy-mid tileable leaves branches magenta."
-  },
-  {
-    "file": "art-src/props/stage2/canopy-front.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "Stage2 canopy-front foreground leaf strip magenta."
-  },
-  {
-    "file": "art-src/story/c2-bike.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16:9 cutscene NO TEXT. 倫寶+琪寶寶 bike uphill to honey tree; grey hollow 噗噗 (empty eyes, no gore drips) in 琪寶寶 basket. Refs model-sheets. v2."
+    "prompt": "ending-picnic sunrise picnic still 16:9 no text."
   },
   {
     "file": "art-src/story/s2-boss-intro.png",
@@ -1256,446 +3128,6 @@
     "prompt": "16:9 boss intro NO TEXT. 蜜冠女王蜂 angry glowing eyes before huge honeycomb wall. Refs queen model."
   },
   {
-    "file": "art-src/map/world-map.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "map",
-    "prompt": "SNES world map 16:9 NO text/characters. Dirt road BL→TR: forest picnic, honey tree hill, night market+hotspring, construction fog, dark tower with △. Darker 1→5."
-  },
-  {
-    "file": "art-src/map/map-icons.png",
-    "frames": 5,
-    "cols": 5,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Magenta sheet 5 round place icons L→R: forest, honey tree, lantern market, crane fog, dark tower △. ~32px 8× NN."
-  },
-  {
-    "file": "art-src/map/map-walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Magenta walk[4] facing RIGHT. Tiny chibi 倫寶+琪寶寶+噗噗 ~24px. Refs hero model-sheets."
-  },
-  {
-    "file": "art-src/bike/bike-far.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike far BG 16:9 countryside honey tree on hill NO characters. Match c2-bike mood."
-  },
-  {
-    "file": "art-src/bike/bike-mid.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike mid tileable strip hills fences flowers. Magenta/sky."
-  },
-  {
-    "file": "art-src/bike/bike-road.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike road tileable dirt strip grass edges magenta."
-  },
-  {
-    "file": "art-src/bike/bee-swarm.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bee swarm 3 frames magenta flying left obstacle."
-  },
-  {
-    "file": "art-src/bike/rock.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike rock obstacle magenta side view."
-  },
-  {
-    "file": "art-src/bike/log.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike fallen log magenta."
-  },
-  {
-    "file": "art-src/bike/honey-puddle.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike fake-honey puddle glossy yellow magenta."
-  },
-  {
-    "file": "art-src/bike/cone.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike traffic cone magenta."
-  },
-  {
-    "file": "art-src/bike/ramp.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike wooden ramp magenta."
-  },
-  {
-    "file": "art-src/bike/obstacles-sheet.png",
-    "frames": 5,
-    "cols": 5,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Bike obstacles sheet rock/log/honey/cone/ramp."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/walk.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 lobster walk 4 magenta facing RIGHT ~56px."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/block.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 block 3 claws up. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/snap.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 snap 4 claw strike. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/turn.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 turn 2. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/hit.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 hit 2. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-08-lobsterguard/die.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-08 die 4 shell crack poof."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/idle.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 idle chopping 3. Yellowtail stallkeeper ~56px."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/throw.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 throw knife 4. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/duck-hit-die-sheet.png",
-    "frames": 8,
-    "cols": 8,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 duck+hit+die combined sheet."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/knife.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Knife FX spinning 4 magenta."
-  },
-  {
-    "file": "art-src/props/stage3/stall.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Food stall prop magenta."
-  },
-  {
-    "file": "art-src/props/stage3/stall-broken.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Broken stall prop magenta."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/duck.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 duck (from duck-hit-die sheet; Claude slice)."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/hit.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 hit (from duck-hit-die sheet)."
-  },
-  {
-    "file": "art-src/anim/enemies/E-09-stallkeeper/die.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-09 die (from duck-hit-die sheet)."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/float.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 float 4. Hooded mirror face ~48px."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/dash.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 dash 3. Same scale."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/split.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 split 4 into two copies."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/hit-die-sheet.png",
-    "frames": 6,
-    "cols": 6,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 hit+die sheet."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/hit.png",
-    "frames": 2,
-    "cols": 2,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 hit 2."
-  },
-  {
-    "file": "art-src/anim/enemies/E-10-mirrorshade/die.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "E-10 die 4 mirror shatter."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/model-sheet.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Mirror owl model sheet 4 views ~128px."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/perch.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl perch 4."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/fly.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl fly 4."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/feather-curtain.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl feather-curtain (from combined sheet)."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/split.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl split three copies."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/guard.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl guard honey crate."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/feather.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Feather FX 3."
-  },
-  {
-    "file": "art-src/props/stage3/market-ground.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 market-ground tileable."
-  },
-  {
-    "file": "art-src/props/stage3/wood-bridge.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 wood-bridge."
-  },
-  {
-    "file": "art-src/props/stage3/hotspring-rock.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 hotspring-rock."
-  },
-  {
-    "file": "art-src/props/stage3/market-far.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 market-far 16:9 night market NO characters."
-  },
-  {
-    "file": "art-src/props/stage3/market-mid.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 market-mid tileable stalls lanterns NO letters."
-  },
-  {
-    "file": "art-src/props/stage3/hotspring-far.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 hotspring-far 16:9 misty moon."
-  },
-  {
-    "file": "art-src/props/stage3/lanterns-wok-steam-items-sheet.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 props sheet lanterns wok steam sashimi lobster."
-  },
-  {
-    "file": "art-src/props/stage3/lantern-on.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 lantern-on.png."
-  },
-  {
-    "file": "art-src/props/stage3/lantern-off.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 lantern-off.png."
-  },
-  {
-    "file": "art-src/props/stage3/wok-stall.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 wok-stall.png."
-  },
-  {
-    "file": "art-src/props/stage3/steam.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 steam.png."
-  },
-  {
-    "file": "art-src/props/stage3/sashimi.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 sashimi.png."
-  },
-  {
-    "file": "art-src/props/stage3/lobster.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Stage3 lobster.png."
-  },
-  {
-    "file": "art-src/story/c3-market.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "16:9 c3-market empty night market heroes+half 噗噗. NO TEXT."
-  },
-  {
     "file": "art-src/story/s3-boss-intro.png",
     "frames": 1,
     "cols": 1,
@@ -1704,19 +3136,75 @@
     "prompt": "16:9 s3-boss-intro mirror owl on moon bridge. NO TEXT."
   },
   {
-    "file": "art-src/anim/boss/mirror-owl/hurt.png",
+    "file": "art-src/story/s4-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Story s4-boss-intro: Mudmane revving bike on muddy ramp under crane △ seal glowing. 16:9 no text."
+  },
+  {
+    "file": "art-src/ui/boss-card-bg.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "boss-card-bg 640x360 dark wood navy plaque empty center no text."
+  },
+  {
+    "file": "art-src/ui/button.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "button 3 normal/pressed/disabled ~96x28 magenta."
+  },
+  {
+    "file": "art-src/ui/coin-icon.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "coin-icon gold magenta."
+  },
+  {
+    "file": "art-src/ui/cursor-hand.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "cursor-hand pointing magenta."
+  },
+  {
+    "file": "art-src/ui/heart.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "heart 3 full/half/empty magenta."
+  },
+  {
+    "file": "art-src/ui/panel-9slice.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "panel-9slice 96x96 wood+gold clear corners/edges flat middle. Section E."
+  },
+  {
+    "file": "art-src/ui/panel-dark-9slice.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "panel-dark-9slice 96x96 navy clear corners/edges flat middle. Section E."
+  },
+  {
+    "file": "art-src/ui/pip.png",
     "frames": 2,
     "cols": 2,
     "rows": 1,
-    "facing": "right",
-    "prompt": "Owl hurt 2 magenta facing RIGHT."
-  },
-  {
-    "file": "art-src/anim/boss/mirror-owl/defeat.png",
-    "frames": 5,
-    "cols": 5,
-    "rows": 1,
-    "facing": "right",
-    "prompt": "Owl defeat 5 mirror cracks calm."
+    "facing": "front",
+    "prompt": "pip 2 on/off magenta."
   }
 ]

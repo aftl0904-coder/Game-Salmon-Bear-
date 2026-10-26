@@ -13,7 +13,7 @@ import { floatText, burst } from './fx'
  *  - 3-second egg: grab 「最後一隻龍蝦」 with attack in time → power ×1.5 for 10 s
  */
 
-type Lantern = { x: number; y: number; img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Arc; litUntil: number; startLit: boolean }
+type Lantern = { x: number; y: number; img: Phaser.GameObjects.Image; glow: Phaser.GameObjects.Arc | Phaser.GameObjects.Image; litUntil: number; startLit: boolean }
 
 export type Stage3Ctx = {
   scene: Phaser.Scene
@@ -73,7 +73,13 @@ export class Stage3World {
       str.fillStyle(0x2a1a14, 1).fillRect(l.x, 30, 1, y - 44)
       const key2 = s.textures.exists('s3-lantern-on') ? 's3-lantern-on' : s.textures.exists('prop-break-lantern') ? 'prop-break-lantern' : 'prop-lantern3d'
       const img = s.add.image(l.x, y, key2).setOrigin(0.5, 0.5).setDepth(DEPTH.PROP)
-      const glow = s.add.circle(l.x, y, 26, 0xff9a40, 0.22).setDepth(DEPTH.PROP - 1).setBlendMode(Phaser.BlendModes.ADD)
+      const glow = (
+      s.textures.exists('fx-glow-round')
+        ? s.add.image(l.x, y, 'fx-glow-round').setDisplaySize(84, 84).setTint(0xffb060).setAlpha(0.5)
+        : s.add.circle(l.x, y, 26, 0xff9a40, 0.22)
+    )
+      .setDepth(DEPTH.PROP - 1)
+      .setBlendMode(Phaser.BlendModes.ADD)
       s.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 1300 + (l.x % 7) * 90, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
       this.lanterns.push({ x: l.x, y, img, glow, litUntil: startLit ? Number.POSITIVE_INFINITY : 0, startLit })
     }

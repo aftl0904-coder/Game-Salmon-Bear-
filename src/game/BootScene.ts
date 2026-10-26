@@ -100,6 +100,10 @@ export class BootScene extends Phaser.Scene {
     // Hand-pixelled terrain (scripts/art/gen_terrain.py): grass lip + wide dirt, foreground bushes.
     this.load.image('tile-ground-top', '/art/tiles/ground-top.png')
     this.load.image('bg-bush-strip', '/art/tiles/bush-strip.png')
+    // Painted lighting + shadow (scripts/art/slice_light.py); every use falls back if missing.
+    for (const f of ['shadow-soft', 'glow-round', 'vignette'] as const) {
+      this.load.image(`fx-${f}`, `/art/fx/${f}.png`)
+    }
     preloadArtOverrides(this)
     preloadHeroAnims(this)
     preloadFxAnims(this)

@@ -121,7 +121,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
-import { addGroundShadow, addContactShadowBand } from './shadow'
+import { addGroundShadow, addContactShadowBand, type GroundShadow } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
 import { ENVIRONMENT, environmentById } from './config/gameData'
 import {
@@ -219,13 +219,13 @@ export class GameScene extends Phaser.Scene {
   /** 2P only — null in 1P（單人只有倫寶） */
   private girl: Hero | null = null
   private pet: Phaser.Physics.Arcade.Sprite | null = null
-  private petShadow: Phaser.GameObjects.Ellipse | null = null
+  private petShadow: GroundShadow | null = null
   /** 琪寶寶長劍（電風扇已 bake 喺角色背脊，唔再用獨立 fan sprite） */
   private sword: Phaser.GameObjects.Image | null = null
   /** 刺刺魚小彈 */
   private enemyShots!: Phaser.Physics.Arcade.Group
-  private boyShadow!: Phaser.GameObjects.Ellipse
-  private girlShadow: Phaser.GameObjects.Ellipse | null = null
+  private boyShadow!: GroundShadow
+  private girlShadow: GroundShadow | null = null
   /** Soft margin inside camera for duo same-screen walls (2P). */
   private static readonly CAM_EDGE_PAD = 48
   private ground!: Phaser.Physics.Arcade.StaticGroup
