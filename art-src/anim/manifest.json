@@ -3070,5 +3070,37 @@
     "rows": 1,
     "facing": "front",
     "prompt": "shadow-long 256x64 elongated white ellipse on PURE BLACK dusk. Section B."
+  },
+  {
+    "file": "art-src/fx/weather/rain-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "rain-sheet 640x360 tileable diagonal rain on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/fog-band.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "fog-band 640x120 tileable L-R fade top/bottom on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/mist-puff.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "mist-puff 4 frames 128x128 each expanding mist on magenta. Section C."
+  },
+  {
+    "file": "art-src/fx/weather/water-ripple.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "water-ripple 256x64 tileable L-R on magenta. Section C."
   }
 ]
