@@ -3102,5 +3102,53 @@
     "rows": 1,
     "facing": "front",
     "prompt": "water-ripple 256x64 tileable L-R on magenta. Section C."
+  },
+  {
+    "file": "art-src/anim/fx/impact-big.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "impact-big 5 heavy hit flash shards fade ~96px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/dust-puff.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "dust-puff 4 small dust ~40px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/sparkle-trail.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "sparkle-trail 4 gold glitter ~48px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/shockwave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shockwave 4 expanding ring ~128px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/leaf-bits.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "leaf-bits 4 leaf fragments ~48px magenta"
+  },
+  {
+    "file": "art-src/anim/fx/glass-shards.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glass-shards 4 mirror shards ~64px magenta"
   }
 ]
