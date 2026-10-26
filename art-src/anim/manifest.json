@@ -2078,5 +2078,173 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Story s4-boss-intro: Mudmane revving bike on muddy ramp under crane △ seal glowing. 16:9 no text."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "huihui model sheet 4 views. Grey-beige pilled teddy pale pink shirt pink nose brown foot pads. Magenta. Original unbranded ~36px."
+  },
+  {
+    "file": "art-src/anim/friends/guard/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "guard model sheet 4 views. Shaggy brown teddy royal guard tall black hat red tunic gold buttons white belt. Magenta. Original ~38px."
+  },
+  {
+    "file": "art-src/anim/friends/denim/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "denim model sheet 4 views. Light-tan teddy cream muzzle dark-blue dungarees. Magenta. Original ~36px."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "brownie model sheet 4 views. Small brown teddy white muzzle/paws plain black T-shirt no letters. Magenta. Original ~34px."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui idle 3 breathe. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui cheer 3 arms up hop. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/huihui/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "huihui walk 4 waddle. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/guard/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard idle 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/guard/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard cheer 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/guard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "guard walk 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim idle 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim cheer 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/denim/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "denim walk 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie idle 3 plain black shirt. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie cheer 3. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/friends/brownie/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "brownie walk 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/portraits/friend-huihui.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-huihui portrait 3 busts neutral/happy/surprised. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-guard.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-guard portrait 3 busts. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-denim.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-denim portrait 3 busts. Magenta."
+  },
+  {
+    "file": "art-src/portraits/friend-brownie.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-brownie portrait 3 busts plain black shirt. Magenta."
+  },
+  {
+    "file": "art-src/props/friends/cage.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "friends cage 3 closed/cracked/broken honey-crate △ padlock. Magenta."
   }
 ]
