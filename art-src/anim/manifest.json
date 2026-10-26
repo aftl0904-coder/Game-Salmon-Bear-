@@ -1734,5 +1734,349 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Mirror owl EVIL dialogue portraits 3 busts magenta: cold / sneer / angry. Glowing fake-honey yellow eyes. Same owl design."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 honeyzombie badger walk 4. Grey fur empty yellow eyes honey drip. Magenta facing RIGHT ~52px. Atmosphere horror never gore."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/reach.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 reach 3 arms forward. Same honeyzombie. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 hit 2. Honeyzombie flinch. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-11-honeyzombie/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-11 die 4 melts to honey puddle then animal wakes runs away. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/idle.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 taximonster idle 2. Small angry taxi headlight eyes grille mouth no letters. Magenta facing RIGHT ~48px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/flash.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 flash 2 headlights blink warning. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/dash.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 dash 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/crash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 crash 3 dizzy steam bonnet. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-12-taximonster/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-12 die 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 punchclock walk 4. Walking time clock stubby legs blank face preferred. Magenta facing RIGHT ~44px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/tick.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 tick 3 shaking about to burst. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/burst.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 burst 4 papers fly out blank. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/paper.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 paper FX 3 spinning blank sheets. Magenta."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 hit 2. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/E-13-punchclock/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-13 die 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane model sheet 4 views ~110px. Hard hat mud cape △ seal. Magenta."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane ride 4 on dirt motorbike. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/charge.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane charge 4 bike mud wave. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/nailgun.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane nailgun 4 standing on beam firing. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/nail.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane nail FX 2. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/summon.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane summon 3 whistle calling zombies. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane walk 4 off bike. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/punch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane punch 4. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane hurt 2. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mudmane/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mudmane defeat 5 △ seal cracks glow fades tired kind old worker. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/lunbo/moto-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Lunbo moto-ride 4 electric scooter rain streaks. Magenta facing RIGHT. Refs lunbo model."
+  },
+  {
+    "file": "art-src/anim/lunbo/moto-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Lunbo moto-jump 3 rain. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/kibobo/moto-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Kibobo moto-ride 4 electric scooter rain. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/kibobo/moto-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Kibobo moto-jump 3 rain. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/props/stage4/site-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 muddy gravel ground strip puddles. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/steel-beam.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 steel girder platform. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/container.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 shipping container no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/crane-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 crane-far 1920x1080 foggy night construction rain no characters."
+  },
+  {
+    "file": "art-src/props/stage4/site-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 site-mid fences cones barriers generator lights tileable."
+  },
+  {
+    "file": "art-src/props/stage4/bulldozer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 bulldozer 3 silhouette driving left ~140px. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/warning-light.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 warning-light 2 rotating amber. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/paper-stack.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 paper-stack step blank papers. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/road-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 road-far 1920x1080 midnight highway rain chase."
+  },
+  {
+    "file": "art-src/props/stage4/barrier.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 barrier road obstacle no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/sign.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 sign road obstacle no letters. Magenta."
+  },
+  {
+    "file": "art-src/props/stage4/night-bus.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage4 night-bus calm fog left soft windows no people no text. Magenta."
+  },
+  {
+    "file": "art-src/story/c7-site.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Story c7-site: taxi at foggy rainy construction; Lunbo Kibobo 30%-colour Pupu look at bulldozed stumps. 16:9 no text."
+  },
+  {
+    "file": "art-src/story/s4-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Story s4-boss-intro: Mudmane revving bike on muddy ramp under crane △ seal glowing. 16:9 no text."
   }
 ]
