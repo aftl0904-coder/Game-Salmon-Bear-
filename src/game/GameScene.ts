@@ -12,7 +12,7 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
-import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, weaponFloor, type Who } from './gear'
+import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
 import { showTutorial, stirCoffee } from './minigames'
 import { openShop } from './shop'
@@ -175,6 +175,11 @@ type Stage1 = {
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
+/** 耐力: a full bar is 1. A sword swing costs a fifth, a roe shot a seventh. */
+const STAM_SWORD = 0.2
+const STAM_SHOT = 0.14
+const STAM_RECOVER = 0.55
+const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
 const FINAL_STAGE = 5
 type ClearAction = 'shop' | 'next' | 'credits' | 'menu'
@@ -662,8 +667,44 @@ export class GameScene extends Phaser.Scene {
     EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
       boyHp: Math.max(0, this.boy.hp),
       girlHp: Math.max(0, this.girl?.hp ?? 0),
-      maxHp: MAX_HP,
+      maxHp: MAX_HP + Math.max(bonusHearts('boy'), bonusHearts('girl')),
+      stamL: this.boy.stam / stamMax(this.boy.role as Who),
+      stamR: this.girl ? this.girl.stam / stamMax(this.girl.role as Who) : 1,
     })
+  }
+
+  /**
+   * 耐力 (Alan, 2026-10-27): mashing attack was a free win, so each swing spends stamina and
+   * it only comes back when you stop. It never locks you out — a tired swing still lands,
+   * it just does half damage — so a panicking player is never left standing still.
+   */
+  private tickStamina(dt: number) {
+    const now = this.time.now
+    for (const h of [this.boy, this.girl]) {
+      if (!h) continue
+      const who = h.role as Who
+      const max = stamMax(who)
+      const resting = now - h.lastAtkAt > STAM_REST_MS
+      const rate = (resting ? STAM_RECOVER : STAM_RECOVER * 0.35) * stamRecoverMul(who)
+      h.stam = Phaser.Math.Clamp(h.stam + (rate * dt) / 1000, 0, max)
+    }
+    this.emitHealth()
+  }
+
+  /** Spend stamina for one attack; false means the hero is winded (half damage). */
+  private spendStamina(h: Hero, cost: number) {
+    h.lastAtkAt = this.time.now
+    if (h.stam < cost) {
+      h.stam = Math.max(0, h.stam - cost * 0.4)
+      if (this.time.now - (h.getData('windedAt') as number | undefined ?? 0) > 900) {
+        h.setData('windedAt', this.time.now)
+        floatText(this, h.x, h.y - 64, '冇氣！', '#8ad0ff', { size: 12, dur: 700 })
+        SFX.land()
+      }
+      return false
+    }
+    h.stam -= cost
+    return true
   }
 
   private emitScore(info?: string) {
@@ -786,6 +827,7 @@ export class GameScene extends Phaser.Scene {
     this.updatePet()
     this.activateDeferredEnemies()
     this.tickEnemyStagger(dt)
+    this.tickStamina(dt)
     this.updateEnemies(dt)
     this.cullSalmonShots()
     this.entities.syncEnemiesFromGroup(this.enemies)
@@ -1156,7 +1198,7 @@ export class GameScene extends Phaser.Scene {
     const spd =
       (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) *
       (this.s2world?.speedMul(this.boy) ?? 1) *
-      speedMul(this.boy.role as Who)
+      speedMul()
     this.steerHero(
       this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), spd,
@@ -1175,7 +1217,7 @@ export class GameScene extends Phaser.Scene {
     const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
       g, dt, left, right,
-      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(g.role as Who),
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(),
       this.p2AttackJust(), () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
@@ -1245,7 +1287,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private fireSalmon(h: Hero) {
-    h.atkCd = SALMON_SHOT_COOLDOWN_MS
+    const freshShot = this.spendStamina(h, STAM_SHOT)
+    h.atkCd = freshShot ? SALMON_SHOT_COOLDOWN_MS : Math.round(SALMON_SHOT_COOLDOWN_MS * 1.6)
     h.pose = 'idle'
     h.playAction(h.crouching ? 'shoot-crouch' : 'shoot')
     // Commit freeze actors only — salmon shot keeps flying (Pack2 G).
@@ -1267,15 +1310,17 @@ export class GameScene extends Phaser.Scene {
         : lv === 2
           ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
           : [{ dy: 0, vy: 0 }]
-    for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range)
+    for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range, freshShot ? 1 : 0.5)
     burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
     playFx(this, 'muzzle-flash', muzzleX + h.facing * 6, muzzleY, { flipX: h.facing < 0, depth: h.depth + 1 })
     this.smashBreakablesInFront(h)
   }
 
-  private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number) {
+  private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1) {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(2 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    shot.setScale(2 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    shot.setData('power', power)
+    if (power < 1) shot.setTint(0x9ab0c8)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
@@ -1307,7 +1352,8 @@ export class GameScene extends Phaser.Scene {
 
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
-    h.atkCd = SWORD_COOLDOWN_MS
+    const fresh = this.spendStamina(h, STAM_SWORD)
+    h.atkCd = fresh ? SWORD_COOLDOWN_MS : Math.round(SWORD_COOLDOWN_MS * 1.6)
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     // 3-hit combo: presses within 0.6s chain slash1 → slash2 → slash3.
     const lastAt = (h.getData('slashAt') as number | undefined) ?? -9999
@@ -1341,7 +1387,8 @@ export class GameScene extends Phaser.Scene {
     const lv = this.weaponLv(h)
     const reach = lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1
     if (lv >= 2) burst(this, grip.x + h.facing * SWORD_HIT_W * reach * 0.6, grip.y, 0xffe070, 4 + lv * 2)
-    this.spawnAttackHitbox(h, PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0), Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
+    const swordDmg = Math.max(1, Math.round((PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0)) * (fresh ? 1 : 0.5)))
+    this.spawnAttackHitbox(h, swordDmg, Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
     // Sword trail: one arc per combo step, longer with the weapon level.
     const arc = (`slash-arc-${step}` as 'slash-arc-1' | 'slash-arc-2' | 'slash-arc-3')
     playFx(this, arc, h.x + h.facing * (22 + 10 * reach), h.y - 36, {
@@ -2439,9 +2486,10 @@ export class GameScene extends Phaser.Scene {
     for (const h of [this.boy, this.girl]) {
       if (!h) continue
       const who = h.role as Who
-      h.jumpMul = jumpMul(who)
+      h.jumpMul = jumpMul()
       const extra = bonusHearts(who)
       if (extra > 0) h.hp = Math.min(MAX_HP + extra, h.hp + extra)
+      h.stam = stamMax(who)
       h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(who)))
     }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
@@ -2783,6 +2831,7 @@ export class GameScene extends Phaser.Scene {
       pay: (w, d) => this.addCoins(w, d),
       friends: () => this.friendsSaved,
       heroes,
+      stage: this.stageNo,
     })
     void shop.done.then(() => {
       if (this.ended && !this.clearOverlay) return
@@ -2790,7 +2839,7 @@ export class GameScene extends Phaser.Scene {
       for (const h of [this.boy, this.girl]) {
         if (!h) continue
         const w = h.role as Who
-        h.jumpMul = jumpMul(w)
+        h.jumpMul = jumpMul()
         h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(w)))
       }
       this.refreshHearts()
@@ -2803,7 +2852,7 @@ export class GameScene extends Phaser.Scene {
   private drinkCoffee() {
     let healed = false
     for (const h of [this.boy, this.girl]) {
-      if (h?.alive && h.hp < MAX_HP) {
+      if (h?.alive && h.hp < MAX_HP + bonusHearts(h.role as Who)) {
         h.hp += 1
         healed = true
         floatText(this, h.x, h.y - 70, '+1HP', '#7dffb0', { size: 14 })
@@ -3005,7 +3054,8 @@ export class GameScene extends Phaser.Scene {
       if (!e.active || e.isDead) return
       playFx(this, 'roe-splash', s.x, s.y)
       s.destroy()
-      this.damageEnemy(e, PLAYER_ATTACK_DMG, Math.sign(e.x - this.boy.x) || 1)
+      const pw = (s.getData('power') as number | undefined) ?? 1
+      this.damageEnemy(e, Math.max(1, Math.round(PLAYER_ATTACK_DMG * pw)), Math.sign(e.x - this.boy.x) || 1)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
       const j = jet as Phaser.Physics.Arcade.Sprite

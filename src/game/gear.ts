@@ -6,7 +6,7 @@
  * 每個角色自己一份，存喺 localStorage，過關之後仲喺度。
  */
 
-export type GearId = 'sword' | 'gun' | 'armour' | 'boots' | 'charm'
+export type GearId = 'heart' | 'sword' | 'gun' | 'armour' | 'boots' | 'charm'
 export type Who = 'boy' | 'girl'
 export type Tiers = Record<GearId, number>
 
@@ -23,48 +23,60 @@ export type GearDef = {
   /** One line per tier, shown in the shop. */
   tiers: [string, string, string]
   blurb: string
+  /** Only stocked once the player has cleared this stage (undefined = always). */
+  fromStage?: number
 }
 
 export const GEAR: GearDef[] = [
   {
+    id: 'heart',
+    name: '大心心',
+    who: 'both',
+    price: [12, 26, 48],
+    tiers: ['銅心：生命上限 +1', '銀心：+2', '金心：+3'],
+    blurb: '生命值。多一格就多一次錯嘅機會。',
+  },
+  {
     id: 'sword',
     name: '劍',
     who: 'girl',
-    price: [8, 18, 32],
-    tiers: ['鐵劍：劍長 ×1.35', '好鐵劍：劍長 ×1.7，傷害 +1', '金劍：唔會跌級'],
-    blurb: '琪寶寶用。買咗之後中招最多跌返買咗嗰級。',
+    price: [10, 22, 40],
+    tiers: ['銅劍：劍長 ×1.35', '銀劍：劍長 ×1.7，傷害 +1', '金劍：唔會跌級'],
+    blurb: '攻擊力。琪寶寶用。買咗之後中招最多跌返買咗嗰級。',
   },
   {
     id: 'gun',
-    name: '槍',
+    name: '三文魚槍',
     who: 'boy',
-    price: [8, 18, 32],
-    tiers: ['雙管：一次兩粒', '三管：扇形三粒，射程 ×1.4', '金管：唔會跌級'],
-    blurb: '倫寶用。買咗之後中招最多跌返買咗嗰級。',
+    price: [10, 22, 40],
+    tiers: ['銅槍：一次兩粒', '銀槍：扇形三粒，射程 ×1.4', '金槍：唔會跌級'],
+    blurb: '攻擊力。倫寶用。買咗之後中招最多跌返買咗嗰級。',
   },
   {
     id: 'armour',
     name: '盔甲',
     who: 'both',
     price: [10, 22, 40],
-    tiers: ['布甲：扣血 −1', '皮甲：扣血 −1，擊退少啲', '金甲：扣血 −2，多 1 格心'],
-    blurb: '最少都會扣 1 格，唔會變成完全唔痛。',
+    tiers: ['銅甲：扣血 −1', '銀甲：扣血 −1，擊退少啲', '金甲：扣血 −2'],
+    blurb: '防禦力。最少都會扣 1 格，唔會完全唔痛。',
   },
   {
     id: 'boots',
     name: '鞋',
     who: 'both',
-    price: [6, 14, 26],
-    tiers: ['波鞋：行快 10%', '行山鞋：行快 18%，跳高 8%', '飛毛鞋：行快 25%，跳高 15%'],
-    blurb: '跳唔到嘅位，可能著對好鞋就跳到。',
+    price: [8, 18, 32],
+    tiers: ['銅鞋：耐力 +25%，回氣快啲', '銀鞋：耐力 +50%', '金鞋：耐力 +85%，回氣好快'],
+    blurb: '耐力。連續出招嘅次數，同埋停手之後幾快回氣。',
   },
   {
     id: 'charm',
     name: '蜜符',
     who: 'both',
-    price: [6, 14, 26],
-    tiers: ['木牌：絕招 +1，無敵時間 +30%', '玉牌：絕招 +2，+60%', '金蜂巢：絕招 +3，+100%'],
-    blurb: '絕招打得重啲，中招之後又閃耐啲。',
+    price: [50, 90, 150],
+    tiers: ['銅符：絕招 +1', '銀符：絕招 +2，無敵時間 +60%', '金符：絕招 +3，無敵時間 +100%'],
+    blurb: '絕招。好貴 — 要儲足幾關，同埋喺小遊戲度搏多啲金幣先買得起。',
+    /** The last thing the stall ever stocks: it shows up on the clear screen before the final stage. */
+    fromStage: 4,
   },
 ]
 
@@ -72,7 +84,7 @@ export function gearById(id: GearId): GearDef {
   return GEAR.find((g) => g.id === id)!
 }
 
-const empty = (): Tiers => ({ sword: 0, gun: 0, armour: 0, boots: 0, charm: 0 })
+const empty = (): Tiers => ({ heart: 0, sword: 0, gun: 0, armour: 0, boots: 0, charm: 0 })
 type Save = { boy: Tiers; girl: Tiers }
 
 function read(): Save {
@@ -159,17 +171,25 @@ export function damageCut(who: Who): number {
   return t >= 3 ? 2 : t >= 1 ? 1 : 0
 }
 
-/** Extra hearts on the max (gold armour only). */
+/** Extra hearts on the max — the 大心心, one per tier. */
 export function bonusHearts(who: Who): number {
-  return tierOf(who, 'armour') >= 3 ? 1 : 0
+  return tierOf(who, 'heart')
 }
 
-export function speedMul(who: Who): number {
-  return [1, 1.1, 1.18, 1.25][tierOf(who, 'boots')] ?? 1
+/** Boots are 耐力: a bigger bar and a faster recovery. */
+export function stamMax(who: Who): number {
+  return [1, 1.25, 1.5, 1.85][tierOf(who, 'boots')] ?? 1
+}
+export function stamRecoverMul(who: Who): number {
+  return [1, 1.2, 1.35, 1.6][tierOf(who, 'boots')] ?? 1
 }
 
-export function jumpMul(who: Who): number {
-  return [1, 1, 1.08, 1.15][tierOf(who, 'boots')] ?? 1
+export function speedMul(): number {
+  return 1
+}
+
+export function jumpMul(): number {
+  return 1
 }
 
 export function knockMul(who: Who): number {
@@ -177,7 +197,7 @@ export function knockMul(who: Who): number {
 }
 
 export function iframeMul(who: Who): number {
-  return [1, 1.3, 1.6, 2][tierOf(who, 'charm')] ?? 1
+  return [1, 1, 1.6, 2][tierOf(who, 'charm')] ?? 1
 }
 
 /** Base 絕招 damage is 3; the 蜜符 adds one per tier. */
@@ -185,8 +205,8 @@ export function specialPower(who: Who): number {
   return 3 + tierOf(who, 'charm')
 }
 
-export type StatId = 'hp' | 'atk' | 'def' | 'spd' | 'sp'
-export const STAT_NAMES: Record<StatId, string> = { hp: '生命', atk: '攻擊', def: '防禦', spd: '速度', sp: '絕招' }
+export type StatId = 'hp' | 'atk' | 'def' | 'stam' | 'sp'
+export const STAT_NAMES: Record<StatId, string> = { hp: '生命', atk: '攻擊', def: '防禦', stam: '耐力', sp: '絕招' }
 
 /**
  * The pentagon on the shop screen. Each axis is 0..1: a fifth for being alive at all,
@@ -196,10 +216,10 @@ export function stats(who: Who): Record<StatId, number> {
   const t = gearOf(who)
   const axis = (n: number) => Math.min(1, 0.25 + n * 0.25)
   return {
-    hp: axis(t.armour >= 3 ? 1 : 0),
+    hp: axis(t.heart),
     atk: axis(who === 'girl' ? t.sword : t.gun),
     def: axis(t.armour),
-    spd: axis(t.boots),
+    stam: axis(t.boots),
     sp: axis(t.charm),
   }
 }

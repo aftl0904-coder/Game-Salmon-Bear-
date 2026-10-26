@@ -13,6 +13,9 @@ export type AggregateHealthPayload = {
   boyHp: number
   girlHp: number
   maxHp: number
+  /** 耐力 0..1 per hero (GameScene.tickStamina). */
+  stamL?: number
+  stamR?: number
 }
 
 export type ScorePayload = {

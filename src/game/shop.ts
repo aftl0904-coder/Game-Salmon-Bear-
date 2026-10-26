@@ -24,6 +24,8 @@ export type ShopHooks = {
   friends: () => string[]
   /** Who is playing: one hero, or both in 2P. */
   heroes: Who[]
+  /** The stage just cleared — late stock (the 蜜符) only appears from its own stage on. */
+  stage: number
 }
 
 export type Shop = { done: Promise<void>; destroy: () => void }
@@ -89,7 +91,8 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   root.add([purseText, whoText, blurb, hint])
 
   /** One row per gear item this hero can actually use. */
-  const rowsFor = (w: Who): GearDef[] => GEAR.filter((g) => g.who === 'both' || g.who === w)
+  const rowsFor = (w: Who): GearDef[] =>
+    GEAR.filter((g) => (g.who === 'both' || g.who === w) && (g.fromStage === undefined || hooks.stage >= g.fromStage))
   type Row = { name: Phaser.GameObjects.Text; tier: Phaser.GameObjects.Text; price: Phaser.GameObjects.Text; cursor: Phaser.GameObjects.Text }
   const rows: Row[] = []
   for (let i = 0; i < GEAR.length; i++) {
@@ -106,7 +109,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   const CX = GAME_W - 100
   const CY = 218
   const R0 = 44
-  const AXES: StatId[] = ['hp', 'atk', 'def', 'spd', 'sp']
+  const AXES: StatId[] = ['hp', 'atk', 'def', 'stam', 'sp']
   const pent = scene.add.graphics().setDepth(1)
   const axisLabels = AXES.map((id, i) => {
     const a = -Math.PI / 2 + (i * Math.PI * 2) / 5
@@ -162,7 +165,8 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       const p = nextPrice(who, g.id)
       const capped = t >= limit && p !== null
       r.name.setText(g.name).setColor(on ? '#ffd040' : '#fff6e0')
-      r.tier.setText(t > 0 ? `Lv${t}　${g.tiers[t - 1]}` : '未買')
+      r.tier.setText(t > 0 ? g.tiers[t - 1]! : '未買')
+      r.tier.setColor(t >= 3 ? '#ffd040' : t === 2 ? '#dfe4ea' : t === 1 ? '#c88a52' : '#c8b890')
       r.price.setText(p === null ? 'MAX' : capped ? '未入貨' : `${p} 幣`)
       r.price.setColor(p === null ? '#8ad0ff' : capped ? '#80706a' : hooks.purse(who) >= p ? '#ffe08a' : '#a08070')
     })
@@ -209,7 +213,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     SFX.powerUp()
     buzz(HAPTIC.power)
     const t2 = tierOf(who, g.id)
-    blurb.setText(`買咗！${g.name} Lv${t2}：${g.tiers[t2 - 1]}`)
+    blurb.setText(`買咗！${g.tiers[t2 - 1]}`)
     draw()
   }
 

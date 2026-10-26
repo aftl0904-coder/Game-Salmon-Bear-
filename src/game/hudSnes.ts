@@ -18,12 +18,15 @@ const HEART_H = 8
 
 type Side = {
   hearts: Phaser.GameObjects.Image[]
+  stam: Phaser.GameObjects.Rectangle
   weapon: Phaser.GameObjects.Image[]
 }
 
 export type SnesHud = {
   heartsL: Phaser.GameObjects.Image[]
   heartsR: Phaser.GameObjects.Image[]
+  stamL: Phaser.GameObjects.Rectangle
+  stamR: Phaser.GameObjects.Rectangle
   weaponL: Phaser.GameObjects.Image[]
   weaponR: Phaser.GameObjects.Image[]
   honey: Phaser.GameObjects.Image[]
@@ -153,7 +156,8 @@ export function buildSnesHud(
     const label = txt(scene, nx, 2, name, 10, who === 'lunbo' ? '#ffc890' : '#ffd0e0').setOrigin(right ? 1 : 0, 0)
     root.add(label)
     const hearts: Phaser.GameObjects.Image[] = []
-    for (let i = 0; i < MAX_HP; i++) {
+    // Three spare slots for the 大心心 upgrades; UIScene hides the ones not bought.
+    for (let i = 0; i < MAX_HP + 3; i++) {
       const hx = right ? nx - HEART_W - i * (HEART_W + 1) : nx + i * (HEART_W + 1)
       const h = scene.add.image(hx, 17, 'hud2-heart').setOrigin(0, 0).setScrollFactor(0)
       hearts.push(h)
@@ -168,12 +172,18 @@ export function buildSnesHud(
       weapon.push(w)
       root.add(w)
     }
-    return { hearts, weapon }
+    // 耐力 bar under the hearts: attacking drains it, standing off it brings it back.
+    const sw = MAX_HP * (HEART_W + 1) - 2
+    const sx = right ? nx - sw : nx
+    root.add(scene.add.rectangle(sx, 28, sw, 4, 0x2a1a10).setOrigin(0, 0).setScrollFactor(0))
+    const stam = scene.add.rectangle(right ? sx + sw : sx, 29, sw, 2, 0x6ad0ff).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
+    root.add(stam)
+    return { hearts, weapon, stam }
   }
 
   const p1Who = opts.mode === '1p' && opts.soloCast === 'girl' ? 'kibobo' : 'lunbo'
   const L = makeSide(false, p1Who, p1Who === 'lunbo' ? '倫寶' : '琪寶寶')
-  const R = opts.mode === '2p' ? makeSide(true, 'kibobo', '琪寶寶') : { hearts: [], weapon: [] }
+  const R = opts.mode === '2p' ? makeSide(true, 'kibobo', '琪寶寶') : { hearts: [], weapon: [], stam: scene.add.rectangle(-99, -99, 1, 1).setVisible(false) }
 
   // Centre: stage plaque + honey / coins / 絕招.
   const cx = GAME_W / 2
@@ -244,6 +254,8 @@ export function buildSnesHud(
   return {
     heartsL: L.hearts,
     heartsR: R.hearts,
+    stamL: L.stam,
+    stamR: R.stam,
     weaponL: L.weapon,
     weaponR: R.weapon,
     honey,

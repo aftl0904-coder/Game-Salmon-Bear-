@@ -4,6 +4,7 @@ import { DEPTH } from './engine/depth'
 import { FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
+import { floatText } from './fx'
 import { BlowMeter, buzz, HAPTIC, isTouchDevice, micLevel, micReady, phonePrefs, startMic, startMotion, stopMic, takeShake } from './phone'
 
 /**
@@ -457,5 +458,260 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
     ui.root.destroy(true)
     resolve(result)
   }
+  return { done, destroy }
+}
+
+// ── 倒漿：撳住倒，啱啱滿放手 ─────────────────────────────────────────────
+
+export type RoundResult = { good: number; total: number }
+
+/**
+ * Hold to pour, let go when the mould is just full (第 2 關・夾餅叔叔).
+ * Overflow is the punishment, so letting go early is safe but scores less.
+ */
+export function pourGame(scene: Phaser.Scene, rounds = 3): Mini<RoundResult> {
+  const ui = frame(scene, '夾餅叔叔：倒啱啱滿')
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? '撳住畫面倒漿，啱啱滿就放手' : '撳住 攻擊鍵／空白鍵 倒漿，啱啱滿就放手')
+  const cx = GAME_W / 2
+  const cy = GAME_H / 2 + 20
+  const W = 150
+  const H = 54
+  const g = scene.add.graphics()
+  const jug = scene.add.graphics()
+  const label = scene.add.text(cx, cy - 72, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  ui.root.add([g, jug, label])
+
+  let fill = 0
+  let held = false
+  let round = 1
+  let spilled = false
+  let settle = 0
+  const res: RoundResult = { good: 0, total: rounds }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+  const started = scene.time.now
+
+  const draw = () => {
+    g.clear()
+    g.fillStyle(0x1a1210, 1).fillRect(cx - W / 2 - 4, cy - H / 2 - 4, W + 8, H + 8)
+    g.fillStyle(0x6a5038, 1).fillRect(cx - W / 2, cy - H / 2, W, H)
+    // The target band: stop anywhere inside it.
+    g.fillStyle(0x3a8a40, 0.5).fillRect(cx - W / 2, cy + H / 2 - H * 1.0, W, H * 0.12)
+    const h = Math.min(1.12, fill) * H
+    g.fillStyle(spilled ? 0x8a5a2a : 0xe8c060, 1).fillRect(cx - W / 2 + 2, cy + H / 2 - h, W - 4, Math.min(h, H - 2))
+    if (fill > 1) {
+      g.fillStyle(0xe8c060, 0.8).fillRect(cx - W / 2 - 10, cy + H / 2, 8, (fill - 1) * 80)
+      g.fillStyle(0xe8c060, 0.8).fillRect(cx + W / 2 + 2, cy + H / 2, 8, (fill - 1) * 80)
+    }
+    jug.clear()
+    if (held) {
+      jug.fillStyle(0xe8c060, 1).fillRect(cx - 4, cy - H / 2 - 44, 8, 40)
+      jug.fillStyle(0xfff0c0, 0.7).fillRect(cx - 2, cy - H / 2 - 44, 3, 40)
+    }
+    jug.fillStyle(0x1a1210, 1).fillRoundedRect(cx - 34, cy - H / 2 - 74, 60, 30, 6)
+    jug.fillStyle(0xc8c8d0, 1).fillRoundedRect(cx - 32, cy - H / 2 - 72, 56, 26, 6)
+    label.setText(`第 ${round} ／ ${rounds} 底　　${Math.round(Math.min(fill, 1.2) * 100)}%`)
+    ui.bar.width = 216 * Math.min(1, fill)
+  }
+
+  const land = () => {
+    // 0.92–1.0 is the sweet spot; over 1.0 spills.
+    const ok = fill >= 0.9 && fill <= 1.02
+    if (ok) {
+      res.good++
+      SFX.coin()
+      buzz(HAPTIC.power)
+      floatText(scene, cx, cy - 40, '啱啱好！', '#ffd040', { size: 16, dur: 800 })
+    } else if (fill > 1.02) {
+      SFX.potShatter()
+      buzz(40)
+      floatText(scene, cx, cy - 40, '瀉咗！', '#ff8a6a', { size: 15, dur: 800 })
+    } else {
+      SFX.blip(240)
+      floatText(scene, cx, cy - 40, '唔夠滿', '#c0b0a0', { size: 14, dur: 800 })
+    }
+    settle = 650
+  }
+
+  let finished = false
+  const tick = (_t: number, dt: number) => {
+    if (finished) return
+    if (settle > 0) {
+      settle -= dt
+      if (settle <= 0) {
+        round++
+        if (round > rounds) return finish()
+        fill = 0
+        spilled = false
+        draw()
+      }
+      return
+    }
+    const down = scene.input.activePointer.isDown || TouchInput.isDown('attack') || TouchInput.isDown('jump') || keyDown
+    if (down && !held) held = true
+    if (!down && held) {
+      held = false
+      land()
+    }
+    if (held) {
+      fill += dt / 1250
+      if (fill > 1.02) spilled = true
+      if (fill > 1.3) {
+        held = false
+        land()
+      }
+    }
+    draw()
+    if (scene.time.now - started > 22000) finish()
+  }
+  let keyDown = false
+  const onDown = (e: KeyboardEvent) => {
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code)) keyDown = true
+  }
+  const onUp = (e: KeyboardEvent) => {
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code)) keyDown = false
+  }
+  scene.input.keyboard?.on('keydown', onDown)
+  scene.input.keyboard?.on('keyup', onUp)
+  scene.events.on('update', tick)
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onDown)
+    scene.input.keyboard?.off('keyup', onUp)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    ui.title.setText(res.good >= rounds ? '全部啱啱好！' : res.good > 0 ? `整好 ${res.good} 底` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(800, destroy)
+  }
+  draw()
+  return { done, destroy }
+}
+
+// ── 指針條：啱嗰刻撳 ────────────────────────────────────────────────────
+
+/**
+ * A pointer sweeps a red-green-red bar; press inside the green (第 3 關・蛋撻出爐,
+ * later 第 5 關・落刀). The green band shrinks each round.
+ */
+export function timingGame(scene: Phaser.Scene, title: string, verb: string, rounds = 4): Mini<RoundResult> {
+  const ui = frame(scene, title)
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? `指針入到綠色就撳畫面${verb}` : `指針入到綠色就撳 攻擊鍵${verb}`)
+  const cx = GAME_W / 2
+  const cy = GAME_H / 2 + 10
+  const BW = 320
+  const g = scene.add.graphics()
+  const label = scene.add.text(cx, cy - 58, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  ui.root.add([g, label])
+
+  let round = 1
+  let pos = 0
+  let dir = 1
+  let settle = 0
+  let band = 0.26
+  let centre = 0.5
+  const res: RoundResult = { good: 0, total: rounds }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+  const started = scene.time.now
+  let finished = false
+
+  const newRound = () => {
+    band = Math.max(0.1, 0.26 - (round - 1) * 0.04)
+    centre = Phaser.Math.FloatBetween(0.3, 0.7)
+    pos = 0
+    dir = 1
+  }
+  const draw = () => {
+    g.clear()
+    const x0 = cx - BW / 2
+    g.fillStyle(0x1a1210, 1).fillRect(x0 - 4, cy - 18, BW + 8, 36)
+    g.fillStyle(0x8a2a22, 1).fillRect(x0, cy - 14, BW, 28)
+    g.fillStyle(0x3a8a40, 1).fillRect(x0 + (centre - band / 2) * BW, cy - 14, band * BW, 28)
+    const px = x0 + pos * BW
+    g.fillStyle(0xfff6e0, 1).fillRect(px - 2, cy - 22, 4, 44)
+    g.fillStyle(0x1a1210, 1).fillRect(px - 3, cy - 23, 1, 46).fillRect(px + 2, cy - 23, 1, 46)
+    label.setText(`第 ${round} ／ ${rounds} 次`)
+    ui.bar.width = (216 * (round - 1)) / rounds
+  }
+  const press = () => {
+    if (finished || settle > 0) return
+    const hit = Math.abs(pos - centre) <= band / 2
+    if (hit) {
+      res.good++
+      SFX.coin()
+      buzz(HAPTIC.power)
+      floatText(scene, cx, cy - 40, '啱！', '#ffd040', { size: 16, dur: 700 })
+    } else {
+      SFX.blip(220)
+      buzz(40)
+      floatText(scene, cx, cy - 40, '走咗雞', '#ff8a6a', { size: 14, dur: 700 })
+    }
+    settle = 520
+  }
+  const tick = (_t: number, dt: number) => {
+    if (finished) return
+    if (settle > 0) {
+      settle -= dt
+      if (settle <= 0) {
+        round++
+        if (round > rounds) return finish()
+        newRound()
+      }
+      draw()
+      return
+    }
+    const speed = 0.55 + round * 0.12
+    pos += dir * speed * (dt / 1000)
+    if (pos > 1) {
+      pos = 1
+      dir = -1
+    }
+    if (pos < 0) {
+      pos = 0
+      dir = 1
+    }
+    if (anyPress()) press()
+    draw()
+    if (scene.time.now - started > 25000) finish()
+  }
+  const onKey = (e: KeyboardEvent) => {
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK', 'ArrowUp'].includes(e.code)) press()
+  }
+  const onTap = () => press()
+  scene.input.keyboard?.on('keydown', onKey)
+  scene.input.on('pointerdown', onTap)
+  scene.events.on('update', tick)
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onKey)
+    scene.input.off('pointerdown', onTap)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    ui.bar.width = 216
+    ui.title.setText(res.good >= rounds ? '次次都啱！' : res.good > 0 ? `啱咗 ${res.good} 次` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(800, destroy)
+  }
+  newRound()
+  draw()
   return { done, destroy }
 }
