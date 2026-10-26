@@ -2774,5 +2774,109 @@
     "rows": 1,
     "facing": "right",
     "prompt": "sashimi cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-plain.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "egg waffle raw/cooked/burnt. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-butter.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "butter pat + knife top-down. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/tart-shell.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "tart shell empty/half/full. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/tart-tray.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "baking tray six shells. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-top.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "coconut top whole/cuts/open straw. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/cleaver.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "cleaver blade left. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/salmon-fillet.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "salmon fillet whole/half/sliced. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/sushi-knife.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "long knife blade left. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/honey-drop.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "falling honey drop 3. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/honey-bottle.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glass honey bottle front. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/grill-fish.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "grill salmon raw/cook/perfect/burnt. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/timing-bar.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "timing bar red|green|red. Magenta minigame prop no text."
+  },
+  {
+    "file": "art-src/props/minigames/timing-pointer.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "white timing pointer. Magenta minigame prop no text."
   }
 ]
