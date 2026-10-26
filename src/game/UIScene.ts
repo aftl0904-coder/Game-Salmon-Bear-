@@ -1,6 +1,6 @@
 import { DEPTH } from './engine/depth'
 import Phaser from 'phaser'
-import { buildStageHud } from './hud'
+import { buildSnesHud, type SnesHud } from './hudSnes'
 import {
   EventBus,
   GameEvents,
@@ -19,7 +19,10 @@ export class UIScene extends Phaser.Scene {
   private heartsR: Phaser.GameObjects.Image[] = []
   private coinText!: Phaser.GameObjects.Text
   private scoreText!: Phaser.GameObjects.Text
-  private hudInfo!: Phaser.GameObjects.Text
+  private hud: SnesHud | null = null
+  private toastUntil = 0
+  private lastInfo = ''
+  private honeyShown = -1
   private mpBar!: Phaser.GameObjects.Rectangle
   private mpText!: Phaser.GameObjects.Text
   private mpMaxW = 62
@@ -53,16 +56,15 @@ export class UIScene extends Phaser.Scene {
       | undefined
 
     const build = () => {
-      const hud = buildStageHud(this, {
+      const hud = buildSnesHud(this, {
         mode,
         stageTitle: cfg?.stageTitle ?? '第一關・百畝樹林',
-        stageSub: cfg?.stageSub ?? '奪回蜂蜜',
+        soloCast: (this.registry.get('soloCast') as 'boy' | 'girl') || 'boy',
       })
+      this.hud = hud
       this.heartsL = hud.heartsL
       this.heartsR = hud.heartsR
-      this.hudInfo = hud.info
       this.coinText = hud.coinText
-      this.scoreText = hud.scoreText
       this.mpBar = hud.mpBar
       this.mpText = hud.mpText
       this.mpMaxW = hud.mpMaxW
@@ -74,6 +76,7 @@ export class UIScene extends Phaser.Scene {
       this.targetMp = this.dispMp = 0
 
       mountMuteButton(this, hud.muteAnchor.x + 11, hud.muteAnchor.y + 8)
+      void cfg?.stageSub
 
       // QA / debug: force HP pip textures without going through EventBus
       ;(
@@ -160,6 +163,10 @@ export class UIScene extends Phaser.Scene {
       this.mpBar.width = Math.max(0, this.dispMp * this.mpMaxW)
       this.mpBar.fillColor = this.dispMp > 0.55 ? 0x3ec8ff : 0x2a7098
     }
+    if (this.hud && this.toastUntil && this.time.now > this.toastUntil) {
+      this.toastUntil = 0
+      this.tweens.add({ targets: this.hud.toast, alpha: 0, duration: 300, onComplete: () => this.hud?.toast.setVisible(false) })
+    }
     if (this.mpText) {
       const full = this.targetMp >= 1
       this.mpText.setText(full ? '滿' : '')
@@ -193,8 +200,33 @@ export class UIScene extends Phaser.Scene {
   private onScore(p: GameEventMap['SCORE_UPDATED']) {
     if (p.coins !== undefined) this.coinText?.setText(`×${p.coins}`)
     if (p.special !== undefined) this.targetMp = Phaser.Math.Clamp(p.special, 0, 1)
-    if (p.info !== undefined) this.hudInfo?.setText(p.info)
     void this.scoreText
+    const hud = this.hud
+    if (!hud || !hud.toast.scene) return
+    if (p.honey !== undefined && p.honey !== this.honeyShown) {
+      hud.honey.forEach((j, i) => {
+        const on = i < (p.honey ?? 0)
+        j.setTexture(on ? hud.jarFull : hud.jarEmpty)
+        // Pop the jar that was just filled.
+        if (on && i >= this.honeyShown && this.honeyShown >= 0) this.tweens.add({ targets: j, y: j.y - 3, yoyo: true, duration: 140 })
+      })
+      this.honeyShown = p.honey
+    }
+    const setW = (icons: Phaser.GameObjects.Image[], lv: number | undefined) =>
+      icons.forEach((w, i) => w.setTexture(i < (lv ?? 1) ? hud.fishOn : hud.fishOff))
+    setW(hud.weaponL, p.wlvL)
+    setW(hud.weaponR, p.wlvR)
+    if (p.progress !== undefined && hud.marker) {
+      hud.marker.x = Math.round(hud.trackX0 + (hud.trackX1 - hud.trackX0) * p.progress)
+      hud.marker.y = this.scale.height - 8 + (Math.floor(this.time.now / 180) % 2)
+    }
+    if (p.timeSec !== undefined) hud.timeText.setText(`${p.timeSec}秒`)
+    if (p.info && p.info !== this.lastInfo) {
+      this.lastInfo = p.info
+      this.tweens.killTweensOf(hud.toast)
+      hud.toast.setText(p.info).setVisible(true).setAlpha(1)
+      this.toastUntil = this.time.now + 2800
+    }
   }
 
   private onGameOver(p: GameEventMap['GAME_OVER']) {

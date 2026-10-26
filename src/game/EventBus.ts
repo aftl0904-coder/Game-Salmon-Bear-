@@ -22,6 +22,12 @@ export type ScorePayload = {
   special?: number
   /** Stage honey collected (quest count). */
   honey?: number
+  /** Journey 0–1 (lead hero x / stage length). */
+  progress?: number
+  timeSec?: number
+  /** 金鮭 weapon level 1–3 per player. */
+  wlvL?: number
+  wlvR?: number
   info?: string
   instant?: boolean
 }

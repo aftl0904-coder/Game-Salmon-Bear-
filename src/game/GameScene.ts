@@ -212,6 +212,9 @@ export class GameScene extends Phaser.Scene {
   private keyNP4!: Phaser.Input.Keyboard.Key
   private keyR!: Phaser.Input.Keyboard.Key
   private keyEnter!: Phaser.Input.Keyboard.Key
+  private keyEsc!: Phaser.Input.Keyboard.Key
+  private keyP!: Phaser.Input.Keyboard.Key
+  private pauseReadyAt = 0
   private keySpace!: Phaser.Input.Keyboard.Key
   private keyC!: Phaser.Input.Keyboard.Key
   private keyRShift!: Phaser.Input.Keyboard.Key // 2P Start
@@ -485,6 +488,32 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private openPause() {
+    if (this.scene.isActive('pause')) return
+    const resetKeys = () => {
+      for (const k of [this.keyEnter, this.keyEsc, this.keyP, this.keyR, this.keyF, this.keyG, this.keySpace]) k?.reset()
+      this.pauseReadyAt = this.time.now + 250
+    }
+    this.scene.pause()
+    this.scene.launch('pause', {
+      mode: this.mode,
+      honey: this.honeyGot,
+      onResume: () => {
+        this.scene.resume()
+        resetKeys()
+      },
+      onRestart: () => {
+        this.scene.resume()
+        this.stopUi()
+        this.scene.restart()
+      },
+      onMenu: () => {
+        this.scene.resume()
+        this.goMenu()
+      },
+    })
+  }
+
   private goMenu() {
     // Guard: Enter/Space can fire both keydown listener + JustDown in the same frame.
     if (this.registry.get('leavingToMenu')) return
@@ -528,11 +557,16 @@ export class GameScene extends Phaser.Scene {
   }
 
   private emitScore(info?: string) {
+    const wl = (h: Hero | null | undefined) => (h ? ((h.getData('wlv') as number | undefined) ?? 1) : 1)
     EventBus.emit(GameEvents.SCORE_UPDATED, {
       score: this.scorePts,
       coins: this.coinStock,
       special: this.specialCharges,
       honey: this.honeyGot,
+      progress: this.boy ? Math.min(1, this.leadX() / (WORLD_W - 160)) : 0,
+      timeSec: this.started ? Math.floor((this.time.now - this.startedAt) / 1000) : 0,
+      wlvL: wl(this.boy),
+      wlvR: wl(this.girl),
       ...(info !== undefined ? { info } : {}),
     })
   }
@@ -610,7 +644,18 @@ export class GameScene extends Phaser.Scene {
       return
     }
 
-    if (Phaser.Input.Keyboard.JustDown(this.keyR)) { this.stopUi(); this.scene.restart() }
+    // Start / Enter / Esc / P → pause menu (restart and back-to-menu live there now;
+    // R no longer restarts instantly — it sits right next to F and T).
+    const pausePressed =
+      Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
+      Phaser.Input.Keyboard.JustDown(this.keyEsc) ||
+      Phaser.Input.Keyboard.JustDown(this.keyP) ||
+      Phaser.Input.Keyboard.JustDown(this.keyR) ||
+      TouchInput.justPressed('start')
+    if (pausePressed && this.time.now >= this.pauseReadyAt) {
+      this.openPause()
+      return
+    }
 
     // Fixed logic step: combat timers first, then steer, then AI.
     tickCombatTimers(this.boy, dt)
@@ -670,12 +715,9 @@ export class GameScene extends Phaser.Scene {
 
     this.updateCameraFollow()
 
-    const pct = Math.min(100, Math.floor((this.leadX() / (WORLD_W - 160)) * 100))
-    const sec = ((this.time.now - this.startedAt) / 1000).toFixed(0)
     this.scorePts = this.liveScore()
-    this.emitScore(
-      `${this.mode === '1p' ? '單人' : '雙人'}　進度 ${pct}%　${sec}秒　蜂蜜 ${this.honeyGot}/3`,
-    )
+    // Journey / time / honey / weapon go to the HUD as numbers; text `info` is only for real messages.
+    this.emitScore()
     this.emitHealth()
     this.checkWin()
 
@@ -811,6 +853,8 @@ export class GameScene extends Phaser.Scene {
     this.keyNP4 = kb.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FOUR, true)
     this.keyR = kb.addKey(Phaser.Input.Keyboard.KeyCodes.R, true)
     this.keyEnter = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER, true)
+    this.keyEsc = kb.addKey(Phaser.Input.Keyboard.KeyCodes.ESC, true)
+    this.keyP = kb.addKey(Phaser.Input.Keyboard.KeyCodes.P, true)
     this.keySpace = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true)
     this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
     this.keyRShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT, true)
@@ -947,6 +991,16 @@ export class GameScene extends Phaser.Scene {
     const body = h.body as Phaser.Physics.Arcade.Body
     if ((body.blocked.down || body.touching.down) && Math.abs(body.velocity.x) > 40 && h.alive) {
       this.juice.runDust(h.x, h.y, dt, true)
+    }
+    // Footsteps on the walk-cycle beat (frames 1 and 3), surface from what is under the feet.
+    if (!h.laneJumping && h.alive && Math.abs(body.velocity.x) > 40 && h.anims?.currentFrame) {
+      const fi = h.anims.currentFrame.index
+      if (fi !== h.getData('stepFrame') && (fi === 1 || fi === 3)) {
+        const top = supportTopAt(h.x, h.y, 4, 10)
+        const surface = top !== null && top < LANE_FLOOR_Y - 2 ? 'wood' : 'grass'
+        SFX.stepOn(surface)
+      }
+      h.setData('stepFrame', fi)
     }
   }
 
@@ -1349,7 +1403,7 @@ export class GameScene extends Phaser.Scene {
     const knockMul = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
     const hpLeft = applyDamage(h, {
       amount: ENEMY_ATTACK_DMG,
-      knockbackX: away * Math.round(340 * knockMul),
+      knockbackX: this.safeKnockX(h, away * Math.round(340 * knockMul)),
       knockbackY: -Math.round(320 * Math.max(0.45, knockMul)),
       now: this.time.now,
     })
@@ -1379,6 +1433,18 @@ export class GameScene extends Phaser.Scene {
     if (hpLeft <= 0) this.knockOut(h)
   }
 
+  /** Knockback never throws a hero into a pit: zero the push if a pit edge lies that way. */
+  private safeKnockX(h: Hero, kx: number) {
+    if (!kx || !terrainEnabled()) return kx
+    const dir = Math.sign(kx)
+    const reach = 80
+    for (const p of terrainPits()) {
+      const near = dir > 0 ? p.x0 >= h.x - 4 && p.x0 <= h.x + reach : p.x1 <= h.x + 4 && p.x1 >= h.x - reach
+      if (near) return 0
+    }
+    return kx
+  }
+
   private spike(h: Hero) {
     this.hazardHit(h, { knockX: h.facing * -180, knockY: -560, label: '尖刺' })
   }
@@ -1394,7 +1460,7 @@ export class GameScene extends Phaser.Scene {
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, {
       amount: 1,
-      knockbackX: opts.knockX,
+      knockbackX: this.safeKnockX(h, opts.knockX),
       knockbackY: opts.knockY,
       iframeMs: HURT_IFRAME_MS,
       now: this.time.now,
@@ -2501,7 +2567,7 @@ export class GameScene extends Phaser.Scene {
     const dmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
     const hpLeft = applyDamage(h, {
       amount: dmg,
-      knockbackX: away * 180,
+      knockbackX: this.safeKnockX(h, away * 180),
       knockbackY: -160,
       now: this.time.now,
     })
@@ -2536,10 +2602,12 @@ export class GameScene extends Phaser.Scene {
         if (this.started) return
         this.started = true
         this.startedAt = this.time.now
+        this.pauseReadyAt = this.time.now + 600
+        this.keyEnter?.reset()
         this.storyIntro = null
         this.emitScore(
           this.mode === '1p'
-            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Ｒ回選單'
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Enter暫停'
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
         )
         // data/signs.json SG-02 — display-only tutorial (no combat change)
@@ -3172,6 +3240,14 @@ export class GameScene extends Phaser.Scene {
     s.setOrigin(0.5, 1)
     s.setScale(PROP_DISPLAY_SCALE)
     s.refreshBody()
+    // Fair hitbox: only the spiky core (≈55% wide, lower half) — grazing the edge doesn't count.
+    {
+      const b = s.body as Phaser.Physics.Arcade.StaticBody
+      const w = Math.round(s.displayWidth * 0.55)
+      const h = Math.round(s.displayHeight * 0.5)
+      b.setSize(w, h)
+      b.setOffset((s.displayWidth - w) / 2, s.displayHeight - h)
+    }
     s.setDepth(DEPTH.HAZARD)
     s.setData('hazardKind', 'durian')
     enablePixelSprite(s)

@@ -159,15 +159,20 @@ export const SFX = {
     tone(420, 0.1, 'triangle', 0.14, 280)
     tone(640, 0.06, 'sine', 0.08)
   },
-  land: () => noise(0.05, 0.09, 0, 700),
+  land: () => {
+    noise(0.05, 0.1, 0, 600)
+    tone(80, 0.06, 'sine', 0.1, 50)
+  },
   swing: () => {
     noise(0.05, 0.1, 0, 1600)
     tone(260, 0.08, 'triangle', 0.12, 80)
   },
+  /** Hit confirm: sharp transient + mid crunch + low body thump (three layers = "weight"). */
   hit: () => {
-    noise(0.04, 0.16, 0, 700)
-    tone(170, 0.07, 'triangle', 0.2)
-    tone(90, 0.11, 'sine', 0.12, 50)
+    noise(0.025, 0.22, 0, 3200)
+    noise(0.06, 0.14, 0.005, 900)
+    tone(190, 0.07, 'square', 0.12, 120)
+    tone(70, 0.14, 'sine', 0.2, 40)
   },
   hurt: () => {
     voiceUh('hurt')
@@ -182,9 +187,12 @@ export const SFX = {
     noise(0.1, 0.12, 0, 600)
     tone(95, 0.14, 'triangle', 0.14, 40)
   },
+  /** Enemy down: pop + falling sweep + a bright chime (reward). */
   kill: () => {
-    tone(620, 0.07, 'sine', 0.12)
-    tone(930, 0.12, 'triangle', 0.1, 400)
+    noise(0.05, 0.16, 0, 1800)
+    tone(420, 0.16, 'square', 0.07, 120)
+    tone(988, 0.08, 'sine', 0.1, undefined, 0.06)
+    tone(1318, 0.14, 'triangle', 0.08, undefined, 0.1)
   },
   boss: () => {
     tone(100, 0.3, 'triangle', 0.18, 50)
@@ -217,6 +225,18 @@ export const SFX = {
     tone(190, 0.45, 'triangle', 0.1, 65)
   },
   step: () => noise(0.022, 0.035, 0, 900),
+  /** Footsteps by surface: grass (soft swish), wood (hollow knock), bark (dry tap). */
+  stepOn: (surface: 'grass' | 'wood' | 'bark' = 'grass') => {
+    if (surface === 'wood') {
+      tone(230, 0.04, 'triangle', 0.05, 180)
+      noise(0.015, 0.03, 0, 1200)
+    } else if (surface === 'bark') {
+      noise(0.02, 0.05, 0, 2200)
+      tone(150, 0.03, 'triangle', 0.03)
+    } else {
+      noise(0.03, 0.035, 0, 2600)
+    }
+  },
   coin: () => {
     tone(988, 0.08, 'sine', 0.12)
     tone(1480, 0.14, 'triangle', 0.09)
@@ -490,7 +510,7 @@ function scheduleSong(c: AudioContext) {
     const step = songStep % total
     const bar = Math.floor(step / 16)
     const inBar = step % 16
-    const duck = t < fanfareUntil ? 0.25 : 1
+    const duck = (t < fanfareUntil ? 0.25 : 1) * (bgmDucked ? 0.3 : 1)
     const v = song.vol * duck
     // Lead: start a note and measure its held length.
     const tok = lead[step] ?? '.'
@@ -528,6 +548,12 @@ function scheduleSong(c: AudioContext) {
     songStep++
     songNextTime += stepDur
   }
+}
+
+let bgmDucked = false
+/** Pause screen: keep the song going but quiet. */
+export function setBgmDucked(on: boolean) {
+  bgmDucked = on
 }
 
 /** Start (or switch to) a song. Safe to call repeatedly with the same id. */
