@@ -14,7 +14,7 @@ import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, speedMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
-import { stirCoffee } from './minigames'
+import { showTutorial, stirCoffee } from './minigames'
 import { openShop, shopGreeting } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
 import {
@@ -2571,8 +2571,42 @@ export class GameScene extends Phaser.Scene {
         this.coffeeDone = true
         this.physics.pause()
         for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-        const mini = stirCoffee(this)
-        this.storyIntro = mini
+        void this.runCoffeeStall()
+        return
+      }
+    }
+  }
+
+  /** 咖啡媽媽: how-to pages first, then the minigame (skipping goes straight to the stall). */
+  private async runCoffeeStall() {
+    const gate = { destroy: () => undefined }
+    this.storyIntro = gate
+    const choice = await showTutorial(this, 'coffee', [
+      {
+        title: '咖啡媽媽：攪勻杯咖啡',
+        lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'],
+        tip: '電腦：方向鍵順時針轉圈（↑→↓←）',
+      },
+      {
+        title: '見到方糖就撳！',
+        lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'],
+        tip: '每粒方糖都係一個金幣，用嚟喺隔離檔口買裝備。',
+      },
+      {
+        title: '最後吹凍佢',
+        lines: ['對住電話吹氣，杯咖啡就凍得快。', '吹唔到？撳住畫面都得。'],
+        tip: '飲完回 1 格血。',
+      },
+    ])
+    if (this.ended || !this.scene.isActive()) return
+    if (choice === 'skip') {
+      this.drinkCoffee()
+      this.openGearShop(gate)
+      return
+    }
+    {
+      const mini = stirCoffee(this)
+      this.storyIntro = mini
         void mini.done.then((r) => {
           if (this.ended || !this.scene.isActive()) {
             if (this.storyIntro === mini) this.storyIntro = null
@@ -2589,8 +2623,6 @@ export class GameScene extends Phaser.Scene {
           if (earned > 0) this.addCoins(this.boy.role as Who, earned)
           this.openGearShop(mini)
         })
-        return
-      }
     }
   }
 

@@ -29,6 +29,111 @@ function frame(scene: Phaser.Scene, title: string) {
   return { root, title: t, hint, bar }
 }
 
+/**
+ * 1–3 pages of "how to play" before a minigame (Alan, 2026-10-27). Shown in full the first
+ * time, then as a one-line reminder. Start skips the whole minigame for the base reward.
+ */
+const SEEN_KEY = 'sake-kuma-mg-seen-v1'
+
+function seen(id: string): boolean {
+  try {
+    return !!JSON.parse(localStorage.getItem(SEEN_KEY) ?? '{}')[id]
+  } catch {
+    return false
+  }
+}
+function markSeen(id: string) {
+  try {
+    const o = JSON.parse(localStorage.getItem(SEEN_KEY) ?? '{}')
+    o[id] = true
+    localStorage.setItem(SEEN_KEY, JSON.stringify(o))
+  } catch {
+    /* private mode — the pages just show again */
+  }
+}
+
+export type Page = { title: string; lines: string[]; tip?: string }
+
+/** Resolves 'play' to start, or 'skip' when the player opts out (base reward only). */
+export function showTutorial(scene: Phaser.Scene, id: string, pages: Page[]): Promise<'play' | 'skip'> {
+  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 270)
+  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0c0806, 0.9).setOrigin(0).setInteractive())
+  const g = scene.add.graphics()
+  g.fillStyle(0xc8902a, 1).fillRect(40, 60, GAME_W - 80, GAME_H - 130)
+  g.fillStyle(0x1a1210, 0.98).fillRect(43, 63, GAME_W - 86, GAME_H - 136)
+  root.add(g)
+  const short = seen(id)
+  const list = short ? pages.slice(0, 1) : pages
+  let i = 0
+  const title = scene.add
+    .text(GAME_W / 2, 92, '', { fontFamily: FONT_UI, fontSize: '17px', color: '#ffd76a', stroke: '#2a1408', strokeThickness: 4 })
+    .setOrigin(0.5)
+  const body = scene.add
+    .text(GAME_W / 2, 132, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#fff6e0', align: 'center', lineSpacing: 9, wordWrap: { width: GAME_W - 130 } })
+    .setOrigin(0.5, 0)
+  const tip = scene.add
+    .text(GAME_W / 2, GAME_H - 104, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#8ad0ff', align: 'center', wordWrap: { width: GAME_W - 130 } })
+    .setOrigin(0.5, 0)
+  const nav = scene.add
+    .text(GAME_W / 2, GAME_H - 48, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#f0dcb0' })
+    .setOrigin(0.5)
+  const pageNo = scene.add.text(GAME_W - 56, 92, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b090' }).setOrigin(1, 0.5)
+  root.add([title, body, tip, nav, pageNo])
+
+  return new Promise<'play' | 'skip'>((resolve) => {
+    let gone = false
+    const end = (r: 'play' | 'skip') => {
+      if (gone) return
+      gone = true
+      markSeen(id)
+      scene.events.off('update', tick)
+      scene.input.keyboard?.off('keydown', onKey)
+      scene.input.off('pointerdown', onTap)
+      root.destroy(true)
+      resolve(r)
+    }
+    const draw = () => {
+      const p = list[i]!
+      title.setText(p.title)
+      body.setText(p.lines.join('\n'))
+      tip.setText(p.tip ?? '')
+      pageNo.setText(list.length > 1 ? `${i + 1}／${list.length}` : '')
+      nav.setText(i < list.length - 1 ? '撳一下 ▶ 下一頁　　Start＝跳過唔玩' : '撳一下 ▶ 開始　　Start＝跳過唔玩')
+    }
+    const next = () => {
+      if (i < list.length - 1) {
+        i++
+        SFX.blip(620)
+        draw()
+      } else end('play')
+    }
+    const onTap = () => next()
+    const onKey = (e: KeyboardEvent) => {
+      if (['Enter', 'Escape'].includes(e.code) || e.code === 'Enter') end('skip')
+      else next()
+    }
+    const tick = () => {
+      if (gone) return
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('menu')) end('skip')
+      else if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) next()
+    }
+    scene.input.on('pointerdown', onTap)
+    scene.input.keyboard?.on('keydown', onKey)
+    scene.events.on('update', tick)
+    // A skip button so a phone player never has to find a key.
+    const skipBtn = scene.add
+      .text(GAME_W - 54, GAME_H - 48, '跳過 ▶▶', { fontFamily: FONT_UI, fontSize: '11px', color: '#e0b86a', backgroundColor: '#2a1a10', padding: { x: 6, y: 3 } })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+    skipBtn.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+      ev?.stopPropagation?.()
+      end('skip')
+    })
+    root.add(skipBtn)
+    draw()
+  })
+}
+
 const anyPress = () =>
   TouchInput.justPressed('attack') || TouchInput.justPressed('jump') || TouchInput.justPressed('start') || TouchInput.justPressed('special')
 
