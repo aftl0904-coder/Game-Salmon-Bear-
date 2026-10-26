@@ -86,6 +86,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   role: PlayerRole = 'boy'
   /** Boots from the gear shop scale the jump (gear.ts jumpMul). */
   jumpMul = 1
+  /** 耐力 0..1: every swing spends some, standing off it brings it back (GameScene.tickStamina). */
+  stam = 1
+  /** Time of the last attack, for the stamina recovery delay. */
+  lastAtkAt = 0
   baseScale = 1
   coyote = 0
   jumpBuf = 0

@@ -28,6 +28,8 @@ export class UIScene extends Phaser.Scene {
   private mpText!: Phaser.GameObjects.Text
   private mpMaxW = 62
   private maxHp = 6
+  private stamL = 1
+  private stamR = 1
   private targetHpL = 6
   private targetHpR = 6
   private dispHpL = 6
@@ -177,9 +179,19 @@ export class UIScene extends Phaser.Scene {
     this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)
     this.dispHpR += (this.targetHpR - this.dispHpR) * (this.targetHpR < this.dispHpR ? drain : recover)
     this.dispMp += (this.targetMp - this.dispMp) * Math.min(1, (dt / 1000) * 10)
-    for (let i = 0; i < this.maxHp; i++) {
-      this.heartsL[i]?.setTexture(i < Math.round(this.dispHpL) ? this.pipFull : this.pipEmpty)
-      this.heartsR[i]?.setTexture(i < Math.round(this.dispHpR) ? this.pipFull : this.pipEmpty)
+    for (let i = 0; i < this.heartsL.length; i++) {
+      const on = i < this.maxHp
+      this.heartsL[i]?.setVisible(on).setTexture(i < Math.round(this.dispHpL) ? this.pipFull : this.pipEmpty)
+      this.heartsR[i]?.setVisible(on).setTexture(i < Math.round(this.dispHpR) ? this.pipFull : this.pipEmpty)
+    }
+    // 耐力 bars: blue when ready, red while winded.
+    for (const [bar, v] of [[this.hud?.stamL, this.stamL], [this.hud?.stamR, this.stamR]] as const) {
+      if (!bar || !bar.scene) continue
+      const full = bar.getData('w0') as number | undefined
+      const w0 = full ?? bar.width
+      if (full === undefined) bar.setData('w0', w0)
+      bar.width = Math.max(0, w0 * Phaser.Math.Clamp(v, 0, 1))
+      bar.fillColor = v < 0.2 ? 0xff6a5a : v < 0.5 ? 0xffc040 : 0x6ad0ff
     }
     if (this.mpBar) {
       this.mpBar.width = Math.max(0, this.dispMp * this.mpMaxW)
@@ -213,6 +225,9 @@ export class UIScene extends Phaser.Scene {
     if (isAggregateHealth(p)) {
       this.targetHpL = p.boyHp
       this.targetHpR = p.girlHp
+      this.maxHp = p.maxHp
+      if (p.stamL !== undefined) this.stamL = p.stamL
+      if (p.stamR !== undefined) this.stamR = p.stamR
       return
     }
     if (p.role === 'boy') this.targetHpL = p.hp
