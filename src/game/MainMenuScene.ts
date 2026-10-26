@@ -310,6 +310,8 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.registry.set('stageRound', 1)
+    this.registry.set('stageNo', 1)
+    this.registry.set('carryCoins', undefined)
     this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
     this.time.delayedCall(680, () => this.scene.start('play'))
   }

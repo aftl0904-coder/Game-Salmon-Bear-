@@ -304,7 +304,7 @@ export const SFX = {
 //   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
 // Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-export type SongId = 'title' | 'stage1' | 'ambush'
+export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2'
 type Song = {
   bpm: number
   chords: string[]
@@ -391,6 +391,40 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     bassStyle: 'drive',
     leadWave: 'pulse12',
+    vol: 1,
+  },
+  // 第 2 關・蜜樹丘：好奇、有啲壓迫 (112 BPM)，E 小調，薄身 12.5% 方波似蜜蜂嗡嗡
+  stage2: {
+    bpm: 112,
+    chords: ['Em', 'Em', 'C', 'B', 'Em', 'Em', 'Am', 'B', 'C', 'D', 'Bm', 'Em'],
+    lead: `
+      E5 - - G5 F#5 - E5 - B4 - - - . . E5 F#5   | G5 - - B5 A5 - G5 - F#5 - - - E5 - - -
+      E5 - G5 - C6 - B5 - A5 - G5 - E5 - - -   | D#5 - F#5 - B5 - - - A5 - F#5 - D#5 - - -
+      E5 - - G5 F#5 - E5 - B4 - - - . . E5 F#5   | G5 - - B5 A5 - G5 - B5 - - - E6 - - -
+      C6 - B5 - A5 - E5 - C5 - E5 - A5 - - -   | B5 - - - A5 - G5 - F#5 - - - D#5 - - -
+      G5 - - - E5 - G5 - C6 - - - B5 - A5 -   | F#5 - - - D5 - F#5 - A5 - - - G5 - F#5 -
+      F#5 - - - D5 - B4 - D5 - F#5 - B5 - - -   | E5 - - - - - - - . . B4 - E5 - - -`,
+    drums: ['k . . h s . . h k . h . s . . h', 'k . . h s . . h k . h k s . o .'],
+    arpBars: [2, 3, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'walk',
+    leadWave: 'pulse12',
+    vol: 0.95,
+  },
+  // 女王蜂 Boss：急、重 (150 BPM)，C 小調
+  boss2: {
+    bpm: 150,
+    chords: ['Cm', 'Cm', 'Ab', 'Bb', 'Cm', 'Cm', 'Ab', 'G', 'Fm', 'Cm', 'Ab', 'G'],
+    lead: `
+      C5 . C5 . Eb5 - G5 - C6 - . Bb5 - G5 - .   | C5 . C5 . Eb5 - G5 - Bb5 - Ab5 - G5 - Eb5 -
+      Ab5 - - - C6 - Eb6 - D6 - C6 - Ab5 - - -   | Bb5 - - - D6 - F6 - Eb6 - D6 - Bb5 - - -
+      C5 . C5 . Eb5 - G5 - C6 - . Bb5 - G5 - .   | C5 . C5 . Eb5 - G5 - C6 - D6 - Eb6 - - -
+      C6 - Ab5 - Eb5 - Ab5 - C6 - Eb6 - D6 - C6 -   | B5 - - - D6 - G6 - F6 - D6 - B5 - G5 -
+      F5 - Ab5 - C6 - - - Bb5 - Ab5 - F5 - - -   | Eb5 - G5 - C6 - - - Bb5 - G5 - Eb5 - - -
+      Ab5 - C6 - Eb6 - - - D6 - C6 - Ab5 - - -   | G5 - - - B5 - - - D6 - - - G6 - - -`,
+    drums: ['k . h k s . h k k . h k s . h h', 'k . h k s . h k k k h . s s s s'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'drive',
+    leadWave: 'pulse25',
     vol: 1,
   },
 }

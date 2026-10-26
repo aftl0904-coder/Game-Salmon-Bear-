@@ -27,6 +27,13 @@ export function createFxAnims(scene: Phaser.Scene) {
       frameRate: m.fps,
       repeat: name === 'coin-spin' ? -1 : 0,
     })
+    // Looping twin for ambient props (wind vents, puddles, drips).
+    scene.anims.create({
+      key: `${key}-loop`,
+      frames: scene.anims.generateFrameNumbers(key, { start: 0, end: m.count - 1 }),
+      frameRate: m.fps,
+      repeat: -1,
+    })
   }
 }
 

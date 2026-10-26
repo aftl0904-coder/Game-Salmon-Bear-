@@ -402,9 +402,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private applyAirGravity(body: Phaser.Physics.Arcade.Body) {
     if (!this.laneJumping || !body.allowGravity) {
       body.setGravity(0, 0)
+      this.floating = false
       return
     }
     const g = jumpGravity()
+    // 琪寶寶's fan: after an updraft she glides down slowly (cancel most of gravity, cap the fall).
+    if (this.floating && body.velocity.y > 0) {
+      body.setGravity(0, -g * 0.82)
+      if (body.velocity.y > 40) body.velocity.y = 40
+      return
+    }
     // Rising: world gravity only (via allowGravity + scene gravity). Falling: extra mul.
     if (body.velocity.y > 0) {
       body.setGravity(0, g * (FALL_GRAVITY_MUL - 1))

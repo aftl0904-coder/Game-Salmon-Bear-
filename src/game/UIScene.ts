@@ -45,8 +45,11 @@ export class UIScene extends Phaser.Scene {
     super('UIScene')
   }
 
-  init(data: { mode?: '1p' | '2p' }) {
+  private stageTitle = ''
+
+  init(data: { mode?: '1p' | '2p'; stageTitle?: string }) {
     this.registry.set('uiMode', data.mode ?? this.registry.get('playMode') ?? '2p')
+    this.stageTitle = data.stageTitle ?? ''
   }
 
   create() {
@@ -58,7 +61,7 @@ export class UIScene extends Phaser.Scene {
     const build = () => {
       const hud = buildSnesHud(this, {
         mode,
-        stageTitle: cfg?.stageTitle ?? '第一關・百畝樹林',
+        stageTitle: this.stageTitle || cfg?.stageTitle || '第一關・百畝樹林',
         soloCast: (this.registry.get('soloCast') as 'boy' | 'girl') || 'boy',
       })
       this.hud = hud
