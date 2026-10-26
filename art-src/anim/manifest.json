@@ -1278,5 +1278,85 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Magenta walk[4] facing RIGHT. Tiny chibi 倫寶+琪寶寶+噗噗 ~24px. Refs hero model-sheets."
+  },
+  {
+    "file": "art-src/bike/bike-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike far BG 16:9 countryside honey tree on hill NO characters. Match c2-bike mood."
+  },
+  {
+    "file": "art-src/bike/bike-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike mid tileable strip hills fences flowers. Magenta/sky."
+  },
+  {
+    "file": "art-src/bike/bike-road.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike road tileable dirt strip grass edges magenta."
+  },
+  {
+    "file": "art-src/bike/bee-swarm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bee swarm 3 frames magenta flying left obstacle."
+  },
+  {
+    "file": "art-src/bike/rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike rock obstacle magenta side view."
+  },
+  {
+    "file": "art-src/bike/log.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fallen log magenta."
+  },
+  {
+    "file": "art-src/bike/honey-puddle.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fake-honey puddle glossy yellow magenta."
+  },
+  {
+    "file": "art-src/bike/cone.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike traffic cone magenta."
+  },
+  {
+    "file": "art-src/bike/ramp.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike wooden ramp magenta."
+  },
+  {
+    "file": "art-src/bike/obstacles-sheet.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike obstacles sheet rock/log/honey/cone/ramp."
   }
 ]
