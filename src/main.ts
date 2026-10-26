@@ -54,6 +54,9 @@ function bootGame() {
   })
   ;(window as unknown as { __SAKE_GAME__: Phaser.Game }).__SAKE_GAME__ = game
   installGamepadBridge(game)
+  void import('./game/audio').then((m) => {
+    ;(window as unknown as { __SAKE_AUDIO__: unknown }).__SAKE_AUDIO__ = { playSong: m.playSong, stopBgm: m.stopBgm, peak: m.debugPeak, unlock: m.unlockAudio }
+  })
 
   game.events.once('ready', () => {
     for (const scene of game.scene.getScenes(false)) {

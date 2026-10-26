@@ -304,7 +304,7 @@ export const SFX = {
 //   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
 // Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2'
+export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2' | 'sad' | 'story' | 'victory'
 type Song = {
   bpm: number
   chords: string[]
@@ -315,6 +315,10 @@ type Song = {
   bassStyle: 'walk' | 'drive' | 'pad'
   leadWave: 'pulse25' | 'pulse12' | 'triangle'
   vol: number
+  /** Bars where a second voice harmonises the lead (nearest chord tone ≥ a minor third below). */
+  harmBars?: number[]
+  /** Bars that get a soft sustained chord pad ("strings"). */
+  padBars?: number[]
 }
 
 const NOTE_IDX: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 }
@@ -352,6 +356,8 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [4, 5, 6, 7],
     bassStyle: 'pad',
     leadWave: 'pulse25',
+    harmBars: [2, 3, 6, 7],
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
     vol: 0.9,
   },
   // 第 1 關・百畝樹林：輕快、少少不安 (120 BPM)，C 段轉小調
@@ -374,6 +380,8 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [4, 5, 6, 7, 8, 9, 10, 11],
     bassStyle: 'walk',
     leadWave: 'pulse25',
+    harmBars: [2, 3, 6, 7, 10, 11],
+    padBars: [8, 9, 10, 11],
     vol: 1,
   },
   // 祭壇伏兵 / Boss：壓迫 (138 BPM)，B 小調
@@ -391,6 +399,7 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     bassStyle: 'drive',
     leadWave: 'pulse12',
+    harmBars: [4, 5, 6, 7, 8, 9, 10, 11],
     vol: 1,
   },
   // 第 2 關・蜜樹丘：好奇、有啲壓迫 (112 BPM)，E 小調，薄身 12.5% 方波似蜜蜂嗡嗡
@@ -408,6 +417,8 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [2, 3, 6, 7, 8, 9, 10, 11],
     bassStyle: 'walk',
     leadWave: 'pulse12',
+    harmBars: [4, 5, 6, 7, 8, 9],
+    padBars: [0, 1, 2, 3, 8, 9, 10, 11],
     vol: 0.95,
   },
   // 女王蜂 Boss：急、重 (150 BPM)，C 小調
@@ -425,7 +436,57 @@ const SONGS: Record<SongId, Song> = {
     arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
     bassStyle: 'drive',
     leadWave: 'pulse25',
+    harmBars: [2, 3, 6, 7, 8, 9, 10, 11],
     vol: 1,
+  },
+  // 悲傷：噗噗變灰 (72 BPM)，A 小調，三角波主旋律 + 琶音
+  sad: {
+    bpm: 72,
+    chords: ['Am', 'F', 'C', 'G', 'Am', 'F', 'E', 'E'],
+    lead: `
+      A4 - - - C5 - - - E5 - - - D5 - C5 -   | C5 - - - A4 - - - F4 - - - - - - -
+      E4 - - - G4 - - - C5 - - - B4 - A4 -   | B4 - - - - - - - G4 - - - - - - -
+      A4 - - - C5 - - - E5 - - - A5 - G5 -   | F5 - - - E5 - - - D5 - - - C5 - - -
+      B4 - - - G#4 - - - E4 - - - - - - -   | E4 - - - - - - - . . . . . . . .`,
+    drums: ['. . . . . . . . . . . . . . . .'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'pad',
+    leadWave: 'triangle',
+    vol: 0.85,
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
+  },
+  // 過場：溫暖、有希望 (92 BPM)，F 大調
+  story: {
+    bpm: 92,
+    chords: ['F', 'C', 'Dm', 'Bb', 'F', 'C', 'Bb', 'C'],
+    lead: `
+      A5 - - - G5 - F5 - C5 - - - F5 - G5 -   | E5 - - - - - G5 - C6 - - - - - - -
+      D5 - - - F5 - A5 - D6 - C6 - A5 - - -   | Bb5 - - - A5 - G5 - F5 - - - - - - -
+      A5 - - - G5 - F5 - C5 - - - F5 - A5 -   | G5 - - - E5 - C5 - E5 - G5 - C6 - - -
+      D6 - - - C6 - Bb5 - A5 - - - G5 - - -   | G5 - - - - - - - E5 - - - C5 - - -`,
+    drums: ['k . . . h . . . s . . . h . . .', 'k . . . h . . k s . . . h . . .'],
+    arpBars: [4, 5, 6, 7],
+    bassStyle: 'walk',
+    leadWave: 'pulse25',
+    vol: 0.85,
+    harmBars: [4, 5, 6, 7],
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
+  },
+  // 勝利：通關 (132 BPM)，D 大調
+  victory: {
+    bpm: 132,
+    chords: ['D', 'G', 'A', 'D', 'Bm', 'G', 'A', 'D'],
+    lead: `
+      D5 . D5 . D5 . F#5 - A5 - - - D6 - - -   | B5 - - - A5 - G5 - B5 - - - D6 - - -
+      C#6 - - - B5 - A5 - E5 - F#5 - G5 - E5 -   | D6 - - - - - - - A5 - - - F#5 - A5 -
+      B5 - - - A5 - F#5 - D5 - F#5 - B5 - - -   | D6 - - - B5 - G5 - B5 - D6 - G6 - - -
+      E6 - - - C#6 - A5 - C#6 - E6 - G6 - F#6 -   | F#6 - - - - - - - D6 - - - . . . .`,
+    drums: ['k . h . s . h . k . h k s . h .', 'k . h . s . h . k k h . s s s s'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'drive',
+    leadWave: 'pulse25',
+    vol: 1,
+    harmBars: [0, 1, 2, 3, 4, 5, 6, 7],
   },
 }
 
@@ -445,6 +506,34 @@ function pulseWave(c: AudioContext, duty: number): PeriodicWave {
   const w = c.createPeriodicWave(real, imag)
   waveCache.set(key, w)
   return w
+}
+
+/**
+ * Music bus with an SNES-style echo (the SPC700's feedback delay): every song voice goes
+ * through a short filtered delay that repeats and darkens — the "big room" chip sound.
+ */
+let musicBus: GainNode | null = null
+function bus(c: AudioContext): AudioNode {
+  if (!musicBus) {
+    musicBus = c.createGain()
+    musicBus.connect(master!)
+    const d = c.createDelay(1)
+    d.delayTime.value = 0.21
+    const lp = c.createBiquadFilter()
+    lp.type = 'lowpass'
+    lp.frequency.value = 2400
+    const fb = c.createGain()
+    fb.gain.value = 0.34
+    const wet = c.createGain()
+    wet.gain.value = 0.3
+    musicBus.connect(d)
+    d.connect(lp)
+    lp.connect(fb)
+    fb.connect(d)
+    lp.connect(wet)
+    wet.connect(master!)
+  }
+  return musicBus
 }
 
 function voice(c: AudioContext, wave: Song['leadWave'] | 'triangle' | 'square', hz: number, t: number, dur: number, vol: number, opts: { vibrato?: boolean; decay?: boolean } = {}) {
@@ -473,7 +562,7 @@ function voice(c: AudioContext, wave: Song['leadWave'] | 'triangle' | 'square', 
   g.gain.setValueAtTime(opts.decay ? Math.max(0.0002, vol * 0.35) : vol, t + Math.max(0.01, dur - 0.03))
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur)
   o.connect(g)
-  g.connect(master)
+  g.connect(bus(c))
   o.start(t)
   o.stop(t + dur + 0.02)
   bgmNodes.push({ n: o, end: t + dur + 0.02 })
@@ -551,7 +640,15 @@ function scheduleSong(c: AudioContext) {
     if (tok !== '-' && tok !== '.') {
       let len = 1
       while (lead[(step + len) % total] === '-' && len < 32) len++
-      voice(c, song.leadWave, noteHz(tok), t, len * stepDur * 0.95, 0.09 * v, { vibrato: true })
+      const hz = noteHz(tok)
+      voice(c, song.leadWave, hz, t, len * stepDur * 0.95, 0.09 * v, { vibrato: true })
+      // Harmony: the nearest chord tone at least a minor third under the melody.
+      if (song.harmBars?.includes(Math.floor(step / 16))) {
+        const ch = song.chords[Math.floor(step / 16)] ?? song.chords[0]!
+        const cands = [3, 4, 5].flatMap((o) => chordTones(ch, o)).filter((f) => f <= hz / Math.pow(2, 3 / 12) + 0.5)
+        const h = cands.length ? Math.max(...cands) : 0
+        if (h) voice(c, 'pulse12', h, t, len * stepDur * 0.9, 0.045 * v)
+      }
       // Soft echo one octave down, an 8th later — gives the SNES "two channel" width.
       voice(c, 'triangle', noteHz(tok) / 2, t + stepDur * 2, Math.min(len, 3) * stepDur, 0.025 * v)
     }
@@ -567,6 +664,10 @@ function scheduleSong(c: AudioContext) {
         voice(c, 'triangle', inBar % 4 === 2 ? r * 2 : r, t, stepDur * 0.9, 0.13 * v)
       } else if (song.bassStyle === 'pad' && inBar % 8 === 0) {
         voice(c, 'triangle', r, t, stepDur * 7.5, 0.1 * v)
+      }
+      // Pad: soft sustained triad across the bar.
+      if (song.padBars?.includes(bar) && inBar === 0) {
+        for (const f of chordTones(chord, 3)) voice(c, 'square', f, t, stepDur * 15.5, 0.012 * v)
       }
       // Arpeggio layer (quiet 12.5% pulse, chord tones up and down).
       if (song.arpBars?.includes(bar)) {
@@ -637,4 +738,20 @@ export function stopBgm() {
 export function unlockAudio() {
   ensureRunning()
   startBgm()
+}
+
+/** Debug hook (bots / level meter): peak of the master output since the last call. */
+let meter: AnalyserNode | null = null
+export function debugPeak(): number {
+  const c = ac()
+  if (!meter) {
+    meter = c.createAnalyser()
+    meter.fftSize = 2048
+    master!.connect(meter)
+  }
+  const buf = new Float32Array(meter.fftSize)
+  meter.getFloatTimeDomainData(buf)
+  let p = 0
+  for (const v of buf) p = Math.max(p, Math.abs(v))
+  return p
 }

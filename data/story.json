@@ -8,7 +8,7 @@
           "bg": "day"
         },
         {
-          "music": "title"
+          "music": "story"
         },
         {
           "prop": "cart",
@@ -96,7 +96,7 @@
           "face": 2
         },
         {
-          "music": "stop"
+          "music": "sad"
         },
         {
           "fx": "shadow"
@@ -167,7 +167,7 @@
           "bg": "day"
         },
         {
-          "music": "stop"
+          "music": "story"
         },
         {
           "prop": "picnic",
@@ -280,7 +280,7 @@
       "stage": "tree",
       "steps": [
         {
-          "music": "stop"
+          "music": "story"
         },
         {
           "still": "c2-bike"
@@ -319,6 +319,9 @@
           "actor": "kibobo",
           "x": 360,
           "flip": true
+        },
+        {
+          "music": "stop"
         },
         {
           "sfx": "dread"
@@ -391,7 +394,7 @@
       "stage": "tree",
       "steps": [
         {
-          "music": "stop"
+          "music": "sad"
         },
         {
           "actor": "lunbo",
@@ -420,6 +423,9 @@
         },
         {
           "sfx": "sparkle"
+        },
+        {
+          "music": "story"
         },
         {
           "still": "c3-queen"
@@ -475,6 +481,9 @@
           "colour": "pupu",
           "amount": 0.5,
           "ms": 1400
+        },
+        {
+          "music": "victory"
         },
         {
           "hop": "pupu"
