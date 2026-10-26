@@ -12,8 +12,11 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, speedMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
 import { stirCoffee } from './minigames'
+import { openShop, shopGreeting } from './shop'
+import { hasBossCard, playBossCard } from './bossCard'
 import {
   type Creep,
   type EnemyKind,
@@ -82,7 +85,6 @@ import {
   PLAYER_ATTACK_DMG,
   ENEMY_ATTACK_DMG,
   BEAR_ASSIST_DMG,
-  COINS_PER_HP,
   SWORD_HIT_W,
   SWORD_HIT_H,
   SWORD_HIT_MS,
@@ -300,6 +302,8 @@ export class GameScene extends Phaser.Scene {
   private friendsSaved: string[] = []
   /** The stir-the-coffee minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Each hero keeps their own coins (docs/bible/minigames-shop.md §2). */
+  private purse: Record<Who, number> = { boy: 0, girl: 0 }
   private bossBar: { fill: Phaser.GameObjects.Rectangle; root: Phaser.GameObjects.Container; w: number } | null = null
 
   constructor() {
@@ -337,6 +341,9 @@ export class GameScene extends Phaser.Scene {
     this.deaths = 0
     const carry = this.registry.get('carryCoins') as number | undefined
     this.coinStock = typeof carry === 'number' ? carry : COINS_START
+    const carryPurse = this.registry.get('carryPurse') as Record<Who, number> | undefined
+    this.purse = carryPurse ? { ...carryPurse } : { boy: this.coinStock, girl: this.mode === '2p' ? this.coinStock : 0 }
+    this.registry.set('carryPurse', undefined)
     this.registry.set('carryCoins', undefined)
     this.prevLeadX = 260
     this.checkpointX = 250
@@ -630,7 +637,7 @@ export class GameScene extends Phaser.Scene {
     const wl = (h: Hero | null | undefined) => (h ? ((h.getData('wlv') as number | undefined) ?? 1) : 1)
     EventBus.emit(GameEvents.SCORE_UPDATED, {
       score: this.scorePts,
-      coins: this.coinStock,
+      coins: this.purse[(this.boy?.role as Who) ?? 'boy'] ?? this.coinStock,
       special: this.specialCharges,
       honey: this.honeyGot,
       progress: this.boy ? Math.min(1, this.leadX() / (WORLD_W - 160)) : 0,
@@ -1103,7 +1110,10 @@ export class GameScene extends Phaser.Scene {
     const ax = this.padAxis(this.pad1, true)
     const left = this.keyA.isDown || ax < -0.45 || TouchInput.isDown('left')
     const right = this.keyD.isDown || ax > 0.45 || TouchInput.isDown('right')
-    const spd = (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) * (this.s2world?.speedMul(this.boy) ?? 1)
+    const spd =
+      (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) *
+      (this.s2world?.speedMul(this.boy) ?? 1) *
+      speedMul(this.boy.role as Who)
     this.steerHero(
       this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), spd,
@@ -1122,7 +1132,7 @@ export class GameScene extends Phaser.Scene {
     const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
       g, dt, left, right,
-      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1),
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(g.role as Who),
       this.p2AttackJust(), () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
@@ -1179,17 +1189,6 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  private tryAutoHealFromCoins() {
-    while (this.coinStock >= COINS_PER_HP) {
-      this.coinStock -= COINS_PER_HP
-      if (this.boy?.alive) this.boy.hp = Math.min(MAX_HP, this.boy.hp + 1)
-      if (this.girl?.alive) this.girl.hp = Math.min(MAX_HP, this.girl.hp + 1)
-      floatText(this, this.boy.x, this.boy.y - 56, '10幣→雙方+1HP', '#7dffb0')
-      SFX.continue()
-      this.refreshHearts()
-    }
-    this.refreshCoins()
-  }
 
 
   /** Melee/range smash for pots & chests in facing cone. */
@@ -1468,15 +1467,17 @@ export class GameScene extends Phaser.Scene {
     else pe.contactCd = 650
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
-    const knockMul = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
+    const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
+    const gearKnock = knockMul(h.role as Who)
     const hpLeft = applyDamage(h, {
-      amount: ENEMY_ATTACK_DMG,
-      knockbackX: this.safeKnockX(h, away * Math.round(340 * knockMul)),
-      knockbackY: -Math.round(320 * Math.max(0.45, knockMul)),
+      amount: this.incoming(h, ENEMY_ATTACK_DMG),
+      knockbackX: this.safeKnockX(h, away * Math.round(340 * speciesKnock * gearKnock)),
+      knockbackY: -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock),
+      iframeMs: this.iframes(h),
       now: this.time.now,
     })
     applyHurtPose(h, -away)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     this.time.delayedCall(160, () => {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
@@ -1527,14 +1528,14 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, {
-      amount: 1,
-      knockbackX: this.safeKnockX(h, opts.knockX),
+      amount: this.incoming(h, 1),
+      knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who)),
       knockbackY: opts.knockY,
-      iframeMs: HURT_IFRAME_MS,
+      iframeMs: this.iframes(h),
       now: this.time.now,
     })
     applyHurtPose(h, -h.facing)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.spike()
     burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
@@ -1567,7 +1568,7 @@ export class GameScene extends Phaser.Scene {
         floatText(this, h.x, h.y - 56, '跌落坑！', '#ff8866')
         this.dropWeaponLv(h)
         applyHurtPose(h, -h.facing)
-        startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+        startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
@@ -1603,6 +1604,10 @@ export class GameScene extends Phaser.Scene {
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
     SFX.die()
+    const lost = dropOnDeath(h.role as Who)
+    if (lost) {
+      floatText(this, h.x, h.y - 100, `跌咗：${gearById(lost.id).name} Lv${lost.from} → Lv${lost.from - 1}`, '#ff9a8a', { size: 13, dur: 2000 })
+    }
     beginDeathPose(h)
     this.tweens.add({
       targets: h,
@@ -2307,6 +2312,15 @@ export class GameScene extends Phaser.Scene {
 
     for (const sp of ST.spikes) this.spikes(sp.x, sp.n)
     for (const x of ST.durians) this.placeDurian(x)
+    // Gear bought at the friends' stall: jump height, extra hearts, weapon floor.
+    for (const h of [this.boy, this.girl]) {
+      if (!h) continue
+      const who = h.role as Who
+      h.jumpMul = jumpMul(who)
+      const extra = bonusHearts(who)
+      if (extra > 0) h.hp = Math.min(MAX_HP + extra, h.hp + extra)
+      h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(who)))
+    }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
@@ -2560,20 +2574,53 @@ export class GameScene extends Phaser.Scene {
         const mini = stirCoffee(this)
         this.storyIntro = mini
         void mini.done.then((r) => {
-          if (this.storyIntro === mini) this.storyIntro = null
-          if (this.ended || !this.scene.isActive()) return
-          this.physics.resume()
-          this.keyEnter?.reset()
+          if (this.ended || !this.scene.isActive()) {
+            if (this.storyIntro === mini) this.storyIntro = null
+            return
+          }
           this.drinkCoffee()
           const pts = r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)
           if (pts > 0) {
             this.killBonus += pts
             this.addScorePop(this.boy.x, this.boy.y - 80, pts)
           }
+          // Every sugar cube is a coin at the friends' stall next door.
+          const earned = r.sugar + (r.stirred >= 1 ? 2 : 0)
+          if (earned > 0) this.addCoins(this.boy.role as Who, earned)
+          this.openGearShop(mini)
         })
         return
       }
     }
+  }
+
+  /** The friends' gear stall, right after the food stall. */
+  private openGearShop(prev?: { destroy: () => void }) {
+    const heroes: Who[] = this.girl ? ['boy', 'girl'] : [(this.boy.role as Who) ?? 'boy']
+    const shop = openShop(this, {
+      purse: (w) => this.purseOf(w),
+      pay: (w, d) => this.addCoins(w, d),
+      friends: () => this.friendsSaved,
+      heroes,
+    })
+    this.storyIntro = shop
+    floatText(this, this.cameras.main.scrollX + GAME_W / 2, 120, shopGreeting(this.friendsSaved.length), '#ffe08a', { size: 12, dur: 2400 })
+    void shop.done.then(() => {
+      if (this.storyIntro === shop || this.storyIntro === prev) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
+      this.physics.resume()
+      this.keyEnter?.reset()
+      this.pauseReadyAt = this.time.now + 800
+      // Gear bought just now takes effect immediately.
+      for (const h of [this.boy, this.girl]) {
+        if (!h) continue
+        const w = h.role as Who
+        h.jumpMul = jumpMul(w)
+        h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(w)))
+      }
+      this.refreshHearts()
+      this.refreshCoins()
+    })
   }
 
   /** 咖啡媽媽's cup: +1 HP for everyone still standing. */
@@ -2799,7 +2846,7 @@ export class GameScene extends Phaser.Scene {
       else if (kind === 'durian') this.durian(this.boy)
       else this.spike(this.boy)
     })
-    this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite, this.boy))
     this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.sushiPickups, (_b, s) => this.takeSushi(this.boy, s as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.powerPickups, (_b, p) => this.takePowerUp(this.boy, p as Phaser.Physics.Arcade.Sprite))
@@ -2813,7 +2860,7 @@ export class GameScene extends Phaser.Scene {
         else if (kind === 'durian') this.durian(g)
         else this.spike(g)
       })
-      this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite))
+      this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite, g))
       this.physics.add.overlap(g, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.sushiPickups, (_g, s) => this.takeSushi(g, s as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.powerPickups, (_g, p) => this.takePowerUp(g, p as Phaser.Physics.Arcade.Sprite))
@@ -2891,7 +2938,7 @@ export class GameScene extends Phaser.Scene {
     if (lane !== undefined && h.lane !== undefined && Math.abs(lane - h.lane) > 1) return
     shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
-    const dmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
+    const dmg = this.incoming(h, (shot.getData('dmg') as number) || FISH_BULLET_DMG)
     const hpLeft = applyDamage(h, {
       amount: dmg,
       knockbackX: this.safeKnockX(h, away * 180),
@@ -2900,7 +2947,7 @@ export class GameScene extends Phaser.Scene {
     })
     applyHurtPose(h, -away)
     freezeActors(this, [h], FISH_BULLET_FREEZE_MS)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.hurt()
     burst(this, h.x, h.y - 20, 0xffaa66, 5)
     floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
@@ -3183,7 +3230,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private weaponLv(h: Hero): number {
-    return (h.getData('wlv') as number | undefined) ?? 1
+    return Math.max(weaponFloor(h.role as Who), (h.getData('wlv') as number | undefined) ?? 1)
+  }
+
+  /** Damage this hero actually takes: armour cuts it, never below 1. */
+  private incoming(h: Hero, amount: number) {
+    return Math.max(1, amount - damageCut(h.role as Who))
+  }
+
+  /** i-frames after a hit: the charm stretches them. */
+  private iframes(h: Hero) {
+    return Math.round(HURT_IFRAME_MS * iframeMul(h.role as Who))
   }
 
   private takePowerUp(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
@@ -3209,7 +3266,7 @@ export class GameScene extends Phaser.Scene {
   /** Lose one weapon level on any damage (Goemon rule). */
   private dropWeaponLv(h: Hero) {
     const lv = this.weaponLv(h)
-    if (lv <= 1) return
+    if (lv <= weaponFloor(h.role as Who)) return
     h.setData('wlv', lv - 1)
     SFX.powerDown()
     floatText(this, h.x, h.y - 84, `武器 Lv${lv - 1}`, '#c8a060', { size: 14, dur: 1000 })
@@ -3346,14 +3403,26 @@ export class GameScene extends Phaser.Scene {
     SFX.kill(); burst(this, item.x, item.y, 0xffc050, 12)
   }
 
-  private takeCoin(coin: Phaser.Physics.Arcade.Sprite) {
+  private takeCoin(coin: Phaser.Physics.Arcade.Sprite, by?: Hero | null) {
     if (!coin.active) return
     coin.disableBody(true, true)
-    this.coinStock += 1
+    this.addCoins(by?.role as Who | undefined, 1)
     SFX.coin()
     burst(this, coin.x, coin.y, 0xffe08a, 8)
     floatText(this, coin.x, coin.y - 16, '＋1幣', '#ffe08a')
-    this.tryAutoHealFromCoins()
+  }
+
+  /** Coins land in one hero's purse; the shared stock is what 投幣續關 spends. */
+  addCoins(who: Who | undefined, n: number) {
+    const w: Who = who ?? (this.boy?.role as Who) ?? 'boy'
+    this.purse[w] = Math.max(0, (this.purse[w] ?? 0) + n)
+    this.coinStock = Math.max(0, this.coinStock + n)
+    this.refreshCoins()
+  }
+
+  /** What this hero can spend at the friends' stall. */
+  purseOf(who: Who) {
+    return this.purse[who] ?? 0
   }
 
   private checkWin() {
@@ -3735,6 +3804,8 @@ export class GameScene extends Phaser.Scene {
   insertCoinContinue() {
     if (!this.awaitingContinue || this.coinStock <= 0) return
     this.coinStock -= 1
+    const w: Who = (this.purse.girl ?? 0) > (this.purse.boy ?? 0) ? 'girl' : 'boy'
+    this.purse[w] = Math.max(0, (this.purse[w] ?? 0) - 1)
     this.refreshCoins()
     SFX.coin()
     SFX.continue()
@@ -3996,6 +4067,17 @@ export class GameScene extends Phaser.Scene {
   private triggerAltarAmbush() {
     this.altarAmbushOn = true
     this.showWarning()
+    // Stage 1 has no boss: the card explains who sent the ambush, then play resumes.
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    const card = playBossCard(this, 'altar', () => {
+      if (this.storyIntro === card) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
+      this.physics.resume()
+      this.keyEnter?.reset()
+      this.pauseReadyAt = this.time.now + 800
+    })
+    this.storyIntro = card
     SFX.boss()
     playSong('ambush')
     this.cameras.main.flash(160, 255, 120, 80)
@@ -4134,7 +4216,16 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
     // Block play while the alarm runs (storyIntro stops update), then the reveal cutscene.
     this.storyIntro = { destroy: () => undefined }
-    this.showWarning(() => this.queenReveal(b))
+    const kind = b.kind as string
+    this.showWarning(() => {
+      if (this.ended) return
+      if (hasBossCard(kind)) {
+        const card = playBossCard(this, kind, () => this.queenReveal(b))
+        this.storyIntro = card
+      } else {
+        this.queenReveal(b)
+      }
+    })
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -4227,6 +4318,7 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('leavingToMenu', true)
     this.registry.set('stageNo', 2)
     this.registry.set('carryCoins', this.coinStock)
+    this.registry.set('carryPurse', { ...this.purse })
     this.registry.set('winScreenShown', false)
     try {
       this.physics.resume()
