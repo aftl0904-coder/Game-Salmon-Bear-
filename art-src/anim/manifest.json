@@ -2092,8 +2092,8 @@
     "frames": 4,
     "cols": 4,
     "rows": 1,
-    "facing": "front",
-    "prompt": "guard model sheet 4 views. Shaggy brown teddy royal guard tall black hat red tunic gold buttons white belt. Magenta. Original ~38px."
+    "facing": "right",
+    "prompt": "guard model-sheet 4. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
   },
   {
     "file": "art-src/anim/friends/denim/model-sheet.png",
@@ -2141,7 +2141,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "guard idle 3. Magenta facing RIGHT."
+    "prompt": "guard idle 3. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
   },
   {
     "file": "art-src/anim/friends/guard/cheer.png",
@@ -2149,7 +2149,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "guard cheer 3. Magenta facing RIGHT."
+    "prompt": "guard cheer 3. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
   },
   {
     "file": "art-src/anim/friends/guard/walk.png",
@@ -2157,7 +2157,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "guard walk 4. Magenta facing RIGHT."
+    "prompt": "guard walk 4. 英國熊 brown shaggy royal guard tall black hat. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
   },
   {
     "file": "art-src/anim/friends/denim/idle.png",
@@ -2221,7 +2221,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-guard portrait 3 busts. Magenta."
+    "prompt": "friend-guard portrait 3 expressions neutral/happy/surprised. 英國熊 brown shaggy royal guard tall black hat. Magenta bust."
   },
   {
     "file": "art-src/portraits/friend-denim.png",
@@ -2244,7 +2244,367 @@
     "frames": 3,
     "cols": 3,
     "rows": 1,
+    "facing": "front",
+    "prompt": "Honey-crate cage 3 states closed/cracked/broken, wooden bars honey △ padlock. Magenta."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
     "facing": "right",
-    "prompt": "friends cage 3 closed/cracked/broken honey-crate △ padlock. Magenta."
+    "prompt": "patbear model-sheet 4. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear idle 3. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear cheer 3. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/patbear/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "patbear walk 4. 大pat熊 honey-yellow chubby bear red shirt original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-patbear.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-patbear portrait 3 expressions neutral/happy/surprised. 大pat熊 honey-yellow chubby bear red shirt original. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe model-sheet 4. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe idle 3. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe cheer 3. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/giraffe/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "giraffe walk 4. 長頸鹿 yellow spotted chubby giraffe plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-giraffe.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-giraffe portrait 3 expressions neutral/happy/surprised. 長頸鹿 yellow spotted chubby giraffe plush. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/polar/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar model-sheet 4. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar idle 3. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar cheer 3. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/polar/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "polar walk 4. 北極熊 fluffy white polar bear plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-polar.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-polar portrait 3 expressions neutral/happy/surprised. 北極熊 fluffy white polar bear plush. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/forest/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest model-sheet 4. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest idle 3. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest cheer 3. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/forest/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "forest walk 4. 龍貓 original grey forest spirit plush leaf belly. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-forest.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-forest portrait 3 expressions neutral/happy/surprised. 龍貓 original grey forest spirit plush leaf belly. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba model-sheet 4. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba idle 3. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba cheer 3. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/shiba/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "shiba walk 4. 柴犬 chubby shiba tan white curled tail. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-shiba.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-shiba portrait 3 expressions neutral/happy/surprised. 柴犬 chubby shiba tan white curled tail. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro model-sheet 4. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro idle 3. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro cheer 3. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/kuro/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "kuro walk 4. 黑貓 black kitten white socks blue collar gold bell. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-kuro.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-kuro portrait 3 expressions neutral/happy/surprised. 黑貓 black kitten white socks blue collar gold bell. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus model-sheet 4. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus idle 3. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus cheer 3. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/stripebus/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "stripebus walk 4. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-stripebus.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-stripebus portrait 3 expressions neutral/happy/surprised. 貓巴士 original teal-cream multi-leg smile bus plush. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/berry/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry model-sheet 4. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry idle 3. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry cheer 3. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/berry/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "berry walk 4. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-berry.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-berry portrait 3 expressions neutral/happy/surprised. 粉紅草莓耳熊 pink bear strawberry on ear. Magenta bust."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub model-sheet 4. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub idle 3. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub cheer 3. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/anim/friends/tigercub/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tigercub walk 4. 橙色老虎 round baby tiger blue beanie original. Magenta #FF00FF soft plush SNES pixel ~34-40px. Facing RIGHT for sheets."
+  },
+  {
+    "file": "art-src/portraits/friend-tigercub.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-tigercub portrait 3 expressions neutral/happy/surprised. 橙色老虎 round baby tiger blue beanie original. Magenta bust."
   }
 ]
