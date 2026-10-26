@@ -1,0 +1,15 @@
+{
+  "note": "一關一個攤檔 (docs/bible/story.md §4)。第一個 checkpoint 係攤檔，之後嘅淨係存檔。",
+  "stalls": {
+    "1": { "keeper": "咖啡媽媽", "food": "咖啡", "sign": "咖啡車・存檔", "game": "stir",
+           "greet": "行咗咁耐，飲杯咖啡先。" },
+    "2": { "keeper": "夾餅叔叔", "food": "雞蛋仔", "sign": "夾餅檔・存檔", "game": "pour",
+           "greet": "新鮮出爐，倒啱啱滿就最香脆。" },
+    "3": { "keeper": "蛋撻哥哥", "food": "蛋撻", "sign": "蛋撻檔・存檔", "game": "timing",
+           "greet": "成條街得返我一檔，食個熱辣辣嘅先。" },
+    "4": { "keeper": "開椰青嘅泰國人", "food": "椰青", "sign": "椰青檔・存檔", "game": "stir",
+           "greet": "凍過水，飲啖涼下。" },
+    "5": { "keeper": "刺身師傅", "food": "三文魚刺身", "sign": "刺身檔・存檔", "game": "timing",
+           "greet": "樓下就係佢哋公司，我都係照開舖。" }
+  }
+}

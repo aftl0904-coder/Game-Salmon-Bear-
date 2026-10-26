@@ -28,6 +28,9 @@ export type Stage3Data = {
   darkZones?: Array<{ x0: number; x1: number; startLit?: boolean }>
   lanterns?: Array<{ x: number }>
   slippery?: Array<{ x0: number; x1: number }>
+  /** 地面手感：黐腳（行慢）／彈床（踩落去彈起）。滑地用 slippery。 */
+  sticky?: Array<{ x0: number; x1: number }>
+  bouncy?: Array<{ x0: number; x1: number }>
   steamVents?: Array<{ x: number; periodMs: number }>
   easterEgg?: { x: number; kind: string; windowMs: number }
 }
@@ -76,19 +79,24 @@ export class Stage3World {
     }
     for (const v of d.steamVents ?? []) this.vents.push({ x: v.x, period: v.periodMs, t: (v.x * 13) % v.periodMs })
     if (d.easterEgg) this.egg = { x: d.easterEgg.x, state: 'idle', until: 0, ui: [] }
+    this.markSurfaces()
   }
 
   private inZone(list: Array<{ x0: number; x1: number }> | undefined, x: number) {
     return (list ?? []).some((z) => x >= z.x0 && x <= z.x1)
   }
 
-  /** Movement smoothing on the hot-spring floor (call after the hero's own update). */
+  /**
+   * 地面手感 (call after the hero's own update):
+   *  - slippery 溫泉濕地：turning and stopping lag behind
+   *  - sticky  黐腳：fake honey slows you to a crawl
+   *  - bouncy  彈床：landing on it throws you back up
+   */
   slip(h: Player, dt: number) {
     const body = h.body as Phaser.Physics.Arcade.Body | null
     if (!body) return
-    const on = this.inZone(this.d.slippery, h.x)
     const prev = (h.getData('slipVx') as number | undefined) ?? body.velocity.x
-    if (on) {
+    if (this.inZone(this.d.slippery, h.x)) {
       const k = Math.min(1, (dt / 1000) * (h.laneJumping ? 1.6 : 2.6))
       const v = prev + (body.velocity.x - prev) * k
       body.velocity.x = v
@@ -96,6 +104,39 @@ export class Stage3World {
     } else {
       h.setData('slipVx', body.velocity.x)
     }
+    if (this.inZone(this.d.sticky, h.x) && !h.laneJumping) {
+      body.velocity.x *= 0.45
+      if (Math.abs(body.velocity.x) > 8 && this.ctx.scene.time.now % 320 < 18) {
+        burst(this.ctx.scene, h.x, this.ctx.floorY - 2, 0xd8a040, 3)
+      }
+    }
+    if (this.inZone(this.d.bouncy, h.x)) {
+      const landed = !h.laneJumping && h.y >= this.ctx.floorY - 2
+      const last = (h.getData('bounceAt') as number | undefined) ?? 0
+      const now = this.ctx.scene.time.now
+      if (landed && now - last > 180) {
+        h.setData('bounceAt', now)
+        h.laneJumping = true
+        body.allowGravity = true
+        body.setVelocityY(-430)
+        SFX.jump()
+        burst(this.ctx.scene, h.x, this.ctx.floorY, 0x8ad0ff, 6)
+      }
+    }
+  }
+
+  /** Paint the surface zones so the player can read them before stepping on. */
+  private markSurfaces() {
+    const s = this.ctx.scene
+    const band = (list: Array<{ x0: number; x1: number }> | undefined, col: number, alpha: number) => {
+      for (const z of list ?? []) {
+        const r = s.add.rectangle(z.x0, this.ctx.floorY, z.x1 - z.x0, 5, col, alpha).setOrigin(0, 0).setDepth(DEPTH.GROUND + 4)
+        s.tweens.add({ targets: r, alpha: { from: alpha * 0.5, to: alpha }, duration: 1400, yoyo: true, repeat: -1 })
+      }
+    }
+    band(this.d.slippery, 0x8ad0ff, 0.35)
+    band(this.d.sticky, 0xd8a040, 0.45)
+    band(this.d.bouncy, 0x7af0a0, 0.5)
   }
 
   private light(l: Lantern) {
