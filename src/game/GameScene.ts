@@ -16,6 +16,7 @@ import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knoc
 import { buzz, HAPTIC } from './phone'
 import { stirCoffee } from './minigames'
 import { openShop, shopGreeting } from './shop'
+import { hasBossCard, playBossCard } from './bossCard'
 import {
   type Creep,
   type EnemyKind,
@@ -4066,6 +4067,17 @@ export class GameScene extends Phaser.Scene {
   private triggerAltarAmbush() {
     this.altarAmbushOn = true
     this.showWarning()
+    // Stage 1 has no boss: the card explains who sent the ambush, then play resumes.
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    const card = playBossCard(this, 'altar', () => {
+      if (this.storyIntro === card) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
+      this.physics.resume()
+      this.keyEnter?.reset()
+      this.pauseReadyAt = this.time.now + 800
+    })
+    this.storyIntro = card
     SFX.boss()
     playSong('ambush')
     this.cameras.main.flash(160, 255, 120, 80)
@@ -4204,7 +4216,16 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
     // Block play while the alarm runs (storyIntro stops update), then the reveal cutscene.
     this.storyIntro = { destroy: () => undefined }
-    this.showWarning(() => this.queenReveal(b))
+    const kind = b.kind as string
+    this.showWarning(() => {
+      if (this.ended) return
+      if (hasBossCard(kind)) {
+        const card = playBossCard(this, kind, () => this.queenReveal(b))
+        this.storyIntro = card
+      } else {
+        this.queenReveal(b)
+      }
+    })
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
