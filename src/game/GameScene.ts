@@ -2133,8 +2133,11 @@ export class GameScene extends Phaser.Scene {
     for (const z of ST.slippery ?? []) {
       for (let x = z.x0 + 60; x < z.x1 - 40; x += 240) {
         if (!this.textures.exists('s3-hotspring-rock')) break
-        const pool = this.add.image(x, LANE_FLOOR_Y - 2, 's3-hotspring-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 4).setTint(0xa0a8c8)
+        // Sit the pool into the paving, not on top of it, and let a little steam-light pool around it.
+        const pool = this.add.image(x, LANE_FLOOR_Y + 7, 's3-hotspring-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 4).setTint(0xa0a8c8)
         enablePixelSprite(pool)
+        const sheen = this.add.ellipse(x, LANE_FLOOR_Y + 3, pool.width * 0.9, 12, 0x8ad0ff, 0.14).setDepth(DEPTH.PROP - 3).setBlendMode(Phaser.BlendModes.ADD)
+        this.tweens.add({ targets: sheen, alpha: { from: 0.08, to: 0.2 }, duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
       }
     }
     const b = ST.boss
@@ -4398,7 +4401,7 @@ export class GameScene extends Phaser.Scene {
     this.s3world?.update(dt)
     // Market street → hot springs: the far painting cross-fades past the creek bridge.
     const cx = this.cameras.main.scrollX
-    const k = Phaser.Math.Clamp((cx - 2160) / 320, 0, 1)
+    const k = Phaser.Math.Clamp((cx - 2080) / 260, 0, 1)
     this.marketFar.market?.setAlpha(1 - k)
     this.marketFar.spring?.setAlpha(k)
     if (this.bushStrip) this.bushStrip.setAlpha(1 - k)
