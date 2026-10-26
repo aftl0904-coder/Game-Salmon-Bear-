@@ -1381,7 +1381,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "E-08 snap 4 claw strike. Same scale."
+    "prompt": "E-08 lobsterguard SNAP redraw: red lobster soldier claw strike 4 frames magenta #FF00FF facing RIGHT. Same model as walk.png (navy vest gold studs). Not wolf."
   },
   {
     "file": "art-src/anim/enemies/E-08-lobsterguard/turn.png",
@@ -1718,5 +1718,21 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Owl defeat 5 mirror cracks calm."
+  },
+  {
+    "file": "art-src/portraits/mirror-owl.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl dialogue portraits 3 busts magenta: neutral / calm-smile / shocked. Soft yellow eyes with pupils, yin-yang mirror disc. Kind uncorrupted."
+  },
+  {
+    "file": "art-src/portraits/mirror-owl-evil.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl EVIL dialogue portraits 3 busts magenta: cold / sneer / angry. Glowing fake-honey yellow eyes. Same owl design."
   }
 ]
