@@ -143,6 +143,10 @@ type Stage1 = {
   crushers?: Array<{ x: number; restH: number; warnMs: number; downMs: number; stayMs: number; upMs: number; idleMs: number }>
   breakables?: Array<{ x: number; kind: 'lantern' | 'pot' | 'hive'; loot: LootKind }>
   decor?: { back: Array<{ x: number; kind: string }>; hang?: Array<{ x: number; kind: string }> }
+  /** Floating coin trails (h = height above floor). */
+  coins?: Array<{ x: number; h: number }>
+  /** Hidden rewards on hard-to-reach perches. */
+  secrets?: Array<{ x: number; h: number; kind: 'sushi' | 'coins' }>
   /** Stage 2 (蜜樹丘) extras. */
   theme?: 'forest' | 'tree'
   name?: string
@@ -298,6 +302,7 @@ export class GameScene extends Phaser.Scene {
     this.tree = ST.theme === 'tree'
     this.s2world?.destroy()
     this.s2world = null
+    this.duskWash = null
     this.s2Pending = []
     this.queen = null
     this.bossFight = false
@@ -1697,6 +1702,11 @@ export class GameScene extends Phaser.Scene {
   private bushStrip: Phaser.GameObjects.TileSprite | null = null
 
   private animateBg() {
+    if (this.duskWash) {
+      // 森林深處: the light drops as the path nears the altar.
+      const k = Phaser.Math.Clamp((this.cameras.main.scrollX - 1600) / 1600, 0, 1)
+      this.duskWash.setAlpha(k * 0.26)
+    }
     if (this.bushStrip) this.bushStrip.tilePositionX = Math.round(this.cameras.main.scrollX * 0.5)
     if (this.farTrunks) this.farTrunks.tilePositionX = Math.round(this.cameras.main.scrollX * 0.25)
     if (!this.water) return
@@ -1916,7 +1926,10 @@ export class GameScene extends Phaser.Scene {
         .setDepth(DEPTH.SKY_BAND)
         .setScale(1)
         .setAlpha(1)
+        // Warmer grade: the painting read cold/misty next to the warm cast and HUD.
+        .setTint(0xfff0d6)
       bg.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
+      this.addForestAtmosphere()
       // Mid layer: bushes along the walk line, half-speed parallax for depth.
       if (this.textures.exists('bg-bush-strip')) {
         const bh = this.textures.get('bg-bush-strip').get().height
@@ -1937,6 +1950,60 @@ export class GameScene extends Phaser.Scene {
 
     this.buildGroundTiles()
     this.buildRiverBand()
+  }
+
+  /** Stage 1 atmosphere: sun shafts, pollen, drifting leaves, and a dusk wash that deepens toward the altar. */
+  private duskWash: Phaser.GameObjects.Rectangle | null = null
+  private addForestAtmosphere() {
+    for (let i = 0; i < 3; i++) {
+      const sx = 120 + i * 200
+      const shaft = this.add.graphics().setScrollFactor(0.12, 0).setDepth(DEPTH.SKY_BAND + 1).setBlendMode(Phaser.BlendModes.ADD)
+      shaft.fillStyle(0xfff0b0, 0.07)
+      shaft.fillPoints(
+        [new Phaser.Math.Vector2(sx, 0), new Phaser.Math.Vector2(sx + 34, 0), new Phaser.Math.Vector2(sx + 110, LANE_FLOOR_Y), new Phaser.Math.Vector2(sx + 44, LANE_FLOOR_Y)],
+        true,
+      )
+      this.tweens.add({ targets: shaft, alpha: { from: 0.45, to: 1 }, duration: 2800 + i * 600, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    }
+    for (let i = 0; i < 14; i++) {
+      const m = this.add
+        .circle(Phaser.Math.Between(0, GAME_W), Phaser.Math.Between(70, LANE_FLOOR_Y - 20), 1, 0xfff4c0, 0.8)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND + 3)
+      this.tweens.add({
+        targets: m,
+        y: m.y - Phaser.Math.Between(16, 50),
+        alpha: { from: 0, to: 0.8 },
+        duration: Phaser.Math.Between(2800, 4800),
+        delay: i * 170,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+    }
+    // Leaves: fall diagonally with a flutter, then loop back to the top.
+    const cols = [0x8ab040, 0xc8a038, 0xd87830, 0x6a9a3a]
+    for (let i = 0; i < 9; i++) {
+      const leaf = this.add
+        .rectangle(Phaser.Math.Between(0, GAME_W), -10, 3, 2, cols[i % cols.length]!)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.FX - 12)
+      const fall = () => {
+        leaf.setPosition(Phaser.Math.Between(-20, GAME_W), Phaser.Math.Between(-40, -8))
+        this.tweens.add({
+          targets: leaf,
+          y: LANE_FLOOR_Y + 6,
+          x: leaf.x + Phaser.Math.Between(-90, 40),
+          angle: Phaser.Math.Between(-360, 360),
+          duration: Phaser.Math.Between(5200, 8200),
+          delay: Phaser.Math.Between(0, 4000),
+          ease: 'Sine.inOut',
+          onComplete: fall,
+        })
+      }
+      fall()
+    }
+    this.duskWash = this.add.rectangle(0, 0, GAME_W, LANE_FLOOR_Y + 8, 0x3a1a20, 0).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 3)
   }
 
   /** Stage 2 · inside the honey tree: painted hollow, bark pillars, light shafts, pollen, canopy ceiling. */
@@ -2217,11 +2284,18 @@ export class GameScene extends Phaser.Scene {
     for (const x of ST.durians) this.placeDurian(x)
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
+    for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
 
     // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
     this.powerPickups = this.physics.add.group()
     this.placeBreakables()
     this.placeCrushers()
+    // Secret perches: a reward floating where only a careful climb reaches.
+    for (const sc of ST.secrets ?? []) {
+      const y = LANE_FLOOR_Y - sc.h
+      if (sc.kind === 'sushi') this.spawnSushi(sc.x, y)
+      else for (let i = -1; i <= 1; i++) this.spawnCoin(sc.x + i * 12, y - Math.abs(i) * -4)
+    }
     if (this.tree) {
       this.s2world = new Stage2World(
         {
@@ -2773,7 +2847,7 @@ export class GameScene extends Phaser.Scene {
         if (this.started) return
         this.started = true
         this.startedAt = this.time.now
-        this.pauseReadyAt = this.time.now + 600
+        this.pauseReadyAt = this.time.now + 1200
         this.keyEnter?.reset()
         this.storyIntro = null
         this.emitScore(
@@ -3720,7 +3794,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.resume()
       if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
       this.keyEnter?.reset()
-      this.pauseReadyAt = this.time.now + 600
+      this.pauseReadyAt = this.time.now + 1200
       playSong('boss2')
       SFX.boss()
       const q = new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
