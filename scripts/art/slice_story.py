@@ -18,7 +18,7 @@ def main():
     root = sys.argv[1] if len(sys.argv) > 1 else '.'
     os.makedirs('public/art/story', exist_ok=True)
     # stage backdrops (full-screen far layers)
-    extra = [os.path.join(root, 'art-src/props/stage2/canopy-far.png')]
+    extra = [os.path.join(root, f) for f in ('art-src/props/stage2/canopy-far.png', 'art-src/props/stage3/market-far.png', 'art-src/props/stage3/hotspring-far.png')]
     for f in sorted(glob.glob(os.path.join(root, 'art-src/story/*.png'))) + [e for e in extra if os.path.exists(e)]:
         name = os.path.splitext(os.path.basename(f))[0]
         im = Image.open(f).convert('RGB')

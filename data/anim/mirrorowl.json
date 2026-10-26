@@ -1,0 +1,49 @@
+{
+ "frameWidth": 184,
+ "frameHeight": 125,
+ "anchorX": 92,
+ "anims": {
+  "perch": {
+   "start": 0,
+   "count": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "fly": {
+   "start": 4,
+   "count": 4,
+   "fps": 10,
+   "loop": true
+  },
+  "feather-curtain": {
+   "start": 8,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "split": {
+   "start": 12,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "guard": {
+   "start": 16,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "hurt": {
+   "start": 19,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "defeat": {
+   "start": 21,
+   "count": 5,
+   "fps": 6,
+   "loop": false
+  }
+ }
+}

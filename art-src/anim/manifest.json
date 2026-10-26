@@ -862,5 +862,861 @@
     "rows": 1,
     "facing": "front",
     "prompt": "magenta portraits 3 expr 蜜冠女王蜂."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 beesoldier fly 4 frames magenta #FF00FF facing RIGHT. Yellow+purple striped bee white wings purple stinger. Wing flap only no weapon. Native 40px 8× NN. Same size every sheet. Ref: art-src/gen/bee-soldier.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/aim.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 aim 3 frames magenta facing RIGHT. Stinger lowers body tilts down. Same 40px bee design/size. Ref bee-soldier + fly sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/dive.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 dive 3 frames magenta facing RIGHT. Dive diagonally down-right speed lines. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/stuck.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 stuck 3 frames magenta facing RIGHT. Stinger stuck in ground wiggling. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 hit 2 frames magenta facing RIGHT. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-05-beesoldier/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-05 die 4 frames magenta facing RIGHT. Spin fall then poof. Same 40px bee."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 zombiesquirrel walk 4 frames magenta facing RIGHT. Brown squirrel glowing yellow eyes dripping fake honey shambling. Native 44px 8× NN. Ref zombie-squirrel.png"
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/lunge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 lunge 3 frames magenta facing RIGHT. Arms out. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 hit 2 frames magenta facing RIGHT. Same 44px squirrel."
+  },
+  {
+    "file": "art-src/anim/enemies/E-06-zombiesquirrel/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-06 die 4 frames magenta facing RIGHT. Collapse into honey puddle then dries. Same 44px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/fly.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee fly 3 frames magenta facing RIGHT. Tiny yellow-purple bee native 20px 8× NN."
+  },
+  {
+    "file": "art-src/anim/enemies/E-07-minibee/die.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-07 minibee die 3 frames magenta facing RIGHT. Same 20px size."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/idle.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Fake-honey egg idle 2 frames magenta pulsing amber egg purple spots."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/hatch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg hatch 4 frames magenta. Cracks mini bee pops facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/enemies/egg/break.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Egg break 3 frames magenta shattered by attack."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Boss queen-bee model sheet 4 views magenta #FF00FF. Yellow+purple stripes pink eyes golden crown. ~128px native 8× NN. Side/3-4 facing RIGHT. Same size. Refs queen-bee.png portraits."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/hover.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen hover 4 frames magenta facing RIGHT. Wing flap bob. Same 128px scale as model."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/summon.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen summon 4 frames magenta facing RIGHT. Raises sceptre-stinger. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/land.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen land 3 frames magenta facing RIGHT. Heavy landing wings fold. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/lay-eggs.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen lay-eggs 4 frames magenta facing RIGHT. Bend drop eggs. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/spray.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen spray 4 frames magenta facing RIGHT. Fake honey stream. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/weak.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen weak 3 frames magenta facing RIGHT. Exhausted glowing head weak point. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen hurt 2 frames magenta facing RIGHT. Same scale."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Queen defeat 5 frames magenta facing RIGHT. Crown falls shrink wakes kind. Same design family."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/honey-stream.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX honey-stream 4 frames magenta L→R spray. No characters."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/honey-puddle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX honey-puddle 3 frames magenta sticky floor."
+  },
+  {
+    "file": "art-src/anim/boss/queen-bee/swarm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "FX swarm 3 frames magenta facing RIGHT. Line of 3 mini bees."
+  },
+  {
+    "file": "art-src/anim/lunbo/bike-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "倫寶 bike-ride 4 frames magenta facing RIGHT. Orange hoodie salmon gun on casual city bike. Same 72px scale as model. Refs lunbo model-sheet."
+  },
+  {
+    "file": "art-src/anim/lunbo/bike-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "倫寶 bike-jump 3 frames magenta facing RIGHT. Same scale design."
+  },
+  {
+    "file": "art-src/anim/kibobo/bike-ride.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top fan on back city bike. Same 72px scale."
+  },
+  {
+    "file": "art-src/anim/kibobo/bike-jump.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 bike-jump 3 frames magenta facing RIGHT. Same scale."
+  },
+  {
+    "file": "art-src/anim/kibobo/fan-float.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
+  },
+  {
+    "file": "art-src/props/stage2/bark-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-ground tileable strip magenta moss lip. Ref tree-tiles."
+  },
+  {
+    "file": "art-src/props/stage2/bark-platform.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-platform horizontal branch one-way magenta."
+  },
+  {
+    "file": "art-src/props/stage2/bark-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 bark-wall tileable vertical magenta."
+  },
+  {
+    "file": "art-src/props/stage2/honeycomb-wall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honeycomb-wall tileable magenta."
+  },
+  {
+    "file": "art-src/props/stage2/mushroom-shelf.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 mushroom-shelf bracket fungus platform magenta."
+  },
+  {
+    "file": "art-src/props/stage2/triangle-mark.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 triangle △ carved in bark magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-far 16:9 inside honey tree light shafts no characters."
+  },
+  {
+    "file": "art-src/props/stage2/wind-vent.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 wind-vent 3 frames magenta knot-hole updraft leaves."
+  },
+  {
+    "file": "art-src/props/stage2/honey-drip.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 honey-drip 3 frames magenta dripping."
+  },
+  {
+    "file": "art-src/props/stage2/vine-a.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 vine-a hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/vine-b.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 vine-b hanging magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-hanging.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-hanging intact magenta."
+  },
+  {
+    "file": "art-src/props/stage2/hive-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 hive-broken magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-mid tileable leaves branches magenta."
+  },
+  {
+    "file": "art-src/props/stage2/canopy-front.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Stage2 canopy-front foreground leaf strip magenta."
+  },
+  {
+    "file": "art-src/story/c2-bike.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 cutscene NO TEXT. 倫寶+琪寶寶 bike uphill to honey tree; grey hollow 噗噗 (empty eyes, no gore drips) in 琪寶寶 basket. Refs model-sheets. v2."
+  },
+  {
+    "file": "art-src/story/s2-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 boss intro NO TEXT. 蜜冠女王蜂 angry glowing eyes before huge honeycomb wall. Refs queen model."
+  },
+  {
+    "file": "art-src/map/world-map.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "map",
+    "prompt": "SNES world map 16:9 NO text/characters. Dirt road BL→TR: forest picnic, honey tree hill, night market+hotspring, construction fog, dark tower with △. Darker 1→5."
+  },
+  {
+    "file": "art-src/map/map-icons.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta sheet 5 round place icons L→R: forest, honey tree, lantern market, crane fog, dark tower △. ~32px 8× NN."
+  },
+  {
+    "file": "art-src/map/map-walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta walk[4] facing RIGHT. Tiny chibi 倫寶+琪寶寶+噗噗 ~24px. Refs hero model-sheets."
+  },
+  {
+    "file": "art-src/bike/bike-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike far BG 16:9 countryside honey tree on hill NO characters. Match c2-bike mood."
+  },
+  {
+    "file": "art-src/bike/bike-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike mid tileable strip hills fences flowers. Magenta/sky."
+  },
+  {
+    "file": "art-src/bike/bike-road.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike road tileable dirt strip grass edges magenta."
+  },
+  {
+    "file": "art-src/bike/bee-swarm.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bee swarm 3 frames magenta flying left obstacle."
+  },
+  {
+    "file": "art-src/bike/rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike rock obstacle magenta side view."
+  },
+  {
+    "file": "art-src/bike/log.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fallen log magenta."
+  },
+  {
+    "file": "art-src/bike/honey-puddle.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike fake-honey puddle glossy yellow magenta."
+  },
+  {
+    "file": "art-src/bike/cone.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike traffic cone magenta."
+  },
+  {
+    "file": "art-src/bike/ramp.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike wooden ramp magenta."
+  },
+  {
+    "file": "art-src/bike/obstacles-sheet.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Bike obstacles sheet rock/log/honey/cone/ramp."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 lobster walk 4 magenta facing RIGHT ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/block.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 block 3 claws up. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/snap.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 snap 4 claw strike. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/turn.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 turn 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 hit 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 die 4 shell crack poof."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 idle chopping 3. Yellowtail stallkeeper ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/throw.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 throw knife 4. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck-hit-die-sheet.png",
+    "frames": 8,
+    "cols": 8,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck+hit+die combined sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/knife.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Knife FX spinning 4 magenta."
+  },
+  {
+    "file": "art-src/props/stage3/stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Food stall prop magenta."
+  },
+  {
+    "file": "art-src/props/stage3/stall-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Broken stall prop magenta."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck (from duck-hit-die sheet; Claude slice)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 hit (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 die (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/float.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 float 4. Hooded mirror face ~48px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/dash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 dash 3. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 split 4 into two copies."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit-die-sheet.png",
+    "frames": 6,
+    "cols": 6,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit+die sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit 2."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 die 4 mirror shatter."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl model sheet 4 views ~128px."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/perch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl perch 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl fly 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/feather-curtain.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl feather-curtain (from combined sheet)."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl split three copies."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/guard.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl guard honey crate."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/feather.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Feather FX 3."
+  },
+  {
+    "file": "art-src/props/stage3/market-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-ground tileable."
+  },
+  {
+    "file": "art-src/props/stage3/wood-bridge.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wood-bridge."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-rock."
+  },
+  {
+    "file": "art-src/props/stage3/market-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-far 16:9 night market NO characters."
+  },
+  {
+    "file": "art-src/props/stage3/market-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-mid tileable stalls lanterns NO letters."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-far 16:9 misty moon."
+  },
+  {
+    "file": "art-src/props/stage3/lanterns-wok-steam-items-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 props sheet lanterns wok steam sashimi lobster."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-on.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-on.png."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-off.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-off.png."
+  },
+  {
+    "file": "art-src/props/stage3/wok-stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wok-stall.png."
+  },
+  {
+    "file": "art-src/props/stage3/steam.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 steam.png."
+  },
+  {
+    "file": "art-src/props/stage3/sashimi.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 sashimi.png."
+  },
+  {
+    "file": "art-src/props/stage3/lobster.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lobster.png."
+  },
+  {
+    "file": "art-src/story/c3-market.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 c3-market empty night market heroes+half 噗噗. NO TEXT."
+  },
+  {
+    "file": "art-src/story/s3-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 s3-boss-intro mirror owl on moon bridge. NO TEXT."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl hurt 2 magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl defeat 5 mirror cracks calm."
   }
 ]

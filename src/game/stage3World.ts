@@ -60,7 +60,7 @@ export class Stage3World {
     const key = 's3-dark'
     if (s.textures.exists(key)) s.textures.remove(key)
     this.tex = s.textures.addCanvas(key, this.canvas)
-    this.overlay = this.tex ? s.add.image(0, 0, key).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.FX + 5).setAlpha(1) : null
+    this.overlay = this.tex ? s.add.image(0, 0, key).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.FX - 1).setAlpha(1) : null
     // Lanterns hang on a string from the stall awnings.
     for (const l of d.lanterns ?? []) {
       const y = ctx.floorY - 74
@@ -68,7 +68,7 @@ export class Stage3World {
       const startLit = !!zone?.startLit || !zone
       const str = s.add.graphics().setDepth(DEPTH.PROP - 1)
       str.fillStyle(0x2a1a14, 1).fillRect(l.x, 30, 1, y - 44)
-      const key2 = s.textures.exists('prop-break-lantern') ? 'prop-break-lantern' : 'prop-lantern3d'
+      const key2 = s.textures.exists('s3-lantern-on') ? 's3-lantern-on' : s.textures.exists('prop-break-lantern') ? 'prop-break-lantern' : 'prop-lantern3d'
       const img = s.add.image(l.x, y, key2).setOrigin(0.5, 0.5).setDepth(DEPTH.PROP)
       const glow = s.add.circle(l.x, y, 26, 0xff9a40, 0.22).setDepth(DEPTH.PROP - 1).setBlendMode(Phaser.BlendModes.ADD)
       s.tweens.add({ targets: img, angle: { from: -4, to: 4 }, duration: 1300 + (l.x % 7) * 90, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
@@ -132,13 +132,15 @@ export class Stage3World {
       }
       const lit = l.litUntil > now
       const fading = lit && l.litUntil - now < 1200 && Math.floor(now / 120) % 2 === 0
-      l.img.setTint(lit ? (fading ? 0xb08060 : 0xffffff) : 0x403848)
+      const want = lit || !this.ctx.scene.textures.exists('s3-lantern-off') ? 's3-lantern-on' : 's3-lantern-off'
+      if (l.img.texture.key !== want && this.ctx.scene.textures.exists(want)) l.img.setTexture(want)
+      l.img.setTint(lit ? (fading ? 0xb08060 : 0xffffff) : 0x605868)
       l.glow.setVisible(lit && !fading)
     }
 
     // ── Darkness ──
     const inDark = this.inZone(this.d.darkZones, lead) && !this.inZone((this.d.darkZones ?? []).filter((z) => z.startLit), lead - 400)
-    const target = inDark ? 0.9 : 0
+    const target = inDark ? 0.82 : 0
     this.dark += (target - this.dark) * Math.min(1, (dt / 1000) * 2.5)
     if (this.overlay && this.tex) {
       this.overlay.setVisible(this.dark > 0.02)
@@ -158,7 +160,7 @@ export class Stage3World {
           c.arc(x, y, r, 0, Math.PI * 2)
           c.fill()
         }
-        for (const h of heroes) hole(h.x - cam.scrollX, h.y - 24 - cam.scrollY, 92 + Math.sin(now / 180) * 3)
+        for (const h of heroes) hole(h.x - cam.scrollX, h.y - 24 - cam.scrollY, 104 + Math.sin(now / 180) * 3)
         for (const l of this.lanterns) if (l.litUntil > now) hole(l.x - cam.scrollX, l.y - cam.scrollY + 30, 150)
         this.tex.refresh()
       }
@@ -169,6 +171,14 @@ export class Stage3World {
       v.t += dt
       if (v.t >= v.period) {
         v.t = 0
+        if (s.textures.exists('s3-steam')) {
+          // Cursor's steam column: rises out of the vent and thins away (hides the view, no damage).
+          for (let k = 0; k < 2; k++) {
+            const p = s.add.image(v.x + (k ? 8 : -6), this.ctx.floorY + 2, 's3-steam').setOrigin(0.5, 1).setDepth(DEPTH.FX - 2).setAlpha(0).setScale(0.6)
+            s.tweens.add({ targets: p, alpha: { from: 0.85, to: 0 }, scale: 1.5, y: p.y - 50, delay: k * 220, duration: 1500, ease: 'Sine.out', onComplete: () => p.destroy() })
+          }
+          continue
+        }
         for (let k = 0; k < 7; k++) {
           const p = s.add
             .circle(v.x + Phaser.Math.Between(-10, 10), this.ctx.floorY - 4, Phaser.Math.Between(8, 16), 0xf0f0ff, 0.55)

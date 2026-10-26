@@ -1,0 +1,37 @@
+{
+ "frameWidth": 66,
+ "frameHeight": 56,
+ "anchorX": 33,
+ "anims": {
+  "float": {
+   "start": 0,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "dash": {
+   "start": 4,
+   "count": 3,
+   "fps": 12,
+   "loop": true
+  },
+  "split": {
+   "start": 7,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  },
+  "hit": {
+   "start": 11,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 13,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

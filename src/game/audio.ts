@@ -319,7 +319,7 @@ export const SFX = {
 //   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
 // Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2' | 'sad' | 'story' | 'victory'
+export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2' | 'stage3' | 'boss3' | 'sad' | 'story' | 'victory'
 type Song = {
   bpm: number
   chords: string[]
@@ -452,6 +452,42 @@ const SONGS: Record<SongId, Song> = {
     bassStyle: 'drive',
     leadWave: 'pulse25',
     harmBars: [2, 3, 6, 7, 8, 9, 10, 11],
+    vol: 1,
+  },
+  // 月影夜市：詭異，鐘聲（三角波）+ 突然靜默 (92 BPM)，D 小調
+  stage3: {
+    bpm: 92,
+    chords: ['Dm', 'Dm', 'Bb', 'A', 'Dm', 'Gm', 'A', 'A', 'Bb', 'C', 'A', 'Dm'],
+    lead: `
+      D5 - - - F5 - A5 - D6 - - - C6 - A5 -   | A5 - - - - - - - . . . . . . . .
+      Bb5 - - - A5 - G5 - F5 - - - D5 - - -   | E5 - - - C#5 - E5 - A5 - - - . . . .
+      D5 - - - F5 - A5 - D6 - - - E6 - F6 -   | G5 - - - Bb5 - D6 - C6 - Bb5 - G5 - - -
+      A5 - - - C#6 - E6 - A6 - - - . . . .   | . . . . . . . . E5 - F5 - G5 - A5 -
+      Bb5 - - - D6 - - - F6 - - - D6 - Bb5 -   | C6 - - - E6 - - - G6 - - - E6 - C6 -
+      C#6 - - - A5 - - - E5 - - - C#5 - - -   | D5 - - - - - - - . . . . . . . .`,
+    drums: ['k . . . . . h . s . . . . . h .', 'k . . . . . h . s . . . k . . .'],
+    arpBars: [0, 4, 5, 8, 9, 10],
+    bassStyle: 'walk',
+    leadWave: 'triangle',
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    vol: 0.9,
+  },
+  // 月橋鏡鴞 Boss：華爾茲感（3+3+3+3+4）(138 BPM)，G 小調
+  boss3: {
+    bpm: 138,
+    chords: ['Gm', 'Gm', 'Eb', 'D', 'Gm', 'Cm', 'D', 'D', 'Eb', 'F', 'D', 'Gm'],
+    lead: `
+      G5 - - Bb5 - - D6 - - G6 - - F6 - D6 -   | Eb6 - - D6 - - C6 - - Bb5 - - A5 - - -
+      G5 - - Bb5 - - Eb6 - - D6 - - C6 - Bb5 -   | A5 - - F#5 - - A5 - - D6 - - C6 - A5 -
+      G5 - - Bb5 - - D6 - - G6 - - A6 - Bb6 -   | C6 - - Eb6 - - G6 - - F6 - - Eb6 - C6 -
+      D6 - - F#6 - - A6 - - F#6 - - D6 - - -   | A5 - - C6 - - D6 - - F#6 - - A6 - - -
+      G6 - - Eb6 - - Bb5 - - G5 - - Bb5 - Eb6 -   | F6 - - C6 - - A5 - - F5 - - A5 - C6 -
+      F#6 - - D6 - - A5 - - F#5 - - A5 - D6 -   | G5 - - - - - - - D6 - - - G6 - - -`,
+    drums: ['k . . h . . s . . h . . k . h .', 'k . . h . . s . . h . . s s s .'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'drive',
+    leadWave: 'pulse25',
+    harmBars: [4, 5, 6, 7, 8, 9, 10, 11],
     vol: 1,
   },
   // 悲傷：噗噗變灰 (72 BPM)，A 小調，三角波主旋律 + 琶音
