@@ -2646,5 +2646,133 @@
     "rows": 1,
     "facing": "front",
     "prompt": "friend-bearcub/熊仔 portrait 3 — pink shirt. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle model-sheet 4. 夾餅叔叔 apron white vest towel. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle idle 3. 夾餅叔叔 apron white vest towel. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle serve 4. 夾餅叔叔 apron white vest towel. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "waffle cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart model-sheet 4. 蛋撻哥哥 baker whites paper hat. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart idle 3. 蛋撻哥哥 baker whites paper hat. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart serve 4. 蛋撻哥哥 baker whites paper hat. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/tart/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "tart cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut model-sheet 4. 椰青泰國人 straw hat cleaver down. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut idle 3. 椰青泰國人 straw hat cleaver down. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut serve 4. 椰青泰國人 straw hat cleaver down. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "coconut cart prop ~72px. No text no people. Magenta."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi model-sheet 4. 刺身師傅 headband navy apron. Magenta ~64px."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi idle 3. 刺身師傅 headband navy apron. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi serve 4. 刺身師傅 headband navy apron. Magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/cart.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "sashimi cart prop ~72px. No text no people. Magenta."
   }
 ]
