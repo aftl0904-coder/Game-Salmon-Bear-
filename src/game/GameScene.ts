@@ -12,6 +12,8 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { buzz, HAPTIC } from './phone'
+import { stirCoffee } from './minigames'
 import {
   type Creep,
   type EnemyKind,
@@ -639,6 +641,7 @@ export class GameScene extends Phaser.Scene {
   /** Fill 絕招 MP from eating／拾取蜂蜜（max 1 charge）. */
   private grantHoneySpecial(x: number, y: number, label = true) {
     this.honeyGot = Math.min(3, this.honeyGot + 1)
+    buzz(HAPTIC.honey)
     if (this.specialCharges < 1) {
       this.specialCharges = 1
       if (label) floatText(this, x, y - 36, '絕招就緒！撳Ｔ', '#66ccff')
@@ -2540,23 +2543,39 @@ export class GameScene extends Phaser.Scene {
         this.lastCheckpointX = x
         floatText(this, x, LANE_FLOOR_Y - 92, '咖啡媽媽：飲杯咖啡先！', '#ffe08a', { size: 12, dur: 1800 })
         SFX.coin()
-        // One warm cup: +1 HP for everyone still standing.
-        let healed = false
-        for (const h of [this.boy, this.girl]) {
-          if (h?.alive && h.hp < MAX_HP) {
-            h.hp += 1
-            healed = true
-            floatText(this, h.x, h.y - 70, '+1HP', '#7dffb0', { size: 14 })
-          }
-        }
-        if (healed) {
-          SFX.sparkle()
-          this.emitHealth()
-        }
         const i = this.checkpointXs.indexOf(x)
         const mama = this.checkpointMamas[i]
         if (mama && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
+        // Stir the cup (circles on the screen), blow on it, then drink: +1 HP.
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        const mini = stirCoffee(this)
+        this.storyIntro = mini
+        void mini.done.then(() => {
+          if (this.storyIntro === mini) this.storyIntro = null
+          if (this.ended || !this.scene.isActive()) return
+          this.physics.resume()
+          this.keyEnter?.reset()
+          this.drinkCoffee()
+        })
+        return
       }
+    }
+  }
+
+  /** 咖啡媽媽's cup: +1 HP for everyone still standing. */
+  private drinkCoffee() {
+    let healed = false
+    for (const h of [this.boy, this.girl]) {
+      if (h?.alive && h.hp < MAX_HP) {
+        h.hp += 1
+        healed = true
+        floatText(this, h.x, h.y - 70, '+1HP', '#7dffb0', { size: 14 })
+      }
+    }
+    if (healed) {
+      SFX.sparkle()
+      this.emitHealth()
     }
   }
 

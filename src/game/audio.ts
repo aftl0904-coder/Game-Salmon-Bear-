@@ -1,3 +1,4 @@
+import { buzz, HAPTIC } from './phone'
 /**
  * Warm riverside BGM + soft SFX (Flash / phone-game feel — not MIDI chip square).
  * Original WebAudio composition; no copyright samples.
@@ -175,10 +176,12 @@ export const SFX = {
     tone(70, 0.14, 'sine', 0.2, 40)
   },
   hurt: () => {
+    buzz(HAPTIC.hurt)
     voiceUh('hurt')
     noise(0.05, 0.08, 0, 500)
   },
   die: () => {
+    buzz(HAPTIC.die)
     voiceUh('die')
     tone(150, 0.4, 'sine', 0.1, 50)
     noise(0.12, 0.06, 0.1, 350)
@@ -189,12 +192,14 @@ export const SFX = {
   },
   /** Enemy down: pop + falling sweep + a bright chime (reward). */
   kill: () => {
+    buzz(HAPTIC.kill)
     noise(0.05, 0.16, 0, 1800)
     tone(420, 0.16, 'square', 0.07, 120)
     tone(988, 0.08, 'sine', 0.1, undefined, 0.06)
     tone(1318, 0.14, 'triangle', 0.08, undefined, 0.1)
   },
   boss: () => {
+    buzz(HAPTIC.bossIn)
     tone(100, 0.3, 'triangle', 0.18, 50)
     tone(150, 0.24, 'sine', 0.1)
   },
@@ -243,6 +248,7 @@ export const SFX = {
   },
   /** 金鮭 weapon level up — rising arpeggio. */
   powerUp: () => {
+    buzz(HAPTIC.power)
     const f = [523, 659, 784, 1046, 1318]
     f.forEach((hz, i) => tone(hz, 0.09, 'square', 0.06, undefined, i * 0.055))
     tone(1568, 0.3, 'triangle', 0.08, undefined, 0.28)

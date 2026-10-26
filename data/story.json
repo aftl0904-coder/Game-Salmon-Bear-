@@ -52,6 +52,17 @@
           "face": 1
         },
         {
+          "say": "kibobo",
+          "text": "嚟，幫手搖勻罐蜂蜜，等陣淋落班戟度！",
+          "face": 1
+        },
+        {
+          "minigame": "shake"
+        },
+        {
+          "hop": "pupu"
+        },
+        {
           "prop": "jar",
           "kind": "jar-fake",
           "x": 336,
