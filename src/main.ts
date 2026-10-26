@@ -7,6 +7,7 @@ import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
 import { PauseScene } from './game/PauseScene'
+import { CreditsScene } from './game/CreditsScene'
 import { installGamepadBridge } from './game/gamepadBridge'
 import { GAME_W, GAME_H, phaserConfig } from './game/display'
 import { installFit } from './game/fitCanvas'
@@ -37,7 +38,7 @@ function bootGame() {
     parent: root,
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: jumpGravity() }, debug: false } },
     input: { gamepad: true, activePointers: 3 },
-    scene: [BootScene, StudioScene, LogoScene, MenuScene, GameScene, UIScene, PauseScene],
+    scene: [BootScene, StudioScene, LogoScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene],
     scale: {
       mode: Phaser.Scale.NONE,
       width: GAME_W,
