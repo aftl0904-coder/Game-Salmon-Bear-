@@ -6,7 +6,7 @@ export const ROUND1_TILESET_KEY = 'tileset-stream'
 export const ROUND1_MAP_URL = '/maps/round1-stream.json'
 export const ROUND1_TILESET_URL = '/maps/tileset-stream.png'
 
-export type BreakableKind = 'pot' | 'chest' | 'lantern' | 'hive'
+export type BreakableKind = 'pot' | 'chest' | 'lantern' | 'hive' | 'cage'
 export type LootKind = 'coin' | 'honey' | 'food' | 'power'
 export type Breakable = Phaser.Physics.Arcade.Sprite & { breakKind: BreakableKind; loot: LootKind }
 export type LevelMapHandle = {
