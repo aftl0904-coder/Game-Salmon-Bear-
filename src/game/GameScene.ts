@@ -14,7 +14,8 @@ import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
-import { showTutorial, stirCoffee } from './minigames'
+import { pourGame, showTutorial, stirCoffee, timingGame } from './minigames'
+import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
 import {
@@ -169,6 +170,8 @@ type Stage1 = {
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
   slippery?: Stage3Data['slippery']
+  sticky?: Stage3Data['sticky']
+  bouncy?: Stage3Data['bouncy']
   steamVents?: Stage3Data['steamVents']
   easterEgg?: Stage3Data['easterEgg']
   stalls?: Array<{ x: number }>
@@ -183,6 +186,8 @@ const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
 const FINAL_STAGE = 5
 type ClearAction = 'shop' | 'next' | 'credits' | 'menu'
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing'; greet: string }
+const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
 type CrusherState = 'idle' | 'warn' | 'down' | 'stay' | 'up'
@@ -2728,21 +2733,42 @@ export class GameScene extends Phaser.Scene {
     this.checkpointMamas = []
     for (const x of this.checkpointXs) {
       const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
-      if (this.textures.exists('cs-cart')) {
-        const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
-        enablePixelSprite(cart)
-      }
-      if (this.textures.exists('cs-mama')) {
-        const mama = this.add.image(x - 8, top + 1, 'cs-mama').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
-        enablePixelSprite(mama)
-        this.checkpointMamas.push(mama)
-        this.tweens.add({ targets: mama, scaleY: { from: 1, to: 1.02 }, duration: 900, yoyo: true, repeat: -1 })
+      const isStall = x === this.checkpointXs[0]
+      const st = this.stall()
+      if (isStall) {
+        if (this.textures.exists('cs-cart')) {
+          const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+          // Until Cursor's own keepers land, each stage tints the cart to its own stall.
+          if (this.stageNo === 2) cart.setTint(0xffd9a0)
+          if (this.stageNo === 3) cart.setTint(0xd8c0ff)
+          enablePixelSprite(cart)
+        }
+        if (this.textures.exists('cs-mama')) {
+          const mama = this.add.image(x - 8, top + 1, 'cs-mama').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
+          if (this.stageNo === 2) mama.setTint(0xcfe4ff)
+          if (this.stageNo === 3) mama.setTint(0xffd0c0)
+          enablePixelSprite(mama)
+          this.checkpointMamas.push(mama)
+          this.tweens.add({ targets: mama, scaleY: { from: 1, to: 1.02 }, duration: 900, yoyo: true, repeat: -1 })
+        }
+      } else {
+        // Plain save point: a lantern on a post, no keeper, no minigame.
+        const key = this.textures.exists('deco-lantern') ? 'deco-lantern' : 'coin'
+        const lamp = this.add.image(x + 10, top + 1, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+        enablePixelSprite(lamp)
+        this.add.circle(x + 10, top - 26, 18, 0xffc070, 0.18).setDepth(DEPTH.PROP - 1).setBlendMode(Phaser.BlendModes.ADD)
+        this.tweens.add({ targets: lamp, angle: { from: -3, to: 3 }, duration: 1600, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
       }
       this.add
-        .text(x + 30, top - 74, '咖啡車・存檔', { fontFamily: FONT_UI, fontSize: '11px', color: '#2a1a10', backgroundColor: '#f7e7c0', padding: { x: 3, y: 1 } })
+        .text(x + (isStall ? 30 : 10), top - 74, isStall ? st.sign : '存檔點', { fontFamily: FONT_UI, fontSize: '11px', color: '#2a1a10', backgroundColor: '#f7e7c0', padding: { x: 3, y: 1 } })
         .setOrigin(0.5)
         .setDepth(DEPTH.SIGN)
     }
+  }
+
+  /** This stage's food stall (data/stalls.json). */
+  private stall(): Stall {
+    return STALLS[String(this.stageNo)] ?? STALLS['1']!
   }
 
   /** Reached a checkpoint → falls respawn here. */
@@ -2751,13 +2777,13 @@ export class GameScene extends Phaser.Scene {
     for (const x of this.checkpointXs) {
       if (lead >= x && x > this.lastCheckpointX) {
         this.lastCheckpointX = x
-        floatText(this, x, LANE_FLOOR_Y - 92, '咖啡媽媽：飲杯咖啡先！', '#ffe08a', { size: 12, dur: 1800 })
+        floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2200 })
         SFX.coin()
         const i = this.checkpointXs.indexOf(x)
         const mama = this.checkpointMamas[i]
         if (mama && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
-        // Once per stage: stir the cup (circles + sugar cubes), blow on it, then drink. Later carts: a quick cup.
-        if (this.coffeeDone) {
+        // Only the first checkpoint is the stall; later ones just save and heal.
+        if (this.coffeeDone || x !== this.checkpointXs[0]) {
           this.drinkCoffee()
           return
         }
@@ -2770,54 +2796,60 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** 咖啡媽媽: how-to pages first, then the minigame (skipping goes straight to the stall). */
+  /** The stage's stall: how-to pages, then its own minigame. Skipping still feeds you. */
   private async runCoffeeStall() {
+    const st = this.stall()
     const gate = { destroy: () => undefined }
     this.storyIntro = gate
-    const choice = await showTutorial(this, 'coffee', [
-      {
-        title: '咖啡媽媽：攪勻杯咖啡',
-        lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'],
-        tip: '電腦：方向鍵順時針轉圈（↑→↓←）',
-      },
-      {
-        title: '見到方糖就撳！',
-        lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'],
-        tip: '每粒方糖都係一個金幣，用嚟喺隔離檔口買裝備。',
-      },
-      {
-        title: '最後吹凍佢',
-        lines: ['對住電話吹氣，杯咖啡就凍得快。', '吹唔到？撳住畫面都得。'],
-        tip: '飲完回 1 格血。',
-      },
-    ])
+    const pages =
+      st.game === 'pour'
+        ? [
+            { title: `${st.keeper}：倒${st.food}`, lines: ['撳住倒漿落個模度，', '啱啱滿就放手。'], tip: '倒多咗會瀉，倒少咗唔夠分。' },
+            { title: '一共三底', lines: ['每底都倒到啱啱滿，', '就全中。'], tip: '每底啱啱好都係金幣，用嚟買裝備。' },
+          ]
+        : st.game === 'timing'
+          ? [
+              { title: `${st.keeper}：睇火候`, lines: ['指針會喺條紅綠紅嘅條度來回，', '入到綠色嗰下撳落去。'], tip: '愈後面綠色愈窄，要睇準啲。' },
+              { title: '一共四次', lines: ['每次啱都有金幣。'], tip: '金幣喺過關之後嘅小朋友檔口買裝備。' },
+            ]
+          : [
+              { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+              { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+              { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+            ]
+    const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
-    if (choice === 'skip') {
-      this.storyIntro = null
+    const after = (coins: number, pts: number) => {
+      if (this.storyIntro === gate) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
       this.keyEnter?.reset()
       this.drinkCoffee()
+      if (pts > 0) {
+        this.killBonus += pts
+        this.addScorePop(this.boy.x, this.boy.y - 80, pts)
+      }
+      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+    }
+    if (choice === 'skip') {
+      after(0, 0)
       return
     }
-    {
-      const mini = stirCoffee(this)
+    if (st.game === 'pour') {
+      const mini = pourGame(this)
       this.storyIntro = mini
-        void mini.done.then((r) => {
-          if (this.storyIntro === mini) this.storyIntro = null
-          if (this.ended || !this.scene.isActive()) return
-          this.physics.resume()
-          this.keyEnter?.reset()
-          this.drinkCoffee()
-          const pts = r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)
-          if (pts > 0) {
-            this.killBonus += pts
-            this.addScorePop(this.boy.x, this.boy.y - 80, pts)
-          }
-          // Every sugar cube is a coin at the friends' stall next door.
-          const earned = r.sugar + (r.stirred >= 1 ? 2 : 0)
-          if (earned > 0) this.addCoins(this.boy.role as Who, earned)
-        })
+      void mini.done.then((r) => after(r.good * 2, r.good * 150))
+      return
     }
+    if (st.game === 'timing') {
+      const mini = timingGame(this, `${st.keeper}：${st.food}出爐`, '出爐')
+      this.storyIntro = mini
+      void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      return
+    }
+    const mini = stirCoffee(this)
+    this.storyIntro = mini
+    void mini.done.then((r) => after(r.sugar + (r.stirred >= 1 ? 2 : 0), r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)))
   }
 
   /**
