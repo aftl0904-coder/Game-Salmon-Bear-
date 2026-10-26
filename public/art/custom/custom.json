@@ -1,4 +1,19 @@
 {
-  "pupu": null,
+  "pupu": {
+    "height": 60,
+    "anims": {
+      "idle": [
+        "pupu-idle.png"
+      ],
+      "walk": [
+        "pupu-walk-1.png",
+        "pupu-walk-2.png",
+        "pupu-walk-3.png"
+      ]
+    },
+    "portrait": [
+      "pupu-portrait.png"
+    ]
+  },
   "stills": {}
 }
