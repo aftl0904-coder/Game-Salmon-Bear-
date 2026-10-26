@@ -295,6 +295,21 @@ export const SFX = {
     tone(784, 0.12, 'triangle', 0.1)
     tone(1046, 0.18, 'sine', 0.1, undefined, 0.1)
   },
+  /** Boss alarm: three rising-falling square sweeps. */
+  siren: () => {
+    for (let i = 0; i < 3; i++) {
+      tone(440, 0.26, 'square', 0.07, 880, i * 0.55)
+      tone(880, 0.26, 'square', 0.07, 440, i * 0.55 + 0.27)
+    }
+  },
+  /** Score tally tick. */
+  tick: () => tone(1320, 0.03, 'square', 0.04),
+  /** Rank stamp thud + sparkle. */
+  stamp: () => {
+    noise(0.08, 0.2, 0, 500)
+    tone(90, 0.2, 'sine', 0.2, 50)
+    tone(1568, 0.25, 'triangle', 0.08, undefined, 0.12)
+  },
 }
 
 // ── Chiptune sequencer (original compositions, synthesised live) ─────────────

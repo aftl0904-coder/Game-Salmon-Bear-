@@ -9,7 +9,7 @@ import {
   snapWorldActors,
 } from './pixelSnap'
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
-import { calcScore, saveScore } from './score'
+import { calcScore, saveScore, loadScores } from './score'
 import {
   type Creep,
   type EnemyKind,
@@ -113,7 +113,6 @@ import { CAMERA, tutorialSign } from './config/gameData'
 import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
 import { addGroundShadow, addContactShadowBand } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
-import { layoutClearCard } from './layoutClearCard'
 import { ENVIRONMENT, environmentById } from './config/gameData'
 import {
   createRound1Tilemap,
@@ -3186,9 +3185,11 @@ export class GameScene extends Phaser.Scene {
 
   /** C2 (first real honey → 噗噗's ear twitches → note to 蜜樹丘), then the clear card. */
   private outroOn = false
+  private clearAt = 0
   private playOutro() {
     if (this.outroOn) return
     this.outroOn = true
+    this.clearAt = this.time.now
     this.ended = true
     this.physics.pause()
     stopBgm()
@@ -3208,6 +3209,217 @@ export class GameScene extends Phaser.Scene {
    * 倫寶＋琪寶寶＋噗噗 hug, 「第２關・待續」, button → character select.
    */
   private clearCardAction: (() => void) | null = null
+  private clearOverlay: Phaser.GameObjects.Container | null = null
+  private clearBtn: { btnBg: Phaser.GameObjects.Rectangle; btnTx: Phaser.GameObjects.Text; hitPad: Phaser.GameObjects.Rectangle; btnY: number } | null = null
+  private tallyDone = false
+  private finishTally: (() => void) | null = null
+
+  /** Clear rank from the run: S = all honey, no continue, little damage. */
+  private clearRank(hpLeft: number, hpMax: number): 'S' | 'A' | 'B' | 'C' {
+    if (this.honeyGot >= 3 && this.deaths === 0 && hpLeft >= hpMax - 2) return 'S'
+    if (this.honeyGot >= 2 && this.deaths <= 1) return 'A'
+    if (this.deaths <= 2) return 'B'
+    return 'C'
+  }
+
+  /**
+   * SNES-style clear screen: lacquered panel, the cast celebrating (win frames),
+   * a score tally that counts up line by line, then a rank stamp.
+   */
+  private buildClearCard() {
+    const overlay = this.add.container(GAME_W / 2, GAME_H / 2).setDepth(DEPTH.UI + 120).setScrollFactor(0)
+    this.clearOverlay = overlay
+    this.tallyDone = false
+    const W = GAME_W
+    const H = GAME_H
+    // Backdrop: the stage's own painting, darkened, with drifting gold motes.
+    const bgKey = this.tree ? 'story-canopy-far' : this.textures.exists('story-cover') ? 'story-cover' : null
+    overlay.add(this.add.rectangle(0, 0, W, H, 0x120a06, 1))
+    if (bgKey && this.textures.exists(bgKey)) overlay.add(this.add.image(0, 0, bgKey).setAlpha(0.35))
+    for (let i = 0; i < 24; i++) {
+      const m = this.add.circle(Phaser.Math.Between(-W / 2, W / 2), Phaser.Math.Between(-H / 2, H / 2), 1, 0xffe08a, 0.8)
+      overlay.add(m)
+      this.tweens.add({ targets: m, y: m.y - 40, alpha: { from: 0.1, to: 0.9 }, duration: 1800 + i * 90, yoyo: true, repeat: -1 })
+    }
+    const lacquer = (x: number, y: number, w: number, h: number) => {
+      const g = this.add.graphics()
+      g.fillStyle(0x000000, 0.4).fillRect(x + 3, y + 3, w, h)
+      g.fillStyle(0xc8902a, 1).fillRect(x - 2, y - 2, w + 4, h + 4)
+      g.fillStyle(0x6a4a18, 1).fillRect(x - 1, y - 1, w + 2, h + 2)
+      g.fillStyle(0x1c120c, 0.96).fillRect(x, y, w, h)
+      g.fillStyle(0x3a2616, 1).fillRect(x, y, w, 3)
+      g.fillStyle(0xffe08a, 1)
+      for (const [cx, cy] of [[x + 3, y + 4], [x + w - 5, y + 4], [x + 3, y + h - 5], [x + w - 5, y + h - 5]] as const) g.fillRect(cx, cy, 2, 2)
+      overlay.add(g)
+    }
+    // Title
+    const title = this.add
+      .text(0, -H / 2 + 34, this.stageNo === 2 ? '第二關　通關！' : '第一關　通關！', {
+        fontFamily: FONT_TITLE,
+        fontSize: '28px',
+        color: '#ffd76a',
+        stroke: '#3a1408',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5)
+      .setScale(0.4)
+    overlay.add(title)
+    this.tweens.add({ targets: title, scale: 1, duration: 420, ease: 'Back.out' })
+    // Cast panel (left)
+    lacquer(-W / 2 + 26, -H / 2 + 64, 250, 214)
+    const castY = -H / 2 + 230
+    const actor = (x: number, set: 'lunbo' | 'kibobo' | 'pupu', anim: string, fallback: string, flip = false) => {
+      const ok = hasAnimSet(this, set)
+      const sp = this.add.sprite(x, castY, ok ? animTex(set) : fallback).setOrigin(0.5, 1).setFlipX(flip)
+      if (ok && this.anims.exists(`${set}-${anim}`)) sp.play({ key: `${set}-${anim}`, repeat: -1, repeatDelay: 500 })
+      enableActorSprite(sp)
+      overlay.add(sp)
+      return sp
+    }
+    actor(-W / 2 + 90, 'lunbo', 'win', 'art-salmon')
+    const kb = actor(-W / 2 + 160, 'kibobo', 'win', 'art-girl')
+    const pu = actor(-W / 2 + 222, 'pupu', this.stageNo === 2 ? 'cute-pose' : 'idle', 'art-bear', true)
+    if (this.stageNo === 1) pu.setTint(0x9a9aa4)
+    this.tweens.add({ targets: pu, y: castY - 10, duration: 300, yoyo: true, repeat: -1, repeatDelay: 700, ease: 'Quad.out' })
+    void kb
+    overlay.add(
+      this.add
+        .text(-W / 2 + 151, castY + 18, this.stageNo === 2 ? '第二罐真蜂蜜！噗噗識跳喇' : '第一罐真蜂蜜！噗噗隻耳郁咗', {
+          fontFamily: FONT_UI,
+          fontSize: '10px',
+          color: '#ffe9a8',
+        })
+        .setOrigin(0.5),
+    )
+    // Tally panel (right)
+    const px = 14
+    const py = -H / 2 + 64
+    const pw = W / 2 - 40
+    lacquer(px, py, pw, 214)
+    const timeSec = Math.max(0, ((this.clearAt || this.time.now) - this.startedAt) / 1000)
+    const hpLeft = Math.max(0, this.boy.hp) + Math.max(0, this.girl?.hp ?? 0)
+    const hpMax = MAX_HP * (this.girl ? 2 : 1)
+    const timeBonus = Math.max(0, 1800 - Math.floor(timeSec * 4))
+    const rows: Array<{ label: string; detail: string; pts: number }> = [
+      { label: '基本分', detail: '', pts: 1000 },
+      { label: '時間', detail: `${Math.floor(timeSec / 60)}:${String(Math.floor(timeSec % 60)).padStart(2, '0')}`, pts: timeBonus },
+      { label: '真蜂蜜', detail: `${this.honeyGot} / 3`, pts: this.honeyGot * 300 },
+      { label: '剩餘生命', detail: `♥ ${hpLeft}`, pts: hpLeft * 150 },
+      { label: '擊倒', detail: '', pts: this.killBonus },
+      { label: '續關', detail: `× ${this.deaths}`, pts: -this.deaths * 200 },
+    ]
+    const total = Math.max(0, rows.reduce((a, r) => a + r.pts, 0))
+    const best = loadScores()[0]
+    const record = !!best && best.score <= total
+    const rowTexts: Phaser.GameObjects.Text[] = []
+    rows.forEach((r, i) => {
+      const y = py + 20 + i * 22
+      const l = this.add.text(px + 14, y, r.label, { fontFamily: FONT_UI, fontSize: '11px', color: '#e8d8b0' }).setAlpha(0)
+      const d = this.add.text(px + 104, y, r.detail, { fontFamily: FONT_UI, fontSize: '11px', color: '#a89878' }).setAlpha(0)
+      const v = this.add
+        .text(px + pw - 14, y, '0', { fontFamily: FONT_UI, fontSize: '11px', color: r.pts < 0 ? '#ff8a6a' : '#ffe9a8' })
+        .setOrigin(1, 0)
+        .setAlpha(0)
+      overlay.add([l, d, v])
+      rowTexts.push(l, d, v)
+    })
+    const lineY = py + 20 + rows.length * 22 + 2
+    const line = this.add.rectangle(px + 14, lineY, pw - 28, 1, 0xc8902a).setOrigin(0).setAlpha(0)
+    const totL = this.add.text(px + 14, lineY + 8, '合計', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffd76a' }).setAlpha(0)
+    const totV = this.add
+      .text(px + pw - 14, lineY + 6, '0', { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 3 })
+      .setOrigin(1, 0)
+      .setAlpha(0)
+    const rank = this.clearRank(hpLeft, hpMax)
+    const rankCol = { S: '#ffd040', A: '#ff8a5a', B: '#8ad0ff', C: '#c0b0a0' }[rank]
+    const stamp = this.add
+      .text(px + 64, lineY + 38, rank, { fontFamily: FONT_TITLE, fontSize: '34px', color: rankCol, stroke: '#2a0e04', strokeThickness: 6 })
+      .setOrigin(0.5)
+      .setAngle(-12)
+      .setAlpha(0)
+    const rec = this.add
+      .text(px + pw - 70, lineY + 40, '★ 新紀錄！★', { fontFamily: FONT_UI, fontSize: '11px', color: '#ff6a8a', stroke: '#1a0608', strokeThickness: 3 })
+      .setOrigin(0.5)
+      .setAlpha(0)
+    const rankL = this.add.text(px + 14, lineY + 32, '評級', { fontFamily: FONT_UI, fontSize: '11px', color: '#e8d8b0' }).setAlpha(0)
+    rowTexts.push(rankL)
+    overlay.add([line, totL, totV, stamp, rec, rankL])
+
+    // Next / menu button (bottom)
+    const btnY = H / 2 - 30
+    const btnBg = this.add.rectangle(0, btnY, 200, 26, 0x4a2a14, 1).setStrokeStyle(2, 0xc8902a)
+    const btnTx = this.add
+      .text(0, btnY, this.stageNo === 2 ? '回角色選擇' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
+      .setOrigin(0.5)
+    const hitPad = this.add.rectangle(0, btnY, 420, 40, 0x000000, 0.001)
+    overlay.add([btnBg, btnTx, hitPad])
+    btnBg.setInteractive({ useHandCursor: true })
+    btnTx.setInteractive({ useHandCursor: true })
+    hitPad.setInteractive({ useHandCursor: true })
+    btnBg.setAlpha(0.4)
+    btnTx.setAlpha(0.4)
+    this.clearBtn = { btnBg, btnTx, hitPad, btnY }
+
+    // ── Tally sequence (a press skips to the end) ──
+    const timers: Phaser.Time.TimerEvent[] = []
+    const showAll = () => {
+      for (const t of timers) t.remove(false)
+      rowTexts.forEach((t) => t.setAlpha(1))
+      rows.forEach((r, i) => rowTexts[i * 3 + 2]!.setText(`${r.pts < 0 ? '−' : ''}${Math.abs(r.pts)}`))
+      line.setAlpha(1)
+      totL.setAlpha(1)
+      totV.setAlpha(1).setText(String(total))
+      stamp.setAlpha(1).setScale(1)
+      if (record) {
+        rec.setAlpha(1)
+        this.tweens.add({ targets: rec, alpha: 0.3, duration: 300, yoyo: true, repeat: -1 })
+      }
+      btnBg.setAlpha(1)
+      btnTx.setAlpha(1)
+      this.tallyDone = true
+    }
+    this.finishTally = showAll
+    let t0 = 700
+    rows.forEach((r, i) => {
+      timers.push(
+        this.time.delayedCall(t0, () => {
+          rowTexts.slice(i * 3, i * 3 + 3).forEach((t) => t.setAlpha(1))
+          const v = rowTexts[i * 3 + 2]!
+          const o = { n: 0 }
+          this.tweens.add({
+            targets: o,
+            n: Math.abs(r.pts),
+            duration: Math.min(500, 120 + Math.abs(r.pts) / 4),
+            onUpdate: () => {
+              v.setText(`${r.pts < 0 ? '−' : ''}${Math.round(o.n)}`)
+              if (this.time.now % 3 < 1) SFX.tick()
+            },
+          })
+          SFX.tick()
+        }),
+      )
+      t0 += 380
+    })
+    timers.push(
+      this.time.delayedCall(t0, () => {
+        line.setAlpha(1)
+        totL.setAlpha(1)
+        totV.setAlpha(1)
+        const o = { n: 0 }
+        this.tweens.add({ targets: o, n: total, duration: 700, onUpdate: () => totV.setText(String(Math.round(o.n))) })
+        SFX.coin()
+      }),
+    )
+    timers.push(
+      this.time.delayedCall(t0 + 900, () => {
+        rankL.setAlpha(1)
+        stamp.setAlpha(1).setScale(2.6)
+        this.tweens.add({ targets: stamp, scale: 1, duration: 220, ease: 'Quad.in', onComplete: () => this.cameras.main.shake(160, 0.006) })
+        SFX.stamp()
+      }),
+    )
+    timers.push(this.time.delayedCall(t0 + 1300, showAll))
+  }
 
   private win() {
     if (this.registry.get('winScreenShown')) return
@@ -3239,120 +3451,16 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setScroll(0, 0)
     this.cameras.main.fadeIn(280, 255, 236, 180)
 
-    // scrollFactor 0 + screen center (NOT world X) — stage end cam was hiding the old overlay.
-    const overlay = this.add.container(GAME_W / 2, GAME_H / 2).setDepth(DEPTH.UI + 120).setScrollFactor(0)
-
-    const sky = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x7ec8f0, 1).setOrigin(0.5)
-    overlay.add(sky)
-    const wash = this.add.rectangle(0, L(80), GAME_W, L(380), 0xffe8b0, 0.55).setOrigin(0.5)
-    overlay.add(wash)
-
-    for (let i = 0; i < 36; i++) {
-      const colors = [0xffe08a, 0xff8899, 0x66ddff, 0xa8f070, 0xffcc44, 0xff66aa, 0xffffff]
-      const d = this.add.circle(
-        Phaser.Math.Between(-460, 460),
-        Phaser.Math.Between(-250, 250),
-        Phaser.Math.Between(3, 8),
-        colors[i % colors.length]!,
-        0.95,
-      )
-      overlay.add(d)
-      this.tweens.add({
-        targets: d,
-        y: d.y + Phaser.Math.Between(50, 140),
-        alpha: 0.3,
-        duration: 1200 + (i % 6) * 180,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.inOut',
-      })
-    }
-
-    const panel = this.add.rectangle(0, 10, 440, 250, 0xfff8ec, 0.98).setStrokeStyle(3, 0xe8a040)
-    overlay.add(panel)
-
-    const title = this.add
-      .text(0, -108, this.stageNo === 2 ? '◆ 第２關　通關！◆' : '◆ 第１關　通關！◆', {
-        fontFamily: FONT_TITLE,
-        fontSize: '24px',
-        color: '#c44828',
-        shadow: { offsetX: 1, offsetY: 1, color: '#1a1008', blur: 0, fill: true, stroke: false },
-      })
-      .setOrigin(0.5)
-    overlay.add(title)
-
-    // Integer-scale cast under title (no overlap with headline).
-    const [boy, girl, bear] = layoutClearCard(this, panel, title, [
-      'art-salmon',
-      'art-girl',
-      'art-bear',
-    ])
-    enableActorSprite(boy)
-    enableActorSprite(girl)
-    enableActorSprite(bear)
-    overlay.add([boy, girl, bear])
-    this.tweens.add({
-      targets: [boy, girl, bear],
-      y: '-=6',
-      duration: 520,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.inOut',
-    })
-    // Angle-only juice — keep setScale integer (no fractional scale tween).
-    this.tweens.add({ targets: boy, angle: -6, duration: 480, yoyo: true, repeat: -1 })
-    this.tweens.add({ targets: girl, angle: 6, duration: 480, yoyo: true, repeat: -1 })
-
-    const castBottom = Math.max(boy!.y, girl!.y, bear!.y)
-    const captionY = Math.round(castBottom + 14)
-    overlay.add(
-      this.add
-        .text(0, captionY, '倫寶・琪寶寶・噗噗　開心擁抱！', {
-          fontFamily: FONT_UI,
-          fontSize: '12px',
-          color: '#5a3020',
-        })
-        .setOrigin(0.5),
-    )
-
-    const stage2Y = captionY + 22
-    overlay.add(
-      this.add
-        .text(0, stage2Y, this.stageNo === 2 ? '第３關　・　待續' : '下一關：第２關・蜜樹丘', {
-          fontFamily: FONT_TITLE,
-          fontSize: '12px',
-          color: '#1a6088',
-          backgroundColor: '#d8f0ff',
-          padding: { x: 10, y: 4 },
-        })
-        .setOrigin(0.5),
-    )
-
-    const btnY = stage2Y + 28
-    const btnBg = this.add
-      .rectangle(0, btnY, 180, 32, 0xe07a4f, 1)
-      .setStrokeStyle(2, 0xffe08a)
-    const btnTx = this.add
-      .text(0, btnY, this.stageNo === 2 ? '回角色選擇' : '前往第２關 ▶', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: '#fff8e0',
-        stroke: '#4a2010',
-        strokeThickness: 3,
-      })
-      .setOrigin(0.5)
-    overlay.add([btnBg, btnTx])
-    // Hit target after container add — more reliable than pre-add interactive.
-    btnBg.setInteractive({ useHandCursor: true })
-    btnTx.setInteractive({ useHandCursor: true })
-    // Click anywhere on the lower third of the panel as fallback.
-    const hitPad = this.add
-      .rectangle(0, btnY, 420, 56, 0x000000, 0.001)
-      .setInteractive({ useHandCursor: true })
-    overlay.add(hitPad)
+    this.buildClearCard()
+    const overlay = this.clearOverlay!
+    const { btnBg, btnTx, hitPad, btnY } = this.clearBtn!
     let left = false
     const toSelect = () => {
       if (left || this.registry.get('leavingToMenu')) return
+      if (!this.tallyDone) {
+        this.finishTally?.()
+        return
+      }
       left = true
       btnBg.disableInteractive()
       btnTx.disableInteractive()
@@ -3368,8 +3476,8 @@ export class GameScene extends Phaser.Scene {
       else this.goMenu()
     }
     this.clearCardAction = toSelect
-    btnBg.on('pointerover', () => btnBg.setFillStyle(0xf09060))
-    btnBg.on('pointerout', () => btnBg.setFillStyle(0xe07a4f))
+    btnBg.on('pointerover', () => btnBg.setFillStyle(0x6a3a18))
+    btnBg.on('pointerout', () => btnBg.setFillStyle(0x4a2a14))
     btnBg.on('pointerup', toSelect)
     btnTx.on('pointerup', toSelect)
     hitPad.on('pointerup', toSelect)
@@ -3379,7 +3487,7 @@ export class GameScene extends Phaser.Scene {
     if (this.stageNo === 1) {
       overlay.add(
         this.add
-          .text(0, btnY + 26, 'Esc　回角色選擇', { fontFamily: FONT_UI, fontSize: '9px', color: '#8a6a50' })
+          .text(0, btnY + 22, 'Esc　回角色選擇', { fontFamily: FONT_UI, fontSize: '9px', color: '#a08a70' })
           .setOrigin(0.5),
       )
       const toMenu = () => {
@@ -3685,6 +3793,7 @@ export class GameScene extends Phaser.Scene {
   /** Wake altar ambushers — they already enter from the right; just harden chase. */
   private triggerAltarAmbush() {
     this.altarAmbushOn = true
+    this.showWarning()
     SFX.boss()
     playSong('ambush')
     this.cameras.main.flash(160, 255, 120, 80)
@@ -3697,6 +3806,42 @@ export class GameScene extends Phaser.Scene {
       e.setFsm('CHASE')
       e.setVelocityX(-ENEMY_SPEED)
       impactRing(this, e.x, e.y - 20, 0xff5533, 16)
+    })
+  }
+
+  /** SNES boss alarm: red bands, scrolling WARNING, siren. Calls onDone after ~2.2 s. */
+  private showWarning(onDone?: () => void) {
+    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 200)
+    const tint = this.add.rectangle(0, 0, GAME_W, GAME_H, 0xff0000, 0).setOrigin(0)
+    root.add(tint)
+    this.tweens.add({ targets: tint, fillAlpha: 0.22, duration: 270, yoyo: true, repeat: 3 })
+    for (const y of [GAME_H / 2 - 34, GAME_H / 2 + 22]) {
+      const band = this.add.rectangle(0, y, GAME_W, 12, 0xc81818, 0.92).setOrigin(0)
+      root.add(band)
+      for (let i = 0; i < 12; i++) {
+        const t = this.add
+          .text(i * 70, y + 6, '▲ WARNING ', { fontFamily: FONT_UI, fontSize: '9px', color: '#ffe0e0' })
+          .setOrigin(0, 0.5)
+        root.add(t)
+        this.tweens.add({ targets: t, x: t.x - 70, duration: 600, repeat: -1 })
+      }
+    }
+    const big = this.add
+      .text(GAME_W / 2, GAME_H / 2 - 6, 'WARNING', {
+        fontFamily: FONT_TITLE,
+        fontSize: '34px',
+        color: '#ff3a2a',
+        stroke: '#2a0606',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5)
+    root.add(big)
+    this.tweens.add({ targets: big, alpha: 0.25, duration: 180, yoyo: true, repeat: 5 })
+    SFX.siren()
+    this.cameras.main.shake(300, 0.004)
+    this.time.delayedCall(2200, () => {
+      root.destroy(true)
+      onDone?.()
     })
   }
 
@@ -3785,6 +3930,13 @@ export class GameScene extends Phaser.Scene {
     this.physics.pause()
     for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
+    // Block play while the alarm runs (storyIntro stops update), then the reveal cutscene.
+    this.storyIntro = { destroy: () => undefined }
+    this.showWarning(() => this.queenReveal(b))
+  }
+
+  private queenReveal(b: NonNullable<Stage1['boss']>) {
+    if (this.ended) return
     const handle = playCutscene(this, 'B2', () => {
       this.storyIntro = null
       if (this.ended) return
