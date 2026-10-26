@@ -2776,52 +2776,12 @@
     "prompt": "sashimi cart prop ~72px. No text no people. Magenta."
   },
   {
-    "file": "art-src/props/minigames/waffle-plain.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "egg waffle raw/cooked/burnt. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/waffle-butter.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "butter pat + knife top-down. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/tart-shell.png",
-    "frames": 3,
-    "cols": 3,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "tart shell empty/half/full. Magenta minigame prop no text."
-  },
-  {
     "file": "art-src/props/minigames/tart-tray.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "baking tray six shells. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/coconut-top.png",
     "frames": 3,
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "coconut top whole/cuts/open straw. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/cleaver.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "cleaver blade left. Magenta minigame prop no text."
+    "prompt": "tart tray six tarts pale/golden/burnt top-down. Magenta minigame prop no text. 2026-10-27 B rewrite."
   },
   {
     "file": "art-src/props/minigames/salmon-fillet.png",
@@ -2846,22 +2806,6 @@
     "rows": 1,
     "facing": "front",
     "prompt": "falling honey drop 3. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/honey-bottle.png",
-    "frames": 1,
-    "cols": 1,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "glass honey bottle front. Magenta minigame prop no text."
-  },
-  {
-    "file": "art-src/props/minigames/grill-fish.png",
-    "frames": 4,
-    "cols": 4,
-    "rows": 1,
-    "facing": "front",
-    "prompt": "grill salmon raw/cook/perfect/burnt. Magenta minigame prop no text."
   },
   {
     "file": "art-src/props/minigames/timing-bar.png",
@@ -2950,5 +2894,77 @@
     "rows": 1,
     "facing": "front",
     "prompt": "ending-picnic sunrise forest picnic heroes pupu friends coffee-mama queen owl. 16:9 no text."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-iron.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "waffle-iron top-down open mold empty/half/full batter. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/batter-jug.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "batter jug pouring stream down. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/waffle-done.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "egg waffle pale/golden/burnt. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/tart-oven.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "open oven with tart tray warm glow. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/oven-gauge.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "vertical heat gauge red-orange-yellow. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/oven-pointer.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "small pointer for vertical gauge. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-pour.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "opened green coconut tilted pouring water. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-drop.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "falling coconut water drop 3. Magenta minigame prop no text. 2026-10-27 B rewrite."
+  },
+  {
+    "file": "art-src/props/minigames/coconut-cup.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "wide-mouth glass cup front. Magenta minigame prop no text. 2026-10-27 B rewrite."
   }
 ]
