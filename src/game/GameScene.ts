@@ -3234,6 +3234,7 @@ export class GameScene extends Phaser.Scene {
 
     stopBgm()
     SFX.continue()
+    this.time.delayedCall(600, () => playSong('victory'))
     this.cameras.main.stopFollow()
     this.cameras.main.setScroll(0, 0)
     this.cameras.main.fadeIn(280, 255, 236, 180)
