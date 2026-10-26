@@ -3046,5 +3046,29 @@
     "rows": 1,
     "facing": "front",
     "prompt": "grade-cold 640x360 faint cold blue wash RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-soft.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-soft 128x64 soft white ellipse on PURE BLACK (white=density). Section B."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-tight.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-tight 128x64 harder-edge white ellipse on PURE BLACK. Section B."
+  },
+  {
+    "file": "art-src/fx/shadow/shadow-long.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shadow-long 256x64 elongated white ellipse on PURE BLACK dusk. Section B."
   }
 ]
