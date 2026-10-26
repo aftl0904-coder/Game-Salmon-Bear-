@@ -12,6 +12,7 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, speedMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
 import { stirCoffee } from './minigames'
 import {
@@ -1103,7 +1104,10 @@ export class GameScene extends Phaser.Scene {
     const ax = this.padAxis(this.pad1, true)
     const left = this.keyA.isDown || ax < -0.45 || TouchInput.isDown('left')
     const right = this.keyD.isDown || ax > 0.45 || TouchInput.isDown('right')
-    const spd = (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) * (this.s2world?.speedMul(this.boy) ?? 1)
+    const spd =
+      (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) *
+      (this.s2world?.speedMul(this.boy) ?? 1) *
+      speedMul(this.boy.role as Who)
     this.steerHero(
       this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), spd,
@@ -1122,7 +1126,7 @@ export class GameScene extends Phaser.Scene {
     const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
       g, dt, left, right,
-      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1),
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(g.role as Who),
       this.p2AttackJust(), () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
@@ -1468,15 +1472,17 @@ export class GameScene extends Phaser.Scene {
     else pe.contactCd = 650
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
-    const knockMul = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
+    const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
+    const gearKnock = knockMul(h.role as Who)
     const hpLeft = applyDamage(h, {
-      amount: ENEMY_ATTACK_DMG,
-      knockbackX: this.safeKnockX(h, away * Math.round(340 * knockMul)),
-      knockbackY: -Math.round(320 * Math.max(0.45, knockMul)),
+      amount: this.incoming(h, ENEMY_ATTACK_DMG),
+      knockbackX: this.safeKnockX(h, away * Math.round(340 * speciesKnock * gearKnock)),
+      knockbackY: -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock),
+      iframeMs: this.iframes(h),
       now: this.time.now,
     })
     applyHurtPose(h, -away)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     this.time.delayedCall(160, () => {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
@@ -1527,14 +1533,14 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, {
-      amount: 1,
-      knockbackX: this.safeKnockX(h, opts.knockX),
+      amount: this.incoming(h, 1),
+      knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who)),
       knockbackY: opts.knockY,
-      iframeMs: HURT_IFRAME_MS,
+      iframeMs: this.iframes(h),
       now: this.time.now,
     })
     applyHurtPose(h, -h.facing)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.spike()
     burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
@@ -1567,7 +1573,7 @@ export class GameScene extends Phaser.Scene {
         floatText(this, h.x, h.y - 56, '跌落坑！', '#ff8866')
         this.dropWeaponLv(h)
         applyHurtPose(h, -h.facing)
-        startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+        startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
@@ -1603,6 +1609,10 @@ export class GameScene extends Phaser.Scene {
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
     SFX.die()
+    const lost = dropOnDeath(h.role as Who)
+    if (lost) {
+      floatText(this, h.x, h.y - 100, `跌咗：${gearById(lost.id).name} Lv${lost.from} → Lv${lost.from - 1}`, '#ff9a8a', { size: 13, dur: 2000 })
+    }
     beginDeathPose(h)
     this.tweens.add({
       targets: h,
@@ -2307,6 +2317,15 @@ export class GameScene extends Phaser.Scene {
 
     for (const sp of ST.spikes) this.spikes(sp.x, sp.n)
     for (const x of ST.durians) this.placeDurian(x)
+    // Gear bought at the friends' stall: jump height, extra hearts, weapon floor.
+    for (const h of [this.boy, this.girl]) {
+      if (!h) continue
+      const who = h.role as Who
+      h.jumpMul = jumpMul(who)
+      const extra = bonusHearts(who)
+      if (extra > 0) h.hp = Math.min(MAX_HP + extra, h.hp + extra)
+      h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(who)))
+    }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
@@ -2861,7 +2880,7 @@ export class GameScene extends Phaser.Scene {
     if (lane !== undefined && h.lane !== undefined && Math.abs(lane - h.lane) > 1) return
     shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
-    const dmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
+    const dmg = this.incoming(h, (shot.getData('dmg') as number) || FISH_BULLET_DMG)
     const hpLeft = applyDamage(h, {
       amount: dmg,
       knockbackX: this.safeKnockX(h, away * 180),
@@ -2870,7 +2889,7 @@ export class GameScene extends Phaser.Scene {
     })
     applyHurtPose(h, -away)
     freezeActors(this, [h], FISH_BULLET_FREEZE_MS)
-    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, HURT_IFRAME_MS)
+    startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.hurt()
     burst(this, h.x, h.y - 20, 0xffaa66, 5)
     floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
@@ -3153,7 +3172,17 @@ export class GameScene extends Phaser.Scene {
   }
 
   private weaponLv(h: Hero): number {
-    return (h.getData('wlv') as number | undefined) ?? 1
+    return Math.max(weaponFloor(h.role as Who), (h.getData('wlv') as number | undefined) ?? 1)
+  }
+
+  /** Damage this hero actually takes: armour cuts it, never below 1. */
+  private incoming(h: Hero, amount: number) {
+    return Math.max(1, amount - damageCut(h.role as Who))
+  }
+
+  /** i-frames after a hit: the charm stretches them. */
+  private iframes(h: Hero) {
+    return Math.round(HURT_IFRAME_MS * iframeMul(h.role as Who))
   }
 
   private takePowerUp(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
@@ -3179,7 +3208,7 @@ export class GameScene extends Phaser.Scene {
   /** Lose one weapon level on any damage (Goemon rule). */
   private dropWeaponLv(h: Hero) {
     const lv = this.weaponLv(h)
-    if (lv <= 1) return
+    if (lv <= weaponFloor(h.role as Who)) return
     h.setData('wlv', lv - 1)
     SFX.powerDown()
     floatText(this, h.x, h.y - 84, `武器 Lv${lv - 1}`, '#c8a060', { size: 14, dur: 1000 })

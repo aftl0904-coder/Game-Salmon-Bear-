@@ -84,6 +84,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   hurtLock = 0
   grace = 0
   role: PlayerRole = 'boy'
+  /** Boots from the gear shop scale the jump (gear.ts jumpMul). */
+  jumpMul = 1
   baseScale = 1
   coyote = 0
   jumpBuf = 0
@@ -349,7 +351,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.laneJumping = true
       this.jumpCutApplied = false
       this.jumpHoldMs = 0
-      this.setVelocityY(fullApexVelocity())
+      this.setVelocityY(fullApexVelocity() * this.jumpMul)
       this.jumpBuf = 0
       this.coyote = 0
       this.jumpConsumed = true
@@ -361,7 +363,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.jumpHoldMs += dt
       // Early release → tap height (~24px). Hold through apex → full (~48px).
       if (!opts.jumpHeld && !this.jumpCutApplied && body.velocity.y < -40) {
-        const tapV = tapApexVelocity()
+        const tapV = tapApexVelocity() * this.jumpMul
         // Mario-style: clamp upward speed so remaining apex ≈ targetHeightPx.tap
         if (body.velocity.y < tapV) this.setVelocityY(tapV)
         this.jumpCutApplied = true
