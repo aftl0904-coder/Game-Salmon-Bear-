@@ -2934,5 +2934,21 @@
     "rows": 1,
     "facing": "front",
     "prompt": "blank wooden shop board no letters. Magenta shop prop."
+  },
+  {
+    "file": "art-src/props/friends/picnic-blanket-big.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "Big red-white checked picnic blanket side strip. Magenta."
+  },
+  {
+    "file": "art-src/story/ending-picnic.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ending-picnic sunrise forest picnic heroes pupu friends coffee-mama queen owl. 16:9 no text."
   }
 ]
