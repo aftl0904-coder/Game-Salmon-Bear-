@@ -6,6 +6,8 @@ import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { animTex, hasAnimSet, portraitTex, stillTex, type AnimSetId } from './heroAnims'
+import { buzz, HAPTIC } from './phone'
+import { shakeHoney, type Mini } from './minigames'
 
 /**
  * In-engine cutscene player (SNES style): a small stage in the top two thirds,
@@ -21,6 +23,8 @@ type Step =
   | { move: string; x: number; ms: number }
   | { say: string; text: string; face?: 0 | 1 | 2 }
   | { wait: number }
+  /** Phone-feel overlay (minigames.ts): shake the phone to mix the honey. */
+  | { minigame: 'shake' }
   | { hop: string }
   | { ear: string }
   | { grey: string; ms: number }
@@ -138,6 +142,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   // them on cleanup would break the player's own controls.
   const kb = scene.input.keyboard
   let advanceFlag = false
+  let mini: Mini | null = null
   const ADV = new Set(['f', 'j', 'a', ' ', 'k'])
   const SKIP = new Set(['Enter', 'Escape'])
   const onKey = (ev: KeyboardEvent) => {
@@ -161,6 +166,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     callback: () => {
       if (dead) return
       if (TouchInput.justPressed('start')) return finish()
+      if (mini) return
       if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) advanceFlag = true
     },
   })
@@ -297,6 +303,12 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       }
     } else if ('say' in s) {
       await showLine(s.say, s.text, s.face ?? 0)
+    } else if ('minigame' in s) {
+      dialog.setVisible(false)
+      mini = shakeHoney(scene)
+      await mini.done
+      mini = null
+      advanceFlag = false
     } else if ('wait' in s) {
       await wait(s.wait)
     } else if ('hop' in s) {
@@ -315,6 +327,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       const a = actors.get(s.grey)
       if (a) {
         SFX.powerDown()
+        buzz(HAPTIC.heartbeat)
         await greyTo(a, 1, s.ms)
         if (dead) return
         // Fully drained: swap to the hollow frames (empty eyes, dripping fake honey).
@@ -412,6 +425,8 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
 
   function cleanup() {
     dead = true
+    mini?.destroy()
+    mini = null
     poll.remove(false)
     kb?.off('keydown', onKey)
     scene.input?.off('pointerdown', onTap)

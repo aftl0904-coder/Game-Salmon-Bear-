@@ -1,0 +1,13 @@
+{
+  "name": "鮭鮭熊",
+  "short_name": "鮭鮭熊",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#1a1420",
+  "theme_color": "#3a2818",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

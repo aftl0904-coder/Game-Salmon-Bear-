@@ -375,5 +375,15 @@
         "kind": "s2-vine-b"
       }
     ]
-  }
+  },
+  "friends": [
+    {
+      "x": 1640,
+      "id": "denim"
+    },
+    {
+      "x": 2560,
+      "id": "brownie"
+    }
+  ]
 }
