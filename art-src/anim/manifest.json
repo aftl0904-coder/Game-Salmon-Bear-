@@ -2990,5 +2990,61 @@
     "rows": 1,
     "facing": "front",
     "prompt": "c0-church Sunday morning small forest-edge church sunlight no people no text 16:9."
+  },
+  {
+    "file": "art-src/fx/light/glow-round.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glow-round 256x256 soft white radial on PURE BLACK additive. Section A."
+  },
+  {
+    "file": "art-src/fx/light/glow-cone.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glow-cone 256x256 streetlamp cone top-narrow bottom-wide PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/glow-ring.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "glow-ring 128x128 hollow soft ring PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/shaft-soft.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "shaft-soft 128x360 diagonal soft shaft denser top PURE BLACK additive."
+  },
+  {
+    "file": "art-src/fx/light/vignette.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "vignette 640x360 black edges transparent center RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/light/grade-warm.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "grade-warm 640x360 faint warm orange wash RGBA. Section A."
+  },
+  {
+    "file": "art-src/fx/light/grade-cold.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "grade-cold 640x360 faint cold blue wash RGBA. Section A."
   }
 ]
