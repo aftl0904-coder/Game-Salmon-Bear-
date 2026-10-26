@@ -1254,5 +1254,29 @@
     "rows": 1,
     "facing": "right",
     "prompt": "16:9 boss intro NO TEXT. 蜜冠女王蜂 angry glowing eyes before huge honeycomb wall. Refs queen model."
+  },
+  {
+    "file": "art-src/map/world-map.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "map",
+    "prompt": "SNES world map 16:9 NO text/characters. Dirt road BL→TR: forest picnic, honey tree hill, night market+hotspring, construction fog, dark tower with △. Darker 1→5."
+  },
+  {
+    "file": "art-src/map/map-icons.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta sheet 5 round place icons L→R: forest, honey tree, lantern market, crane fog, dark tower △. ~32px 8× NN."
+  },
+  {
+    "file": "art-src/map/map-walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Magenta walk[4] facing RIGHT. Tiny chibi 倫寶+琪寶寶+噗噗 ~24px. Refs hero model-sheets."
   }
 ]
