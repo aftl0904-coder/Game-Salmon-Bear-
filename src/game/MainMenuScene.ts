@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
+import { maxStage } from './progress'
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -36,6 +37,11 @@ export class MainMenuScene extends Phaser.Scene {
   /** Ignore Enter/Space/click-start until this time — same key that left the previous screen. */
   private inputReadyAt = 0
   private starting = false
+  /** Start stage (2 only once stage 1 has been cleared in this browser). */
+  private stageSel = 1
+  private stageText: Phaser.GameObjects.Text | null = null
+  /** Secret code progress (↑↑↓↓←→←→BA). */
+  private code: string[] = []
 
   constructor() {
     super('menu')
@@ -52,6 +58,9 @@ export class MainMenuScene extends Phaser.Scene {
     this.shade = {}
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
+    this.stageSel = maxStage() >= 2 ? 2 : 1
+    this.stageText = null
+    this.code = []
 
     this.choices = [
       { mode: '1p', solo: 'boy', text: '單人・倫寶', info: '倫寶：遠距離射三文魚子　食金鮭升級散射', lit: ['boy'] },
@@ -63,6 +72,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.buildTitle(width)
     this.buildPlaques(width, height)
     this.buildScores(width)
+    this.buildStagePicker(width)
     this.wireInput()
     mountTouchControls(this)
     mountMuteButton(this, 14, 8)
@@ -70,11 +80,91 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   update() {
-    if (TouchInput.justPressed('up') || TouchInput.justPressed('left')) this.move(-1)
-    if (TouchInput.justPressed('down') || TouchInput.justPressed('right')) this.move(1)
-    if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) {
-      this.confirmStart()
-    }
+    if (TouchInput.justPressed('up')) this.onUp()
+    if (TouchInput.justPressed('down')) this.onDown()
+    if (TouchInput.justPressed('left')) this.onLeft()
+    if (TouchInput.justPressed('right')) this.onRight()
+    const b = TouchInput.justPressed('attack')
+    const a = TouchInput.justPressed('jump')
+    if (b && this.feedCode('B')) return
+    if (a && this.feedCode('A')) return
+    if (TouchInput.justPressed('start') || a || b) this.confirmStart()
+  }
+
+  private onUp() {
+    this.feedCode('U')
+    if (maxStage() >= 2) this.toggleStage()
+    else this.move(-1)
+  }
+  private onDown() {
+    this.feedCode('D')
+    if (maxStage() >= 2) this.toggleStage()
+    else this.move(1)
+  }
+  private onLeft() {
+    this.feedCode('L')
+    this.move(-1)
+  }
+  private onRight() {
+    this.feedCode('R')
+    this.move(1)
+  }
+
+  /** ↑↑↓↓←→←→BA → 秘技: 金鮭 Lv3 from the start and unlimited 絕招. Returns true when it fires. */
+  private feedCode(sym: string): boolean {
+    const SEQ = ['U', 'U', 'D', 'D', 'L', 'R', 'L', 'R', 'B', 'A']
+    this.code.push(sym)
+    if (this.code.length > SEQ.length) this.code.shift()
+    if (this.code.join() !== SEQ.join()) return false
+    this.code = []
+    const on = !this.registry.get('cheat')
+    this.registry.set('cheat', on)
+    SFX.powerUp()
+    SFX.sparkle()
+    this.cameras.main.flash(300, 255, 230, 140)
+    const t = this.add
+      .text(this.scale.width / 2, 120, on ? '★ 秘技成功！金鮭滿級・無限絕招 ★' : '秘技已關閉', {
+        fontFamily: FONT_UI,
+        fontSize: '13px',
+        color: '#ffe08a',
+        stroke: '#1a0e06',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+    this.tweens.add({ targets: t, y: 108, alpha: 0, delay: 1600, duration: 600, onComplete: () => t.destroy() })
+    this.inputReadyAt = this.time.now + 300
+    return true
+  }
+
+  /** "從 第一關 / 第二關 開始" — only shown once stage 1 has been cleared. */
+  private buildStagePicker(width: number) {
+    if (maxStage() < 2) return
+    this.stageText = this.add
+      .text(width / 2, 98, '', {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#ffe9a8',
+        backgroundColor: '#1c120ccc',
+        padding: { x: 8, y: 3 },
+        stroke: '#1a0e06',
+        strokeThickness: 2,
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+    this.stageText.on('pointerdown', () => this.toggleStage())
+    this.drawStage()
+  }
+
+  private drawStage() {
+    const name = this.stageSel === 2 ? '第二關・蜜樹丘' : '第一關・百畝樹林'
+    this.stageText?.setText(`▲▼　由 ${name} 開始`)
+  }
+
+  private toggleStage() {
+    if (maxStage() < 2) return
+    this.stageSel = this.stageSel === 2 ? 1 : 2
+    SFX.blip(520)
+    this.drawStage()
   }
 
   private buildBackdrop(width: number, height: number) {
@@ -249,18 +339,18 @@ export class MainMenuScene extends Phaser.Scene {
 
   private wireInput() {
     const kb = this.input.keyboard!
-    const prev = () => this.move(-1)
-    const next = () => this.move(1)
     const onStart = () => this.confirmStart()
     const map: [string, () => void][] = [
-      ['keydown-UP', prev],
-      ['keydown-LEFT', prev],
-      ['keydown-A', prev],
-      ['keydown-W', prev],
-      ['keydown-DOWN', next],
-      ['keydown-RIGHT', next],
-      ['keydown-D', next],
-      ['keydown-S', next],
+      ['keydown-UP', () => this.onUp()],
+      ['keydown-W', () => this.onUp()],
+      ['keydown-DOWN', () => this.onDown()],
+      ['keydown-S', () => this.onDown()],
+      ['keydown-LEFT', () => this.onLeft()],
+      ['keydown-RIGHT', () => this.onRight()],
+      ['keydown-D', () => this.onRight()],
+      // A is also "left" (WASD) — but as the last key of the code it fires the secret instead.
+      ['keydown-A', () => (this.feedCode('A') ? undefined : this.move(-1))],
+      ['keydown-B', () => void this.feedCode('B')],
       ['keydown-ENTER', onStart],
       ['keydown-SPACE', onStart],
       ['keydown-F', onStart],
@@ -313,7 +403,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.registry.set('stageRound', 1)
-    this.registry.set('stageNo', 1)
+    this.registry.set('stageNo', this.stageSel)
     this.registry.set('carryCoins', undefined)
     this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
     this.time.delayedCall(680, () => this.scene.start('play'))

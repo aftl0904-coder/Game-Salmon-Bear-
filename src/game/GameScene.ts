@@ -10,6 +10,7 @@ import {
 } from './pixelSnap'
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
+import { unlockStage } from './progress'
 import {
   type Creep,
   type EnemyKind,
@@ -350,6 +351,10 @@ export class GameScene extends Phaser.Scene {
     this.drawWorld()
     this.buildLevel()
     this.spawnCast()
+    if (this.registry.get('cheat')) {
+      for (const h of [this.boy, this.girl]) h?.setData('wlv', WEAPON_MAX_LV)
+      this.specialCharges = 1
+    }
     this.applyStageLighting()
     this.wirePhysics()
     this.setupCameraFollow()
@@ -553,6 +558,18 @@ export class GameScene extends Phaser.Scene {
         this.scene.resume()
         this.goMenu()
       },
+    })
+  }
+
+  /** After the last stage: staff roll, then the menu. */
+  private goCredits() {
+    if (this.registry.get('leavingToMenu')) return
+    this.registry.set('leavingToMenu', true)
+    this.stopUi()
+    this.cameras.main.fadeOut(400, 0, 0, 0)
+    this.time.delayedCall(420, () => {
+      this.registry.set('leavingToMenu', false)
+      this.scene.start('credits')
     })
   }
 
@@ -1126,7 +1143,8 @@ export class GameScene extends Phaser.Scene {
       floatText(this, h.x, h.y - 40, '無目標', '#aaaaaa')
       return
     }
-    this.specialCharges -= 1
+    // 秘技 (menu code): unlimited 絕招.
+    if (!this.registry.get('cheat')) this.specialCharges -= 1
     this.emitScore()
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
@@ -3349,7 +3367,7 @@ export class GameScene extends Phaser.Scene {
     const btnY = H / 2 - 30
     const btnBg = this.add.rectangle(0, btnY, 200, 26, 0x4a2a14, 1).setStrokeStyle(2, 0xc8902a)
     const btnTx = this.add
-      .text(0, btnY, this.stageNo === 2 ? '回角色選擇' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
+      .text(0, btnY, this.stageNo === 2 ? '片尾字幕 ▶' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
       .setOrigin(0.5)
     const hitPad = this.add.rectangle(0, btnY, 420, 40, 0x000000, 0.001)
     overlay.add([btnBg, btnTx, hitPad])
@@ -3424,6 +3442,7 @@ export class GameScene extends Phaser.Scene {
   private win() {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
+    unlockStage(this.stageNo + 1)
     this.ended = true
     this.awaitingContinue = false
     // Drop story intro if still open so it never covers the clear card.
@@ -3473,7 +3492,7 @@ export class GameScene extends Phaser.Scene {
       this.keySpace?.reset()
       this.keyR?.reset()
       if (this.stageNo === 1) this.goNextStage()
-      else this.goMenu()
+      else this.goCredits()
     }
     this.clearCardAction = toSelect
     btnBg.on('pointerover', () => btnBg.setFillStyle(0x6a3a18))
