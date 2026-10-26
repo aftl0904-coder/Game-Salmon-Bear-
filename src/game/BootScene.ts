@@ -24,6 +24,7 @@ import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { applyEnemyPlaceholderTextures, ENEMY_SHEET_MAP } from './enemyPlaceholders'
 import { applyArtOverrides, preloadArtOverrides } from './artOverrides'
+import { loadCustomSkins, preloadCustomConfig } from './customSkins'
 import {
   BAKE_RES_FACTOR,
   OUTLINE_WIDTH,
@@ -103,6 +104,7 @@ export class BootScene extends Phaser.Scene {
     preloadHeroAnims(this)
     preloadFxAnims(this)
     preloadRound1Map(this)
+    preloadCustomConfig(this)
   }
 
   create() {
@@ -133,7 +135,8 @@ export class BootScene extends Phaser.Scene {
       coinsStart: 5,
     })
 
-    this.scene.start('studio')
+    // Owner-supplied art slots (public/art/custom) load last and override the built-in frames.
+    loadCustomSkins(this, () => this.scene.start('studio'))
   }
 
   /** Prefer cel PNG coin over procedural koban paint (heroes + coin share style). */
