@@ -1358,5 +1358,365 @@
     "rows": 1,
     "facing": "right",
     "prompt": "Bike obstacles sheet rock/log/honey/cone/ramp."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 lobster walk 4 magenta facing RIGHT ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/block.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 block 3 claws up. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/snap.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 snap 4 claw strike. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/turn.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 turn 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 hit 2. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-08-lobsterguard/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-08 die 4 shell crack poof."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 idle chopping 3. Yellowtail stallkeeper ~56px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/throw.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 throw knife 4. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck-hit-die-sheet.png",
+    "frames": 8,
+    "cols": 8,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck+hit+die combined sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/knife.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Knife FX spinning 4 magenta."
+  },
+  {
+    "file": "art-src/props/stage3/stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Food stall prop magenta."
+  },
+  {
+    "file": "art-src/props/stage3/stall-broken.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Broken stall prop magenta."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/duck.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 duck (from duck-hit-die sheet; Claude slice)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 hit (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-09-stallkeeper/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-09 die (from duck-hit-die sheet)."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/float.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 float 4. Hooded mirror face ~48px."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/dash.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 dash 3. Same scale."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 split 4 into two copies."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit-die-sheet.png",
+    "frames": 6,
+    "cols": 6,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit+die sheet."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 hit 2."
+  },
+  {
+    "file": "art-src/anim/enemies/E-10-mirrorshade/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "E-10 die 4 mirror shatter."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Mirror owl model sheet 4 views ~128px."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/perch.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl perch 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/fly.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl fly 4."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/feather-curtain.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl feather-curtain (from combined sheet)."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/split.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl split three copies."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/guard.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl guard honey crate."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/feather.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Feather FX 3."
+  },
+  {
+    "file": "art-src/props/stage3/market-ground.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-ground tileable."
+  },
+  {
+    "file": "art-src/props/stage3/wood-bridge.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wood-bridge."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-rock.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-rock."
+  },
+  {
+    "file": "art-src/props/stage3/market-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-far 16:9 night market NO characters."
+  },
+  {
+    "file": "art-src/props/stage3/market-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 market-mid tileable stalls lanterns NO letters."
+  },
+  {
+    "file": "art-src/props/stage3/hotspring-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 hotspring-far 16:9 misty moon."
+  },
+  {
+    "file": "art-src/props/stage3/lanterns-wok-steam-items-sheet.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 props sheet lanterns wok steam sashimi lobster."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-on.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-on.png."
+  },
+  {
+    "file": "art-src/props/stage3/lantern-off.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lantern-off.png."
+  },
+  {
+    "file": "art-src/props/stage3/wok-stall.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 wok-stall.png."
+  },
+  {
+    "file": "art-src/props/stage3/steam.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 steam.png."
+  },
+  {
+    "file": "art-src/props/stage3/sashimi.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 sashimi.png."
+  },
+  {
+    "file": "art-src/props/stage3/lobster.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Stage3 lobster.png."
+  },
+  {
+    "file": "art-src/story/c3-market.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 c3-market empty night market heroes+half 噗噗. NO TEXT."
+  },
+  {
+    "file": "art-src/story/s3-boss-intro.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "16:9 s3-boss-intro mirror owl on moon bridge. NO TEXT."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl hurt 2 magenta facing RIGHT."
+  },
+  {
+    "file": "art-src/anim/boss/mirror-owl/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "Owl defeat 5 mirror cracks calm."
   }
 ]
