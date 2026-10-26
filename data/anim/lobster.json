@@ -1,0 +1,37 @@
+{
+ "frameWidth": 142,
+ "frameHeight": 71,
+ "anchorX": 71,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "block": {
+   "start": 4,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "turn": {
+   "start": 7,
+   "count": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "hit": {
+   "start": 9,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 11,
+   "count": 4,
+   "fps": 10,
+   "loop": false
+  }
+ }
+}

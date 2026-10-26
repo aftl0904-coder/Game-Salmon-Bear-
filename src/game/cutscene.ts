@@ -19,7 +19,8 @@ type Step =
   | { bg: 'day' | 'dusk' | 'night' }
   | { music: SongId | 'stop' }
   | { prop: string; kind: string; x: number; drop?: boolean }
-  | { actor: string; x: number; flip?: boolean; grey?: boolean; lift?: number }
+  /** `grey: true` = drained (hollow frames); a number = partly grey (0..1). */
+  | { actor: string; x: number; flip?: boolean; grey?: boolean | number; lift?: number }
   | { move: string; x: number; ms: number }
   | { say: string; text: string; face?: 0 | 1 | 2 }
   | { wait: number }
@@ -40,10 +41,10 @@ type Step =
   | { anim: string; name: string }
 
 /** `stage: 'tree'` draws the 蜜樹丘 interior instead of the 百畝樹林 path. */
-type Scene = { title: string; stage?: 'forest' | 'tree'; steps: Step[] }
+type Scene = { title: string; stage?: 'forest' | 'tree' | 'market'; steps: Step[] }
 const STORY = storyRaw as unknown as { scenes: Record<string, Scene> }
 
-export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4'
+export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6'
 
 /** Who can talk: name, stage sprite (anim set / still), portrait strip and blip pitch. */
 type CastEntry = { name: string; set: AnimSetId | null; tex: string | null; portrait: string | null; pitch: number; color: string; idle?: string }
@@ -56,6 +57,8 @@ const CAST: Record<string, CastEntry> = {
   queen: { name: '蜜冠女王蜂', set: 'queen', tex: null, portrait: 'queen-bee', pitch: 250, color: '#ffcc44', idle: 'hover' },
   /** Under the fake honey: no friendly portrait. */
   queenEvil: { name: '蜜冠女王蜂', set: 'queen', tex: null, portrait: null, pitch: 180, color: '#ff9a3a', idle: 'hover' },
+  owl: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl', pitch: 220, color: '#d8e0ff', idle: 'perch' },
+  owlEvil: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl-evil', pitch: 160, color: '#b8c0ff', idle: 'perch' },
 }
 
 const PROP_TEX: Record<string, string> = {
@@ -83,8 +86,12 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
 
   // ── Stage ──────────────────────────────────────────────────────────────
   root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 1).setOrigin(0))
-  const tree = data.stage === 'tree' && scene.textures.exists('story-canopy-far')
-  if (tree) {
+  const market = data.stage === 'market' && scene.textures.exists('story-market-far')
+  const tree = market || (data.stage === 'tree' && scene.textures.exists('story-canopy-far'))
+  if (market) {
+    root.add(scene.add.image(GAME_W / 2, GAME_H / 2, 'story-market-far').setTint(0xb0b0d0))
+    if (scene.textures.exists('s3-market-ground')) root.add(scene.add.tileSprite(0, FLOOR - 2, GAME_W, 40, 's3-market-ground').setOrigin(0).setTint(0x9090b0))
+  } else if (tree) {
     root.add(scene.add.image(GAME_W / 2, FLOOR + 30, 'story-canopy-far').setOrigin(0.5, 1))
     if (scene.textures.exists('s2-bark-ground')) root.add(scene.add.tileSprite(0, FLOOR - 4, GAME_W, 40, 's2-bark-ground').setOrigin(0))
   } else if (scene.textures.exists('bg-wallpaper')) {
@@ -275,15 +282,15 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       if (!set && (!c.tex || !scene.textures.exists(c.tex))) return
       const img = scene.add.sprite(s.x, FLOOR - (s.lift ?? 0), set ? animTex(set) : c.tex!).setOrigin(0.5, 1).setFlipX(!!s.flip)
       actorLayer.add(img)
-      const a: Actor = { img, grey: s.grey ? 1 : 0, set, hollow: false, idle: c.idle ?? 'idle' }
+      const a: Actor = { img, grey: s.grey === true ? 1 : typeof s.grey === 'number' ? s.grey : 0, set, hollow: false, idle: c.idle ?? 'idle' }
       actors.set(s.actor, a)
-      if (s.grey && set === 'pupu' && scene.anims.exists('pupu-hollow-idle')) {
+      if (s.grey === true && set === 'pupu' && scene.anims.exists('pupu-hollow-idle')) {
         a.hollow = true
         img.play('pupu-hollow-idle')
       } else {
         if (set) img.play(`${set}-${a.idle}`)
         applyGrey(a)
-        if (s.grey) img.setAngle(8).setY(FLOOR + 2)
+        if (s.grey === true) img.setAngle(8).setY(FLOOR + 2)
       }
     } else if ('move' in s) {
       const a = actors.get(s.move)

@@ -34,6 +34,9 @@ import { p2Pad, padDir, btn as padBtn } from './gamepadBridge'
 import { playCutscene } from './cutscene'
 import stage1Raw from '../../data/levels/stage1.json'
 import stage2Raw from '../../data/levels/stage2.json'
+import stage3Raw from '../../data/levels/stage3.json'
+import { Stage3World, type Stage3Data } from './stage3World'
+import { MirrorOwl, OwlDecoy, OwlCrate, LobsterGuard, StallKeeper, MarketStall, MirrorShade, type OwlHooks } from './enemies/Stage3Enemies'
 import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hooks } from './enemies/Stage2Enemies'
 import { Stage2World } from './stage2World'
 import {
@@ -156,12 +159,19 @@ type Stage1 = {
   /** Hidden rewards on hard-to-reach perches. */
   secrets?: Array<{ x: number; h: number; kind: 'sushi' | 'coins' }>
   /** Stage 2 (蜜樹丘) extras. */
-  theme?: 'forest' | 'tree'
+  theme?: 'forest' | 'tree' | 'market'
   name?: string
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'queen'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'queen' | 'mirrorowl'; triggerX: number; arenaX0: number; arenaX1: number }
+  /** Stage 3 (月影夜市) extras — see stage3World.ts. */
+  darkZones?: Stage3Data['darkZones']
+  lanterns?: Stage3Data['lanterns']
+  slippery?: Stage3Data['slippery']
+  steamVents?: Stage3Data['steamVents']
+  easterEgg?: Stage3Data['easterEgg']
+  stalls?: Array<{ x: number }>
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
@@ -179,6 +189,7 @@ type Crusher = {
 const STAGES: Record<number, Stage1> = {
   1: stage1Raw as unknown as Stage1,
   2: stage2Raw as unknown as Stage1,
+  3: stage3Raw as unknown as Stage1,
 }
 /** Current stage layout — picked in create() from registry `stageNo`. */
 let ST: Stage1 = STAGES[1]!
@@ -296,7 +307,14 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number }> = []
-  private queen: QueenBee | null = null
+  private queen: QueenBee | MirrorOwl | null = null
+  /** 月影夜市 (stage 3). */
+  private market = false
+  private s3world: Stage3World | null = null
+  /** 龍蝦 power-up: attack ×1.5 until this time. */
+  private powerUntil = 0
+  private stalls: MarketStall[] = []
+  private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private bossFight = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
@@ -313,9 +331,16 @@ export class GameScene extends Phaser.Scene {
 
   create() {
     this.mode = (this.registry.get('playMode') as '1p' | '2p') || '2p'
-    this.stageNo = (this.registry.get('stageNo') as number) === 2 ? 2 : 1
+    const sn = (this.registry.get('stageNo') as number) || 1
+    this.stageNo = STAGES[sn] ? sn : 1
     ST = STAGES[this.stageNo]!
     this.tree = ST.theme === 'tree'
+    this.market = ST.theme === 'market'
+    this.s3world?.destroy()
+    this.s3world = null
+    this.powerUntil = 0
+    this.stalls = []
+    this.marketFar = { market: null, spring: null }
     this.s2world?.destroy()
     this.s2world = null
     this.duskWash = null
@@ -364,7 +389,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(300, 40, 100, 140)
 
     unlockAudio()
-    playSong(this.tree ? 'stage2' : 'stage1')
+    playSong(this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
 
     this.drawWorld()
     this.buildLevel()
@@ -543,7 +568,8 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene') || this.scene.isSleeping('UIScene')) {
       this.scene.stop('UIScene')
     }
-    this.scene.launch('UIScene', { mode: this.mode, stageTitle: this.stageNo === 2 ? '第二關・蜜樹丘' : '第一關・百畝樹林' })
+    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市' }
+    this.scene.launch('UIScene', { mode: this.mode, stageTitle: titles[this.stageNo] ?? titles[1] })
     this.events.once('shutdown', this.stopUi, this)
   }
 
@@ -587,7 +613,13 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeOut(400, 0, 0, 0)
     this.time.delayedCall(420, () => {
       this.registry.set('leavingToMenu', false)
-      this.scene.start('worldmap', { from: 2, to: 3, next: 'credits' })
+      // 蜜樹丘 → 月影夜市 (coins carry over); the last stage built so far rolls the credits.
+      if (this.stageNo === 2) {
+        this.registry.set('carryCoins', this.coinStock)
+        this.scene.start('worldmap', { from: 2, to: 3, next: 'play', stageNo: 3 })
+      } else {
+        this.scene.start('worldmap', { from: this.stageNo, to: this.stageNo + 1, next: 'credits' })
+      }
     })
   }
 
@@ -760,6 +792,7 @@ export class GameScene extends Phaser.Scene {
     this.tickMovers()
     this.tickCrushers(dt)
     if (this.tree) this.tickStage2(dt)
+    if (this.market) this.tickStage3(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -833,7 +866,13 @@ export class GameScene extends Phaser.Scene {
   /** flat → platforms → ambush → altar — one readable story beat each. */
   private tickStageBeats() {
     const lead = this.leadX()
-    const beats: Array<{ x: number; title: string }> = this.tree
+    const beats: Array<{ x: number; title: string }> = this.market
+      ? [
+          { x: 640, title: '無人攤檔街' },
+          { x: 1480, title: '暗巷・熄燈' },
+          { x: 2380, title: '溪橋・溫泉' },
+        ]
+      : this.tree
       ? [
           { x: 640, title: '蜜僵松鼠群' },
           { x: 1440, title: '滴蜜長廊' },
@@ -1057,6 +1096,7 @@ export class GameScene extends Phaser.Scene {
       left, right, jumpJust, jumpHeld, attackJust, crouchHeld,
       onJump: () => SFX.jump(), onAttack: doAttack, now: this.time.now,
     })
+    this.s3world?.slip(h, dt)
     if (h.justLandedFlag) {
       if (hasFx(this, 'land-dust')) playFx(this, 'land-dust', h.x, h.y + 1, { originY: 1, depth: h.depth - 0.1 })
       else this.juice.landDust(h.x, h.y)
@@ -1427,6 +1467,19 @@ export class GameScene extends Phaser.Scene {
         return
       }
     }
+    // 龍蝦兵 claws / 油甘魚攤主 behind the counter.
+    const guarded = pe as unknown as { blocks?: (d: number) => boolean; hiding?: () => boolean }
+    if (typeof guarded.blocks === 'function' && guarded.blocks(dir)) {
+      floatText(this, pe.x, pe.y - 52, '叮！跳過頭打背脊', '#ffd0c0', { size: 12, dur: 600 })
+      burst(this, pe.x - dir * 14, pe.y - 30, 0xffe0d0, 5)
+      SFX.hit()
+      return
+    }
+    if (typeof guarded.hiding === 'function' && guarded.hiding()) {
+      floatText(this, pe.x, pe.y - 48, '躲埋咗！打爛個檔', '#ffe08a', { size: 12, dur: 600 })
+      return
+    }
+    if (this.time.now < this.powerUntil) dmg = Math.ceil(dmg * 1.5)
     const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
@@ -1447,7 +1500,7 @@ export class GameScene extends Phaser.Scene {
       impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
       const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
       this.addScorePop(pe.x, pe.y - 72, bonus)
-      if (pe.kind === 'boss') this.emitScore(this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
+      if (pe.kind === 'boss') this.emitScore(this.market ? '鏡鴞醒返喇！' : this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
     }
   }
 
@@ -1932,6 +1985,10 @@ export class GameScene extends Phaser.Scene {
       this.drawTreeWorld()
       return
     }
+    if (this.market) {
+      this.drawMarketWorld()
+      return
+    }
     // Prefer generated wallpaper 貼圖 (pretty Flash/phone look) over hand-built mountains.
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     // Soft sky under wallpaper — warm daylight, not heavy blue
@@ -2036,6 +2093,61 @@ export class GameScene extends Phaser.Scene {
     this.duskWash = this.add.rectangle(0, 0, GAME_W, LANE_FLOOR_Y + 8, 0x3a1a20, 0).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 3)
   }
 
+  /** Stage 3 · 月影夜市: night street painting → hot springs, stall row strip, moonlit haze. */
+  private drawMarketWorld() {
+    const g = this.add.graphics().setDepth(DEPTH.SKY)
+    g.fillStyle(0x0a0a18, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    this.bgClouds = []
+    this.bgMounts = []
+    const far = (key: string) =>
+      this.textures.exists(key) ? this.add.image(GAME_W / 2, GAME_H / 2, key).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setTint(0xc8c8e0) : null
+    this.marketFar = { market: far('story-market-far'), spring: far('story-hotspring-far') }
+    this.marketFar.spring?.setAlpha(0)
+    if (this.textures.exists('s3-market-mid')) {
+      const bh = this.textures.get('s3-market-mid').get().height
+      this.bushStrip = this.add
+        .tileSprite(0, LANE_FLOOR_Y + 4 - bh, GAME_W, bh, 's3-market-mid')
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND + 2)
+        .setTint(0x8078a0)
+      enablePixelSprite(this.bushStrip as unknown as Phaser.GameObjects.Image)
+    }
+    // Lantern-string glow dots + drifting mist.
+    for (let i = 0; i < 12; i++) {
+      const d = this.add
+        .circle(30 + i * 52 + ((i * 17) % 20), 60 + ((i * 29) % 30), 2, 0xffa050, 0.85)
+        .setScrollFactor(0.3, 0)
+        .setDepth(DEPTH.SKY_BAND + 1)
+        .setBlendMode(Phaser.BlendModes.ADD)
+      this.tweens.add({ targets: d, alpha: { from: 0.35, to: 0.95 }, duration: 900 + i * 130, yoyo: true, repeat: -1 })
+    }
+    for (let i = 0; i < 6; i++) {
+      const m = this.add
+        .ellipse(Phaser.Math.Between(0, GAME_W), LANE_FLOOR_Y - Phaser.Math.Between(4, 40), 160, 26, 0xd0d0f0, 0.06)
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND + 3)
+      this.tweens.add({ targets: m, x: m.x + 120, duration: 9000 + i * 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    }
+    // Hot-spring pools behind the slippery stretch; moon bridge deck at the boss arena.
+    for (const z of ST.slippery ?? []) {
+      for (let x = z.x0 + 60; x < z.x1 - 40; x += 240) {
+        if (!this.textures.exists('s3-hotspring-rock')) break
+        const pool = this.add.image(x, LANE_FLOOR_Y - 2, 's3-hotspring-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 4).setTint(0xa0a8c8)
+        enablePixelSprite(pool)
+      }
+    }
+    const b = ST.boss
+    if (b && this.textures.exists('s3-wood-bridge')) {
+      const w = this.textures.get('s3-wood-bridge').get().width
+      for (let x = b.arenaX0 + w / 2 - 20; x < b.arenaX1 + w / 2; x += w - 8) {
+        const br = this.add.image(x, LANE_FLOOR_Y + 14, 's3-wood-bridge').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 3).setTint(0x9a8a90)
+        enablePixelSprite(br)
+      }
+    }
+    this.buildGroundTiles()
+  }
+
   /** Stage 2 · inside the honey tree: painted hollow, bark pillars, light shafts, pollen, canopy ceiling. */
   private treePillars: Phaser.GameObjects.Image[] = []
   private drawTreeWorld() {
@@ -2132,6 +2244,7 @@ export class GameScene extends Phaser.Scene {
           .setDepth(DEPTH.GROUND)
           .setOrigin(0.5)
         if (this.tree) t.setTint(0x8a5a3a)
+        if (this.market) t.setTint(0x6a6a88)
       }
     }
     // 2px contact shadow where feet meet the ground band
@@ -2350,8 +2463,24 @@ export class GameScene extends Phaser.Scene {
       )
     }
 
-    if (this.tree) {
-      // Stage 2 ends when the queen falls — keep an inert goal far off-world so overlap checks stay valid.
+    if (this.market) {
+      this.s3world = new Stage3World(
+        {
+          scene: this,
+          floorY: LANE_FLOOR_Y,
+          heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
+          shots: () => this.shots.getChildren(),
+          onPower: () => {
+            this.powerUntil = this.time.now + 10000
+            for (const h of [this.boy, this.girl]) if (h) burst(this, h.x, h.y - 30, 0xff6a3a, 10)
+          },
+        },
+        ST,
+      )
+    }
+
+    if (this.tree || this.market) {
+      // Stages 2+ end when the boss falls — keep an inert goal far off-world so overlap checks stay valid.
       this.goal = this.physics.add.sprite(WORLD_W + 400, GROUND_Y - 10, 'goal3d').setVisible(false)
       ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
       this.goal.disableBody(false, true)
@@ -2423,7 +2552,9 @@ export class GameScene extends Phaser.Scene {
     for (const st of ST.steps) {
       const top = floor - st.h
       // Earth body + grass lip (same tile as the ground ribbon); 1px dark outline.
-      const stepTex = this.tree && this.textures.exists('s2-bark-ground') ? 's2-bark-ground' : 'tile-ground-top'
+      const stepTex = this.tree && this.textures.exists('s2-bark-ground')
+        ? 's2-bark-ground'
+        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : 'tile-ground-top'
       if (this.textures.exists(stepTex)) {
         const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
         enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
@@ -2474,7 +2605,7 @@ export class GameScene extends Phaser.Scene {
   private placeDecor() {
     // Far tree line between the painted backdrop and the bush strip, slow parallax.
     this.farTrunks = null
-    if (!this.tree && this.textures.exists('deco-far-trunks')) {
+    if (!this.tree && !this.market && this.textures.exists('deco-far-trunks')) {
       const th = this.textures.get('deco-far-trunks').get().height
       this.farTrunks = this.add
         .tileSprite(0, LANE_FLOOR_Y - th + 2, GAME_W, th, 'deco-far-trunks')
@@ -2485,12 +2616,16 @@ export class GameScene extends Phaser.Scene {
       enablePixelSprite(this.farTrunks as unknown as Phaser.GameObjects.Image)
     }
     for (const d of ST.decor?.back ?? []) {
-      const key = d.kind === 'picnic' ? 'cs-picnic' : d.kind.startsWith('s2-') ? d.kind : `deco-${d.kind}`
+      const key = d.kind === 'picnic' ? 'cs-picnic' : d.kind.startsWith('s2-') || d.kind.startsWith('s3-') ? d.kind : `deco-${d.kind}`
       if (!this.textures.exists(key)) continue
       const top = groundTopBelow(d.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
       const img = this.add.image(d.x, top + 2, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
       if (key === 's2-honeycomb-wall') img.setAlpha(0.9).setTint(0xd0a060)
       if (key === 's2-triangle-mark') img.setY(top - 30)
+      if (key === 's3-wok-stall') {
+        img.setTint(0x9a90b0)
+        this.add.circle(d.x, top - 30, 34, 0xff8a30, 0.12).setDepth(DEPTH.PROP - 3).setBlendMode(Phaser.BlendModes.ADD)
+      }
       enablePixelSprite(img)
       if (d.kind === 'billboard') {
         // The 地產 front company's sign — first hint of the plot.
@@ -2510,7 +2645,7 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({ targets: v, angle: { from: -2, to: 2 }, duration: 2200 + (d.x % 7) * 120, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
     }
     // Foreground grass tufts pass in front of the cast (depth above actors, below FX).
-    const kinds = this.tree ? ['deco-fern-b'] : ['deco-grass-a', 'deco-fern-b', 'deco-grass-c']
+    const kinds = this.market ? [] : this.tree ? ['deco-fern-b'] : ['deco-grass-a', 'deco-fern-b', 'deco-grass-c']
     let i = 0
     for (let x = 110; x < WORLD_W - 60; x += 190 + ((x * 7) % 70)) {
       const key = kinds[i++ % kinds.length]!
@@ -2817,6 +2952,7 @@ export class GameScene extends Phaser.Scene {
     this.shots = this.physics.add.group()
     this.enemyShots = this.physics.add.group()
     this.honeys = this.physics.add.group()
+    if (this.market) this.placeStalls()
     this.placeEnemies()
 
     this.physics.add.collider(this.boy, this.ground)
@@ -3002,8 +3138,8 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(0, () => {
       if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
     })
-    const handle = playCutscene(this, this.tree ? 'C3' : 'C1', () => {
-        playSong(this.tree ? 'stage2' : 'stage1')
+    const handle = playCutscene(this, this.market ? 'C5' : this.tree ? 'C3' : 'C1', () => {
+        playSong(this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -3017,7 +3153,8 @@ export class GameScene extends Phaser.Scene {
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
         )
         // data/signs.json SG-02 — display-only tutorial (no combat change)
-        const tip = this.tree ? null : tutorialSign()
+        const tip = this.tree || this.market ? null : tutorialSign()
+        if (this.market) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '燈熄咗？打燈籠著返佢！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
         if (this.tree) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '踩入風口會彈高！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
         if (tip && 'text' in tip && tip.text) {
           const ms = 'showMs' in tip && typeof tip.showMs === 'number' ? tip.showMs : 3000
@@ -3488,7 +3625,7 @@ export class GameScene extends Phaser.Scene {
     SFX.win()
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
     this.time.delayedCall(1800, () => {
-      this.storyIntro = playCutscene(this, this.tree ? 'C4' : 'C2', () => {
+      this.storyIntro = playCutscene(this, this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
         this.storyIntro = null
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         this.win()
@@ -3525,7 +3662,7 @@ export class GameScene extends Phaser.Scene {
     const W = GAME_W
     const H = GAME_H
     // Backdrop: the stage's own painting, darkened, with drifting gold motes.
-    const bgKey = this.tree ? 'story-canopy-far' : this.textures.exists('story-cover') ? 'story-cover' : null
+    const bgKey = this.market ? 'story-credits-bg' : this.tree ? 'story-canopy-far' : this.textures.exists('story-cover') ? 'story-cover' : null
     overlay.add(this.add.rectangle(0, 0, W, H, 0x120a06, 1))
     if (bgKey && this.textures.exists(bgKey)) overlay.add(this.add.image(0, 0, bgKey).setAlpha(0.35))
     for (let i = 0; i < 24; i++) {
@@ -3546,7 +3683,7 @@ export class GameScene extends Phaser.Scene {
     }
     // Title
     const title = this.add
-      .text(0, -H / 2 + 34, this.stageNo === 2 ? '第二關　通關！' : '第一關　通關！', {
+      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關'][this.stageNo] ?? '第一關'}　通關！`, {
         fontFamily: FONT_TITLE,
         fontSize: '28px',
         color: '#ffd76a',
@@ -3576,7 +3713,7 @@ export class GameScene extends Phaser.Scene {
     void kb
     overlay.add(
       this.add
-        .text(-W / 2 + 151, castY + 18, this.stageNo === 2 ? '第二罐真蜂蜜！噗噗識跳喇' : '第一罐真蜂蜜！噗噗隻耳郁咗', {
+        .text(-W / 2 + 151, castY + 18, ['', '第一罐真蜂蜜！噗噗隻耳郁咗', '第二罐真蜂蜜！噗噗識跳喇', '第三罐真蜂蜜！噗噗識行路'][this.stageNo] ?? '', {
           fontFamily: FONT_UI,
           fontSize: '10px',
           color: '#ffe9a8',
@@ -3645,7 +3782,7 @@ export class GameScene extends Phaser.Scene {
     const btnY = H / 2 - 30
     const btnBg = this.add.rectangle(0, btnY, 200, 26, 0x4a2a14, 1).setStrokeStyle(2, 0xc8902a)
     const btnTx = this.add
-      .text(0, btnY, this.stageNo === 2 ? '片尾字幕 ▶' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
+      .text(0, btnY, this.stageNo >= 2 ? '片尾字幕 ▶' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
       .setOrigin(0.5)
     const hitPad = this.add.rectangle(0, btnY, 420, 40, 0x000000, 0.001)
     overlay.add([btnBg, btnTx, hitPad])
@@ -3883,7 +4020,9 @@ export class GameScene extends Phaser.Scene {
   private layGroundRibbon(surfaceY: number) {
     const tex = this.tree && this.textures.exists('s2-bark-ground')
       ? 's2-bark-ground'
-      : this.textures.exists('tile-ground-top')
+      : this.market && this.textures.exists('s3-market-ground')
+        ? 's3-market-ground'
+        : this.textures.exists('tile-ground-top')
         ? 'tile-ground-top'
         : this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
     const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
@@ -3967,7 +4106,7 @@ export class GameScene extends Phaser.Scene {
     // wave; two heroes get an extra copy of every 3rd, a little behind it.
     const solo = this.mode === '1p'
     const place = (en: Stage1['enemies'][number], dx = 0) => {
-      if (en.species === 'bee' || en.species === 'squirrel') {
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade'].includes(en.species)) {
         this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX })
         return
       }
@@ -4186,7 +4325,8 @@ export class GameScene extends Phaser.Scene {
       if (lead < p.unlockX) return true
       let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.width + 24 + k * 38))
       k++
-      if (p.species === 'squirrel') x = this.nearestBaseFloorX(x, -1)
+      if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
+      if (p.species === 'stallkeeper') x = p.x
       this.spawnS2(p.species, x)
       return false
     })
@@ -4225,9 +4365,133 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spawnS2(species: string, x: number) {
+    if (species === 'lobster') {
+      this.addS2Enemy(new LobsterGuard(this, x, this.s2Hooks())).setFlipX(true)
+      return
+    }
+    if (species === 'stallkeeper') {
+      const k = new StallKeeper(this, x, this.s2Hooks(), { knife: (kx, ky, dir, high) => this.throwKnife(kx, ky, dir, high) })
+      k.stall = this.stalls.find((st) => Math.abs(st.x - x) < 90) ?? null
+      this.addS2Enemy(k).setFlipX(true)
+      return
+    }
+    if (species === 'mirrorshade') {
+      const m = this.addS2Enemy(new MirrorShade(this, x, this.s2Hooks()))
+      m.setFlipX(true)
+      m.onSplit = (fx) => {
+        if (this.ended || this.bossFight) return
+        const f = this.addS2Enemy(new MirrorShade(this, fx, this.s2Hooks(), true))
+        f.setFlipX(m.flipX)
+        playFx(this, 'enemy-poof', fx, LANE_FLOOR_Y - 20)
+        floatText(this, m.x, m.y - 60, '分身！睇地下倒影', '#c8d0ff', { size: 11, dur: 900 })
+      }
+      return
+    }
     const e = species === 'bee' ? new BeeSoldier(this, x, this.s2Hooks()) : new HoneySquirrel(this, x, this.s2Hooks())
     this.addS2Enemy(e)
     e.setFlipX(true)
+  }
+
+  // ── Stage 3 · 月影夜市 ───────────────────────────────────────────────────
+
+  private tickStage3(dt: number) {
+    this.s3world?.update(dt)
+    // Market street → hot springs: the far painting cross-fades past the creek bridge.
+    const cx = this.cameras.main.scrollX
+    const k = Phaser.Math.Clamp((cx - 2160) / 320, 0, 1)
+    this.marketFar.market?.setAlpha(1 - k)
+    this.marketFar.spring?.setAlpha(k)
+    if (this.bushStrip) this.bushStrip.setAlpha(1 - k)
+    this.tickStage2(dt)
+  }
+
+  /** 油甘魚攤主's kitchen knife: alternates low (jump) / high (crouch), spins. */
+  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean) {
+    if (this.ended) return
+    const key = this.textures.exists('s3-knife') ? 's3-knife' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const shot = this.enemyShots.create(x, feet - (high ? 19 : 7), key) as Phaser.Physics.Arcade.Sprite
+    shot.setDepth(DEPTH.FX - 2)
+    enableActorSprite(shot)
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(10, 8)
+    shot.setVelocity(dir * 180, 0)
+    shot.setData('lane', 0)
+    shot.setData('dmg', 1)
+    this.tweens.add({ targets: shot, angle: dir * 360, duration: 360, repeat: -1 })
+    floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
+    this.entities.add(shot, 'projectile')
+    this.time.delayedCall(1900, () => {
+      if (shot.active) shot.destroy()
+    })
+  }
+
+  /** Stalls from stage3.json: breakable cover in front of each keeper. */
+  private placeStalls() {
+    this.stalls = []
+    for (const st of ST.stalls ?? []) {
+      const stall = new MarketStall(this, st.x, LANE_FLOOR_Y + 1)
+      stall.setTint(0xb0a8c8)
+      this.addS2Enemy(stall)
+      stall.setDepth(DEPTH.PROP + 1)
+      stall.onBroken = () => {
+        SFX.kill()
+        burst(this, stall.x, stall.y - 24, 0xd8a060, 12)
+        floatText(this, stall.x, stall.y - 70, '個檔爛咗！', '#ffe08a', { size: 12, dur: 900 })
+      }
+      this.stalls.push(stall)
+    }
+  }
+
+  private owlHooks(): OwlHooks {
+    const b = ST.boss!
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      feathers: (gapX) => {
+        // A row of feathers drifts down across the arena; walk into the gap.
+        SFX.siren()
+        for (let x = b.arenaX0 + 18; x < b.arenaX1 - 10; x += 26) {
+          if (Math.abs(x - gapX) < 44) continue
+          const key = this.textures.exists('s3-feather') ? 's3-feather' : 'coin'
+          const f = this.enemyShots.create(x + Phaser.Math.Between(-4, 4), 40, key) as Phaser.Physics.Arcade.Sprite
+          f.setDepth(DEPTH.FX - 2).setAngle(160)
+          ;(f.body as Phaser.Physics.Arcade.Body).allowGravity = false
+          ;(f.body as Phaser.Physics.Arcade.Body).setSize(8, 14)
+          f.setVelocity(0, 0)
+          f.setData('dmg', 1)
+          this.entities.add(f, 'projectile')
+          this.time.delayedCall(450 + Phaser.Math.Between(0, 120), () => f.active && f.setVelocity(0, 150))
+          this.tweens.add({ targets: f, angle: { from: 150, to: 210 }, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+          this.time.delayedCall(2600, () => f.active && f.destroy())
+        }
+        // Gap marker on the bridge so the safe spot reads.
+        const m = this.add.ellipse(gapX, LANE_FLOOR_Y + 2, 70, 8, 0xfff0a0, 0.35).setDepth(DEPTH.GROUND + 4)
+        this.tweens.add({ targets: m, alpha: 0, delay: 1600, duration: 400, onComplete: () => m.destroy() })
+      },
+      reflect: (x) => {
+        // Wrong owl: its mirror flashes moonlight back at the nearest hero.
+        const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+        const h = heroes.sort((a, c) => Math.abs(a.x - x) - Math.abs(c.x - x))[0]
+        this.cameras.main.flash(120, 220, 230, 255)
+        floatText(this, x, LANE_FLOOR_Y - 90, '假身！反光！', '#c8d0ff', { size: 13, dur: 900 })
+        if (!h) return
+        const beam = this.add.line(0, 0, x, LANE_FLOOR_Y - 40, h.x, h.y - 24, 0xe8f0ff, 0.8).setOrigin(0).setDepth(DEPTH.FX).setLineWidth(3)
+        this.tweens.add({ targets: beam, alpha: 0, duration: 260, onComplete: () => beam.destroy() })
+        this.hazardHit(h, { knockX: (Math.sign(h.x - x) || 1) * 200, knockY: -320, label: '反光 -1' })
+      },
+      spawnDecoy: (x) => {
+        const d = new OwlDecoy(this, x, LANE_FLOOR_Y - 40, this.s2Hooks())
+        this.addS2Enemy(d)
+        playFx(this, 'enemy-poof', x, LANE_FLOOR_Y - 60)
+        return d
+      },
+      spawnCrate: (x) => {
+        const c = new OwlCrate(this, x, LANE_FLOOR_Y + 1)
+        this.addS2Enemy(c)
+        return c
+      },
+      bossEvent: (kind) => this.onQueenEvent(kind),
+    }
   }
 
   private addS2Enemy<T extends Phaser.Physics.Arcade.Sprite & { flying: boolean }>(e: T): T {
@@ -4274,22 +4538,24 @@ export class GameScene extends Phaser.Scene {
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
     if (this.ended) return
-    const handle = playCutscene(this, 'B2', () => {
+    const handle = playCutscene(this, this.market ? 'B3' : 'B2', () => {
       this.storyIntro = null
       if (this.ended) return
       this.physics.resume()
       if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
       this.keyEnter?.reset()
       this.pauseReadyAt = this.time.now + 1200
-      playSong('boss2')
+      playSong(this.market ? 'boss3' : 'boss2')
       SFX.boss()
-      const q = new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
+      const q = this.market
+        ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
+        : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
       q.onDefeated = () => this.queenDefeated()
       this.addS2Enemy(q)
       q.setFlipX(true)
       this.queen = q
       this.buildBossBar()
-      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '蜜冠女王蜂', '#ffcc44', { size: 22, dur: 1600 })
+      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.market ? '月橋鏡鴞' : '蜜冠女王蜂', this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
     })
     this.storyIntro = handle
   }
@@ -4302,7 +4568,7 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(0x1c120c, 1).fillRect(-w / 2 - 1, -3, w + 2, 8)
     const fill = this.add.rectangle(-w / 2, -2, w, 6, 0xffb020).setOrigin(0, 0)
     const label = this.add
-      .text(0, -6, '蜜冠女王蜂', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
+      .text(0, -6, this.market ? '月橋鏡鴞' : '蜜冠女王蜂', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
       .setOrigin(0.5, 1)
     root.add([g, fill, label])
     this.bossBar = { root, fill, w }
@@ -4322,19 +4588,19 @@ export class GameScene extends Phaser.Scene {
     if (kind === 'phase2') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 200, 90)
-      floatText(this, cx, 96, '佢落地生蛋！快啲打爛啲蛋！', '#ffe08a', { size: 16, dur: 2000 })
+      floatText(this, cx, 96, this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！', '#ffe08a', { size: 16, dur: 2000 })
     } else if (kind === 'phase3') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 140, 60)
-      floatText(this, cx, 96, '小心！假蜜噴射——跳開！', '#ff9a3a', { size: 16, dur: 2000 })
+      floatText(this, cx, 96, this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！', '#ff9a3a', { size: 16, dur: 2000 })
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(this, this.queen.x, this.queen.y - 110, this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
     } else if (kind === 'defeat') {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen) floatText(this, this.queen.x, this.queen.y - 120, '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen) floatText(this, this.queen.x, this.queen.y - 120, this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy

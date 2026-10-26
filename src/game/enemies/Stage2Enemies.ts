@@ -26,7 +26,7 @@ export type Stage2Hooks = {
   bossEvent?: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat', q: QueenBee) => void
 }
 
-class AnimEnemy extends Enemy {
+export class AnimEnemy extends Enemy {
   set: AnimSetId
   flying = false
   /** Stage-2 hooks (set by GameScene factory). */

@@ -577,6 +577,250 @@
           "sub": "多謝遊玩・待續"
         }
       ]
+    },
+    "C5": {
+      "title": "第 3 關前・夜市",
+      "stage": "market",
+      "steps": [
+        {
+          "music": "story"
+        },
+        {
+          "still": "c3-market"
+        },
+        {
+          "say": "narr",
+          "text": "下山條路通去一個夜市。攤檔一個人都冇，啲鑊仲喺度炒緊嘢。"
+        },
+        {
+          "say": "lunbo",
+          "text": "點解冇人……啲鑊仲熱嘅？",
+          "face": 2
+        },
+        {
+          "say": "kibobo",
+          "text": "燈……自己熄咗。",
+          "face": 2
+        },
+        {
+          "still": null
+        },
+        {
+          "actor": "lunbo",
+          "x": 220
+        },
+        {
+          "actor": "pupu",
+          "x": 300,
+          "grey": 0.5
+        },
+        {
+          "actor": "kibobo",
+          "x": 360,
+          "flip": true
+        },
+        {
+          "music": "stop"
+        },
+        {
+          "sfx": "dread"
+        },
+        {
+          "fx": "shadow"
+        },
+        {
+          "say": "pupu",
+          "text": "噗……噗！"
+        },
+        {
+          "say": "kibobo",
+          "text": "噗噗話佢聞到蜂蜜味……仲有雪糕同柴柴嘅味道！",
+          "face": 1
+        },
+        {
+          "say": "lunbo",
+          "text": "燈籠熄咗就打返著佢。我哋唔好行散。"
+        },
+        {
+          "card": "第三關",
+          "sub": "月影夜市"
+        }
+      ]
+    },
+    "B3": {
+      "title": "鏡鴞現身",
+      "stage": "market",
+      "steps": [
+        {
+          "music": "stop"
+        },
+        {
+          "sfx": "dread"
+        },
+        {
+          "still": "s3-boss-intro"
+        },
+        {
+          "say": "owlEvil",
+          "text": "月光照到嘅，都係我嘅。"
+        },
+        {
+          "say": "owlEvil",
+          "text": "三角大人話，呢罐蜜要留喺橋上。"
+        },
+        {
+          "say": "kibobo",
+          "text": "佢心口塊鏡……反光反到我眼都花。",
+          "face": 2
+        },
+        {
+          "say": "lunbo",
+          "text": "睇水面！有倒影嗰隻先係真嘅。",
+          "face": 0
+        },
+        {
+          "still": null
+        }
+      ]
+    },
+    "C6": {
+      "title": "第 3 關後・第三罐",
+      "stage": "market",
+      "steps": [
+        {
+          "music": "sad"
+        },
+        {
+          "actor": "lunbo",
+          "x": 200
+        },
+        {
+          "actor": "pupu",
+          "x": 270,
+          "grey": 0.5
+        },
+        {
+          "actor": "kibobo",
+          "x": 330
+        },
+        {
+          "actor": "owl",
+          "x": 470,
+          "flip": true
+        },
+        {
+          "anim": "owl",
+          "name": "defeat"
+        },
+        {
+          "wait": 900
+        },
+        {
+          "sfx": "sparkle"
+        },
+        {
+          "music": "story"
+        },
+        {
+          "say": "narr",
+          "text": "鏡面一裂，貓頭鷹眼入面嘅黃光慢慢褪咗。"
+        },
+        {
+          "say": "owl",
+          "text": "……我好似發咗一場好長嘅夢。",
+          "face": 2
+        },
+        {
+          "say": "owl",
+          "text": "佢哋……喺工地。推土機一路推，成片樹林都冇晒。",
+          "face": 0
+        },
+        {
+          "say": "owl",
+          "text": "呢罐真蜂蜜，我守咗好耐。交俾你哋。",
+          "face": 1
+        },
+        {
+          "prop": "jar",
+          "kind": "jar-real",
+          "x": 300,
+          "drop": true
+        },
+        {
+          "sfx": "sparkle"
+        },
+        {
+          "say": "kibobo",
+          "text": "第三罐喇！噗噗，飲啦。",
+          "face": 1
+        },
+        {
+          "move": "pupu",
+          "x": 296,
+          "ms": 380
+        },
+        {
+          "sfx": "gulp"
+        },
+        {
+          "remove": "jar"
+        },
+        {
+          "colour": "pupu",
+          "amount": 0.3,
+          "ms": 1400
+        },
+        {
+          "music": "victory"
+        },
+        {
+          "move": "pupu",
+          "x": 340,
+          "ms": 700
+        },
+        {
+          "move": "pupu",
+          "x": 300,
+          "ms": 700
+        },
+        {
+          "say": "pupu",
+          "text": "噗噗噗！"
+        },
+        {
+          "say": "lunbo",
+          "text": "佢識行喇！仲差兩罐。",
+          "face": 1
+        },
+        {
+          "say": "narr",
+          "text": "雪糕同柴柴由攤檔底下鑽出嚟。柴柴搖到條尾都快甩。"
+        },
+        {
+          "say": "kibobo",
+          "text": "六個小朋友喇！張野餐墊快坐唔落。",
+          "face": 1
+        },
+        {
+          "still": "c4-taxi"
+        },
+        {
+          "say": "narr",
+          "text": "一架的士停喺橋頭。揸車嘅，係咖啡媽媽。"
+        },
+        {
+          "say": "mama",
+          "text": "上車啦，飲杯熱咖啡先。工地好遠㗎。",
+          "face": 1
+        },
+        {
+          "still": null
+        },
+        {
+          "card": "第三關・完",
+          "sub": "下一站：鹽霧工地"
+        }
+      ]
     }
   }
 }
