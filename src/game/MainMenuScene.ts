@@ -1,30 +1,39 @@
 import Phaser from 'phaser'
-import { unlockAudio, playSong } from './audio'
+import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
-import { enableActorSprite } from './pixelSnap'
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 type Mode = '1p' | '2p'
 type SoloCast = 'boy' | 'girl'
-type MenuChoice = { mode: Mode; solo?: SoloCast; text: string }
+type CastId = 'boy' | 'girl' | 'bear'
+type MenuChoice = { mode: Mode; solo?: SoloCast; text: string; info: string; lit: CastId[] }
 
-/** Title / 1P·2P select — brand-first creek shrine atmosphere */
+/** Where each hero stands in the cover still (art-src/story/cover.png, 640×360). */
+const CAST_BOX: Record<CastId, { x: number; y: number; w: number; h: number }> = {
+  boy: { x: 136, y: 78, w: 124, h: 248 },
+  girl: { x: 256, y: 82, w: 108, h: 246 },
+  bear: { x: 390, y: 136, w: 108, h: 188 },
+}
+
+const PLAQUE_W = 134
+const PLAQUE_H = 20
+
+/**
+ * Character select over the cover illustration: the chosen heroes stay lit,
+ * the others sink into shadow; three lacquered plaques along the bottom.
+ */
 export class MainMenuScene extends Phaser.Scene {
   private cursor = 0
-  private labels: Phaser.GameObjects.Text[] = []
-  private panels: Phaser.GameObjects.Image[] = []
-  private cursorsGfx: Phaser.GameObjects.Image[] = []
   private choices: MenuChoice[] = []
-  private previewGirl: Phaser.GameObjects.Image | null = null
-  private previewBear: Phaser.GameObjects.Image | null = null
-  private previewGirlShad: Phaser.GameObjects.Image | null = null
-  private previewBearShad: Phaser.GameObjects.Image | null = null
-  private previewBoy: Phaser.GameObjects.Image | null = null
-  private previewBoyShad: Phaser.GameObjects.Image | null = null
-  /** Ignore Enter/Space/click-start until this time — same key that left the win screen. */
+  private plaques: { g: Phaser.GameObjects.Graphics; label: Phaser.GameObjects.Text; x: number }[] = []
+  private shade: Partial<Record<CastId, Phaser.GameObjects.Image>> = {}
+  private info!: Phaser.GameObjects.Text
+  private arrows: Phaser.GameObjects.Text[] = []
+  private arrowBox!: Phaser.GameObjects.Container
+  /** Ignore Enter/Space/click-start until this time — same key that left the previous screen. */
   private inputReadyAt = 0
   private starting = false
 
@@ -34,113 +43,68 @@ export class MainMenuScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale
-    this.cameras.main.setBackgroundColor('#6a9ec8')
-    this.cameras.main.fadeIn(300, 70, 120, 150)
+    this.cameras.main.setBackgroundColor('#000000')
+    this.cameras.main.fadeIn(300, 0, 0, 0)
     this.cursor = 0
     this.starting = false
+    this.plaques = []
+    this.arrows = []
+    this.shade = {}
     this.registry.set('leavingToMenu', false)
-    // Block the Return/Space that just dismissed the clear screen from also picking a mode.
     this.inputReadyAt = this.time.now + 450
 
-    this.buildAtmosphere(width, height)
-    this.buildBrandHero(width, height)
-    this.buildModeSelect(width)
-    this.buildFooter(width, height)
+    this.choices = [
+      { mode: '1p', solo: 'boy', text: '單人・倫寶', info: '倫寶：遠距離射三文魚子　食金鮭升級散射', lit: ['boy'] },
+      { mode: '1p', solo: 'girl', text: '單人・琪寶寶', info: '琪寶寶：近身劍擊三連斬　背上扇可以乘風', lit: ['girl', 'bear'] },
+      { mode: '2p', text: '雙人合作', info: '兩個人一齊玩：倫寶（WASD）＋琪寶寶（方向鍵）', lit: ['boy', 'girl', 'bear'] },
+    ]
+
+    this.buildBackdrop(width, height)
+    this.buildTitle(width)
+    this.buildPlaques(width, height)
+    this.buildScores(width)
     this.wireInput()
     mountTouchControls(this)
     mountMuteButton(this, 14, 8)
-    this.refresh()
+    this.refresh(true)
   }
 
   update() {
-    if (TouchInput.justPressed('up')) {
-      this.cursor = (this.cursor + this.choices.length - 1) % this.choices.length
-      this.refresh()
-    }
-    if (TouchInput.justPressed('down')) {
-      this.cursor = (this.cursor + 1) % this.choices.length
-      this.refresh()
-    }
+    if (TouchInput.justPressed('up') || TouchInput.justPressed('left')) this.move(-1)
+    if (TouchInput.justPressed('down') || TouchInput.justPressed('right')) this.move(1)
     if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) {
       this.confirmStart()
     }
   }
 
-  private buildAtmosphere(width: number, height: number) {
-    const g = this.add.graphics().setDepth(0)
-    g.fillStyle(0x6ab4e0, 1)
-    g.fillRect(0, 0, width, height)
-    // Far upper wallpaper — warm fog, no blue veil
-    if (this.textures.exists('bg-wallpaper')) {
-      this.add
-        .image(width / 2, height * 0.3, 'bg-wallpaper')
-        .setDepth(0)
-        .setScale(1)
-        .setAlpha(0.7)
+  private buildBackdrop(width: number, height: number) {
+    if (!this.textures.exists('story-cover')) {
+      this.add.rectangle(width / 2, height / 2, width, height, 0x2a3a18)
+      return
     }
-
-    if (this.textures.exists('water-deep')) {
-      const water = this.add.tileSprite(width / 2, height - 64, width, 64, 'water-deep').setDepth(3)
-      this.tweens.add({ targets: water, tilePositionX: 64, duration: 6000, repeat: -1 })
+    this.add.image(width / 2, height / 2, 'story-cover')
+    for (const id of Object.keys(CAST_BOX) as CastId[]) {
+      const key = `menu-shade-${id}`
+      this.bakeShade(key, CAST_BOX[id])
+      if (this.textures.exists(key)) this.shade[id] = this.add.image(width / 2, height / 2, key).setAlpha(0)
     }
-    if (this.textures.exists('water-foam')) {
-      this.add.tileSprite(width / 2, height - 96, width, 16, 'water-foam').setDepth(4).setAlpha(0.9)
+    // Dark band top (logo) and bottom (plaques) so text stays readable.
+    const g = this.add.graphics()
+    for (let i = 0; i < 20; i++) {
+      g.fillStyle(0x0c0804, 0.6 * (1 - i / 20))
+      g.fillRect(0, i * 5, width, 5)
+      g.fillStyle(0x0c0804, 0.7 * (1 - i / 20))
+      g.fillRect(0, height - (i + 1) * 3, width, 3)
     }
-
-    g.fillStyle(0xc48a48, 1)
-    g.fillRect(0, height - 48, width, 48)
-    g.fillStyle(0x9a6838, 1)
-    for (let x = 0; x < width; x += 36) g.fillRect(x, height - 48, 3, 48)
-    g.fillStyle(0xe0b070, 0.45)
-    g.fillRect(0, height - 48, width, 5)
-
-    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    if (this.textures.exists('prop-torii')) {
-      this.add.image(width / 2, height - 42, shad).setDepth(5).setAlpha(0.6).setScale(2, 1)
-      this.add.image(width / 2, height - 50, 'prop-torii').setOrigin(0.5, 1).setDepth(5).setScale(1).setAlpha(0.95)
-    }
-    if (this.textures.exists('prop-banner')) {
-      this.add.image(70, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(1, 1)
-      this.add.image(70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(2)
-      this.add.image(width - 70, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(1, 1)
-      this.add.image(width - 70, height - 48, 'prop-banner').setOrigin(0.5, 1).setDepth(6).setScale(2)
-    }
-    if (this.textures.exists('prop-lantern3d')) {
-      const L = this.add.image(130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(2)
-      const R = this.add.image(width - 130, height - 48, 'prop-lantern3d').setOrigin(0.5, 1).setDepth(6).setScale(2)
-      this.add.image(130, height - 42, shad).setDepth(5).setAlpha(0.45).setScale(1, 1)
-      this.add.image(width - 130, height - 42, shad).setDepth(5).setAlpha(0.45).setScale(1, 1)
-      this.tweens.add({ targets: L, angle: { from: -4, to: 4 }, duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
-      this.tweens.add({ targets: R, angle: { from: 4, to: -4 }, duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
-    }
-    if (this.textures.exists('prop-honey-stack')) {
-      this.add.image(200, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(1, 1)
-      this.add.image(200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1)
-      this.add.image(width - 200, height - 42, shad).setDepth(5).setAlpha(0.5).setScale(1, 1)
-      this.add.image(width - 200, height - 48, 'prop-honey-stack').setOrigin(0.5, 1).setDepth(6).setScale(1).setFlipX(true)
-    }
-    if (this.textures.exists('prop-bridge')) {
-      this.add.image(width / 2, height - 38, 'prop-bridge').setDepth(4).setScale(2).setAlpha(0.85)
-    }
-
-    if (this.textures.exists('ui-noren')) {
-      this.add.image(28, 90, 'ui-noren').setDepth(8).setScale(1)
-      this.add.image(width - 28, 90, 'ui-noren').setDepth(8).setScale(1).setFlipX(true)
-    }
-    if (this.textures.exists('ui-corner')) {
-      this.add.image(22, 22, 'ui-corner').setDepth(9).setScale(1)
-      this.add.image(width - 22, 22, 'ui-corner').setDepth(9).setScale(1).setFlipX(true)
-    }
-
-    for (let i = 0; i < 8; i++) {
-      const sx = 80 + i * 110 + (i % 3) * 20
-      const sy = 40 + (i % 4) * 28
-      const spark = this.add.circle(sx, sy, 2 + (i % 3), 0xffe08a, 0.55).setDepth(7)
+    // Light motes drifting in the sunbeam.
+    for (let i = 0; i < 16; i++) {
+      const m = this.add.circle(Phaser.Math.Between(140, 500), Phaser.Math.Between(110, 300), 1, 0xfff0b0, 0.8)
       this.tweens.add({
-        targets: spark,
-        y: sy - 14,
-        alpha: { from: 0.2, to: 0.85 },
-        duration: 1600 + i * 120,
+        targets: m,
+        y: m.y - Phaser.Math.Between(30, 70),
+        alpha: { from: 0, to: 0.9 },
+        duration: Phaser.Math.Between(2600, 4200),
+        delay: i * 180,
         yoyo: true,
         repeat: -1,
         ease: 'Sine.inOut',
@@ -148,185 +112,162 @@ export class MainMenuScene extends Phaser.Scene {
     }
   }
 
-  private buildBrandHero(width: number, height: number) {
-    const plaqueKey = this.textures.exists('ui-title-plaque') ? 'ui-title-plaque' : 'ui-scroll'
-    const plaque = this.add
-      .image(width / 2, 36, plaqueKey)
-      .setDepth(10)
-      .setScale(1)
-
-    const brand = this.add
-      .text(width / 2, 32, '鮭鮭熊', {
-        fontFamily: FONT_TITLE,
-        fontSize: '24px',
-        color: '#2a1408',
-        stroke: '#fff6d0',
-        strokeThickness: 3,
-      })
-      .setOrigin(0.5)
-      .setDepth(11)
-
-    const sub = this.add
-      .text(width / 2, 54, '第一關・百畝樹林　｜　奪回蜂蜜・野餐之路', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: '#5a3820',
-        backgroundColor: '#ffe8b088',
-        padding: { x: 6, y: 2 },
-      })
-      .setOrigin(0.5)
-      .setDepth(11)
-
-    this.tweens.add({
-      targets: [plaque, brand],
-      y: '+=4',
-      duration: 2200,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.inOut',
-    })
-    this.tweens.add({
-      targets: sub,
-      alpha: { from: 0.75, to: 1 },
-      duration: 1800,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.inOut',
-    })
-
-    const shad = this.textures.exists('shad') ? 'shad' : 'shadow-blob'
-    // Bible-sized cast (48/40) at ~1× — keep under title band on 480×270.
-    const ly = height - 22
-    this.previewBoyShad = this.add.image(70, ly + 3, shad).setDepth(6).setAlpha(0.6).setScale(1, 1)
-    this.previewBoy = this.add.image(70, ly, 'art-salmon').setDepth(7).setScale(1)
-    enableActorSprite(this.previewBoy)
-    this.previewGirlShad = this.add.image(width - 70, ly + 3, shad).setDepth(6).setAlpha(0.55).setScale(1, 1)
-    this.previewGirl = this.add.image(width - 70, ly, 'art-girl').setDepth(7).setScale(1)
-    enableActorSprite(this.previewGirl)
-    this.previewBearShad = this.add.image(width - 110, ly + 3, shad).setDepth(6).setAlpha(0.5).setScale(1, 1)
-    this.previewBear = this.add.image(width - 110, ly + 1, 'art-bear').setDepth(7).setScale(1)
-    enableActorSprite(this.previewBear)
-    this.previewGirl.setVisible(false)
-    this.previewBear.setVisible(false)
-    this.previewGirlShad.setVisible(false)
-    this.previewBearShad.setVisible(false)
+  /** A full-screen copy of the cover, darkened and desaturated, kept only inside one hero's feathered box. */
+  private bakeShade(key: string, box: { x: number; y: number; w: number; h: number }) {
+    if (this.textures.exists(key)) return
+    const src = this.textures.get('story-cover').getSourceImage() as HTMLImageElement | HTMLCanvasElement
+    const W = 640
+    const H = 360
+    const c = document.createElement('canvas')
+    c.width = W
+    c.height = H
+    const ctx = c.getContext('2d')!
+    ctx.filter = 'grayscale(0.7) brightness(0.45)'
+    ctx.drawImage(src, 0, 0, W, H)
+    ctx.filter = 'none'
+    const m = document.createElement('canvas')
+    m.width = W
+    m.height = H
+    const mc = m.getContext('2d')!
+    mc.filter = 'blur(5px)'
+    mc.fillStyle = '#fff'
+    mc.beginPath()
+    mc.ellipse(box.x + box.w / 2, box.y + box.h / 2, box.w / 2, box.h / 2 + 10, 0, 0, Math.PI * 2)
+    mc.fill()
+    ctx.globalCompositeOperation = 'destination-in'
+    ctx.drawImage(m, 0, 0)
+    this.textures.addCanvas(key, c)
   }
 
-  private buildModeSelect(width: number) {
-    this.choices = [
-      { mode: '1p', solo: 'boy', text: '單人　—　倫寶' },
-      { mode: '1p', solo: 'girl', text: '單人　—　琪寶寶' },
-      { mode: '2p', text: '雙人　—　倫寶＋琪寶寶' },
-    ]
-    this.panels = []
-    this.labels = []
-    this.cursorsGfx = []
-
-    this.choices.forEach((item, i) => {
-      const y = 78 + i * 28
-      const panelKey = this.textures.exists('ui-wood-panel') ? 'ui-wood-panel' : 'ui-scroll'
-      const panel = this.add
-        .image(width / 2, y, panelKey)
-        .setDepth(12)
-        .setScale(1)
-      panel.setInteractive({ useHandCursor: true })
-      panel.on('pointerover', () => {
-        this.cursor = i
-        this.refresh()
+  private buildTitle(width: number) {
+    this.add
+      .text(width / 2 + 2, 30 + 2, '鮭鮭熊', { fontFamily: FONT_TITLE, fontSize: '34px', color: '#5a1808' })
+      .setOrigin(0.5)
+    const logo = this.add
+      .text(width / 2, 30, '鮭鮭熊', {
+        fontFamily: FONT_TITLE,
+        fontSize: '34px',
+        color: '#ffd76a',
+        stroke: '#3a1408',
+        strokeThickness: 5,
       })
-      // Pick a mode → go straight into the run (no separate Start button).
-      panel.on('pointerdown', () => {
+      .setOrigin(0.5)
+    this.tweens.add({ targets: logo, y: 28, duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    this.add
+      .text(width / 2, 58, '— 揀角色 —', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff2d0', stroke: '#1a0e06', strokeThickness: 3 })
+      .setOrigin(0.5)
+    this.info = this.add
+      .text(width / 2, 78, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#fff2d0', stroke: '#1a0e06', strokeThickness: 3 })
+      .setOrigin(0.5)
+  }
+
+  private buildPlaques(width: number, height: number) {
+    const y = height - 26
+    const gap = 172
+    this.choices.forEach((c, i) => {
+      const x = width / 2 + (i - 1) * gap
+      const g = this.add.graphics()
+      const label = this.add
+        .text(x, y, c.text, { fontFamily: FONT_UI, fontSize: '12px', color: '#fff', stroke: '#1a0e06', strokeThickness: 2 })
+        .setOrigin(0.5)
+      const hit = this.add.zone(x, y, PLAQUE_W, PLAQUE_H + 6).setInteractive({ useHandCursor: true })
+      hit.on('pointerover', () => {
+        if (this.cursor !== i) {
+          this.cursor = i
+          this.refresh()
+        }
+      })
+      hit.on('pointerdown', () => {
+        unlockAudio()
         this.cursor = i
         this.refresh()
         this.confirmStart()
       })
-      this.panels.push(panel)
-
-      this.labels.push(
-        this.add
-          .text(width / 2, y, item.text, {
-            fontFamily: FONT_UI,
-            fontSize: '12px',
-            color: '#2a1810',
-            padding: { x: 4, y: 2 },
-          })
-          .setOrigin(0.5)
-          .setDepth(13),
-      )
-
-      if (this.textures.exists('ui-cursor')) {
-        this.cursorsGfx.push(
-          this.add.image(width / 2 - 95, y, 'ui-cursor').setDepth(13).setScale(1).setVisible(false),
-        )
-      }
+      this.plaques.push({ g, label, x })
     })
-
+    // Bouncing arrows either side of the chosen plaque (children of a box that follows the cursor).
+    this.arrowBox = this.add.container(0, y)
+    for (const dir of [-1, 1]) {
+      const a = this.add
+        .text(dir * (PLAQUE_W / 2 + 10), 0, dir < 0 ? '▶' : '◀', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
+        .setOrigin(0.5)
+      this.arrowBox.add(a)
+      this.tweens.add({ targets: a, x: `+=${-dir * 3}`, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      this.arrows.push(a)
+    }
+    this.add
+      .text(width / 2, height - 6, '←→ 揀　Enter／F 開始', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
+      .setOrigin(0.5, 1)
+      .setAlpha(0.8)
   }
 
-  private buildFooter(width: number, height: number) {
+  private buildScores(width: number) {
     const scores = loadScores()
-    const scoreLines =
-      scores.length === 0
-        ? '尚無紀錄'
-        : scores
-            .slice(0, 3)
-            .map(
-              (s, i) =>
-                `${i + 1}. ${s.score}分　${s.timeSec.toFixed(0)}秒　蜜${s.honey}　${s.mode === '1p' ? '單人' : '雙人'}`,
-            )
-            .join('\n')
+    if (scores.length === 0) return
+    const lines = scores
+      .slice(0, 3)
+      .map((s, i) => `${i + 1}. ${s.score}分 ${s.timeSec.toFixed(0)}秒 ${s.mode === '1p' ? '單' : '雙'}`)
+      .join('\n')
     this.add
-      .text(width / 2, 168, `★ 高分榜 ★\n${scoreLines}`, {
+      .text(width - 8, 8, `★ 最佳紀錄\n${lines}`, {
         fontFamily: FONT_UI,
-        fontSize: '10px',
+        fontSize: '9px',
         color: '#f7e7c0',
-        backgroundColor: '#3a2210cc',
-        padding: { x: 8, y: 4 },
-        align: 'center',
+        backgroundColor: '#1c120ccc',
+        padding: { x: 6, y: 4 },
+        align: 'left',
       })
-      .setOrigin(0.5, 0)
-      .setDepth(12)
+      .setOrigin(1, 0)
+  }
 
-    this.add
-      .text(
-        width / 2,
-        height - 14,
-        '點選模式即開始　｜　上下揀　空白／Enter確認\nP1：ＷＡＳＤ　Ｆ攻擊　Ｇ跳　Ｔ絕招（食蜂蜜充藍條）',
-        {
-          fontFamily: FONT_UI,
-          fontSize: '9px',
-          color: '#3a2818',
-          align: 'center',
-          backgroundColor: '#ffe8b0aa',
-          padding: { x: 6, y: 3 },
-        },
-      )
-      .setOrigin(0.5)
-      .setDepth(12)
+  private drawPlaque(i: number, on: boolean) {
+    const p = this.plaques[i]
+    if (!p) return
+    const { g, x } = p
+    const y = this.scale.height - 26
+    const x0 = x - PLAQUE_W / 2
+    const y0 = y - PLAQUE_H / 2
+    g.clear()
+    g.fillStyle(0x000000, 0.35).fillRect(x0 + 2, y0 + 2, PLAQUE_W, PLAQUE_H)
+    g.fillStyle(on ? 0xc8902a : 0x5a4020, 1).fillRect(x0 - 1, y0 - 1, PLAQUE_W + 2, PLAQUE_H + 2)
+    g.fillStyle(on ? 0x4a2a14 : 0x241810, 1).fillRect(x0, y0, PLAQUE_W, PLAQUE_H)
+    g.fillStyle(on ? 0x7a4a24 : 0x34241a, 1).fillRect(x0, y0, PLAQUE_W, 3)
+    if (on) {
+      g.fillStyle(0xffe08a, 1)
+      for (const cx of [x0 + 3, x0 + PLAQUE_W - 5]) g.fillRect(cx, y0 + PLAQUE_H / 2 - 1, 2, 2)
+    }
+    p.label.setColor(on ? '#ffe9a8' : '#9a8a78')
+  }
+
+  private move(d: number) {
+    this.cursor = (this.cursor + this.choices.length + d) % this.choices.length
+    SFX.blip(660)
+    this.refresh()
   }
 
   private wireInput() {
     const kb = this.input.keyboard!
-    const onUp = () => {
-      this.cursor = (this.cursor + this.choices.length - 1) % this.choices.length
-      this.refresh()
-    }
-    const onDown = () => {
-      this.cursor = (this.cursor + 1) % this.choices.length
-      this.refresh()
-    }
+    const prev = () => this.move(-1)
+    const next = () => this.move(1)
     const onStart = () => this.confirmStart()
-    kb.on('keydown-UP', onUp)
-    kb.on('keydown-DOWN', onDown)
-    kb.on('keydown-ENTER', onStart)
-    kb.on('keydown-SPACE', onStart)
+    const map: [string, () => void][] = [
+      ['keydown-UP', prev],
+      ['keydown-LEFT', prev],
+      ['keydown-A', prev],
+      ['keydown-W', prev],
+      ['keydown-DOWN', next],
+      ['keydown-RIGHT', next],
+      ['keydown-D', next],
+      ['keydown-S', next],
+      ['keydown-ENTER', onStart],
+      ['keydown-SPACE', onStart],
+      ['keydown-F', onStart],
+      ['keydown-J', onStart],
+    ]
+    for (const [ev, fn] of map) kb.on(ev, fn)
     this.events.once('shutdown', () => {
-      kb?.off('keydown-UP', onUp)
-      kb?.off('keydown-DOWN', onDown)
-      kb?.off('keydown-ENTER', onStart)
-      kb?.off('keydown-SPACE', onStart)
+      for (const [ev, fn] of map) kb?.off(ev, fn)
     })
-
     kb.once('keydown', () => {
       unlockAudio()
       playSong('title')
@@ -337,33 +278,24 @@ export class MainMenuScene extends Phaser.Scene {
     })
   }
 
-  private refresh() {
-    this.labels.forEach((t, i) => {
-      const on = i === this.cursor
-      t.setColor(on ? '#1a1008' : '#8a8a8a')
-      t.setScale(1)
-      const panel = this.panels[i]
-      if (panel) {
-        if (this.textures.exists('ui-wood-panel')) {
-          panel.setTexture(on ? 'ui-wood-panel-on' : 'ui-wood-panel')
-        }
-        if (on) panel.clearTint()
-        else panel.setTint(0x7a7a7a)
-        panel.setAlpha(on ? 1 : 0.72)
-      }
-      const cur = this.cursorsGfx[i]
-      if (cur) cur.setVisible(on)
-    })
+  private refresh(instant = false) {
     const choice = this.choices[this.cursor]
-    const duo = choice?.mode === '2p'
-    const soloGirl = choice?.mode === '1p' && choice.solo === 'girl'
-    const soloBoy = choice?.mode === '1p' && choice.solo === 'boy'
-    this.previewBoy?.setVisible(duo || soloBoy)
-    this.previewBoyShad?.setVisible(duo || soloBoy)
-    this.previewGirl?.setVisible(duo || soloGirl)
-    this.previewGirlShad?.setVisible(duo || soloGirl)
-    this.previewBear?.setVisible(duo || soloGirl)
-    this.previewBearShad?.setVisible(duo || soloGirl)
+    if (!choice) return
+    this.plaques.forEach((_, i) => this.drawPlaque(i, i === this.cursor))
+    const p = this.plaques[this.cursor]
+    if (p) {
+      this.arrowBox.setX(p.x)
+      this.tweens.add({ targets: p.label, scale: { from: 1.15, to: 1 }, duration: 160, ease: 'Back.out' })
+    }
+    this.info.setText(choice.info)
+    for (const id of Object.keys(CAST_BOX) as CastId[]) {
+      const img = this.shade[id]
+      if (!img) continue
+      const alpha = choice.lit.includes(id) ? 0 : 1
+      this.tweens.killTweensOf(img)
+      if (instant) img.setAlpha(alpha)
+      else this.tweens.add({ targets: img, alpha, duration: 220, ease: 'Sine.out' })
+    }
   }
 
   private confirmStart() {
@@ -372,11 +304,13 @@ export class MainMenuScene extends Phaser.Scene {
     const choice = this.choices[this.cursor]
     if (!choice) return
     this.starting = true
+    SFX.powerUp()
+    const p = this.plaques[this.cursor]
+    if (p) this.tweens.add({ targets: p.label, alpha: 0.2, duration: 70, yoyo: true, repeat: 3 })
     this.registry.set('playMode', choice.mode)
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.registry.set('stageRound', 1)
-    // 過場黑幕 0.3s 淡出 → 下一場淡入
-    this.cameras.main.fadeOut(300, 0, 0, 0)
-    this.time.delayedCall(300, () => this.scene.start('play'))
+    this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
+    this.time.delayedCall(680, () => this.scene.start('play'))
   }
 }

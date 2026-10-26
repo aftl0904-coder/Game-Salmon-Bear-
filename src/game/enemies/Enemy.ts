@@ -66,7 +66,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     // Goemon knockback lean — heavier push + white flash pose
     this.setVelocityX(dir * (dmg >= 2 ? 340 : 280))
     this.setVelocityY(dmg >= 2 ? -370 : -300)
+    // Pure-white hit flash (fill tint) for 2–3 frames — the classic "it connected" read.
     this.setTint(0xffffff)
+    this.setTintMode(Phaser.TintModes.FILL)
     this.poseAngle = 0
     this.setAngle(0)
     this.setScale(this.baseScale || 1)
@@ -74,8 +76,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.hitThis = false
     this.setFsm('HURT')
     const tintRestore = this.defaultTint()
-    this.scene.time.delayedCall(90, () => {
-      if (!this.active || this.fsm === 'DEAD') return
+    this.scene.time.delayedCall(70, () => {
+      if (!this.active) return
+      this.setTintMode(Phaser.TintModes.MULTIPLY)
+      if (this.fsm === 'DEAD') return
       this.clearTint()
       if (tintRestore !== undefined) this.setTint(tintRestore)
     })
