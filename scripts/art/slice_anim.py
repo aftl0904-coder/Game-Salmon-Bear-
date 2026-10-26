@@ -39,13 +39,22 @@ def wood_dark(a):  # 機械豬 barrel staves
     r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
     return (r > 80) & (r < 170) & (g > 40) & (g < 110) & (b < 70) & (r - b > 50)
 
+def bee_yellow(a):  # 蜜蜂 / 女王蜂 yellow stripes
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 200) & (g > 160) & (b < 110)
+def squirrel_fur(a):  # 蜜僵松鼠 brown fur
+    r, g, b = a[..., 0].astype(int), a[..., 1].astype(int), a[..., 2].astype(int)
+    return (r > 110) & (r < 210) & (g > 55) & (g < 130) & (b < 80) & (r - b > 60)
+
 CHARS = {
     'lunbo': dict(height=72, ref='walk', key=hair_black, anims={
         'idle': (6, True), 'walk': (10, True), 'jump': (8, False), 'crouch': (14, False), 'shoot': (16, False),
-        'shoot-crouch': (16, False), 'hurt': (10, False), 'ko': (8, False), 'win': (6, True)}),
+        'shoot-crouch': (16, False), 'hurt': (10, False), 'ko': (8, False), 'win': (6, True),
+        'bike-ride': (12, True), 'bike-jump': (8, False)}),
     'kibobo': dict(height=72, ref='idle', key=hair_brown, anims={
         'idle': (6, True), 'run': (12, True), 'jump': (8, False), 'crouch': (14, False), 'slash1': (18, False),
-        'slash2': (18, False), 'slash3': (18, False), 'fan-glide': (8, True), 'hurt': (10, False), 'ko': (8, False), 'win': (6, True)}),
+        'slash2': (18, False), 'slash3': (18, False), 'fan-glide': (8, True), 'hurt': (10, False), 'ko': (8, False), 'win': (6, True),
+        'bike-ride': (12, True), 'bike-jump': (8, False), 'fan-float': (8, True)}, keep_largest=['fan-float']),
     'pupu': dict(height=56, ref='idle', key=fur, fit_height=['hollow-idle', 'wake-up'], anims={
         'idle': (6, True), 'walk': (10, True), 'cute-pose': (6, False), 'tackle': (14, False),
         'hollow-idle': (4, True), 'wake-up': (6, False)}),
@@ -56,6 +65,18 @@ CHARS = {
         'walk': (8, True), 'throw-low': (12, False), 'throw-high': (12, False), 'hit': (12, False), 'die': (10, False)}),
     'mechpig': dict(height=64, ref='walk', key=wood_dark, ref_scale=['die'], dir='enemies/E-02-mechpig', flip=['walk', 'windup', 'die'], anims={
         'walk': (7, True), 'windup': (8, False), 'lunge': (14, True), 'opening': (8, True), 'block': (14, False), 'die': (10, False)}),
+    # Stage 2 (art/stage2)
+    'beesoldier': dict(height=40, ref='fly', key=bee_yellow, dir='enemies/E-05-beesoldier', ref_scale=['die'], keep_largest=['dive', 'aim'], anims={
+        'fly': (10, True), 'aim': (10, False), 'dive': (14, True), 'stuck': (8, True), 'hit': (12, False), 'die': (10, False)}),
+    'squirrel': dict(height=44, ref='walk', key=squirrel_fur, dir='enemies/E-06-zombiesquirrel', ref_scale=['die'], anims={
+        'walk': (5, True), 'lunge': (12, False), 'hit': (12, False), 'die': (8, False)}),
+    'minibee': dict(height=20, ref='fly', key=bee_yellow, dir='enemies/E-07-minibee', ref_scale=['die'], anims={
+        'fly': (14, True), 'die': (10, False)}),
+    'egg': dict(height=22, ref='idle', key=bee_yellow, dir='enemies/egg', ref_scale=['hatch', 'break'], anims={
+        'idle': (4, True), 'hatch': (8, False), 'break': (12, False)}),
+    'queen': dict(height=128, ref='hover', key=bee_yellow, dir='boss/queen-bee', ref_scale=['defeat'], anims={
+        'hover': (8, True), 'summon': (8, False), 'land': (8, False), 'lay-eggs': (8, False), 'spray': (10, True),
+        'weak': (6, True), 'hurt': (12, False), 'defeat': (6, False)}),
 }
 
 def fg_mask(a):
@@ -89,12 +110,18 @@ def largest_blob_bbox(m):
     if not len(ys): return None
     return xs.min(), ys.min(), xs.max() + 1, ys.max() + 1
 
-def frames_of(path, n):
+def frames_of(path, n, keep_largest=False):
     a = np.array(Image.open(path).convert('RGB'))
     m = fg_mask(a)
     out = []
     for (x0, x1) in split(m, n):
         sm = m[:, x0:x1]
+        if keep_largest:
+            # only the character's own blob: drops stray labels / separate props in the cell
+            lab, k = ndimage.label(ndimage.binary_closing(sm, iterations=2))
+            if k > 1:
+                sizes = ndimage.sum(sm, lab, range(1, k + 1))
+                sm = sm & (lab == int(np.argmax(sizes)) + 1)
         # drop specks (noise / stray sparkles far from the body)
         colsum = sm.sum(0); rowsum = sm.sum(1)
         bb = largest_blob_bbox(sm & (rowsum[:, None] > 0) & (colsum[None, :] > 1))
@@ -124,7 +151,7 @@ def main():
         for anim in cfg['anims']:
             rel = f"art-src/anim/{cfg.get('dir', ch)}/{anim}.png"
             if rel not in MAN or not os.path.exists(os.path.join(ROOT, rel)): continue
-            frs = frames_of(os.path.join(ROOT, rel), MAN[rel]['frames'])
+            frs = frames_of(os.path.join(ROOT, rel), MAN[rel]['frames'], anim in cfg.get('keep_largest', []))
             if anim in cfg.get('flip', []):
                 frs = [(rgb[:, ::-1], m[:, ::-1]) for rgb, m in frs]
             sheets[anim] = frs

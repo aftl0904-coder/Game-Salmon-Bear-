@@ -1,0 +1,379 @@
+{
+  "id": "ST-02",
+  "name": "蜜樹丘",
+  "theme": "tree",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "segments": [
+    {
+      "id": "S1",
+      "role": "teach",
+      "x0": 0,
+      "x1": 620,
+      "note": "風口教學：踩入風口會彈高，琪寶寶用紙扇可以飄得更高（高處有蜂蜜）。第一隻蜜蜂兵。"
+    },
+    {
+      "id": "S2",
+      "role": "test",
+      "x0": 620,
+      "x1": 1240,
+      "note": "坑＋蜜僵松鼠三隻一組，慢但會撲。"
+    },
+    {
+      "id": "S3",
+      "role": "rest",
+      "x0": 1240,
+      "x1": 1420,
+      "note": "咖啡車存檔。"
+    },
+    {
+      "id": "S4",
+      "role": "test",
+      "x0": 1420,
+      "x1": 2120,
+      "note": "蜜蜂兵三隻＋滴蜜（黐腳）＋移動樹枝坑；吊住嘅蜂巢打得爛。"
+    },
+    {
+      "id": "S5",
+      "role": "rest",
+      "x0": 2120,
+      "x1": 2300,
+      "note": "咖啡車存檔。"
+    },
+    {
+      "id": "S6",
+      "role": "twist",
+      "x0": 2300,
+      "x1": 3020,
+      "note": "松鼠潮＋紅魚帽仔兵混合；第二個風口上高台。"
+    },
+    {
+      "id": "S7",
+      "role": "rest",
+      "x0": 3020,
+      "x1": 3180,
+      "note": "Boss 前存檔＋金鮭。"
+    },
+    {
+      "id": "S8",
+      "role": "boss",
+      "x0": 3160,
+      "x1": 3800,
+      "note": "蜜冠女王蜂。"
+    }
+  ],
+  "pits": [
+    {
+      "x": 700,
+      "w": 44
+    },
+    {
+      "x": 1980,
+      "w": 104,
+      "note": "移動樹枝"
+    },
+    {
+      "x": 2860,
+      "w": 60
+    }
+  ],
+  "steps": [
+    {
+      "x": 1100,
+      "w": 110,
+      "h": 24
+    },
+    {
+      "x": 2420,
+      "w": 96,
+      "h": 20
+    }
+  ],
+  "platforms": [
+    {
+      "x": 400,
+      "w": 110,
+      "h": 88,
+      "note": "風口上面"
+    },
+    {
+      "x": 2680,
+      "w": 110,
+      "h": 84
+    }
+  ],
+  "shelves": [
+    {
+      "x": 300,
+      "w": 52,
+      "h": 150,
+      "note": "只有琪寶寶飄得上"
+    }
+  ],
+  "movingPlatforms": [
+    {
+      "x": 2002,
+      "w": 56,
+      "h": 14,
+      "range": 22,
+      "periodMs": 2400
+    }
+  ],
+  "crushers": [],
+  "spikes": [],
+  "durians": [],
+  "windVents": [
+    {
+      "x": 456,
+      "lift": 150
+    },
+    {
+      "x": 2735,
+      "lift": 150
+    }
+  ],
+  "drips": [
+    {
+      "x": 1600,
+      "periodMs": 2200
+    },
+    {
+      "x": 1660,
+      "periodMs": 2600
+    },
+    {
+      "x": 1880,
+      "periodMs": 2000
+    },
+    {
+      "x": 2560,
+      "periodMs": 2400
+    }
+  ],
+  "honey": [
+    {
+      "x": 326,
+      "h": 168,
+      "note": "磨菇架上，要飄"
+    },
+    {
+      "x": 455,
+      "h": 104,
+      "note": "風口平台"
+    },
+    {
+      "x": 2735,
+      "h": 100
+    }
+  ],
+  "checkpoints": [
+    1320,
+    2200,
+    3080
+  ],
+  "breakables": [
+    {
+      "x": 560,
+      "kind": "hive",
+      "loot": "coin"
+    },
+    {
+      "x": 1500,
+      "kind": "hive",
+      "loot": "power"
+    },
+    {
+      "x": 1760,
+      "kind": "hive",
+      "loot": "coin"
+    },
+    {
+      "x": 2250,
+      "kind": "pot",
+      "loot": "food"
+    },
+    {
+      "x": 2950,
+      "kind": "hive",
+      "loot": "food"
+    },
+    {
+      "x": 3120,
+      "kind": "lantern",
+      "loot": "power"
+    }
+  ],
+  "enemies": [
+    {
+      "x": 600,
+      "species": "bee",
+      "unlockX": 360
+    },
+    {
+      "x": 900,
+      "species": "squirrel",
+      "unlockX": 760
+    },
+    {
+      "x": 960,
+      "species": "squirrel",
+      "unlockX": 760
+    },
+    {
+      "x": 1030,
+      "species": "squirrel",
+      "unlockX": 760
+    },
+    {
+      "x": 1520,
+      "species": "bee",
+      "unlockX": 1440
+    },
+    {
+      "x": 1720,
+      "species": "bee",
+      "unlockX": 1620
+    },
+    {
+      "x": 1880,
+      "species": "fish",
+      "kind": "chaser",
+      "unlockX": 1700
+    },
+    {
+      "x": 2060,
+      "species": "bee",
+      "unlockX": 1960
+    },
+    {
+      "x": 2450,
+      "species": "squirrel",
+      "unlockX": 2330
+    },
+    {
+      "x": 2500,
+      "species": "squirrel",
+      "unlockX": 2330
+    },
+    {
+      "x": 2560,
+      "species": "squirrel",
+      "unlockX": 2330
+    },
+    {
+      "x": 2620,
+      "species": "squirrel",
+      "unlockX": 2330
+    },
+    {
+      "x": 2650,
+      "species": "barrel",
+      "kind": "ambusher",
+      "unlockX": 2500
+    },
+    {
+      "x": 2900,
+      "species": "bee",
+      "unlockX": 2780
+    },
+    {
+      "x": 2980,
+      "species": "elephant",
+      "kind": "guardian",
+      "unlockX": 2860
+    }
+  ],
+  "altarAmbush": [],
+  "altarTriggerX": 99999,
+  "boss": {
+    "kind": "queen",
+    "triggerX": 3260,
+    "arenaX0": 3160,
+    "arenaX1": 3800
+  },
+  "decor": {
+    "back": [
+      {
+        "x": 120,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 240,
+        "kind": "s2-triangle-mark"
+      },
+      {
+        "x": 820,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 1180,
+        "kind": "s2-triangle-mark"
+      },
+      {
+        "x": 1560,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 2340,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 2640,
+        "kind": "s2-triangle-mark"
+      },
+      {
+        "x": 3300,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 3520,
+        "kind": "s2-honeycomb-wall"
+      },
+      {
+        "x": 3680,
+        "kind": "s2-triangle-mark"
+      }
+    ],
+    "hang": [
+      {
+        "x": 180,
+        "kind": "s2-vine-a"
+      },
+      {
+        "x": 640,
+        "kind": "s2-vine-b"
+      },
+      {
+        "x": 1010,
+        "kind": "s2-vine-a"
+      },
+      {
+        "x": 1450,
+        "kind": "s2-vine-b"
+      },
+      {
+        "x": 1830,
+        "kind": "s2-vine-a"
+      },
+      {
+        "x": 2280,
+        "kind": "s2-vine-b"
+      },
+      {
+        "x": 2600,
+        "kind": "s2-vine-a"
+      },
+      {
+        "x": 3000,
+        "kind": "s2-vine-b"
+      },
+      {
+        "x": 3400,
+        "kind": "s2-vine-a"
+      },
+      {
+        "x": 3640,
+        "kind": "s2-vine-b"
+      }
+    ]
+  }
+}

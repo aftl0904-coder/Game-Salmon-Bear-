@@ -1,0 +1,25 @@
+{
+ "frameWidth": 34,
+ "frameHeight": 29,
+ "anchorX": 17,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 2,
+   "fps": 4,
+   "loop": true
+  },
+  "hatch": {
+   "start": 2,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "break": {
+   "start": 6,
+   "count": 3,
+   "fps": 12,
+   "loop": false
+  }
+ }
+}

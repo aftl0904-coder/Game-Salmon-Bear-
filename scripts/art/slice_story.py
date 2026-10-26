@@ -17,7 +17,9 @@ def to_native(im, box=None):
 def main():
     root = sys.argv[1] if len(sys.argv) > 1 else '.'
     os.makedirs('public/art/story', exist_ok=True)
-    for f in sorted(glob.glob(os.path.join(root, 'art-src/story/*.png'))):
+    # stage backdrops (full-screen far layers)
+    extra = [os.path.join(root, 'art-src/props/stage2/canopy-far.png')]
+    for f in sorted(glob.glob(os.path.join(root, 'art-src/story/*.png'))) + [e for e in extra if os.path.exists(e)]:
         name = os.path.splitext(os.path.basename(f))[0]
         im = Image.open(f).convert('RGB')
         box = (0, 232, im.width, im.height) if name == 'cover' else None

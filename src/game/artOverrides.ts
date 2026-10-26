@@ -41,6 +41,20 @@ export const ART_OVERRIDES: Record<string, string> = {
   'deco-billboard': '/art/props/billboard.png',
   'deco-stone-altar': '/art/props/stone-altar.png',
   'deco-far-trunks': '/art/props/far-trunks.png',
+  // Stage 2 · 蜜樹丘 (data/levels/stage2.json)
+  's2-bark-ground': '/art/props/s2-bark-ground.png',
+  's2-bark-platform': '/art/props/s2-bark-platform.png',
+  's2-bark-wall': '/art/props/s2-bark-wall.png',
+  's2-honeycomb-wall': '/art/props/s2-honeycomb-wall.png',
+  's2-mushroom-shelf': '/art/props/s2-mushroom-shelf.png',
+  's2-triangle-mark': '/art/props/s2-triangle-mark.png',
+  's2-vine-a': '/art/props/s2-vine-a.png',
+  's2-vine-b': '/art/props/s2-vine-b.png',
+  's2-hive': '/art/props/s2-hive.png',
+  's2-hive-broken': '/art/props/s2-hive-broken.png',
+  's2-canopy-mid': '/art/props/s2-canopy-mid.png',
+  's2-canopy-front': '/art/props/s2-canopy-front.png',
+  's2-vine-lattice': '/art/props/s2-vine-lattice.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {

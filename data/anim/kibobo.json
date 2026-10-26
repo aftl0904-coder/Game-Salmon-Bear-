@@ -68,6 +68,24 @@
    "count": 3,
    "fps": 6,
    "loop": true
+  },
+  "bike-ride": {
+   "start": 41,
+   "count": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "bike-jump": {
+   "start": 45,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "fan-float": {
+   "start": 48,
+   "count": 3,
+   "fps": 8,
+   "loop": true
   }
  }
 }

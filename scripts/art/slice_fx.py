@@ -14,6 +14,9 @@ FX = {
     'slash-arc-1': (70, 30), 'slash-arc-2': (70, 30), 'slash-arc-3': (80, 30),
     'lantern-break': (50, 16), 'pot-break': (42, 16), 'coin-spin': (16, 12), 'power-up': (56, 16),
     'dust-step': (18, 18), 'land-dust': (34, 18), 'honey-sparkle': (26, 12), 'armour-clank': (30, 24),
+    # stage 2 boss FX (live under the boss folder)
+    'wind-vent': (40, 10, '../props/stage2'), 'honey-drip': (16, 6, '../props/stage2'),
+    'honey-stream': (90, 14, 'boss/queen-bee'), 'honey-puddle': (60, 8, 'boss/queen-bee'), 'swarm': (64, 12, 'boss/queen-bee'),
 }
 
 def main():
@@ -21,8 +24,10 @@ def main():
     man = {m['file']: m for m in json.load(open(os.path.join(root, 'art-src/anim/manifest.json')))}
     os.makedirs('public/art/fx', exist_ok=True)
     meta = {}
-    for name, (target, fps) in FX.items():
-        rel = f'art-src/anim/fx/{name}.png'
+    for name, spec in FX.items():
+        target, fps = spec[0], spec[1]
+        folder = spec[2] if len(spec) > 2 else 'fx'
+        rel = os.path.normpath(f'art-src/anim/{folder}/{name}.png')
         if rel not in man: continue
         a = np.array(Image.open(os.path.join(root, rel)).convert('RGB'))
         m = fg_mask(a)

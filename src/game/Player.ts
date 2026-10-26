@@ -675,6 +675,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.alive) this.setAlpha(1)
   }
 
+  /** Riding an updraft (wind vent): 琪寶寶 holds her fan overhead. Set by GameScene each frame. */
+  floating = false
+
+  /** External launch (wind vent / spring): start an airborne arc without the tap-height cut. */
+  launch(vy: number) {
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (!body || !this.alive) return
+    this.laneJumping = true
+    this.jumpCutApplied = true
+    this.jumpConsumed = true
+    body.allowGravity = true
+    this.setVelocityY(Math.min(body.velocity.y, vy))
+    fsmEnter(this, 'JUMP', this.scene.time.now)
+  }
+
   /** Play a one-shot action (shoot / slash1…3 / shoot-crouch) and let it own the sprite. */
   playAction(name: string) {
     if (!this.animSet) return
@@ -726,6 +741,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (!grounded) {
       this.pose = 'jump'
       if (now < this.actionUntil && this.anims.isPlaying) return
+      if (this.floating && ANIM_SETS[set].anims['fan-float']) {
+        this.animTo('fan-float')
+        return
+      }
       // rise / apex / fall frames picked from vertical speed
       const vy = body?.velocity.y ?? 0
       const j = ANIM_SETS[set].anims.jump

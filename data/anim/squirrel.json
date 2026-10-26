@@ -1,0 +1,31 @@
+{
+ "frameWidth": 52,
+ "frameHeight": 46,
+ "anchorX": 26,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "lunge": {
+   "start": 4,
+   "count": 3,
+   "fps": 12,
+   "loop": false
+  },
+  "hit": {
+   "start": 7,
+   "count": 2,
+   "fps": 12,
+   "loop": false
+  },
+  "die": {
+   "start": 9,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  }
+ }
+}
