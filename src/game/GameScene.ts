@@ -1418,7 +1418,7 @@ export class GameScene extends Phaser.Scene {
       impactRing(this, pe.x, pe.y - 16, 0xff6688, 14)
       const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
       this.addScorePop(pe.x, pe.y - 72, bonus)
-      if (pe.kind === 'boss') this.emitScore('武者倒下！搶回樹頂蜂巢！')
+      if (pe.kind === 'boss') this.emitScore(this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
     }
   }
 
@@ -3700,6 +3700,14 @@ export class GameScene extends Phaser.Scene {
     const b = ST.boss!
     this.bossFight = true
     this.s2Pending = []
+    // Stragglers don't follow into the throne room: they scatter in a puff.
+    for (const o of [...this.enemies.getChildren()]) {
+      const e = o as Phaser.Physics.Arcade.Sprite
+      if (!e.active) continue
+      playFx(this, 'enemy-poof', e.x, e.y - 20)
+      e.disableBody(true, true)
+      this.time.delayedCall(0, () => e.destroy())
+    }
     // The arena is exactly one screen: lock the camera on it.
     this.cameras.main.setBounds(b.arenaX0, 0, b.arenaX1 - b.arenaX0, WORLD_H)
     stopBgm()
@@ -3728,7 +3736,7 @@ export class GameScene extends Phaser.Scene {
 
   private buildBossBar() {
     const w = 220
-    const root = this.add.container(GAME_W / 2, 44).setScrollFactor(0).setDepth(DEPTH.UI + 30)
+    const root = this.add.container(GAME_W / 2, 50).setScrollFactor(0).setDepth(DEPTH.UI + 30)
     const g = this.add.graphics()
     g.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -4, w + 4, 10)
     g.fillStyle(0x1c120c, 1).fillRect(-w / 2 - 1, -3, w + 2, 8)

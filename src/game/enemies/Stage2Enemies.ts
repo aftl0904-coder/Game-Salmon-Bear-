@@ -380,14 +380,16 @@ export class QueenBee extends AnimEnemy {
   arenaX0 = 0
   arenaX1 = 0
   private eggsLaid = 0
+  private lastHitAt = 0
   onDefeated?: () => void
 
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, hooks: Stage2Hooks) {
-    super(scene, x, hooks.floorY() - 36, 'queen', hooks, 'hover')
+    // Hovers above shot height: ground shots pass under her, jump to hit (or wait for her to land).
+    super(scene, x, hooks.floorY() - 56, 'queen', hooks, 'hover')
     this.flying = true
     this.boss = true
     this.kind = 'boss'
-    this.hp = this.maxHp = 28
+    this.hp = this.maxHp = 36
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
@@ -403,7 +405,13 @@ export class QueenBee extends AnimEnemy {
 
   receiveHit(dmg: number, dir: number): EnemyHitResult {
     if (this.act === 'defeat' || this.act === 'intro') return { killed: false, hp: this.hp }
-    const mult = this.act === 'weak' ? 2 : 1
+    // Boss HP counts hits, not weapon damage: one point per hit (three on the glowing weak spot),
+    // then ~0.4s of boss i-frames (spread volleys and mashing count once).
+    const now = this.scene.time.now
+    if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
+    this.lastHitAt = now
+    dmg = 1
+    const mult = this.act === 'weak' ? 3 : 1
     // Bosses don't fly across the arena when hit.
     const before = { x: this.x, y: this.y }
     const r = super.receiveHit(dmg * mult, dir)
