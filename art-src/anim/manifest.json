@@ -3150,5 +3150,61 @@
     "rows": 1,
     "facing": "front",
     "prompt": "glass-shards 4 mirror shards ~64px magenta"
+  },
+  {
+    "file": "art-src/ui/panel-9slice.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "panel-9slice 96x96 wood+gold clear corners/edges flat middle. Section E."
+  },
+  {
+    "file": "art-src/ui/panel-dark-9slice.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "panel-dark-9slice 96x96 navy clear corners/edges flat middle. Section E."
+  },
+  {
+    "file": "art-src/ui/button.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "button 3 normal/pressed/disabled ~96x28 magenta."
+  },
+  {
+    "file": "art-src/ui/heart.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "heart 3 full/half/empty magenta."
+  },
+  {
+    "file": "art-src/ui/coin-icon.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "coin-icon gold magenta."
+  },
+  {
+    "file": "art-src/ui/pip.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "pip 2 on/off magenta."
+  },
+  {
+    "file": "art-src/ui/cursor-hand.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "cursor-hand pointing magenta."
   }
 ]
