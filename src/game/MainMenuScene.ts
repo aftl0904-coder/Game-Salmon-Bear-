@@ -406,6 +406,6 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('stageNo', this.stageSel)
     this.registry.set('carryCoins', undefined)
     this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
-    this.time.delayedCall(680, () => this.scene.start('play'))
+    this.time.delayedCall(680, () => this.scene.start('worldmap', { from: this.stageSel, to: this.stageSel, next: 'play' }))
   }
 }

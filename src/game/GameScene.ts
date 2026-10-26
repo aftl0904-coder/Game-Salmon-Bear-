@@ -569,7 +569,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeOut(400, 0, 0, 0)
     this.time.delayedCall(420, () => {
       this.registry.set('leavingToMenu', false)
-      this.scene.start('credits')
+      this.scene.start('worldmap', { from: 2, to: 3, next: 'credits' })
     })
   }
 
@@ -4054,7 +4054,8 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(320, () => {
       this.registry.set('leavingToMenu', false)
       this.stopUi()
-      this.scene.restart()
+      // World map (forest → honey tree), then the bike chase, then 蜜樹丘.
+      this.scene.start('worldmap', { from: 1, to: 2, next: 'bike' })
     })
   }
 
