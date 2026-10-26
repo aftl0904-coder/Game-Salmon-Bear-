@@ -1,9 +1,20 @@
 import Phaser from 'phaser'
+import { TouchInput } from './touchInput'
+import { unlockAudio } from './audio'
 import { enableActorSprite } from './pixelSnap'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 /** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
+  /** Controllers send no key/pointer events: poll the virtual pad and call the current exit. */
+  private padGo: (() => void) | null = null
+
+  update() {
+    if (this.padGo && (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack'))) {
+      unlockAudio()
+      this.padGo()
+    }
+  }
   constructor() {
     super('logo')
   }
@@ -163,6 +174,7 @@ export class LogoScene extends Phaser.Scene {
     this.time.delayedCall(3200, go)
     this.input.once('pointerdown', go)
     this.input.keyboard?.once('keydown', go)
+    this.padGo = go
   }
 
   /** Title over the cover illustration (art-src/story/cover.png). */
@@ -236,6 +248,7 @@ export class LogoScene extends Phaser.Scene {
     this.time.delayedCall(500, () => {
       this.input.once('pointerdown', go)
       this.input.keyboard?.once('keydown', go)
+      this.padGo = go
     })
   }
 }

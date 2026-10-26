@@ -23,6 +23,7 @@ import { Player } from './Player'
 import { animTex, hasAnimSet } from './heroAnims'
 import { hasFx, playFx } from './fxAnims'
 import { TouchInput } from './touchInput'
+import { p2Pad, padDir, btn as padBtn } from './gamepadBridge'
 import { playCutscene } from './cutscene'
 import stage1Raw from '../../data/levels/stage1.json'
 import stage2Raw from '../../data/levels/stage2.json'
@@ -243,8 +244,10 @@ export class GameScene extends Phaser.Scene {
   private physicsDebug = false
   /** Honey special charges (max 1). */
   private specialCharges = 0
-  private pad1: Phaser.Input.Gamepad.Gamepad | null = null
-  private pad2: Phaser.Input.Gamepad.Gamepad | null = null
+  /** Player 1's controller is read through TouchInput (gamepadBridge) — kept null here. */
+  private pad1: Gamepad | null = null
+  /** Player 2 = the second connected controller, refreshed every frame. */
+  private pad2: Gamepad | null = null
   /** Synced from UIScene for smoke / continue path. */
   banner!: Phaser.GameObjects.Text
   continueBox!: Phaser.GameObjects.Text
@@ -641,6 +644,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_t: number, dt: number) {
+    this.pad2 = this.mode === '2p' ? p2Pad() : null
     if (Phaser.Input.Keyboard.JustDown(this.keyDebug)) {
       const on = this.debugOverlay.toggle()
       this.resetPhysicsDebug(on)
@@ -656,8 +660,8 @@ export class GameScene extends Phaser.Scene {
       if (this.awaitingContinue && this.coinJust()) this.insertCoinContinue()
       else if (this.registry.get('winScreenShown')) {
         // The clear card owns Enter / Space / R / clicks; touch buttons map onto the same action.
-        if (TouchInput.justPressed('start') || TouchInput.justPressed('attack')) this.clearCardAction?.()
-      } else if (Phaser.Input.Keyboard.JustDown(this.keyR) || TouchInput.justPressed('start')) {
+        if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) this.clearCardAction?.()
+      } else if (Phaser.Input.Keyboard.JustDown(this.keyR) || TouchInput.justPressed('start') || TouchInput.justPressed('menu')) {
         this.goMenu()
       }
       this.debugOverlay.draw({
@@ -687,7 +691,8 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.JustDown(this.keyEsc) ||
       Phaser.Input.Keyboard.JustDown(this.keyP) ||
       Phaser.Input.Keyboard.JustDown(this.keyR) ||
-      TouchInput.justPressed('start')
+      TouchInput.justPressed('start') ||
+      this.padFaceJust(this.pad2, 9)
     if (pausePressed && this.time.now >= this.pauseReadyAt) {
       this.openPause()
       return
@@ -837,7 +842,8 @@ export class GameScene extends Phaser.Scene {
       Phaser.Input.Keyboard.JustDown(this.keyEnter) ||
       Phaser.Input.Keyboard.JustDown(this.keySpace) ||
       Phaser.Input.Keyboard.JustDown(this.keyC) ||
-      TouchInput.justPressed('start')
+      TouchInput.justPressed('start') ||
+      this.padFaceJust(this.pad2, 9)
     )
   }
 
@@ -908,34 +914,21 @@ export class GameScene extends Phaser.Scene {
     this.keyPhysicsDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.BACKTICK, true)
     this.keyPhysicsDebugAlt = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F2, true)
 
-    this.input.gamepad?.once('connected', (pad: Phaser.Input.Gamepad.Gamepad) => {
-      if (!this.pad1) this.pad1 = pad
-      else if (!this.pad2) this.pad2 = pad
-    })
-    if (this.input.gamepad?.pad1) this.pad1 = this.input.gamepad.pad1
-    if (this.input.gamepad?.pad2) this.pad2 = this.input.gamepad.pad2
+    this.pad1 = null
+    this.pad2 = p2Pad()
   }
 
   private padPrev: Record<string, boolean> = {}
-  private padFaceJust(pad: Phaser.Input.Gamepad.Gamepad | null, i: number) {
+  private padFaceJust(pad: Gamepad | null, i: number) {
     if (!pad) return false
-    const b = pad.buttons[i]
-    const down = !!(b && ((b as { pressed?: boolean }).pressed || (b as { value?: number }).value! > 0.5))
+    const down = padBtn(pad, i)
     const key = `${pad.index}:${i}`
     const was = !!this.padPrev[key]
     this.padPrev[key] = down
     return down && !was
   }
-  private padAxis(pad: Phaser.Input.Gamepad.Gamepad | null, horiz: boolean) {
-    if (!pad) return 0
-    if (horiz) {
-      if (pad.left) return -1
-      if (pad.right) return 1
-      return pad.leftStick?.x ?? 0
-    }
-    if (pad.up) return -1
-    if (pad.down) return 1
-    return pad.leftStick?.y ?? 0
+  private padAxis(pad: Gamepad | null, horiz: boolean) {
+    return padDir(pad, horiz)
   }
 
   /** Y = attack (F / , / legacy J) */
@@ -985,7 +978,8 @@ export class GameScene extends Phaser.Scene {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyComma) ||
       Phaser.Input.Keyboard.JustDown(this.keyNP1) ||
-      this.padFaceJust(this.pad2 ?? this.pad1, 3)
+      this.padFaceJust(this.pad2, 1) ||
+      this.padFaceJust(this.pad2, 2)
     )
   }
   private p2JumpJust() {
@@ -1005,7 +999,9 @@ export class GameScene extends Phaser.Scene {
     return (
       Phaser.Input.Keyboard.JustDown(this.keySemicolon) ||
       Phaser.Input.Keyboard.JustDown(this.keyNP4) ||
-      this.padFaceJust(this.pad2, 2)
+      this.padFaceJust(this.pad2, 3) ||
+      this.padFaceJust(this.pad2, 4) ||
+      this.padFaceJust(this.pad2, 5)
     )
   }
 
@@ -3410,7 +3406,7 @@ export class GameScene extends Phaser.Scene {
       if (this.girl) this.girl.awaitingContinue = true
       const msgText =
         `${msg}\n\n◆ 投幣續關 ◆\n剩餘幣 ×${this.coinStock}\n` +
-        `按 Enter／空白／Ｃ　投幣\n按Ｒ　回選單`
+        `Enter／Ｃ／手掣 Start／點呢度　投幣\nＲ　回選單`
       EventBus.emit(GameEvents.GAME_OVER, {
         active: true,
         message: msgText,
@@ -3423,7 +3419,7 @@ export class GameScene extends Phaser.Scene {
       if (this.girl) this.girl.awaitingContinue = false
       EventBus.emit(GameEvents.GAME_OVER, {
         active: true,
-        message: `${msg}\n◆ 幣已用盡 ◆\n按Ｒ鍵回選單`,
+        message: `${msg}\n◆ 幣已用盡 ◆\nＲ／手掣 Start／點呢度　回選單`,
         canContinue: false,
         win: false,
       })

@@ -8,6 +8,7 @@ import {
   type GameEventMap,
 } from './EventBus'
 import { mountTouchControls } from './TouchControls'
+import { TouchInput } from './touchInput'
 import { mountMuteButton } from './muteButton'
 import { FONT_UI } from './ui/fonts'
 
@@ -40,6 +41,7 @@ export class UIScene extends Phaser.Scene {
   private freezeHp = false
 
   banner!: Phaser.GameObjects.Text
+  private menuBtn: Phaser.GameObjects.Text | null = null
 
   constructor() {
     super('UIScene')
@@ -130,6 +132,23 @@ export class UIScene extends Phaser.Scene {
       .setScrollFactor(0)
       .setDepth(DEPTH.UI + 50)
       .setVisible(false)
+    // Tap the game-over box = Start (insert coin, or back to the menu when out of coins).
+    this.banner.setInteractive({ useHandCursor: true })
+    this.banner.on('pointerdown', () => TouchInput.pulse('start'))
+    this.menuBtn = this.add
+      .text(this.scale.width / 2, this.scale.height / 2, '回選單', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
+        color: '#fff4d0',
+        backgroundColor: '#3a2210ee',
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(DEPTH.UI + 50)
+      .setVisible(false)
+      .setInteractive({ useHandCursor: true })
+    this.menuBtn.on('pointerdown', () => TouchInput.pulse('menu'))
 
     const game = this.scene.get('play') as Phaser.Scene & {
       banner?: Phaser.GameObjects.Text
@@ -236,6 +255,7 @@ export class UIScene extends Phaser.Scene {
     this.tweens.killTweensOf(this.banner)
     if (!p.active) {
       this.banner.setVisible(false).setScale(1).setAlpha(1)
+      this.menuBtn?.setVisible(false)
       return
     }
     this.banner.setStyle({
@@ -251,6 +271,9 @@ export class UIScene extends Phaser.Scene {
       duration: 180,
       ease: 'Back.out',
     })
+    if (p.canContinue && !p.win && this.menuBtn) {
+      this.menuBtn.setY(this.banner.y + this.banner.height / 2 + 8).setVisible(true)
+    }
     if (p.canContinue && !p.win) {
       this.tweens.add({
         targets: this.banner,

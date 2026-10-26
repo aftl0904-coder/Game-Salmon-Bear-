@@ -119,9 +119,16 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   })
   const nextMark = scene.add.text(GAME_W - 26, GAME_H - 26, '▼', { fontFamily: FONT_UI, fontSize: '12px', color: '#e0b86a' }).setVisible(false)
   const skipHint = scene.add
-    .text(GAME_W - 12, 8, 'Enter 跳過', { fontFamily: FONT_UI, fontSize: '10px', color: '#c8b090' })
+    .text(GAME_W - 8, 6, '跳過 ▶▶', {
+      fontFamily: FONT_UI,
+      fontSize: '11px',
+      color: '#f0dcb0',
+      backgroundColor: '#1a1210c0',
+      padding: { x: 8, y: 4 },
+    })
     .setOrigin(1, 0)
-    .setAlpha(0.7)
+    .setAlpha(0.8)
+    .setInteractive({ useHandCursor: true })
   const dialog = scene.add.container(0, 0, [box, frame, portrait, nameText, bodyText, nextMark]).setVisible(false)
   root.add([dialog, skipHint])
   scene.tweens.add({ targets: nextMark, y: '+=3', duration: 300, yoyo: true, repeat: -1 })
@@ -139,13 +146,22 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     if (ADV.has(ev.key.toLowerCase())) advanceFlag = true
   }
   kb?.on('keydown', onKey)
+  // Phones: tap anywhere = next line; tap 「跳過」 = skip the scene.
+  skipHint.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+    ev?.stopPropagation?.()
+    if (!dead) finish()
+  })
+  const onTap = () => {
+    if (!dead) advanceFlag = true
+  }
+  scene.input.on('pointerdown', onTap)
   const poll = scene.time.addEvent({
     delay: 16,
     loop: true,
     callback: () => {
       if (dead) return
       if (TouchInput.justPressed('start')) return finish()
-      if (TouchInput.justPressed('attack')) advanceFlag = true
+      if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) advanceFlag = true
     },
   })
 
@@ -398,6 +414,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     dead = true
     poll.remove(false)
     kb?.off('keydown', onKey)
+    scene.input?.off('pointerdown', onTap)
     // During scene shutdown the containers may already be torn down — guard every list.
     try {
       const objs = [actorLayer, propLayer, fxLayer].flatMap((c) => (c?.list ? [...c.list] : []))

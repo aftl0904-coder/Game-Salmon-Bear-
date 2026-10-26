@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { SFX, setBgmDucked } from './audio'
-import { TouchInput } from './touchInput'
+import { TouchInput, isPhonePlay } from './touchInput'
+import { connectedPads } from './gamepadBridge'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
 export type PauseData = {
@@ -79,10 +80,13 @@ export class PauseScene extends Phaser.Scene {
       .setOrigin(0.5)
     this.tweens.add({ targets: this.arrow, x: '+=3', duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
 
-    const help =
-      data.mode === '2p'
+    const pads = connectedPads().length
+    const keys = isPhonePlay()
+      ? '直接撳選項　或者用畫面按鈕：← → 揀，攻／跳 確認'
+      : data.mode === '2p'
         ? 'P1　A D 行　G 跳　S 蹲　F 攻　T 絕招\nP2　← → 行　． 跳　↓ 蹲　， 攻　； 絕招'
         : 'A D 行　G 跳　S 蹲\nF 攻擊　T 絕招（食蜂蜜充滿）'
+    const help = pads || isPhonePlay() ? `${keys}\n手掣　A 跳　B／X 攻　Y／LB／RB 絕招　Start 暫停` : keys
     this.add
       .text(W / 2, py + ph + 26, help, {
         fontFamily: FONT_UI,
@@ -117,8 +121,8 @@ export class PauseScene extends Phaser.Scene {
   }
 
   update() {
-    if (TouchInput.justPressed('up')) this.select(this.cursor - 1, true)
-    if (TouchInput.justPressed('down')) this.select(this.cursor + 1, true)
+    if (TouchInput.justPressed('up') || TouchInput.justPressed('left')) this.select(this.cursor - 1, true)
+    if (TouchInput.justPressed('down') || TouchInput.justPressed('right')) this.select(this.cursor + 1, true)
     if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) this.confirm()
     if (TouchInput.justPressed('start')) this.close(0)
   }
