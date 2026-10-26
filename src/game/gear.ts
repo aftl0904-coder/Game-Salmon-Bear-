@@ -60,11 +60,11 @@ export const GEAR: GearDef[] = [
   },
   {
     id: 'charm',
-    name: '護身符',
+    name: '蜜符',
     who: 'both',
     price: [6, 14, 26],
-    tiers: ['木牌：無敵時間 +30%', '玉牌：+60%', '金蜂巢：+100%'],
-    blurb: '中招之後閃幾耐。愈長愈容易逃出重圍。',
+    tiers: ['木牌：絕招 +1，無敵時間 +30%', '玉牌：絕招 +2，+60%', '金蜂巢：絕招 +3，+100%'],
+    blurb: '絕招打得重啲，中招之後又閃耐啲。',
   },
 ]
 
@@ -178,4 +178,28 @@ export function knockMul(who: Who): number {
 
 export function iframeMul(who: Who): number {
   return [1, 1.3, 1.6, 2][tierOf(who, 'charm')] ?? 1
+}
+
+/** Base 絕招 damage is 3; the 蜜符 adds one per tier. */
+export function specialPower(who: Who): number {
+  return 3 + tierOf(who, 'charm')
+}
+
+export type StatId = 'hp' | 'atk' | 'def' | 'spd' | 'sp'
+export const STAT_NAMES: Record<StatId, string> = { hp: '生命', atk: '攻擊', def: '防禦', spd: '速度', sp: '絕招' }
+
+/**
+ * The pentagon on the shop screen. Each axis is 0..1: a fifth for being alive at all,
+ * then a fifth per tier of the gear that drives it.
+ */
+export function stats(who: Who): Record<StatId, number> {
+  const t = gearOf(who)
+  const axis = (n: number) => Math.min(1, 0.25 + n * 0.25)
+  return {
+    hp: axis(t.armour >= 3 ? 1 : 0),
+    atk: axis(who === 'girl' ? t.sword : t.gun),
+    def: axis(t.armour),
+    spd: axis(t.boots),
+    sp: axis(t.charm),
+  }
 }

@@ -5,7 +5,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { buzz, HAPTIC } from './phone'
-import { GEAR, buy, nextPrice, tierOf, type GearDef, type Who } from './gear'
+import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
 
 /**
@@ -67,11 +67,14 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   })
 
   const panel = scene.add.graphics()
-  panel.fillStyle(0xc8902a, 1).fillRect(28, 128, GAME_W - 56, 178)
-  panel.fillStyle(0x1c120c, 0.97).fillRect(31, 131, GAME_W - 62, 172)
+  const PW = GAME_W - 56 - 150
+  panel.fillStyle(0xc8902a, 1).fillRect(28, 128, PW, 178)
+  panel.fillStyle(0x1c120c, 0.97).fillRect(31, 131, PW - 6, 172)
+  panel.fillStyle(0xc8902a, 1).fillRect(GAME_W - 172, 128, 144, 178)
+  panel.fillStyle(0x1c120c, 0.97).fillRect(GAME_W - 169, 131, 138, 172)
   root.add(panel)
 
-  const purseText = scene.add.text(GAME_W - 40, 136, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(1, 0)
+  const purseText = scene.add.text(28 + PW - 16, 136, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(1, 0)
   const whoText = scene.add.text(44, 136, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffd0e0' }).setOrigin(0, 0)
   const blurb = scene.add
     .text(GAME_W / 2, GAME_H - 38, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#d8c8a8', align: 'center', wordWrap: { width: GAME_W - 80 } })
@@ -94,9 +97,50 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     const cursor = scene.add.text(44, y, '▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffd040' }).setOrigin(0, 0.5)
     const name = scene.add.text(66, y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#fff6e0' }).setOrigin(0, 0.5)
     const tier = scene.add.text(140, y, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b890' }).setOrigin(0, 0.5)
-    const price = scene.add.text(GAME_W - 48, y, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(1, 0.5)
+    const price = scene.add.text(28 + PW - 16, y, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(1, 0.5)
     rows.push({ name, tier, price, cursor })
     root.add([cursor, name, tier, price])
+  }
+
+  // ── 五角形：生命・攻擊・防禦・速度・絕招 ──
+  const CX = GAME_W - 100
+  const CY = 218
+  const R0 = 44
+  const AXES: StatId[] = ['hp', 'atk', 'def', 'spd', 'sp']
+  const pent = scene.add.graphics().setDepth(1)
+  const axisLabels = AXES.map((id, i) => {
+    const a = -Math.PI / 2 + (i * Math.PI * 2) / 5
+    const lx = Phaser.Math.Clamp(CX + Math.cos(a) * (R0 + 16), GAME_W - 162, GAME_W - 38)
+    return scene.add
+      .text(lx, CY + Math.sin(a) * (R0 + 14), STAT_NAMES[id], { fontFamily: FONT_UI, fontSize: '9px', color: '#c8b890' })
+      .setOrigin(0.5)
+  })
+  root.add([pent, ...axisLabels])
+
+  const drawPentagon = (w: Who) => {
+    const v = stats(w)
+    pent.clear()
+    const pt = (i: number, r: number) => {
+      const a = -Math.PI / 2 + (i * Math.PI * 2) / 5
+      return new Phaser.Math.Vector2(CX + Math.cos(a) * r, CY + Math.sin(a) * r)
+    }
+    // Rings
+    for (const f of [0.25, 0.5, 0.75, 1]) {
+      pent.lineStyle(1, 0x5a4a38, f === 1 ? 0.9 : 0.4)
+      const ring = AXES.map((_, i) => pt(i, R0 * f))
+      pent.strokePoints(ring, true)
+    }
+    for (let i = 0; i < 5; i++) {
+      pent.lineStyle(1, 0x5a4a38, 0.4)
+      const p = pt(i, R0)
+      pent.lineBetween(CX, CY, p.x, p.y)
+    }
+    const shape = AXES.map((id, i) => pt(i, R0 * v[id]))
+    pent.fillStyle(0xffc040, 0.3)
+    pent.fillPoints(shape, true)
+    pent.lineStyle(2, 0xffd76a, 1)
+    pent.strokePoints(shape, true)
+    for (const p of shape) pent.fillStyle(0xfff0c0, 1).fillCircle(p.x, p.y, 2)
   }
 
   const draw = () => {
@@ -124,6 +168,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     })
     const g = list[sel]
     blurb.setText(g ? g.blurb : '')
+    drawPentagon(who)
   }
 
   const move = (d: number) => {
@@ -201,7 +246,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
 
   // Tappable rows for phones.
   rows.forEach((_r, i) => {
-    const hit = scene.add.rectangle(GAME_W / 2, 160 + i * 30, GAME_W - 80, 26, 0xffffff, 0.001).setInteractive({ useHandCursor: true })
+    const hit = scene.add.rectangle(28 + PW / 2, 160 + i * 30, PW - 10, 26, 0xffffff, 0.001).setInteractive({ useHandCursor: true })
     root.add(hit)
     hit.on('pointerdown', () => {
       if (sel === i) tryBuy()

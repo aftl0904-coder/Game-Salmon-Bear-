@@ -12,10 +12,10 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
-import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, speedMul, weaponFloor, type Who } from './gear'
+import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, weaponFloor, type Who } from './gear'
 import { buzz, HAPTIC } from './phone'
 import { showTutorial, stirCoffee } from './minigames'
-import { openShop, shopGreeting } from './shop'
+import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
 import {
   type Creep,
@@ -175,6 +175,10 @@ type Stage1 = {
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
+/** The stage that ends the story — only its clear screen offers the credits. */
+const FINAL_STAGE = 5
+type ClearAction = 'shop' | 'next' | 'credits' | 'menu'
+type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
 type CrusherState = 'idle' | 'warn' | 'down' | 'stay' | 'up'
 type Crusher = {
@@ -351,6 +355,9 @@ export class GameScene extends Phaser.Scene {
     this.coffeeDone = false
     this.bossBar = null
     this.clearCardAction = null
+    this.clearCardMove = null
+    this.clearBtns = []
+    this.clearSel = 0
     this.ended = false
     this.outroOn = false
     this.awaitingContinue = false
@@ -613,13 +620,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeOut(400, 0, 0, 0)
     this.time.delayedCall(420, () => {
       this.registry.set('leavingToMenu', false)
-      // 蜜樹丘 → 月影夜市 (coins carry over); the last stage built so far rolls the credits.
-      if (this.stageNo === 2) {
-        this.registry.set('carryCoins', this.coinStock)
-        this.scene.start('worldmap', { from: 2, to: 3, next: 'play', stageNo: 3 })
-      } else {
-        this.scene.start('worldmap', { from: this.stageNo, to: this.stageNo + 1, next: 'credits' })
-      }
+      this.scene.start('worldmap', { from: this.stageNo, to: Math.min(FINAL_STAGE, this.stageNo + 1), next: 'credits' })
     })
   }
 
@@ -727,6 +728,8 @@ export class GameScene extends Phaser.Scene {
       if (this.awaitingContinue && this.coinJust()) this.insertCoinContinue()
       else if (this.registry.get('winScreenShown')) {
         // The clear card owns Enter / Space / R / clicks; touch buttons map onto the same action.
+        if (TouchInput.justPressed('left')) this.clearCardMove?.(-1)
+        if (TouchInput.justPressed('right')) this.clearCardMove?.(1)
         if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) this.clearCardAction?.()
       } else if (Phaser.Input.Keyboard.JustDown(this.keyR) || TouchInput.justPressed('start') || TouchInput.justPressed('menu')) {
         this.goMenu()
@@ -1220,6 +1223,7 @@ export class GameScene extends Phaser.Scene {
     jet.setData('lane', best.lane)
     jet.setData('fromY', best.y)
     jet.setData('homing', best)
+    jet.setData('by', h.role as Who)
     this.entities.add(jet, 'projectile')
     floatText(this, h.x, h.y - 48, '絕招！', '#66ddff')
     burst(this, h.x, h.y - 28, 0x66ccff, 10)
@@ -2133,6 +2137,9 @@ export class GameScene extends Phaser.Scene {
     for (const z of ST.slippery ?? []) {
       for (let x = z.x0 + 60; x < z.x1 - 40; x += 240) {
         if (!this.textures.exists('s3-hotspring-rock')) break
+        // A pool drawn across a pit reads as solid rock and the player falls through it.
+        const halfW = this.textures.get('s3-hotspring-rock').get().width / 2
+        if (terrainPits().some((p) => x + halfW > p.x0 - 8 && x - halfW < p.x1 + 8)) continue
         // Sit the pool into the paving, not on top of it, and let a little steam-light pool around it.
         const pool = this.add.image(x, LANE_FLOOR_Y + 7, 's3-hotspring-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 4).setTint(0xa0a8c8)
         enablePixelSprite(pool)
@@ -2738,18 +2745,20 @@ export class GameScene extends Phaser.Scene {
     ])
     if (this.ended || !this.scene.isActive()) return
     if (choice === 'skip') {
+      this.storyIntro = null
+      this.physics.resume()
+      this.keyEnter?.reset()
       this.drinkCoffee()
-      this.openGearShop(gate)
       return
     }
     {
       const mini = stirCoffee(this)
       this.storyIntro = mini
         void mini.done.then((r) => {
-          if (this.ended || !this.scene.isActive()) {
-            if (this.storyIntro === mini) this.storyIntro = null
-            return
-          }
+          if (this.storyIntro === mini) this.storyIntro = null
+          if (this.ended || !this.scene.isActive()) return
+          this.physics.resume()
+          this.keyEnter?.reset()
           this.drinkCoffee()
           const pts = r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)
           if (pts > 0) {
@@ -2759,13 +2768,15 @@ export class GameScene extends Phaser.Scene {
           // Every sugar cube is a coin at the friends' stall next door.
           const earned = r.sugar + (r.stirred >= 1 ? 2 : 0)
           if (earned > 0) this.addCoins(this.boy.role as Who, earned)
-          this.openGearShop(mini)
         })
     }
   }
 
-  /** The friends' gear stall, right after the food stall. */
-  private openGearShop(prev?: { destroy: () => void }) {
+  /**
+   * 小朋友檔口 — opens from the stage-clear screen, so shopping happens between stages
+   * rather than interrupting a run (Alan, 2026-10-27).
+   */
+  private openGearShop(onClose?: () => void) {
     const heroes: Who[] = this.girl ? ['boy', 'girl'] : [(this.boy.role as Who) ?? 'boy']
     const shop = openShop(this, {
       purse: (w) => this.purseOf(w),
@@ -2773,15 +2784,9 @@ export class GameScene extends Phaser.Scene {
       friends: () => this.friendsSaved,
       heroes,
     })
-    this.storyIntro = shop
-    floatText(this, this.cameras.main.scrollX + GAME_W / 2, 120, shopGreeting(this.friendsSaved.length), '#ffe08a', { size: 12, dur: 2400 })
     void shop.done.then(() => {
-      if (this.storyIntro === shop || this.storyIntro === prev) this.storyIntro = null
-      if (this.ended || !this.scene.isActive()) return
-      this.physics.resume()
-      this.keyEnter?.reset()
-      this.pauseReadyAt = this.time.now + 800
-      // Gear bought just now takes effect immediately.
+      if (this.ended && !this.clearOverlay) return
+      // Gear bought just now takes effect on the next stage (and now, if play resumes).
       for (const h of [this.boy, this.girl]) {
         if (!h) continue
         const w = h.role as Who
@@ -2790,6 +2795,7 @@ export class GameScene extends Phaser.Scene {
       }
       this.refreshHearts()
       this.refreshCoins()
+      onClose?.()
     })
   }
 
@@ -3007,7 +3013,8 @@ export class GameScene extends Phaser.Scene {
       if (!e.active || e.isDead) return
       const g = this.girl
       j.destroy()
-      this.damageEnemy(e, 3, Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
+      const caster = (j.getData('by') as Who | undefined) ?? ((g?.role ?? this.boy.role) as Who)
+      this.damageEnemy(e, specialPower(caster), Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
     })
     // Enemy body ↔ player hurtbox
     this.physics.add.overlap(this.boy, this.enemies, (_b, e) => this.hurtHero(this.boy, e as PatrolEnemy))
@@ -3641,8 +3648,20 @@ export class GameScene extends Phaser.Scene {
    * 倫寶＋琪寶寶＋噗噗 hug, 「第２關・待續」, button → character select.
    */
   private clearCardAction: (() => void) | null = null
+
+  /** Highlight the chosen clear-screen button. */
+  private drawClearSel() {
+    this.clearBtns.forEach((b, i) => {
+      const on = i === this.clearSel && b.on
+      b.bg.setFillStyle(on ? 0x6a3a18 : 0x4a2a14)
+      b.bg.setStrokeStyle(2, on ? 0xffd76a : b.on ? 0xc8902a : 0x6a5a40)
+      b.tx.setColor(on ? '#fff6e0' : b.on ? '#ffe9a8' : '#8a7a60')
+    })
+  }
   private clearOverlay: Phaser.GameObjects.Container | null = null
-  private clearBtn: { btnBg: Phaser.GameObjects.Rectangle; btnTx: Phaser.GameObjects.Text; hitPad: Phaser.GameObjects.Rectangle; btnY: number } | null = null
+  private clearBtns: ClearButton[] = []
+  private clearSel = 0
+  private clearCardMove: ((d: number) => void) | null = null
   private tallyDone = false
   private finishTally: (() => void) | null = null
 
@@ -3781,20 +3800,36 @@ export class GameScene extends Phaser.Scene {
     rowTexts.push(rankL)
     overlay.add([line, totL, totV, stamp, rec, rankL])
 
-    // Next / menu button (bottom)
-    const btnY = H / 2 - 30
-    const btnBg = this.add.rectangle(0, btnY, 200, 26, 0x4a2a14, 1).setStrokeStyle(2, 0xc8902a)
-    const btnTx = this.add
-      .text(0, btnY, this.stageNo >= 2 ? '片尾字幕 ▶' : '前往第２關 ▶', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' })
-      .setOrigin(0.5)
-    const hitPad = this.add.rectangle(0, btnY, 420, 40, 0x000000, 0.001)
-    overlay.add([btnBg, btnTx, hitPad])
-    btnBg.setInteractive({ useHandCursor: true })
-    btnTx.setInteractive({ useHandCursor: true })
-    hitPad.setInteractive({ useHandCursor: true })
-    btnBg.setAlpha(0.4)
-    btnTx.setAlpha(0.4)
-    this.clearBtn = { btnBg, btnTx, hitPad, btnY }
+    // Buttons (bottom): shop · next stage · menu. 片尾 only after the last stage.
+    const btnY = H / 2 - 28
+    const defs: Array<{ id: ClearAction; label: string; on: boolean }> = [
+      { id: 'shop', label: '小朋友檔口 ◎', on: true },
+      this.stageNo >= FINAL_STAGE
+        ? { id: 'credits', label: '片尾字幕 ▶', on: true }
+        : { id: 'next', label: STAGES[this.stageNo + 1] ? `前往第${'一二三四五'[this.stageNo]}關 ▶` : `第${'一二三四五'[this.stageNo]}關　製作中`, on: !!STAGES[this.stageNo + 1] },
+      { id: 'menu', label: '返主選單', on: true },
+    ]
+    const gap = 8
+    const widths = defs.map((d) => Math.max(104, d.label.length * 13 + 20))
+    const rowW = widths.reduce((a, b) => a + b, 0) + gap * (defs.length - 1)
+    let bx = -rowW / 2
+    const buttons: ClearButton[] = []
+    defs.forEach((d, i) => {
+      const w = widths[i]!
+      const cx = bx + w / 2
+      bx += w + gap
+      const bg = this.add.rectangle(cx, btnY, w, 26, 0x4a2a14, 1).setStrokeStyle(2, d.on ? 0xc8902a : 0x6a5a40)
+      const tx = this.add
+        .text(cx, btnY, d.label, { fontFamily: FONT_UI, fontSize: '12px', color: d.on ? '#ffe9a8' : '#8a7a60' })
+        .setOrigin(0.5)
+      overlay.add([bg, tx])
+      bg.setAlpha(0.4)
+      tx.setAlpha(0.4)
+      if (d.on) bg.setInteractive({ useHandCursor: true })
+      buttons.push({ id: d.id, bg, tx, on: d.on })
+    })
+    this.clearBtns = buttons
+    this.clearSel = Math.max(0, buttons.findIndex((b) => b.id !== 'shop' && b.on))
 
     // ── Tally sequence (a press skips to the end) ──
     const timers: Phaser.Time.TimerEvent[] = []
@@ -3810,8 +3845,11 @@ export class GameScene extends Phaser.Scene {
         rec.setAlpha(1)
         this.tweens.add({ targets: rec, alpha: 0.3, duration: 300, yoyo: true, repeat: -1 })
       }
-      btnBg.setAlpha(1)
-      btnTx.setAlpha(1)
+      for (const b of this.clearBtns) {
+        b.bg.setAlpha(1)
+        b.tx.setAlpha(1)
+      }
+      this.drawClearSel()
       this.tallyDone = true
     }
     this.finishTally = showAll
@@ -3890,56 +3928,80 @@ export class GameScene extends Phaser.Scene {
 
     this.buildClearCard()
     const overlay = this.clearOverlay!
-    const { btnBg, btnTx, hitPad, btnY } = this.clearBtn!
     let left = false
-    const toSelect = () => {
+
+    const leaveBy = (id: ClearAction) => {
       if (left || this.registry.get('leavingToMenu')) return
+      if (id === 'shop') {
+        // The stall sits on top of the clear card; the card is still there behind it.
+        this.openGearShop(() => this.drawClearSel())
+        return
+      }
+      left = true
+      for (const b of this.clearBtns) b.bg.disableInteractive()
+      offKeys()
+      this.keyEnter?.reset()
+      this.keySpace?.reset()
+      this.keyR?.reset()
+      if (id === 'menu') this.goMenu()
+      else if (id === 'credits') this.goCredits()
+      else this.goNextStage()
+    }
+    /** Enter / Start: finish the tally first, then run the highlighted button. */
+    const activate = () => {
       if (!this.tallyDone) {
         this.finishTally?.()
         return
       }
-      left = true
-      btnBg.disableInteractive()
-      btnTx.disableInteractive()
-      hitPad.disableInteractive()
-      this.input.keyboard?.off('keydown-ENTER', toSelect)
-      this.input.keyboard?.off('keydown-SPACE', toSelect)
-      this.input.keyboard?.off('keydown-R', toSelect)
-      // Clear sticky key state so cast select does not see Enter still down.
-      this.keyEnter?.reset()
-      this.keySpace?.reset()
-      this.keyR?.reset()
-      if (this.stageNo === 1) this.goNextStage()
-      else this.goCredits()
+      const b = this.clearBtns[this.clearSel]
+      if (b?.on) leaveBy(b.id)
     }
-    this.clearCardAction = toSelect
-    btnBg.on('pointerover', () => btnBg.setFillStyle(0x6a3a18))
-    btnBg.on('pointerout', () => btnBg.setFillStyle(0x4a2a14))
-    btnBg.on('pointerup', toSelect)
-    btnTx.on('pointerup', toSelect)
-    hitPad.on('pointerup', toSelect)
-    this.input.keyboard?.on('keydown-ENTER', toSelect)
-    this.input.keyboard?.on('keydown-SPACE', toSelect)
-    this.input.keyboard?.on('keydown-R', toSelect)
-    if (this.stageNo === 1) {
-      overlay.add(
-        this.add
-          .text(0, btnY + 22, 'Esc　回角色選擇', { fontFamily: FONT_UI, fontSize: '9px', color: '#a08a70' })
-          .setOrigin(0.5),
-      )
-      const toMenu = () => {
-        if (left) return
-        left = true
-        this.goMenu()
+    const move = (d: number) => {
+      if (!this.tallyDone || !this.clearBtns.length) return
+      for (let i = 0; i < this.clearBtns.length; i++) {
+        this.clearSel = (this.clearSel + d + this.clearBtns.length) % this.clearBtns.length
+        if (this.clearBtns[this.clearSel]?.on) break
       }
-      this.input.keyboard?.once('keydown-ESC', toMenu)
-      this.events.once('shutdown', () => this.input.keyboard?.off('keydown-ESC', toMenu))
+      SFX.blip(520)
+      this.drawClearSel()
     }
-    this.events.once('shutdown', () => {
-      this.input.keyboard?.off('keydown-ENTER', toSelect)
-      this.input.keyboard?.off('keydown-SPACE', toSelect)
-      this.input.keyboard?.off('keydown-R', toSelect)
+    const onKey = (e: KeyboardEvent) => {
+      if (['ArrowLeft', 'KeyA'].includes(e.code)) move(-1)
+      else if (['ArrowRight', 'KeyD'].includes(e.code)) move(1)
+      else if (['Enter', 'Space', 'KeyF', 'KeyJ', 'KeyK', 'KeyR'].includes(e.code)) activate()
+    }
+    const offKeys = () => this.input.keyboard?.off('keydown', onKey)
+    this.input.keyboard?.on('keydown', onKey)
+    this.events.once('shutdown', offKeys)
+    this.clearCardAction = activate
+    this.clearCardMove = move
+    this.clearBtns.forEach((b, i) => {
+      if (!b.on) return
+      b.bg.on('pointerover', () => {
+        this.clearSel = i
+        this.drawClearSel()
+      })
+      b.bg.on('pointerup', () => {
+        this.clearSel = i
+        leaveBy(b.id)
+      })
+      b.tx.setInteractive({ useHandCursor: true }).on('pointerup', () => {
+        this.clearSel = i
+        leaveBy(b.id)
+      })
     })
+    overlay.add(
+      this.add
+        .text(0, GAME_H / 2 - 8, '←→ 揀　Enter／攻擊　確定', { fontFamily: FONT_UI, fontSize: '9px', color: '#a08a70' })
+        .setOrigin(0.5),
+    )
+    const toMenu = () => {
+      if (left) return
+      left = true
+      this.goMenu()
+    }
+    this.input.keyboard?.once('keydown-ESC', toMenu)
+    this.events.once('shutdown', () => this.input.keyboard?.off('keydown-ESC', toMenu))
   }
 
   private lose(msg: string) {
@@ -4626,10 +4688,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Stage 1 clear card → straight into 蜜樹丘 (coins carry over). */
+  /** On to the next stage: the world map, with the bike leg between stages 1 and 2. */
   private goNextStage() {
     if (this.registry.get('leavingToMenu')) return
+    const to = this.stageNo + 1
+    if (!STAGES[to]) return
     this.registry.set('leavingToMenu', true)
-    this.registry.set('stageNo', 2)
+    this.registry.set('stageNo', to)
     this.registry.set('carryCoins', this.coinStock)
     this.registry.set('carryPurse', { ...this.purse })
     this.registry.set('winScreenShown', false)
@@ -4642,8 +4707,9 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(320, () => {
       this.registry.set('leavingToMenu', false)
       this.stopUi()
-      // World map (forest → honey tree), then the bike chase, then 蜜樹丘.
-      this.scene.start('worldmap', { from: 1, to: 2, next: 'bike' })
+      const from = this.stageNo
+      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike' })
+      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to })
     })
   }
 
