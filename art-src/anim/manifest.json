@@ -2253,7 +2253,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear/大pat熊 model — small round-head grey-beige teddy pale pink shirt. Magenta SNES pixel."
+    "prompt": "patbear/大pat白衫 — small grey round-head WHITE shirt. Magenta SNES plush."
   },
   {
     "file": "art-src/anim/friends/patbear/idle.png",
@@ -2261,7 +2261,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear idle 3 — small grey-beige pink shirt. Magenta SNES pixel."
+    "prompt": "patbear idle — white shirt. Magenta SNES plush."
   },
   {
     "file": "art-src/anim/friends/patbear/cheer.png",
@@ -2269,7 +2269,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear cheer 3 — small grey-beige pink shirt. Magenta SNES pixel."
+    "prompt": "patbear cheer — white shirt. Magenta SNES plush."
   },
   {
     "file": "art-src/anim/friends/patbear/walk.png",
@@ -2277,7 +2277,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "patbear walk 4 — small grey-beige pink shirt. Magenta SNES pixel."
+    "prompt": "patbear walk — white shirt. Magenta SNES plush."
   },
   {
     "file": "art-src/portraits/friend-patbear.png",
@@ -2285,7 +2285,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "front",
-    "prompt": "friend-patbear portrait 3 — small grey-beige pink shirt. Magenta SNES pixel."
+    "prompt": "friend-patbear portrait — white shirt. Magenta SNES plush."
   },
   {
     "file": "art-src/anim/friends/giraffe/model-sheet.png",
@@ -2606,5 +2606,45 @@
     "rows": 1,
     "facing": "front",
     "prompt": "friend-tigercub portrait 3 — orange striped no blue hat. Magenta #FF00FF SNES pixel plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub/熊仔 — small grey-beige round-head pale PINK shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub idle — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub cheer — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/anim/friends/bearcub/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "bearcub walk — pink shirt. Magenta SNES plush."
+  },
+  {
+    "file": "art-src/portraits/friend-bearcub.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "friend-bearcub/熊仔 portrait 3 — pink shirt. Magenta."
   }
 ]
