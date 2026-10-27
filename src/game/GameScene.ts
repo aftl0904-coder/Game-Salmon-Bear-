@@ -596,12 +596,21 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Clear "just pressed" on every pause-trigger key and hold the pause gate briefly.
+   * Any overlay a player dismisses with Enter / Esc / P / R (a tutorial, a minigame, a boss
+   * card, a cutscene) must not let that same keypress also open the pause menu the instant
+   * control returns — update() skips the pausePressed check while storyIntro is set, so the
+   * JustDown flag survives to the very next frame and fires openPause() unless cleared here.
+   */
+  private resetPauseKeys() {
+    for (const k of [this.keyEnter, this.keyEsc, this.keyP, this.keyR, this.keyF, this.keyG, this.keySpace]) k?.reset()
+    this.pauseReadyAt = Math.max(this.pauseReadyAt, this.time.now + 250)
+  }
+
   private openPause() {
     if (this.scene.isActive('pause')) return
-    const resetKeys = () => {
-      for (const k of [this.keyEnter, this.keyEsc, this.keyP, this.keyR, this.keyF, this.keyG, this.keySpace]) k?.reset()
-      this.pauseReadyAt = this.time.now + 250
-    }
+    const resetKeys = () => this.resetPauseKeys()
     this.scene.pause()
     this.scene.launch('pause', {
       mode: this.mode,
@@ -689,8 +698,11 @@ export class GameScene extends Phaser.Scene {
       if (!h) continue
       const who = h.role as Who
       const max = stamMax(who)
+      // Still swinging (within STAM_REST_MS of the last attack) → no regen at all, so a
+      // mash-attack flurry visibly runs the bar down instead of coasting on partial
+      // recovery between hits (Alan, 2026-10-27: "唔好一味係咁咁攻擊就好似保命符").
       const resting = now - h.lastAtkAt > STAM_REST_MS
-      const rate = (resting ? STAM_RECOVER : STAM_RECOVER * 0.35) * stamRecoverMul(who)
+      const rate = resting ? STAM_RECOVER * stamRecoverMul(who) : 0
       h.stam = Phaser.Math.Clamp(h.stam + (rate * dt) / 1000, 0, max)
     }
     this.emitHealth()
@@ -2823,7 +2835,7 @@ export class GameScene extends Phaser.Scene {
       if (this.storyIntro === gate) this.storyIntro = null
       if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
-      this.keyEnter?.reset()
+      this.resetPauseKeys()
       this.drinkCoffee()
       if (pts > 0) {
         this.killBonus += pts
@@ -3237,7 +3249,7 @@ export class GameScene extends Phaser.Scene {
         this.started = true
         this.startedAt = this.time.now
         this.pauseReadyAt = this.time.now + 1200
-        this.keyEnter?.reset()
+        this.resetPauseKeys()
         this.storyIntro = null
         this.emitScore(
           this.mode === '1p'
@@ -4022,9 +4034,7 @@ export class GameScene extends Phaser.Scene {
       left = true
       for (const b of this.clearBtns) b.bg.disableInteractive()
       offKeys()
-      this.keyEnter?.reset()
-      this.keySpace?.reset()
-      this.keyR?.reset()
+      this.resetPauseKeys()
       if (id === 'menu') this.goMenu()
       else if (id === 'credits') this.goCredits()
       else this.goNextStage()
@@ -4404,7 +4414,7 @@ export class GameScene extends Phaser.Scene {
       if (this.storyIntro === card) this.storyIntro = null
       if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
-      this.keyEnter?.reset()
+      this.resetPauseKeys()
       this.pauseReadyAt = this.time.now + 800
     })
     this.storyIntro = card
@@ -4690,7 +4700,7 @@ export class GameScene extends Phaser.Scene {
       if (this.ended) return
       this.physics.resume()
       if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
-      this.keyEnter?.reset()
+      this.resetPauseKeys()
       this.pauseReadyAt = this.time.now + 1200
       playSong(this.market ? 'boss3' : 'boss2')
       SFX.boss()

@@ -3,6 +3,12 @@ import { TouchInput } from './touchInput'
 import { unlockAudio } from './audio'
 import { enableActorSprite } from './pixelSnap'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { animTex, hasAnimSet } from './heroAnims'
+
+/** Splash lineup: Cursor's painted sprite when it's loaded, else the old placeholder. */
+function castTex(scene: Phaser.Scene, set: 'lunbo' | 'kibobo' | 'pupu', fallback: string) {
+  return hasAnimSet(scene, set) ? animTex(set) : fallback
+}
 
 /** Logo splash — brand-first creek shrine packaging (~5s → menu) */
 export class LogoScene extends Phaser.Scene {
@@ -67,17 +73,17 @@ export class LogoScene extends Phaser.Scene {
     const girlS = 1
     const bearS = 1
     this.add.image(cx - gap, lineupY + 4, shad).setAlpha(0.45).setScale(1, 1)
-    enableActorSprite(
-      this.add.image(cx - gap, lineupY, 'art-salmon').setOrigin(0.5, 1).setScale(boyS),
-    )
+    const boySpr = this.add.sprite(cx - gap, lineupY, castTex(this, 'lunbo', 'art-salmon')).setOrigin(0.5, 1).setScale(boyS)
+    enableActorSprite(boySpr)
     this.add.image(cx, lineupY + 5, shad).setAlpha(0.4).setScale(1, 1)
-    enableActorSprite(
-      this.add.image(cx, lineupY + 2, 'art-bear').setOrigin(0.5, 1).setScale(bearS),
-    )
+    const bearSpr = this.add.sprite(cx, lineupY + 2, castTex(this, 'pupu', 'art-bear')).setOrigin(0.5, 1).setScale(bearS)
+    enableActorSprite(bearSpr)
     this.add.image(cx + gap, lineupY + 4, shad).setAlpha(0.4).setScale(1, 1)
-    enableActorSprite(
-      this.add.image(cx + gap, lineupY, 'art-girl').setOrigin(0.5, 1).setScale(girlS),
-    )
+    const girlSpr = this.add.sprite(cx + gap, lineupY, castTex(this, 'kibobo', 'art-girl')).setOrigin(0.5, 1).setScale(girlS)
+    enableActorSprite(girlSpr)
+    if (hasAnimSet(this, 'lunbo')) boySpr.play('lunbo-idle')
+    if (hasAnimSet(this, 'pupu')) bearSpr.play('pupu-idle')
+    if (hasAnimSet(this, 'kibobo')) girlSpr.play('kibobo-idle')
     if (this.textures.exists('pot3d')) {
       this.add.image(cx - 22, lineupY + 2, 'pot3d').setOrigin(0.5, 1).setScale(1)
     }
