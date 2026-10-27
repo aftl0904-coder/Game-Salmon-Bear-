@@ -1,0 +1,46 @@
+{
+  "task_id": "ART-REQUEST-12",
+  "title": "5隻野餐小朋友原創設計（薑餅、聖誕伯伯、北極熊、大pat熊、虎仔重畫）",
+  "from": "Claude",
+  "to": "Cursor",
+  "branch": "art/batch-11",
+  "context": "同ART-REQUEST-11（噗噗重新設計）一齊喺同一條branch交。呢5隻係『小朋友』陣營入面冇真圖、宜家仲係用緊代碼畫嘅簡陋色塊嗰5隻，依家要畫原創正式圖。每隻淨係要一張idle sheet（3個企定姿勢），參考現有已經畫好嘅朋友（huihui/guard/denim/brownie/shiba/kuro，喺art-src/anim/friends/下面）嗰種畫法、構圖、磅數、比例，淨係跟住呢個做就得，唔使畫model-sheet/walk/cheer。",
+  "new_art": [
+    {
+      "file": "art-src/anim/friends/tigercub/idle.png",
+      "canvas_size": "1280x720 (3格橫排，側面，每格約426寬)",
+      "desc": "虎仔：重畫，原本嗰版本太似返迪士尼嘅Tigger，唔可以用。新設計：圓碌碌、矮仔身形坐低嘅老虎BB（唔好好似人咁企高瘦長嗰種身形），橙黑間紋，白色肚皮，戴一頂藍色冷帽完全遮晒耳仔（唔好見到虎耳凸出嚟），圓形鼻（唔好用心形/桃紅色鼻），冇呼吸符號/手勢呢啲裝飾，姿勢同表情自己發揮，淨係成體比例做矮仔BB款，唔好做返瘦高企立嗰種。"
+    },
+    {
+      "file": "art-src/anim/friends/snowcat/idle.png",
+      "canvas_size": "1280x720 (3格橫排，側面)",
+      "desc": "北極熊（原本設定係白貓，而家改做熊）：白色/米白色毛熊仔BB，圓滾滾熊仔身形（唔係貓），耳仔同頭頂帶少少淺粉紅色點綴，冇著衫。"
+    },
+    {
+      "file": "art-src/anim/friends/ginger/idle.png",
+      "canvas_size": "1280x720 (3格橫排，側面)",
+      "desc": "薑餅：薑黃啡色熊仔，戴紅色聖誕帽，頸有綠色蝴蝶結，冷冷織質感（好似薑餅人咁有啲『餅乾』質感都得，但始終係熊仔形狀唔係人形）。"
+    },
+    {
+      "file": "art-src/anim/friends/fleecy/idle.png",
+      "canvas_size": "1280x720 (3格橫排，側面)",
+      "desc": "大pat熊：灰色毛熊仔，著白色蓬鬆毛毛連身衫（成件衫好似棉花糖咁蓬鬆），熊仔BB身形。"
+    },
+    {
+      "file": "art-src/anim/friends/gnome/idle.png",
+      "canvas_size": "1280x720 (3格橫排，正面企定，呢隻『高身』所以企喺畫面會高過其他熊仔)",
+      "desc": "聖誕伯伯：冷冷織質感嘅小矮人（gnome），紅白間條尖頂帽，白色長鬍鬚遮住塊面，紅鼻，紅色衫。唔好整到好似市面上常見嗰隻『聖誕老人』品牌formal形象，保持矮人/gnome風格、簡約得意。"
+    }
+  ],
+  "note": "呢份同ART-REQUEST-11一樣，覆蓋/新增嘅檔名儘量跟番現有friends資料夾格式，方便我（Claude）跑返現有嘅切圖script。每隻熊仔淨係need一個靚嘅idle姿勢就夠用（遊戲入面淨係用單一靜態sprite，唔係full動畫），3個姿勢畀我哋揀一個用得。",
+  "delivery": [
+    "git pull 先，由最新 main 開 art/batch-11（如果ART-REQUEST-11已經開咗呢條branch，就直接喺度加）",
+    "新增/覆蓋上面5個檔案",
+    "commit + push 上 branch art/batch-11"
+  ],
+  "rules": [
+    "唔好改 src/、data/ 或 public/",
+    "用瀏覽器 GitHub 登入 push，唔好貼 token",
+    "唔好畫任何同迪士尼/其他品牌角色相似嘅設計（尤其虎仔，呢次本身就係要改到唔似Tigger）"
+  ]
+}
