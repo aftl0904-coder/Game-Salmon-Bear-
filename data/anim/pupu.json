@@ -1,7 +1,7 @@
 {
- "frameWidth": 88,
- "frameHeight": 73,
- "anchorX": 44,
+ "frameWidth": 58,
+ "frameHeight": 63,
+ "anchorX": 29,
  "anims": {
   "idle": {
    "start": 0,

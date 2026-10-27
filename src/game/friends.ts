@@ -15,12 +15,12 @@ export const FRIENDS: Record<FriendId, Look> = {
   guard: { name: '英國熊', fur: 0x9a6a40, shirt: 0xc8281c, hat: 0x141014, tall: true }, // renamed from 阿兵
   denim: { name: '小熊仔', fur: 0xd8b07a, shirt: 0x2c3e6a }, // renamed from 牛仔
   brownie: { name: '招積熊', fur: 0x8a5a30, shirt: 0x1c1c20 }, // renamed from 啡啡
-  snowcat: { name: '北極熊', fur: 0xf4f0f0, shirt: 0xf4d8e0 }, // renamed from 雪糕; concept changed cat -> polar bear, art pending (ART-REQUEST-12)
+  snowcat: { name: '北極熊', fur: 0xf4f0f0, shirt: 0xf4d8e0 }, // renamed from 雪糕; concept changed cat -> polar bear
   shiba: { name: '柴柴', fur: 0xd8904a, shirt: 0xf8f0e0 },
-  ginger: { name: '薑餅', fur: 0xa86a38, shirt: 0x3a8a40, hat: 0xd02828 }, // art pending (ART-REQUEST-12)
-  fleecy: { name: '大pat熊', fur: 0x9a948c, shirt: 0xf8f6f0 }, // renamed from 毛毛; art pending (ART-REQUEST-12)
-  gnome: { name: '聖誕伯伯', fur: 0xf0e8e0, shirt: 0xc82828, hat: 0xd83030, tall: true }, // art pending (ART-REQUEST-12)
-  tigercub: { name: '虎仔', fur: 0xe8902a, shirt: 0xfaf0e0, hat: 0x3a6ac8 }, // redesign pending (ART-REQUEST-12) — delivered art was Tigger, excluded
+  ginger: { name: '薑餅', fur: 0xa86a38, shirt: 0x3a8a40, hat: 0xd02828 },
+  fleecy: { name: '大pat熊', fur: 0x9a948c, shirt: 0xf8f6f0 }, // renamed from 毛毛
+  gnome: { name: '聖誕伯伯', fur: 0xf0e8e0, shirt: 0xc82828, hat: 0xd83030, tall: true },
+  tigercub: { name: '虎仔', fur: 0xe8902a, shirt: 0xfaf0e0, hat: 0x3a6ac8 }, // redesigned in ART-REQUEST-12 after the first delivery turned out to be Tigger
   kuro: { name: '喵仔', fur: 0x202026, shirt: 0x2a4a9a }, // renamed from 黑豆
 }
 
