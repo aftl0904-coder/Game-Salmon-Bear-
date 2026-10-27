@@ -1,0 +1,67 @@
+{
+  "task_id": "ART-REQUEST-11",
+  "title": "噗噗（主角熊仔）外觀重新設計 — 杏色毛 + 橙色衫，唔好似返Winnie the Pooh",
+  "from": "Claude",
+  "to": "Cursor",
+  "branch": "art/batch-11",
+  "context": "噗噗依家啲毛色太似返迪士尼嘅Winnie the Pooh（金啡色毛+藍色頸巾），要整返設計做得original啲，避免同佢太似。呢次係重畫返同一批現有檔案（檔名、格數、畫布大小全部唔變，淨係畫面內容換新設計），方便我（Claude）用返現有個切圖script，唔使改code。",
+  "new_art": [
+    {
+      "file": "art-src/anim/pupu/model-sheet.png",
+      "canvas_size": "1280x720 (4格橫排，每格320寬)",
+      "desc": "新設計 model sheet，4個角度/pose畀我哋對scale。核心設計：毛色由金啡色換成『杏色』（warm apricot/almond，比家下淺身少少，偏暖杏黃，唔好太橙）；著一件素色橙黃色短袖T恤（唔好着紅色，紅色太似返Pooh件衫）；全身唔好有頸巾/領結呢樣嘢，一個都唔好畫；細細對圓眼、細鼻哥，圓滾滾熊仔身形保持唔變。SNES像素風，flat magenta (#FF00FF) background。"
+    },
+    {
+      "file": "art-src/anim/pupu/idle.png",
+      "canvas_size": "960x240 (3格橫排，每格320寬)",
+      "desc": "idle 3幀，企定定、呼吸擺動。杏色毛、橙色T恤、冇頸巾，同model-sheet一致設計。"
+    },
+    {
+      "file": "art-src/anim/pupu/walk.png",
+      "canvas_size": "1280x240 (4格橫排)",
+      "desc": "walk 4幀，行路循環。同上設計。"
+    },
+    {
+      "file": "art-src/anim/pupu/cute-pose.png",
+      "canvas_size": "960x240 (3格橫排)",
+      "desc": "cute-pose 3幀，得意表情/姿勢（例如歪頭、揈手）。同上設計。"
+    },
+    {
+      "file": "art-src/anim/pupu/tackle.png",
+      "canvas_size": "1280x240 (4格橫排)",
+      "desc": "tackle 4幀，向前撲嘅動作。同上設計。"
+    },
+    {
+      "file": "art-src/anim/pupu/hollow-idle.png",
+      "canvas_size": "960x240 (3格橫排)",
+      "desc": "hollow-idle 3幀，灰色版本（無精打采/被困嗰種狀態），用返跟idle一樣嘅pose，淨係成隻熊變晒灰色調（毛、衫全部降低彩度），冇頸巾。"
+    },
+    {
+      "file": "art-src/anim/pupu/wake-up.png",
+      "canvas_size": "1600x240 (5格橫排)",
+      "desc": "wake-up 5幀，瞓醒伸懶腰嘅動作連續幀。同上設計。"
+    },
+    {
+      "file": "art-src/portraits/pupu.png",
+      "canvas_size": "960x320 (3格橫排，正面)",
+      "desc": "正面portrait 3幀（表情變化：平靜/開心/驚訝之類），用喺對話框。杏色毛、橙色衫、冇頸巾。"
+    },
+    {
+      "file": "art-src/portraits/pupu-hollow.png",
+      "canvas_size": "960x320 (3格橫排，正面)",
+      "desc": "正面portrait灰色版 3幀，同pupu.png構圖一致，成隻變灰色調。"
+    }
+  ],
+  "note": "檔名、格數、畫布大細同宜家現有嘅完全一樣，唔使改manifest.json或者其他code，我呢邊攞到新圖之後直接重新跑一次切圖script就會自動更新遊戲入面嘅噗噗。設計重點記住三樣：(1) 杏色毛唔係金啡色，(2) 橙色素色T恤唔係紅色，(3) 完全唔好有頸巾/領結。",
+  "delivery": [
+    "git pull 先，由最新 main 開新branch",
+    "覆蓋返上面9個現有檔案（檔名一樣）",
+    "commit + push 上 branch art/batch-11"
+  ],
+  "rules": [
+    "唔好改 src/、data/ 或 public/",
+    "用瀏覽器 GitHub 登入 push，唔好貼 token",
+    "呢個係新branch，由最新 main pull 先再開，唔好繼續用返舊branch",
+    "唔好畫任何同迪士尼/其他品牌角色相似嘅設計（呢次本身就係要改到唔似，所以設計上更加要原創）"
+  ]
+}

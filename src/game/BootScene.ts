@@ -110,6 +110,14 @@ export class BootScene extends Phaser.Scene {
     for (const id of ['omamori', 'speed', 'power', 'stamina', 'luck'] as const) {
       this.load.image(`charm-${id}`, `/art/items/charm-${id}.png`)
     }
+    // 朋友仔 (ART batch-06, slice_friends.py): real art for the friends with a vetted,
+    // non-infringing design. 虎仔 and any other roster id are deliberately left out here
+    // so friends.ts's procedural placeholder keeps drawing them — see slice_friends.py's
+    // top comment for why (some delivered sheets turned out to be copyrighted characters).
+    for (const id of ['huihui', 'guard', 'denim', 'brownie', 'shiba', 'kuro']) {
+      this.load.image(`friend-${id}`, `/art/friends/${id}.png`)
+    }
+    this.load.image('friend-cage', '/art/friends/cage.png')
     preloadArtOverrides(this)
     preloadHeroAnims(this)
     preloadFxAnims(this)

@@ -44,6 +44,7 @@ export class MainMenuScene extends Phaser.Scene {
   /** Start stage (2 only once stage 1 has been cleared in this browser). */
   private stageSel = 1
   private stageText: Phaser.GameObjects.Text | null = null
+  private stageRedrawBox: (() => void) | null = null
   /** Secret code progress (↑↑↓↓←→←→BA). */
   private code: string[] = []
 
@@ -64,6 +65,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.inputReadyAt = this.time.now + 450
     this.stageSel = Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
+    this.stageRedrawBox = null
     this.code = []
 
     this.choices = [
@@ -143,25 +145,41 @@ export class MainMenuScene extends Phaser.Scene {
   /** "從 第一關 / 第二關 開始" — only shown once stage 1 has been cleared. */
   private buildStagePicker(width: number) {
     if (maxStage() < 2) return
-    this.stageText = this.add
-      .text(width / 2, 98, '', {
+    // Gold-bordered pill (matches the plaques below) so this reads as a real,
+    // clickable control rather than a caption easy to miss.
+    const y = 100
+    const box = this.add.graphics()
+    const label = this.add
+      .text(width / 2, y, '', {
         fontFamily: FONT_UI,
-        fontSize: '11px',
+        fontSize: '15px',
         color: '#ffe9a8',
-        backgroundColor: '#1c120ccc',
-        padding: { x: 8, y: 3 },
         stroke: '#1a0e06',
-        strokeThickness: 2,
+        strokeThickness: 3,
       })
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
-    this.stageText.on('pointerdown', () => this.toggleStage(1))
+    const redraw = () => {
+      const w = Math.ceil(label.width) + 28
+      box.clear()
+      box.fillStyle(0x1c120c, 0.92).fillRoundedRect(Math.round(width / 2 - w / 2), y - 12, w, 24, 6)
+      box.lineStyle(2, 0xc8902a, 1).strokeRoundedRect(Math.round(width / 2 - w / 2), y - 12, w, 24, 6)
+    }
+    label.on('pointerdown', () => this.toggleStage(1))
+    this.stageText = label
+    this.stageRedrawBox = redraw
+    // Draws under the text but was created after it — fix the order.
+    box.setDepth(label.depth - 1)
     this.drawStage()
+    // Briefly pulse on first appearance so a returning player notices there's
+    // a stage choice now, not just the character picker.
+    this.tweens.add({ targets: [box, label], scale: { from: 1.12, to: 1 }, duration: 260, ease: 'Back.out' })
   }
 
   private drawStage() {
     const name = STAGE_NAMES[this.stageSel] ?? STAGE_NAMES[1]
-    this.stageText?.setText(`▲▼　由 ${name} 開始`)
+    this.stageText?.setText(`◀　揀關卡：${name}　▶`)
+    this.stageRedrawBox?.()
   }
 
   private toggleStage(dir: 1 | -1) {

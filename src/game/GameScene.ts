@@ -2875,6 +2875,10 @@ export class GameScene extends Phaser.Scene {
   private async runCoffeeStall() {
     const st = this.stall()
     const gate = { destroy: () => undefined }
+    // Tracks whichever gate object is the current lock (gate, then the minigame's own
+    // gate once one starts) so `after()` below clears the right one and never leaves
+    // storyIntro stuck — a stuck storyIntro blocks all input permanently.
+    let activeGate: { destroy: () => void } = gate
     this.storyIntro = gate
     const pages =
       st.game === 'pour'
@@ -2895,7 +2899,7 @@ export class GameScene extends Phaser.Scene {
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number) => {
-      if (this.storyIntro === gate) this.storyIntro = null
+      if (this.storyIntro === activeGate) this.storyIntro = null
       if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
       this.resetPauseKeys()
@@ -2912,18 +2916,18 @@ export class GameScene extends Phaser.Scene {
     }
     if (st.game === 'pour') {
       const mini = pourGame(this)
-      this.storyIntro = mini
+      this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.good * 2, r.good * 150))
       return
     }
     if (st.game === 'timing') {
       const mini = timingGame(this, `${st.keeper}：${st.food}出爐`, '出爐')
-      this.storyIntro = mini
+      this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.good * 2, r.good * 120))
       return
     }
     const mini = stirCoffee(this)
-    this.storyIntro = mini
+    this.storyIntro = activeGate = mini
     void mini.done.then((r) => after(r.sugar + (r.stirred >= 1 ? 2 : 0), r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)))
   }
 

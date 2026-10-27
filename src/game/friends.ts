@@ -11,7 +11,7 @@ export type FriendId = 'huihui' | 'guard' | 'denim' | 'brownie' | 'snowcat' | 's
 type Look = { name: string; fur: number; shirt: number; hat?: number; tall?: boolean }
 
 export const FRIENDS: Record<FriendId, Look> = {
-  huihui: { name: '灰灰', fur: 0xb4aca0, shirt: 0xf0c0cc },
+  huihui: { name: '灰灰', fur: 0xb78e6a, shirt: 0xf0c0cc }, // 杏色 fur (was grey) per owner request
   guard: { name: '阿兵', fur: 0x9a6a40, shirt: 0xc8281c, hat: 0x141014, tall: true },
   denim: { name: '牛仔', fur: 0xd8b07a, shirt: 0x2c3e6a },
   brownie: { name: '啡啡', fur: 0x8a5a30, shirt: 0x1c1c20 },
