@@ -104,6 +104,12 @@ export class BootScene extends Phaser.Scene {
     for (const f of ['shadow-soft', 'glow-round', 'vignette'] as const) {
       this.load.image(`fx-${f}`, `/art/fx/${f}.png`)
     }
+    // 扭蛋機 (ART-REQUEST-10): gacha prop + capsule spritesheet + charm icons.
+    this.load.image('gacha-machine', '/art/props/gacha-machine.png')
+    this.load.spritesheet('gacha-capsules', '/art/props/gacha-capsules.png', { frameWidth: 64, frameHeight: 64 })
+    for (const id of ['omamori', 'speed', 'power', 'stamina', 'luck'] as const) {
+      this.load.image(`charm-${id}`, `/art/items/charm-${id}.png`)
+    }
     preloadArtOverrides(this)
     preloadHeroAnims(this)
     preloadFxAnims(this)

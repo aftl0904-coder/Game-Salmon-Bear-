@@ -410,7 +410,14 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('stageRound', 1)
     this.registry.set('stageNo', this.stageSel)
     this.registry.set('carryCoins', undefined)
+    // Only a true new run (starting from stage 1) draws a fresh charm —
+    // picking up at a later-cleared stage keeps whatever this run already rolled.
+    const next = this.stageSel === 1 ? 'gacha' : 'worldmap'
     this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
-    this.time.delayedCall(680, () => this.scene.start('worldmap', { from: this.stageSel, to: this.stageSel, next: 'play' }))
+    this.time.delayedCall(680, () =>
+      next === 'gacha'
+        ? this.scene.start('gacha')
+        : this.scene.start('worldmap', { from: this.stageSel, to: this.stageSel, next: 'play' }),
+    )
   }
 }
