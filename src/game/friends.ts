@@ -11,17 +11,17 @@ export type FriendId = 'huihui' | 'guard' | 'denim' | 'brownie' | 'snowcat' | 's
 type Look = { name: string; fur: number; shirt: number; hat?: number; tall?: boolean }
 
 export const FRIENDS: Record<FriendId, Look> = {
-  huihui: { name: '灰灰', fur: 0xb78e6a, shirt: 0xf0c0cc }, // 杏色 fur (was grey) per owner request
-  guard: { name: '阿兵', fur: 0x9a6a40, shirt: 0xc8281c, hat: 0x141014, tall: true },
-  denim: { name: '牛仔', fur: 0xd8b07a, shirt: 0x2c3e6a },
-  brownie: { name: '啡啡', fur: 0x8a5a30, shirt: 0x1c1c20 },
-  snowcat: { name: '雪糕', fur: 0xf4f0f0, shirt: 0xf4d8e0 },
+  huihui: { name: '熊仔', fur: 0xb78e6a, shirt: 0xf0c0cc }, // 杏色 fur (was grey) per owner request; renamed from 灰灰
+  guard: { name: '英國熊', fur: 0x9a6a40, shirt: 0xc8281c, hat: 0x141014, tall: true }, // renamed from 阿兵
+  denim: { name: '小熊仔', fur: 0xd8b07a, shirt: 0x2c3e6a }, // renamed from 牛仔
+  brownie: { name: '招積熊', fur: 0x8a5a30, shirt: 0x1c1c20 }, // renamed from 啡啡
+  snowcat: { name: '北極熊', fur: 0xf4f0f0, shirt: 0xf4d8e0 }, // renamed from 雪糕; concept changed cat -> polar bear, art pending (ART-REQUEST-12)
   shiba: { name: '柴柴', fur: 0xd8904a, shirt: 0xf8f0e0 },
-  ginger: { name: '薑餅', fur: 0xa86a38, shirt: 0x3a8a40, hat: 0xd02828 },
-  fleecy: { name: '毛毛', fur: 0x9a948c, shirt: 0xf8f6f0 },
-  gnome: { name: '聖誕伯伯', fur: 0xf0e8e0, shirt: 0xc82828, hat: 0xd83030, tall: true },
-  tigercub: { name: '虎仔', fur: 0xe8902a, shirt: 0xfaf0e0, hat: 0x3a6ac8 },
-  kuro: { name: '黑豆', fur: 0x202026, shirt: 0x2a4a9a },
+  ginger: { name: '薑餅', fur: 0xa86a38, shirt: 0x3a8a40, hat: 0xd02828 }, // art pending (ART-REQUEST-12)
+  fleecy: { name: '大pat熊', fur: 0x9a948c, shirt: 0xf8f6f0 }, // renamed from 毛毛; art pending (ART-REQUEST-12)
+  gnome: { name: '聖誕伯伯', fur: 0xf0e8e0, shirt: 0xc82828, hat: 0xd83030, tall: true }, // art pending (ART-REQUEST-12)
+  tigercub: { name: '虎仔', fur: 0xe8902a, shirt: 0xfaf0e0, hat: 0x3a6ac8 }, // redesign pending (ART-REQUEST-12) — delivered art was Tigger, excluded
+  kuro: { name: '喵仔', fur: 0x202026, shirt: 0x2a4a9a }, // renamed from 黑豆
 }
 
 export function friendTex(id: string) {
