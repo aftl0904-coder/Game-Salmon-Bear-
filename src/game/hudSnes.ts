@@ -15,6 +15,8 @@ import { FONT_UI } from './ui/fonts'
 const BAND_H = 30
 const HEART_W = 9
 const HEART_H = 8
+/** Max possible hearts beyond MAX_HP: 大心心 gear tiers 1-3 (+1/+2/+3) stack with 運符 (+1). */
+const MAX_BONUS_HEARTS = 4
 
 type Side = {
   hearts: Phaser.GameObjects.Image[]
@@ -156,15 +158,19 @@ export function buildSnesHud(
     const label = txt(scene, nx, 2, name, 10, who === 'lunbo' ? '#ffc890' : '#ffd0e0').setOrigin(right ? 1 : 0, 0)
     root.add(label)
     const hearts: Phaser.GameObjects.Image[] = []
-    // Three spare slots for the 大心心 upgrades; UIScene hides the ones not bought.
-    for (let i = 0; i < MAX_HP + 3; i++) {
+    // Spare slots for the 大心心 upgrades + 運符 charm; UIScene hides the ones not bought/rolled.
+    for (let i = 0; i < MAX_HP + MAX_BONUS_HEARTS; i++) {
       const hx = right ? nx - HEART_W - i * (HEART_W + 1) : nx + i * (HEART_W + 1)
       const h = scene.add.image(hx, 17, 'hud2-heart').setOrigin(0, 0).setScrollFactor(0)
       hearts.push(h)
       root.add(h)
     }
     const weapon: Phaser.GameObjects.Image[] = []
-    const wx0 = right ? nx - MAX_HP * (HEART_W + 1) - 6 : nx + MAX_HP * (HEART_W + 1) + 5
+    // Start past every reserved heart slot (not just the base MAX_HP) so a bonus heart
+    // from gear or the 運符 charm never overlaps the weapon-level icons.
+    const wx0 = right
+      ? nx - (MAX_HP + MAX_BONUS_HEARTS) * (HEART_W + 1) - 6
+      : nx + (MAX_HP + MAX_BONUS_HEARTS) * (HEART_W + 1) + 5
     for (let i = 0; i < 3; i++) {
       const wx = right ? wx0 - 13 - i * 14 : wx0 + i * 14
       const w = scene.add.image(wx, 17, i === 0 ? 'hud2-fish' : 'hud2-fish-off').setOrigin(0, 0).setScrollFactor(0)
