@@ -6,6 +6,16 @@
  * 每個角色自己一份，存喺 localStorage，過關之後仲喺度。
  */
 
+import {
+  charmBonusHearts,
+  charmDamageCutPenalty,
+  charmJumpMul,
+  charmSpecialPowerBonus,
+  charmSpeedMul,
+  charmStamMaxMul,
+  charmStamRecoverMul,
+} from './charms'
+
 export type GearId = 'heart' | 'sword' | 'gun' | 'armour' | 'boots' | 'charm'
 export type Who = 'boy' | 'girl'
 export type Tiers = Record<GearId, number>
@@ -165,31 +175,33 @@ export function weaponFloor(who: Who): number {
   return 1 + tierOf(who, who === 'girl' ? 'sword' : 'gun')
 }
 
-/** Damage taken is reduced by this, never below 1. */
+/** Damage taken is reduced by this, never below 0 — 力符 trades some of it away. */
 export function damageCut(who: Who): number {
   const t = tierOf(who, 'armour')
-  return t >= 3 ? 2 : t >= 1 ? 1 : 0
+  const base = t >= 3 ? 2 : t >= 1 ? 1 : 0
+  return Math.max(0, base - charmDamageCutPenalty())
 }
 
-/** Extra hearts on the max — the 大心心, one per tier. */
+/** Extra hearts on the max — the 大心心, one per tier, plus the 運符 charm. */
 export function bonusHearts(who: Who): number {
-  return tierOf(who, 'heart')
+  return tierOf(who, 'heart') + charmBonusHearts()
 }
 
-/** Boots are 耐力: a bigger bar and a faster recovery. */
+/** Boots are 耐力: a bigger bar and a faster recovery. 氣符/運符 scale it further. */
 export function stamMax(who: Who): number {
-  return [1, 1.25, 1.5, 1.85][tierOf(who, 'boots')] ?? 1
+  return ([1, 1.25, 1.5, 1.85][tierOf(who, 'boots')] ?? 1) * charmStamMaxMul()
 }
 export function stamRecoverMul(who: Who): number {
-  return [1, 1.2, 1.35, 1.6][tierOf(who, 'boots')] ?? 1
+  return ([1, 1.2, 1.35, 1.6][tierOf(who, 'boots')] ?? 1) * charmStamRecoverMul()
 }
 
+/** 扭蛋機 charm for this run — 風符/氣符 only, no gear affects this (yet). */
 export function speedMul(): number {
-  return 1
+  return charmSpeedMul()
 }
 
 export function jumpMul(): number {
-  return 1
+  return charmJumpMul()
 }
 
 export function knockMul(who: Who): number {
@@ -200,9 +212,9 @@ export function iframeMul(who: Who): number {
   return [1, 1, 1.6, 2][tierOf(who, 'charm')] ?? 1
 }
 
-/** Base 絕招 damage is 3; the 蜜符 adds one per tier. */
+/** Base 絕招 damage is 3; the 蜜符 adds one per tier, 力符 adds one more. */
 export function specialPower(who: Who): number {
-  return 3 + tierOf(who, 'charm')
+  return 3 + tierOf(who, 'charm') + charmSpecialPowerBonus()
 }
 
 export type StatId = 'hp' | 'atk' | 'def' | 'stam' | 'sp'

@@ -13,6 +13,7 @@ import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
+import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, timingGame } from './minigames'
 import stallsRaw from '../../data/stalls.json'
@@ -274,6 +275,11 @@ export class GameScene extends Phaser.Scene {
   private keyPhysicsDebug!: Phaser.Input.Keyboard.Key
   private keyPhysicsDebugAlt!: Phaser.Input.Keyboard.Key
   private physicsDebug = false
+  /** 御守 charm: O key / shake-the-phone / tap the icon → one blessing per stage. */
+  private keyO!: Phaser.Input.Keyboard.Key
+  private prayIcon: Phaser.GameObjects.Image | null = null
+  private shakeHandler: ((e: DeviceMotionEvent) => void) | null = null
+  private lastShakeAt = 0
   /** Honey special charges (max 1). */
   private specialCharges = 0
   /** Player 1's controller is read through TouchInput (gamepadBridge) — kept null here. */
@@ -397,6 +403,7 @@ export class GameScene extends Phaser.Scene {
     this.entities.clear()
     this.ambientCritters = []
     this.specialCharges = 0
+    resetPrayCharge()
     // Scene instances survive restart — reset debug before any frame can
     // hit World.postUpdate with a destroyed/null debugGraphic.
     this.resetPhysicsDebug(false)
@@ -441,6 +448,7 @@ export class GameScene extends Phaser.Scene {
     this.showIntro()
     this.emitHealth()
     this.emitScore()
+    this.setupPrayerCharm()
     this.events.once('shutdown', this.onSceneShutdown, this)
   }
 
@@ -519,7 +527,58 @@ export class GameScene extends Phaser.Scene {
     this.animateBg()
   }
 
+  /**
+   * 御守: one blessing per stage. Keyboard (O) and a tappable corner icon always
+   * work; a phone shake fires the same thing when the device exposes motion and
+   * (iOS) permission was already granted — see GachaScene's requestPermission() call.
+   */
+  private setupPrayerCharm() {
+    if (activeCharm() !== 'omamori') return
+    if (this.textures.exists('charm-omamori')) {
+      this.prayIcon = this.add
+        .image(GAME_W - 22, 44, 'charm-omamori')
+        .setScrollFactor(0)
+        .setDepth(DEPTH.UI)
+        .setScale(0.7)
+        .setVisible(hasPrayCharge())
+        .setInteractive({ useHandCursor: true })
+      this.prayIcon.on('pointerdown', () => this.tryPray())
+      this.tweens.add({ targets: this.prayIcon, scale: { from: 0.65, to: 0.78 }, duration: 520, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    }
+    if (typeof window !== 'undefined' && 'DeviceMotionEvent' in window) {
+      this.shakeHandler = (e: DeviceMotionEvent) => {
+        const acc = e.accelerationIncludingGravity
+        if (!acc) return
+        const mag = Math.abs(acc.x ?? 0) + Math.abs(acc.y ?? 0) + Math.abs(acc.z ?? 0)
+        if (mag > 38 && this.time.now - this.lastShakeAt > 1200) {
+          this.lastShakeAt = this.time.now
+          this.tryPray()
+        }
+      }
+      window.addEventListener('devicemotion', this.shakeHandler)
+    }
+  }
+
+  /** Consumes the charge (if any) and blesses both heroes: full stamina + a brief invincibility flash. */
+  private tryPray() {
+    if (!usePrayCharge()) return
+    SFX.sparkle()
+    for (const h of [this.boy, this.girl]) {
+      if (!h?.alive) continue
+      h.stam = stamMax(h.role as Who)
+      h.hurtCd = Math.max(h.hurtCd, 1500)
+      startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, 1500)
+      burst(this, h.x, h.y - 20, 0xffe08a, 10)
+      floatText(this, h.x, h.y - 32, '祝福！', '#ffe08a')
+    }
+  }
+
   private onSceneShutdown() {
+    if (this.shakeHandler) {
+      window.removeEventListener('devicemotion', this.shakeHandler)
+      this.shakeHandler = null
+    }
+    this.prayIcon = null
     // Must clear drawDebug before Phaser destroys the Graphics — otherwise
     // World.postUpdate still calls debugGraphic.clear() on undefined.
     this.resetPhysicsDebug(false)
@@ -812,6 +871,9 @@ export class GameScene extends Phaser.Scene {
 
     if (this.storyIntro) return
 
+    if (hasPrayCharge() && Phaser.Input.Keyboard.JustDown(this.keyO)) this.tryPray()
+    this.prayIcon?.setVisible(hasPrayCharge())
+
     // Start / Enter / Esc / P → pause menu (restart and back-to-menu live there now;
     // R no longer restarts instantly — it sits right next to F and T).
     const pausePressed =
@@ -1043,6 +1105,7 @@ export class GameScene extends Phaser.Scene {
     this.keySpace = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE, true)
     this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
     this.keyRShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT, true)
+    this.keyO = kb.addKey(Phaser.Input.Keyboard.KeyCodes.O, true)
     void this.keyH
     void this.keySlash
     void this.keyRShift
