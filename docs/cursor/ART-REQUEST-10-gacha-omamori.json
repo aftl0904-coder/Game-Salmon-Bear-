@@ -1,0 +1,56 @@
+{
+  "task_id": "ART-REQUEST-10",
+  "title": "扭蛋機（開局抽charm）+ 御守 icon",
+  "from": "Claude",
+  "to": "Cursor",
+  "branch": "art/batch-10",
+  "context": "新功能：開局前有部扭蛋機，玩家扭一個隨機「charm」，令呢次playthrough攞到少少唔同嘅能力（有少少加強，亦有少少trade-off），每次開局都有啲唔同，好似開盲盒。遊戲機制同UI我（Claude）自己寫，呢個brief淨係要畫面。",
+  "new_art": [
+    {
+      "file": "art-src/props/gacha-machine.png",
+      "canvas_size": "640x720",
+      "desc": "扭蛋機實物，橫向尺寸配合 640 寬嘅畫面（企喺畫面中間，玩家行埋去撳），圓頂玻璃機身、彩色扭蛋膠囊喺入面，風格跟遊戲其他 props（簡約、飽和色、SNES質感，可參考 art-src/props/coffee-cart.png 嗰種路邊小店質感）。"
+    },
+    {
+      "file": "art-src/props/gacha-capsule-sheet.png",
+      "canvas_size": "320x64",
+      "desc": "5格橫排扭蛋膠囊（每格64x64），5種唔同顏色（紅／藍／綠／金／粉），圓膠囊有條中間線（扭蛋膠囊經典造型），用嚟做跌落嚨/滾動動畫嘅幀。"
+    },
+    {
+      "file": "art-src/items/charm-omamori.png",
+      "canvas_size": "64x64",
+      "desc": "御守（日式護身符）icon，布袋長方形、有繩結同吊繩，顏色用藍白或紅白（傳統御守配色），簡潔小icon風格，要同其他 art-src/items/*.png 嗰種細icon尺寸同線條粗度一致。"
+    },
+    {
+      "file": "art-src/items/charm-speed.png",
+      "canvas_size": "64x64",
+      "desc": "「風」charm icon（加速效果）：一粒羽毛或風紋漩渦，顏色淡青/白。"
+    },
+    {
+      "file": "art-src/items/charm-power.png",
+      "canvas_size": "64x64",
+      "desc": "「力」charm icon（加攻擊）：一粒拳頭或火燄紋，顏色橙紅。"
+    },
+    {
+      "file": "art-src/items/charm-stamina.png",
+      "canvas_size": "64x64",
+      "desc": "「氣」charm icon（體力回復加快）：一粒呼吸/漩渦符號，顏色綠。"
+    },
+    {
+      "file": "art-src/items/charm-luck.png",
+      "canvas_size": "64x64",
+      "desc": "「運」charm icon（隨機小buff）：一粒四葉草或銅錢紋，顏色金黃。"
+    }
+  ],
+  "note": "御守個 icon 畫完之後，會喺遊戲入面有個「搖手機」小互動（撳住/搖動觸發一次小祝福），嗰個係code做嘅動畫+現有特效拼出嚟，唔需要額外畫新素材。",
+  "delivery": [
+    "git pull 先",
+    "新增上面7個檔案",
+    "commit + push 上 branch art/batch-10"
+  ],
+  "rules": [
+    "唔好改 src/、data/ 或 public/",
+    "用瀏覽器 GitHub 登入 push，唔好貼 token",
+    "呢個係新branch，由最新 main pull 先再開，唔好繼續用返舊branch"
+  ]
+}
