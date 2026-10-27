@@ -11,15 +11,20 @@ component blob detection (ndimage.label over the whole mask) rather than the
 even-grid split() in slice_anim.py, then sorts blobs left-to-right by centroid.
 
 IMPORTANT: only a vetted allow-list of friend ids is sliced here. Several
-folders delivered in this batch (tigercub, berry, forest, and the unused
-duplicate bearcub) turned out to depict recognizable copyrighted characters
-(Disney's Tigger, a Lotso/Care-Bear-style pink strawberry bear, and Studio
-Ghibli's Totoro) and must never be wired into the game. Do not widen ALLOWED
-without a human visually re-checking the new id's source art first.
+folders delivered in the first friends batch (the original tigercub, berry,
+forest, and the unused duplicate bearcub) turned out to depict recognizable
+copyrighted characters (Disney's Tigger, a Lotso/Care-Bear-style pink
+strawberry bear, and Studio Ghibli's Totoro) and must never be wired into
+the game; berry/forest/bearcub are still excluded (no roster id uses them).
+ART-REQUEST-12 (art/batch-11) redelivered tigercub as an original sitting
+baby-tiger design (round proportions, beanie hiding the ears, no Tigger-style
+pink heart nose or spring-coil pose) that passed a human visual re-check, so
+it's back in ALLOWED below. Do not widen ALLOWED again without a human
+visually re-checking the new id's source art first.
 
 Run: python3 scripts/art/slice_friends.py [art-root]
 """
-import sys, os
+import sys, os, colorsys
 import numpy as np
 from scipy import ndimage
 from PIL import Image
@@ -27,7 +32,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from slice_anim import fg_mask, downscale  # noqa: E402
 
 # id -> target content height in px (matches the old procedural placeholder's
-# ~40px bears; the two 'tall' friends get a bit more so they still read taller).
+# ~40px bears; 'tall' friends get more so they still read taller; sitting-pose
+# friends (tigercub/snowcat/fleecy) are wider than tall so get a bit less).
 FRIEND_TARGETS = {
     'huihui': 38,
     'guard': 46,
@@ -35,8 +41,44 @@ FRIEND_TARGETS = {
     'brownie': 38,
     'shiba': 34,
     'kuro': 34,
+    'tigercub': 36,
+    'snowcat': 34,
+    'ginger': 36,
+    'fleecy': 34,
+    'gnome': 48,
 }
 CAGE_TARGET = 46
+
+# id -> (hue_deg_min, hue_deg_max, max_sat, target_hue_deg) fur recolor, applied to the
+# final cropped icon AFTER slicing. huihui's delivered art is grey fur with a pink shirt;
+# the owner asked for apricot fur instead, so low-saturation warm-grey pixels (the fur —
+# the pink shirt and black nose/eyes have their own hue/saturation and are untouched) get
+# their hue pinned to a warm apricot and their saturation boosted, keeping each pixel's
+# original value (shading) intact. This is baked into the slicer (not a one-off edit on
+# the output PNG) so re-running this script can never silently revert the recolor.
+FUR_RECOLOR = {
+    'huihui': (8, 55, 0.35, 28 / 360),
+}
+
+
+def recolor_fur(icon: Image.Image, hue_lo: float, hue_hi: float, max_sat: float, target_hue: float) -> Image.Image:
+    a = np.array(icon.convert('RGBA')).astype(float)
+    rgb = a[..., :3] / 255
+    alpha = a[..., 3]
+    h = np.zeros(rgb.shape[:2]); s = np.zeros(rgb.shape[:2]); v = np.zeros(rgb.shape[:2])
+    it = np.nditer(h, flags=['multi_index'])
+    for _ in it:
+        y, x = it.multi_index
+        hh, ss, vv = colorsys.rgb_to_hsv(*rgb[y, x])
+        h[y, x], s[y, x], v[y, x] = hh, ss, vv
+    hue_deg = h * 360
+    fur = (alpha > 10) & (hue_deg > hue_lo) & (hue_deg < hue_hi) & (s < max_sat) & (v > 0.15)
+    out_rgb = rgb.copy()
+    for y, x in zip(*np.where(fur)):
+        new_s = min(0.55, s[y, x] * 1.7 + 0.14)
+        out_rgb[y, x] = colorsys.hsv_to_rgb(target_hue, new_s, v[y, x])
+    out = (out_rgb * 255).clip(0, 255).astype(np.uint8)
+    return Image.fromarray(np.dstack([out, alpha.astype(np.uint8)]), 'RGBA')
 
 
 def blobs(mask, min_area=250):
@@ -87,8 +129,12 @@ def main():
             continue
         _, x0, y0, x1, y1 = bl[0]  # leftmost pose
         icon = crop_scale(a, m, (x0, y0, x1, y1), target_h)
+        recolor_note = ''
+        if fid in FUR_RECOLOR:
+            icon = recolor_fur(icon, *FUR_RECOLOR[fid])
+            recolor_note = ', fur recolored'
         icon.save(f'public/art/friends/{fid}.png')
-        print(fid, icon.size, f'({len(bl)} poses found, used leftmost)')
+        print(fid, icon.size, f'({len(bl)} poses found, used leftmost{recolor_note})')
 
     cage_path = os.path.join(root, 'art-src/props/friends/cage.png')
     a = np.array(Image.open(cage_path).convert('RGB'))
