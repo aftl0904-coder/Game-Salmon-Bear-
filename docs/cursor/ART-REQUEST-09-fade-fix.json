@@ -1,0 +1,31 @@
+{
+  "task_id": "ART-REQUEST-09",
+  "title": "噗噗褪色效果修正",
+  "from": "Claude",
+  "to": "Cursor",
+  "branch": "art/batch-09",
+  "edit_file": "art-src/story/c3-market.png",
+  "canvas_size": "640x360",
+  "problem": "噗噗而家係一刀切嘅半邊白、半邊橙，好似張圖壞咗／未畫完。故事設定係佢食咗假蜜會慢慢變灰（data/story.json 呢個場景 grey=0.5，0=本來顏色、1=全灰），應該係「褪緊色褪到一半」，唔係「被一刀切做兩半」。",
+  "reference_good_example": {
+    "file": "art-src/story/c1-hollow.png",
+    "why": "第1關開頭，噗噗全灰嗰張，已經畫得好靚：全身均勻嘅灰藍色，冇銳利分界線。c3-market.png 嗰隻噗噗應該follow同一種質感，只係褪到一半（仲帶少少原本暖色）。"
+  },
+  "changes": [
+    "噗噗全身都帶一層灰，唔好垂直一刀切做兩種顏色",
+    "可以不均勻／斑駁（肚、耳仔邊位灰得深啲，其他位仲有少少暖色），模仿褪色中但未褪晒嘅質感，但唔好有銳利分界線",
+    "跟 c1-hollow.png 嗰種灰藍色調，唔好用純灰／純白",
+    "表情同姿勢跟番而家張圖（企喺度，有少少驚訝／唔舒服），淨係改佢身上嘅顏色處理",
+    "背景、倫寶、琪寶寶原封不動"
+  ],
+  "note": "如果同一批圖裡面重有第二隻噗噗／第二張 story 圖係同一種一刀切畫法，一拼跟呢個方向改。",
+  "delivery": [
+    "git pull 先",
+    "overwrite art-src/story/c3-market.png（同大細、同構圖，淨係噗噗顏色處理改咗）",
+    "commit + push 上 branch art/batch-09"
+  ],
+  "rules": [
+    "唔好改 src/、data/ 或 public/",
+    "用瀏覽器 GitHub 登入 push，唔好貼 token"
+  ]
+}
