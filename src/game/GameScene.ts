@@ -357,6 +357,7 @@ export class GameScene extends Phaser.Scene {
   private powerUntil = 0
   private stalls: MarketStall[] = []
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
+  private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
   private bossFight = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
@@ -390,6 +391,7 @@ export class GameScene extends Phaser.Scene {
     this.powerUntil = 0
     this.stalls = []
     this.marketFar = { market: null, spring: null }
+    this.towerFar = { hq: null, roof: null }
     this.s2world?.destroy()
     this.s2world = null
     this.duskWash = null
@@ -2376,9 +2378,11 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Stage 5 · △畝大廈: the final "mixed mechanics" tower interior — lobby → hex corridor →
-   * blacked-out floor → rooftop. No Cursor backdrop art for this one either, so (same
-   * placeholder spirit as drawDepotWorld) it's a procedural corporate-tower silhouette:
-   * cool concrete pillars and floor-sign glow that turns alarm-red near the boss gate.
+   * blacked-out floor → rooftop. Cursor's batch-13 delivered the two far-backdrop paintings
+   * (hq-far: the honeycomb-piped office interior, rooftop-far: the sunset vista at the boss
+   * arena) — crossfaded in tickStage5 as the camera nears the boss gate, same pattern as
+   * drawMarketWorld's market→hotspring crossfade. The procedural pillars/floor-sign glow
+   * stay layered on top for depth texture.
    */
   private drawTowerWorld() {
     const g = this.add.graphics().setDepth(DEPTH.SKY)
@@ -2386,6 +2390,9 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(0x262c36, 0.5).fillRect(0, 80, WORLD_W, 240)
     this.bgClouds = []
     this.bgMounts = []
+    const far = (key: string) => (this.textures.exists(key) ? this.add.image(GAME_W / 2, GAME_H / 2, key).setScrollFactor(0).setDepth(DEPTH.SKY_BAND) : null)
+    this.towerFar = { hq: far('story-hq-far'), roof: far('story-rooftop-far') }
+    this.towerFar.roof?.setAlpha(0)
     for (let i = 0; i < 10; i++) {
       const x = 120 + i * 420
       const cg = this.add.graphics().setScrollFactor(0.3, 0).setDepth(DEPTH.SKY_BAND).setAlpha(0.6)
@@ -4857,6 +4864,12 @@ export class GameScene extends Phaser.Scene {
     this.s4world?.update(dt)
     this.s5world?.update(dt)
     this.tickHotSprings()
+    // Office interior → rooftop sunset: the far painting crossfades on approach to the boss gate.
+    const triggerX = ST.boss?.triggerX ?? 99999
+    const cx = this.cameras.main.scrollX
+    const k = Phaser.Math.Clamp((cx - (triggerX - 360)) / 260, 0, 1)
+    this.towerFar.hq?.setAlpha(1 - k)
+    this.towerFar.roof?.setAlpha(k)
     this.tickStage2(dt)
   }
 

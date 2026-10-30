@@ -891,7 +891,7 @@
       "steps": [
         { "music": "stop" },
         { "sfx": "dread" },
-        { "still": "c7-boss" },
+        { "still": "c10-unmask" },
         { "say": "triboss", "text": "森林？邊個會記得森林。" },
         { "say": "triboss", "text": "呢度即將起嘅，叫「百畝商場・二期」。" },
         { "say": "kibobo", "text": "原來「三角大人」，即係你哋地產商！", "face": 2 },
@@ -928,6 +928,7 @@
         { "still": "ending-2" },
         { "say": "lunbo", "text": "不如而家就喺呢度，大家一齊野餐？", "face": 1 },
         { "say": "kibobo", "text": "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］" },
+        { "still": "ending-3" },
         { "still": null },
         { "card": "鮭鮭熊", "sub": "全部真蜂蜜搵齊・森林獲救" }
       ]
