@@ -1,0 +1,70 @@
+{
+  "task_id": "ART-REQUEST-14",
+  "title": "倫寶/琪寶寶 第4-5關戰術背心造型（原創設計，刻意避開任何現有生還恐怖片角色嘅outfit）",
+  "from": "Claude",
+  "to": "Cursor",
+  "branch": "art/batch-13",
+  "context": "第4關（鹽霧工地）同第5關（△畝大廈）氣氛轉返認真/緊張，想畀倫寶同琪寶寶加一套『出任務』造型，淨係呢兩關用，第1-3關照舊用而家嗰套休閒衫（唔覆蓋舊檔，係新增一套）。面部、髮型、身形比例、武器（倫寶：鮭魚槍；琪寶寶：劍+背脊紙扇）同依家 `art-src/anim/lunbo/model-sheet.png`／`art-src/anim/kibobo/model-sheet.png` 果套完全一樣，淨係換衫層（外面加件戰術背心），唔好改面/髮型/身形/武器設計。讀 `docs/cursor/ART-REQUEST-02-animation.md` 嘅 global rules（magenta底、側面向右、腳踏同一條基線、無文字、16-bit SNES pixel art）。",
+  "design_rules_avoid": [
+    "唔好畫任何真實電玩/電影角色嘅outfit（尤其任何『生還恐怖片』風格嘅特勤/警察主角套裝）",
+    "唔好用啡色/卡其色皮革夾克（例如男主角常見嗰種outfit色系）",
+    "唔好用紅色皮褸+丹寧短褲+肩章+數字（例如女主角常見嗰種outfit色系／剪裁）",
+    "唔好畫任何星形／鷹形徽章、任何品牌logo、任何真實軍警臂章或數字牌",
+    "唔好有任何文字、字母、數字出現喺衫、徽章或裝備上"
+  ],
+  "new_art": [
+    {
+      "file": "art-src/anim/lunbo/tactical-model-sheet.png",
+      "canvas_size": "1536x1024（正面、側面、背面、3/4 側，magenta底）",
+      "desc": "倫寶：面/髮型/身形同現有model-sheet一樣。外層新增一件深藍灰（slate navy）戰術背心，罩住白色底衫，背心上有2-3個細小工具袋、拉鍊，胸口有一個細細嘅原創蜂巢六角形徽章（唔係星形），背心肩帶夾一支細電筒（原創款，筒身深灰，唔反光過份）。褲（藍牛仔）同鞋同現有設計一樣冇變。鮭魚槍照舊，可以喺槽身加一條電筒座（細節自由）。"
+    },
+    {
+      "file": "art-src/anim/lunbo/tactical-idle.png",
+      "canvas_size": "1536x512 (3格橫排)",
+      "desc": "著住tactical背心嘅企定呼吸動作，姿勢/比例跟返現有idle.png嗰套，淨係換衫。"
+    },
+    {
+      "file": "art-src/anim/lunbo/tactical-walk.png",
+      "canvas_size": "1536x384 (4格橫排)",
+      "desc": "著住tactical背心嘅行路動作，跟返現有walk.png嗰套姿勢，淨係換衫。"
+    },
+    {
+      "file": "art-src/anim/lunbo/tactical-shoot.png",
+      "canvas_size": "1536x384 (4格橫排)",
+      "desc": "著住tactical背心嘅開槍動作（舉槍→開火→後坐→收槍），跟返現有shoot.png嗰套姿勢，淨係換衫。"
+    },
+    {
+      "file": "art-src/anim/kibobo/tactical-model-sheet.png",
+      "canvas_size": "1536x1024（正面、側面、背面、3/4 側，magenta底）",
+      "desc": "琪寶寶：面/髮型（長馬尾）/身形同現有model-sheet一樣。外層新增一件橄欖綠（moss green）戰術背心，罩住部分米白色底衫（留少少米白領口見到），胸口有同一款細蜂巢六角形徽章，一條細電筒/頭燈帶喺馬尾上面（唔遮馬尾，淨係一條細帶+細燈泡），方便佳佳兩手揸劍/拎紙扇。深色褲同鞋同現有設計一樣冇變，劍同背後紙扇照舊。"
+    },
+    {
+      "file": "art-src/anim/kibobo/tactical-idle.png",
+      "canvas_size": "1536x512 (3格橫排)",
+      "desc": "著住tactical背心嘅企定動作，跟返現有idle.png姿勢，淨係換衫。"
+    },
+    {
+      "file": "art-src/anim/kibobo/tactical-run.png",
+      "canvas_size": "1536x640 (5格橫排)",
+      "desc": "著住tactical背心嘅跑步動作，跟返現有run.png姿勢，淨係換衫。"
+    },
+    {
+      "file": "art-src/anim/kibobo/tactical-slash1.png",
+      "canvas_size": "1536x384 (4格橫排)",
+      "desc": "著住tactical背心嘅揈劍動作，跟返現有slash1.png姿勢，淨係換衫。"
+    }
+  ],
+  "note": "呢套只係stage4-5限定嘅外層造型，唔係取代現有casual衫（1-3關同主選單/結局繼續用返現有model-sheet）。如果Cursor時間/額度有限，順序優先做完2個tactical-model-sheet先，再做idle/walk/shoot/run/slash1，其餘動作（crouch/hurt/ko/win）可以暫時沿用casual衫版本頂住，唔急。",
+  "delivery": [
+    "git pull 先，開（或者接續）branch art/batch-13",
+    "新增上面檔案（唔好覆蓋現有 model-sheet.png/idle.png/walk.png 等 casual 版本——tactical 係新增檔名）",
+    "更新 art-src/anim/manifest.json 加對應entry",
+    "commit + push 上 art/batch-13",
+    "用瀏覽器 GitHub 登入 push，唔好貼 token"
+  ],
+  "rules": [
+    "唔好改 src/、data/ 或 public/",
+    "面/髮型/身形比例/武器設計保持同現有model-sheet一致，淨係換衫層",
+    "如果有frame走樣（面/比例/色系唔夾），重新畫過，唔好照咁push"
+  ]
+}
