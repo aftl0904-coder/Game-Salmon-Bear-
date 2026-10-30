@@ -35,8 +35,8 @@ const ROLL: Line[] = [
   { t: 'Claude', gap: 40 },
   { t: '送給', size: 13, color: '#ffb070', gap: 22 },
   { t: '最重要嘅妳', size: 16, color: '#ffd0e0', gap: 56 },
-  { t: '仲有三罐真蜂蜜……', size: 12, color: '#e8d8b0', gap: 18 },
-  { t: '噗噗，等埋我哋。', size: 12, color: '#e8d8b0', gap: 70 },
+  { t: '仲有更多甜蜜，一齊搵。', size: 12, color: '#e8d8b0', gap: 18 },
+  { t: '噗噗，陪住我哋。', size: 12, color: '#e8d8b0', gap: 70 },
   { t: '多謝遊玩', size: 22, color: '#ffd76a', title: true, gap: 0 },
 ]
 
