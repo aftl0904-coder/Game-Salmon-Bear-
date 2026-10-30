@@ -4960,7 +4960,7 @@ export class GameScene extends Phaser.Scene {
         this.addS2Enemy(z)
       },
       dozerSweep: (x0, x1, dir) => this.mudWave(x0, x1, dir),
-      replayQueen: (x) => this.s2Hooks().spawnEgg(x),
+      replayQueen: (x) => this.s2Hooks().spawnEgg?.(x),
       replayOwl: (gapX) => this.owlHooks().feathers(gapX),
       bossEvent: (kind) => this.onQueenEvent(kind),
     }
