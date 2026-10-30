@@ -1,0 +1,49 @@
+{
+ "frameWidth": 86,
+ "frameHeight": 102,
+ "anchorX": 43,
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "point": {
+   "start": 4,
+   "count": 3,
+   "fps": 8,
+   "loop": false
+  },
+  "rain": {
+   "start": 7,
+   "count": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "shield": {
+   "start": 11,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "hurt": {
+   "start": 15,
+   "count": 2,
+   "fps": 10,
+   "loop": false
+  },
+  "defeat": {
+   "start": 17,
+   "count": 5,
+   "fps": 6,
+   "loop": false
+  },
+  "unmask": {
+   "start": 22,
+   "count": 5,
+   "fps": 7,
+   "loop": false
+  }
+ }
+}

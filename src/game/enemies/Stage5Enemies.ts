@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { Enemy, type EnemyHitResult } from './Enemy'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { actorDepth } from '../engine/depth'
+import { ANIM_SETS, animTex, hasAnimSet } from '../heroAnims'
 
 /**
  * Stage 5 · △畝大廈 final boss: △畝大佬 (the man behind the triangle mask). No new jumping
@@ -16,8 +17,9 @@ import { actorDepth } from '../engine/depth'
  *  3. 三角盾＋主控電腦 — shielded except for brief "crack" windows; the last hit on the
  *     crack triggers a short 噗噗 team-up beat before he actually falls (see `die`).
  *
- * No Cursor art for him yet, so (same approach as Stage4Enemies.ts) he's a small
- * procedurally drawn silhouette — a suit + triangle mask — swapped for real art later.
+ * Art: Cursor's batch-13 (scripts/art/slice_triboss.py → public/art/anim/triboss.png),
+ * registered as the 'triboss' anim set in heroAnims.ts. Falls back to a flat silhouette
+ * texture if the art set isn't loaded for some reason (same spirit as the old placeholder).
  */
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
@@ -70,24 +72,31 @@ export class TriBoss extends Enemy {
   arenaX1 = 0
   private lastHitAt = 0
   private th: TriHooks
+  private hasArt: boolean
+  private animName = ''
   onDefeated?: () => void
 
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, th: TriHooks) {
-    makeTexture(scene, 'stage5-triboss', 52, 64, (g) => {
-      const out = 0x0e0a10
-      // Suit + shoes.
-      g.fillStyle(out, 1).fillEllipse(26, 58, 44, 10)
-      g.fillStyle(0x201a28, 1).fillRoundedRect(8, 30, 36, 30, 6)
-      g.fillStyle(0x16111c, 1).fillRect(8, 30, 36, 8)
-      // Head + triangle mask.
-      g.fillStyle(0x3a3240, 1).fillCircle(26, 20, 13)
-      g.fillStyle(0xd82a2a, 1).fillTriangle(26, 8, 13, 28, 39, 28)
-      g.fillStyle(out, 1).fillTriangle(26, 14, 19, 25, 33, 25)
-      g.fillStyle(0xffd060, 1).fillCircle(26, 20, 2.4)
-      // Tie — the one bright thread.
-      g.fillStyle(0xffb020, 1).fillTriangle(26, 30, 22, 44, 30, 44)
-    })
-    super(scene, x, th.floorY(), 'stage5-triboss')
+    const hasArt = hasAnimSet(scene, 'triboss')
+    if (!hasArt) {
+      makeTexture(scene, 'stage5-triboss', 52, 64, (g) => {
+        const out = 0x0e0a10
+        // Suit + shoes.
+        g.fillStyle(out, 1).fillEllipse(26, 58, 44, 10)
+        g.fillStyle(0x201a28, 1).fillRoundedRect(8, 30, 36, 30, 6)
+        g.fillStyle(0x16111c, 1).fillRect(8, 30, 36, 8)
+        // Head + triangle mask.
+        g.fillStyle(0x3a3240, 1).fillCircle(26, 20, 13)
+        g.fillStyle(0xd82a2a, 1).fillTriangle(26, 8, 13, 28, 39, 28)
+        g.fillStyle(out, 1).fillTriangle(26, 14, 19, 25, 33, 25)
+        g.fillStyle(0xffd060, 1).fillCircle(26, 20, 2.4)
+        // Tie — the one bright thread.
+        g.fillStyle(0xffb020, 1).fillTriangle(26, 30, 22, 44, 30, 44)
+      })
+    }
+    const idleStart = hasArt ? ANIM_SETS.triboss.anims.idle?.start ?? 0 : undefined
+    super(scene, x, th.floorY(), hasArt ? animTex('triboss') : 'stage5-triboss', idleStart)
+    this.hasArt = hasArt
     this.th = th
     this.setOrigin(0.5, 1)
     this.hp = this.maxHp = 48
@@ -96,8 +105,28 @@ export class TriBoss extends Enemy {
     this.arenaX1 = arenaX1
     const body = this.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
-    body.setSize(40, 48)
-    body.setOffset(6, 10)
+    if (hasArt) {
+      // Real art cell is taller than the old 52×64 placeholder — centre a similar hit
+      // volume over his torso instead of the full suit+legs.
+      const fw = this.frame.width
+      const fh = this.frame.height
+      body.setSize(44, 56)
+      body.setOffset((fw - 44) / 2, fh - 56 - 6)
+      this.playAnim('idle')
+    } else {
+      body.setSize(40, 48)
+      body.setOffset(6, 10)
+    }
+  }
+
+  /** Play `triboss-<name>` once per state change; no-ops to the placeholder tint path when there's no art. */
+  private playAnim(name: string) {
+    if (!this.hasArt) return
+    if (this.animName === name) return
+    const key = `triboss-${name}`
+    if (!this.scene?.anims.exists(key)) return
+    this.animName = name
+    this.play(key)
   }
 
   canHurtPlayer() {
@@ -145,7 +174,19 @@ export class TriBoss extends Enemy {
     this.setFsm('DEAD')
     this.setVelocity(0, 0)
     ;(this.body as Phaser.Physics.Arcade.Body).enable = false
-    this.scene.tweens.add({ targets: this, y: this.th.floorY(), angle: 10, duration: 700, ease: 'Bounce.out' })
+    if (this.hasArt) {
+      // Mask cracks off, then he crumples — no silhouette bounce-tween needed, the
+      // animation itself carries the fall.
+      this.animName = ''
+      this.playAnim('unmask')
+      this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
+        this.animName = ''
+        this.playAnim('defeat')
+      })
+    } else {
+      this.clearTint()
+      this.scene.tweens.add({ targets: this, y: this.th.floorY(), angle: 10, duration: 700, ease: 'Bounce.out' })
+    }
     // 噗噗 half-wakes and charges in for the team-up finish before he's counted defeated.
     this.th.bossEvent('finale')
     this.scene.time.delayedCall(2200, () => {
@@ -164,12 +205,15 @@ export class TriBoss extends Enemy {
     this.setFlipX(tgt.x < this.x)
     switch (this.act) {
       case 'intro':
+        this.playAnim('idle')
         if (this.t > 1200) this.go('rainwarn')
         break
 
       // ── Phase 1: 假蜜雨＋蜜僵門潮 ──
       case 'rainwarn':
-        this.setTint(0xffd070)
+        // Pointing-up telegraph; keep the amber tint too when there's no art to flash instead.
+        this.playAnim('point')
+        if (!this.hasArt) this.setTint(0xffd070)
         if (this.t > 600) {
           this.clearTint()
           this.th.rain(this.arenaX0, this.arenaX1)
@@ -177,24 +221,29 @@ export class TriBoss extends Enemy {
         }
         break
       case 'rain':
+        this.playAnim('rain')
         if (this.t > 500 && this.t - dt <= 500) this.th.spawnZombie(this.arenaX0 + 30)
         if (this.t > 900 && this.t - dt <= 900) this.th.spawnZombie(this.arenaX1 - 30)
         if (this.t > 1800) this.go('rest1')
         break
       case 'rest1':
+        this.playAnim('idle')
         if (this.t > 900) this.go('rainwarn')
         break
 
       // ── Phase 2: 推土機軌道＋舊 Boss 投影 ──
       case 'proj1':
+        this.playAnim('point')
         if (this.t > 200 && this.t - dt <= 200) this.th.replayQueen(tgt.x)
         if (this.t > 1400) this.go('proj2')
         break
       case 'proj2':
+        this.playAnim('point')
         if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl(this.x)
         if (this.t > 1600) this.go('dozer')
         break
       case 'dozer':
+        this.playAnim('point')
         if (this.t > 100 && this.t - dt <= 100) {
           this.dirX = (Math.sign(tgt.x - this.x) || this.dirX) as 1 | -1
           this.th.dozerSweep(this.arenaX0, this.arenaX1, this.dirX)
@@ -202,12 +251,14 @@ export class TriBoss extends Enemy {
         if (this.t > 1500) this.go('rest2')
         break
       case 'rest2':
+        this.playAnim('idle')
         if (this.t > 1000) this.go('proj1')
         break
 
       // ── Phase 3: 三角盾＋主控電腦 ──
       case 'shield':
-        this.setTint(0x6a7aff)
+        this.playAnim('shield')
+        if (!this.hasArt) this.setTint(0x6a7aff)
         if (this.t > 1300) {
           this.clearTint()
           this.go('crack')
@@ -215,7 +266,8 @@ export class TriBoss extends Enemy {
         }
         break
       case 'crack':
-        this.setTint(0xffe060)
+        this.playAnim('hurt')
+        if (!this.hasArt) this.setTint(0xffe060)
         if (this.t > 1100) {
           this.clearTint()
           this.go('shield')
