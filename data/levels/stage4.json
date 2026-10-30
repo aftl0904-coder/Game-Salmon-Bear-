@@ -1,0 +1,93 @@
+{
+  "id": "ST-04",
+  "name": "鹽霧工地",
+  "theme": "depot",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "segments": [
+    { "id": "S1", "role": "teach", "x0": 0, "x1": 620, "note": "工地入口，霧，警示燈。第一隻蜜僵（慢，成群）。教推土機：背景黃燈閃 1.5 秒之後衝過，要跳上鋼架平台避開。" },
+    { "id": "S2", "role": "test", "x0": 620, "x1": 1300, "note": "鋼架同吊臂：天花尖刺塊兩個，打卡鐘怪（定時炸開文件），的士怪（車頭燈預警＋高速衝刺）。" },
+    { "id": "S3", "role": "rest", "x0": 1300, "x1": 1460, "note": "咖啡車（喺貨櫃入面）。" },
+    { "id": "S4", "role": "test", "x0": 1460, "x1": 1900, "note": "寫字樓走廊：文件堆台階，蜜僵潮從左右兩邊嚟。" },
+    { "id": "S5", "role": "twist", "x0": 1900, "x1": 2400, "note": "電單車追逐段（用鋼架平台＋的士怪密度加大嘅一般關卡機制表達——撞到只係慢，冇傷害，重用 BikeScene 留待下一批）。" },
+    { "id": "S6", "role": "rest-twist", "x0": 2400, "x1": 3040, "note": "喪事班車段（尊重處理）：霧中一架安靜嘅班車駛過，冇敵人冇音樂，只有雨聲同引擎聲。之後蜜僵數量減少。" },
+    { "id": "S7", "role": "rest", "x0": 3040, "x1": 3180, "note": "咖啡車＋金鮭。" },
+    { "id": "S8", "role": "boss", "x0": 3180, "x1": 3800, "note": "泥鬃（電單車工頭）。" }
+  ],
+
+  "pits": [
+    { "x": 760, "w": 48, "note": "鋼架缺口" },
+    { "x": 1040, "w": 56, "note": "吊臂落貨口" },
+    { "x": 2040, "w": 64, "note": "追逐段路障坑" },
+    { "x": 3300, "w": 40 }
+  ],
+  "steps": [
+    { "x": 700, "w": 90, "h": 32, "note": "鋼架平台（推土機教學）" },
+    { "x": 1620, "w": 100, "h": 32, "note": "文件堆台階" },
+    { "x": 3220, "w": 90, "h": 24 }
+  ],
+  "platforms": [
+    { "x": 900, "w": 70, "h": 48, "note": "第二個推土機避難台" },
+    { "x": 2150, "w": 64, "h": 40, "note": "追逐段路障平台" }
+  ],
+  "movingPlatforms": [],
+  "crushers": [],
+  "spikes": [
+    { "x": 760, "n": 2 },
+    { "x": 1180, "n": 2 }
+  ],
+  "durians": [],
+  "honey": [
+    { "x": 980, "h": 40 },
+    { "x": 1780, "h": 44 },
+    { "x": 2900, "h": 40 }
+  ],
+  "checkpoints": [1320, 3100],
+  "breakables": [
+    { "x": 980, "kind": "pot", "loot": "coin" },
+    { "x": 1740, "kind": "pot", "loot": "food" },
+    { "x": 2900, "kind": "pot", "loot": "coin" }
+  ],
+
+  "enemies": [
+    { "x": 420, "species": "honeyzombie", "unlockX": 220 },
+    { "x": 480, "species": "honeyzombie", "unlockX": 220 },
+    { "x": 850, "species": "clockpunch", "unlockX": 660 },
+    { "x": 1050, "species": "taximonster", "unlockX": 880 },
+    { "x": 1220, "species": "clockpunch", "unlockX": 1040 },
+    { "x": 1520, "species": "honeyzombie", "unlockX": 1480 },
+    { "x": 1560, "species": "honeyzombie", "unlockX": 1480 },
+    { "x": 1820, "species": "honeyzombie", "unlockX": 1700 },
+    { "x": 1860, "species": "honeyzombie", "unlockX": 1700 },
+    { "x": 1980, "species": "taximonster", "unlockX": 1920 },
+    { "x": 2200, "species": "taximonster", "unlockX": 2100 },
+    { "x": 2340, "species": "clockpunch", "unlockX": 2260 },
+    { "x": 2820, "species": "honeyzombie", "unlockX": 2780, "note": "班車段之後蜜僵數量減少，呢隻係之後先出。" }
+  ],
+  "altarAmbush": [],
+  "altarTriggerX": 99999,
+
+  "friends": [
+    { "x": 1660, "id": "ginger", "note": "寫字樓走廊附近" },
+    { "x": 2960, "id": "fleecy", "h": 30, "note": "班車段之後，第七咖啡車前" }
+  ],
+  "decor": { "back": [], "hang": [] },
+  "coins": [
+    { "x": 760, "h": 56 },
+    { "x": 784, "h": 60 },
+    { "x": 2140, "h": 48 },
+    { "x": 2164, "h": 52 },
+    { "x": 3230, "h": 40 },
+    { "x": 3254, "h": 44 }
+  ],
+  "secrets": [{ "x": 900, "h": 92, "kind": "sushi", "note": "第二個推土機避難台上面" }],
+
+  "boss": { "kind": "mudmane", "triggerX": 3260, "arenaX0": 3160, "arenaX1": 3800 },
+
+  "bulldozers": [
+    { "x": 560, "periodMs": 5200 },
+    { "x": 1240, "periodMs": 4600 },
+    { "x": 1700, "periodMs": 5000 }
+  ],
+  "busEvent": { "x0": 2460, "x1": 2760, "durationMs": 4200 },
+  "fog": true
+}

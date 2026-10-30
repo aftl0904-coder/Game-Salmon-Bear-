@@ -5,8 +5,8 @@ import { loadScores } from './score'
 import { maxStage } from './progress'
 
 /** Stages that exist so far (picker + progress). */
-const LAST_STAGE = 3
-const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市' }
+const LAST_STAGE = 4
+const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地' }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'

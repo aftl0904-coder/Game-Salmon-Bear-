@@ -821,6 +821,52 @@
           "sub": "下一站：鹽霧工地"
         }
       ]
+    },
+    "C7": {
+      "title": "第 4 關前・工地",
+      "stage": "depot",
+      "steps": [
+        { "music": "stage4" },
+        { "sfx": "dread" },
+        { "actor": "lunbo", "x": 240 },
+        { "actor": "pupu", "x": 300, "grey": 0.7 },
+        { "actor": "kibobo", "x": 360, "flip": true },
+        { "say": "narr", "text": "的士停喺一片圍住鐵皮嘅地方。濃霧落雨，警示燈一閃一閃。" },
+        { "say": "lunbo", "text": "呢度……本來係森林嚟。", "face": 2 },
+        { "say": "kibobo", "text": "推土機仲喺度衝嚟衝去。小心啲，跳上鋼架平台避開。", "face": 2 },
+        { "say": "pupu", "text": "噗……噗噗。", "face": 0 },
+        { "say": "lunbo", "text": "第四罐，就喺呢個工頭手上。" },
+        { "card": "第四關", "sub": "鹽霧工地" }
+      ]
+    },
+    "C9": {
+      "title": "第 4 關後・第四罐",
+      "stage": "depot",
+      "steps": [
+        { "music": "sad" },
+        { "actor": "lunbo", "x": 200 },
+        { "actor": "pupu", "x": 270, "grey": 0.7 },
+        { "actor": "kibobo", "x": 330 },
+        { "wait": 600 },
+        { "still": "c6-screen" },
+        { "say": "narr", "text": "工頭嘅電腦仲開住。畫面寫住：「清拆百畝・假蜜量產」。" },
+        { "say": "lunbo", "text": "原來係佢哋。", "face": 2 },
+        { "still": null },
+        { "prop": "jar", "kind": "jar-real", "x": 300, "drop": true },
+        { "sfx": "sparkle" },
+        { "say": "kibobo", "text": "第四罐喇！噗噗，飲啦。", "face": 1 },
+        { "move": "pupu", "x": 296, "ms": 380 },
+        { "sfx": "gulp" },
+        { "remove": "jar" },
+        { "colour": "pupu", "amount": 0.3, "ms": 1400 },
+        { "music": "victory" },
+        { "say": "pupu", "text": "噗噗噗噗！" },
+        { "ear": "pupu" },
+        { "say": "lunbo", "text": "佢顏色返咗六成喇，仲識揮手！", "face": 1 },
+        { "say": "narr", "text": "薑餅同大pat熊由貨櫃後面行出嚟，拖住手。" },
+        { "say": "kibobo", "text": "八個小朋友喇！淨係三個未搵到。", "face": 1 },
+        { "card": "第四關・完", "sub": "下一站：△畝大廈" }
+      ]
     }
   }
 }
