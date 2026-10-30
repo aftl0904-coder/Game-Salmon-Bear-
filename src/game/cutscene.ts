@@ -44,7 +44,7 @@ type Step =
 type Scene = { title: string; stage?: 'forest' | 'tree' | 'market'; steps: Step[] }
 const STORY = storyRaw as unknown as { scenes: Record<string, Scene> }
 
-export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9'
+export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9' | 'C8' | 'C10' | 'C11'
 
 /** Who can talk: name, stage sprite (anim set / still), portrait strip and blip pitch. */
 type CastEntry = { name: string; set: AnimSetId | null; tex: string | null; portrait: string | null; pitch: number; color: string; idle?: string }
@@ -59,6 +59,8 @@ const CAST: Record<string, CastEntry> = {
   queenEvil: { name: '蜜冠女王蜂', set: 'queen', tex: null, portrait: null, pitch: 180, color: '#ff9a3a', idle: 'hover' },
   owl: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl', pitch: 220, color: '#d8e0ff', idle: 'perch' },
   owlEvil: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl-evil', pitch: 160, color: '#b8c0ff', idle: 'perch' },
+  /** △畝大佬: no painted portrait yet (C10 reuses the c7-boss full-screen still instead). */
+  triboss: { name: '△畝大佬', set: null, tex: null, portrait: null, pitch: 140, color: '#ff6a4a' },
 }
 
 const PROP_TEX: Record<string, string> = {

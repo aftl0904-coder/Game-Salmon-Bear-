@@ -867,6 +867,70 @@
         { "say": "kibobo", "text": "八個小朋友喇！淨係三個未搵到。", "face": 1 },
         { "card": "第四關・完", "sub": "下一站：△畝大廈" }
       ]
+    },
+    "C8": {
+      "title": "第 5 關前・△畝大廈",
+      "stage": "tower",
+      "steps": [
+        { "music": "stage5" },
+        { "sfx": "dread" },
+        { "actor": "lunbo", "x": 240 },
+        { "actor": "pupu", "x": 300, "grey": 0.7 },
+        { "actor": "kibobo", "x": 360, "flip": true },
+        { "say": "narr", "text": "工頭留低嘅地址，帶佬哋去到一座亮晶晶嘅商廈——「△畝發展」總部。" },
+        { "say": "kibobo", "text": "大堂地下有條輸送帶，會推住你行，小心方向。", "face": 2 },
+        { "say": "lunbo", "text": "最後一罐真蜂蜜，應該就喺大佬保險箱裏面。", "face": 2 },
+        { "say": "pupu", "text": "噗……噗噗！" },
+        { "say": "kibobo", "text": "入去啦。今次，真係最後一關。", "face": 1 },
+        { "card": "第五關", "sub": "△畝大廈" }
+      ]
+    },
+    "C10": {
+      "title": "面具甩開",
+      "stage": "tower",
+      "steps": [
+        { "music": "stop" },
+        { "sfx": "dread" },
+        { "still": "c7-boss" },
+        { "say": "triboss", "text": "森林？邊個會記得森林。" },
+        { "say": "triboss", "text": "呢度即將起嘅，叫「百畝商場・二期」。" },
+        { "say": "kibobo", "text": "原來「三角大人」，即係你哋地產商！", "face": 2 },
+        { "say": "lunbo", "text": "放假蜜清場啲動物，就係為咗起商場？", "face": 2 },
+        { "say": "triboss", "text": "森林唔識賺錢。商場先識。" },
+        { "say": "kibobo", "text": "噗噗同啲朋友嘅家，唔係由你話拆就拆！", "face": 1 },
+        { "still": null }
+      ]
+    },
+    "C11": {
+      "title": "結局・森林番晒顏色",
+      "stage": "tower",
+      "steps": [
+        { "music": "sad" },
+        { "actor": "lunbo", "x": 200 },
+        { "actor": "pupu", "x": 270, "grey": 0.7 },
+        { "actor": "kibobo", "x": 330 },
+        { "wait": 600 },
+        { "say": "narr", "text": "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。" },
+        { "say": "kibobo", "text": "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。", "face": 1 },
+        { "prop": "jar", "kind": "jar-real", "x": 300, "drop": true },
+        { "sfx": "sparkle" },
+        { "say": "kibobo", "text": "飲埋呢罐，噗噗。", "face": 1 },
+        { "move": "pupu", "x": 296, "ms": 380 },
+        { "sfx": "gulp" },
+        { "remove": "jar" },
+        { "colour": "pupu", "amount": 1, "ms": 2000 },
+        { "music": "victory" },
+        { "say": "pupu", "text": "噗噗噗噗噗！！" },
+        { "ear": "pupu" },
+        { "fx": "flash" },
+        { "still": "ending-1" },
+        { "say": "narr", "text": "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。" },
+        { "still": "ending-2" },
+        { "say": "lunbo", "text": "不如而家就喺呢度，大家一齊野餐？", "face": 1 },
+        { "say": "kibobo", "text": "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］" },
+        { "still": null },
+        { "card": "鮭鮭熊", "sub": "全部真蜂蜜搵齊・森林獲救" }
+      ]
     }
   }
 }

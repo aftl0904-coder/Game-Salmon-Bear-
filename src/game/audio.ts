@@ -325,7 +325,22 @@ export const SFX = {
 //   drums: "k" kick · "s" snare · "h" closed hat · "o" open hat · "." rest.
 // Bass and arpeggio lines are generated from the chord list (one chord per bar).
 
-export type SongId = 'title' | 'stage1' | 'ambush' | 'stage2' | 'boss2' | 'stage3' | 'boss3' | 'stage4' | 'boss4' | 'sad' | 'story' | 'victory'
+export type SongId =
+  | 'title'
+  | 'stage1'
+  | 'ambush'
+  | 'stage2'
+  | 'boss2'
+  | 'stage3'
+  | 'boss3'
+  | 'stage4'
+  | 'boss4'
+  | 'stage5'
+  | 'boss5'
+  | 'ending'
+  | 'sad'
+  | 'story'
+  | 'victory'
 type Song = {
   bpm: number
   chords: string[]
@@ -530,6 +545,40 @@ const SONGS: Record<SongId, Song> = {
     harmBars: [4, 5, 6, 7, 8, 9, 10, 11],
     vol: 1,
   },
+  // 第 5 關・△畝大廈：警報感、焦躁但唔亂 (128 BPM)，C 小調
+  stage5: {
+    bpm: 128,
+    chords: ['Cm', 'Ab', 'Bb', 'Gm', 'Cm', 'Fm', 'Gm', 'Bb'],
+    lead: `
+      C5 - - - Eb5 - - - G5 - - - F5 - Eb5 -   | Ab4 - - - - - - - Bb4 - - - - - - -
+      Bb4 - - - C5 - Eb5 - G5 - - - F5 - Eb5 -   | D5 - - - Bb4 - G4 - Bb4 - - - . . . .
+      C5 - - - Eb5 - - - G5 - - - Ab5 - G5 -   | F5 - - - Eb5 - D5 - C5 - - - . . . .
+      F5 - - - Ab5 - - - C6 - - - Bb5 - Ab5 -   | G5 - - - - - - - Bb4 - - - . . . .`,
+    drums: ['k . h . s h h . k . h . s . h h', 'k h h . s h h . k . h h s h h .'],
+    arpBars: [2, 3, 6, 7],
+    bassStyle: 'drive',
+    leadWave: 'pulse12',
+    padBars: [0, 4],
+    vol: 0.92,
+  },
+  // △畝大佬 Boss：三段變奏，由沉著到暴走 (150 BPM)，C 小調
+  boss5: {
+    bpm: 150,
+    chords: ['Cm', 'Cm', 'Ab', 'Bb', 'Gm', 'Gm', 'Ab', 'Bb', 'Fm', 'Cm', 'Gm', 'Bb'],
+    lead: `
+      C5 . C5 . Eb5 - F5 - G5 - . Ab5 - G5 - .   | C5 . C5 . Eb5 - G5 - Bb5 - Ab5 - G5 - .
+      G4 . G4 . Bb4 - C5 - D5 - . Eb5 - D5 - .   | G4 . G4 . Bb4 - D5 - F5 - Eb5 - D5 - .
+      Ab5 - - - C6 - Eb6 - D6 - C6 - Ab5 - - -   | Bb5 - - - D6 - F6 - Eb6 - D6 - Bb5 - - -
+      F5 - Ab5 - C6 - - - Bb5 - Ab5 - F5 - - -   | C5 - Eb5 - G5 - - - F5 - Eb5 - C5 - - -
+      Ab5 - - - C6 - Eb6 - - - D6 - C6 - Ab5 - -   | Bb5 - - - - - - - D6 - - - F6 - - -
+      C5 . C5 . Eb5 - F5 - G5 - . Ab5 - G5 - .   | Bb5 - - - - - - - - - - - . . . .`,
+    drums: ['k . h k s . h k k . h k s . h h', 'k k h k s . h k k k h . s s h h'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    bassStyle: 'drive',
+    leadWave: 'pulse12',
+    harmBars: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    vol: 1,
+  },
   // 悲傷：噗噗變灰 (72 BPM)，A 小調，三角波主旋律 + 琶音
   sad: {
     bpm: 72,
@@ -578,6 +627,23 @@ const SONGS: Record<SongId, Song> = {
     leadWave: 'pulse25',
     vol: 1,
     harmBars: [0, 1, 2, 3, 4, 5, 6, 7],
+  },
+  // 結局：溫暖慢版，重用標題旋律 (72 BPM)，D 大調
+  ending: {
+    bpm: 72,
+    chords: ['D', 'G', 'Bm', 'A', 'D', 'G', 'Em', 'A'],
+    lead: `
+      F#5 - - - A5 - - - D6 - - - - - C#6 -   | B5 - - - G5 - - - D5 - - - - - . .
+      F#5 - - - A5 - - - B5 - - - A5 - F#5 -   | E5 - - - - - - - C#5 - E5 - A5 - - -
+      F#5 - - - A5 - - - D6 - - - E6 - F#6 -   | G6 - - - F#6 - E6 - D6 - - - B5 - - -
+      G5 - - - B5 - - - E6 - - - D6 - B5 -     | A5 - - - - - - - - - - - . . . .`,
+    drums: ['. . . . . . . . . . . . . . . .'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'pad',
+    leadWave: 'triangle',
+    harmBars: [2, 3, 6, 7],
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    vol: 0.85,
   },
 }
 
