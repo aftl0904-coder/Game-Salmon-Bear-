@@ -1,0 +1,108 @@
+{
+  "id": "ST-05",
+  "name": "△畝大廈",
+  "theme": "tower",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "segments": [
+    { "id": "S1", "role": "teach", "x0": 0, "x1": 700, "note": "大廈大堂：蜜流輸送帶（左推／右推），保安＝精英紅魚（頭上有三角記號）。" },
+    { "id": "S2", "role": "test", "x0": 700, "x1": 1400, "note": "蜂巢通道：六角形牆、風口（第 2 關回顧），精英蜜蜂兵。" },
+    { "id": "S3", "role": "rest", "x0": 1400, "x1": 1560, "note": "咖啡車。" },
+    { "id": "S4", "role": "test", "x0": 1560, "x1": 2300, "note": "停電樓層：熄燈＋精英鏡影雜兵（第 3 關回顧），滑地茶水間。" },
+    { "id": "S5", "role": "rest", "x0": 2300, "x1": 2460, "note": "咖啡車。" },
+    { "id": "S6", "role": "twist", "x0": 2460, "x1": 3060, "note": "天台工地：推土機＋天花尖刺塊＋精英的士怪（第 4 關回顧）。" },
+    { "id": "S7", "role": "rest", "x0": 3060, "x1": 3200, "note": "溫泉回復點（全回血）＋金鮭。" },
+    { "id": "S8", "role": "boss", "x0": 3200, "x1": 3800, "note": "△畝大佬。" }
+  ],
+
+  "pits": [
+    { "x": 620, "w": 44, "note": "大堂輸送帶缺口" },
+    { "x": 1980, "w": 56, "note": "停電樓層地板缺口" },
+    { "x": 2760, "w": 60, "note": "天台缺口" },
+    { "x": 3160, "w": 40 }
+  ],
+  "steps": [
+    { "x": 560, "w": 90, "h": 28, "note": "大堂・避開輸送帶" },
+    { "x": 1780, "w": 100, "h": 32, "note": "停電樓層台階" },
+    { "x": 2560, "w": 90, "h": 28, "note": "天台・避開天花尖刺塊" }
+  ],
+  "platforms": [
+    { "x": 980, "w": 70, "h": 48, "note": "蜂巢通道・風口上面" },
+    { "x": 2020, "w": 64, "h": 40, "note": "停電樓層・過缺口" },
+    { "x": 2820, "w": 70, "h": 44, "note": "天台平台" }
+  ],
+  "movingPlatforms": [],
+  "crushers": [
+    { "x": 2680, "restH": 78, "warnMs": 450, "downMs": 140, "stayMs": 500, "upMs": 900, "idleMs": 900, "note": "天台・天花尖刺塊" },
+    { "x": 2960, "restH": 78, "warnMs": 420, "downMs": 140, "stayMs": 480, "upMs": 900, "idleMs": 900 }
+  ],
+  "spikes": [],
+  "durians": [],
+  "honey": [
+    { "x": 380, "h": 40 },
+    { "x": 1200, "h": 44 },
+    { "x": 2600, "h": 40 }
+  ],
+  "checkpoints": [1430, 2380],
+  "breakables": [
+    { "x": 380, "kind": "pot", "loot": "coin" },
+    { "x": 1200, "kind": "pot", "loot": "food" },
+    { "x": 2600, "kind": "pot", "loot": "coin" }
+  ],
+
+  "enemies": [
+    { "x": 300, "species": "fish", "kind": "chaser", "unlockX": 150, "elite": true },
+    { "x": 460, "species": "fish", "kind": "chaser", "unlockX": 320, "elite": true },
+    { "x": 600, "species": "fish", "kind": "chaser", "unlockX": 480, "elite": true },
+    { "x": 820, "species": "bee", "unlockX": 680, "elite": true },
+    { "x": 950, "species": "bee", "unlockX": 760 },
+    { "x": 1100, "species": "bee", "unlockX": 980, "elite": true },
+    { "x": 1280, "species": "bee", "unlockX": 1180 },
+    { "x": 1650, "species": "mirrorshade", "unlockX": 1560, "elite": true },
+    { "x": 1850, "species": "mirrorshade", "unlockX": 1760 },
+    { "x": 2080, "species": "mirrorshade", "unlockX": 1980, "elite": true },
+    { "x": 2220, "species": "mirrorshade", "unlockX": 2120 },
+    { "x": 2560, "species": "taximonster", "unlockX": 2460, "elite": true },
+    { "x": 2760, "species": "taximonster", "unlockX": 2660 },
+    { "x": 2940, "species": "taximonster", "unlockX": 2840, "elite": true }
+  ],
+  "altarAmbush": [],
+  "altarTriggerX": 99999,
+
+  "friends": [
+    { "x": 1200, "id": "kuro", "note": "蜂巢通道・風口平台附近" },
+    { "x": 1850, "id": "gnome", "note": "停電樓層走廊" },
+    { "x": 2820, "id": "tigercub", "h": 30, "note": "天台平台上面" }
+  ],
+  "decor": { "back": [], "hang": [] },
+  "coins": [
+    { "x": 620, "h": 56 },
+    { "x": 644, "h": 60 },
+    { "x": 1980, "h": 48 },
+    { "x": 2004, "h": 52 },
+    { "x": 3140, "h": 40 },
+    { "x": 3164, "h": 44 }
+  ],
+  "secrets": [{ "x": 980, "h": 92, "kind": "sushi", "note": "蜂巢通道平台上面" }],
+
+  "boss": { "kind": "triboss", "triggerX": 3200, "arenaX0": 3100, "arenaX1": 3800 },
+
+  "windVents": [
+    { "x": 820, "lift": 150 },
+    { "x": 1150, "lift": 150 }
+  ],
+  "darkZones": [{ "x0": 1560, "x1": 2300 }],
+  "lanterns": [{ "x": 1620 }, { "x": 1780 }, { "x": 1940 }, { "x": 2100 }, { "x": 2240 }],
+  "slippery": [{ "x0": 1980, "x1": 2150, "note": "停電樓層・滑地茶水間" }],
+
+  "bulldozers": [
+    { "x": 2520, "periodMs": 4800 },
+    { "x": 2860, "periodMs": 5200 }
+  ],
+  "fog": false,
+
+  "conveyors": [
+    { "x0": 120, "x1": 380, "dir": 1, "speed": 70, "note": "大堂輸送帶・右推" },
+    { "x0": 420, "x1": 620, "dir": -1, "speed": 70, "note": "大堂輸送帶・左推" }
+  ],
+  "hotSprings": [{ "x": 3120 }]
+}

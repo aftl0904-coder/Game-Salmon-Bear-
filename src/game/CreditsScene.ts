@@ -12,16 +12,21 @@ type Line = { t: string; size?: number; color?: string; gap?: number; title?: bo
 
 const ROLL: Line[] = [
   { t: '鮭鮭熊', size: 30, color: '#ffd76a', title: true, gap: 34 },
-  { t: '— 第一章・完 —', size: 12, color: '#e8d8b0', gap: 46 },
+  { t: '— 全五關・完 —', size: 12, color: '#e8d8b0', gap: 46 },
   { t: '登場角色', size: 13, color: '#ffb070', gap: 22 },
   { t: '倫寶', gap: 16 },
   { t: '琪寶寶', gap: 16 },
   { t: '噗噗', gap: 16 },
   { t: '咖啡媽媽', gap: 16 },
-  { t: '蜜冠女王蜂', gap: 40 },
+  { t: '蜜冠女王蜂', gap: 16 },
+  { t: '月橋鏡鴞', gap: 16 },
+  { t: '泥鬃', gap: 16 },
+  { t: '△畝大佬', gap: 16 },
+  { t: '十一位野餐小朋友', gap: 40 },
   { t: '敵人', size: 13, color: '#ffb070', gap: 22 },
   { t: '紅魚　帽仔兵　機械豬　疾風桶', gap: 16 },
-  { t: '蜜蜂兵　蜜僵松鼠　小蜜蜂', gap: 40 },
+  { t: '蜜蜂兵　蜜僵松鼠　小蜜蜂', gap: 16 },
+  { t: '鏡影雜兵　蜜僵　的士怪　打卡鐘怪', gap: 40 },
   { t: '監製・故事', size: 13, color: '#ffb070', gap: 22 },
   { t: 'ALAN FONG', size: 16, color: '#ffffff', gap: 40 },
   { t: '美術', size: 13, color: '#ffb070', gap: 22 },
@@ -96,6 +101,7 @@ export class CreditsScene extends Phaser.Scene {
       ['squirrel', 'walk'],
       ['beesoldier', 'fly'],
       ['fish', 'walk'],
+      ['mirrorshade', 'float'],
     ]
     parade.forEach(([set, anim], i) => {
       if (!hasAnimSet(this, set) || !this.anims.exists(`${set}-${anim}`)) return

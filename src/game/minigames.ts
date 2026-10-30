@@ -5,7 +5,7 @@ import { FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { floatText } from './fx'
-import { BlowMeter, buzz, HAPTIC, isTouchDevice, micLevel, micReady, phonePrefs, startMic, startMotion, stopMic, takeShake } from './phone'
+import { BlowMeter, buzz, HAPTIC, isTouchDevice, micLevel, micReady, phonePrefs, startMic, startMotion, stopMic, takeShake, tilt, tiltY } from './phone'
 
 /**
  * Little phone-feel minigames shown as overlays (they never block the story: each has a
@@ -713,5 +713,223 @@ export function timingGame(scene: Phaser.Scene, title: string, verb: string, rou
   }
   newRound()
   draw()
+  return { done, destroy }
+}
+
+// ── 傾斜電話：揈個波入窿 ────────────────────────────────────────────────
+
+/**
+ * Tilt the phone (or hold a direction) to roll a ball across a tray into the glowing hole —
+ * avoid the dark pits, which drop the ball and cost the round (第 4 關・開椰青嘅泰國人).
+ * Each round the timer gets a little tighter.
+ */
+export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
+  const ui = frame(scene, '傾斜個電話，揈個波入窿！')
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? '揈郁電話（或者撳住畫面方向）' : '方向鍵／WASD 郁個波，避開黑窿')
+  void startMotion()
+  const cx = GAME_W / 2
+  const cy = GAME_H / 2 + 14
+  const HALF_W = 108
+  const HALF_H = 64
+  const BALL_R = 8
+  const HOLE_R = 16
+  const PIT_R = 15
+
+  const g = scene.add.graphics()
+  const dyn = scene.add.graphics()
+  const label = scene.add.text(cx, cy - 92, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  ui.root.add([g, dyn, label])
+
+  type Pt = { x: number; y: number }
+  let round = 1
+  let bx = 0
+  let by = 0
+  let vx = 0
+  let vy = 0
+  let hole: Pt = { x: 0, y: 0 }
+  let pits: Pt[] = []
+  let settle = 0
+  let dropped = false
+  let roundMs = 7000
+  let roundStart = scene.time.now
+  const res: RoundResult = { good: 0, total: rounds }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+  const started = scene.time.now
+  let finished = false
+
+  const farEnough = (p: Pt, pts: Pt[], min: number) => pts.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= min)
+  const newRound = () => {
+    roundMs = Math.max(3600, 7000 - (round - 1) * 700)
+    bx = 0
+    by = 0
+    vx = 0
+    vy = 0
+    dropped = false
+    const rnd = (): Pt => ({ x: Phaser.Math.FloatBetween(-HALF_W + 24, HALF_W - 24), y: Phaser.Math.FloatBetween(-HALF_H + 18, HALF_H - 18) })
+    let h = rnd()
+    while (Math.hypot(h.x, h.y) < 40) h = rnd()
+    hole = h
+    const n = Math.min(3, 1 + Math.floor((round - 1) / 1.5))
+    const ps: Pt[] = []
+    for (let i = 0; i < n; i++) {
+      let p = rnd()
+      let tries = 0
+      while ((Math.hypot(p.x, p.y) < 36 || Math.hypot(p.x - hole.x, p.y - hole.y) < 44 || !farEnough(p, ps, 40)) && tries < 20) {
+        p = rnd()
+        tries++
+      }
+      ps.push(p)
+    }
+    pits = ps
+    roundStart = scene.time.now
+  }
+
+  const keys = { up: false, down: false, left: false, right: false }
+  const KEYMAP: Record<string, keyof typeof keys> = {
+    ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right',
+  }
+  const onKeyDown = (e: KeyboardEvent) => {
+    const k = KEYMAP[e.code]
+    if (k) keys[k] = true
+  }
+  const onKeyUp = (e: KeyboardEvent) => {
+    const k = KEYMAP[e.code]
+    if (k) keys[k] = false
+  }
+  scene.input.keyboard?.on('keydown', onKeyDown)
+  scene.input.keyboard?.on('keyup', onKeyUp)
+
+  const draw = () => {
+    g.clear()
+    g.fillStyle(0x1a1210, 1).fillRoundedRect(cx - HALF_W - 10, cy - HALF_H - 10, HALF_W * 2 + 20, HALF_H * 2 + 20, 10)
+    g.fillStyle(0x3a2a1a, 1).fillRoundedRect(cx - HALF_W, cy - HALF_H, HALF_W * 2, HALF_H * 2, 6)
+    g.fillStyle(0x4a3a24, 0.5)
+    for (let i = -HALF_W; i < HALF_W; i += 16) g.fillRect(cx + i, cy - HALF_H, 1, HALF_H * 2)
+    label.setText(`第 ${round} ／ ${rounds} 次`)
+    ui.bar.width = (216 * (round - 1)) / rounds
+  }
+  const drawDyn = () => {
+    dyn.clear()
+    // Pits (avoid).
+    for (const p of pits) {
+      dyn.fillStyle(0x0a0604, 1).fillCircle(cx + p.x, cy + p.y, PIT_R)
+      dyn.lineStyle(2, 0x2a1a10, 1).strokeCircle(cx + p.x, cy + p.y, PIT_R)
+    }
+    // Hole (goal), pulsing.
+    const pulse = 1 + Math.sin(scene.time.now / 160) * 0.12
+    dyn.lineStyle(3, 0x6adf6a, 0.9).strokeCircle(cx + hole.x, cy + hole.y, HOLE_R * pulse)
+    dyn.fillStyle(0x1a4a1a, 1).fillCircle(cx + hole.x, cy + hole.y, HOLE_R * 0.7)
+    // Ball.
+    if (!dropped) {
+      dyn.fillStyle(0x2a1408, 0.4).fillCircle(cx + bx + 2, cy + by + 3, BALL_R)
+      dyn.fillStyle(0xffb04a, 1).fillCircle(cx + bx, cy + by, BALL_R)
+      dyn.fillStyle(0xfff0c0, 0.8).fillCircle(cx + bx - 2, cy + by - 2, BALL_R * 0.4)
+    }
+    // Countdown ring.
+    const left = Math.max(0, roundMs - (scene.time.now - roundStart))
+    dyn.lineStyle(3, left < 1800 ? 0xff8a6a : 0xffe08a, 0.8)
+    dyn.beginPath()
+    dyn.arc(cx, cy - HALF_H - 22, 10, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * left) / roundMs, false)
+    dyn.strokePath()
+  }
+
+  const land = (ok: boolean) => {
+    if (ok) {
+      res.good++
+      SFX.coin()
+      buzz(HAPTIC.power)
+      floatText(scene, cx + hole.x, cy + hole.y - 24, '入咗！', '#ffd040', { size: 15, dur: 700 })
+    } else {
+      SFX.potShatter()
+      buzz(40)
+      dropped = true
+      floatText(scene, cx + bx, cy + by - 20, dropped ? '跌咗落窿！' : '走雞', '#ff8a6a', { size: 13, dur: 700 })
+    }
+    settle = 650
+  }
+
+  const tick = (_t: number, dt: number) => {
+    if (finished) return
+    if (settle > 0) {
+      settle -= dt
+      drawDyn()
+      if (settle <= 0) {
+        round++
+        if (round > rounds) return finish()
+        newRound()
+        draw()
+      }
+      return
+    }
+    const dtS = Math.min(0.05, dt / 1000)
+    const padX = (TouchInput.isDown('right') ? 1 : 0) - (TouchInput.isDown('left') ? 1 : 0)
+    const padY = (TouchInput.isDown('down') ? 1 : 0) - (TouchInput.isDown('up') ? 1 : 0)
+    let ix = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + padX + Phaser.Math.Clamp(tilt() / 16, -1, 1)
+    let iy = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + padY + Phaser.Math.Clamp(tiltY() / 16, -1, 1)
+    ix = Phaser.Math.Clamp(ix, -1, 1)
+    iy = Phaser.Math.Clamp(iy, -1, 1)
+    vx += ix * 380 * dtS
+    vy += iy * 380 * dtS
+    const damp = Math.max(0, 1 - 3.0 * dtS)
+    vx *= damp
+    vy *= damp
+    const sp = Math.hypot(vx, vy)
+    const MAXV = 170
+    if (sp > MAXV) {
+      vx = (vx / sp) * MAXV
+      vy = (vy / sp) * MAXV
+    }
+    bx += vx * dtS
+    by += vy * dtS
+    if (bx < -HALF_W + BALL_R) {
+      bx = -HALF_W + BALL_R
+      vx *= -0.4
+    }
+    if (bx > HALF_W - BALL_R) {
+      bx = HALF_W - BALL_R
+      vx *= -0.4
+    }
+    if (by < -HALF_H + BALL_R) {
+      by = -HALF_H + BALL_R
+      vy *= -0.4
+    }
+    if (by > HALF_H - BALL_R) {
+      by = HALF_H - BALL_R
+      vy *= -0.4
+    }
+    if (Math.abs(ix) > 0.15 && scene.time.now % 5 < 1) buzz(6)
+    for (const p of pits) {
+      if (Math.hypot(bx - p.x, by - p.y) < PIT_R - 2) return land(false)
+    }
+    if (Math.hypot(bx - hole.x, by - hole.y) < HOLE_R - BALL_R * 0.5) return land(true)
+    drawDyn()
+    if (scene.time.now - roundStart > roundMs) land(false)
+    if (scene.time.now - started > 32000) finish()
+  }
+  scene.events.on('update', tick)
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onKeyDown)
+    scene.input.keyboard?.off('keyup', onKeyUp)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    ui.bar.width = 216
+    ui.title.setText(res.good >= rounds ? '次次都入咗窿！' : res.good > 0 ? `入咗 ${res.good} 次窿` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(800, destroy)
+  }
+  newRound()
+  draw()
+  drawDyn()
   return { done, destroy }
 }

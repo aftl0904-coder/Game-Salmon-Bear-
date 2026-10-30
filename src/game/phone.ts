@@ -81,6 +81,7 @@ let shakeEnergy = 0
 let lastAcc: { x: number; y: number; z: number } | null = null
 let gravity = { x: 0, y: 0, z: 9.8 }
 let tiltX = 0
+let tiltYv = 0
 let faceDown = false
 let motionSeen = false
 
@@ -101,7 +102,10 @@ function onOrient(e: DeviceOrientationEvent) {
   // Landscape: the phone's beta axis is the steering one; flip the sign with the rotation direction.
   const ang = (screen.orientation?.angle ?? 0) as number
   const beta = e.beta ?? 0
+  const gamma = e.gamma ?? 0
   tiltX = ang === 270 || ang === -90 ? -beta : beta
+  // Second axis (forward/back tilt in landscape) for the labyrinth-style tilt minigame.
+  tiltYv = ang === 270 || ang === -90 ? gamma : -gamma
 }
 
 /** Start listening (Android needs no permission; iOS asks once — must run inside a tap). */
@@ -132,6 +136,8 @@ export function takeShake(): number {
 }
 /** Steering tilt in degrees (left −, right +). */
 export const tilt = () => tiltX
+/** Second-axis tilt in degrees (forward −, back +) — for the tilt-tray minigame. */
+export const tiltY = () => tiltYv
 export const isFaceDown = () => faceDown
 
 // ── Microphone ───────────────────────────────────────────────────────────

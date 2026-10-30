@@ -40,6 +40,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   earlyAggro = false
   /** Altar climax ambusher: longer red telegraph + ambush shout. */
   altarAmbush = false
+  /** 第五關「精英」reskin: 頭上紅色三角記號, +1hp, 死咗掉兩個金幣 (docs/bible/stages-3-5.md §5). */
+  isElite = false
+  private eliteMarker?: Phaser.GameObjects.Triangle
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: number) {
     super(scene, x, y, texture, frame)
@@ -49,6 +52,32 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   get isDead(): boolean {
     return this.fsm === 'DEAD' || !this.active
+  }
+
+  /** Call right after construction (before the enemy is visible) to reskin it as a stage-5 精英. */
+  markElite() {
+    if (this.isElite) return
+    this.isElite = true
+    this.hp += 1
+    this.maxHp += 1
+    this.eliteMarker = this.scene.add
+      .triangle(this.x, this.y, 0, 9, 4.5, 0, 9, 9, 0xff2a2a, 1)
+      .setStrokeStyle(1, 0x661010, 1)
+      .setDepth(20000)
+  }
+
+  /** Called every tick (GameScene.updateEnemies) so the marker tracks a moving/dying enemy. */
+  syncEliteMarker() {
+    if (!this.eliteMarker) return
+    if (this.fsm === 'DEAD') {
+      this.eliteMarker.destroy()
+      this.eliteMarker = undefined
+      return
+    }
+    // Deferred (not yet walked on) rather than dead — stay hidden, don't discard.
+    this.eliteMarker.setVisible(this.active)
+    if (!this.active) return
+    this.eliteMarker.setPosition(this.x, this.y - this.displayHeight - 6)
   }
 
   setFsm(next: EnemyFsm) {
@@ -102,10 +131,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTint(0x884444)
     this.setVelocity(dir * 80, -120)
     this.setFsm('DEAD')
+    this.eliteMarker?.destroy()
+    this.eliteMarker = undefined
     const coinX = this.x
     const coinY = this.y - 28
+    const wasElite = this.isElite
     this.scene.time.delayedCall(280, () => {
       this.hooks.spawnCoin?.(coinX, coinY)
+      if (wasElite) this.hooks.spawnCoin?.(coinX + 16, coinY - 10)
       this.label?.destroy()
       this.label = undefined
       this.disableBody(true, true)
