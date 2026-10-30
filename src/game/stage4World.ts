@@ -33,6 +33,42 @@ export type Stage4Data = {
 const W = 640
 const H = 360
 
+/** Procedural placeholder for the bulldozer's pushed load — a lumpy dirt/rubble heap
+ * instead of a flat colour rectangle, so it reads as "ground being shoved" rather than
+ * an unexplained brown block. Drawn once and cached under `s4-dirt-heap`. */
+function dirtHeapTexture(scene: Phaser.Scene): string {
+  const key = 's4-dirt-heap'
+  if (scene.textures.exists(key)) return key
+  const w = 96
+  const h = 50
+  const g = scene.make.graphics({ x: 0, y: 0 }, false)
+  // Shadow base — wide and flat, anchors it to the ground.
+  g.fillStyle(0x2a1c10, 0.55).fillEllipse(w / 2, h - 6, w * 0.92, 14)
+  // Main mass — an irregular heap, built from overlapping blobs rather than one shape.
+  g.fillStyle(0x7a5230, 1)
+  g.fillEllipse(w * 0.3, h - 16, w * 0.52, 30)
+  g.fillEllipse(w * 0.62, h - 14, w * 0.5, 28)
+  g.fillEllipse(w * 0.48, h - 24, w * 0.46, 26)
+  // Mid-tone clumps — breaks up the silhouette so it doesn't read as one smooth blob.
+  g.fillStyle(0x5c3c22, 1)
+  g.fillEllipse(w * 0.22, h - 10, 20, 12)
+  g.fillEllipse(w * 0.78, h - 11, 18, 11)
+  g.fillEllipse(w * 0.52, h - 30, 16, 10)
+  // Lighter rubble chunks on top — broken concrete/stone flecks, catching the light.
+  g.fillStyle(0xb8a888, 1)
+  g.fillEllipse(w * 0.34, h - 26, 8, 6)
+  g.fillEllipse(w * 0.58, h - 22, 7, 5)
+  g.fillEllipse(w * 0.46, h - 34, 6, 5)
+  g.fillEllipse(w * 0.68, h - 28, 6, 4)
+  // Dark cracks for texture.
+  g.fillStyle(0x3a2616, 1)
+  g.fillRect(w * 0.4, h - 28, 2, 10)
+  g.fillRect(w * 0.6, h - 22, 2, 8)
+  g.generateTexture(key, w, h)
+  g.destroy()
+  return key
+}
+
 type Dozer = {
   x: number
   period: number
@@ -92,10 +128,10 @@ export class Stage4World {
           dz.state = 'sweep'
           dz.warnT = 0
           dz.hitHeroes.clear()
-          const key = s.textures.exists('s4-bulldozer') ? 's4-bulldozer' : null
-          dz.img = key
-            ? s.add.image(dz.x + 260, this.ctx.floorY - 30, key).setDepth(DEPTH.PROP - 2)
-            : s.add.rectangle(dz.x + 260, this.ctx.floorY - 24, 90, 48, 0xc8781a, 1).setDepth(DEPTH.PROP - 2)
+          const key = s.textures.exists('s4-bulldozer') ? 's4-bulldozer' : dirtHeapTexture(s)
+          // Bottom-anchored on the floor — matches the old rectangle's footprint (its
+          // centre at floorY-24, height 48, put its bottom edge at floorY).
+          dz.img = s.add.image(dz.x + 260, this.ctx.floorY, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
         }
       } else if (dz.state === 'sweep') {
         dz.light.setAlpha(0)

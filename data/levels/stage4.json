@@ -37,9 +37,9 @@
   ],
   "durians": [],
   "honey": [
-    { "x": 980, "h": 40 },
+    { "x": 950, "h": 40 },
     { "x": 1780, "h": 44 },
-    { "x": 2900, "h": 40 }
+    { "x": 2865, "h": 40 }
   ],
   "checkpoints": [1320, 3100],
   "breakables": [
@@ -59,6 +59,7 @@
     { "x": 1820, "species": "honeyzombie", "unlockX": 1700 },
     { "x": 1860, "species": "honeyzombie", "unlockX": 1700 },
     { "x": 1980, "species": "taximonster", "unlockX": 1920 },
+    { "x": 2080, "species": "honeyzombie", "unlockX": 2000, "note": "S5 鋼架平台段：原先 pit(2040)→platform(2150) 之間冇敵人，淨係跳，加一隻填返個設計筆記講嘅密度。" },
     { "x": 2200, "species": "taximonster", "unlockX": 2100 },
     { "x": 2340, "species": "clockpunch", "unlockX": 2260 },
     { "x": 2820, "species": "honeyzombie", "unlockX": 2780, "note": "班車段之後蜜僵數量減少，呢隻係之後先出。" }
