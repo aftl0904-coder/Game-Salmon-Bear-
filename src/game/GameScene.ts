@@ -3292,9 +3292,21 @@ export class GameScene extends Phaser.Scene {
     // Hitboxes → overlap
     const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h)
     for (const hero of heroes) {
-      this.physics.add.overlap(hero.attackHitbox, this.enemies, (_a, enemy) => {
+      this.physics.add.overlap(hero.attackHitbox, this.enemies, (hitbox, enemy) => {
         const e = enemy as PatrolEnemy
         if (!hero.isMeleeActive() || !e.active || e.isDead) return
+        // Dedup per swing (hitSet is reset in Hero.startMelee): without this, an enemy
+        // that cancels its own knockback (e.g. 打卡鐘怪) sits inside the box and gets
+        // re-hit on every physics step for as long as the overlap holds — each hit
+        // re-extends the post-hit freeze window, which can never expire because the
+        // frozen hero's own update (and so the hitbox's timeout) stops advancing while
+        // frozen, softlocking movement. One hit per swing per target closes the loop.
+        const box = hitbox as Phaser.Physics.Arcade.Image
+        const hitSet = (box.getData('hitSet') as Set<string> | undefined) ?? new Set<string>()
+        box.setData('hitSet', hitSet)
+        const key = (e as { entityId?: string }).entityId ?? `${e.x.toFixed(0)}:${e.y.toFixed(0)}`
+        if (hitSet.has(key)) return
+        hitSet.add(key)
         this.damageEnemy(e, PLAYER_ATTACK_DMG, hero.facing, hero)
       })
       this.physics.add.overlap(hero.attackHitbox, this.pots, (_a, pot) => {

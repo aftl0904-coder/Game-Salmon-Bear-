@@ -548,6 +548,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.attackHitbox.setActive(true)
     this.attackHitbox.setVisible(false)
     this.attackHitbox.setAlpha(0.001)
+    // Fresh swing, fresh targets — cleared here (not just on timeout) so a stationary
+    // enemy that never leaves the box (e.g. 打卡鐘怪, which cancels its own knockback)
+    // can only be hit once per swing instead of once per physics step it stays frozen.
+    this.attackHitbox.setData('hitSet', new Set<string>())
     const hb = this.attackHitbox.body as Phaser.Physics.Arcade.Body
     hb.setSize(MELEE_W, MELEE_H)
     hb.debugBodyColor = HITBOX_DEBUG
