@@ -1,17 +1,20 @@
 {
   "icons": {
-    "frameWidth": 34,
-    "frameHeight": 32,
-    "count": 5
+    "frameWidth": 70,
+    "frameHeight": 64,
+    "count": 5,
+    "res": 2
   },
   "walk": {
-    "frameWidth": 35,
-    "frameHeight": 30,
-    "count": 4
+    "frameWidth": 70,
+    "frameHeight": 60,
+    "count": 4,
+    "res": 2
   },
   "swarm": {
-    "frameWidth": 37,
-    "frameHeight": 30,
-    "count": 3
+    "frameWidth": 74,
+    "frameHeight": 60,
+    "count": 3,
+    "res": 2
   }
 }

@@ -4,6 +4,7 @@ import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import meta from '../../data/anim/map-bike.json'
+import { markHd } from './heroAnims'
 
 /**
  * SNES world map between stages. The party walks the dotted road from one place to the
@@ -49,6 +50,8 @@ export class MapScene extends Phaser.Scene {
 
   create(data: MapData) {
     this.data_ = data
+    markHd(this.textures.get('map-icons'), meta.icons.res)
+    markHd(this.textures.get('map-walk'), meta.walk.res)
     this.leaving = false
     this.walking = false
     const cam = this.cameras.main

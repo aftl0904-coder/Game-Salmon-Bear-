@@ -4,7 +4,7 @@ import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
 import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
-import { animTex, hasAnimSet, type AnimSetId } from './heroAnims'
+import { animTex, hasAnimSet, markHd, type AnimSetId } from './heroAnims'
 import { p2Pad, btn as padBtn } from './gamepadBridge'
 import meta from '../../data/anim/map-bike.json'
 
@@ -80,6 +80,7 @@ export class BikeScene extends Phaser.Scene {
   }
 
   create() {
+    for (const k of ['far', 'mid', 'road', 'rock', 'log', 'cone', 'puddle', 'ramp', 'swarm']) markHd(this.textures.get(`bike-${k}`), meta.swarm.res)
     this.riders = []
     this.objs = []
     this.dist = 0
