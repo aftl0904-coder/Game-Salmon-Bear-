@@ -118,5 +118,23 @@
   "frameHeight": 66,
   "count": 3,
   "fps": 12
+ },
+ "charge-aura": {
+  "frameWidth": 128,
+  "frameHeight": 128,
+  "count": 4,
+  "fps": 12
+ },
+ "ult-salmon-wave": {
+  "frameWidth": 320,
+  "frameHeight": 160,
+  "count": 6,
+  "fps": 20
+ },
+ "ult-honey-slash": {
+  "frameWidth": 320,
+  "frameHeight": 160,
+  "count": 6,
+  "fps": 20
  }
 }
