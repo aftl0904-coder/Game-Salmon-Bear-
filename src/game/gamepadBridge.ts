@@ -11,6 +11,7 @@ import { TouchInput, type TouchBtn } from './touchInput'
  *   A (bottom)  = 跳          B (right) = 攻
  *   X (left)    = 攻          Y (top)   = 絕招
  *   LB / RB     = 絕招         Start / Back = 開始・暫停・投幣
+ *   LT (index 6) = 武器切換（倫寶連射/重擊、琪寶寶快劍/重劍）
  *   D-pad or left stick = move (down = 蹲)
  */
 
@@ -49,7 +50,7 @@ export function installGamepadBridge(game: Phaser.Game) {
   const poll = () => {
     const p = connectedPads()[0] ?? null
     if (!p) {
-      if (hadPad) for (const b of ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'start'] as TouchBtn[]) TouchInput.setPad(b, false)
+      if (hadPad) for (const b of ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'weaponSwitch', 'start'] as TouchBtn[]) TouchInput.setPad(b, false)
       hadPad = false
       return
     }
@@ -64,6 +65,10 @@ export function installGamepadBridge(game: Phaser.Game) {
     TouchInput.setPad('jump', btn(p, 0))
     TouchInput.setPad('attack', btn(p, 1) || btn(p, 2))
     TouchInput.setPad('special', btn(p, 3) || btn(p, 4) || btn(p, 5))
+    // Weapon-switch: index 6 — LT/L2 on the standard gamepad layout (NOT "R1"; that's
+    // index 5, already claimed by special below, per Cursor's device-testing pass).
+    // 0/1/2/3/4/5 are jump/attack/special and 8/9 are start, so 6 is the first free one.
+    TouchInput.setPad('weaponSwitch', btn(p, 6))
     TouchInput.setPad('start', btn(p, 9) || btn(p, 8))
   }
   game.events.on('prestep', poll)

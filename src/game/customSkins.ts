@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { ANIM_SETS, animTex, portraitTex, stillTex } from './heroAnims'
+import { ANIM_SETS, animTex, logicalCell, portraitTex, stillTex } from './heroAnims'
 
 /**
  * Owner-supplied art slots (public/art/custom/custom.json + images in that folder).
@@ -72,8 +72,7 @@ function drawFit(ctx: CanvasRenderingContext2D, src: CanvasImageSource, cx: numb
 function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
   if (!slot) return
   const meta = ANIM_SETS.pupu
-  const fw = meta.frameWidth
-  const fh = meta.frameHeight
+  const { w: fw, h: fh } = logicalCell(meta)
   const h = Math.min(fh, slot.height ?? 60)
   const names = Object.keys(meta.anims)
   const listFor = (name: string): { files: string[]; grey: boolean } => {

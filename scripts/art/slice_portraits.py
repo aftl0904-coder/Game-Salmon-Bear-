@@ -12,7 +12,8 @@ from slice_anim import fg_mask, split, downscale  # noqa: E402  (shared helpers)
 ROOT = sys.argv[1] if len(sys.argv) > 1 else '.'
 OUT = 'public/art/portraits/'
 os.makedirs(OUT, exist_ok=True)
-S = 72
+RES = 2  # keep in sync with PORTRAIT_RES in src/game/heroAnims.ts
+S = 72 * RES
 for f in sorted(glob.glob(os.path.join(ROOT, 'art-src/portraits/*.png'))):
     pid = os.path.splitext(os.path.basename(f))[0]
     a = np.array(Image.open(f).convert('RGB'))
@@ -31,12 +32,12 @@ for f in sorted(glob.glob(os.path.join(ROOT, 'art-src/portraits/*.png'))):
         by0, by1, bx0, bx1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
         rgb = a[by0:by1, x0 + bx0:x0 + bx1]; mm = sm[by0:by1, bx0:bx1]
         s = min((S - 2) / mm.shape[0], (S - 2) / mm.shape[1])
-        C, A = downscale(rgb, mm, s)
+        C, A = downscale(rgb, mm, s, True)
         h, w = A.shape
-        tile = Image.fromarray(np.dstack([C, (A * 255).astype(np.uint8)]), 'RGBA')
-        strip.paste(tile, (i * S + (S - w) // 2, S - h), tile)
+        tile = Image.fromarray(np.dstack([C, (A * 255).round().astype(np.uint8)]), 'RGBA')
+        strip.paste(tile, (i * S + (S - w) // 2, S - h))
     alpha = strip.split()[3]
-    q = strip.convert('RGB').quantize(colors=40, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-    q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+    q = strip.convert('RGB').quantize(colors=40 * RES, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+    q.putalpha(alpha)
     q.save(OUT + pid + '.png')
     print(pid)

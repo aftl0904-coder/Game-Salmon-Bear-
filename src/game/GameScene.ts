@@ -13,6 +13,7 @@ import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
+import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
@@ -225,6 +226,18 @@ const STAGES: Record<number, Stage1> = {
 let ST: Stage1 = STAGES[1]!
 
 /**
+ * 4-tier sushi healing (Alan: 玉子25% / 蝦50% / 三文魚75% / 極上壽司船100%).
+ * pct is a fraction of the hero's effective max HP (MAX_HP + gear bonus hearts).
+ */
+type SushiTier = 'tamago' | 'ebi' | 'salmon' | 'deluxe'
+const SUSHI_TIERS: Record<SushiTier, { tex: string; pct: number; label: string }> = {
+  tamago: { tex: 'pickup-sushi-tamago', pct: 0.25, label: '玉子壽司' },
+  ebi: { tex: 'pickup-sushi-ebi', pct: 0.5, label: '蝦壽司' },
+  salmon: { tex: 'pickup-sushi', pct: 0.75, label: '三文魚壽司' },
+  deluxe: { tex: 'pickup-sushi-deluxe', pct: 1, label: '極上壽司船' },
+}
+
+/**
  * Round 1 — 溪流小路（側視 上／中／下 三線）
  * P1：A/D 左右・W/S 換線・J/K/U/I；P2：←→・↑↓換線・數字鍵
  * 噗噗跟琪寶寶線；攻擊／受傷僅同線命中
@@ -262,19 +275,19 @@ export class GameScene extends Phaser.Scene {
   private keyA!: Phaser.Input.Keyboard.Key
   private keyS!: Phaser.Input.Keyboard.Key
   private keyD!: Phaser.Input.Keyboard.Key
-  /** SNES face: F=Y atk, G=B jump, T=X special, H=A unused */
+  /** SNES face: F=Y atk, G=B jump, T=X special, H=A → weapon-switch (倫寶雙槍) */
   private keyF!: Phaser.Input.Keyboard.Key
   private keyG!: Phaser.Input.Keyboard.Key
   private keyT!: Phaser.Input.Keyboard.Key
-  private keyH!: Phaser.Input.Keyboard.Key // A unused
+  private keyH!: Phaser.Input.Keyboard.Key
   /** Legacy jump／special aliases */
   private keyK!: Phaser.Input.Keyboard.Key
   private keyU!: Phaser.Input.Keyboard.Key
-  /** 2P SNES: ,=Y . =B ; =X / =A */
+  /** 2P SNES: ,=Y . =B ; =X / =A → weapon-switch (琪寶寶快劍/重劍) */
   private keyComma!: Phaser.Input.Keyboard.Key
   private keyPeriod!: Phaser.Input.Keyboard.Key
   private keySemicolon!: Phaser.Input.Keyboard.Key
-  private keySlash!: Phaser.Input.Keyboard.Key // A unused
+  private keySlash!: Phaser.Input.Keyboard.Key
   private keyNP1!: Phaser.Input.Keyboard.Key
   private keyNP2!: Phaser.Input.Keyboard.Key
   private keyNP4!: Phaser.Input.Keyboard.Key
@@ -359,6 +372,8 @@ export class GameScene extends Phaser.Scene {
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
   private bossFight = false
+  /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
+  private bossSushiSpawned = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
   /** The stir-the-coffee minigame runs at the first cart of each stage only. */
@@ -524,7 +539,7 @@ export class GameScene extends Phaser.Scene {
     const cam = this.cameras.main
     const pad = GameScene.CAM_EDGE_PAD
     const left = cam.scrollX + pad
-    const right = cam.scrollX + cam.width - pad
+    const right = cam.scrollX + cam.displayWidth - pad
     for (const h of [this.boy, g]) {
       if (h.x < left) {
         h.x = left
@@ -675,7 +690,7 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene') || this.scene.isSleeping('UIScene')) {
       this.scene.stop('UIScene')
     }
-    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地' }
+    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈' }
     this.scene.launch('UIScene', { mode: this.mode, stageTitle: titles[this.stageNo] ?? titles[1] })
     this.events.once('shutdown', this.stopUi, this)
   }
@@ -816,6 +831,13 @@ export class GameScene extends Phaser.Scene {
 
   private emitScore(info?: string) {
     const wl = (h: Hero | null | undefined) => (h ? ((h.getData('wlv') as number | undefined) ?? 1) : 1)
+    const wm = (h: Hero | null | undefined): 'normal' | 'heavy' =>
+      h ? ((h.getData('wmode') as 'normal' | 'heavy' | undefined) ?? 'normal') : 'normal'
+    const wmLabel = (h: Hero | null | undefined): string => {
+      const mode = wm(h)
+      if (!h) return mode === 'heavy' ? '重擊' : '連射'
+      return h.role === 'girl' ? (mode === 'heavy' ? '重劍' : '快劍') : mode === 'heavy' ? '重擊' : '連射'
+    }
     EventBus.emit(GameEvents.SCORE_UPDATED, {
       score: this.scorePts,
       coins: this.purse[(this.boy?.role as Who) ?? 'boy'] ?? this.coinStock,
@@ -825,6 +847,10 @@ export class GameScene extends Phaser.Scene {
       timeSec: this.started ? Math.floor((this.time.now - this.startedAt) / 1000) : 0,
       wlvL: wl(this.boy),
       wlvR: wl(this.girl),
+      wmodeL: wm(this.boy),
+      wmodeR: wm(this.girl),
+      wmodeLabelL: wmLabel(this.boy),
+      wmodeLabelR: wmLabel(this.girl),
       ...(info !== undefined ? { info } : {}),
     })
   }
@@ -1151,8 +1177,6 @@ export class GameScene extends Phaser.Scene {
     this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
     this.keyRShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT, true)
     this.keyO = kb.addKey(Phaser.Input.Keyboard.KeyCodes.O, true)
-    void this.keyH
-    void this.keySlash
     void this.keyRShift
     this.keyDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F1, true)
     this.keyPhysicsDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.BACKTICK, true)
@@ -1218,6 +1242,26 @@ export class GameScene extends Phaser.Scene {
       TouchInput.justPressed('special')
     )
   }
+  /**
+   * Weapon-mode switch (倫寶 雙槍切換 / 琪寶寶 快劍↔重劍), Alan: use the free 4th action
+   * key (H sits unused next to F/G/T) + gamepad LT (index 6, NOT R1 — index 5 is
+   * already special, see gamepadBridge.ts; Cursor's device pass caught the earlier
+   * wrong naming), touch button for phone.
+   * Bug fix (code-review pass before handing off to Cursor for device testing): P1's
+   * gamepad is NEVER read via `this.pad1` directly — see its field comment, it's kept
+   * hardcoded null by design, P1's real controller input flows through TouchInput
+   * (gamepadBridge.ts), same as p1Attack/Jump/SpecialJust below. The original version
+   * of this method checked `this.padFaceJust(this.pad1, 5)`, which is permanently dead
+   * code (always false) — it silently never fired on a real gamepad, and happened to
+   * also collide with gamepadBridge's own index-5 "special" mapping if it had worked.
+   * Fixed to go through TouchInput like every other P1 action; gamepadBridge.ts now
+   * maps index 6 (free — 0/1/2/3/4/5 are jump/attack/special, 8/9 are start) to it,
+   * and mountTouchControls has a matching on-screen button for phone play. Confirmed
+   * working on simulated gamepad/phone by Cursor's round-2 device-testing pass.
+   */
+  private p1WeaponSwitchJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keyH) || TouchInput.justPressed('weaponSwitch')
+  }
   private p2AttackJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyComma) ||
@@ -1247,6 +1291,15 @@ export class GameScene extends Phaser.Scene {
       this.padFaceJust(this.pad2, 4) ||
       this.padFaceJust(this.pad2, 5)
     )
+  }
+  /**
+   * Weapon-switch for P2 (快劍↔重劍 stance switch) — the free 4th action key
+   * (slash sits unused next to comma/period/semicolon). pad2's indices 4/5
+   * (L1/R1) are already alt-bindings for special, so pad index 6 (LT, NOT R1)
+   * stands in as P2's shoulder button for this until Alan wants a real pad remap.
+   */
+  private p2WeaponSwitchJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keySlash) || this.padFaceJust(this.pad2, 6)
   }
 
   private steerHero(
@@ -1333,6 +1386,7 @@ export class GameScene extends Phaser.Scene {
       this.p1CrouchHeld(),
     )
     if (this.p1SpecialJust()) this.fireHoneySpecial(this.boy)
+    if (this.p1WeaponSwitchJust()) this.toggleWeaponMode(this.boy)
   }
 
   private moveGirl(dt: number) {
@@ -1348,6 +1402,7 @@ export class GameScene extends Phaser.Scene {
       this.p2CrouchHeld(),
     )
     if (this.p2SpecialJust()) this.fireHoneySpecial(g)
+    if (this.p2WeaponSwitchJust()) this.toggleWeaponMode(g)
   }
 
   /**
@@ -1393,15 +1448,65 @@ export class GameScene extends Phaser.Scene {
     jet.setData('homing', best)
     jet.setData('by', h.role as Who)
     this.entities.add(jet, 'projectile')
-    floatText(this, h.x, h.y - 48, '絕招！', '#66ddff')
+    const ultName = h.role === 'girl' ? '蜜光斬' : '鮭魚瀑布'
+    floatText(this, h.x, h.y - 48, ultName, '#66ddff')
     burst(this, h.x, h.y - 28, 0x66ccff, 10)
-    this.emitScore('絕招！蜂蜜 MP 清空')
+    this.playUltimateFx(h)
+    this.emitScore(`${ultName}！蜂蜜 MP 清空`)
     this.time.delayedCall(900, () => {
       if (jet.active) jet.destroy()
     })
   }
 
-
+  /**
+   * ART-16 絕招 FX (docs/cursor/ART-REQUEST-16-ultimate-fx.md): full-screen flourish
+   * layered on top of the unchanged single-target homing shot above — a short
+   * role-tinted charge-aura pulse at the hero, then the named full-screen sweep
+   * (倫寶 鮭魚瀑布 / 琪寶寶 蜜光斬) across the screen. Pure visual juice: targeting and
+   * damage still come from the homing `jet` fired just above, not from this sweep —
+   * turning it into real multi-enemy AoE is a balance call Alan hasn't scoped yet.
+   */
+  private playUltimateFx(h: Hero) {
+    const girl = h.role === 'girl'
+    const auraTint = girl ? 0xffd060 : 0xff8a5a // 蜜糖金 / 鮭魚粉橙 (shared B&W sheet, tinted per hero)
+    if (hasFx(this, 'charge-aura')) {
+      // Cursor's round-2 device pass: at scale 0.7 the 128×128 sheet (~90px) was 2-3×
+      // the hero's own height and rendered on top (default depth), so it completely
+      // blotted the character out instead of reading as a ring around them. Shrunk to
+      // roughly hero-height and dropped just behind the sprite.
+      const hgt = Math.max(16, h.displayHeight || 32)
+      const aura = playFx(this, 'charge-aura', h.x, h.y - hgt * 0.3, { scale: (hgt * 1.3) / 128, depth: h.depth - 1, alpha: 0.85 })
+      if (aura) aura.setBlendMode(Phaser.BlendModes.ADD).setTint(auraTint)
+    }
+    const sweepName = girl ? 'ult-honey-slash' : 'ult-salmon-wave'
+    if (hasFx(this, sweepName)) {
+      const sweepY = this.cameras.main.scrollY + GAME_H / 2
+      const dir = h.facing < 0 ? -1 : 1
+      this.time.delayedCall(90, () => {
+        // Cursor's round-2 pass: pixel-checked the sliced sheet directly (not just the
+        // report's single screenshot) — the 6-frame burst only fills roughly the left
+        // half of its own 320px cell and shrinks in place rather than crossing the
+        // frame, so a single centered sprite left half the screen untouched (likely the
+        // "flat rectangle" they saw was just empty frame against the stage background)
+        // and read as a static flourish at ~0.3s, not a sweep. Slowed the clip to 14fps
+        // (fx.json, ~0.43s — see slice_ult_fx.py) and tween it edge-to-edge in the
+        // hero's facing direction so the existing art actually travels; still pure
+        // visual (see class comment) — no new art, no damage change.
+        const midX = this.cameras.main.scrollX + GAME_W / 2
+        const sweep = playFx(this, sweepName, midX - dir * GAME_W * 0.4, sweepY, {
+          flipX: h.facing < 0,
+          scale: 2,
+          depth: DEPTH.FX + 10,
+          alpha: 0.95,
+        })
+        if (sweep) {
+          sweep.setBlendMode(Phaser.BlendModes.ADD)
+          this.tweens.add({ targets: sweep, x: midX + dir * GAME_W * 0.4, duration: 420, ease: 'Sine.easeOut' })
+          sweep.once('destroy', () => this.tweens.killTweensOf(sweep))
+        }
+      })
+    }
+  }
 
   /** Melee/range smash for pots & chests in facing cone. */
   private smashBreakablesInFront(h: Hero) {
@@ -1412,9 +1517,28 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /**
+   * Weapon-mode toggle, shared by both roles (mode travels with the Hero via
+   * setData, same convention as 'wlv'): 倫寶 'heavy' = single big-power roe
+   * instead of the lv-based spread; 琪寶寶 'heavy' = slower, bigger, harder sword
+   * strike instead of the 3-hit combo. Confirmed scope: just the switch + its
+   * two concrete effects — no new art, no separate HUD icon yet.
+   */
+  private toggleWeaponMode(h: Hero) {
+    const cur = (h.getData('wmode') as 'normal' | 'heavy' | undefined) ?? 'normal'
+    const next = cur === 'normal' ? 'heavy' : 'normal'
+    h.setData('wmode', next)
+    SFX.blip(next === 'heavy' ? 320 : 520)
+    // Same colour pair as the persistent HUD badge (cyan = normal, gold = heavy),
+    // consistent across both heroes — Cursor playtest flagged the old mismatched tints.
+    const label = h.role === 'girl' ? (next === 'heavy' ? '重劍' : '快劍') : next === 'heavy' ? '重擊鮭' : '連射鮭'
+    floatText(this, h.x, h.y - 60, label, next === 'heavy' ? '#ffb060' : '#8ad8ff', { size: 16, dur: 900 })
+  }
+
   private fireSalmon(h: Hero) {
     const freshShot = this.spendStamina(h, STAM_SHOT)
-    h.atkCd = freshShot ? SALMON_SHOT_COOLDOWN_MS : Math.round(SALMON_SHOT_COOLDOWN_MS * 1.6)
+    const heavy = (h.getData('wmode') as 'normal' | 'heavy' | undefined) === 'heavy'
+    h.atkCd = Math.round((freshShot ? SALMON_SHOT_COOLDOWN_MS : Math.round(SALMON_SHOT_COOLDOWN_MS * 1.6)) * (heavy ? 1.8 : 1))
     h.pose = 'idle'
     h.playAction(h.crouching ? 'shoot-crouch' : 'shoot')
     // Commit freeze actors only — salmon shot keeps flying (Pack2 G).
@@ -1430,23 +1554,33 @@ export class GameScene extends Phaser.Scene {
     // 金鮭 levels: Lv1 one roe · Lv2 two (up/down) · Lv3 three-way fan, range ×1.4.
     const lv = this.weaponLv(h)
     const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
-    const pattern: Array<{ dy: number; vy: number }> =
-      lv >= 3
-        ? [{ dy: 0, vy: -42 }, { dy: 0, vy: 0 }, { dy: 0, vy: 42 }]
-        : lv === 2
-          ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
-          : [{ dy: 0, vy: 0 }]
-    for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range, freshShot ? 1 : 0.5)
-    burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    if (heavy) {
+      // 重擊鮭 (heavy mode): one slow, heavy roe instead of the lv spread — trades
+      // rate of fire for a bigger single hit (range ×1.6, power ×2.2).
+      this.spawnRoe(h, muzzleX, muzzleY, 0, Math.round(range * 1.6), freshShot ? 2.2 : 1.1)
+      burst(this, muzzleX, muzzleY, 0xff8040, 10)
+    } else {
+      const pattern: Array<{ dy: number; vy: number }> =
+        lv >= 3
+          ? [{ dy: 0, vy: -42 }, { dy: 0, vy: 0 }, { dy: 0, vy: 42 }]
+          : lv === 2
+            ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
+            : [{ dy: 0, vy: 0 }]
+      for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range, freshShot ? 1 : 0.5)
+      burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    }
     playFx(this, 'muzzle-flash', muzzleX + h.facing * 6, muzzleY, { flipX: h.facing < 0, depth: h.depth + 1 })
     this.smashBreakablesInFront(h)
   }
 
   private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1) {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(2 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
+    // Alan: ammo read a bit chunky — trimmed base scale 2 → 1.7 (Cursor/Alan feedback).
+    shot.setScale(1.7 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
     if (power < 1) shot.setTint(0x9ab0c8)
+    else if (power > 1) shot.setTint(0xffa060)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
@@ -1479,17 +1613,19 @@ export class GameScene extends Phaser.Scene {
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
     const fresh = this.spendStamina(h, STAM_SWORD)
-    h.atkCd = fresh ? SWORD_COOLDOWN_MS : Math.round(SWORD_COOLDOWN_MS * 1.6)
+    const heavy = (h.getData('wmode') as 'normal' | 'heavy' | undefined) === 'heavy'
+    h.atkCd = Math.round((fresh ? SWORD_COOLDOWN_MS : Math.round(SWORD_COOLDOWN_MS * 1.6)) * (heavy ? 1.9 : 1))
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     // 3-hit combo: presses within 0.6s chain slash1 → slash2 → slash3.
+    // 重劍 (heavy) skips the combo chain — every swing is the big slash3 strike.
     const lastAt = (h.getData('slashAt') as number | undefined) ?? -9999
-    const step = this.time.now - lastAt < 600 ? (((h.getData('slashN') as number | undefined) ?? 0) % 3) + 1 : 1
+    const step = heavy ? 3 : this.time.now - lastAt < 600 ? (((h.getData('slashN') as number | undefined) ?? 0) % 3) + 1 : 1
     h.setData('slashAt', this.time.now)
     h.setData('slashN', step)
     h.playAction(`slash${step}`)
     SFX.swing()
     const grip = this.girlSwordAnchor(h, true)
-    burst(this, grip.x + h.facing * 24, grip.y, 0xe8f0ff, 10)
+    burst(this, grip.x + h.facing * 24, grip.y, heavy ? 0xffa060 : 0xe8f0ff, heavy ? 16 : 10)
     h.setAngle(0)
     h.setScale(h.baseScale)
     if (this.sword) {
@@ -1501,7 +1637,7 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({
         targets: this.sword,
         angle: h.facing > 0 ? 70 : -70,
-        duration: 110,
+        duration: heavy ? 180 : 110,
         yoyo: true,
         onComplete: () => {
           if (!this.sword) return
@@ -1510,16 +1646,17 @@ export class GameScene extends Phaser.Scene {
       })
     }
     // 金鮭 levels: Lv2 reach ×1.35 · Lv3 reach ×1.7 and +1 damage.
+    // 重劍 stacks its own ×1.3 reach / ×1.8 damage on top of the weapon-level bonus.
     const lv = this.weaponLv(h)
-    const reach = lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1
+    const reach = (lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1) * (heavy ? 1.3 : 1)
     if (lv >= 2) burst(this, grip.x + h.facing * SWORD_HIT_W * reach * 0.6, grip.y, 0xffe070, 4 + lv * 2)
-    const swordDmg = Math.max(1, Math.round((PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0)) * (fresh ? 1 : 0.5)))
+    const swordDmg = Math.max(1, Math.round((PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0)) * (fresh ? 1 : 0.5) * (heavy ? 1.8 : 1)))
     this.spawnAttackHitbox(h, swordDmg, Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
     // Sword trail: one arc per combo step, longer with the weapon level.
     const arc = (`slash-arc-${step}` as 'slash-arc-1' | 'slash-arc-2' | 'slash-arc-3')
     playFx(this, arc, h.x + h.facing * (22 + 10 * reach), h.y - 36, {
       flipX: h.facing < 0,
-      scale: reach > 1.5 ? 1.25 : reach > 1.2 ? 1.1 : 1,
+      scale: (reach > 1.5 ? 1.25 : reach > 1.2 ? 1.1 : 1) * (heavy ? 1.2 : 1),
       depth: h.depth + 1,
       alpha: 0.92,
     })
@@ -1682,6 +1819,44 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Per-species attack-damage multiplier — previously every species dealt the exact
+   * same flat ENEMY_ATTACK_DMG regardless of how tanky/fast it is (HP already varied
+   * 1–3, bosses 36–48, but damage didn't). Fast/fragile hits softer, slow/tanky and
+   * telegraphed charges hit harder, bosses hardest. Tuned to feel internally
+   * consistent — not a substitute for an actual playtest pass.
+   */
+  private speciesAtkMul(pe: PatrolEnemy): number {
+    if (pe.kind === 'boss') return 1.8
+    // Stage-1 cast (PatrolEnemy) is differentiated via pe.species — fish/barrel/elephant.
+    if (pe.species === 'barrel') return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
+    if (pe.species === 'elephant') return 1.4 // 霸鼻象：慢重坦克，撞到好痛
+    if (pe.species === 'fish') return 1
+    // Stage2-5 cast (AnimEnemy/Enemy subclasses) all share a generic species marker
+    // ('stage2' etc., not a real per-species string), so differentiate by the Phaser
+    // texture key each subclass loads instead — plain runtime string data, so it
+    // survives a production minify pass (unlike constructor/class names).
+    switch (pe.texture.key) {
+      case 'anim-beesoldier':
+        return 0.7 // 蜂兵：1hp 快速俯衝，脆皮
+      case 'anim-minibee':
+      case 'anim-egg':
+        return 0.5 // 小蜜蜂／假蜜蛋：孵出嘅雜兵，更脆
+      case 'anim-squirrel':
+      case 'anim-lobster':
+        return 1.1 // 蜜僵松鼠／龍蝦守衛：較硬淨
+      case 'anim-mirrorowl':
+      case 'anim-mirrorshade':
+        return 0.6 // 分身／鏡影：1hp，單隻打少啲
+      case 'stage4-honeyzombie':
+        return 0.9 // 蜜僵：基本慢速殭屍
+      case 'stage4-taximonster':
+        return 1.5 // 的士怪：車頭燈預警後高速衝刺，命中要痛
+      default:
+        return 1
+    }
+  }
+
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
@@ -1700,8 +1875,10 @@ export class GameScene extends Phaser.Scene {
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
     const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
     const gearKnock = knockMul(h.role as Who)
+    const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * this.speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
+    const dmg = this.incoming(h, rawDmg)
     const hpLeft = applyDamage(h, {
-      amount: this.incoming(h, ENEMY_ATTACK_DMG),
+      amount: dmg,
       knockbackX: this.safeKnockX(h, away * Math.round(340 * speciesKnock * gearKnock)),
       knockbackY: -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock),
       iframeMs: this.iframes(h),
@@ -1724,7 +1901,7 @@ export class GameScene extends Phaser.Scene {
       this,
       h.x,
       h.y - 40,
-      pe.species === 'barrel' ? `輕傷 -${ENEMY_ATTACK_DMG}` : `-${ENEMY_ATTACK_DMG}`,
+      pe.species === 'barrel' ? `輕傷 -${dmg}` : `-${dmg}`,
       pe.species === 'barrel' ? '#ffaa77' : '#ff6677',
     )
     this.juice.shakeDamage()
@@ -3148,9 +3325,11 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
   }
 
-  private spawnSushi(x: number, y: number) {
-    const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
+  private spawnSushi(x: number, y: number, tier: SushiTier = 'salmon') {
+    const def = SUSHI_TIERS[tier]
+    const key = this.textures.exists(def.tex) ? def.tex : this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
     const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
+    s.setData('sushiTier', tier)
     s.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -3161,14 +3340,18 @@ export class GameScene extends Phaser.Scene {
   private takeSushi(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
     if (!item.active || !h.alive) return
     item.disableBody(true, true)
+    const tier = (item.getData('sushiTier') as SushiTier | undefined) ?? 'salmon'
+    const def = SUSHI_TIERS[tier]
+    const effMax = MAX_HP + bonusHearts(h.role as Who)
+    const heal = Math.max(1, Math.round(effMax * def.pct))
     const before = h.hp
-    h.hp = Math.min(MAX_HP, h.hp + 2)
+    h.hp = Math.min(effMax, h.hp + heal)
     const gained = h.hp - before
     SFX.coin()
     burst(this, item.x, item.y, 0xff8899, 10)
     if (gained > 0) {
-      floatText(this, h.x, h.y - 56, '+2HP', '#ff6688', {
-        size: 26,
+      floatText(this, h.x, h.y - 56, `${def.label} +${gained}`, '#ff6688', {
+        size: 24,
         rise: 28,
         dur: 2500,
       })
@@ -3488,8 +3671,8 @@ export class GameScene extends Phaser.Scene {
         this.storyIntro = null
         this.emitScore(
           this.mode === '1p'
-            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Enter暫停'
-            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招　Ｈ切換｜Enter暫停'
+            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
         )
         // data/signs.json SG-02 — display-only tutorial (no combat change)
         const tip = this.tree || this.market || this.depot || this.tower ? null : tutorialSign()
@@ -3702,7 +3885,9 @@ export class GameScene extends Phaser.Scene {
     if (loot === 'honey') this.grantHoneySpecial(x, midY)
     else if (loot === 'power') this.spawnPowerUp(x, dropY)
     else if (loot === 'food') {
-      this.spawnSushi(x, dropY)
+      // Ordinary breakable drop: mostly the weak/common tamago, sometimes the better ebi.
+      const tier: SushiTier = Math.random() < 0.35 ? 'ebi' : 'tamago'
+      this.spawnSushi(x, dropY, tier)
       floatText(this, x, midY - 20, '壽司！', '#ff99aa')
     } else {
       this.spawnCoin?.(x, dropY)
@@ -4036,7 +4221,7 @@ export class GameScene extends Phaser.Scene {
     }
     // Title
     const title = this.add
-      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關'][this.stageNo] ?? '第一關'}　通關！`, {
+      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關', '第四關', '第五關'][this.stageNo] ?? '第一關'}　通關！`, {
         fontFamily: FONT_TITLE,
         fontSize: '28px',
         color: '#ffd76a',
@@ -4066,7 +4251,18 @@ export class GameScene extends Phaser.Scene {
     void kb
     overlay.add(
       this.add
-        .text(-W / 2 + 151, castY + 18, ['', '第一罐真蜂蜜！噗噗隻耳郁咗', '第二罐真蜂蜜！噗噗識跳喇', '第三罐真蜂蜜！噗噗識行路'][this.stageNo] ?? '', {
+        .text(
+          -W / 2 + 151,
+          castY + 18,
+          // docs/bible/stages-3-5.md's own Pupu-recovery beats (顏色回復到X成 at each
+          // stage), stage 5's line reusing the exact wording from the boss-defeat
+          // floatText at line ~5398 ('噗噗醒咗一半，衝出嚟同主角合體！') rather than
+          // inventing new story text — this panel was blank on stage 4/5 before
+          // (Cursor's round-2 device pass caught it), same class of bug as the
+          // earlier stage-5 title fix.
+          ['', '第一罐真蜂蜜！噗噗隻耳郁咗', '第二罐真蜂蜜！噗噗識跳喇', '第三罐真蜂蜜！噗噗識行路', '第四罐真蜂蜜！噗噗識揮手', '第五罐真蜂蜜！噗噗醒咗一半，同你哋合體咗'][
+            this.stageNo
+          ] ?? '', {
           fontFamily: FONT_UI,
           fontSize: '10px',
           color: '#ffe9a8',
@@ -4589,7 +4785,7 @@ export class GameScene extends Phaser.Scene {
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
         : wave === 'altar'
           ? WORLD_W - 30 - (stagger % 4) * 46
-          : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
+          : Math.min(WORLD_W - 24, cam.scrollX + cam.displayWidth + 48 + stagger * 140)
       stagger += 1
       if (terrainEnabled()) enterX = this.nearestBaseFloorX(enterX, fromLeft ? 1 : -1)
       const enterY = laneY(e.lane)
@@ -4721,7 +4917,7 @@ export class GameScene extends Phaser.Scene {
     this.s2Pending = this.s2Pending.filter((p) => {
       if (this.bossFight) return false
       if (lead < p.unlockX) return true
-      let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.width + 24 + k * 38))
+      let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.displayWidth + 24 + k * 38))
       k++
       if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
       if (p.species === 'stallkeeper') x = p.x
@@ -5087,6 +5283,17 @@ export class GameScene extends Phaser.Scene {
     body.setVelocityY(0)
     this.entities.add(e as unknown as PatrolEnemy, 'enemy')
     addGroundShadow(this, e, (t) => (e.flying ? LANE_FLOOR_Y : this.groundYFor(t)), e.flying ? 0.4 : 0.65)
+    // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
+    // after its constructor sets hp = maxHp = N, so this is the single injection
+    // point (duck-typed: the generic signature doesn't guarantee hp/maxHp fields).
+    const scalable = e as unknown as { hp?: number; maxHp?: number }
+    if (typeof scalable.hp === 'number' && typeof scalable.maxHp === 'number') {
+      const mul = difficultyHpMul(getDifficulty())
+      if (mul !== 1) {
+        scalable.maxHp = Math.max(1, Math.round(scalable.maxHp * mul))
+        scalable.hp = scalable.maxHp
+      }
+    }
     return e
   }
 
@@ -5151,6 +5358,11 @@ export class GameScene extends Phaser.Scene {
       this.queen = q
       this.buildBossBar()
       floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
+      // Last-chance full heal: one 極上壽司船 near the arena entrance, before the boss.
+      if (!this.bossSushiSpawned) {
+        this.bossSushiSpawned = true
+        this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, 'deluxe')
+      }
     }
     if (this.depot) {
       // No dedicated reveal cutscene for 泥鬃 yet — his 來歷卡 (bossCard) already told the story.
@@ -5263,8 +5475,10 @@ export class GameScene extends Phaser.Scene {
       this.registry.set('leavingToMenu', false)
       this.stopUi()
       const from = this.stageNo
-      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike' })
-      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to })
+      // Alan: let the player pick which unlocked stage to go to here, instead of
+      // always auto-advancing into `to`.
+      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike', pick: true })
+      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to, pick: true })
     })
   }
 

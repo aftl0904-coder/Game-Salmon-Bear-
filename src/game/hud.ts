@@ -1,6 +1,6 @@
 import { DEPTH } from './engine/depth'
 import type Phaser from 'phaser'
-import { MAX_HP, GAME_W } from './engine/constants'
+import { MAX_HP, GAME_W, GAME_H } from './engine/constants'
 import { FONT_UI } from './ui/fonts'
 import {
   layoutRow,
@@ -312,7 +312,7 @@ export function buildStageHud(
   root.add(scoreText)
 
   const info = scene.add
-    .text(GAME_W / 2, scene.scale.height - 18, '', {
+    .text(GAME_W / 2, GAME_H - 18, '', {
       fontFamily: FONT_UI,
       fontSize: '12px',
       color: '#fff8e0',

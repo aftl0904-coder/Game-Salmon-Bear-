@@ -1,13 +1,14 @@
 import Phaser from 'phaser'
 import fxMeta from '../../data/anim/fx.json'
 import { DEPTH } from './engine/depth'
+import { markHd } from './heroAnims'
 
 /**
  * Hand-animated effect strips (Cursor FX sheets → scripts/art/slice_fx.py).
  * Texture `fxa-<name>`, animation `fxa-<name>`. `playFx` spawns a self-destroying sprite.
  */
 export type FxName = keyof typeof fxMeta
-type FxMeta = { frameWidth: number; frameHeight: number; count: number; fps: number }
+type FxMeta = { frameWidth: number; frameHeight: number; count: number; fps: number; res?: number }
 const META = fxMeta as Record<string, FxMeta>
 
 export function preloadFxAnims(scene: Phaser.Scene) {
@@ -20,6 +21,7 @@ export function createFxAnims(scene: Phaser.Scene) {
   for (const [name, m] of Object.entries(META)) {
     const key = `fxa-${name}`
     if (!scene.textures.exists(key) || scene.anims.exists(key)) continue
+    markHd(scene.textures.get(key), m.res ?? 1)
     scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
     scene.anims.create({
       key,

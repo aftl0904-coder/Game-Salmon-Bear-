@@ -1,7 +1,13 @@
 {
- "frameWidth": 86,
- "frameHeight": 102,
- "anchorX": 43,
+ "frameWidth": 172,
+ "frameHeight": 204,
+ "anchorX": 86,
+ "res": 2,
+ "columns": 23,
+ "cell1x": [
+  86,
+  102
+ ],
  "anims": {
   "idle": {
    "start": 0,

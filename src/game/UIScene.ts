@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import { DEPTH } from './engine/depth'
 import Phaser from 'phaser'
 import { buildSnesHud, type SnesHud } from './hudSnes'
@@ -16,8 +17,10 @@ import { FONT_UI } from './ui/fonts'
  * HUD overlay — two-row layout; hearts show all slots; 滿 only when MP full.
  */
 export class UIScene extends Phaser.Scene {
-  private heartsL: Phaser.GameObjects.Image[] = []
-  private heartsR: Phaser.GameObjects.Image[] = []
+  private hpFillL: Phaser.GameObjects.Rectangle | null = null
+  private hpFillR: Phaser.GameObjects.Rectangle | null = null
+  private hpBarWL = 1
+  private hpBarWR = 1
   private coinText!: Phaser.GameObjects.Text
   private scoreText!: Phaser.GameObjects.Text
   private hud: SnesHud | null = null
@@ -36,8 +39,6 @@ export class UIScene extends Phaser.Scene {
   private dispHpR = 6
   private targetMp = 0
   private dispMp = 0
-  private pipFull = 'heart-full'
-  private pipEmpty = 'heart-empty'
   private fullBlink = 0
   /** When true, ignore EventBus HP and keep dispHp frozen (QA). */
   private freezeHp = false
@@ -69,15 +70,15 @@ export class UIScene extends Phaser.Scene {
         soloCast: (this.registry.get('soloCast') as 'boy' | 'girl') || 'boy',
       })
       this.hud = hud
-      this.heartsL = hud.heartsL
-      this.heartsR = hud.heartsR
+      this.hpFillL = hud.hpFillL
+      this.hpFillR = hud.hpFillR
+      this.hpBarWL = hud.hpBarWL
+      this.hpBarWR = hud.hpBarWR
       this.coinText = hud.coinText
       this.mpBar = hud.mpBar
       this.mpText = hud.mpText
       this.mpMaxW = hud.mpMaxW
       this.maxHp = hud.maxHp
-      this.pipFull = hud.pipFull
-      this.pipEmpty = hud.pipEmpty
       this.targetHpL = this.dispHpL = this.maxHp
       this.targetHpR = this.dispHpR = this.maxHp
       this.targetMp = this.dispMp = 0
@@ -85,7 +86,7 @@ export class UIScene extends Phaser.Scene {
       mountMuteButton(this, hud.muteAnchor.x + 11, hud.muteAnchor.y + 8)
       void cfg?.stageSub
 
-      // QA / debug: force HP pip textures without going through EventBus
+      // QA / debug: force the HP bar fill without going through EventBus
       ;(
         window as unknown as {
           __SAKE_HUD_SET_HP__?: (hp: number) => void
@@ -94,9 +95,7 @@ export class UIScene extends Phaser.Scene {
         const n = Math.max(0, Math.min(this.maxHp, Math.round(hp)))
         this.freezeHp = true
         this.targetHpL = this.dispHpL = n
-        for (let i = 0; i < this.maxHp; i++) {
-          this.heartsL[i]?.setTexture(i < n ? this.pipFull : this.pipEmpty)
-        }
+        if (this.hpFillL) this.hpFillL.width = Math.max(0, this.hpBarWL * (n / this.maxHp))
       }
     }
 
@@ -121,7 +120,7 @@ export class UIScene extends Phaser.Scene {
     }
 
     this.banner = this.add
-      .text(this.scale.width / 2, this.scale.height / 2, '', {
+      .text(GAME_W / 2, GAME_H / 2, '', {
         fontFamily: FONT_UI,
         fontSize: '16px',
         color: '#ffe8b0',
@@ -138,7 +137,7 @@ export class UIScene extends Phaser.Scene {
     this.banner.setInteractive({ useHandCursor: true })
     this.banner.on('pointerdown', () => TouchInput.pulse('start'))
     this.menuBtn = this.add
-      .text(this.scale.width / 2, this.scale.height / 2, '回選單', {
+      .text(GAME_W / 2, GAME_H / 2, '回選單', {
         fontFamily: FONT_UI,
         fontSize: '12px',
         color: '#fff4d0',
@@ -172,17 +171,22 @@ export class UIScene extends Phaser.Scene {
   }
 
   update(_t: number, dt: number) {
-    // Stale hearts from a previous run (scene restart) have no scene — skip until rebuilt.
-    if (!this.heartsL.length || !this.heartsL[0]?.scene) return
+    // Stale bar from a previous run (scene restart) has no scene — skip until rebuilt.
+    if (!this.hpFillL || !this.hpFillL.scene) return
     const drain = Math.min(1, (dt / 1000) * 8)
     const recover = Math.min(1, (dt / 1000) * 6)
     this.dispHpL += (this.targetHpL - this.dispHpL) * (this.targetHpL < this.dispHpL ? drain : recover)
     this.dispHpR += (this.targetHpR - this.dispHpR) * (this.targetHpR < this.dispHpR ? drain : recover)
     this.dispMp += (this.targetMp - this.dispMp) * Math.min(1, (dt / 1000) * 10)
-    for (let i = 0; i < this.heartsL.length; i++) {
-      const on = i < this.maxHp
-      this.heartsL[i]?.setVisible(on).setTexture(i < Math.round(this.dispHpL) ? this.pipFull : this.pipEmpty)
-      this.heartsR[i]?.setVisible(on).setTexture(i < Math.round(this.dispHpR) ? this.pipFull : this.pipEmpty)
+    // HP gauge: one continuous bar, fill = % of current max (incl. gear bonus hearts).
+    // No number shown — just the fill, with a brighter red warning flash under 25%.
+    const pctL = this.maxHp > 0 ? Phaser.Math.Clamp(this.dispHpL / this.maxHp, 0, 1) : 0
+    this.hpFillL.width = Math.max(0, this.hpBarWL * pctL)
+    this.hpFillL.fillColor = pctL < 0.25 ? 0xff5a4a : 0xe8384a
+    if (this.hpFillR && this.hpFillR.scene) {
+      const pctR = this.maxHp > 0 ? Phaser.Math.Clamp(this.dispHpR / this.maxHp, 0, 1) : 0
+      this.hpFillR.width = Math.max(0, this.hpBarWR * pctR)
+      this.hpFillR.fillColor = pctR < 0.25 ? 0xff5a4a : 0xe8384a
     }
     // 耐力 bars: blue when ready, red while winded.
     for (const [bar, v] of [[this.hud?.stamL, this.stamL], [this.hud?.stamR, this.stamR]] as const) {
@@ -253,9 +257,13 @@ export class UIScene extends Phaser.Scene {
       icons.forEach((w, i) => w.setTexture(i < (lv ?? 1) ? hud.fishOn : hud.fishOff))
     setW(hud.weaponL, p.wlvL)
     setW(hud.weaponR, p.wlvR)
+    // Weapon-mode badge: same colour pair for both heroes (cyan = normal, gold =
+    // heavy) so the state reads at a glance regardless of which role is on which side.
+    if (p.wmodeLabelL !== undefined) hud.modeTagL.setText(p.wmodeLabelL).setColor(p.wmodeL === 'heavy' ? '#ffb060' : '#8ad8ff')
+    if (p.wmodeLabelR !== undefined) hud.modeTagR.setText(p.wmodeLabelR).setColor(p.wmodeR === 'heavy' ? '#ffb060' : '#8ad8ff')
     if (p.progress !== undefined && hud.marker) {
       hud.marker.x = Math.round(hud.trackX0 + (hud.trackX1 - hud.trackX0) * p.progress)
-      hud.marker.y = this.scale.height - 8 + (Math.floor(this.time.now / 180) % 2)
+      hud.marker.y = GAME_H - 8 + (Math.floor(this.time.now / 180) % 2)
     }
     if (p.timeSec !== undefined) hud.timeText.setText(`${p.timeSec}秒`)
     if (p.info && p.info !== this.lastInfo) {

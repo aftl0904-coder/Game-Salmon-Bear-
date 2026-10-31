@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { unlockAudio, SFX } from './audio'
 import { TouchInput } from './touchInput'
@@ -23,14 +24,15 @@ export class GachaScene extends Phaser.Scene {
   }
 
   create() {
-    const { width: W, height: H } = this.scale
+    const W = GAME_W
+    const H = GAME_H
     this.inputReadyAt = this.time.now + 350
     this.pendingConfirm = null
     this.cameras.main.setBackgroundColor('#140a1e')
     this.cameras.main.fadeIn(280, 20, 10, 30)
 
     this.add.text(W / 2, 34, '扭　蛋　機', { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffe08a', stroke: '#2a1408', strokeThickness: 4 }).setOrigin(0.5)
-    this.add.text(W / 2, 58, '開局前扭一次，呢次 playthrough 都係呢張 charm', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b0e0' }).setOrigin(0.5)
+    this.add.text(W / 2, 58, '開局前扭一次，呢次遊玩全程都係呢張符咒', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b0e0' }).setOrigin(0.5)
 
     if (this.textures.exists('gacha-machine')) {
       this.machine = this.add.image(W / 2, H - 20, 'gacha-machine').setOrigin(0.5, 1).setScale(0.78)
@@ -89,7 +91,8 @@ export class GachaScene extends Phaser.Scene {
 
     this.tweens.killTweensOf(this.prompt)
     this.prompt.setVisible(false)
-    const { width: W, height: H } = this.scale
+    const W = GAME_W
+    const H = GAME_H
     // QA hook (bots): registry 'forceCharm' skips the real roll for deterministic testing.
     const forced = this.registry.get('forceCharm') as CharmId | undefined
     const charm = forced ? setActiveCharm(forced) : rollCharm()
@@ -124,7 +127,8 @@ export class GachaScene extends Phaser.Scene {
 
   private reveal(charm: CharmDef) {
     SFX.powerUp()
-    const { width: W, height: H } = this.scale
+    const W = GAME_W
+    const H = GAME_H
     const cy = H / 2 - 30 // matches the capsule's resting y from spin()
     this.tweens.add({ targets: this.capsule, scale: { from: 1.6, to: 2.1 }, duration: 160, yoyo: true })
 

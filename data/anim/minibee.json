@@ -1,7 +1,7 @@
 {
- "frameWidth": 38,
- "frameHeight": 25,
- "anchorX": 19,
+ "frameWidth": 76,
+ "frameHeight": 50,
+ "anchorX": 38,
  "anims": {
   "fly": {
    "start": 0,
@@ -15,5 +15,11 @@
    "fps": 10,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 6,
+ "cell1x": [
+  38,
+  25
+ ]
 }

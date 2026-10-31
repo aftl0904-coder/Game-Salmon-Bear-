@@ -8,6 +8,8 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 from slice_anim import fg_mask, split, downscale  # noqa: E402
 
+RES = 2
+
 # name → (largest side in game px, fps)
 FX = {
     'hit-spark': (34, 24), 'enemy-poof': (52, 16), 'roe-splash': (26, 22), 'muzzle-flash': (22, 30),
@@ -24,6 +26,7 @@ def main():
     man = {m['file']: m for m in json.load(open(os.path.join(root, 'art-src/anim/manifest.json')))}
     os.makedirs('public/art/fx', exist_ok=True)
     meta = {}
+    old = json.load(open('data/anim/fx.json')) if os.path.exists('data/anim/fx.json') else {}
     for name, spec in FX.items():
         target, fps = spec[0], spec[1]
         folder = spec[2] if len(spec) > 2 else 'fx'
@@ -40,10 +43,12 @@ def main():
             by0, by1, bx0, bx1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
             crops.append((a[by0:by1, x0 + bx0:x0 + bx1], sm[by0:by1, bx0:bx1]))
         big = max(max(c[1].shape) for c in crops)
-        s = target / big
-        tiles = [downscale(rgb, mm, s) for rgb, mm in crops]
-        fw = max(t[1].shape[1] for t in tiles) + 2
-        fh = max(t[1].shape[0] for t in tiles) + 2
+        s = target / big * RES
+        tiles = [downscale(rgb, mm, s, soft=True) for rgb, mm in crops]
+        o = old.get(name, {})
+        lw = max(-(-max(t[1].shape[1] for t in tiles) // RES) + 1, o.get('frameWidth', 0) // o.get('res', 1))
+        lh = max(-(-max(t[1].shape[0] for t in tiles) // RES) + 1, o.get('frameHeight', 0) // o.get('res', 1))
+        fw, fh = lw * RES, lh * RES
         strip = Image.new('RGBA', (fw * len(tiles), fh), (0, 0, 0, 0))
         for i, (C, A) in enumerate(tiles):
             h, w = A.shape
@@ -55,10 +60,10 @@ def main():
         arr[..., 3][(r > 180) & (g < 130) & (b > 140) & (r - g > 90)] = 0
         strip = Image.fromarray(arr, 'RGBA')
         alpha = strip.split()[3]
-        q = strip.convert('RGB').quantize(colors=32, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-        q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+        q = strip.convert('RGB').quantize(colors=32 * RES, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+        q.putalpha(alpha)
         q.save(f'public/art/fx/{name}.png')
-        meta[name] = {'frameWidth': fw, 'frameHeight': fh, 'count': len(tiles), 'fps': fps}
+        meta[name] = {'frameWidth': fw, 'frameHeight': fh, 'count': len(tiles), 'fps': fps, 'res': RES}
         print(name, fw, fh, len(tiles))
     json.dump(meta, open('data/anim/fx.json', 'w'), indent=1)
 

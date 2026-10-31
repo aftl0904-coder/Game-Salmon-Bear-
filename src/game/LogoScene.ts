@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { TouchInput } from './touchInput'
 import { unlockAudio } from './audio'
@@ -27,7 +28,8 @@ export class LogoScene extends Phaser.Scene {
 
   create() {
     if (this.textures.exists('story-cover')) return this.createCover()
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#5a98c8')
     this.cameras.main.fadeIn(420, 50, 90, 130)
 
@@ -173,7 +175,7 @@ export class LogoScene extends Phaser.Scene {
       this.input?.keyboard?.off('keydown', go)
       this.cameras?.main?.fadeOut(280, 40, 28, 16)
       this.time.delayedCall(280, () => {
-        if (this.sys.isActive()) this.scene.start('menu')
+        if (this.sys.isActive()) this.scene.start('difficulty')
       })
     }
 
@@ -185,7 +187,8 @@ export class LogoScene extends Phaser.Scene {
 
   /** Title over the cover illustration (art-src/story/cover.png). */
   private createCover() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#000000')
     this.cameras.main.fadeIn(600, 0, 0, 0)
     const cover = this.add.image(width / 2, height / 2, 'story-cover')
@@ -247,7 +250,7 @@ export class LogoScene extends Phaser.Scene {
       left = true
       this.cameras?.main?.fadeOut(320, 0, 0, 0)
       this.time.delayedCall(320, () => {
-        if (this.sys.isActive()) this.scene.start('menu')
+        if (this.sys.isActive()) this.scene.start('difficulty')
       })
     }
     // Title waits for the player (no auto-skip); ignore the press that skipped the studio splash.

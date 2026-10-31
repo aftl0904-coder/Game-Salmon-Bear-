@@ -1,7 +1,7 @@
 {
- "frameWidth": 184,
- "frameHeight": 125,
- "anchorX": 92,
+ "frameWidth": 368,
+ "frameHeight": 250,
+ "anchorX": 184,
  "anims": {
   "perch": {
    "start": 0,
@@ -45,5 +45,11 @@
    "fps": 6,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 11,
+ "cell1x": [
+  184,
+  125
+ ]
 }

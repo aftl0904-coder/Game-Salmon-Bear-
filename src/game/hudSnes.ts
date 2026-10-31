@@ -1,11 +1,12 @@
 import type Phaser from 'phaser'
+import { markHd } from './heroAnims'
 import { DEPTH } from './engine/depth'
 import { MAX_HP, GAME_W, GAME_H } from './engine/constants'
 import { FONT_UI } from './ui/fonts'
 
 /**
  * SNES-style stage HUD (640×360): lacquered top band with gold trim.
- *  left  — P1 portrait · name · pixel hearts · 金鮭 weapon level
+ *  left  — P1 portrait · name · HP % bar · 金鮭 weapon level
  *  centre— stage plaque · honey jars 0/3 · coins · 絕招 gauge
  *  right — P2 (2P) mirrored
  *  bottom— journey track with 噗噗 marker → honey tree, timer
@@ -14,31 +15,35 @@ import { FONT_UI } from './ui/fonts'
 
 const BAND_H = 30
 const HEART_W = 9
-const HEART_H = 8
 /** Max possible hearts beyond MAX_HP: 大心心 gear tiers 1-3 (+1/+2/+3) stack with 運符 (+1). */
 const MAX_BONUS_HEARTS = 4
 
 type Side = {
-  hearts: Phaser.GameObjects.Image[]
+  hpFill: Phaser.GameObjects.Rectangle
+  hpBarW: number
   stam: Phaser.GameObjects.Rectangle
   weapon: Phaser.GameObjects.Image[]
+  modeTag: Phaser.GameObjects.Text
 }
 
 export type SnesHud = {
-  heartsL: Phaser.GameObjects.Image[]
-  heartsR: Phaser.GameObjects.Image[]
+  hpFillL: Phaser.GameObjects.Rectangle
+  hpFillR: Phaser.GameObjects.Rectangle
+  hpBarWL: number
+  hpBarWR: number
   stamL: Phaser.GameObjects.Rectangle
   stamR: Phaser.GameObjects.Rectangle
   weaponL: Phaser.GameObjects.Image[]
   weaponR: Phaser.GameObjects.Image[]
+  /** Persistent weapon-mode badge (reads "連射"/"快劍" or "重擊"/"重劍"), next to each name. */
+  modeTagL: Phaser.GameObjects.Text
+  modeTagR: Phaser.GameObjects.Text
   honey: Phaser.GameObjects.Image[]
   coinText: Phaser.GameObjects.Text
   mpBar: Phaser.GameObjects.Rectangle
   mpText: Phaser.GameObjects.Text
   mpMaxW: number
   maxHp: number
-  pipFull: string
-  pipEmpty: string
   jarFull: string
   jarEmpty: string
   fishOn: string
@@ -51,51 +56,23 @@ export type SnesHud = {
   muteAnchor: { x: number; y: number }
 }
 
-const HEART_ROWS = [
-  '.##...##.',
-  '#oo#.#oo#',
-  '#oxx#xxx#',
-  '#xxxxxxx#',
-  '.#xxxxx#.',
-  '..#xxx#..',
-  '...#x#...',
-  '....#....',
-]
-
-function bakeHeart(scene: Phaser.Scene, key: string, full: boolean) {
-  if (scene.textures.exists(key)) return
-  const c = document.createElement('canvas')
-  c.width = HEART_W
-  c.height = HEART_H
-  const ctx = c.getContext('2d')!
-  const pal: Record<string, string> = full
-    ? { '#': '#2a0a0e', x: '#e8384a', o: '#ffb0b8' }
-    : { '#': '#2a1a1e', x: '#4a3438', o: '#5a4448' }
-  HEART_ROWS.forEach((row, y) =>
-    [...row].forEach((ch, x) => {
-      const col = pal[ch]
-      if (!col) return
-      ctx.fillStyle = col
-      ctx.fillRect(x, y, 1, 1)
-    }),
-  )
-  scene.textures.addCanvas(key, c)
-}
-
 /** Downscale an existing texture frame into a small HUD icon (smooth, then hard alpha). */
 function bakeIcon(scene: Phaser.Scene, src: string, key: string, w: number, h: number, frame?: number, grey = false) {
   if (scene.textures.exists(key) || !scene.textures.exists(src)) return
   const fr = scene.textures.getFrame(src, frame)
   if (!fr) return
   const img = fr.source.image as HTMLImageElement | HTMLCanvasElement
+  const res = fr.source.resolution || 1
+  const pw = w * res
+  const ph = h * res
   const c = document.createElement('canvas')
-  c.width = w
-  c.height = h
+  c.width = pw
+  c.height = ph
   const ctx = c.getContext('2d', { willReadFrequently: true })!
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(img, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, w, h)
-  const d = ctx.getImageData(0, 0, w, h)
+  ctx.drawImage(img, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, pw, ph)
+  const d = ctx.getImageData(0, 0, pw, ph)
   for (let i = 0; i < d.data.length; i += 4) {
     d.data[i + 3] = d.data[i + 3]! > 110 ? 255 : 0
     if (grey) {
@@ -106,7 +83,7 @@ function bakeIcon(scene: Phaser.Scene, src: string, key: string, w: number, h: n
     }
   }
   ctx.putImageData(d, 0, 0)
-  scene.textures.addCanvas(key, c)
+  markHd(scene.textures.addCanvas(key, c)!, res)
 }
 
 function txt(scene: Phaser.Scene, x: number, y: number, s: string, size: number, color: string) {
@@ -124,8 +101,6 @@ export function buildSnesHud(
   scene: Phaser.Scene,
   opts: { mode: '1p' | '2p'; stageTitle: string; soloCast: 'boy' | 'girl' },
 ): SnesHud {
-  bakeHeart(scene, 'hud2-heart', true)
-  bakeHeart(scene, 'hud2-heart-empty', false)
   bakeIcon(scene, 'portrait-lunbo', 'hud2-face-lunbo', 24, 24, 0)
   bakeIcon(scene, 'portrait-kibobo', 'hud2-face-kibobo', 24, 24, 0)
   bakeIcon(scene, 'pickup-power', 'hud2-fish', 13, 8)
@@ -157,39 +132,68 @@ export function buildSnesHud(
     const nx = right ? x0 - 5 : x0 + 29
     const label = txt(scene, nx, 2, name, 10, who === 'lunbo' ? '#ffc890' : '#ffd0e0').setOrigin(right ? 1 : 0, 0)
     root.add(label)
-    const hearts: Phaser.GameObjects.Image[] = []
-    // Spare slots for the 大心心 upgrades + 運符 charm; UIScene hides the ones not bought/rolled.
-    for (let i = 0; i < MAX_HP + MAX_BONUS_HEARTS; i++) {
-      const hx = right ? nx - HEART_W - i * (HEART_W + 1) : nx + i * (HEART_W + 1)
-      const h = scene.add.image(hx, 17, 'hud2-heart').setOrigin(0, 0).setScrollFactor(0)
-      hearts.push(h)
-      root.add(h)
-    }
+    // Persistent weapon-mode badge, right after the name. Same two colours for both
+    // heroes regardless of role (cyan = normal, gold = heavy) so the state reads at a
+    // glance without having to know which label belongs to which mode per-character.
+    // 10px, not the name's 10px-matching 8px — Cursor's device pass flagged the badge
+    // as too small to read on a low-res phone screen.
+    const modeTag = txt(scene, right ? nx - label.displayWidth - 4 : nx + label.displayWidth + 4, 2, '', 10, '#8ad8ff').setOrigin(
+      right ? 1 : 0,
+      0,
+    )
+    root.add(modeTag)
+    // HP gauge: one chunky bar instead of discrete hearts — fill width = % of current
+    // max HP, no number shown. Thick gold-riveted frame so it reads at a glance /
+    // peripheral vision mid-fight, echoing the old hearts' decorated look.
+    const hpBarW = (MAX_HP + MAX_BONUS_HEARTS) * (HEART_W + 1) - 3
+    const hpX = right ? nx - hpBarW : nx
+    const HP_BAR_H = 9
+    const hpY = 14
+    g.fillStyle(0xc8902a, 1).fillRect(hpX - 1, hpY - 1, hpBarW + 2, HP_BAR_H + 2)
+    g.fillStyle(0x240e0e, 1).fillRect(hpX, hpY, hpBarW, HP_BAR_H)
+    // gold rivets at both ends of the frame — the decorative touch the hearts had.
+    g.fillStyle(0xffdf90, 1).fillCircle(hpX - 1, hpY + HP_BAR_H / 2, 1.6)
+    g.fillStyle(0xffdf90, 1).fillCircle(hpX + hpBarW + 1, hpY + HP_BAR_H / 2, 1.6)
+    const hpFill = scene.add
+      .rectangle(right ? hpX + hpBarW : hpX, hpY, hpBarW, HP_BAR_H, 0xe8384a, 1)
+      .setOrigin(right ? 1 : 0, 0)
+      .setScrollFactor(0)
+    root.add(hpFill)
     const weapon: Phaser.GameObjects.Image[] = []
-    // Start past every reserved heart slot (not just the base MAX_HP) so a bonus heart
-    // from gear or the 運符 charm never overlaps the weapon-level icons.
+    // Start past the full HP-bar footprint (same width hearts used to reserve) so a
+    // bonus heart from gear or the 運符 charm never overlaps the weapon-level icons.
     const wx0 = right
       ? nx - (MAX_HP + MAX_BONUS_HEARTS) * (HEART_W + 1) - 6
       : nx + (MAX_HP + MAX_BONUS_HEARTS) * (HEART_W + 1) + 5
     for (let i = 0; i < 3; i++) {
       const wx = right ? wx0 - 13 - i * 14 : wx0 + i * 14
-      const w = scene.add.image(wx, 17, i === 0 ? 'hud2-fish' : 'hud2-fish-off').setOrigin(0, 0).setScrollFactor(0)
+      const w = scene.add.image(wx, hpY + 1, i === 0 ? 'hud2-fish' : 'hud2-fish-off').setOrigin(0, 0).setScrollFactor(0)
       if (right) w.setFlipX(true)
       weapon.push(w)
       root.add(w)
     }
-    // 耐力 bar under the hearts: attacking drains it, standing off it brings it back.
+    // 耐力 bar under the HP gauge: attacking drains it, standing off it brings it back.
     const sw = MAX_HP * (HEART_W + 1) - 2
     const sx = right ? nx - sw : nx
-    root.add(scene.add.rectangle(sx, 28, sw, 4, 0x2a1a10).setOrigin(0, 0).setScrollFactor(0))
-    const stam = scene.add.rectangle(right ? sx + sw : sx, 29, sw, 2, 0x6ad0ff).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
+    const stamY = hpY + HP_BAR_H + 3
+    root.add(scene.add.rectangle(sx, stamY, sw, 4, 0x2a1a10).setOrigin(0, 0).setScrollFactor(0))
+    const stam = scene.add.rectangle(right ? sx + sw : sx, stamY + 1, sw, 2, 0x6ad0ff).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
     root.add(stam)
-    return { hearts, weapon, stam }
+    return { hpFill, hpBarW, weapon, stam, modeTag }
   }
 
   const p1Who = opts.mode === '1p' && opts.soloCast === 'girl' ? 'kibobo' : 'lunbo'
   const L = makeSide(false, p1Who, p1Who === 'lunbo' ? '倫寶' : '琪寶寶')
-  const R = opts.mode === '2p' ? makeSide(true, 'kibobo', '琪寶寶') : { hearts: [], weapon: [], stam: scene.add.rectangle(-99, -99, 1, 1).setVisible(false) }
+  const R: Side =
+    opts.mode === '2p'
+      ? makeSide(true, 'kibobo', '琪寶寶')
+      : {
+          hpFill: scene.add.rectangle(-99, -99, 1, 1).setVisible(false),
+          hpBarW: 1,
+          weapon: [],
+          stam: scene.add.rectangle(-99, -99, 1, 1).setVisible(false),
+          modeTag: scene.add.text(-99, -99, '').setVisible(false),
+        }
 
   // Centre: stage plaque + honey / coins / 絕招.
   const cx = GAME_W / 2
@@ -218,10 +222,14 @@ export function buildSnesHud(
   const mpLabel = txt(scene, x, rowY - 2, '絕招', 10, '#a8e0ff')
   root.add(mpLabel)
   const mpX = x + Math.ceil(mpLabel.width) + 3
-  const mpMaxW = 34
-  g.fillStyle(0xc8902a, 1).fillRect(mpX - 1, rowY + 1, mpMaxW + 2, 7)
-  g.fillStyle(0x0c1a26, 1).fillRect(mpX, rowY + 2, mpMaxW, 5)
-  const mpBar = scene.add.rectangle(mpX, rowY + 2, 0, 5, 0x3ec8ff, 1).setOrigin(0, 0).setScrollFactor(0)
+  const mpMaxW = 42
+  const MP_BAR_H = 8
+  g.fillStyle(0xc8902a, 1).fillRect(mpX - 1, rowY, mpMaxW + 2, MP_BAR_H + 2)
+  g.fillStyle(0x0c1a26, 1).fillRect(mpX, rowY + 1, mpMaxW, MP_BAR_H)
+  // gold rivets at both ends — matches the HP gauge's decorated frame.
+  g.fillStyle(0xffdf90, 1).fillCircle(mpX - 1, rowY + 1 + MP_BAR_H / 2, 1.6)
+  g.fillStyle(0xffdf90, 1).fillCircle(mpX + mpMaxW + 1, rowY + 1 + MP_BAR_H / 2, 1.6)
+  const mpBar = scene.add.rectangle(mpX, rowY + 1, 0, MP_BAR_H, 0x3ec8ff, 1).setOrigin(0, 0).setScrollFactor(0)
   root.add(mpBar)
   const mpText = txt(scene, mpX + mpMaxW + 3, rowY - 2, '滿', 10, '#66eeff').setVisible(false)
   root.add(mpText)
@@ -258,20 +266,22 @@ export function buildSnesHud(
   root.add(toast)
 
   return {
-    heartsL: L.hearts,
-    heartsR: R.hearts,
+    hpFillL: L.hpFill,
+    hpFillR: R.hpFill,
+    hpBarWL: L.hpBarW,
+    hpBarWR: R.hpBarW,
     stamL: L.stam,
     stamR: R.stam,
     weaponL: L.weapon,
     weaponR: R.weapon,
+    modeTagL: L.modeTag,
+    modeTagR: R.modeTag,
     honey,
     coinText,
     mpBar,
     mpText,
     mpMaxW,
     maxHp: MAX_HP,
-    pipFull: 'hud2-heart',
-    pipEmpty: 'hud2-heart-empty',
     jarFull: 'hud2-jar',
     jarEmpty: 'hud2-jar-empty',
     fishOn: 'hud2-fish',
