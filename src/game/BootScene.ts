@@ -242,8 +242,10 @@ export class BootScene extends Phaser.Scene {
     for (const key of playObjects) {
       if (!this.textures.exists(key)) continue
       if (REPLACED_STILLS.has(key)) continue
+      const hdRes = this.textures.get(key).source[0]?.resolution ?? 1
       bakePixelTexture(this, key, BAKE_RES_FACTOR)
-      thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
+      thickenSpriteOutline(this, key, OUTLINE_WIDTH * hdRes, OUTLINE_INK)
+      markHd(this.textures.get(key), hdRes)
       setActorNearestFilter(this, key)
     }
 
