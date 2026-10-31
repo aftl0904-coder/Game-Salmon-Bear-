@@ -1692,22 +1692,29 @@ export class GameScene extends Phaser.Scene {
    */
   private speciesAtkMul(pe: PatrolEnemy): number {
     if (pe.kind === 'boss') return 1.8
-    switch (pe.species) {
-      case 'barrel':
-        return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
-      case 'elephant':
-        return 1.4 // 霸鼻象：慢重坦克，撞到好痛
-      case 'bee':
+    // Stage-1 cast (PatrolEnemy) is differentiated via pe.species — fish/barrel/elephant.
+    if (pe.species === 'barrel') return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
+    if (pe.species === 'elephant') return 1.4 // 霸鼻象：慢重坦克，撞到好痛
+    if (pe.species === 'fish') return 1
+    // Stage2-5 cast (AnimEnemy/Enemy subclasses) all share a generic species marker
+    // ('stage2' etc., not a real per-species string), so differentiate by the Phaser
+    // texture key each subclass loads instead — plain runtime string data, so it
+    // survives a production minify pass (unlike constructor/class names).
+    switch (pe.texture.key) {
+      case 'anim-beesoldier':
         return 0.7 // 蜂兵：1hp 快速俯衝，脆皮
-      case 'squirrel':
-        return 1.1 // 蜜松鼠：2hp 地面追擊，較硬淨
-      case 'lobster':
-        return 1.1 // 龍蝦守衛：3hp
-      case 'mirrorshade':
-        return 0.6 // 鏡影：1hp 會分身，單隻打少啲
-      case 'honeyzombie':
+      case 'anim-minibee':
+      case 'anim-egg':
+        return 0.5 // 小蜜蜂／假蜜蛋：孵出嘅雜兵，更脆
+      case 'anim-squirrel':
+      case 'anim-lobster':
+        return 1.1 // 蜜僵松鼠／龍蝦守衛：較硬淨
+      case 'anim-mirrorowl':
+      case 'anim-mirrorshade':
+        return 0.6 // 分身／鏡影：1hp，單隻打少啲
+      case 'stage4-honeyzombie':
         return 0.9 // 蜜僵：基本慢速殭屍
-      case 'taximonster':
+      case 'stage4-taximonster':
         return 1.5 // 的士怪：車頭燈預警後高速衝刺，命中要痛
       default:
         return 1
