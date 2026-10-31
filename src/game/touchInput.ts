@@ -14,7 +14,7 @@ export type TouchBtn =
   | 'attack'
   | 'jump'
   | 'special'
-  /** R1 weapon-mode switch (倫寶 連射/重擊, 琪寶寶 快劍/重劍) — P1 only, same convention. */
+  /** Weapon-mode switch, index 6/LT on gamepad (倫寶 連射/重擊, 琪寶寶 快劍/重劍) — P1 only. */
   | 'weaponSwitch'
   | 'start'
   /** Back to the menu (game-over screen button). */

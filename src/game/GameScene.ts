@@ -275,7 +275,7 @@ export class GameScene extends Phaser.Scene {
   private keyA!: Phaser.Input.Keyboard.Key
   private keyS!: Phaser.Input.Keyboard.Key
   private keyD!: Phaser.Input.Keyboard.Key
-  /** SNES face: F=Y atk, G=B jump, T=X special, H=A → R1 weapon-switch (倫寶雙槍) */
+  /** SNES face: F=Y atk, G=B jump, T=X special, H=A → weapon-switch (倫寶雙槍) */
   private keyF!: Phaser.Input.Keyboard.Key
   private keyG!: Phaser.Input.Keyboard.Key
   private keyT!: Phaser.Input.Keyboard.Key
@@ -283,7 +283,7 @@ export class GameScene extends Phaser.Scene {
   /** Legacy jump／special aliases */
   private keyK!: Phaser.Input.Keyboard.Key
   private keyU!: Phaser.Input.Keyboard.Key
-  /** 2P SNES: ,=Y . =B ; =X / =A → R1 weapon-switch (琪寶寶快劍/重劍) */
+  /** 2P SNES: ,=Y . =B ; =X / =A → weapon-switch (琪寶寶快劍/重劍) */
   private keyComma!: Phaser.Input.Keyboard.Key
   private keyPeriod!: Phaser.Input.Keyboard.Key
   private keySemicolon!: Phaser.Input.Keyboard.Key
@@ -1243,8 +1243,10 @@ export class GameScene extends Phaser.Scene {
     )
   }
   /**
-   * R1 = weapon-mode switch (倫寶 雙槍切換 / 琪寶寶 快劍↔重劍), Alan: use the free
-   * 4th action key (H sits unused next to F/G/T) + gamepad R1, touch button for phone.
+   * Weapon-mode switch (倫寶 雙槍切換 / 琪寶寶 快劍↔重劍), Alan: use the free 4th action
+   * key (H sits unused next to F/G/T) + gamepad LT (index 6, NOT R1 — index 5 is
+   * already special, see gamepadBridge.ts; Cursor's device pass caught the earlier
+   * wrong naming), touch button for phone.
    * Bug fix (code-review pass before handing off to Cursor for device testing): P1's
    * gamepad is NEVER read via `this.pad1` directly — see its field comment, it's kept
    * hardcoded null by design, P1's real controller input flows through TouchInput
@@ -1254,7 +1256,8 @@ export class GameScene extends Phaser.Scene {
    * also collide with gamepadBridge's own index-5 "special" mapping if it had worked.
    * Fixed to go through TouchInput like every other P1 action; gamepadBridge.ts now
    * maps index 6 (free — 0/1/2/3/4/5 are jump/attack/special, 8/9 are start) to it,
-   * and mountTouchControls has a matching on-screen button for phone play.
+   * and mountTouchControls has a matching on-screen button for phone play. Confirmed
+   * working on simulated gamepad/phone by Cursor's round-2 device-testing pass.
    */
   private p1WeaponSwitchJust() {
     return Phaser.Input.Keyboard.JustDown(this.keyH) || TouchInput.justPressed('weaponSwitch')
@@ -1290,10 +1293,10 @@ export class GameScene extends Phaser.Scene {
     )
   }
   /**
-   * R1-equivalent for P2 (快劍↔重劍 stance switch) — the free 4th action key
+   * Weapon-switch for P2 (快劍↔重劍 stance switch) — the free 4th action key
    * (slash sits unused next to comma/period/semicolon). pad2's indices 4/5
-   * (L1/R1) are already alt-bindings for special, so pad index 6 (LT) stands
-   * in as P2's shoulder button for this until Alan wants a real pad remap.
+   * (L1/R1) are already alt-bindings for special, so pad index 6 (LT, NOT R1)
+   * stands in as P2's shoulder button for this until Alan wants a real pad remap.
    */
   private p2WeaponSwitchJust() {
     return Phaser.Input.Keyboard.JustDown(this.keySlash) || this.padFaceJust(this.pad2, 6)
@@ -1467,20 +1470,40 @@ export class GameScene extends Phaser.Scene {
     const girl = h.role === 'girl'
     const auraTint = girl ? 0xffd060 : 0xff8a5a // 蜜糖金 / 鮭魚粉橙 (shared B&W sheet, tinted per hero)
     if (hasFx(this, 'charge-aura')) {
-      const aura = playFx(this, 'charge-aura', h.x, h.y - 20, { scale: 0.7 })
+      // Cursor's round-2 device pass: at scale 0.7 the 128×128 sheet (~90px) was 2-3×
+      // the hero's own height and rendered on top (default depth), so it completely
+      // blotted the character out instead of reading as a ring around them. Shrunk to
+      // roughly hero-height and dropped just behind the sprite.
+      const hgt = Math.max(16, h.displayHeight || 32)
+      const aura = playFx(this, 'charge-aura', h.x, h.y - hgt * 0.3, { scale: (hgt * 1.3) / 128, depth: h.depth - 1, alpha: 0.85 })
       if (aura) aura.setBlendMode(Phaser.BlendModes.ADD).setTint(auraTint)
     }
     const sweepName = girl ? 'ult-honey-slash' : 'ult-salmon-wave'
     if (hasFx(this, sweepName)) {
       const sweepY = this.cameras.main.scrollY + GAME_H / 2
+      const dir = h.facing < 0 ? -1 : 1
       this.time.delayedCall(90, () => {
-        const sweep = playFx(this, sweepName, this.cameras.main.scrollX + GAME_W / 2, sweepY, {
+        // Cursor's round-2 pass: pixel-checked the sliced sheet directly (not just the
+        // report's single screenshot) — the 6-frame burst only fills roughly the left
+        // half of its own 320px cell and shrinks in place rather than crossing the
+        // frame, so a single centered sprite left half the screen untouched (likely the
+        // "flat rectangle" they saw was just empty frame against the stage background)
+        // and read as a static flourish at ~0.3s, not a sweep. Slowed the clip to 14fps
+        // (fx.json, ~0.43s — see slice_ult_fx.py) and tween it edge-to-edge in the
+        // hero's facing direction so the existing art actually travels; still pure
+        // visual (see class comment) — no new art, no damage change.
+        const midX = this.cameras.main.scrollX + GAME_W / 2
+        const sweep = playFx(this, sweepName, midX - dir * GAME_W * 0.4, sweepY, {
           flipX: h.facing < 0,
           scale: 2,
           depth: DEPTH.FX + 10,
           alpha: 0.95,
         })
-        if (sweep) sweep.setBlendMode(Phaser.BlendModes.ADD)
+        if (sweep) {
+          sweep.setBlendMode(Phaser.BlendModes.ADD)
+          this.tweens.add({ targets: sweep, x: midX + dir * GAME_W * 0.4, duration: 420, ease: 'Sine.easeOut' })
+          sweep.once('destroy', () => this.tweens.killTweensOf(sweep))
+        }
       })
     }
   }
@@ -1495,7 +1518,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * R1 weapon-mode toggle, shared by both roles (mode travels with the Hero via
+   * Weapon-mode toggle, shared by both roles (mode travels with the Hero via
    * setData, same convention as 'wlv'): 倫寶 'heavy' = single big-power roe
    * instead of the lv-based spread; 琪寶寶 'heavy' = slower, bigger, harder sword
    * strike instead of the 3-hit combo. Confirmed scope: just the switch + its
@@ -1532,7 +1555,7 @@ export class GameScene extends Phaser.Scene {
     const lv = this.weaponLv(h)
     const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
     if (heavy) {
-      // 重擊鮭 (R1 mode): one slow, heavy roe instead of the lv spread — trades
+      // 重擊鮭 (heavy mode): one slow, heavy roe instead of the lv spread — trades
       // rate of fire for a bigger single hit (range ×1.6, power ×2.2).
       this.spawnRoe(h, muzzleX, muzzleY, 0, Math.round(range * 1.6), freshShot ? 2.2 : 1.1)
       burst(this, muzzleX, muzzleY, 0xff8040, 10)
@@ -4227,7 +4250,18 @@ export class GameScene extends Phaser.Scene {
     void kb
     overlay.add(
       this.add
-        .text(-W / 2 + 151, castY + 18, ['', '第一罐真蜂蜜！噗噗隻耳郁咗', '第二罐真蜂蜜！噗噗識跳喇', '第三罐真蜂蜜！噗噗識行路'][this.stageNo] ?? '', {
+        .text(
+          -W / 2 + 151,
+          castY + 18,
+          // docs/bible/stages-3-5.md's own Pupu-recovery beats (顏色回復到X成 at each
+          // stage), stage 5's line reusing the exact wording from the boss-defeat
+          // floatText at line ~5398 ('噗噗醒咗一半，衝出嚟同主角合體！') rather than
+          // inventing new story text — this panel was blank on stage 4/5 before
+          // (Cursor's round-2 device pass caught it), same class of bug as the
+          // earlier stage-5 title fix.
+          ['', '第一罐真蜂蜜！噗噗隻耳郁咗', '第二罐真蜂蜜！噗噗識跳喇', '第三罐真蜂蜜！噗噗識行路', '第四罐真蜂蜜！噗噗識揮手', '第五罐真蜂蜜！噗噗醒咗一半，同你哋合體咗'][
+            this.stageNo
+          ] ?? '', {
           fontFamily: FONT_UI,
           fontSize: '10px',
           color: '#ffe9a8',

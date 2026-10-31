@@ -129,12 +129,12 @@
   "frameWidth": 320,
   "frameHeight": 160,
   "count": 6,
-  "fps": 20
+  "fps": 14
  },
  "ult-honey-slash": {
   "frameWidth": 320,
   "frameHeight": 160,
   "count": 6,
-  "fps": 20
+  "fps": 14
  }
 }
