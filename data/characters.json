@@ -10,7 +10,7 @@
       "releaseCut": 0.5,
       "coyoteMs": 90,
       "bufferMs": 110,
-      "targetHeightPx": { "tap": 28, "full": 60 }
+      "targetHeightPx": { "tap": 28, "full": 70 }
     },
     "crouch": { "speedMultiplier": 0.5 },
     "hurt": { "invulnMs": 1000, "knockbackX": 60, "knockbackY": 120 },
@@ -23,8 +23,8 @@
       "role": "ranged",
       "difficulty": "hard",
       "hp": 6,
-      "moveSpeed": 95,
-      "jumpVelocity": 290,
+      "moveSpeed": 105,
+      "jumpVelocity": 313,
       "weapon": { "name": "鮭魚槍", "look": "手持一條鮭魚形狀嘅槍（原創）" },
       "attack": {
         "type": "projectile",
@@ -65,8 +65,8 @@
       "role": "melee",
       "difficulty": "easy",
       "hp": 5,
-      "moveSpeed": 115,
-      "jumpVelocity": 300,
+      "moveSpeed": 127,
+      "jumpVelocity": 313,
       "weapon": { "name": "劍", "look": "手持短劍，近身快速斬擊（原創）" },
       "attack": {
         "type": "melee",

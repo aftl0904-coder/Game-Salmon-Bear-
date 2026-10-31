@@ -1576,7 +1576,8 @@ export class GameScene extends Phaser.Scene {
   private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1) {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
-    shot.setScale(2 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    // Alan: ammo read a bit chunky — trimmed base scale 2 → 1.7 (Cursor/Alan feedback).
+    shot.setScale(1.7 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
     if (power < 1) shot.setTint(0x9ab0c8)
     else if (power > 1) shot.setTint(0xffa060)
