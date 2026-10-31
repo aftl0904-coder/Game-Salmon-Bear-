@@ -30,6 +30,16 @@ export class DifficultyScene extends Phaser.Scene {
     this.inputReadyAt = this.time.now + 350
     this.rows = []
 
+    // Alan: this screen was a flat colour, no art — reuse the cover illustration
+    // (same as the menu/logo screens either side of it), darkened so rows stay readable.
+    if (this.textures.exists('story-cover')) {
+      this.add.image(width / 2, height / 2, 'story-cover')
+      const dim = this.add.graphics()
+      dim.fillStyle(0x0a0603, 0.6).fillRect(0, 0, width, height)
+    } else {
+      this.add.rectangle(width / 2, height / 2, width, height, 0x2a3a18)
+    }
+
     const cur = getDifficulty()
     this.cursor = Math.max(0, this.order.indexOf(cur))
 
