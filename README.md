@@ -75,4 +75,5 @@ Vercel 專案：`sake-kuma`（靜態 `dist`，見 `vercel.json`）
 - HD 貼圖用 `markHd(texture, res)`（`heroAnims.ts`）標記：畫面像素係 `res` 倍，但 frame 邏輯尺寸不變，所以 sprite／body／layout 毋須改。
 - 切圖腳本（`scripts/art/slice_*.py`）用 `RES = 2` 出 2x 圖（柔邊 alpha、palette ×2）；角色用 `cell1x`／`MIN_CELL` 保持同 1x 一樣嘅格仔尺寸。
 - 新 scene 請用 `GAME_W/GAME_H` 做佈局，唔好用 `this.scale.width/height`（會係 1280×720）。
-- 仍然係 1x：普通地面磚（`tiles/`）、charm／capsule（原圖得 64px）、HUD／UI 面板、光暗 overlay、`honey-tree`（goal3d 逐像素 bake）。
+- 仍然係 1x：charm／capsule（原圖得 64px，睇落係 chunky 像素 icon，決定保留）、程序畫嘅 UI 面板同破壞物（`uiArt.ts`／`isoArt.ts` 逐 pixel 畫，乘 RES 唔會多細節）、`hud2-heart`。
+- 光暗 overlay 用 `ctx.scale(RENDER_SCALE)` + `markHd`；HUD 頭像 icon 由 HD 肖像烘焙。
