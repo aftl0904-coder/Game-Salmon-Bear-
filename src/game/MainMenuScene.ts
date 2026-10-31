@@ -145,9 +145,17 @@ export class MainMenuScene extends Phaser.Scene {
   /** "從 第一關 / 第二關 開始" — only shown once stage 1 has been cleared. */
   private buildStagePicker(width: number) {
     if (maxStage() < 2) return
+    // Alan: make this read clearly as "continue / load progress" rather than
+    // an unlabelled stage-picker a returning player might not recognise as
+    // their save. The pill below still works the same way (◀▶ cycles every
+    // unlocked stage) — this just names what it is.
+    this.add
+      .text(width / 2, 86, '── 讀取進度 ──', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', stroke: '#1a0e06', strokeThickness: 2 })
+      .setOrigin(0.5)
+      .setAlpha(0.85)
     // Gold-bordered pill (matches the plaques below) so this reads as a real,
     // clickable control rather than a caption easy to miss.
-    const y = 100
+    const y = 108
     const box = this.add.graphics()
     const label = this.add
       .text(width / 2, y, '', {
@@ -178,7 +186,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   private drawStage() {
     const name = STAGE_NAMES[this.stageSel] ?? STAGE_NAMES[1]
-    this.stageText?.setText(`◀　揀關卡：${name}　▶`)
+    this.stageText?.setText(`◀　繼續：${name}　▶`)
     this.stageRedrawBox?.()
   }
 
@@ -301,8 +309,9 @@ export class MainMenuScene extends Phaser.Scene {
     // Bouncing arrows either side of the chosen plaque (children of a box that follows the cursor).
     this.arrowBox = this.add.container(0, y)
     for (const dir of [-1, 1]) {
+      // Alan: arrow sat right on top of the plaque text — pushed out further (10 → 17px).
       const a = this.add
-        .text(dir * (PLAQUE_W / 2 + 10), 0, dir < 0 ? '▶' : '◀', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
+        .text(dir * (PLAQUE_W / 2 + 17), 0, dir < 0 ? '▶' : '◀', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
         .setOrigin(0.5)
       this.arrowBox.add(a)
       this.tweens.add({ targets: a, x: `+=${-dir * 3}`, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })

@@ -3,7 +3,7 @@
   "name": "百畝樹林",
   "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
   "physicsRef": {
-    "note": "Measured in-game 2026-10-25 (倫寶 run 95px/s): full jump ≈47px high, ≈76px far; tap jump ≈24px. 琪寶寶 runs 115px/s (≈92px far).",
+    "note": "2026-10-31 speed/jump tuning (Alan: stage1 64px pit was unclearable, chars felt slow): moveSpeed 倫寶 95→105px/s, 琪寶寶 115→127px/s; full-jump target height 60→70px. Computed full-jump air time ≈0.84s → far ≈88px (倫寶) / ≈107px (琪寶寶), high ≈70px; tap jump unchanged ≈24px/~0.53s far. Still well under the 112/144px pits that are meant to require the platform/moving-board, not a single jump.",
     "maxPitPx": 64,
     "maxStepPx": 40
   },

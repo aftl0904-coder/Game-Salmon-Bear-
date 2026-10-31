@@ -660,6 +660,82 @@ export function registerIsoArt(scene: Phaser.Scene) {
     set(7, 5, fishD)
   })
 
+  // 玉子壽司 (tamago, 25% heal tier) — same rice base, egg-omelet topping + nori belt.
+  paint(scene, 'pickup-sushi-tamago', 22, 14, (set) => {
+    const ink: RGB = [28, 18, 12]
+    const rice: RGB = [250, 246, 236]
+    const riceD: RGB = [230, 220, 200]
+    const egg: RGB = [255, 206, 90]
+    const eggD: RGB = [224, 170, 60]
+    const nori: RGB = [40, 70, 48]
+    rect(set, 2, 11, 18, 2, ink, 100)
+    rect(set, 4, 6, 14, 5, ink)
+    rect(set, 5, 7, 12, 3, rice)
+    set(6, 8, riceD)
+    set(14, 8, riceD)
+    // nori belt wraps the egg block (tamago's signature strap).
+    rect(set, 4, 3, 14, 7, ink)
+    rect(set, 5, 4, 12, 5, egg)
+    rect(set, 5, 4, 12, 1, [255, 230, 150])
+    set(8, 6, eggD)
+    set(12, 6, eggD)
+    rect(set, 8, 6, 1, 4, nori)
+    rect(set, 9, 6, 1, 4, nori)
+  })
+
+  // 蝦壽司 (ebi, 50% heal tier) — curved shrimp topping, pink-orange with dark ridge bands.
+  paint(scene, 'pickup-sushi-ebi', 22, 14, (set) => {
+    const ink: RGB = [28, 18, 12]
+    const rice: RGB = [250, 246, 236]
+    const riceD: RGB = [230, 220, 200]
+    const shrimp: RGB = [255, 150, 125]
+    const shrimpD: RGB = [225, 100, 90]
+    const nori: RGB = [40, 70, 48]
+    rect(set, 2, 11, 18, 2, ink, 100)
+    rect(set, 4, 6, 14, 5, ink)
+    rect(set, 5, 7, 12, 3, rice)
+    set(6, 8, riceD)
+    set(14, 8, riceD)
+    rect(set, 4, 9, 14, 1, nori)
+    // curved shrimp back: arcs up at the ends, ridge bands across the middle.
+    rect(set, 5, 4, 12, 4, ink)
+    rect(set, 6, 5, 10, 2, shrimp)
+    set(7, 4, shrimp)
+    set(13, 4, shrimp)
+    set(8, 5, shrimpD)
+    set(11, 5, shrimpD)
+    set(9, 6, [255, 210, 200])
+  })
+
+  // 極上壽司船（大拼盤） (deluxe platter, 100% heal tier) — a wooden boat with 3 pieces on top.
+  paint(scene, 'pickup-sushi-deluxe', 40, 18, (set) => {
+    const ink: RGB = [28, 18, 12]
+    const boat: RGB = [120, 76, 40]
+    const boatD: RGB = [90, 54, 26]
+    const rice: RGB = [250, 246, 236]
+    const riceD: RGB = [230, 220, 200]
+    const fish: RGB = [255, 120, 110]
+    const egg: RGB = [255, 206, 90]
+    const shrimp: RGB = [255, 150, 125]
+    // boat hull (shadow, then wood with a lighter rim).
+    rect(set, 1, 15, 38, 2, ink, 100)
+    rect(set, 2, 9, 36, 7, ink)
+    rect(set, 3, 10, 34, 5, boat)
+    rect(set, 3, 10, 34, 1, [150, 100, 56])
+    set(4, 14, boatD)
+    set(35, 14, boatD)
+    // three mounds side by side, each with its own topping.
+    for (let i = 0; i < 3; i++) {
+      const bx = 6 + i * 11
+      rect(set, bx, 3, 9, 6, ink)
+      rect(set, bx + 1, 4, 7, 4, rice)
+      set(bx + 2, 5, riceD)
+      const top = i === 0 ? egg : i === 1 ? fish : shrimp
+      rect(set, bx + 1, 1, 7, 3, ink)
+      rect(set, bx + 2, 2, 5, 2, top)
+    }
+  })
+
   // Ambient bee — Flash/phone chunky cel (thick ink, highlight)
   paint(scene, 'fx-ambient-bee', 18, 16, (set) => {
     const ink: RGB = [24, 16, 10]
