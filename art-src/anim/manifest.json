@@ -3206,5 +3206,29 @@
     "rows": 1,
     "facing": "front",
     "prompt": "pip 2 on/off magenta."
+  },
+  {
+    "file": "art-src/fx/light/charge-aura.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "charge-aura 4 frames 128x128 expanding soft white energy ring center bright edge fade PURE BLACK additive. ART-16 A."
+  },
+  {
+    "file": "art-src/anim/fx/ult-salmon-wave.png",
+    "frames": 6,
+    "cols": 6,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ult-salmon-wave 6 frames 320x160 coral pink/orange-red energy wave sweeps L→R splash sparks fade PURE BLACK additive. ART-16 B 鮭魚瀑布."
+  },
+  {
+    "file": "art-src/anim/fx/ult-honey-slash.png",
+    "frames": 6,
+    "cols": 6,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ult-honey-slash 6 frames 320x160 golden honey sword-energy slash sweep sparkling honey trail fade PURE BLACK additive. ART-16 C 蜜光斬."
   }
 ]
