@@ -67,3 +67,12 @@ Vercel 專案：`sake-kuma`（靜態 `dist`，見 `vercel.json`）
 
 對 Agent 講 **publish** 即會一次完成：push GitHub、開／更新 PR、Vercel 部署。
 
+
+## 2x 畫面解像度（HD）
+
+遊戲邏輯／物理／關卡資料／碰撞箱全部仍然係 640×360；canvas 係 `CANVAS_W/H = GAME_W/H × RENDER_SCALE`（1280×720），每個 scene 嘅 camera 用 zoom 2（`src/game/hd.ts` 修正咗 Phaser camera 嘅 scroll／follow／pan 語義）。
+
+- HD 貼圖用 `markHd(texture, res)`（`heroAnims.ts`）標記：畫面像素係 `res` 倍，但 frame 邏輯尺寸不變，所以 sprite／body／layout 毋須改。
+- 切圖腳本（`scripts/art/slice_*.py`）用 `RES = 2` 出 2x 圖（柔邊 alpha、palette ×2）；角色用 `cell1x`／`MIN_CELL` 保持同 1x 一樣嘅格仔尺寸。
+- 新 scene 請用 `GAME_W/GAME_H` 做佈局，唔好用 `this.scale.width/height`（會係 1280×720）。
+- 仍然係 1x：普通地面磚（`tiles/`）、charm／capsule（原圖得 64px）、HUD／UI 面板、光暗 overlay、`honey-tree`（goal3d 逐像素 bake）。
