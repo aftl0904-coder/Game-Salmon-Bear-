@@ -173,7 +173,7 @@ export class LogoScene extends Phaser.Scene {
       this.input?.keyboard?.off('keydown', go)
       this.cameras?.main?.fadeOut(280, 40, 28, 16)
       this.time.delayedCall(280, () => {
-        if (this.sys.isActive()) this.scene.start('menu')
+        if (this.sys.isActive()) this.scene.start('difficulty')
       })
     }
 
@@ -247,7 +247,7 @@ export class LogoScene extends Phaser.Scene {
       left = true
       this.cameras?.main?.fadeOut(320, 0, 0, 0)
       this.time.delayedCall(320, () => {
-        if (this.sys.isActive()) this.scene.start('menu')
+        if (this.sys.isActive()) this.scene.start('difficulty')
       })
     }
     // Title waits for the player (no auto-skip); ignore the press that skipped the studio splash.

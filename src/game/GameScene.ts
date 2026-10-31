@@ -13,6 +13,7 @@ import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
+import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
@@ -1682,6 +1683,37 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Per-species attack-damage multiplier — previously every species dealt the exact
+   * same flat ENEMY_ATTACK_DMG regardless of how tanky/fast it is (HP already varied
+   * 1–3, bosses 36–48, but damage didn't). Fast/fragile hits softer, slow/tanky and
+   * telegraphed charges hit harder, bosses hardest. Tuned to feel internally
+   * consistent — not a substitute for an actual playtest pass.
+   */
+  private speciesAtkMul(pe: PatrolEnemy): number {
+    if (pe.kind === 'boss') return 1.8
+    switch (pe.species) {
+      case 'barrel':
+        return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
+      case 'elephant':
+        return 1.4 // 霸鼻象：慢重坦克，撞到好痛
+      case 'bee':
+        return 0.7 // 蜂兵：1hp 快速俯衝，脆皮
+      case 'squirrel':
+        return 1.1 // 蜜松鼠：2hp 地面追擊，較硬淨
+      case 'lobster':
+        return 1.1 // 龍蝦守衛：3hp
+      case 'mirrorshade':
+        return 0.6 // 鏡影：1hp 會分身，單隻打少啲
+      case 'honeyzombie':
+        return 0.9 // 蜜僵：基本慢速殭屍
+      case 'taximonster':
+        return 1.5 // 的士怪：車頭燈預警後高速衝刺，命中要痛
+      default:
+        return 1
+    }
+  }
+
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
@@ -1700,8 +1732,10 @@ export class GameScene extends Phaser.Scene {
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
     const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
     const gearKnock = knockMul(h.role as Who)
+    const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
+    const dmg = this.incoming(h, rawDmg)
     const hpLeft = applyDamage(h, {
-      amount: this.incoming(h, ENEMY_ATTACK_DMG),
+      amount: dmg,
       knockbackX: this.safeKnockX(h, away * Math.round(340 * speciesKnock * gearKnock)),
       knockbackY: -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock),
       iframeMs: this.iframes(h),
@@ -1724,7 +1758,7 @@ export class GameScene extends Phaser.Scene {
       this,
       h.x,
       h.y - 40,
-      pe.species === 'barrel' ? `輕傷 -${ENEMY_ATTACK_DMG}` : `-${ENEMY_ATTACK_DMG}`,
+      pe.species === 'barrel' ? `輕傷 -${dmg}` : `-${dmg}`,
       pe.species === 'barrel' ? '#ffaa77' : '#ff6677',
     )
     this.juice.shakeDamage()
@@ -5087,6 +5121,17 @@ export class GameScene extends Phaser.Scene {
     body.setVelocityY(0)
     this.entities.add(e as unknown as PatrolEnemy, 'enemy')
     addGroundShadow(this, e, (t) => (e.flying ? LANE_FLOOR_Y : this.groundYFor(t)), e.flying ? 0.4 : 0.65)
+    // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
+    // after its constructor sets hp = maxHp = N, so this is the single injection
+    // point (duck-typed: the generic signature doesn't guarantee hp/maxHp fields).
+    const scalable = e as unknown as { hp?: number; maxHp?: number }
+    if (typeof scalable.hp === 'number' && typeof scalable.maxHp === 'number') {
+      const mul = difficultyHpMul(getDifficulty())
+      if (mul !== 1) {
+        scalable.maxHp = Math.max(1, Math.round(scalable.maxHp * mul))
+        scalable.hp = scalable.maxHp
+      }
+    }
     return e
   }
 
