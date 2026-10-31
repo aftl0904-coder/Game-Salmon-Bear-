@@ -14,7 +14,6 @@ import { FONT_UI } from './ui/fonts'
 
 const BAND_H = 30
 const HEART_W = 9
-const HEART_H = 8
 /** Max possible hearts beyond MAX_HP: 大心心 gear tiers 1-3 (+1/+2/+3) stack with 運符 (+1). */
 const MAX_BONUS_HEARTS = 4
 
