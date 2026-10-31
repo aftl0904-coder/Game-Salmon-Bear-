@@ -140,7 +140,7 @@ export class BootScene extends Phaser.Scene {
     // Frame-by-frame cast (Cursor action sheets) — also swaps the old stills to the new designs.
     createHeroAnims(this)
     for (const key of this.textures.getTextureKeys()) {
-      if (key.startsWith('friend-') || key === 'gacha-machine') markHd(this.textures.get(key), HD_PROP_RES)
+      if (key.startsWith('friend-') || key === 'gacha-machine' || key.startsWith('tile-ground-') || key === 'bg-bush-strip') markHd(this.textures.get(key), HD_PROP_RES)
     }
     createFxAnims(this)
     this.applyCelCoinTexture()
