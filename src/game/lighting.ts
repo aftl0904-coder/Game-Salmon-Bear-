@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
-import { GAME_W, GAME_H } from './display'
+import { GAME_W, GAME_H, RENDER_SCALE } from './display'
+import { markHd } from './heroAnims'
 
 export type StageLightCfg = {
   id: string
@@ -28,9 +29,10 @@ export function addStageLighting(
   const H = GAME_H
   const key = `light-${cfg.id}`
   if (!scene.textures.exists(key)) {
-    const tex = scene.textures.createCanvas(key, W, H)
+    const tex = scene.textures.createCanvas(key, W * RENDER_SCALE, H * RENDER_SCALE)
     if (!tex) throw new Error(`createCanvas failed for ${key}`)
     const ctx = tex.getContext()
+    ctx.scale(RENDER_SCALE, RENDER_SCALE)
     const lx = W * cfg.lightX
     const ly = H * cfg.lightY
     const g = ctx.createRadialGradient(lx, ly, 8, lx, ly, W * 0.95)
@@ -39,6 +41,7 @@ export function addStageLighting(
     ctx.fillStyle = g
     ctx.fillRect(0, 0, W, H)
     tex.refresh()
+    markHd(tex, RENDER_SCALE)
   }
   return scene.add
     .image(0, 0, key)
