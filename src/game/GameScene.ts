@@ -226,6 +226,18 @@ const STAGES: Record<number, Stage1> = {
 let ST: Stage1 = STAGES[1]!
 
 /**
+ * 4-tier sushi healing (Alan: 玉子25% / 蝦50% / 三文魚75% / 極上壽司船100%).
+ * pct is a fraction of the hero's effective max HP (MAX_HP + gear bonus hearts).
+ */
+type SushiTier = 'tamago' | 'ebi' | 'salmon' | 'deluxe'
+const SUSHI_TIERS: Record<SushiTier, { tex: string; pct: number; label: string }> = {
+  tamago: { tex: 'pickup-sushi-tamago', pct: 0.25, label: '玉子壽司' },
+  ebi: { tex: 'pickup-sushi-ebi', pct: 0.5, label: '蝦壽司' },
+  salmon: { tex: 'pickup-sushi', pct: 0.75, label: '三文魚壽司' },
+  deluxe: { tex: 'pickup-sushi-deluxe', pct: 1, label: '極上壽司船' },
+}
+
+/**
  * Round 1 — 溪流小路（側視 上／中／下 三線）
  * P1：A/D 左右・W/S 換線・J/K/U/I；P2：←→・↑↓換線・數字鍵
  * 噗噗跟琪寶寶線；攻擊／受傷僅同線命中
@@ -360,6 +372,8 @@ export class GameScene extends Phaser.Scene {
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
   private bossFight = false
+  /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
+  private bossSushiSpawned = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
   /** The stir-the-coffee minigame runs at the first cart of each stage only. */
@@ -3189,9 +3203,11 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: jar, y: y - 8, yoyo: true, repeat: -1, duration: 640 })
   }
 
-  private spawnSushi(x: number, y: number) {
-    const key = this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
+  private spawnSushi(x: number, y: number, tier: SushiTier = 'salmon') {
+    const def = SUSHI_TIERS[tier]
+    const key = this.textures.exists(def.tex) ? def.tex : this.textures.exists('pickup-sushi') ? 'pickup-sushi' : 'coin'
     const s = this.sushiPickups.create(x, y, key) as Phaser.Physics.Arcade.Sprite
+    s.setData('sushiTier', tier)
     s.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(s)
     ;(s.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -3202,14 +3218,18 @@ export class GameScene extends Phaser.Scene {
   private takeSushi(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
     if (!item.active || !h.alive) return
     item.disableBody(true, true)
+    const tier = (item.getData('sushiTier') as SushiTier | undefined) ?? 'salmon'
+    const def = SUSHI_TIERS[tier]
+    const effMax = MAX_HP + bonusHearts(h.role as Who)
+    const heal = Math.max(1, Math.round(effMax * def.pct))
     const before = h.hp
-    h.hp = Math.min(MAX_HP, h.hp + 2)
+    h.hp = Math.min(effMax, h.hp + heal)
     const gained = h.hp - before
     SFX.coin()
     burst(this, item.x, item.y, 0xff8899, 10)
     if (gained > 0) {
-      floatText(this, h.x, h.y - 56, '+2HP', '#ff6688', {
-        size: 26,
+      floatText(this, h.x, h.y - 56, `${def.label} +${gained}`, '#ff6688', {
+        size: 24,
         rise: 28,
         dur: 2500,
       })
@@ -3743,7 +3763,9 @@ export class GameScene extends Phaser.Scene {
     if (loot === 'honey') this.grantHoneySpecial(x, midY)
     else if (loot === 'power') this.spawnPowerUp(x, dropY)
     else if (loot === 'food') {
-      this.spawnSushi(x, dropY)
+      // Ordinary breakable drop: mostly the weak/common tamago, sometimes the better ebi.
+      const tier: SushiTier = Math.random() < 0.35 ? 'ebi' : 'tamago'
+      this.spawnSushi(x, dropY, tier)
       floatText(this, x, midY - 20, '壽司！', '#ff99aa')
     } else {
       this.spawnCoin?.(x, dropY)
@@ -5203,6 +5225,11 @@ export class GameScene extends Phaser.Scene {
       this.queen = q
       this.buildBossBar()
       floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
+      // Last-chance full heal: one 極上壽司船 near the arena entrance, before the boss.
+      if (!this.bossSushiSpawned) {
+        this.bossSushiSpawned = true
+        this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, 'deluxe')
+      }
     }
     if (this.depot) {
       // No dedicated reveal cutscene for 泥鬃 yet — his 來歷卡 (bossCard) already told the story.
