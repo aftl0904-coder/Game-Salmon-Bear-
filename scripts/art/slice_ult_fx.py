@@ -17,10 +17,15 @@ import sys, os, json
 from PIL import Image
 
 # dest name → (art-src relative path, frame px, fps)
+# ult-salmon-wave / ult-honey-slash were 20fps (0.3s total) at first ship — Cursor's
+# round-2 device pass flagged the ultimate sweep as reading under 0.4s and not like a
+# sweep; slowed to 14fps (~0.43s) and paired with a travel tween in GameScene.ts's
+# playUltimateFx() so the existing 6-frame art actually crosses the screen instead of
+# shrinking in place. Re-run this script after any re-slice to keep fx.json in sync.
 JOBS = [
     ('charge-aura', 'fx/light/charge-aura.png', 128, 128, 12),
-    ('ult-salmon-wave', 'anim/fx/ult-salmon-wave.png', 320, 160, 20),
-    ('ult-honey-slash', 'anim/fx/ult-honey-slash.png', 320, 160, 20),
+    ('ult-salmon-wave', 'anim/fx/ult-salmon-wave.png', 320, 160, 14),
+    ('ult-honey-slash', 'anim/fx/ult-honey-slash.png', 320, 160, 14),
 ]
 
 

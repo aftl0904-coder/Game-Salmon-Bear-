@@ -257,7 +257,7 @@ export class UIScene extends Phaser.Scene {
       icons.forEach((w, i) => w.setTexture(i < (lv ?? 1) ? hud.fishOn : hud.fishOff))
     setW(hud.weaponL, p.wlvL)
     setW(hud.weaponR, p.wlvR)
-    // R1 weapon-mode badge: same colour pair for both heroes (cyan = normal, gold =
+    // Weapon-mode badge: same colour pair for both heroes (cyan = normal, gold =
     // heavy) so the state reads at a glance regardless of which role is on which side.
     if (p.wmodeLabelL !== undefined) hud.modeTagL.setText(p.wmodeLabelL).setColor(p.wmodeL === 'heavy' ? '#ffb060' : '#8ad8ff')
     if (p.wmodeLabelR !== undefined) hud.modeTagR.setText(p.wmodeLabelR).setColor(p.wmodeR === 'heavy' ? '#ffb060' : '#8ad8ff')

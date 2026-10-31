@@ -86,9 +86,11 @@ export class PauseScene extends Phaser.Scene {
     const keys = isPhonePlay()
       ? '直接撳選項　或者用畫面按鈕：← → 揀，攻／跳 確認'
       : data.mode === '2p'
-        ? 'P1　A D 行　G 跳　S 蹲　F 攻　T 絕招\nP2　← → 行　． 跳　↓ 蹲　， 攻　； 絕招'
-        : 'A D 行　G 跳　S 蹲\nF 攻擊　T 絕招（食蜂蜜充滿）'
-    const help = pads || isPhonePlay() ? `${keys}\n手掣　A 跳　B／X 攻　Y／LB／RB 絕招　Start 暫停` : keys
+        ? 'P1　A D 行　G 跳　S 蹲　F 攻　T 絕招　H 換武器\nP2　← → 行　． 跳　↓ 蹲　， 攻　； 絕招　／ 換武器'
+        : 'A D 行　G 跳　S 蹲\nF 攻擊　T 絕招（食蜂蜜充滿）　H 換武器'
+    // LT, not R1 — index 6 on the standard layout (Cursor's device-testing pass caught
+    // the earlier wrong "R1" naming; see gamepadBridge.ts).
+    const help = pads || isPhonePlay() ? `${keys}\n手掣　A 跳　B／X 攻　Y／LB／RB 絕招　LT 換武器　Start 暫停` : keys
     this.add
       .text(W / 2, py + ph + 26, help, {
         fontFamily: FONT_UI,

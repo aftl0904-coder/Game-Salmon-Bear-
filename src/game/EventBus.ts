@@ -31,7 +31,7 @@ export type ScorePayload = {
   /** 金鮭 weapon level 1–3 per player. */
   wlvL?: number
   wlvR?: number
-  /** R1 weapon-mode per player (倫寶 連射鮭/重擊鮭, 琪寶寶 快劍/重劍). */
+  /** Weapon-mode per player (倫寶 連射鮭/重擊鮭, 琪寶寶 快劍/重劍). */
   wmodeL?: 'normal' | 'heavy'
   wmodeR?: 'normal' | 'heavy'
   /** Short role-aware label for the HUD badge (e.g. '連射'/'重擊', '快劍'/'重劍'). */

@@ -34,7 +34,7 @@ export type SnesHud = {
   stamR: Phaser.GameObjects.Rectangle
   weaponL: Phaser.GameObjects.Image[]
   weaponR: Phaser.GameObjects.Image[]
-  /** Persistent R1 weapon-mode badge (reads "連射"/"快劍" or "重擊"/"重劍"), next to each name. */
+  /** Persistent weapon-mode badge (reads "連射"/"快劍" or "重擊"/"重劍"), next to each name. */
   modeTagL: Phaser.GameObjects.Text
   modeTagR: Phaser.GameObjects.Text
   honey: Phaser.GameObjects.Image[]
@@ -128,10 +128,12 @@ export function buildSnesHud(
     const nx = right ? x0 - 5 : x0 + 29
     const label = txt(scene, nx, 2, name, 10, who === 'lunbo' ? '#ffc890' : '#ffd0e0').setOrigin(right ? 1 : 0, 0)
     root.add(label)
-    // Persistent R1 weapon-mode badge, right after the name. Same two colours for both
+    // Persistent weapon-mode badge, right after the name. Same two colours for both
     // heroes regardless of role (cyan = normal, gold = heavy) so the state reads at a
     // glance without having to know which label belongs to which mode per-character.
-    const modeTag = txt(scene, right ? nx - label.displayWidth - 4 : nx + label.displayWidth + 4, 2, '', 8, '#8ad8ff').setOrigin(
+    // 10px, not the name's 10px-matching 8px — Cursor's device pass flagged the badge
+    // as too small to read on a low-res phone screen.
+    const modeTag = txt(scene, right ? nx - label.displayWidth - 4 : nx + label.displayWidth + 4, 2, '', 10, '#8ad8ff').setOrigin(
       right ? 1 : 0,
       0,
     )
