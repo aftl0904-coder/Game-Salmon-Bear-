@@ -37,7 +37,7 @@
   ],
   "durians": [],
   "honey": [
-    { "x": 950, "h": 40 },
+    { "x": 825, "h": 40, "note": "moved from 950 — that sat inside the platform(900) refuge footprint, 8px below its solid top, so it read as uncollectible." },
     { "x": 1780, "h": 44 },
     { "x": 2865, "h": 40 }
   ],
