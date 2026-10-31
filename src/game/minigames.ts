@@ -343,7 +343,7 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   scene.input.keyboard?.on('keyup', onKeyUp)
 
   const NEED = Math.PI * 2 * 3 // three full turns
-  const tick = (_t: number, dt: number) => {
+  const tick = (_t: number, _dt: number) => {
     if (phase === 'end') return
     if (phase === 'stir') {
       // Touch pad / gamepad stick: rotate through the four directions.
