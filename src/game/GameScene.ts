@@ -5475,8 +5475,10 @@ export class GameScene extends Phaser.Scene {
       this.registry.set('leavingToMenu', false)
       this.stopUi()
       const from = this.stageNo
-      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike' })
-      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to })
+      // Alan: let the player pick which unlocked stage to go to here, instead of
+      // always auto-advancing into `to`.
+      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike', pick: true })
+      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to, pick: true })
     })
   }
 
