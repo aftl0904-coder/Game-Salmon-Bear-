@@ -1,7 +1,7 @@
 {
- "frameWidth": 90,
- "frameHeight": 62,
- "anchorX": 45,
+ "frameWidth": 180,
+ "frameHeight": 124,
+ "anchorX": 90,
  "anims": {
   "idle": {
    "start": 0,
@@ -33,5 +33,11 @@
    "fps": 10,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 15,
+ "cell1x": [
+  90,
+  62
+ ]
 }

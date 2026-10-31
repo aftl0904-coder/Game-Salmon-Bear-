@@ -1,7 +1,7 @@
 {
- "frameWidth": 62,
- "frameHeight": 65,
- "anchorX": 31,
+ "frameWidth": 124,
+ "frameHeight": 130,
+ "anchorX": 62,
  "anims": {
   "walk": {
    "start": 0,
@@ -33,5 +33,11 @@
    "fps": 10,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 18,
+ "cell1x": [
+  62,
+  65
+ ]
 }
