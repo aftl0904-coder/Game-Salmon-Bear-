@@ -301,8 +301,9 @@ export class MainMenuScene extends Phaser.Scene {
     // Bouncing arrows either side of the chosen plaque (children of a box that follows the cursor).
     this.arrowBox = this.add.container(0, y)
     for (const dir of [-1, 1]) {
+      // Alan: arrow sat right on top of the plaque text — pushed out further (10 → 17px).
       const a = this.add
-        .text(dir * (PLAQUE_W / 2 + 10), 0, dir < 0 ? '▶' : '◀', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
+        .text(dir * (PLAQUE_W / 2 + 17), 0, dir < 0 ? '▶' : '◀', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
         .setOrigin(0.5)
       this.arrowBox.add(a)
       this.tweens.add({ targets: a, x: `+=${-dir * 3}`, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
