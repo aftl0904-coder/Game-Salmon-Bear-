@@ -275,19 +275,19 @@ export class GameScene extends Phaser.Scene {
   private keyA!: Phaser.Input.Keyboard.Key
   private keyS!: Phaser.Input.Keyboard.Key
   private keyD!: Phaser.Input.Keyboard.Key
-  /** SNES face: F=Y atk, G=B jump, T=X special, H=A unused */
+  /** SNES face: F=Y atk, G=B jump, T=X special, H=A → R1 weapon-switch (倫寶雙槍) */
   private keyF!: Phaser.Input.Keyboard.Key
   private keyG!: Phaser.Input.Keyboard.Key
   private keyT!: Phaser.Input.Keyboard.Key
-  private keyH!: Phaser.Input.Keyboard.Key // A unused
+  private keyH!: Phaser.Input.Keyboard.Key
   /** Legacy jump／special aliases */
   private keyK!: Phaser.Input.Keyboard.Key
   private keyU!: Phaser.Input.Keyboard.Key
-  /** 2P SNES: ,=Y . =B ; =X / =A */
+  /** 2P SNES: ,=Y . =B ; =X / =A → R1 weapon-switch (琪寶寶快劍/重劍) */
   private keyComma!: Phaser.Input.Keyboard.Key
   private keyPeriod!: Phaser.Input.Keyboard.Key
   private keySemicolon!: Phaser.Input.Keyboard.Key
-  private keySlash!: Phaser.Input.Keyboard.Key // A unused
+  private keySlash!: Phaser.Input.Keyboard.Key
   private keyNP1!: Phaser.Input.Keyboard.Key
   private keyNP2!: Phaser.Input.Keyboard.Key
   private keyNP4!: Phaser.Input.Keyboard.Key
@@ -1166,8 +1166,6 @@ export class GameScene extends Phaser.Scene {
     this.keyC = kb.addKey(Phaser.Input.Keyboard.KeyCodes.C, true)
     this.keyRShift = kb.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT, true)
     this.keyO = kb.addKey(Phaser.Input.Keyboard.KeyCodes.O, true)
-    void this.keyH
-    void this.keySlash
     void this.keyRShift
     this.keyDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.F1, true)
     this.keyPhysicsDebug = kb.addKey(Phaser.Input.Keyboard.KeyCodes.BACKTICK, true)
@@ -1233,6 +1231,14 @@ export class GameScene extends Phaser.Scene {
       TouchInput.justPressed('special')
     )
   }
+  /**
+   * R1 = weapon-mode switch (倫寶 雙槍切換 / 琪寶寶 快劍↔重劍), Alan: use the free
+   * 4th action key (H sits unused next to F/G/T) + gamepad R1 (standard index 5).
+   * L1 (index 4) is reserved the same way for a future mechanic — no function yet.
+   */
+  private p1WeaponSwitchJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keyH) || this.padFaceJust(this.pad1, 5)
+  }
   private p2AttackJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyComma) ||
@@ -1262,6 +1268,15 @@ export class GameScene extends Phaser.Scene {
       this.padFaceJust(this.pad2, 4) ||
       this.padFaceJust(this.pad2, 5)
     )
+  }
+  /**
+   * R1-equivalent for P2 (快劍↔重劍 stance switch) — the free 4th action key
+   * (slash sits unused next to comma/period/semicolon). pad2's indices 4/5
+   * (L1/R1) are already alt-bindings for special, so pad index 6 (LT) stands
+   * in as P2's shoulder button for this until Alan wants a real pad remap.
+   */
+  private p2WeaponSwitchJust() {
+    return Phaser.Input.Keyboard.JustDown(this.keySlash) || this.padFaceJust(this.pad2, 6)
   }
 
   private steerHero(
@@ -1348,6 +1363,7 @@ export class GameScene extends Phaser.Scene {
       this.p1CrouchHeld(),
     )
     if (this.p1SpecialJust()) this.fireHoneySpecial(this.boy)
+    if (this.p1WeaponSwitchJust()) this.toggleWeaponMode(this.boy)
   }
 
   private moveGirl(dt: number) {
@@ -1363,6 +1379,7 @@ export class GameScene extends Phaser.Scene {
       this.p2CrouchHeld(),
     )
     if (this.p2SpecialJust()) this.fireHoneySpecial(g)
+    if (this.p2WeaponSwitchJust()) this.toggleWeaponMode(g)
   }
 
   /**
@@ -1427,9 +1444,26 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /**
+   * R1 weapon-mode toggle, shared by both roles (mode travels with the Hero via
+   * setData, same convention as 'wlv'): 倫寶 'heavy' = single big-power roe
+   * instead of the lv-based spread; 琪寶寶 'heavy' = slower, bigger, harder sword
+   * strike instead of the 3-hit combo. Confirmed scope: just the switch + its
+   * two concrete effects — no new art, no separate HUD icon yet.
+   */
+  private toggleWeaponMode(h: Hero) {
+    const cur = (h.getData('wmode') as 'normal' | 'heavy' | undefined) ?? 'normal'
+    const next = cur === 'normal' ? 'heavy' : 'normal'
+    h.setData('wmode', next)
+    SFX.blip(next === 'heavy' ? 320 : 520)
+    const label = h.role === 'girl' ? (next === 'heavy' ? '重劍' : '快劍') : next === 'heavy' ? '重擊鮭' : '連射鮭'
+    floatText(this, h.x, h.y - 60, label, next === 'heavy' ? '#ff9a4a' : '#8ad8ff', { size: 16, dur: 900 })
+  }
+
   private fireSalmon(h: Hero) {
     const freshShot = this.spendStamina(h, STAM_SHOT)
-    h.atkCd = freshShot ? SALMON_SHOT_COOLDOWN_MS : Math.round(SALMON_SHOT_COOLDOWN_MS * 1.6)
+    const heavy = (h.getData('wmode') as 'normal' | 'heavy' | undefined) === 'heavy'
+    h.atkCd = Math.round((freshShot ? SALMON_SHOT_COOLDOWN_MS : Math.round(SALMON_SHOT_COOLDOWN_MS * 1.6)) * (heavy ? 1.8 : 1))
     h.pose = 'idle'
     h.playAction(h.crouching ? 'shoot-crouch' : 'shoot')
     // Commit freeze actors only — salmon shot keeps flying (Pack2 G).
@@ -1445,23 +1479,32 @@ export class GameScene extends Phaser.Scene {
     // 金鮭 levels: Lv1 one roe · Lv2 two (up/down) · Lv3 three-way fan, range ×1.4.
     const lv = this.weaponLv(h)
     const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
-    const pattern: Array<{ dy: number; vy: number }> =
-      lv >= 3
-        ? [{ dy: 0, vy: -42 }, { dy: 0, vy: 0 }, { dy: 0, vy: 42 }]
-        : lv === 2
-          ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
-          : [{ dy: 0, vy: 0 }]
-    for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range, freshShot ? 1 : 0.5)
-    burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    if (heavy) {
+      // 重擊鮭 (R1 mode): one slow, heavy roe instead of the lv spread — trades
+      // rate of fire for a bigger single hit (range ×1.6, power ×2.2).
+      this.spawnRoe(h, muzzleX, muzzleY, 0, Math.round(range * 1.6), freshShot ? 2.2 : 1.1)
+      burst(this, muzzleX, muzzleY, 0xff8040, 10)
+    } else {
+      const pattern: Array<{ dy: number; vy: number }> =
+        lv >= 3
+          ? [{ dy: 0, vy: -42 }, { dy: 0, vy: 0 }, { dy: 0, vy: 42 }]
+          : lv === 2
+            ? [{ dy: -5, vy: 0 }, { dy: 5, vy: 0 }]
+            : [{ dy: 0, vy: 0 }]
+      for (const p of pattern) this.spawnRoe(h, muzzleX, muzzleY + p.dy, p.vy, range, freshShot ? 1 : 0.5)
+      burst(this, muzzleX, muzzleY, lv >= 2 ? 0xffd040 : 0xffaa66, 4 + lv * 2)
+    }
     playFx(this, 'muzzle-flash', muzzleX + h.facing * 6, muzzleY, { flipX: h.facing < 0, depth: h.depth + 1 })
     this.smashBreakablesInFront(h)
   }
 
   private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1) {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
-    shot.setScale(2 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
+    shot.setScale(2 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
     if (power < 1) shot.setTint(0x9ab0c8)
+    else if (power > 1) shot.setTint(0xffa060)
     enableActorSprite(shot)
     ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
@@ -1494,17 +1537,19 @@ export class GameScene extends Phaser.Scene {
   /** 琪寶寶劍撃 — 近戰主力 */
   private swordSlash(h: Hero) {
     const fresh = this.spendStamina(h, STAM_SWORD)
-    h.atkCd = fresh ? SWORD_COOLDOWN_MS : Math.round(SWORD_COOLDOWN_MS * 1.6)
+    const heavy = (h.getData('wmode') as 'normal' | 'heavy' | undefined) === 'heavy'
+    h.atkCd = Math.round((fresh ? SWORD_COOLDOWN_MS : Math.round(SWORD_COOLDOWN_MS * 1.6)) * (heavy ? 1.9 : 1))
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     // 3-hit combo: presses within 0.6s chain slash1 → slash2 → slash3.
+    // 重劍 (heavy) skips the combo chain — every swing is the big slash3 strike.
     const lastAt = (h.getData('slashAt') as number | undefined) ?? -9999
-    const step = this.time.now - lastAt < 600 ? (((h.getData('slashN') as number | undefined) ?? 0) % 3) + 1 : 1
+    const step = heavy ? 3 : this.time.now - lastAt < 600 ? (((h.getData('slashN') as number | undefined) ?? 0) % 3) + 1 : 1
     h.setData('slashAt', this.time.now)
     h.setData('slashN', step)
     h.playAction(`slash${step}`)
     SFX.swing()
     const grip = this.girlSwordAnchor(h, true)
-    burst(this, grip.x + h.facing * 24, grip.y, 0xe8f0ff, 10)
+    burst(this, grip.x + h.facing * 24, grip.y, heavy ? 0xffa060 : 0xe8f0ff, heavy ? 16 : 10)
     h.setAngle(0)
     h.setScale(h.baseScale)
     if (this.sword) {
@@ -1516,7 +1561,7 @@ export class GameScene extends Phaser.Scene {
       this.tweens.add({
         targets: this.sword,
         angle: h.facing > 0 ? 70 : -70,
-        duration: 110,
+        duration: heavy ? 180 : 110,
         yoyo: true,
         onComplete: () => {
           if (!this.sword) return
@@ -1525,16 +1570,17 @@ export class GameScene extends Phaser.Scene {
       })
     }
     // 金鮭 levels: Lv2 reach ×1.35 · Lv3 reach ×1.7 and +1 damage.
+    // 重劍 stacks its own ×1.3 reach / ×1.8 damage on top of the weapon-level bonus.
     const lv = this.weaponLv(h)
-    const reach = lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1
+    const reach = (lv >= 3 ? 1.7 : lv === 2 ? 1.35 : 1) * (heavy ? 1.3 : 1)
     if (lv >= 2) burst(this, grip.x + h.facing * SWORD_HIT_W * reach * 0.6, grip.y, 0xffe070, 4 + lv * 2)
-    const swordDmg = Math.max(1, Math.round((PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0)) * (fresh ? 1 : 0.5)))
+    const swordDmg = Math.max(1, Math.round((PLAYER_ATTACK_DMG + (lv >= 3 ? 1 : 0)) * (fresh ? 1 : 0.5) * (heavy ? 1.8 : 1)))
     this.spawnAttackHitbox(h, swordDmg, Math.round(SWORD_HIT_W * reach), SWORD_HIT_H, SWORD_HIT_MS)
     // Sword trail: one arc per combo step, longer with the weapon level.
     const arc = (`slash-arc-${step}` as 'slash-arc-1' | 'slash-arc-2' | 'slash-arc-3')
     playFx(this, arc, h.x + h.facing * (22 + 10 * reach), h.y - 36, {
       flipX: h.facing < 0,
-      scale: reach > 1.5 ? 1.25 : reach > 1.2 ? 1.1 : 1,
+      scale: (reach > 1.5 ? 1.25 : reach > 1.2 ? 1.1 : 1) * (heavy ? 1.2 : 1),
       depth: h.depth + 1,
       alpha: 0.92,
     })
