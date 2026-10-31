@@ -1,6 +1,6 @@
 import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
-import { createHeroAnims, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
+import { createHeroAnims, markHd, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
 import { createFxAnims, preloadFxAnims } from './fxAnims'
 import { registerTiles } from './tiles'
 import { registerWorldArt } from './worldArt'
@@ -34,6 +34,8 @@ import {
   TARGET_H_ENEMY_M,
   TARGET_H_ITEM,
 } from './engine/constants'
+
+const HD_PROP_RES = 2
 
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
@@ -137,6 +139,9 @@ export class BootScene extends Phaser.Scene {
     this.registry.set('artOverrides', applyArtOverrides(this))
     // Frame-by-frame cast (Cursor action sheets) — also swaps the old stills to the new designs.
     createHeroAnims(this)
+    for (const key of this.textures.getTextureKeys()) {
+      if (key.startsWith('friend-') || key === 'gacha-machine') markHd(this.textures.get(key), HD_PROP_RES)
+    }
     createFxAnims(this)
     this.applyCelCoinTexture()
     this.bakeCastTextures()
