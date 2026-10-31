@@ -120,10 +120,11 @@ export function portraitTex(id: string) {
   return `portrait-${id}`
 }
 
-/** Story stills used so far (public/art/story, 640×360). Later stages add theirs here. */
+/** Story stills (public/art/story): STORY_RES× pixels, shown at 640×360 logical. Later stages add theirs here. */
 export const STORY_STILLS = ['cover', 'c1-picnic', 'c1-hollow', 'c1-mama', 'c2-note', 'credits-bg', 'c2-bike', 's2-boss-intro', 'c3-queen', 'canopy-far',
   'c3-market', 's3-boss-intro', 'market-far', 'hotspring-far', 'c4-taxi', 'c5-bus', 'c6-screen', 'c7-boss', 'ending-1', 'ending-2',
   'c10-unmask', 'ending-3', 'hq-far', 'rooftop-far'] as const
+export const STORY_RES = 2
 export function stillTex(id: string) {
   return `story-${id}`
 }
@@ -170,6 +171,10 @@ export function createHeroAnims(scene: Phaser.Scene) {
   for (const id of PORTRAITS) {
     const key = portraitTex(id)
     if (scene.textures.exists(key)) markHd(scene.textures.get(key), PORTRAIT_RES)
+  }
+  for (const id of STORY_STILLS) {
+    const key = stillTex(id)
+    if (scene.textures.exists(key)) markHd(scene.textures.get(key), STORY_RES)
   }
   for (const [still, set] of Object.entries(STILL_KEYS)) replaceStill(scene, still, set)
 }
