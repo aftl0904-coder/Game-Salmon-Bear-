@@ -1,7 +1,7 @@
 {
- "frameWidth": 84,
- "frameHeight": 81,
- "anchorX": 42,
+ "frameWidth": 162,
+ "frameHeight": 160,
+ "anchorX": 81,
  "anims": {
   "idle": {
    "start": 0,
@@ -69,5 +69,7 @@
    "fps": 8,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 25
 }

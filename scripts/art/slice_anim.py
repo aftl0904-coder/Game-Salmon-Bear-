@@ -59,6 +59,11 @@ def owl_silver(a):  # 月橋鏡鴞 feathers
     mx = a.max(-1).astype(int); mn = a.min(-1).astype(int)
     return (mx > 120) & (mx - mn < 45)
 
+# Output resolution multiplier per set (frames are drawn RES x bigger than the 640x360 logical
+# size and shown at 1/RES by the engine: see heroAnims.markHd). Sets not listed stay 1x.
+HD = {'lunbo': 2, 'kibobo': 2, 'pupu': 2}
+MAX_SHEET_W = 4096  # keep atlases within the smallest common GPU texture limit
+
 CHARS = {
     'lunbo': dict(height=72, ref='walk', key=hair_black, anims={
         'idle': (6, True), 'walk': (10, True), 'jump': (8, False), 'crouch': (14, False), 'shoot': (16, False),
@@ -176,7 +181,7 @@ def frames_of(path, n, keep_largest=False, band=None):
         out.append((a[by0:by1, x0 + bx0:x0 + bx1], sm[by0:by1, bx0:bx1]))
     return out
 
-def downscale(rgb, m, s):
+def downscale(rgb, m, s, soft=False):
     h, w = m.shape
     W, H = max(1, round(w * s)), max(1, round(h * s))
     mf = m.astype(np.float32)
@@ -184,7 +189,7 @@ def downscale(rgb, m, s):
     A = np.array(Image.fromarray((mf * 255).astype(np.uint8)).resize((W, H), Image.BOX)).astype(np.float32) / 255
     P = np.array(pre.resize((W, H), Image.BOX)).astype(np.float32)
     C = np.where(A[..., None] > 0.01, P / np.maximum(A[..., None], 1e-3), 0).clip(0, 255).astype(np.uint8)
-    return C, A > 0.5
+    return C, (A if soft else (A > 0.5).astype(np.float32))
 
 def main():
     ROOT = sys.argv[1] if len(sys.argv) > 1 else '.'
@@ -207,6 +212,8 @@ def main():
                 frs = [(rgb[:, ::-1], m[:, ::-1]) for rgb, m in frs]
             sheets[anim] = frs
         # scale reference: standing sheet height → target height
+        res = HD.get(ch, 1)
+        cfg = dict(cfg, height=cfg['height'] * res)
         ref = sheets[cfg['ref']]
         ref_h = np.median([f[1].shape[0] for f in ref])
         ref_scale = cfg['height'] / ref_h
@@ -230,37 +237,44 @@ def main():
             # guard against a bad key read: stay within 0.7–1.7× of the reference scale
             s = float(np.clip(s, ref_scale * lo, ref_scale * hi))
             scales[anim] = s
-            scaled[anim] = [downscale(rgb, m, s) for rgb, m in frs]
+            scaled[anim] = [downscale(rgb, m, s, res > 1) for rgb, m in frs]
             report[f'{ch}/{anim}'] = round(s / ref_scale, 3)
         # anchor: x = median of foreground in the lower 45 % (legs), y = bottom
         items = []
         for anim, frs in [(k, scaled[k]) for k in cfg['anims'] if k in scaled]:
             for C, A in frs:
                 h, w = A.shape
-                ys, xs = np.where(A[int(h * 0.55):])
+                ys, xs = np.where(A[int(h * 0.55):] > 0.5)
                 ax = int(np.median(xs)) if len(xs) else w // 2
                 items.append((anim, C, A, ax))
         # symmetric cell so the game can keep origin (0.5, 1) and the foot body centred
         half = max(max(ax for _, _, _, ax in items), max(A.shape[1] - ax for _, _, A, ax in items)) + 2
         left = half
         cw = half * 2; chh = max(A.shape[0] for _, _, A, _ in items) + 2
-        sheet = Image.new('RGBA', (cw * len(items), chh), (0, 0, 0, 0))
+        chh += -chh % res  # logical (cell / res) size must stay integral
+        cw += -cw % res
+        left = cw // 2
+        cols = max(1, min(len(items), MAX_SHEET_W // cw)) if res > 1 else len(items)
+        rows = -(-len(items) // cols)
+        sheet = Image.new('RGBA', (cw * cols, chh * rows), (0, 0, 0, 0))
         anims = {}; i = 0
         for anim, C, A, ax in items:
             h, w = A.shape
-            rgba = np.dstack([C, (A * 255).astype(np.uint8)])
+            rgba = np.dstack([C, (A * 255).round().astype(np.uint8)])
             tile = Image.fromarray(rgba, 'RGBA')
-            sheet.paste(tile, (i * cw + left - ax, chh - 1 - h), tile)
+            sheet.paste(tile, ((i % cols) * cw + left - ax, (i // cols) * chh + chh - 1 - h))
             anims.setdefault(anim, {'start': i, 'count': 0})
             anims[anim]['count'] += 1; i += 1
         # one shared palette for the character (keeps frames from flickering colour)
         alpha = sheet.split()[3]
-        q = sheet.convert('RGB').quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-        q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+        q = sheet.convert('RGB').quantize(colors=48 * res, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+        q.putalpha(alpha if res > 1 else alpha.point(lambda v: 255 if v > 127 else 0))
         q.save(OUT + f'{ch}.png')
         for anim, (fps, loop) in cfg['anims'].items():
             if anim in anims: anims[anim].update(fps=fps, loop=loop)
-        json.dump({'frameWidth': cw, 'frameHeight': chh, 'anchorX': left, 'anims': anims}, open('data/anim/' + f'{ch}.json', 'w'), indent=1)
+        meta = {'frameWidth': cw, 'frameHeight': chh, 'anchorX': left, 'anims': anims}
+        if res > 1: meta.update(res=res, columns=cols)
+        json.dump(meta, open('data/anim/' + f'{ch}.json', 'w'), indent=1)
         print(ch, 'cell', cw, chh, 'frames', i)
     print('scale vs ref', report)
 

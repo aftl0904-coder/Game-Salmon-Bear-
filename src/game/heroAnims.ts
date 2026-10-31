@@ -29,8 +29,13 @@ export type AnimSetId =
   | 'beesoldier' | 'squirrel' | 'minibee' | 'egg' | 'queen'
   | 'lobster' | 'stallkeeper' | 'mirrorshade' | 'mirrorowl' | 'triboss'
 type Meta = {
+  /** Cell size in sheet pixels (RES× the logical size for HD sets). */
   frameWidth: number
   frameHeight: number
+  /** Sheet pixels per logical pixel (HD sets only; default 1). */
+  res?: number
+  /** Cells per sheet row (HD sets are wrapped to stay under the GPU texture limit; default: one row). */
+  columns?: number
   anims: Record<string, { start: number; count: number; fps: number; loop: boolean }>
 }
 
@@ -65,6 +70,42 @@ const STILL_KEYS: Record<string, AnimSetId> = {
   'art-salmon': 'lunbo',
   'art-girl': 'kibobo',
   'art-bear': 'pupu',
+}
+
+/** Logical (640×360 world) cell size of a set. */
+export function logicalCell(m: Meta) {
+  const r = m.res ?? 1
+  return { w: m.frameWidth / r, h: m.frameHeight / r }
+}
+
+/** Pixel rectangle of cell `index` inside the sheet image. */
+export function cellRect(m: Meta, index: number) {
+  const cols = m.columns ?? Number.MAX_SAFE_INTEGER
+  return { x: (index % cols) * m.frameWidth, y: Math.floor(index / cols) * m.frameHeight, w: m.frameWidth, h: m.frameHeight }
+}
+
+/**
+ * Show a texture drawn at `res`× resolution at its logical size: Phaser's WebGL renderer divides the
+ * quad by `source.resolution`, and every frame reports logical width/height, so sprites, physics bodies
+ * and layout code keep working in 640×360 units while the pixels stay sharp on the 2× canvas.
+ */
+export function markHd(tex: Phaser.Textures.Texture, res: number) {
+  if (res <= 1) return
+  for (const src of tex.source) src.resolution = res
+  for (const name of tex.getFrameNames(true)) {
+    const f = tex.get(name)
+    const w = f.cutWidth / res
+    const h = f.cutHeight / res
+    f.width = w
+    f.height = h
+    f.halfWidth = Math.floor(w / 2)
+    f.halfHeight = Math.floor(h / 2)
+    f.centerX = Math.floor(w / 2)
+    f.centerY = Math.floor(h / 2)
+    const d = (f as unknown as { data: { sourceSize: { w: number; h: number }; spriteSourceSize: { w: number; h: number } } }).data
+    d.sourceSize.w = d.spriteSourceSize.w = w
+    d.sourceSize.h = d.spriteSourceSize.h = h
+  }
 }
 
 export function animTex(set: AnimSetId) {
@@ -112,6 +153,7 @@ export function createHeroAnims(scene: Phaser.Scene) {
       continue
     }
     scene.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    markHd(scene.textures.get(key), m.res ?? 1)
     for (const [name, a] of Object.entries(m.anims)) {
       const k = `${id}-${name}`
       if (scene.anims.exists(k)) continue
@@ -139,12 +181,14 @@ function replaceStill(scene: Phaser.Scene, still: string, set: AnimSetId) {
   const src = scene.textures.get(key).getSourceImage() as HTMLImageElement
   const fw = m.frameWidth
   const fh = m.frameHeight
+  const res = m.res ?? 1
+  const cell = cellRect(m, idle.start)
   const c = document.createElement('canvas')
   c.width = fw
   c.height = fh
   const ctx = c.getContext('2d', { willReadFrequently: true })!
   ctx.imageSmoothingEnabled = false
-  ctx.drawImage(src, idle.start * fw, 0, fw, fh, 0, 0, fw, fh)
+  ctx.drawImage(src, cell.x, cell.y, fw, fh, 0, 0, fw, fh)
   const data = ctx.getImageData(0, 0, fw, fh).data
   let x0 = fw, y0 = fh, x1 = -1, y1 = -1
   for (let y = 0; y < fh; y++) {
@@ -159,13 +203,14 @@ function replaceStill(scene: Phaser.Scene, still: string, set: AnimSetId) {
   }
   if (x1 < 0) return
   const out = document.createElement('canvas')
-  out.width = x1 - x0 + 3
-  out.height = y1 - y0 + 2
+  out.width = x1 - x0 + 3 + ((-(x1 - x0 + 3) % res) + res) % res
+  out.height = y1 - y0 + 2 + ((-(y1 - y0 + 2) % res) + res) % res
   const octx = out.getContext('2d')!
   octx.imageSmoothingEnabled = false
   octx.drawImage(c, x0, y0, x1 - x0 + 1, y1 - y0 + 1, 1, 1, x1 - x0 + 1, y1 - y0 + 1)
   if (scene.textures.exists(still)) scene.textures.remove(still)
   scene.textures.addCanvas(still, out)
   scene.textures.get(still).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  markHd(scene.textures.get(still), res)
   REPLACED_STILLS.add(still)
 }
