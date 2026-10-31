@@ -64,8 +64,7 @@ PROPS = {
 }
 
 RES = 2  # sheet pixels per logical pixel; the engine shows HD props at 1/RES (artOverrides.ts)
-# Props the engine bakes per pixel (goal3d) stay 1x.
-HD_EXCLUDE = {'honey-tree'}
+HD_EXCLUDE = set()
 
 TRIM = {'s3-market-ground': (10, 3, 10, 2), 's3-market-mid': (4, 0, 4, 0)}
 
