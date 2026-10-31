@@ -113,6 +113,8 @@ export function animTex(set: AnimSetId) {
 }
 
 /** Dialogue portraits (scripts/art/slice_portraits.py): 3 frames, 72×72 — neutral / happy / shocked. */
+/** Portrait strips are drawn this many sheet pixels per logical pixel (scripts/art/slice_portraits.py). */
+export const PORTRAIT_RES = 2
 export const PORTRAITS = ['lunbo', 'kibobo', 'pupu', 'pupu-hollow', 'coffee-mama', 'queen-bee'] as const
 export function portraitTex(id: string) {
   return `portrait-${id}`
@@ -129,7 +131,7 @@ export function stillTex(id: string) {
 export function preloadHeroAnims(scene: Phaser.Scene) {
   for (const id of STORY_STILLS) scene.load.image(stillTex(id), `/art/story/${id}.png`)
   for (const id of PORTRAITS) {
-    scene.load.spritesheet(portraitTex(id), `/art/portraits/${id}.png`, { frameWidth: 72, frameHeight: 72 })
+    scene.load.spritesheet(portraitTex(id), `/art/portraits/${id}.png`, { frameWidth: 72 * PORTRAIT_RES, frameHeight: 72 * PORTRAIT_RES })
   }
   for (const [id, m] of Object.entries(ANIM_SETS)) {
     scene.load.spritesheet(animTex(id as AnimSetId), `/art/anim/${id}.png`, {
@@ -164,6 +166,10 @@ export function createHeroAnims(scene: Phaser.Scene) {
         repeat: a.loop ? -1 : 0,
       })
     }
+  }
+  for (const id of PORTRAITS) {
+    const key = portraitTex(id)
+    if (scene.textures.exists(key)) markHd(scene.textures.get(key), PORTRAIT_RES)
   }
   for (const [still, set] of Object.entries(STILL_KEYS)) replaceStill(scene, still, set)
 }
