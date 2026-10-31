@@ -690,7 +690,7 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene') || this.scene.isSleeping('UIScene')) {
       this.scene.stop('UIScene')
     }
-    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地' }
+    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈' }
     this.scene.launch('UIScene', { mode: this.mode, stageTitle: titles[this.stageNo] ?? titles[1] })
     this.events.once('shutdown', this.stopUi, this)
   }
@@ -831,6 +831,13 @@ export class GameScene extends Phaser.Scene {
 
   private emitScore(info?: string) {
     const wl = (h: Hero | null | undefined) => (h ? ((h.getData('wlv') as number | undefined) ?? 1) : 1)
+    const wm = (h: Hero | null | undefined): 'normal' | 'heavy' =>
+      h ? ((h.getData('wmode') as 'normal' | 'heavy' | undefined) ?? 'normal') : 'normal'
+    const wmLabel = (h: Hero | null | undefined): string => {
+      const mode = wm(h)
+      if (!h) return mode === 'heavy' ? '重擊' : '連射'
+      return h.role === 'girl' ? (mode === 'heavy' ? '重劍' : '快劍') : mode === 'heavy' ? '重擊' : '連射'
+    }
     EventBus.emit(GameEvents.SCORE_UPDATED, {
       score: this.scorePts,
       coins: this.purse[(this.boy?.role as Who) ?? 'boy'] ?? this.coinStock,
@@ -840,6 +847,10 @@ export class GameScene extends Phaser.Scene {
       timeSec: this.started ? Math.floor((this.time.now - this.startedAt) / 1000) : 0,
       wlvL: wl(this.boy),
       wlvR: wl(this.girl),
+      wmodeL: wm(this.boy),
+      wmodeR: wm(this.girl),
+      wmodeLabelL: wmLabel(this.boy),
+      wmodeLabelR: wmLabel(this.girl),
       ...(info !== undefined ? { info } : {}),
     })
   }
@@ -1456,8 +1467,10 @@ export class GameScene extends Phaser.Scene {
     const next = cur === 'normal' ? 'heavy' : 'normal'
     h.setData('wmode', next)
     SFX.blip(next === 'heavy' ? 320 : 520)
+    // Same colour pair as the persistent HUD badge (cyan = normal, gold = heavy),
+    // consistent across both heroes — Cursor playtest flagged the old mismatched tints.
     const label = h.role === 'girl' ? (next === 'heavy' ? '重劍' : '快劍') : next === 'heavy' ? '重擊鮭' : '連射鮭'
-    floatText(this, h.x, h.y - 60, label, next === 'heavy' ? '#ff9a4a' : '#8ad8ff', { size: 16, dur: 900 })
+    floatText(this, h.x, h.y - 60, label, next === 'heavy' ? '#ffb060' : '#8ad8ff', { size: 16, dur: 900 })
   }
 
   private fireSalmon(h: Hero) {
@@ -3595,8 +3608,8 @@ export class GameScene extends Phaser.Scene {
         this.storyIntro = null
         this.emitScore(
           this.mode === '1p'
-            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招｜Enter暫停'
-            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招',
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招　Ｈ切換｜Enter暫停'
+            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
         )
         // data/signs.json SG-02 — display-only tutorial (no combat change)
         const tip = this.tree || this.market || this.depot || this.tower ? null : tutorialSign()
@@ -4145,7 +4158,7 @@ export class GameScene extends Phaser.Scene {
     }
     // Title
     const title = this.add
-      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關'][this.stageNo] ?? '第一關'}　通關！`, {
+      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關', '第四關', '第五關'][this.stageNo] ?? '第一關'}　通關！`, {
         fontFamily: FONT_TITLE,
         fontSize: '28px',
         color: '#ffd76a',

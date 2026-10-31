@@ -32,7 +32,7 @@ export class GachaScene extends Phaser.Scene {
     this.cameras.main.fadeIn(280, 20, 10, 30)
 
     this.add.text(W / 2, 34, '扭　蛋　機', { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffe08a', stroke: '#2a1408', strokeThickness: 4 }).setOrigin(0.5)
-    this.add.text(W / 2, 58, '開局前扭一次，呢次 playthrough 都係呢張 charm', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b0e0' }).setOrigin(0.5)
+    this.add.text(W / 2, 58, '開局前扭一次，呢次遊玩全程都係呢張符咒', { fontFamily: FONT_UI, fontSize: '11px', color: '#c8b0e0' }).setOrigin(0.5)
 
     if (this.textures.exists('gacha-machine')) {
       this.machine = this.add.image(W / 2, H - 20, 'gacha-machine').setOrigin(0.5, 1).setScale(0.78)

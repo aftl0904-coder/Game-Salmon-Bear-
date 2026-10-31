@@ -22,6 +22,7 @@ type Side = {
   hpBarW: number
   stam: Phaser.GameObjects.Rectangle
   weapon: Phaser.GameObjects.Image[]
+  modeTag: Phaser.GameObjects.Text
 }
 
 export type SnesHud = {
@@ -33,6 +34,9 @@ export type SnesHud = {
   stamR: Phaser.GameObjects.Rectangle
   weaponL: Phaser.GameObjects.Image[]
   weaponR: Phaser.GameObjects.Image[]
+  /** Persistent R1 weapon-mode badge (reads "連射"/"快劍" or "重擊"/"重劍"), next to each name. */
+  modeTagL: Phaser.GameObjects.Text
+  modeTagR: Phaser.GameObjects.Text
   honey: Phaser.GameObjects.Image[]
   coinText: Phaser.GameObjects.Text
   mpBar: Phaser.GameObjects.Rectangle
@@ -124,6 +128,14 @@ export function buildSnesHud(
     const nx = right ? x0 - 5 : x0 + 29
     const label = txt(scene, nx, 2, name, 10, who === 'lunbo' ? '#ffc890' : '#ffd0e0').setOrigin(right ? 1 : 0, 0)
     root.add(label)
+    // Persistent R1 weapon-mode badge, right after the name. Same two colours for both
+    // heroes regardless of role (cyan = normal, gold = heavy) so the state reads at a
+    // glance without having to know which label belongs to which mode per-character.
+    const modeTag = txt(scene, right ? nx - label.displayWidth - 4 : nx + label.displayWidth + 4, 2, '', 8, '#8ad8ff').setOrigin(
+      right ? 1 : 0,
+      0,
+    )
+    root.add(modeTag)
     // HP gauge: one chunky bar instead of discrete hearts — fill width = % of current
     // max HP, no number shown. Thick gold-riveted frame so it reads at a glance /
     // peripheral vision mid-fight, echoing the old hearts' decorated look.
@@ -161,7 +173,7 @@ export function buildSnesHud(
     root.add(scene.add.rectangle(sx, stamY, sw, 4, 0x2a1a10).setOrigin(0, 0).setScrollFactor(0))
     const stam = scene.add.rectangle(right ? sx + sw : sx, stamY + 1, sw, 2, 0x6ad0ff).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
     root.add(stam)
-    return { hpFill, hpBarW, weapon, stam }
+    return { hpFill, hpBarW, weapon, stam, modeTag }
   }
 
   const p1Who = opts.mode === '1p' && opts.soloCast === 'girl' ? 'kibobo' : 'lunbo'
@@ -174,6 +186,7 @@ export function buildSnesHud(
           hpBarW: 1,
           weapon: [],
           stam: scene.add.rectangle(-99, -99, 1, 1).setVisible(false),
+          modeTag: scene.add.text(-99, -99, '').setVisible(false),
         }
 
   // Centre: stage plaque + honey / coins / 絕招.
@@ -255,6 +268,8 @@ export function buildSnesHud(
     stamR: R.stam,
     weaponL: L.weapon,
     weaponR: R.weapon,
+    modeTagL: L.modeTag,
+    modeTagR: R.modeTag,
     honey,
     coinText,
     mpBar,
