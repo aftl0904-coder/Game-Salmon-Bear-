@@ -122,12 +122,15 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   const box = scene.add.rectangle(8, BOX_Y, GAME_W - 16, GAME_H - BOX_Y - 8, 0x1a1210, 0.94).setOrigin(0).setStrokeStyle(2, 0xe0b86a)
   const frame = scene.add.rectangle(18, BOX_Y + 10, 76, 76, 0x2e2018, 1).setOrigin(0).setStrokeStyle(1, 0x8a6a40)
   const portrait = scene.add.image(20, BOX_Y + 12, '__DEFAULT').setOrigin(0, 0).setVisible(false)
-  const nameText = scene.add.text(106, BOX_Y + 8, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' })
-  const bodyText = scene.add.text(106, BOX_Y + 30, '', {
+  // Alan: the opening/story dialogue text read too small — bumped 13/15px → 14/17px
+  // (confirmed against a live render, not just the number) and nudged the body down a
+  // touch so the taller line-height still clears the name row.
+  const nameText = scene.add.text(106, BOX_Y + 7, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a' })
+  const bodyText = scene.add.text(106, BOX_Y + 29, '', {
     fontFamily: FONT_UI,
-    fontSize: '15px',
+    fontSize: '17px',
     color: '#fff6e0',
-    lineSpacing: 6,
+    lineSpacing: 5,
     wordWrap: { width: GAME_W - 140, useAdvancedWrap: true },
   })
   const nextMark = scene.add.text(GAME_W - 26, GAME_H - 26, '▼', { fontFamily: FONT_UI, fontSize: '12px', color: '#e0b86a' }).setVisible(false)
