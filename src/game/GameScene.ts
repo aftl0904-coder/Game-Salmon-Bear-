@@ -1436,15 +1436,45 @@ export class GameScene extends Phaser.Scene {
     jet.setData('homing', best)
     jet.setData('by', h.role as Who)
     this.entities.add(jet, 'projectile')
-    floatText(this, h.x, h.y - 48, '絕招！', '#66ddff')
+    const ultName = h.role === 'girl' ? '蜜光斬' : '鮭魚瀑布'
+    floatText(this, h.x, h.y - 48, ultName, '#66ddff')
     burst(this, h.x, h.y - 28, 0x66ccff, 10)
-    this.emitScore('絕招！蜂蜜 MP 清空')
+    this.playUltimateFx(h)
+    this.emitScore(`${ultName}！蜂蜜 MP 清空`)
     this.time.delayedCall(900, () => {
       if (jet.active) jet.destroy()
     })
   }
 
-
+  /**
+   * ART-16 絕招 FX (docs/cursor/ART-REQUEST-16-ultimate-fx.md): full-screen flourish
+   * layered on top of the unchanged single-target homing shot above — a short
+   * role-tinted charge-aura pulse at the hero, then the named full-screen sweep
+   * (倫寶 鮭魚瀑布 / 琪寶寶 蜜光斬) across the screen. Pure visual juice: targeting and
+   * damage still come from the homing `jet` fired just above, not from this sweep —
+   * turning it into real multi-enemy AoE is a balance call Alan hasn't scoped yet.
+   */
+  private playUltimateFx(h: Hero) {
+    const girl = h.role === 'girl'
+    const auraTint = girl ? 0xffd060 : 0xff8a5a // 蜜糖金 / 鮭魚粉橙 (shared B&W sheet, tinted per hero)
+    if (hasFx(this, 'charge-aura')) {
+      const aura = playFx(this, 'charge-aura', h.x, h.y - 20, { scale: 0.7 })
+      if (aura) aura.setBlendMode(Phaser.BlendModes.ADD).setTint(auraTint)
+    }
+    const sweepName = girl ? 'ult-honey-slash' : 'ult-salmon-wave'
+    if (hasFx(this, sweepName)) {
+      const sweepY = this.cameras.main.scrollY + GAME_H / 2
+      this.time.delayedCall(90, () => {
+        const sweep = playFx(this, sweepName, this.cameras.main.scrollX + GAME_W / 2, sweepY, {
+          flipX: h.facing < 0,
+          scale: 2,
+          depth: DEPTH.FX + 10,
+          alpha: 0.95,
+        })
+        if (sweep) sweep.setBlendMode(Phaser.BlendModes.ADD)
+      })
+    }
+  }
 
   /** Melee/range smash for pots & chests in facing cone. */
   private smashBreakablesInFront(h: Hero) {
