@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -15,7 +16,8 @@ export class StudioScene extends Phaser.Scene {
 
   create() {
     this.leaving = false
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     const cx = Math.round(width / 2)
     const cy = Math.round(height / 2)
     this.cameras.main.setBackgroundColor('#000000')

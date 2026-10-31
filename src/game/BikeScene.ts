@@ -1,3 +1,4 @@
+import { GAME_W } from './display'
 import Phaser from 'phaser'
 import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
@@ -90,7 +91,7 @@ export class BikeScene extends Phaser.Scene {
     this.mash = 0
     this.mult = 1
     this.speedLines = []
-    const W = this.scale.width
+    const W = GAME_W
     this.cameras.main.fadeIn(400, 255, 250, 235)
     unlockAudio()
     playSong('stage1')
@@ -344,7 +345,7 @@ export class BikeScene extends Phaser.Scene {
     const carry = ((this.registry.get('carryCoins') as number | undefined) ?? 5) + this.coins
     this.registry.set('carryCoins', carry)
     this.registry.set('stageNo', 2)
-    const W = this.scale.width
+    const W = GAME_W
     if (!skipped) {
       SFX.win()
       const box = this.add.container(W / 2, 150).setDepth(70)

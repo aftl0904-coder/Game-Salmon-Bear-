@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import { DEPTH } from './engine/depth'
 import Phaser from 'phaser'
 import { buildSnesHud, type SnesHud } from './hudSnes'
@@ -121,7 +122,7 @@ export class UIScene extends Phaser.Scene {
     }
 
     this.banner = this.add
-      .text(this.scale.width / 2, this.scale.height / 2, '', {
+      .text(GAME_W / 2, GAME_H / 2, '', {
         fontFamily: FONT_UI,
         fontSize: '16px',
         color: '#ffe8b0',
@@ -138,7 +139,7 @@ export class UIScene extends Phaser.Scene {
     this.banner.setInteractive({ useHandCursor: true })
     this.banner.on('pointerdown', () => TouchInput.pulse('start'))
     this.menuBtn = this.add
-      .text(this.scale.width / 2, this.scale.height / 2, '回選單', {
+      .text(GAME_W / 2, GAME_H / 2, '回選單', {
         fontFamily: FONT_UI,
         fontSize: '12px',
         color: '#fff4d0',
@@ -255,7 +256,7 @@ export class UIScene extends Phaser.Scene {
     setW(hud.weaponR, p.wlvR)
     if (p.progress !== undefined && hud.marker) {
       hud.marker.x = Math.round(hud.trackX0 + (hud.trackX1 - hud.trackX0) * p.progress)
-      hud.marker.y = this.scale.height - 8 + (Math.floor(this.time.now / 180) % 2)
+      hud.marker.y = GAME_H - 8 + (Math.floor(this.time.now / 180) % 2)
     }
     if (p.timeSec !== undefined) hud.timeText.setText(`${p.timeSec}秒`)
     if (p.info && p.info !== this.lastInfo) {

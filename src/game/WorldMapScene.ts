@@ -1,3 +1,4 @@
+import { RENDER_SCALE } from './display'
 import Phaser from 'phaser'
 import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
@@ -52,7 +53,7 @@ export class MapScene extends Phaser.Scene {
     this.walking = false
     const cam = this.cameras.main
     cam.setBackgroundColor('#0a1428')
-    cam.setZoom(1).setRotation(0)
+    cam.setZoom(RENDER_SCALE).setRotation(0)
     cam.centerOn(320, 180)
     cam.fadeIn(500, 0, 0, 0)
     unlockAudio()
@@ -180,7 +181,7 @@ export class MapScene extends Phaser.Scene {
     this.time.delayedCall(700, () => {
       SFX.powerUp()
       cam.pan(dest.x * S, dest.y * S, 1100, 'Sine.easeIn')
-      cam.zoomTo(5, 1200, 'Cubic.easeIn')
+      cam.zoomTo(5 * RENDER_SCALE, 1200, 'Cubic.easeIn')
       this.tweens.add({ targets: cam, rotation: 0.9, duration: 1200, ease: 'Cubic.easeIn' })
       this.time.delayedCall(850, () => cam.fadeOut(380, 255, 250, 235))
       this.time.delayedCall(1260, () => this.goNext())
@@ -190,7 +191,7 @@ export class MapScene extends Phaser.Scene {
   private goNext() {
     const d = this.data_
     const cam = this.cameras.main
-    cam.setRotation(0).setZoom(1)
+    cam.setRotation(0).setZoom(RENDER_SCALE)
     if (d.stageNo) this.registry.set('stageNo', d.stageNo)
     if (d.next === 'credits') this.scene.start('credits')
     else if (d.next === 'bike') this.scene.start('bike')

@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
@@ -53,7 +54,8 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#000000')
     this.cameras.main.fadeIn(300, 0, 0, 0)
     this.cursor = 0
@@ -129,7 +131,7 @@ export class MainMenuScene extends Phaser.Scene {
     SFX.sparkle()
     this.cameras.main.flash(300, 255, 230, 140)
     const t = this.add
-      .text(this.scale.width / 2, 120, on ? '★ 秘技成功！金鮭滿級・無限絕招 ★' : '秘技已關閉', {
+      .text(GAME_W / 2, 120, on ? '★ 秘技成功！金鮭滿級・無限絕招 ★' : '秘技已關閉', {
         fontFamily: FONT_UI,
         fontSize: '13px',
         color: '#ffe08a',
@@ -337,7 +339,7 @@ export class MainMenuScene extends Phaser.Scene {
     const p = this.plaques[i]
     if (!p) return
     const { g, x } = p
-    const y = this.scale.height - 26
+    const y = GAME_H - 26
     const x0 = x - PLAQUE_W / 2
     const y0 = y - PLAQUE_H / 2
     g.clear()

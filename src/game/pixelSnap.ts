@@ -1,3 +1,4 @@
+import { RENDER_SCALE } from './display'
 import Phaser from 'phaser'
 
 /**
@@ -546,8 +547,8 @@ export function snapXY(
 }
 
 export function snapCameraScroll(cam: Phaser.Cameras.Scene2D.Camera) {
-  cam.scrollX = Math.round(cam.scrollX)
-  cam.scrollY = Math.round(cam.scrollY)
+  cam.scrollX = Math.round(cam.scrollX * RENDER_SCALE) / RENDER_SCALE
+  cam.scrollY = Math.round(cam.scrollY * RENDER_SCALE) / RENDER_SCALE
 }
 
 export function snapTilePosition(

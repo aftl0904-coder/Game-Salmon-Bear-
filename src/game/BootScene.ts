@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { createHeroAnims, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
 import { createFxAnims, preloadFxAnims } from './fxAnims'
@@ -42,7 +43,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#3a2818')
 
     const g = this.add.graphics()

@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { playSong, stopBgm, SFX } from './audio'
 import { TouchInput } from './touchInput'
@@ -51,8 +52,8 @@ export class CreditsScene extends Phaser.Scene {
   }
 
   create() {
-    const W = this.scale.width
-    const H = this.scale.height
+    const W = GAME_W
+    const H = GAME_H
     this.done = false
     this.readyAt = this.time.now + 1500
     this.cameras.main.setBackgroundColor('#000000')
@@ -131,8 +132,8 @@ export class CreditsScene extends Phaser.Scene {
   private showEnd() {
     if (this.done) return
     this.done = true
-    const W = this.scale.width
-    const H = this.scale.height
+    const W = GAME_W
+    const H = GAME_H
     const fin = this.add
       .text(W / 2, H / 2 + 46, '完', { fontFamily: FONT_TITLE, fontSize: '28px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 })
       .setOrigin(0.5)

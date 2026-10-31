@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { SFX, setBgmDucked } from './audio'
 import { TouchInput, isPhonePlay } from './touchInput'
@@ -35,7 +36,8 @@ export class PauseScene extends Phaser.Scene {
     this.readyAt = this.time.now + 180
     setBgmDucked(true)
     SFX.blip(440)
-    const { width: W, height: H } = this.scale
+    const W = GAME_W
+    const H = GAME_H
 
     const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x06040a, 0.62).setInteractive()
     dim.on('pointerdown', () => undefined)
