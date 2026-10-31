@@ -1,7 +1,7 @@
 {
- "frameWidth": 176,
- "frameHeight": 176,
- "anchorX": 88,
+ "frameWidth": 180,
+ "frameHeight": 178,
+ "anchorX": 90,
  "anims": {
   "idle": {
    "start": 0,
@@ -89,5 +89,5 @@
   }
  },
  "res": 2,
- "columns": 23
+ "columns": 22
 }

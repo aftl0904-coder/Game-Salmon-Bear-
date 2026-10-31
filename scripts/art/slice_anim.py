@@ -62,6 +62,9 @@ def owl_silver(a):  # 月橋鏡鴞 feathers
 # Output resolution multiplier per set (frames are drawn RES x bigger than the 640x360 logical
 # size and shown at 1/RES by the engine: see heroAnims.markHd). Sets not listed stay 1x.
 HD = {'lunbo': 2, 'kibobo': 2, 'pupu': 2}
+# Logical cell size of the 1x sheets. HD cells are never smaller, so physics bodies (噗噗's body is its
+# whole frame) and body offsets stay exactly what the 1x game was tuned with.
+MIN_CELL = {'lunbo': (84, 81), 'kibobo': (90, 89), 'pupu': (58, 63)}
 MAX_SHEET_W = 4096  # keep atlases within the smallest common GPU texture limit
 
 CHARS = {
@@ -251,6 +254,8 @@ def main():
         half = max(max(ax for _, _, _, ax in items), max(A.shape[1] - ax for _, _, A, ax in items)) + 2
         left = half
         cw = half * 2; chh = max(A.shape[0] for _, _, A, _ in items) + 2
+        if ch in MIN_CELL and res > 1:
+            cw = max(cw, MIN_CELL[ch][0] * res); chh = max(chh, MIN_CELL[ch][1] * res)
         chh += -chh % res  # logical (cell / res) size must stay integral
         cw += -cw % res
         left = cw // 2
