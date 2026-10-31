@@ -64,8 +64,8 @@ PROPS = {
 }
 
 RES = 2  # sheet pixels per logical pixel; the engine shows HD props at 1/RES (artOverrides.ts)
-# Props the engine tiles with TileSprite or bakes per pixel (goal3d) stay 1x.
-HD_EXCLUDE = {'honey-tree', 's2-bark-ground', 's2-bark-platform', 's2-canopy-mid', 's2-vine-lattice', 's3-market-mid', 's3-market-ground', 'far-trunks'}
+# Props the engine bakes per pixel (goal3d) stay 1x.
+HD_EXCLUDE = {'honey-tree'}
 
 TRIM = {'s3-market-ground': (10, 3, 10, 2), 's3-market-mid': (4, 0, 4, 0)}
 
@@ -117,7 +117,7 @@ def main():
             W, H = q.size
             pad = Image.new('RGBA', (W + -W % res, H + -H % res), (0, 0, 0, 0)); pad.paste(q, (0, 0)); q = pad
         if name in TRIM:  # strips meant to tile: cut the rounded ends / soft top
-            l, t, r, b = TRIM[name]
+            l, t, r, b = (v * res for v in TRIM[name])
             q = q.crop((l, t, q.width - r, q.height - b))
         q.save(f'public/art/props/{name}.png')
         if res > 1: hd[name] = res
