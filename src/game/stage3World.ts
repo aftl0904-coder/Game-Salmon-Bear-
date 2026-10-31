@@ -3,6 +3,8 @@ import type { Player } from './Player'
 import { DEPTH } from './engine/depth'
 import { SFX } from './audio'
 import { floatText, burst } from './fx'
+import { markHd } from './heroAnims'
+import { RENDER_SCALE } from './display'
 
 /**
  * 月影夜市 mechanics (no enemies here):
@@ -57,12 +59,14 @@ export class Stage3World {
     const s = ctx.scene
     // Darkness layer: a canvas redrawn each frame with holes punched around the light sources.
     this.canvas = document.createElement('canvas')
-    this.canvas.width = W
-    this.canvas.height = H
+    this.canvas.width = W * RENDER_SCALE
+    this.canvas.height = H * RENDER_SCALE
     this.c2d = this.canvas.getContext('2d')!
+    this.c2d.scale(RENDER_SCALE, RENDER_SCALE)
     const key = 's3-dark'
     if (s.textures.exists(key)) s.textures.remove(key)
     this.tex = s.textures.addCanvas(key, this.canvas)
+    if (this.tex) markHd(this.tex, RENDER_SCALE)
     this.overlay = this.tex ? s.add.image(0, 0, key).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.FX - 1).setAlpha(1) : null
     // Lanterns hang on a string from the stall awnings.
     for (const l of d.lanterns ?? []) {

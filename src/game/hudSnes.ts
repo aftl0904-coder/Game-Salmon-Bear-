@@ -1,4 +1,5 @@
 import type Phaser from 'phaser'
+import { markHd } from './heroAnims'
 import { DEPTH } from './engine/depth'
 import { MAX_HP, GAME_W, GAME_H } from './engine/constants'
 import { FONT_UI } from './ui/fonts'
@@ -61,14 +62,17 @@ function bakeIcon(scene: Phaser.Scene, src: string, key: string, w: number, h: n
   const fr = scene.textures.getFrame(src, frame)
   if (!fr) return
   const img = fr.source.image as HTMLImageElement | HTMLCanvasElement
+  const res = fr.source.resolution || 1
+  const pw = w * res
+  const ph = h * res
   const c = document.createElement('canvas')
-  c.width = w
-  c.height = h
+  c.width = pw
+  c.height = ph
   const ctx = c.getContext('2d', { willReadFrequently: true })!
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(img, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, w, h)
-  const d = ctx.getImageData(0, 0, w, h)
+  ctx.drawImage(img, fr.cutX, fr.cutY, fr.cutWidth, fr.cutHeight, 0, 0, pw, ph)
+  const d = ctx.getImageData(0, 0, pw, ph)
   for (let i = 0; i < d.data.length; i += 4) {
     d.data[i + 3] = d.data[i + 3]! > 110 ? 255 : 0
     if (grey) {
@@ -79,7 +83,7 @@ function bakeIcon(scene: Phaser.Scene, src: string, key: string, w: number, h: n
     }
   }
   ctx.putImageData(d, 0, 0)
-  scene.textures.addCanvas(key, c)
+  markHd(scene.textures.addCanvas(key, c)!, res)
 }
 
 function txt(scene: Phaser.Scene, x: number, y: number, s: string, size: number, color: string) {
