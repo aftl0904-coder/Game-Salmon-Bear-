@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import { BootScene } from './game/BootScene'
 import { LogoScene } from './game/LogoScene'
 import { StudioScene } from './game/StudioScene'
+import { DifficultyScene } from './game/DifficultyScene'
 import { MenuScene } from './game/MenuScene'
 import { GameScene } from './game/GameScene'
 import { UIScene } from './game/UIScene'
@@ -45,7 +46,7 @@ function bootGame() {
     parent: root,
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: jumpGravity() }, debug: false } },
     input: { gamepad: true, activePointers: 3 },
-    scene: [BootScene, StudioScene, LogoScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene, MapScene, BikeScene, GachaScene],
+    scene: [BootScene, StudioScene, LogoScene, DifficultyScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene, MapScene, BikeScene, GachaScene],
     scale: {
       mode: Phaser.Scale.NONE,
       width: CANVAS_W,

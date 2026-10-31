@@ -18,6 +18,7 @@ import {
   defaultSpecies,
   pickTarget,
 } from '../enemyAi'
+import { difficultyHpMul, getDifficulty } from '../difficulty'
 import { Enemy, type EnemyFsm, type EnemyHooks, type EnemyTickCtx } from './Enemy'
 
 type AtkPhase = 'none' | 'windup' | 'strike' | 'recover' | 'pause' | 'charge'
@@ -99,7 +100,7 @@ export class PatrolEnemy extends Enemy {
     // Stagger so the pack doesn't all hop rows the same frame.
     e.laneSwitchCd = Phaser.Math.Between(80, 720)
     e.laneReactLag = Phaser.Math.Between(120, 520)
-    const hp = Math.max(1, Math.round(st.hp * (sp.hpMul ?? 1)))
+    const hp = Math.max(1, Math.round(st.hp * (sp.hpMul ?? 1) * difficultyHpMul(getDifficulty())))
     e.hp = hp
     e.maxHp = hp
     e.atkCd = Phaser.Math.Between(300, 800)
