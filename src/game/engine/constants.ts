@@ -192,10 +192,20 @@ export const SALMON_SHOT_SPEED = Math.round(520 * 0.7 * LAYOUT_SCALE)
  */
 export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8 / 0.8)
 export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8 / 0.8)
-/** 琪寶寶劍撃 hitbox 寬／高／持續（−60% with weapon size） */
-export const SWORD_HIT_W = Math.round(120 * WEAPON_DISPLAY_SCALE)
-/** Tall for ±1 lane reach */
-export const SWORD_HIT_H = Math.round(96 * WEAPON_DISPLAY_SCALE)
+/**
+ * 琪寶寶劍撃 hitbox 寬／高／持續 — fixed px, deliberately NOT tied to
+ * WEAPON_DISPLAY_SCALE (sprite display scale). Commit 20d7079 bumped
+ * WEAPON_DISPLAY_SCALE 0.37→1 for the art, which silently dragged this
+ * hit-detection box along for the ride: Lv1 reach went ~44px → ~120px
+ * (Cursor 3427f4e playtest: Lv1 ≈110px, Lv3 ≈190px, Lv3 重劍 ≈230px —
+ * at points level with or past 倫寶's Lv3 gun range of 182px, which
+ * breaks the ranged-vs-melee archetype). SWORD_HIT_W is one body-width
+ * (~44px) again so Lv1/Lv2/Lv3/重劍 (44/59/75/97px) all stay well under
+ * the gun's 130–291px range at every matching tier.
+ */
+export const SWORD_HIT_W = 44
+/** Tall for ±1 lane reach — unrelated to horizontal reach, left as-is. */
+export const SWORD_HIT_H = 96
 export const SWORD_HIT_MS = 160
 /** 噗噗跟在琪寶寶身後的水平距離 */
 export const PET_FOLLOW_BEHIND = Math.round((36 + 42 * ACTOR_DISPLAY_SCALE * HERO_SIZE_MUL) * LAYOUT_SCALE)
