@@ -49,7 +49,7 @@ export function installGamepadBridge(game: Phaser.Game) {
   const poll = () => {
     const p = connectedPads()[0] ?? null
     if (!p) {
-      if (hadPad) for (const b of ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'start'] as TouchBtn[]) TouchInput.setPad(b, false)
+      if (hadPad) for (const b of ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'weaponSwitch', 'start'] as TouchBtn[]) TouchInput.setPad(b, false)
       hadPad = false
       return
     }
@@ -64,6 +64,9 @@ export function installGamepadBridge(game: Phaser.Game) {
     TouchInput.setPad('jump', btn(p, 0))
     TouchInput.setPad('attack', btn(p, 1) || btn(p, 2))
     TouchInput.setPad('special', btn(p, 3) || btn(p, 4) || btn(p, 5))
+    // R1 weapon-switch: index 6 (LT on most pads) — 0/1/2/3/4/5 are already claimed
+    // above (jump/attack/special) and 8/9 below (start), so this is the first free one.
+    TouchInput.setPad('weaponSwitch', btn(p, 6))
     TouchInput.setPad('start', btn(p, 9) || btn(p, 8))
   }
   game.events.on('prestep', poll)

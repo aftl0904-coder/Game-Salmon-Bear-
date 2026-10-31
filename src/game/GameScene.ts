@@ -1244,11 +1244,20 @@ export class GameScene extends Phaser.Scene {
   }
   /**
    * R1 = weapon-mode switch (倫寶 雙槍切換 / 琪寶寶 快劍↔重劍), Alan: use the free
-   * 4th action key (H sits unused next to F/G/T) + gamepad R1 (standard index 5).
-   * L1 (index 4) is reserved the same way for a future mechanic — no function yet.
+   * 4th action key (H sits unused next to F/G/T) + gamepad R1, touch button for phone.
+   * Bug fix (code-review pass before handing off to Cursor for device testing): P1's
+   * gamepad is NEVER read via `this.pad1` directly — see its field comment, it's kept
+   * hardcoded null by design, P1's real controller input flows through TouchInput
+   * (gamepadBridge.ts), same as p1Attack/Jump/SpecialJust below. The original version
+   * of this method checked `this.padFaceJust(this.pad1, 5)`, which is permanently dead
+   * code (always false) — it silently never fired on a real gamepad, and happened to
+   * also collide with gamepadBridge's own index-5 "special" mapping if it had worked.
+   * Fixed to go through TouchInput like every other P1 action; gamepadBridge.ts now
+   * maps index 6 (free — 0/1/2/3/4/5 are jump/attack/special, 8/9 are start) to it,
+   * and mountTouchControls has a matching on-screen button for phone play.
    */
   private p1WeaponSwitchJust() {
-    return Phaser.Input.Keyboard.JustDown(this.keyH) || this.padFaceJust(this.pad1, 5)
+    return Phaser.Input.Keyboard.JustDown(this.keyH) || TouchInput.justPressed('weaponSwitch')
   }
   private p2AttackJust() {
     return (

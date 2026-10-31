@@ -14,11 +14,13 @@ export type TouchBtn =
   | 'attack'
   | 'jump'
   | 'special'
+  /** R1 weapon-mode switch (倫寶 連射/重擊, 琪寶寶 快劍/重劍) — P1 only, same convention. */
+  | 'weaponSwitch'
   | 'start'
   /** Back to the menu (game-over screen button). */
   | 'menu'
 
-const BTNS: TouchBtn[] = ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'start', 'menu']
+const BTNS: TouchBtn[] = ['left', 'right', 'up', 'down', 'crouch', 'attack', 'jump', 'special', 'weaponSwitch', 'start', 'menu']
 const mk = <T>(v: T) => Object.fromEntries(BTNS.map((b) => [b, v])) as Record<TouchBtn, T>
 
 const touchHeld = mk(false)

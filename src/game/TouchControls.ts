@@ -65,6 +65,11 @@ export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Cont
   mkBtn({ btn: 'jump', x: rx, y: ry, label: '跳', w: 48, h: 48 })
   mkBtn({ btn: 'attack', x: rx - 52, y: ry - 8, label: '攻', w: 44, h: 44 })
   mkBtn({ btn: 'special', x: rx, y: ry - 56, label: '絕', w: 44, h: 40 })
+  // R1 weapon-switch (倫寶 連射/重擊, 琪寶寶 快劍/重劍) — 4th corner of the face-button
+  // fan, between 攻 and 絕 so the cluster keeps the same "4 action keys" shape as the
+  // keyboard/gamepad bindings (H / pad index 6). Was previously untestable on phone —
+  // there was no on-screen control for it at all.
+  mkBtn({ btn: 'weaponSwitch', x: rx - 52, y: ry - 56, label: '換', w: 40, h: 36 })
   // Start: pause in play, insert coin on the continue screen, skip in menus.
   mkBtn({ btn: 'start', x: GAME_W - 30, y: 52, label: 'Ⅱ', w: 40, h: 28 })
 
