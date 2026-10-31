@@ -1739,7 +1739,7 @@ export class GameScene extends Phaser.Scene {
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
     const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
     const gearKnock = knockMul(h.role as Who)
-    const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
+    const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * this.speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
     const dmg = this.incoming(h, rawDmg)
     const hpLeft = applyDamage(h, {
       amount: dmg,
