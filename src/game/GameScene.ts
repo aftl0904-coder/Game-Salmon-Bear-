@@ -58,7 +58,9 @@ import {
   supportTopAt,
   terrainEnabled,
   wallClampX,
+  stepUpTop,
   terrainPits,
+  terrainSolids,
   type Solid,
 } from './engine/terrain'
 import {
@@ -3878,26 +3880,124 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => {
         const next = this.checkpointXs.find((x) => x > pal.x + 40)
         const destX = next !== undefined ? next + 56 + this.friendsSaved.length * 6 : pal.x + 420
-        this.tweens.add({ targets: pal, angle: { from: -6, to: 6 }, duration: 160, yoyo: true, repeat: -1 })
-        this.tweens.add({
-          targets: pal,
-          x: destX,
-          duration: Math.abs(destX - pal.x) * 9,
-          onComplete: () => {
-            this.tweens.killTweensOf(pal)
-            pal.setAngle(0)
-            if (next === undefined) {
-              this.tweens.add({ targets: pal, alpha: 0, duration: 300, onComplete: () => pal.destroy() })
-              return
-            }
-            const top = groundTopBelow(destX, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
-            pal.setY(top + 1).setDepth(DEPTH.PROP + 2)
-            // Waves (little hops) at the cart while you pass.
-            this.tweens.add({ targets: pal, y: top - 5, duration: 220, yoyo: true, repeat: -1, repeatDelay: 900, ease: 'Quad.out' })
-          },
+        this.friendWalk(pal, destX, () => {
+          pal.setAngle(0)
+          if (next === undefined) {
+            this.tweens.add({ targets: pal, alpha: 0, duration: 300, onComplete: () => pal.destroy() })
+            return
+          }
+          const top = groundTopBelow(destX, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+          pal.setY(top + 1).setDepth(DEPTH.PROP + 2)
+          // Waves (little hops) at the cart while you pass.
+          this.tweens.add({ targets: pal, y: top - 5, duration: 220, yoyo: true, repeat: -1, repeatDelay: 900, ease: 'Quad.out' })
         })
       },
     })
+  }
+
+  /**
+   * A freed friend walks to `destX` along the level's terrain (same supportTopAt / groundTopBelow /
+   * stepUpTop queries as the enemies): low steps are walked up, drops are walked off and fall, and a
+   * pit or tall step makes it stop a beat and then hop across. The plush art has no walk frames, so
+   * a small bounce on every stride stands in for them.
+   */
+  private friendWalk(pal: Phaser.GameObjects.Sprite, destX: number, onArrive: () => void) {
+    const SPEED = 1000 / 9
+    const HALF = 8
+    const STEP_UP = 15
+    const dir = (Math.sign(destX - pal.x) || 1) as 1 | -1
+    pal.setFlipX(dir < 0)
+    let feetY = pal.y
+    let vy = 0
+    let t = 0
+    let pause = 0
+    type Hop = { x0: number; y0: number; x1: number; y1: number; dur: number; arc: number; t: number }
+    let leap: Hop | null = null
+    let hop: Hop | null = null
+    let total = 0
+    const finish = () => {
+      this.events.off(Phaser.Scenes.Events.UPDATE, step)
+      this.events.off(Phaser.Scenes.Events.SHUTDOWN, finish)
+      if (!pal.active) return
+      pal.setX(destX)
+      onArrive()
+    }
+    const groundAt = (x: number, fy: number) => groundTopBelow(x, fy - STEP_UP, HALF)
+    const step = (_time: number, delta: number) => {
+      if (!pal.active) {
+        this.events.off(Phaser.Scenes.Events.UPDATE, step)
+        return
+      }
+      if (!terrainEnabled()) {
+        finish()
+        return
+      }
+      const dt = Math.min(delta, 50)
+      total += dt
+      t += dt
+      if (total > 25000) return finish()
+      if (leap) {
+        leap.t += dt
+        const p = Math.min(1, leap.t / leap.dur)
+        pal.x = leap.x0 + (leap.x1 - leap.x0) * p
+        feetY = leap.y0 + (leap.y1 - leap.y0) * p - Math.sin(Math.PI * p) * leap.arc
+        pal.y = feetY
+        if (p >= 1) {
+          feetY = leap.y1
+          leap = null
+          vy = 0
+        }
+        return
+      }
+      if (pause > 0) {
+        pause -= dt
+        if (pause <= 0 && hop) {
+          leap = hop
+          hop = null
+          vy = 0
+        }
+        return
+      }
+      const remain = (destX - pal.x) * dir
+      if (remain <= 0.5) return finish()
+      const nx = pal.x + dir * Math.min(remain, (SPEED * dt) / 1000)
+      const lead = nx + dir * HALF
+      const aheadTop = groundAt(lead, feetY)
+      const blockedWall = wallClampX(nx, feetY, dir, HALF, false) !== null && stepUpTop(nx, feetY, dir, HALF, STEP_UP) === null
+      if (aheadTop === null || blockedWall) {
+        // Stop at the edge for a beat, then hop to the first footing beyond the pit / step.
+        let toX = pal.x + dir * 40
+        if (aheadTop === null) {
+          const pit = terrainPits().find((q) => lead >= q.x0 - 2 && lead <= q.x1 + 2)
+          if (pit) toX = dir > 0 ? pit.x1 + HALF + 3 : pit.x0 - HALF - 3
+        } else {
+          const wall = terrainSolids().find((q) => !q.oneWay && q.kind === 'step' && Math.abs((dir > 0 ? q.x0 : q.x1) - lead) < 14)
+          if (wall) toX = (dir > 0 ? wall.x0 : wall.x1) + dir * (HALF + 6)
+        }
+        toX = dir > 0 ? Math.min(toX, destX) : Math.max(toX, destX)
+        const landTop = groundTopBelow(toX, feetY - 45, HALF) ?? feetY
+        const width = Math.abs(toX - pal.x)
+        hop = { x0: pal.x, y0: feetY, x1: toX, y1: landTop, dur: 380 + width * 2.4, arc: 26 + width * 0.22 + Math.max(0, feetY - landTop), t: 0 }
+        pause = 320
+        return
+      }
+      pal.x = nx
+      if (aheadTop < feetY) {
+        feetY = Math.max(aheadTop, feetY - 140 * (dt / 1000) - 0.01)
+        feetY = Math.max(feetY, aheadTop)
+        vy = 0
+      } else if (aheadTop > feetY + 0.5) {
+        vy += 900 * (dt / 1000)
+        feetY = Math.min(aheadTop, feetY + vy * (dt / 1000))
+        if (feetY >= aheadTop) vy = 0
+      } else {
+        feetY = aheadTop
+      }
+      const bounce = feetY >= aheadTop - 0.5 ? Math.abs(Math.sin(t / 95)) * 3 : 0
+      pal.y = feetY - bounce
+    }
+    this.events.on(Phaser.Scenes.Events.UPDATE, step)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, finish)
   }
 
   private breakPot(pot: Breakable) {
