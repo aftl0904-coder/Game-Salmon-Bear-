@@ -99,3 +99,20 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - 劍（琪）／槍（倫）：武器手邊 1／2／3 條光線，顏色銅／銀／金，閃爍。
 - 實測 `gear_fx.mjs` 截圖 `docs/qa-gear/tiers-zoom.png`（上排琪寶寶、下排倫寶，左至右 0–3 級）。
 - 未驗證：光線位置係固定偏移，唔會跟住每格動畫嘅劍位置移動（揮劍時光線留喺原位）；金色整體偏黃要人手睇係咪接受；冇加心心／鞋／蜜符視覺（brief 只要求盔甲同武器）。
+
+## 2026-11-02 Stage 4 泥鬃 / Stage 5 △畝大佬 換動畫 sprite
+
+### 現況核對（和需求描述有出入）
+- 兩隻大佬嘅正式美術其實一早已經喺 repo：`art-src/anim/boss/triboss/*`（batch-13，已切片成 `public/art/anim/triboss.png` + `data/anim/triboss.json`，TriBoss 本來就有 `hasArt` 路徑，`makeTexture` 只係冇圖時嘅後備）；`art-src/anim/boss/mudmane/*` 有 10 張 AI 生成動作表，但從未切片／接駁。所以冇重新生成，直接用現成同 pipeline 嘅圖。
+- 同樣情況（有 art-src 未切片）：`art-src/anim/enemies/E-11 honeyzombie / E-12 taximonster / E-13 punchclock`（Stage 4 三隻雜兵仍係 `makeTexture`），今次冇動。
+
+### 改動
+- 新 `scripts/art/slice_mudmane.py`：魔術粉紅去底，每張動作表按黃色安全帽面積同 walk 表對齊比例（因為騎車表入面嘅人細好多），出 `public/art/anim/mudmane.png`（30 格，cell 113×121 邏輯 px，res 2）+ `data/anim/mudmane.json`；動畫：ride / charge / walk / summon / nailgun / punch(拆做 windup + strike) / hurt / defeat。`heroAnims.ts` 註冊 `mudmane`。
+- `MudMane` 同 `TriBoss` 都改成 `extends AnimEnemy`，刪走 `makeTexture` 後備同 `hasArt` 分支。MudMane 每個 act 對應動畫（`MUD_ANIM`）：intro/anticip/recover=ride、charge=charge（碰撞箱放寬到 96 包住電單車）、platform/approach=walk、summon=summon、volley=nailgun、windup/strike=punch 前後半、exposed=hurt、死=defeat。原有 telegraph 染色（anticip/windup/exposed）保留，方便睇出弱點窗口。
+- TriBoss 死亡：unmask → defeat 由動畫自己帶，唔再有 bounce tween（呢條路徑本來已經係咁，只係移除咗後備）。
+
+### 實測（Playwright，真開遊戲打大佬）
+- `scripts/qa/owl/boss_acts.mjs` / `boss_acts_p3.mjs` / `boss_defeat.mjs`。
+- Stage 4：anticip→charge→recover→platform→summon→volley→approach→windup→strike→exposed→死，逐個 act 打印 `anims.currentAnim.key`，全部對應正確（ride/charge/walk/summon/nailgun/walk/windup/strike/hurt/defeat），console 0 error。截圖 `docs/qa-bossart/mudmane-acts.png`、`defeat-4-5.png`。
+- Stage 5：idle/point/rain/shield/hurt 對應 act 正確，強制擊殺 → unmask → defeat 播完，勝利流程進入通關卡。
+- 未驗證：人手打過兩場 boss 嘅手感（電單車衝撞箱 96px 係估計）；泥鬃嘅釘槍子彈（`nail.png` FX）同泥浪仍用舊嘅代碼畫；「hurt」第一格係全白受擊閃光（原圖就係咁）；bike 表有少量紅色邊緣（原圖輪輻透底色殘留，縮細後幾乎睇唔到）；Stage 4 三隻雜兵仍係 placeholder。

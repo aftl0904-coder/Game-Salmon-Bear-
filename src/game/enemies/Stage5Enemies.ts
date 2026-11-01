@@ -1,8 +1,8 @@
 import Phaser from 'phaser'
-import { Enemy, type EnemyHitResult } from './Enemy'
+import type { EnemyHitResult } from './Enemy'
+import { AnimEnemy } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { actorDepth } from '../engine/depth'
-import { ANIM_SETS, animTex, hasAnimSet } from '../heroAnims'
 import { bossHitDamage } from '../engine/bossDamage'
 
 /**
@@ -19,19 +19,10 @@ import { bossHitDamage } from '../engine/bossDamage'
  *     crack triggers a short 噗噗 team-up beat before he actually falls (see `die`).
  *
  * Art: Cursor's batch-13 (scripts/art/slice_triboss.py → public/art/anim/triboss.png),
- * registered as the 'triboss' anim set in heroAnims.ts. Falls back to a flat silhouette
- * texture if the art set isn't loaded for some reason (same spirit as the old placeholder).
+ * registered as the 'triboss' anim set in heroAnims.ts; extends AnimEnemy like QueenBee / MirrorOwl.
  */
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
-
-function makeTexture(scene: Phaser.Scene, key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) {
-  if (scene.textures.exists(key)) return
-  const g = scene.make.graphics({ x: 0, y: 0 }, false)
-  draw(g)
-  g.generateTexture(key, w, h)
-  g.destroy()
-}
 
 export type TriHooks = {
   floorY: () => number
@@ -64,11 +55,7 @@ type Act =
   | 'storm'
   | 'crack'
 
-export class TriBoss extends Enemy {
-  flying = false
-  species = 'triboss'
-  kind = 'boss'
-  boss = true
+export class TriBoss extends AnimEnemy {
   qphase: 1 | 2 | 3 = 1
   private act: Act = 'intro'
   private t = 0
@@ -80,61 +67,22 @@ export class TriBoss extends Enemy {
   arenaX1 = 0
   private lastHitAt = 0
   private th: TriHooks
-  private hasArt: boolean
-  private animName = ''
   onDefeated?: () => void
 
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, th: TriHooks) {
-    const hasArt = hasAnimSet(scene, 'triboss')
-    if (!hasArt) {
-      makeTexture(scene, 'stage5-triboss', 52, 64, (g) => {
-        const out = 0x0e0a10
-        // Suit + shoes.
-        g.fillStyle(out, 1).fillEllipse(26, 58, 44, 10)
-        g.fillStyle(0x201a28, 1).fillRoundedRect(8, 30, 36, 30, 6)
-        g.fillStyle(0x16111c, 1).fillRect(8, 30, 36, 8)
-        // Head + triangle mask.
-        g.fillStyle(0x3a3240, 1).fillCircle(26, 20, 13)
-        g.fillStyle(0xd82a2a, 1).fillTriangle(26, 8, 13, 28, 39, 28)
-        g.fillStyle(out, 1).fillTriangle(26, 14, 19, 25, 33, 25)
-        g.fillStyle(0xffd060, 1).fillCircle(26, 20, 2.4)
-        // Tie — the one bright thread.
-        g.fillStyle(0xffb020, 1).fillTriangle(26, 30, 22, 44, 30, 44)
-      })
-    }
-    const idleStart = hasArt ? ANIM_SETS.triboss.anims.idle?.start ?? 0 : undefined
-    super(scene, x, th.floorY(), hasArt ? animTex('triboss') : 'stage5-triboss', idleStart)
-    this.hasArt = hasArt
+    super(scene, x, th.floorY(), 'triboss', { floorY: th.floorY }, 'idle')
+    this.species = 'triboss'
+    this.kind = 'boss'
+    this.boss = true
     this.th = th
-    this.setOrigin(0.5, 1)
     this.hp = this.maxHp = 48
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
+    // The art cell is much taller than the old 52x64 stand-in: keep the hit volume over his torso.
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.allowGravity = false
-    if (hasArt) {
-      // Real art cell is taller than the old 52×64 placeholder — centre a similar hit
-      // volume over his torso instead of the full suit+legs.
-      const fw = this.frame.width
-      const fh = this.frame.height
-      body.setSize(44, 56)
-      body.setOffset((fw - 44) / 2, fh - 56 - 6)
-      this.playAnim('idle')
-    } else {
-      body.setSize(40, 48)
-      body.setOffset(6, 10)
-    }
-  }
-
-  /** Play `triboss-<name>` once per state change; no-ops to the placeholder tint path when there's no art. */
-  private playAnim(name: string) {
-    if (!this.hasArt) return
-    if (this.animName === name) return
-    const key = `triboss-${name}`
-    if (!this.scene?.anims.exists(key)) return
-    this.animName = name
-    this.play(key)
+    body.setSize(44, 56)
+    body.setOffset((this.frame.width - 44) / 2, this.frame.height - 56 - 6)
   }
 
   canHurtPlayer() {
@@ -198,19 +146,10 @@ export class TriBoss extends Enemy {
     this.setFsm('DEAD')
     this.setVelocity(0, 0)
     ;(this.body as Phaser.Physics.Arcade.Body).enable = false
-    if (this.hasArt) {
-      // Mask cracks off, then he crumples — no silhouette bounce-tween needed, the
-      // animation itself carries the fall.
-      this.animName = ''
-      this.playAnim('unmask')
-      this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        this.animName = ''
-        this.playAnim('defeat')
-      })
-    } else {
-      this.clearTint()
-      this.scene.tweens.add({ targets: this, y: this.th.floorY(), angle: 10, duration: 700, ease: 'Bounce.out' })
-    }
+    // Mask cracks off, then he crumples — the animation itself carries the fall.
+    this.clearTint()
+    this.anim('unmask')
+    this.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => this.anim('defeat'))
     // 噗噗 half-wakes and charges in for the team-up finish before he's counted defeated.
     this.th.bossEvent('finale')
     this.scene.time.delayedCall(2200, () => {
@@ -229,15 +168,13 @@ export class TriBoss extends Enemy {
     this.setFlipX(tgt.x < this.x)
     switch (this.act) {
       case 'intro':
-        this.playAnim('idle')
+        this.anim('idle')
         if (this.t > 1200) this.go('rainwarn')
         break
 
       // ── Phase 1: 假蜜雨＋蜜僵門潮 ──
       case 'rainwarn':
-        // Pointing-up telegraph; keep the amber tint too when there's no art to flash instead.
-        this.playAnim('point')
-        if (!this.hasArt) this.setTint(0xffd070)
+        this.anim('point')
         if (this.t > 600) {
           this.clearTint()
           this.th.rain(this.arenaX0, this.arenaX1)
@@ -245,29 +182,29 @@ export class TriBoss extends Enemy {
         }
         break
       case 'rain':
-        this.playAnim('rain')
+        this.anim('rain')
         if (this.t > 500 && this.t - dt <= 500) this.th.spawnZombie(this.arenaX0 + 30)
         if (this.t > 900 && this.t - dt <= 900) this.th.spawnZombie(this.arenaX1 - 30)
         if (this.t > 1800) this.go('rest1')
         break
       case 'rest1':
-        this.playAnim('idle')
+        this.anim('idle')
         if (this.t > 900) this.go('rainwarn')
         break
 
       // ── Phase 2: 推土機軌道＋舊 Boss 投影 ──
       case 'proj1':
-        this.playAnim('point')
+        this.anim('point')
         if (this.t > 200 && this.t - dt <= 200) this.th.replayQueen(tgt.x)
         if (this.t > 1400) this.go('proj2')
         break
       case 'proj2':
-        this.playAnim('point')
+        this.anim('point')
         if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl(this.safeGap(tgt.x))
         if (this.t > 1600) this.go('dozer')
         break
       case 'dozer':
-        this.playAnim('point')
+        this.anim('point')
         if (this.t > 100 && this.t - dt <= 100) {
           this.dirX = (Math.sign(tgt.x - this.x) || this.dirX) as 1 | -1
           this.th.dozerRun(this.arenaX0, this.arenaX1, this.dirX)
@@ -275,21 +212,20 @@ export class TriBoss extends Enemy {
         if (this.t > 1500) this.go('rest2')
         break
       case 'rest2':
-        this.playAnim('idle')
+        this.anim('idle')
         if (this.t > 1000) this.go('proj1')
         break
 
       // ── Phase 3: 三角盾＋主控電腦 ──
       case 'shield':
-        this.playAnim('shield')
-        if (!this.hasArt) this.setTint(0x6a7aff)
+        this.anim('shield')
         if (this.t > 700) {
           this.clearTint()
           this.go(this.cycle % 2 === 0 ? 'volley' : 'storm')
         }
         break
       case 'volley': {
-        this.playAnim('point')
+        this.anim('point')
         const dir: 1 | -1 = tgt.x < this.x ? -1 : 1
         if (this.volleyShots < 3 && this.t >= this.volleyShots * 520) {
           this.th.bolt(this.x + dir * 24, floor, dir, this.volleyShots === 1, 240, 2600)
@@ -299,7 +235,7 @@ export class TriBoss extends Enemy {
         break
       }
       case 'storm':
-        this.playAnim('rain')
+        this.anim('rain')
         if (this.stormFired === 0 && this.t > 100) {
           this.stormFired = 1
           this.th.rain(this.arenaX0, this.arenaX1)
@@ -312,8 +248,7 @@ export class TriBoss extends Enemy {
         if (this.t > 2000) this.openCrack()
         break
       case 'crack':
-        this.playAnim('hurt')
-        if (!this.hasArt) this.setTint(0xffe060)
+        this.anim('hurt')
         if (this.t > 1400) {
           this.clearTint()
           this.cycle++

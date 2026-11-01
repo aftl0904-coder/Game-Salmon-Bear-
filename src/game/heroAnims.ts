@@ -15,6 +15,7 @@ import stallkeeperMeta from '../../data/anim/stallkeeper.json'
 import mirrorshadeMeta from '../../data/anim/mirrorshade.json'
 import mirrorowlMeta from '../../data/anim/mirrorowl.json'
 import tribossMeta from '../../data/anim/triboss.json'
+import mudmaneMeta from '../../data/anim/mudmane.json'
 
 /**
  * Frame-by-frame hero / companion animation from Cursor's action sheets
@@ -27,7 +28,7 @@ import tribossMeta from '../../data/anim/triboss.json'
 export type AnimSetId =
   | 'lunbo' | 'kibobo' | 'pupu' | 'fish' | 'hatsoldier' | 'mechpig'
   | 'beesoldier' | 'squirrel' | 'minibee' | 'egg' | 'queen'
-  | 'lobster' | 'stallkeeper' | 'mirrorshade' | 'mirrorowl' | 'triboss'
+  | 'lobster' | 'stallkeeper' | 'mirrorshade' | 'mirrorowl' | 'triboss' | 'mudmane'
 type Meta = {
   /** Cell size in sheet pixels (RES× the logical size for HD sets). */
   frameWidth: number
@@ -56,6 +57,7 @@ export const ANIM_SETS: Record<AnimSetId, Meta> = {
   mirrorshade: mirrorshadeMeta as Meta,
   mirrorowl: mirrorowlMeta as Meta,
   triboss: tribossMeta as Meta,
+  mudmane: mudmaneMeta as Meta,
 }
 
 /** Enemy species (enemyAi) → animation set. */

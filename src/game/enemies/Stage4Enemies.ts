@@ -1,6 +1,6 @@
 import Phaser from 'phaser'
 import { Enemy, type EnemyHitResult } from './Enemy'
-import type { Stage2Hooks } from './Stage2Enemies'
+import { AnimEnemy, type Stage2Hooks } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
 import { actorDepth } from '../engine/depth'
@@ -11,9 +11,11 @@ import { bossHitDamage } from '../engine/bossDamage'
  * then high-speed charge), 打卡鐘怪 (countdown then a radial paper burst), and the boss
  * 泥鬃 (motorcycle foreman).
  *
- * No Cursor art delivered yet for this batch, so every look here is a small procedurally
- * drawn placeholder (same approach as friends.ts before batch-06) — a code-drawn silhouette
- * that reads clearly at game scale, swapped for real art once ART-REQUEST-14 comes back.
+ * The boss 泥鬃 now runs on real frame animation (art-src/anim/boss/mudmane →
+ * scripts/art/slice_mudmane.py → the 'mudmane' anim set, via AnimEnemy). The three mobs below
+ * are still small procedurally drawn placeholders — a code-drawn silhouette that reads at
+ * game scale, to be swapped once their art arrives (art-src/anim/enemies/E-11..E-13 exist but
+ * are not sliced yet).
  * Everything still runs through the shared Stage2Hooks plumbing (floorY/spawnCoin) so these
  * drop in via GameScene.addS2Enemy exactly like the stage 2/3 cast.
  */
@@ -276,11 +278,22 @@ export type MudHooks = {
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
 }
 
-export class MudMane extends Enemy {
-  flying = false
-  species = 'mudmane'
-  kind = 'boss'
-  boss = true
+/** Which of the boss's animations each act plays (data/anim/mudmane.json). */
+const MUD_ANIM: Record<MudMane['act'], string> = {
+  intro: 'ride',
+  anticip: 'ride',
+  charge: 'charge',
+  recover: 'ride',
+  platform: 'walk',
+  summon: 'summon',
+  volley: 'nailgun',
+  approach: 'walk',
+  windup: 'windup',
+  strike: 'strike',
+  exposed: 'hurt',
+}
+
+export class MudMane extends AnimEnemy {
   qphase: 1 | 2 | 3 = 1
   private act: 'intro' | 'anticip' | 'charge' | 'recover' | 'platform' | 'summon' | 'volley' | 'approach' | 'windup' | 'strike' | 'exposed' = 'intro'
   private t = 0
@@ -292,29 +305,22 @@ export class MudMane extends Enemy {
   private mh: MudHooks
   onDefeated?: () => void
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, mh: MudHooks) {
-    makeTexture(scene, 'stage4-mudmane', 56, 62, (g) => {
-      const out = 0x140e0a
-      g.fillStyle(out, 1).fillEllipse(28, 56, 46, 10)
-      g.fillStyle(0x201812, 1).fillRoundedRect(4, 44, 48, 12, 4)
-      g.fillStyle(0x3a2c20, 1).fillCircle(14, 56, 7).fillCircle(42, 56, 7)
-      g.fillStyle(out, 1).fillCircle(14, 56, 3).fillCircle(42, 56, 3)
-      g.fillStyle(0x6a5030, 1).fillEllipse(28, 30, 22, 28)
-      g.fillStyle(0x8a6a3c, 1).fillCircle(28, 14, 10)
-      g.fillStyle(out, 1).fillRect(20, 8, 16, 7)
-      g.fillStyle(0xd8a020, 1).fillTriangle(22, 26, 34, 26, 28, 14)
-      g.fillStyle(out, 1).fillTriangle(24, 25, 32, 25, 28, 16)
-    })
-    super(scene, x, mh.floorY(), 'stage4-mudmane')
+    super(scene, x, mh.floorY(), 'mudmane', { floorY: mh.floorY }, 'ride')
+    this.species = 'mudmane'
+    this.kind = 'boss'
+    this.boss = true
     this.mh = mh
-    this.setOrigin(0.5, 1)
     this.hp = this.maxHp = 40
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
+    this.box(44, 56)
+  }
+  /** Hit volume over the torso; the charge swaps in a wide one that covers the bike. */
+  private box(w: number, h: number) {
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.allowGravity = false
-    body.setSize(44, 44)
-    body.setOffset(6, 10)
+    body.setSize(w, h)
+    body.setOffset((this.frame.width - w) / 2, this.frame.height - h - 4)
   }
   canHurtPlayer() {
     if (!this.active || this.fsm === 'DEAD') return false
@@ -346,6 +352,8 @@ export class MudMane extends Enemy {
   private go(a: MudMane['act']) {
     this.act = a
     this.t = 0
+    this.anim(MUD_ANIM[a])
+    this.box(a === 'charge' ? 96 : 44, a === 'charge' ? 50 : 56)
   }
   protected override die(_dir: number) {
     this.hp = 0
@@ -353,7 +361,8 @@ export class MudMane extends Enemy {
     this.setFsm('DEAD')
     this.setVelocity(0, 0)
     ;(this.body as Phaser.Physics.Arcade.Body).enable = false
-    this.scene.tweens.add({ targets: this, y: this.mh.floorY(), angle: 8, duration: 600, ease: 'Bounce.out' })
+    this.clearTint()
+    this.anim('defeat')
     this.mh.bossEvent('defeat')
     this.scene.time.delayedCall(1600, () => this.onDefeated?.())
   }
