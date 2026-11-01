@@ -2,14 +2,14 @@ import { chromium } from 'playwright'
 import fs from 'fs'
 export const OUT = '/tmp/owl-artifacts'
 export async function boot(cast = 'girl', diff = 'normal') {
-  const lvl = JSON.parse(fs.readFileSync('/tmp/res2x-on58/data/levels/stage3.json', 'utf8'))
+  const lvl = JSON.parse(fs.readFileSync('/tmp/res2x-on58/data/levels/stage'+(process.env.STAGE||3)+'.json', 'utf8'))
   const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] })
   const ctx = await b.newContext({ viewport: { width: 1280, height: 720 } })
   await ctx.addInitScript((d) => { localStorage.setItem('sake-kuma-difficulty-v1', d); localStorage.setItem('sake-kuma-progress-v1', JSON.stringify({ maxStage: 5 })) }, diff)
   const page = await ctx.newPage()
   const errs = []; page.on('pageerror', (e) => errs.push(e.message)); page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text().slice(0, 160)) })
   await page.goto('http://127.0.0.1:47313/'); await page.waitForTimeout(5000)
-  await page.evaluate(([c, d]) => { const g = window.__SAKE_GAME__; g.registry.set('stageNo', 3); g.registry.set('difficulty', d); g.registry.set('playMode', '1p'); g.registry.set('soloCast', c); g.registry.set('stageRound', 1); for (const s of g.scene.getScenes(true)) g.scene.stop(s.scene.key); g.scene.start('play') }, [cast, diff])
+  await page.evaluate((s) => { window.__STG = s }, +(process.env.STAGE||3)); await page.evaluate(([c, d]) => { const g = window.__SAKE_GAME__; g.registry.set('stageNo', +(window.__STG||3)); g.registry.set('difficulty', d); g.registry.set('playMode', '1p'); g.registry.set('soloCast', c); g.registry.set('stageRound', 1); for (const s of g.scene.getScenes(true)) g.scene.stop(s.scene.key); g.scene.start('play') }, [cast, diff])
   await page.waitForTimeout(3000)
   const press = async (k, h = 45) => { await page.keyboard.down(k); await page.waitForTimeout(h); await page.keyboard.up(k) }
   const S = () => page.evaluate(() => { const s = window.__SAKE_GAME__.scene.getScene('play'); if (!s || !s.cameras) return { gone: true }; const h = s.boy?.active ? s.boy : s.girl; const q = s.queen; return { hx: Math.round(h.x), hy: Math.round(h.y), hp: h.hp, alive: h.alive, pose: h.pose, intro: !!s.storyIntro, bf: !!s.bossFight, qhp: q?.hp, qmax: q?.maxHp, qx: q ? Math.round(q.x) : null, qy: q ? Math.round(q.y) : null, act: q?.act, ph: q?.qphase, gap: q?.gapX, dest: q?.destX, wh: q?.windowHits, cued: q?.cued, face: s.boy?.active ? s.boy.facing : s.girl?.facing, cont: !!s.awaitingContinue, ended: !!s.ended, now: Math.round(s.time.now) } })

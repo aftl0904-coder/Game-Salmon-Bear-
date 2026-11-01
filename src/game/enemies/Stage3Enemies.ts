@@ -3,6 +3,7 @@ import { Enemy, type EnemyHitResult } from './Enemy'
 import { AnimEnemy, type Stage2Hooks } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
+import { bossHitDamage } from '../engine/bossDamage'
 
 /**
  * Stage 3 boss 月橋鏡鴞 (mirror owl) and its pieces.
@@ -171,9 +172,8 @@ export class MirrorOwl extends AnimEnemy {
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
-    void dmg
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(this.act === 'weak' ? 2 : 1, dir)
+    const r = super.receiveHit(bossHitDamage(dmg, { weak: this.act === 'weak', weakBase: 2, capNormal: 2, capWeak: 4 }), dir)
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')

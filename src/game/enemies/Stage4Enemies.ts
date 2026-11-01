@@ -4,6 +4,7 @@ import type { Stage2Hooks } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
 import { actorDepth } from '../engine/depth'
+import { bossHitDamage } from '../engine/bossDamage'
 
 /**
  * Stage 4 · 鹽霧工地 cast: 蜜僵 (slow shambling zombie, groups), 的士怪 (headlight-warn
@@ -320,13 +321,13 @@ export class MudMane extends Enemy {
     if (this.act === 'intro' || this.act === 'recover' || this.act === 'exposed' || this.act === 'windup') return false
     return this.contactCd <= 0
   }
-  receiveHit(_dmg: number, dir: number): EnemyHitResult {
+  receiveHit(dmg: number, dir: number): EnemyHitResult {
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
-    const mult = this.act === 'exposed' ? 3 : 1
+    const hitDmg = bossHitDamage(dmg, { weak: this.act === 'exposed', weakBase: 3, capNormal: 2, capWeak: 5 })
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(1 * mult, dir)
+    const r = super.receiveHit(hitDmg, dir)
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')

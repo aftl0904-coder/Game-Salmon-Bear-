@@ -4,6 +4,7 @@ import { ANIM_SETS, animTex, hasAnimSet, type AnimSetId } from '../heroAnims'
 import { actorDepth } from '../engine/depth'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
+import { bossHitDamage } from '../engine/bossDamage'
 
 /**
  * Stage 2 · 蜜樹丘 cast: 蜜蜂兵 (diving flyer), 蜜僵松鼠 (slow shambler, groups),
@@ -405,16 +406,15 @@ export class QueenBee extends AnimEnemy {
 
   receiveHit(dmg: number, dir: number): EnemyHitResult {
     if (this.act === 'defeat' || this.act === 'intro') return { killed: false, hp: this.hp }
-    // Boss HP counts hits, not weapon damage: one point per hit (three on the glowing weak spot),
-    // then ~0.4s of boss i-frames (spread volleys and mashing count once).
+    // Boss HP: a base hit is 1 point (3 on the glowing weak spot); gear scales it, capped (bossHitDamage).
+    // ~0.4s of boss i-frames follow (spread volleys and mashing count once).
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
-    dmg = 1
-    const mult = this.act === 'weak' ? 3 : 1
+    const hitDmg = bossHitDamage(dmg, { weak: this.act === 'weak', weakBase: 3, capNormal: 2, capWeak: 5 })
     // Bosses don't fly across the arena when hit.
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(dmg * mult, dir)
+    const r = super.receiveHit(hitDmg, dir)
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')

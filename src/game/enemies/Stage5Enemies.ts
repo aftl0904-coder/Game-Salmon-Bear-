@@ -3,6 +3,7 @@ import { Enemy, type EnemyHitResult } from './Enemy'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { actorDepth } from '../engine/depth'
 import { ANIM_SETS, animTex, hasAnimSet } from '../heroAnims'
+import { bossHitDamage } from '../engine/bossDamage'
 
 /**
  * Stage 5 · △畝大廈 final boss: △畝大佬 (the man behind the triangle mask). No new jumping
@@ -141,7 +142,7 @@ export class TriBoss extends Enemy {
     return this.contactCd <= 0
   }
 
-  receiveHit(_dmg: number, dir: number): EnemyHitResult {
+  receiveHit(dmg: number, dir: number): EnemyHitResult {
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     // Phase 3: shielded except during the brief crack window.
@@ -151,7 +152,7 @@ export class TriBoss extends Enemy {
     }
     this.lastHitAt = now
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(1, dir)
+    const r = super.receiveHit(bossHitDamage(dmg, { capNormal: 2 }), dir)
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')
