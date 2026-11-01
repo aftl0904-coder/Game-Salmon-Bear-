@@ -22,6 +22,8 @@ type Side = {
   hpFill: Phaser.GameObjects.Rectangle
   hpBarW: number
   stam: Phaser.GameObjects.Rectangle
+  combo: Phaser.GameObjects.Rectangle
+  comboW: number
   weapon: Phaser.GameObjects.Image[]
   modeTag: Phaser.GameObjects.Text
 }
@@ -33,6 +35,11 @@ export type SnesHud = {
   hpBarWR: number
   stamL: Phaser.GameObjects.Rectangle
   stamR: Phaser.GameObjects.Rectangle
+  /** 連擊 meters, drawn just below the top band so they never crowd the HP / 耐力 bars. */
+  comboL: Phaser.GameObjects.Rectangle
+  comboR: Phaser.GameObjects.Rectangle
+  comboWL: number
+  comboWR: number
   weaponL: Phaser.GameObjects.Image[]
   weaponR: Phaser.GameObjects.Image[]
   /** Persistent weapon-mode badge (reads "連射"/"快劍" or "重擊"/"重劍"), next to each name. */
@@ -179,7 +186,17 @@ export function buildSnesHud(
     root.add(scene.add.rectangle(sx, stamY, sw, 4, 0x2a1a10).setOrigin(0, 0).setScrollFactor(0))
     const stam = scene.add.rectangle(right ? sx + sw : sx, stamY + 1, sw, 2, 0x6ad0ff).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
     root.add(stam)
-    return { hpFill, hpBarW, weapon, stam, modeTag }
+    // 連擊 meter: its own royal-blue bar below the band (distinct from the cyan 耐力 bar and the 絕招 gauge).
+    const comboW = 64
+    const comboY = BAND_H + 3
+    const comboX = right ? GAME_W - 6 - comboW : 6 + 22
+    const lab = txt(scene, right ? comboX - 3 : comboX - 22, comboY - 3, '連擊', 9, '#8ab8ff').setOrigin(right ? 1 : 0, 0)
+    root.add(lab)
+    g.fillStyle(0xc8902a, 1).fillRect(comboX - 1, comboY - 1, comboW + 2, 7)
+    g.fillStyle(0x0a1230, 1).fillRect(comboX, comboY, comboW, 5)
+    const combo = scene.add.rectangle(right ? comboX + comboW : comboX, comboY, 0, 5, 0x3a78ff, 1).setOrigin(right ? 1 : 0, 0).setScrollFactor(0)
+    root.add(combo)
+    return { hpFill, hpBarW, weapon, stam, combo, comboW, modeTag }
   }
 
   const p1Who = opts.mode === '1p' && opts.soloCast === 'girl' ? 'kibobo' : 'lunbo'
@@ -192,6 +209,8 @@ export function buildSnesHud(
           hpBarW: 1,
           weapon: [],
           stam: scene.add.rectangle(-99, -99, 1, 1).setVisible(false),
+          combo: scene.add.rectangle(-99, -99, 1, 1).setVisible(false),
+          comboW: 1,
           modeTag: scene.add.text(-99, -99, '').setVisible(false),
         }
 
@@ -272,6 +291,10 @@ export function buildSnesHud(
     hpBarWR: R.hpBarW,
     stamL: L.stam,
     stamR: R.stam,
+    comboL: L.combo,
+    comboR: R.combo,
+    comboWL: L.comboW,
+    comboWR: R.comboW,
     weaponL: L.weapon,
     weaponR: R.weapon,
     modeTagL: L.modeTag,

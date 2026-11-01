@@ -158,5 +158,22 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - 狀態：CHASE / ATTACK（卡≥700ms）會跳；PATROL / HURT / DEAD 唔跳（維持）；flying 唔受影響。
 **實測**（`scripts/qa/owl/gaphop.mjs`，chaser 窿前 50px，hero 窿後 120px；log 喺 `docs/qa-gaphop/`）：
 stage1 窿 1184/1872(144)/2464/3152(144)/4524 跳過；stage2 1980(104)/2860 跳過；stage3 2560(96)/2860 跳過；stage4 760/1040/2040 跳過；stage5 1980/2760 跳過。
-每條各一次，5 關同時跑令 swiftshader 變慢，個別窿首次無記到「跳過」，之後用單獨 `trace.mjs` 跑 stage1 pit672 見到 ATTACK/CHASE 700ms 後 `L` 跳過。
-未能實測：stage1 5116、stage4 3300、stage5 3160（喺 boss 觸發線後面，傳送 hero 過去會觸發 boss 清走敵人，屬測試手法限制）；stage2/3/4/5 嘅首個窿同 stage1 672 一樣通過單獨 trace 或漏測，詳見 log。
+每條各一次；5 關同時跑令 swiftshader 變慢，stage 1/2/3/5 嘅第一個窿（672/700/1040/620，窿前 50px 起步）喺 12 秒限時內未記到「跳過」。單獨 trace stage1 pit672：ATTACK/CHASE 約 700ms 後 `L` 跳過（已確認）；其餘三個首窿未單獨重跑。
+未能實測：stage1 5116、stage4 3300、stage5 3160（喺 boss 觸發線後面，傳送 hero 過去會觸發 boss 清走敵人，屬測試手法限制）。
+
+
+## 連擊特殊招 + 踩頭彈跳
+腳本：`scripts/qa/owl/combo.mjs`、`stomp.mjs`（CAST=boy|girl）；截圖 `docs/qa-combo/`。
+**連擊 meter**（`Player.combo`，同 `specialCharges` 完全分開）：
+- 命中（damageEnemy 真係打中，鐵甲/霸體/躲埋唔計）近戰 +0.05、射擊 +0.03；2 秒冇命中後每秒 −0.12；施放期間唔累積。
+- 長撳攻擊 500ms + meter 滿 → 觸發；meter 未滿長撳冇反應（實測 B）。
+- 女：360° 旋轉 1.5 秒，每 250ms 一個以自己為中心 150×84 嘅 hitbox，每下 2 傷（6 下）。男：5 發，間距 110ms，每發 power 0.7（2 傷）。
+- 施放期間 `superArmorUntil`：hurtHero 實測 HP 6→5 但 pose 仍 idle、hurtLock 0、冇擊退（男女都係）；放完後同一個 hurtHero 呼叫就正常 hurt/hurtLock 260。
+- 放完 combo=0、stam=0（實測男 stam 0.09–0.23 係清零後再回復）。
+- HUD：新藍色「連擊」bar 喺頂部 band 下面（左 x 28–92，右 x 570–634），同 HP/耐力/絕招分開；滿時閃白藍。2P 截圖 `hud-2p.png`。
+**踩頭**（`GameScene.tickStomp`，同攻擊 hitbox 獨立，只睇「落緊 + 腳底穿過敵人頭頂」）：
+- 一般彈：velocity = 0.8× 全跳初速（實測 apex 約 50px，地面全跳 68px）；jump 喺落地前 ≤100ms 撳（或之後 ≤100ms）→ 1.3×（實測 apex 116px）。
+- 傷害 2（boss 1），HP 2 嘅敵人一踩即死（實測）；踩後 350ms 內唔受接觸傷害，敵人 ATTACK/strike 狀態下踩都冇扣血（實測）。
+- 同一隻敵人 350ms 冷卻；彈起後跌返落同一隻會連踩（實測 8 傷 = 4 次）。
+**順手發現（已修，行為有變）**：`this.shots` ↔ `this.enemies` overlap 喺 `s.destroy()` 之後先讀 `getData('power')`，永遠係 undefined → power 一律當 1。即係重擊鮭（power 2.2）同冇氣射擊（power 0.5）一直都係 3 傷。我將讀取提前，所以現在重擊鮭 = 7 傷、冇氣射擊 = 2 傷（設計原意）。如果 Alan 唔想改平衡，將 `pw` 固定為 1 即可還原。
+**未實測**：遊戲手柄/觸控長撳（只用鍵盤 F 測）；2P 嘅 P2（`,` 鍵）長撳；踩頭「落地後 100ms 內再撳」嗰條路（只測咗落地前撳）；真人手感同數值平衡；女角旋轉嗰把劍嘅視覺只係喺截圖見到 HUD/字，未逐幀確認。

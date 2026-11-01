@@ -37,6 +37,7 @@ import {
 } from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
 import { landingTopAt, stepUpTop, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
+import { floatText } from './fx'
 import {
   enableActorSprite,
   setDiePoseVisual,
@@ -77,6 +78,12 @@ const MELEE_OFFSET_X = 40
 /** Torso-centered so ±1 lane bodies still overlap. */
 const MELEE_OFFSET_Y = -52
 
+/** Head-stomp rebound as a multiple of the full-jump launch velocity. */
+export const STOMP_BOUNCE_V = 0.8
+export const STOMP_SUPER_V = 1.3
+/** Jump pressed within this window of a stomp (before or after) upgrades the bounce. */
+export const STOMP_SUPER_MS = 100
+
 /**
  * Arcade player — single-lane side-scroller (stage 1).
  * Jump / crouch / hitbox / speed from data/player.json.
@@ -96,6 +103,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   stam = 1
   /** Time of the last attack, for the stamina recovery delay. */
   lastAtkAt = 0
+  /** 連擊 meter 0..1 (separate from 絕招 honey charge): filled by landing hits, decays when idle. */
+  combo = 0
+  comboHitAt = 0
+  comboHoldMs = 0
+  comboCasting = false
+  /** Time of the last jump press — a press just before a head-stomp turns it into a super bounce. */
+  lastJumpPressAt = -9999
+  stompAt = -9999
+  stompBoosted = true
   baseScale = 1
   coyote = 0
   jumpBuf = 0
@@ -276,8 +292,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.coyote = Math.max(0, this.coyote - dt)
     }
 
-    if (opts.jumpJust) this.jumpBuf = PLAYER.jump.bufferMs
-    else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
+    if (opts.jumpJust) {
+      this.jumpBuf = PLAYER.jump.bufferMs
+      this.lastJumpPressAt = now
+      if (!this.stompBoosted && now - this.stompAt <= STOMP_SUPER_MS) {
+        this.stompBoosted = true
+        this.setVelocityY(STOMP_SUPER_V * fullApexVelocity() * this.jumpMul)
+        floatText(this.scene, this.x, this.y - 70, '超級彈跳！', '#ffe070', { size: 12, dur: 700 })
+      }
+    } else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
 
     this.atkCd = Math.max(0, this.atkCd - dt)
     this.hurtCd = Math.max(0, this.hurtCd - dt)
@@ -413,6 +436,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     })
     this.syncActorDepth()
     this.applyPose(grounded, vx)
+  }
+
+  /** Head-stomp rebound: forced upward velocity; `super` when jump was pressed within STOMP_SUPER_MS before landing. */
+  stompBounce(now: number, superBounce: boolean) {
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = true
+    body.setGravity(0, 0)
+    this.laneJumping = true
+    this.jumpCutApplied = true
+    this.jumpHoldMs = 0
+    this.jumpConsumed = true
+    this.coyote = 0
+    this.floating = false
+    this.stompAt = now
+    this.stompBoosted = superBounce
+    this.setVelocityY((superBounce ? STOMP_SUPER_V : STOMP_BOUNCE_V) * fullApexVelocity() * this.jumpMul)
+    fsmEnter(this, 'JUMP', now)
   }
 
   /** Standing / crouch hurtbox from data/player.json. */

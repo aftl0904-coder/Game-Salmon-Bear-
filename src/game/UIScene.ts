@@ -33,6 +33,8 @@ export class UIScene extends Phaser.Scene {
   private maxHp = 6
   private stamL = 1
   private stamR = 1
+  private comboL = 0
+  private comboR = 0
   private targetHpL = 6
   private targetHpR = 6
   private dispHpL = 6
@@ -197,6 +199,15 @@ export class UIScene extends Phaser.Scene {
       bar.width = Math.max(0, w0 * Phaser.Math.Clamp(v, 0, 1))
       bar.fillColor = v < 0.2 ? 0xff6a5a : v < 0.5 ? 0xffc040 : 0x6ad0ff
     }
+    for (const [bar, w, v] of [
+      [this.hud?.comboL, this.hud?.comboWL ?? 0, this.comboL],
+      [this.hud?.comboR, this.hud?.comboWR ?? 0, this.comboR],
+    ] as const) {
+      if (!bar || !bar.scene) continue
+      bar.width = Math.max(0, w * Phaser.Math.Clamp(v, 0, 1))
+      const full = v >= 1
+      bar.fillColor = full ? (Math.floor(this.time.now / 110) % 2 ? 0xb8d4ff : 0x3a78ff) : 0x3a78ff
+    }
     if (this.mpBar) {
       this.mpBar.width = Math.max(0, this.dispMp * this.mpMaxW)
       this.mpBar.fillColor = this.dispMp > 0.55 ? 0x3ec8ff : 0x2a7098
@@ -232,6 +243,8 @@ export class UIScene extends Phaser.Scene {
       this.maxHp = p.maxHp
       if (p.stamL !== undefined) this.stamL = p.stamL
       if (p.stamR !== undefined) this.stamR = p.stamR
+      if (p.comboL !== undefined) this.comboL = p.comboL
+      if (p.comboR !== undefined) this.comboR = p.comboR
       return
     }
     if (p.role === 'boy') this.targetHpL = p.hp

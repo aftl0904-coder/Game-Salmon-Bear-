@@ -30,8 +30,9 @@ import {
   tickEnemy,
 } from './enemyAi'
 import { PatrolEnemy } from './enemies'
+import * as CB from './combo'
 import { EventBus, GameEvents } from './EventBus'
-import { Player } from './Player'
+import { Player, STOMP_SUPER_MS } from './Player'
 import { animTex, hasAnimSet } from './heroAnims'
 import { hasFx, playFx } from './fxAnims'
 import { TouchInput } from './touchInput'
@@ -808,6 +809,8 @@ export class GameScene extends Phaser.Scene {
       maxHp: MAX_HP + Math.max(bonusHearts('boy'), bonusHearts('girl')),
       stamL: this.boy.stam / stamMax(this.boy.role as Who),
       stamR: this.girl ? this.girl.stam / stamMax(this.girl.role as Who) : 1,
+      comboL: this.boy.combo,
+      comboR: this.girl ? this.girl.combo : 0,
     })
   }
 
@@ -828,6 +831,9 @@ export class GameScene extends Phaser.Scene {
       const resting = now - h.lastAtkAt > STAM_REST_MS
       const rate = resting ? STAM_RECOVER * stamRecoverMul(who) : 0
       h.stam = Phaser.Math.Clamp(h.stam + (rate * dt) / 1000, 0, max)
+      if (!h.comboCasting && h.combo > 0 && now - h.comboHitAt > CB.COMBO_IDLE_MS) {
+        h.combo = Math.max(0, h.combo - (CB.COMBO_DECAY_PER_SEC * dt) / 1000)
+      }
     }
     this.emitHealth()
   }
@@ -984,6 +990,7 @@ export class GameScene extends Phaser.Scene {
     this.tickEnemyStagger(dt)
     this.tickStamina(dt)
     this.updateEnemies(dt)
+    this.tickStomp()
     this.cullSalmonShots()
     this.entities.syncEnemiesFromGroup(this.enemies)
     this.syncFx()
@@ -1269,6 +1276,12 @@ export class GameScene extends Phaser.Scene {
       this.padFaceJust(this.pad2, 2)
     )
   }
+  private p1AttackHeld() {
+    return this.keyF.isDown || padBtn(this.pad1, 3) || TouchInput.isDown('attack')
+  }
+  private p2AttackHeld() {
+    return this.keyComma.isDown || this.keyNP1.isDown || padBtn(this.pad2, 1) || padBtn(this.pad2, 2)
+  }
   private p2JumpJust() {
     return (
       Phaser.Input.Keyboard.JustDown(this.keyPeriod) ||
@@ -1380,10 +1393,11 @@ export class GameScene extends Phaser.Scene {
     this.steerHero(
       this.boy, dt, left, right,
       this.p1JumpJust(), this.p1JumpHeld(), spd,
-      this.p1AttackJust(),
+      this.p1AttackJust() && !this.boy.comboCasting,
       () => (this.boy.role === 'girl' ? this.swordSlash(this.boy) : this.fireSalmon(this.boy)),
       this.p1CrouchHeld(),
     )
+    this.tickComboHold(this.boy, this.p1AttackHeld(), dt)
     if (this.p1SpecialJust()) this.fireHoneySpecial(this.boy)
     if (this.p1WeaponSwitchJust()) this.toggleWeaponMode(this.boy)
   }
@@ -1397,9 +1411,10 @@ export class GameScene extends Phaser.Scene {
     this.steerHero(
       g, dt, left, right,
       this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(),
-      this.p2AttackJust(), () => this.swordSlash(g),
+      this.p2AttackJust() && !g.comboCasting, () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
+    this.tickComboHold(g, this.p2AttackHeld(), dt)
     if (this.p2SpecialJust()) this.fireHoneySpecial(g)
     if (this.p2WeaponSwitchJust()) this.toggleWeaponMode(g)
   }
@@ -1572,12 +1587,13 @@ export class GameScene extends Phaser.Scene {
     this.smashBreakablesInFront(h)
   }
 
-  private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1) {
+  private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1): Phaser.Physics.Arcade.Sprite {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
     // Alan: ammo read a bit chunky — trimmed base scale 2 → 1.7 (Cursor/Alan feedback).
     shot.setScale(1.7 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
+    shot.setData('by', h.role)
     if (power < 1) shot.setTint(0x9ab0c8)
     else if (power > 1) shot.setTint(0xffa060)
     enableActorSprite(shot)
@@ -1592,6 +1608,7 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(maxMs, () => {
       if (shot.active) shot.destroy()
     })
+    return shot
   }
 
   /** Sword from hand at chest height, close to the body. */
@@ -1676,6 +1693,7 @@ export class GameScene extends Phaser.Scene {
     body.setSize(w, ht)
     box.setData('dmg', dmg)
     box.setData('dir', h.facing)
+    box.setData('by', h.role)
     box.setData('lane', h.lane)
     box.setData('fromY', h.y)
     box.setData('hitSet', new Set<string>())
@@ -1760,14 +1778,14 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number, _from?: { lane?: number; y: number }) {
+  private damageEnemy(e: Creep | PatrolEnemy, dmg: number, dir: number, _from?: { lane?: number; y: number }): boolean {
     const pe = e as PatrolEnemy
-    if (pe.isDead || pe.fsm === 'DEAD') return
+    if (pe.isDead || pe.fsm === 'DEAD') return false
     void _from
     // 霸鼻象打中人後短暫霸體：其他人打唔入，佢仲可以打人
     if (typeof pe.isDominating === 'function' && pe.isDominating(this.time.now)) {
       floatText(this, pe.x, pe.y - 48, '霸體！', '#ffe08a', { size: 16, dur: 500 })
-      return
+      return false
     }
     // 機械豬 front armour: hits on its face clang off unless the slam left it open.
     if (pe.species === 'elephant' && this.time.now >= (pe.vulnerableUntil ?? 0)) {
@@ -1777,7 +1795,7 @@ export class GameScene extends Phaser.Scene {
         burst(this, pe.x + face * 14, pe.y - 30, 0xe8f0ff, 5)
         playFx(this, 'armour-clank', pe.x + face * 22, pe.y - 30, { flipX: face < 0 })
         SFX.hit()
-        return
+        return false
       }
     }
     // 龍蝦兵 claws / 油甘魚攤主 behind the counter.
@@ -1786,11 +1804,11 @@ export class GameScene extends Phaser.Scene {
       floatText(this, pe.x, pe.y - 52, '叮！跳過頭打背脊', '#ffd0c0', { size: 12, dur: 600 })
       burst(this, pe.x - dir * 14, pe.y - 30, 0xffe0d0, 5)
       SFX.hit()
-      return
+      return false
     }
     if (typeof guarded.hiding === 'function' && guarded.hiding()) {
       floatText(this, pe.x, pe.y - 48, '躲埋咗！打爛個檔', '#ffe08a', { size: 12, dur: 600 })
-      return
+      return false
     }
     if (this.time.now < this.powerUntil) dmg = Math.ceil(dmg * 1.5)
     const heavy = dmg >= 2 || pe.kind === 'boss'
@@ -1816,6 +1834,7 @@ export class GameScene extends Phaser.Scene {
       if (pe.kind === 'boss')
         this.emitScore(this.tower ? '大佬醒返喇！' : this.depot ? '泥鬃醒返喇！' : this.market ? '鏡鴞醒返喇！' : this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
     }
+    return true
   }
 
   /**
@@ -1859,6 +1878,7 @@ export class GameScene extends Phaser.Scene {
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
+    if (this.time.now < ((h.getData('stompSafeUntil') as number | undefined) ?? 0)) return
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (!sameLane(h, pe)) return
@@ -2066,6 +2086,174 @@ export class GameScene extends Phaser.Scene {
       ;(o as unknown as { syncEliteMarker?: () => void }).syncEliteMarker?.()
     })
     this.prevLeadX = leadX
+  }
+
+  private heroByRole(role: string | undefined): Hero | null {
+    if (this.boy?.role === role) return this.boy
+    if (this.girl?.role === role) return this.girl
+    return null
+  }
+
+  /** Confirmed hit → 連擊 meter (not while a combo special is running). */
+  private comboHit(h: Hero | null, gain: number) {
+    if (!h || !h.alive || h.comboCasting) return
+    const was = h.combo
+    h.combo = Math.min(1, h.combo + gain)
+    h.comboHitAt = this.time.now
+    if (was < 1 && h.combo >= 1) {
+      floatText(this, h.x, h.y - 70, '連擊滿！長撳攻擊', '#6aa8ff', { size: 12, dur: 1400 })
+      SFX.blip(680)
+    }
+  }
+
+  /** Hold the attack key with a full meter → fire the role's combo special. */
+  private tickComboHold(h: Hero, held: boolean, dt: number) {
+    if (!h.alive || h.comboCasting || h.combo < 1 || this.ended) {
+      h.comboHoldMs = 0
+      return
+    }
+    h.comboHoldMs = held ? h.comboHoldMs + dt : 0
+    if (h.comboHoldMs >= CB.COMBO_HOLD_MS && h.hurtLock <= 0) {
+      h.comboHoldMs = 0
+      this.fireComboSpecial(h)
+    }
+  }
+
+  private fireComboSpecial(h: Hero) {
+    const now = this.time.now
+    const girl = h.role === 'girl'
+    const dur = girl ? CB.SPIN_MS : CB.RAPID_SHOTS * CB.RAPID_GAP_MS + 150
+    h.comboCasting = true
+    h.setData('superArmorUntil', now + dur + 60)
+    floatText(this, h.x, h.y - 62, girl ? '旋風斬！' : '連珠射！', '#6aa8ff', { size: 16, dur: 900 })
+    SFX.swing()
+    burst(this, h.x, h.y - 28, 0x6aa8ff, 12)
+    const start = h.combo
+    this.tweens.addCounter({
+      from: 0,
+      to: 1,
+      duration: dur,
+      onUpdate: (tw) => {
+        if (h.comboCasting) h.combo = start * (1 - tw.getValue()!)
+      },
+    })
+    if (girl) this.runSpin(h)
+    else this.runRapid(h)
+    this.time.delayedCall(dur, () => {
+      h.comboCasting = false
+      h.combo = 0
+      h.comboHoldMs = 0
+      h.stam = 0
+      h.lastAtkAt = this.time.now
+      h.setData('superArmorUntil', 0)
+      if (h.active) h.clearTint()
+      floatText(this, h.x, h.y - 52, '冇氣！', '#8ad0ff', { size: 12, dur: 700 })
+      this.emitHealth()
+    })
+  }
+
+  private runSpin(h: Hero) {
+    const pulses = Math.round(CB.SPIN_MS / CB.SPIN_PULSE_MS)
+    const sword = this.sword
+    const tw = this.tweens.addCounter({
+      from: 0,
+      to: 3,
+      duration: CB.SPIN_MS,
+      onUpdate: (t) => {
+        if (!sword || !h.active) return
+        const a = t.getValue()! * Math.PI * 2
+        sword.setVisible(true).setAlpha(1).setOrigin(0.5, 0.5).setScale(h.baseScale)
+        sword.setPosition(h.x + Math.cos(a) * 34, h.y - 34 + Math.sin(a) * 12)
+        sword.setAngle((a * 180) / Math.PI + 90)
+      },
+      onComplete: () => {
+        if (sword) sword.setVisible(false)
+      },
+    })
+    void tw
+    for (let i = 0; i < pulses; i++) {
+      this.time.delayedCall(i * CB.SPIN_PULSE_MS, () => {
+        if (!h.active || !h.alive) return
+        this.spawnSpinBox(h)
+        h.playAction(`slash${(i % 3) + 1}`)
+        const side = i % 2 === 0 ? 1 : -1
+        playFx(this, 'slash-arc-3', h.x + side * 30, h.y - 36, { flipX: side < 0, scale: 1.3, depth: h.depth + 1, alpha: 0.9 })
+        impactRing(this, h.x, h.y - 30, 0x6aa8ff, 26)
+        SFX.swing()
+      })
+    }
+  }
+
+  private spawnSpinBox(h: Hero) {
+    const key = this.textures.exists('fx-salmon-shot') ? 'fx-salmon-shot' : 'coin'
+    const box = this.attackHitboxes.create(h.x, h.y - 40, key) as Phaser.Physics.Arcade.Sprite
+    box.setAlpha(0).setDepth(actorDepth('hitbox', h.lane, h.y))
+    const body = box.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(CB.SPIN_W, CB.SPIN_H)
+    box.setData('dmg', CB.SPIN_DMG)
+    box.setData('by', h.role)
+    box.setData('radial', true)
+    box.setData('combo', true)
+    box.setData('lane', h.lane)
+    box.setData('fromY', h.y)
+    box.setData('hitSet', new Set<string>())
+    this.time.delayedCall(140, () => {
+      if (box.active) box.destroy()
+    })
+  }
+
+  private runRapid(h: Hero) {
+    const lv = this.weaponLv(h)
+    const range = Math.round((lv >= 3 ? SALMON_SHOT_RANGE * 1.4 : SALMON_SHOT_RANGE) * CB.RAPID_RANGE_MUL)
+    for (let i = 0; i < CB.RAPID_SHOTS; i++) {
+      this.time.delayedCall(i * CB.RAPID_GAP_MS, () => {
+        if (!h.active || !h.alive) return
+        const hgt = Math.max(16, h.displayHeight || 32)
+        const mx = h.x + h.facing * hgt * 0.55
+        const my = h.y - hgt * 0.55 + (i % 2 === 0 ? -2 : 2)
+        const shot = this.spawnRoe(h, mx, my, 0, range, CB.RAPID_POWER)
+        shot.setData('combo', true)
+        shot.setTint(0x6aa8ff)
+        if (i === 0) h.playAction(h.crouching ? 'shoot-crouch' : 'shoot')
+        SFX.swing()
+        burst(this, mx, my, 0x8ac0ff, 3)
+        playFx(this, 'muzzle-flash', mx + h.facing * 6, my, { flipX: h.facing < 0, depth: h.depth + 1 })
+      })
+    }
+  }
+
+  /** Head stomp: falling onto an enemy's top bounces the hero, hurts it a little, and costs no heart. */
+  private tickStomp() {
+    const now = this.time.now
+    for (const h of [this.boy, this.girl]) {
+      if (!h || !h.alive) continue
+      const prevY = (h.getData('stompPrevY') as number | undefined) ?? h.y
+      h.setData('stompPrevY', h.y)
+      const hb = h.body as Phaser.Physics.Arcade.Body | null
+      if (!hb || !h.laneJumping || hb.velocity.y <= 40 || h.hurtLock > 0) continue
+      for (const o of this.enemies.getChildren()) {
+        const e = o as PatrolEnemy
+        if (!e.active || !e.body || e.fsm === 'DEAD' || (e as unknown as { flying?: boolean }).flying) continue
+        if (now - ((e.getData('stompedAt') as number | undefined) ?? -9999) < CB.STOMP_COOLDOWN_MS) continue
+        const eb = e.body as Phaser.Physics.Arcade.Body
+        if (h.x < eb.left - 6 || h.x > eb.right + 6) continue
+        const top = eb.top
+        if (!(prevY <= top + 8 && h.y >= top - 2 && h.y <= top + 24)) continue
+        e.setData('stompedAt', now)
+        const sup = now - h.lastJumpPressAt <= STOMP_SUPER_MS
+        h.stompBounce(now, sup)
+        h.setData('stompSafeUntil', now + CB.STOMP_SAFE_MS)
+        h.setY(Math.min(h.y, top))
+        const boss = e.kind === 'boss' || (e as unknown as { boss?: boolean }).boss === true
+        this.damageEnemy(e, boss ? CB.STOMP_BOSS_DMG : CB.STOMP_DMG, Math.sign(e.x - h.x) || 1)
+        SFX.land()
+        burst(this, h.x, top, 0xffe8a0, 6)
+        impactRing(this, h.x, top, sup ? 0xffe070 : 0xffffff, sup ? 16 : 10)
+        if (sup) burst(this, h.x, top, 0xffe070, 8)
+        break
+      }
+    }
   }
 
   /** Enemies walk the base floor only: stop at pit edges and hop any pit once a chaser has been stuck 700ms; low steps are walked through. */
@@ -3560,7 +3748,7 @@ export class GameScene extends Phaser.Scene {
         const key = (e as { entityId?: string }).entityId ?? `${e.x.toFixed(0)}:${e.y.toFixed(0)}`
         if (hitSet.has(key)) return
         hitSet.add(key)
-        this.damageEnemy(e, PLAYER_ATTACK_DMG, hero.facing, hero)
+        if (this.damageEnemy(e, PLAYER_ATTACK_DMG, hero.facing, hero)) this.comboHit(hero, CB.COMBO_GAIN_MELEE)
       })
       this.physics.add.overlap(hero.attackHitbox, this.pots, (_a, pot) => {
         if (!hero.isMeleeActive()) return
@@ -3577,17 +3765,21 @@ export class GameScene extends Phaser.Scene {
       if (hitSet.has(key)) return
       hitSet.add(key)
       const dmg = (box.getData('dmg') as number) || 1
-      const dir = (box.getData('dir') as number) || 1
-      this.damageEnemy(e, dmg, dir)
+      const dir = box.getData('radial') ? Math.sign(e.x - box.x) || 1 : (box.getData('dir') as number) || 1
+      const landed = this.damageEnemy(e, dmg, dir)
+      if (landed && !box.getData('combo')) this.comboHit(this.heroByRole(box.getData('by') as string | undefined), CB.COMBO_GAIN_MELEE)
     })
     this.physics.add.overlap(this.shots, this.enemies, (shot, enemy) => {
       const s = shot as Phaser.Physics.Arcade.Sprite
       const e = enemy as PatrolEnemy
       if (!e.active || e.isDead) return
       playFx(this, 'roe-splash', s.x, s.y)
-      s.destroy()
       const pw = (s.getData('power') as number | undefined) ?? 1
-      this.damageEnemy(e, Math.max(1, Math.round(PLAYER_ATTACK_DMG * pw)), Math.sign(e.x - this.boy.x) || 1)
+      const byRole = s.getData('by') as string | undefined
+      const fromCombo = !!s.getData('combo')
+      s.destroy()
+      const landed = this.damageEnemy(e, Math.max(1, Math.round(PLAYER_ATTACK_DMG * pw)), Math.sign(e.x - this.boy.x) || 1)
+      if (landed && !fromCombo) this.comboHit(this.heroByRole(byRole), CB.COMBO_GAIN_SHOT)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
       const j = jet as Phaser.Physics.Arcade.Sprite

@@ -121,6 +121,7 @@ export function freezeActors(
     if (!a || !a.active) continue
     // Never stop an airborne hero mid-jump — it kills the arc and feels like lag.
     if ((a as { laneJumping?: boolean }).laneJumping) continue
+    if (scene.time.now < ((a.getData('superArmorUntil') as number | undefined) ?? 0)) continue
     const prev = (a.getData(FREEZE_KEY) as number) || 0
     a.setData(FREEZE_KEY, Math.max(prev, until))
     const body = a.body as Phaser.Physics.Arcade.Body | null
