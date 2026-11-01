@@ -143,3 +143,7 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - Rules: claw moves on a rail (←→ / A D / pad / touch buttons), attack key drops it (430 ms down, 190 ms close, 430 ms up); prizes ride a belt at 26–58 px/s (gold 82) and bounce at the ends, so the drop has to lead the target; grab zone = ±10–15 px by prize; 18 s limit; values lobster 6 / shrimp 3 / boot 1 / can 1 / gold lobster 12.
 - Test (`scripts/qa/owl/claw.mjs`, `claw_play.mjs`, screenshots `docs/qa-claw/`): routing 2→3 = claw PASS, 1→2 = bike PASS, 3→4 = bike PASS; tutorial → game → ←/→ moves the claw (320→440, back to 379); aimed drop on a moving lobster = +6; deliberate miss = no coin and counted as a drop; full 18 s run with perfect aiming = 11/12 grabs, 25 coins, `carryCoins` 5→30, result card shown, then `play`. No page errors.
 - Not verified: how hard it is for a human (my script aims with perfect lead, so 25 coins is the ceiling-ish, not typical), balance against the bike's coin yield, touch/pad controls on a real device, 2P (one shared claw).
+
+## Boss card 文案：武者王（data/bosses.json `altar` entry）
+- 只改 name / title / lines / why，portrait 仍為 null。
+- 實跑 stage 1 → 傳送到 x=5300 觸發，截圖 `docs/qa-king/card-montage.png`：標題、副題、三行 lines、why 全部顯示新文字，無 pageerror。
