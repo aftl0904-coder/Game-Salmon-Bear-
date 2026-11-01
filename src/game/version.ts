@@ -11,7 +11,9 @@
  */
 declare const __BUILD_TIME__: string
 
-export const VERSION = 'A001.001'
+// A = Cursor 獨力開發嗰段（開荒到交 Claude 接手之前）。
+// B = Claude 接手做plan/decide/review、Cursor執行呢個階段開始，由 B001.001 計。
+export const VERSION = 'B001.001'
 
 /** 字串化做「YYYY-MM-DD HH:mm」，用緊玩家所在時區顯示。 */
 export function buildTimeLabel(): string {
