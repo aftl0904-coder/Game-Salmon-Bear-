@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { Enemy, type EnemyHitResult } from './Enemy'
+import { type EnemyHitResult } from './Enemy'
 import { AnimEnemy, type Stage2Hooks } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
@@ -11,54 +11,25 @@ import { bossHitDamage } from '../engine/bossDamage'
  * then high-speed charge), 打卡鐘怪 (countdown then a radial paper burst), and the boss
  * 泥鬃 (motorcycle foreman).
  *
- * The boss 泥鬃 now runs on real frame animation (art-src/anim/boss/mudmane →
- * scripts/art/slice_mudmane.py → the 'mudmane' anim set, via AnimEnemy). The three mobs below
- * are still small procedurally drawn placeholders — a code-drawn silhouette that reads at
- * game scale, to be swapped once their art arrives (art-src/anim/enemies/E-11..E-13 exist but
- * are not sliced yet).
- * Everything still runs through the shared Stage2Hooks plumbing (floorY/spawnCoin) so these
- * drop in via GameScene.addS2Enemy exactly like the stage 2/3 cast.
+ * All four run on real frame animation (art-src/anim/enemies/E-11..E-13 and boss/mudmane →
+ * scripts/art/slice_stage4mobs.py / slice_mudmane.py → the 'honeyzombie' / 'taximonster' /
+ * 'clockpunch' / 'mudmane' anim sets, via AnimEnemy). They drop in through GameScene.addS2Enemy
+ * exactly like the stage 2/3 cast.
  */
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
-function makeTexture(scene: Phaser.Scene, key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) {
-  if (scene.textures.exists(key)) return
-  const g = scene.make.graphics({ x: 0, y: 0 }, false)
-  draw(g)
-  g.generateTexture(key, w, h)
-  g.destroy()
-}
-
 // ── 蜜僵 ─────────────────────────────────────────────────────────────────
 
 /** Shambles slowly towards the nearest hero; hits leave a sticky honey puddle underfoot. */
-export class HoneyZombie extends Enemy {
-  flying = false
-  species = 'honeyzombie'
-  kind = 'blocker'
-  boss = false
-  s2: Stage2Hooks
+export class HoneyZombie extends AnimEnemy {
   onSplatter?: (x: number) => void
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
-    makeTexture(scene, 'stage4-honeyzombie', 30, 38, (g) => {
-      const out = 0x1a1210
-      g.fillStyle(out, 1).fillEllipse(15, 30, 24, 16).fillCircle(15, 17, 11).fillRect(3, 9, 7, 16).fillRect(20, 9, 7, 16)
-      g.fillStyle(0x8a9a5a, 1).fillEllipse(15, 29, 20, 13).fillCircle(15, 17, 9)
-      g.fillStyle(0xc0b878, 1).fillRect(4, 10, 5, 13).fillRect(21, 10, 5, 13)
-      g.fillStyle(0xd8a040, 0.6).fillEllipse(15, 34, 16, 6)
-      g.fillStyle(out, 1).fillRect(10, 14, 2, 2).fillRect(18, 14, 2, 2)
-      g.fillStyle(0xe8e060, 0.5).fillCircle(10, 15, 3).fillCircle(18, 15, 3)
-    })
-    super(scene, x, hooks.floorY(), 'stage4-honeyzombie')
-    this.s2 = hooks
-    this.setOrigin(0.5, 1)
+    super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
+    this.species = 'honeyzombie'
     this.hp = this.maxHp = 2
     this.hurtMs = 260
-    const body = this.body as Phaser.Physics.Arcade.Body
-    body.allowGravity = false
-    body.setSize(22, 30)
-    body.setOffset(4, 8)
+    this.bodyBox(30, 44)
   }
   canHurtPlayer() {
     return this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT' && this.contactCd <= 0
@@ -82,41 +53,26 @@ export class HoneyZombie extends Enemy {
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
     const dx = tgt.x - this.x
     this.setFlipX(dx < 0)
-    this.setVelocityX(Math.sign(dx) * 16)
+    const near = Math.abs(dx) < 46
+    this.anim(near ? 'reach' : 'walk')
+    this.setVelocityX(Math.sign(dx) * (near ? 8 : 16))
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
 }
 
 // ── 的士怪 ───────────────────────────────────────────────────────────────
 
-/** Headlights flash twice as a 0.6 s warning, then a fast charge; stuns itself on the wall. */
-export class TaxiMonster extends Enemy {
-  flying = false
-  species = 'taximonster'
-  kind = 'blocker'
-  boss = false
-  s2: Stage2Hooks
+/** Headlights flash as a 0.6 s warning, then a fast charge; stuns itself on the wall. */
+export class TaxiMonster extends AnimEnemy {
   private phase: 'idle' | 'warn' | 'charge' | 'stun' = 'idle'
   private t = 0
   private dir: 1 | -1 = 1
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
-    makeTexture(scene, 'stage4-taximonster', 40, 26, (g) => {
-      const out = 0x1a1210
-      g.fillStyle(out, 1).fillRoundedRect(1, 3, 38, 20, 6)
-      g.fillStyle(0xd8b038, 1).fillRoundedRect(3, 5, 34, 16, 5)
-      g.fillStyle(0x1a1210, 1).fillRect(3, 17, 34, 3)
-      g.fillStyle(0xf0f0f0, 1).fillCircle(34, 13, 4).fillCircle(34, 13, 4)
-      g.fillStyle(0x303030, 1).fillCircle(10, 23, 4).fillCircle(28, 23, 4)
-    })
-    super(scene, x, hooks.floorY(), 'stage4-taximonster')
-    this.s2 = hooks
-    this.setOrigin(0.5, 1)
+    super(scene, x, hooks.floorY(), 'taximonster', hooks, 'idle')
+    this.species = 'taximonster'
     this.hp = this.maxHp = 3
     this.hurtMs = 260
-    const body = this.body as Phaser.Physics.Arcade.Body
-    body.allowGravity = false
-    body.setSize(34, 20)
-    body.setOffset(3, 3)
+    this.bodyBox(64, 34)
   }
   canHurtPlayer() {
     return this.active && this.fsm !== 'DEAD' && this.phase === 'charge'
@@ -144,6 +100,7 @@ export class TaxiMonster extends Enemy {
     const dx = tgt.x - this.x
     this.t += dt
     if (this.phase === 'idle') {
+      this.anim('idle')
       this.setVelocity(0, 0)
       this.setFlipX(dx < 0)
       if (Math.abs(dx) < 260 && Math.abs(dx) > 40) {
@@ -152,16 +109,13 @@ export class TaxiMonster extends Enemy {
         this.dir = (Math.sign(dx) || 1) as 1 | -1
       }
     } else if (this.phase === 'warn') {
-      const blink = Math.floor(this.t / 150) % 2 === 0
-      this.setTint(blink ? 0xffffff : 0xffffff00)
-      this.clearTint()
-      this.setTint(blink ? 0xfff0a0 : 0xd8b038)
+      this.anim('flash')
       if (this.t > 600) {
-        this.clearTint()
         this.phase = 'charge'
         this.t = 0
         this.setFsm('ATTACK')
         this.hitThis = false
+        this.anim('dash')
         this.setVelocityX(this.dir * 260)
       }
     } else if (this.phase === 'charge') {
@@ -171,12 +125,11 @@ export class TaxiMonster extends Enemy {
         this.t = 0
         this.setFsm('CHASE')
         this.setVelocity(0, 0)
-        this.setTint(0xa0a0a0)
+        this.anim('crash')
       }
     } else {
       this.setVelocity(0, 0)
       if (this.t > 1800) {
-        this.clearTint()
         this.phase = 'idle'
         this.t = 0
       }
@@ -190,34 +143,17 @@ export class TaxiMonster extends Enemy {
 export type ClockHooks = { burst: (x: number, y: number) => void }
 
 /** Ticks down for 3 s, then flings documents in eight directions; harmless to touch. */
-export class ClockPunch extends Enemy {
-  flying = false
-  species = 'clockpunch'
-  kind = 'blocker'
-  boss = false
-  s2: Stage2Hooks
+export class ClockPunch extends AnimEnemy {
   private ch: ClockHooks
   private phase: 'count' | 'burst' | 'cool' = 'count'
   private t = 0
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, ch: ClockHooks) {
-    makeTexture(scene, 'stage4-clockpunch', 30, 34, (g) => {
-      const out = 0x1a1210
-      g.fillStyle(out, 1).fillCircle(15, 17, 15)
-      g.fillStyle(0xe8e0c8, 1).fillCircle(15, 17, 12)
-      g.fillStyle(out, 1).fillRect(14, 7, 2, 10).fillRect(15, 16, 7, 2)
-      g.fillStyle(0xb02828, 1).fillRect(10, 1, 10, 4)
-      g.fillStyle(0x303030, 1).fillCircle(9, 29, 3).fillCircle(21, 29, 3)
-    })
-    super(scene, x, hooks.floorY(), 'stage4-clockpunch')
-    this.s2 = hooks
+    super(scene, x, hooks.floorY(), 'clockpunch', hooks, 'walk')
+    this.species = 'clockpunch'
     this.ch = ch
-    this.setOrigin(0.5, 1)
     this.hp = this.maxHp = 2
     this.hurtMs = 220
-    const body = this.body as Phaser.Physics.Arcade.Body
-    body.allowGravity = false
-    body.setSize(24, 26)
-    body.setOffset(3, 6)
+    this.bodyBox(34, 44)
   }
   canHurtPlayer() {
     return false
@@ -244,16 +180,16 @@ export class ClockPunch extends Enemy {
     this.setFlipX(tgt.x < this.x)
     this.t += dt
     if (this.phase === 'count') {
-      const tick = Math.floor(this.t / 500) % 2 === 0
-      this.setTint(tick ? 0xffd0a0 : 0xffffff)
+      // The last second glows: that is the cue to get out of the way.
+      this.anim(this.t > 2000 ? 'tick' : 'walk')
       if (this.t > 3000) {
-        this.clearTint()
         this.phase = 'burst'
         this.t = 0
+        this.anim('burst')
         this.ch.burst(this.x, this.y - 18)
       }
     } else if (this.phase === 'burst') {
-      if (this.t > 200) {
+      if (this.t > 340) {
         this.phase = 'cool'
         this.t = 0
       }
@@ -261,6 +197,7 @@ export class ClockPunch extends Enemy {
       if (this.t > 900) {
         this.phase = 'count'
         this.t = 0
+        this.anim('walk')
       }
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))

@@ -1,0 +1,43 @@
+{
+ "frameWidth": 214,
+ "frameHeight": 138,
+ "anchorX": 107,
+ "res": 2,
+ "columns": 15,
+ "cell1x": [
+  107,
+  69
+ ],
+ "anims": {
+  "idle": {
+   "start": 0,
+   "count": 2,
+   "fps": 3,
+   "loop": true
+  },
+  "flash": {
+   "start": 2,
+   "count": 2,
+   "fps": 8,
+   "loop": true
+  },
+  "dash": {
+   "start": 4,
+   "count": 4,
+   "fps": 14,
+   "loop": true
+  },
+  "crash": {
+   "start": 8,
+   "count": 3,
+   "fps": 6,
+   "loop": false
+  },
+  "die": {
+   "start": 11,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  }
+ }
+}

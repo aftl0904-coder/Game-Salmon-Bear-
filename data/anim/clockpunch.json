@@ -1,0 +1,43 @@
+{
+ "frameWidth": 120,
+ "frameHeight": 126,
+ "anchorX": 60,
+ "res": 2,
+ "columns": 19,
+ "cell1x": [
+  60,
+  63
+ ],
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 6,
+   "loop": true
+  },
+  "tick": {
+   "start": 4,
+   "count": 3,
+   "fps": 5,
+   "loop": true
+  },
+  "burst": {
+   "start": 7,
+   "count": 4,
+   "fps": 12,
+   "loop": false
+  },
+  "hit": {
+   "start": 11,
+   "count": 4,
+   "fps": 14,
+   "loop": false
+  },
+  "die": {
+   "start": 15,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  }
+ }
+}

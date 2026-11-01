@@ -1845,9 +1845,9 @@ export class GameScene extends Phaser.Scene {
       case 'anim-mirrorowl':
       case 'anim-mirrorshade':
         return 0.6 // 分身／鏡影：1hp，單隻打少啲
-      case 'stage4-honeyzombie':
+      case 'anim-honeyzombie':
         return 0.9 // 蜜僵：基本慢速殭屍
-      case 'stage4-taximonster':
+      case 'anim-taximonster':
         return 1.5 // 的士怪：車頭燈預警後高速衝刺，命中要痛
       default:
         return 1

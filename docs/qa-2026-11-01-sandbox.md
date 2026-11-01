@@ -123,3 +123,10 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - Test: `scripts/qa/owl/king_acts.mjs` (STAGE=1, Playwright + swiftshader, hero kept alive). Screenshots in `docs/qa-king/`.
 - Observed (log): P1 stalk -> throw-low/throw-high; P2 (hp 33/50) +2 summons, throw / windup / dash / recover; P3 (hp 17/50) +2 summons, fan / windup / dash / exposed; exposed hit 16->13 (x3), normal hit 13->12; defeat -> bar removed, minions dead, `bossOn` true, standing on the goal -> `outro`.
 - Not verified: dash contact damage on a real hero (test keeps the hero invulnerable), fan fairness (low/high shots overlapping), pacing/difficulty by a human, 2P.
+
+## Stage 4 mobs on real animation (蜜僵 / 的士怪 / 打卡鐘怪)
+
+- Change: `scripts/art/slice_stage4mobs.py` slices art-src E-11/12/13 into `public/art/anim/{honeyzombie,taximonster,clockpunch}.png` + `data/anim/*.json` (registered in `heroAnims.ts`). `HoneyZombie` / `TaxiMonster` / `ClockPunch` now `extends AnimEnemy`; `makeTexture` and the `stage4-*` textures are gone. GameScene's per-texture damage multiplier keys changed to `anim-honeyzombie` / `anim-taximonster`.
+- Test: `scripts/qa/owl/s4mobs2.mjs` (spawns each mob on stage 4, logs the anim key per phase, screenshots in `docs/qa-s4mobs/`). Observed anim keys: zombie walk / reach (within 46 px) / hit / die; clock walk / tick (last second of the 3 s countdown) / burst / hit / die; taxi idle / flash (0.6 s warning) / dash / crash (stun) / die. No page errors.
+- Not used: `E-13-punchclock/paper.png` (white background, a paper projectile; the burst still uses the existing paper FX).
+- Not verified: hitbox feel against the new sprites (bodies are 30x44 / 64x34 / 34x44 logical px, estimated), difficulty by a human, colour fringe on the taxi dash speed lines.
