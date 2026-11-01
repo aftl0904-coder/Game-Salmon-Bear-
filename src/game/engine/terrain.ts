@@ -101,10 +101,11 @@ export function groundTopBelow(x: number, feetY: number, halfW = 4): number | nu
  * Solid (non one-way) wall blocking horizontal movement: a step whose top is
  * higher than the feet. Returns the x the actor must be clamped to, else null.
  */
-export function wallClampX(x: number, feetY: number, dir: number, halfW: number): number | null {
+export function wallClampX(x: number, feetY: number, dir: number, halfW: number, ignoreSteps = false): number | null {
   if (!enabled || !dir) return null
   for (const s of solids) {
     if (s.oneWay) continue
+    if (ignoreSteps && s.kind === 'step') continue
     if (s.top >= feetY - 3) continue // not taller than the feet → walkable / below
     if (dir > 0 && x + halfW > s.x0 && x - halfW < s.x0) return s.x0 - halfW
     if (dir < 0 && x - halfW < s.x1 && x + halfW > s.x1) return s.x1 + halfW
@@ -123,4 +124,20 @@ export function edgeAhead(x: number, feetY: number, dir: number, lookAhead: numb
   if (!enabled || !dir) return false
   const ax = x + dir * lookAhead
   return supportTopAt(ax, feetY, 1) === null
+}
+
+/**
+ * Low ledge the actor can simply walk up (SNES-style step-up): top of the blocking step when it
+ * rises no more than `maxRise` above the feet, else null.
+ */
+export function stepUpTop(x: number, feetY: number, dir: number, halfW: number, maxRise: number): number | null {
+  if (!enabled || !dir) return null
+  for (const s of solids) {
+    if (s.oneWay || s.kind !== 'step') continue
+    const rise = feetY - s.top
+    if (rise <= 3 || rise > maxRise) continue
+    if (dir > 0 && x + halfW > s.x0 && x - halfW < s.x0) return s.top
+    if (dir < 0 && x - halfW < s.x1 && x + halfW > s.x1) return s.top
+  }
+  return null
 }

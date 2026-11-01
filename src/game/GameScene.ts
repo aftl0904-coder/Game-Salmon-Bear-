@@ -2048,7 +2048,7 @@ export class GameScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** Enemies walk the base floor only: stop at pit edges and at raised-step walls. */
+  /** Enemies walk the base floor only: stop at pit edges; low steps are walked through (they never climb, but must not stall against them). */
   private keepEnemyOnTerrain(e: PatrolEnemy, dt: number) {
     if (!terrainEnabled() || !e.active || !e.body) return
     if ((e as unknown as { flying?: boolean }).flying) return
@@ -2060,7 +2060,7 @@ export class GameScene extends Phaser.Scene {
     const nx = e.x + (vx * dt) / 1000
     const lead = nx + dir * half
     const blocked =
-      supportTopAt(lead, LANE_FLOOR_Y, 1) === null || wallClampX(nx, LANE_FLOOR_Y, dir, half) !== null
+      supportTopAt(lead, LANE_FLOOR_Y, 1) === null || wallClampX(nx, LANE_FLOOR_Y, dir, half, true) !== null
     if (blocked) e.setVelocityX(0)
   }
 

@@ -34,7 +34,7 @@ import {
   tapApexVelocity,
 } from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
-import { landingTopAt, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
+import { landingTopAt, stepUpTop, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
 import {
   enableActorSprite,
   setDiePoseVisual,
@@ -44,6 +44,9 @@ import {
   setPixelPose,
   setRunPose,
 } from './pixelSnap'
+
+/** Steps up to this many px high are walked up without jumping. */
+const STEP_UP_MAX = 18
 
 export type HeroPose = 'idle' | 'run' | 'jump' | 'hurt' | 'die'
 export type PlayerRole = 'boy' | 'girl'
@@ -336,7 +339,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (terrainEnabled() && vx !== 0) {
       // Raised steps are walls: can't walk into them, must jump up.
       const nx = this.x + (vx * dt) / 1000
-      const clampX = wallClampX(nx, this.y, Math.sign(vx), this.footHalfW + 2)
+      const hw = this.footHalfW + 2
+      const rise = grounded ? stepUpTop(nx, this.y, Math.sign(vx), hw, STEP_UP_MAX) : null
+      if (rise !== null) {
+        this.setY(rise)
+        this.setX(nx)
+        body.reset(this.x, this.y)
+      }
+      const clampX = rise !== null ? null : wallClampX(nx, this.y, Math.sign(vx), hw)
       if (clampX !== null) {
         this.setX(clampX)
         vx = 0
