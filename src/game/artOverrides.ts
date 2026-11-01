@@ -18,6 +18,11 @@ export const ART_OVERRIDES: Record<string, string> = {
   // Cursor stage-1 props (scripts/art/slice_props.py) replace the earlier hand-pixelled stand-ins.
   'prop-break-lantern': '/art/props/lantern.png',
   'prop-break-pot': '/art/props/honey-pot.png',
+  // Painted replacements for the old isoArt.ts procedural breakables.
+  crate3d: '/art/props/crate3d.png',
+  chest3d: '/art/props/chest3d.png',
+  pot3d: '/art/props/pot3d.png',
+  'prop-lantern3d': '/art/props/lantern3d.png',
   // Cutscene props (data/story.json).
   'cs-jar-fake': '/art/items/jar-fake.png',
   'cs-jar-real': '/art/items/jar-real.png',
