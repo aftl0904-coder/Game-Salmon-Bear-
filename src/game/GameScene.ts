@@ -2059,9 +2059,37 @@ export class GameScene extends Phaser.Scene {
     const half = Math.max(8, Math.round((e.displayWidth || 32) * 0.3))
     const nx = e.x + (vx * dt) / 1000
     const lead = nx + dir * half
-    const blocked =
-      supportTopAt(lead, LANE_FLOOR_Y, 1) === null || wallClampX(nx, LANE_FLOOR_Y, dir, half, true) !== null
-    if (blocked) e.setVelocityX(0)
+    const overPit = supportTopAt(lead, LANE_FLOOR_Y, 1) === null
+    const blocked = overPit || wallClampX(nx, LANE_FLOOR_Y, dir, half, true) !== null
+    if (!blocked) {
+      e.setData('blockedMs', 0)
+      return
+    }
+    e.setVelocityX(0)
+    if (!overPit || e.fsm === 'PATROL' || e.fsm === 'HURT' || e.fsm === 'DEAD') return
+    // A chaser stuck at a narrow pit edge hops across instead of jittering there forever.
+    const ms = ((e.getData('blockedMs') as number | undefined) ?? 0) + dt
+    e.setData('blockedMs', ms)
+    if (ms < 700 || e.getData('leaping')) return
+    const pit = terrainPits().find((p) => (dir > 0 ? p.x0 : p.x1) - lead <= 4 && (dir > 0 ? lead - p.x0 : p.x1 - lead) >= -4 && p.x1 - p.x0 <= 90)
+    if (!pit) return
+    const toX = dir > 0 ? pit.x1 + half + 4 : pit.x0 - half - 4
+    e.setData('leaping', true)
+    e.setData('blockedMs', 0)
+    const y0 = e.y
+    this.tweens.add({
+      targets: e,
+      x: toX,
+      duration: 520,
+      ease: 'Sine.inOut',
+      onUpdate: (tw) => {
+        e.y = y0 - Math.sin(tw.progress * Math.PI) * 34
+      },
+      onComplete: () => {
+        e.y = y0
+        e.setData('leaping', false)
+      },
+    })
   }
 
   /** Active 琪寶寶 — 2P girl or 1P solo girl (stored in boy slot). */
