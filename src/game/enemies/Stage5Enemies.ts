@@ -37,11 +37,13 @@ export type TriHooks = {
   /** Fake-honey rain across the arena — a handful of falling hazards from the ceiling. */
   rain: (x0: number, x1: number) => void
   spawnZombie: (x: number) => void
-  /** Reuses 泥鬃's ground sweep telegraph for the rooftop dozer track. */
-  dozerSweep: (x0: number, x1: number, dir: 1 | -1) => void
   /** "大屏幕投影" — replays 蜜冠女王蜂 / 月橋鏡鴞's own real attacks via their existing hooks. */
   replayQueen: (x: number) => void
   replayOwl: (gapX: number) => void
+  /** Flat light bolt along the floor (high = crouch under, low = jump over). */
+  bolt: (x: number, feet: number, dir: 1 | -1, high: boolean, speed: number, lifeMs: number) => void
+  /** Damaging dozer run along the arena track (telegraphed first). */
+  dozerRun: (x0: number, x1: number, dir: 1 | -1) => void
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'finale' | 'defeat') => void
 }
 
@@ -57,6 +59,8 @@ type Act =
   | 'dozer'
   | 'rest2'
   | 'shield'
+  | 'volley'
+  | 'storm'
   | 'crack'
 
 export class TriBoss extends Enemy {
@@ -68,6 +72,9 @@ export class TriBoss extends Enemy {
   private act: Act = 'intro'
   private t = 0
   private dirX: 1 | -1 = -1
+  private cycle = 0
+  private volleyShots = 0
+  private stormFired = 0
   arenaX0 = 0
   arenaX1 = 0
   private lastHitAt = 0
@@ -131,7 +138,6 @@ export class TriBoss extends Enemy {
 
   canHurtPlayer() {
     if (!this.active || this.fsm === 'DEAD') return false
-    if (this.qphase === 3 && this.act !== 'crack') return false
     return this.contactCd <= 0
   }
 
@@ -153,6 +159,12 @@ export class TriBoss extends Enemy {
     return r
   }
 
+  private openCrack() {
+    this.clearTint()
+    this.go('crack')
+    this.th.bossEvent('weak')
+  }
+
   private updatePhase() {
     const f = this.hp / this.maxHp
     const next: 1 | 2 | 3 = f <= 0.34 ? 3 : f <= 0.67 ? 2 : 1
@@ -166,6 +178,17 @@ export class TriBoss extends Enemy {
   private go(a: Act) {
     this.act = a
     this.t = 0
+    this.volleyShots = 0
+    this.stormFired = 0
+  }
+
+  /** Safe lane for feather rain: never at the boss's feet, never on top of the target. */
+  private safeGap(targetX: number) {
+    const mid = (this.arenaX0 + this.arenaX1) / 2
+    const cands = [this.arenaX0 + 90, mid - 80, mid + 80, this.arenaX1 - 260].filter((c) => Math.abs(c - this.x) > 120)
+    const far = cands.filter((c) => Math.abs(c - targetX) >= 140)
+    const pool = far.length ? far : cands
+    return pool[Math.floor(Math.random() * pool.length)] ?? mid
   }
 
   protected override die(_dir: number) {
@@ -239,14 +262,14 @@ export class TriBoss extends Enemy {
         break
       case 'proj2':
         this.playAnim('point')
-        if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl(this.x)
+        if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl(this.safeGap(tgt.x))
         if (this.t > 1600) this.go('dozer')
         break
       case 'dozer':
         this.playAnim('point')
         if (this.t > 100 && this.t - dt <= 100) {
           this.dirX = (Math.sign(tgt.x - this.x) || this.dirX) as 1 | -1
-          this.th.dozerSweep(this.arenaX0, this.arenaX1, this.dirX)
+          this.th.dozerRun(this.arenaX0, this.arenaX1, this.dirX)
         }
         if (this.t > 1500) this.go('rest2')
         break
@@ -259,17 +282,40 @@ export class TriBoss extends Enemy {
       case 'shield':
         this.playAnim('shield')
         if (!this.hasArt) this.setTint(0x6a7aff)
-        if (this.t > 1300) {
+        if (this.t > 700) {
           this.clearTint()
-          this.go('crack')
-          this.th.bossEvent('weak')
+          this.go(this.cycle % 2 === 0 ? 'volley' : 'storm')
         }
+        break
+      case 'volley': {
+        this.playAnim('point')
+        const dir: 1 | -1 = tgt.x < this.x ? -1 : 1
+        if (this.volleyShots < 3 && this.t >= this.volleyShots * 520) {
+          this.th.bolt(this.x + dir * 24, floor, dir, this.volleyShots === 1, 240, 2600)
+          this.volleyShots++
+        }
+        if (this.t > 1900) this.openCrack()
+        break
+      }
+      case 'storm':
+        this.playAnim('rain')
+        if (this.stormFired === 0 && this.t > 100) {
+          this.stormFired = 1
+          this.th.rain(this.arenaX0, this.arenaX1)
+          this.th.replayOwl(this.safeGap(tgt.x))
+        }
+        if (this.stormFired === 1 && this.t > 900) {
+          this.stormFired = 2
+          this.th.replayQueen(tgt.x)
+        }
+        if (this.t > 2000) this.openCrack()
         break
       case 'crack':
         this.playAnim('hurt')
         if (!this.hasArt) this.setTint(0xffe060)
-        if (this.t > 1100) {
+        if (this.t > 1400) {
           this.clearTint()
+          this.cycle++
           this.go('shield')
         }
         break

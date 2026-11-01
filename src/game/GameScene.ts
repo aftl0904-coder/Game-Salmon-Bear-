@@ -5170,6 +5170,36 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** △畝大佬's rooftop dozer: warning band, then a body sweeps the arena floor (jump it). */
+  private dozerRun(x0: number, x1: number, dir: 1 | -1) {
+    SFX.siren()
+    const y = LANE_FLOOR_Y + 3
+    const band = this.add.rectangle((x0 + x1) / 2, y, x1 - x0, 8, 0xff5030, 0.35).setDepth(DEPTH.GROUND + 4)
+    floatText(this, dir > 0 ? x0 + 60 : x1 - 60, LANE_FLOOR_Y - 70, '推土機！跳！', '#ff9a6a', { size: 13, dur: 700 })
+    this.tweens.add({ targets: band, alpha: 0, duration: 700, onComplete: () => band.destroy() })
+    this.time.delayedCall(700, () => {
+      if (this.ended || !this.bossFight) return
+      this.cameras.main.shake(200, 0.004)
+      const dozer = this.add.rectangle(dir > 0 ? x0 + 20 : x1 - 20, y - 12, 56, 26, 0x5a4a30, 0.9).setDepth(DEPTH.FX - 2)
+      const hit = new Set<Hero>()
+      this.tweens.add({
+        targets: dozer,
+        x: dir > 0 ? x1 - 20 : x0 + 20,
+        duration: 1400,
+        onUpdate: () => {
+          for (const h of [this.boy, this.girl]) {
+            if (!h || !h.alive || hit.has(h)) continue
+            if (Math.abs(h.x - dozer.x) < 36 && h.y > LANE_FLOOR_Y - 22) {
+              hit.add(h)
+              this.hazardHit(h, { knockX: dir * 220, knockY: -320, label: '推土機 -1' })
+            }
+          }
+        },
+        onComplete: () => dozer.destroy(),
+      })
+    })
+  }
+
   private triHooks(): TriHooks {
     return {
       floorY: () => LANE_FLOOR_Y,
@@ -5180,7 +5210,8 @@ export class GameScene extends Phaser.Scene {
         z.onSplatter = (sx) => this.honeySplat(sx)
         this.addS2Enemy(z)
       },
-      dozerSweep: (x0, x1, dir) => this.mudWave(x0, x1, dir),
+      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs),
+      dozerRun: (x0, x1, dir) => this.dozerRun(x0, x1, dir),
       replayQueen: (x) => this.s2Hooks().spawnEgg?.(x),
       replayOwl: (gapX) => this.owlHooks().feathers(gapX),
       bossEvent: (kind) => this.onQueenEvent(kind),
@@ -5188,7 +5219,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** 油甘魚攤主's kitchen knife: alternates low (jump) / high (crouch), spins. */
-  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean) {
+  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900) {
     if (this.ended) return
     const key = this.textures.exists('s3-knife') ? 's3-knife' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
     const shot = this.enemyShots.create(x, feet - (high ? 19 : 7), key) as Phaser.Physics.Arcade.Sprite
@@ -5197,13 +5228,13 @@ export class GameScene extends Phaser.Scene {
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
     body.setSize(10, 8)
-    shot.setVelocity(dir * 180, 0)
+    shot.setVelocity(dir * speed, 0)
     shot.setData('lane', 0)
     shot.setData('dmg', 1)
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 360, repeat: -1 })
     floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
-    this.time.delayedCall(1900, () => {
+    this.time.delayedCall(lifeMs, () => {
       if (shot.active) shot.destroy()
     })
   }
