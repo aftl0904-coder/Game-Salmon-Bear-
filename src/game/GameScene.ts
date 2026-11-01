@@ -5344,9 +5344,10 @@ export class GameScene extends Phaser.Scene {
         this.tweens.add({ targets: m, alpha: 0, delay: 1600, duration: 400, onComplete: () => m.destroy() })
       },
       warnGap: (gapX, ms) => {
-        const col = this.add.rectangle(gapX, LANE_FLOOR_Y / 2, 88, LANE_FLOOR_Y, 0xfff0a0, 0.16).setDepth(DEPTH.SHADOW + 4)
+        const col = this.add.rectangle(gapX, LANE_FLOOR_Y / 2, 88, LANE_FLOOR_Y, 0xfff0a0, 0.3).setDepth(DEPTH.SHADOW + 4)
         const base = this.add.ellipse(gapX, LANE_FLOOR_Y + 2, 88, 10, 0xfff0a0, 0.7).setDepth(DEPTH.SHADOW + 5)
-        this.tweens.add({ targets: [col, base], alpha: { from: 0.1, to: 0.8 }, duration: 160, yoyo: true, repeat: Math.max(1, Math.round(ms / 320)) })
+        this.tweens.add({ targets: col, alpha: { from: 0.22, to: 0.5 }, duration: 160, yoyo: true, repeat: Math.max(1, Math.round(ms / 320)) })
+        this.tweens.add({ targets: base, alpha: { from: 0.6, to: 1 }, duration: 160, yoyo: true, repeat: Math.max(1, Math.round(ms / 320)) })
         this.time.delayedCall(ms + 1700, () => {
           col.destroy()
           base.destroy()
