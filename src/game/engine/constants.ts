@@ -154,6 +154,14 @@ export const COYOTE_MS = 100
 /** Jump input buffer (~100ms). */
 export const JUMP_BUF_MS = 100
 export const HURT_LOCK_MS = 260
+/** Boss-class hits: longer lock + slower slide so the hero is really pushed out of melee range. */
+export const BOSS_HURT_LOCK_MS = 550
+export const BOSS_KNOCK_X = 360
+/** Per-60fps-frame horizontal damping while hurt-locked (grounded). */
+export const HURT_DAMP = 0.82
+/** Horizontal speed cap while in hurt-lock (normal cap is moveSpeed + 60, which used to swallow knockback). */
+export const HURT_MAX_VX = 380
+export const BOSS_HURT_DAMP = 0.955
 /** Player hurt i-frames (1.5s blink). */
 export const HURT_IFRAME_MS = 1500
 export const FALL_Y = L(530)

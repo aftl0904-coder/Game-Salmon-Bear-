@@ -7,6 +7,8 @@ import {
   GIRL_SPEED,
   HURT_IFRAME_MS,
   HURT_LOCK_MS,
+  HURT_DAMP,
+  HURT_MAX_VX,
   LANE_DEFAULT,
   LANE_SNAP_SPEED,
   MAX_FALL,
@@ -85,6 +87,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   atkCd = 0
   hurtCd = 0
   hurtLock = 0
+  hurtDamp = HURT_DAMP
   grace = 0
   role: PlayerRole = 'boy'
   /** Boots from the gear shop scale the jump (gear.ts jumpMul). */
@@ -279,6 +282,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.atkCd = Math.max(0, this.atkCd - dt)
     this.hurtCd = Math.max(0, this.hurtCd - dt)
     this.hurtLock = Math.max(0, this.hurtLock - dt)
+    if (this.hurtLock <= 0) this.hurtDamp = HURT_DAMP
+    const vxCap = this.hurtLock > 0 ? HURT_MAX_VX : this.moveSpeed + 60
+    if (body.maxVelocity.x !== vxCap) body.setMaxVelocityX(vxCap)
     this.tickIFrameFlash(now)
     this.syncAttackHitbox(now)
     this.applyAirGravity(body)
@@ -294,7 +300,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
-      if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * 0.82)
+      if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * Math.pow(this.hurtDamp, dt / 16.667))
       this.holdLaneFloor(body, dt)
       fsmUpdate(this, {
         now,

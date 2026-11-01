@@ -73,6 +73,9 @@ import {
   MAX_HP,
   GIRL_SPEED,
   HURT_LOCK_MS,
+  BOSS_HURT_LOCK_MS,
+  BOSS_KNOCK_X,
+  BOSS_HURT_DAMP,
   HURT_IFRAME_MS,
   FALL_Y,
   COINS_START,
@@ -1880,11 +1883,15 @@ export class GameScene extends Phaser.Scene {
     const gearKnock = knockMul(h.role as Who)
     const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * this.speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
     const dmg = this.incoming(h, rawDmg)
+    const bossHit = e instanceof MirrorOwl
+    const kx = this.safeKnockX(h, away * Math.round((bossHit ? BOSS_KNOCK_X * Math.max(gearKnock, 0.85) : 340 * speciesKnock * gearKnock)))
+    const ky = -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock)
     const hpLeft = applyDamage(h, {
       amount: dmg,
-      knockbackX: this.safeKnockX(h, away * Math.round(340 * speciesKnock * gearKnock)),
-      knockbackY: -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock),
+      knockbackX: kx,
+      knockbackY: ky,
       iframeMs: this.iframes(h),
+      lockMs: bossHit ? BOSS_HURT_LOCK_MS : undefined,
       now: this.time.now,
     })
     applyHurtPose(h, -away)
@@ -1894,6 +1901,7 @@ export class GameScene extends Phaser.Scene {
     })
     SFX.hurt()
     freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
+    this.knockAfterFreeze(h, kx, ky, PLAYER_HURT_FREEZE_MS, bossHit)
     freezeActors(this, this.combatActors().filter((a) => a !== h), HIT_CONFIRM_FREEZE_MS)
     this.dropWeaponLv(h)
     if (pe.species === 'elephant' && typeof pe.grantDominate === 'function') {
@@ -1911,6 +1919,19 @@ export class GameScene extends Phaser.Scene {
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
     if (hpLeft <= 0) this.knockOut(h)
+  }
+
+  /**
+   * freezeActors() zeroes a hero's velocity for the hit-stop, which used to wipe the knockback
+   * that applyDamage had just set (measured: 0px push). Re-apply it when the freeze ends.
+   */
+  private knockAfterFreeze(h: Hero, vx: number, vy: number, freezeMs: number, boss = false) {
+    if (boss) h.hurtDamp = BOSS_HURT_DAMP
+    this.time.delayedCall(freezeMs, () => {
+      if (!h.active || !h.alive || h.pose !== 'hurt') return
+      h.setVelocityX(vx)
+      h.setVelocityY(vy)
+    })
   }
 
   /** Knockback never throws a hero into a pit: zero the push if a pit edge lies that way. */
@@ -1935,7 +1956,7 @@ export class GameScene extends Phaser.Scene {
       label: '榴槤！腳痛！',
     })
   }
-  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string } = { knockX: 0, knockY: -560 }) {
+  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string; boss?: boolean } = { knockX: 0, knockY: -560 }) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     const hpLeft = applyDamage(h, {
@@ -1943,8 +1964,10 @@ export class GameScene extends Phaser.Scene {
       knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who)),
       knockbackY: opts.knockY,
       iframeMs: this.iframes(h),
+      lockMs: opts.boss ? BOSS_HURT_LOCK_MS : undefined,
       now: this.time.now,
     })
+    if (opts.boss) h.hurtDamp = BOSS_HURT_DAMP
     applyHurtPose(h, -h.facing)
     startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.spike()
@@ -3021,10 +3044,10 @@ export class GameScene extends Phaser.Scene {
       const mvTex = this.tree && this.textures.exists('s2-bark-platform') ? 's2-bark-platform' : 'blk-wood'
       const mvH = mvTex === 'blk-wood' ? 8 : this.textures.get(mvTex).get().height
       const img = this.textures.exists(mvTex)
-        ? this.add.tileSprite(mp.x, floor - mp.h, mp.w, mvH, mvTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        ? this.add.tileSprite(mp.x, floor - mp.h, mp.w, mvH, mvTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         : null
       if (img) enablePixelSprite(img as unknown as Phaser.GameObjects.Image)
-      const posts = this.add.graphics().setDepth(DEPTH.GROUND + 3)
+      const posts = this.add.graphics().setDepth(DEPTH.SHADOW + 4)
       this.movers.push({ solid, baseX: mp.x, w: mp.w, range: mp.range, periodMs: mp.periodMs, img, posts })
     }
     setTerrain(solids, pits, floor)
@@ -3047,7 +3070,7 @@ export class GameScene extends Phaser.Scene {
         ? 's2-bark-ground'
         : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : 'tile-ground-top'
       if (this.textures.exists(stepTex)) {
-        const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
       } else {
         g.fillStyle(0x6b4428, 1).fillRect(st.x, top, st.w, st.h)
@@ -3063,7 +3086,7 @@ export class GameScene extends Phaser.Scene {
     for (const pl of ST.platforms) {
       const top = floor - pl.h
       if (woodTex) {
-        const plank = this.add.tileSprite(pl.x, top, pl.w, plankH, woodTex).setOrigin(0, 0).setDepth(DEPTH.GROUND + 3)
+        const plank = this.add.tileSprite(pl.x, top, pl.w, plankH, woodTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(plank as unknown as Phaser.GameObjects.Image)
       } else {
         g.fillStyle(0x8a5a30, 1).fillRect(pl.x, top, pl.w, 8)
@@ -3082,7 +3105,7 @@ export class GameScene extends Phaser.Scene {
     for (const sh of ST.shelves ?? []) {
       const top = floor - sh.h
       if (this.textures.exists('s2-mushroom-shelf')) {
-        const img = this.add.image(sh.x + sh.w / 2, top - 2, 's2-mushroom-shelf').setOrigin(0.5, 0).setDepth(DEPTH.GROUND + 3)
+        const img = this.add.image(sh.x + sh.w / 2, top - 2, 's2-mushroom-shelf').setOrigin(0.5, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(img)
       } else {
         g.fillStyle(0xc88a50, 1).fillRect(sh.x, top, sh.w, 6)
@@ -3657,17 +3680,22 @@ export class GameScene extends Phaser.Scene {
     const lane = shot.getData('lane') as number | undefined
     // ±1 lane still hits (同上下差一行)
     if (lane !== undefined && h.lane !== undefined && Math.abs(lane - h.lane) > 1) return
+    const shotDmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
+    const bossShot = !!shot.getData('boss')
     shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
-    const dmg = this.incoming(h, (shot.getData('dmg') as number) || FISH_BULLET_DMG)
+    const dmg = this.incoming(h, shotDmg)
+    const bkx = this.safeKnockX(h, away * (bossShot ? BOSS_KNOCK_X : 180))
     const hpLeft = applyDamage(h, {
       amount: dmg,
-      knockbackX: this.safeKnockX(h, away * 180),
+      knockbackX: bkx,
       knockbackY: -160,
+      lockMs: bossShot ? BOSS_HURT_LOCK_MS : undefined,
       now: this.time.now,
     })
     applyHurtPose(h, -away)
     freezeActors(this, [h], FISH_BULLET_FREEZE_MS)
+    this.knockAfterFreeze(h, bkx, -160, FISH_BULLET_FREEZE_MS, bossShot)
     startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
     SFX.hurt()
     burst(this, h.x, h.y - 20, 0xffaa66, 5)
@@ -4048,7 +4076,7 @@ export class GameScene extends Phaser.Scene {
       enablePixelSprite(spr)
       this.crushers.push({ spr, x: c.x, restBottom, floor, state: 'idle', t: c.idleMs, cfg: c })
       // Warning stripe on the floor under it.
-      this.add.rectangle(c.x, floor + 1, spr.displayWidth + 4, 2, 0xb03020, 0.7).setOrigin(0.5, 0).setDepth(DEPTH.GROUND + 4)
+      this.add.rectangle(c.x, floor + 1, spr.displayWidth + 4, 2, 0xb03020, 0.7).setOrigin(0.5, 0).setDepth(DEPTH.SHADOW + 5)
     }
   }
 
@@ -5162,7 +5190,7 @@ export class GameScene extends Phaser.Scene {
   private mudWave(x0: number, x1: number, dir: 1 | -1) {
     SFX.siren()
     const y = LANE_FLOOR_Y + 3
-    const wave = this.add.ellipse(dir > 0 ? x0 + 30 : x1 - 30, y, 70, 10, 0x4a3a28, 0.6).setDepth(DEPTH.GROUND + 4)
+    const wave = this.add.ellipse(dir > 0 ? x0 + 30 : x1 - 30, y, 70, 10, 0x4a3a28, 0.6).setDepth(DEPTH.SHADOW + 5)
     this.tweens.add({ targets: wave, x: dir > 0 ? x1 - 30 : x0 + 30, alpha: 0, duration: 900, onComplete: () => wave.destroy() })
     this.cameras.main.shake(200, 0.003)
   }
@@ -5205,7 +5233,7 @@ export class GameScene extends Phaser.Scene {
   private dozerRun(x0: number, x1: number, dir: 1 | -1) {
     SFX.siren()
     const y = LANE_FLOOR_Y + 3
-    const band = this.add.rectangle((x0 + x1) / 2, y, x1 - x0, 8, 0xff5030, 0.35).setDepth(DEPTH.GROUND + 4)
+    const band = this.add.rectangle((x0 + x1) / 2, y, x1 - x0, 8, 0xff5030, 0.35).setDepth(DEPTH.SHADOW + 5)
     floatText(this, dir > 0 ? x0 + 60 : x1 - 60, LANE_FLOOR_Y - 70, '推土機！跳！', '#ff9a6a', { size: 13, dur: 700 })
     this.tweens.add({ targets: band, alpha: 0, duration: 700, onComplete: () => band.destroy() })
     this.time.delayedCall(700, () => {
@@ -5250,7 +5278,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** 油甘魚攤主's kitchen knife: alternates low (jump) / high (crouch), spins. */
-  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900) {
+  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900, boss = false) {
     if (this.ended) return
     const key = this.textures.exists('s3-knife') ? 's3-knife' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
     const shot = this.enemyShots.create(x, feet - (high ? 19 : 7), key) as Phaser.Physics.Arcade.Sprite
@@ -5262,6 +5290,7 @@ export class GameScene extends Phaser.Scene {
     shot.setVelocity(dir * speed, 0)
     shot.setData('lane', 0)
     shot.setData('dmg', 1)
+    if (boss) shot.setData('boss', true)
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 360, repeat: -1 })
     floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
@@ -5291,9 +5320,10 @@ export class GameScene extends Phaser.Scene {
     const b = ST.boss!
     return {
       floorY: () => LANE_FLOOR_Y,
-      feathers: (gapX) => {
+      feathers: (gapX, opts) => {
         // A row of feathers drifts down across the arena; walk into the gap.
         SFX.siren()
+        const fall = opts?.fall ?? 150
         for (let x = b.arenaX0 + 18; x < b.arenaX1 - 10; x += 26) {
           if (Math.abs(x - gapX) < 44) continue
           const key = this.textures.exists('s3-feather') ? 's3-feather' : 'coin'
@@ -5303,15 +5333,40 @@ export class GameScene extends Phaser.Scene {
           ;(f.body as Phaser.Physics.Arcade.Body).setSize(8, 14)
           f.setVelocity(0, 0)
           f.setData('dmg', 1)
+          if (opts?.boss) f.setData('boss', true)
           this.entities.add(f, 'projectile')
-          this.time.delayedCall(450 + Phaser.Math.Between(0, 120), () => f.active && f.setVelocity(0, 150))
+          this.time.delayedCall((opts?.hover ?? 450) + Phaser.Math.Between(0, 120), () => f.active && f.setVelocity(0, fall))
           this.tweens.add({ targets: f, angle: { from: 150, to: 210 }, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
           this.time.delayedCall(2600, () => f.active && f.destroy())
         }
         // Gap marker on the bridge so the safe spot reads.
-        const m = this.add.ellipse(gapX, LANE_FLOOR_Y + 2, 70, 8, 0xfff0a0, 0.35).setDepth(DEPTH.GROUND + 4)
+        const m = this.add.ellipse(gapX, LANE_FLOOR_Y + 2, 70, 8, 0xfff0a0, 0.35).setDepth(DEPTH.SHADOW + 5)
         this.tweens.add({ targets: m, alpha: 0, delay: 1600, duration: 400, onComplete: () => m.destroy() })
       },
+      warnGap: (gapX, ms) => {
+        const col = this.add.rectangle(gapX, LANE_FLOOR_Y / 2, 88, LANE_FLOOR_Y, 0xfff0a0, 0.16).setDepth(DEPTH.SHADOW + 4)
+        const base = this.add.ellipse(gapX, LANE_FLOOR_Y + 2, 88, 10, 0xfff0a0, 0.7).setDepth(DEPTH.SHADOW + 5)
+        this.tweens.add({ targets: [col, base], alpha: { from: 0.1, to: 0.8 }, duration: 160, yoyo: true, repeat: Math.max(1, Math.round(ms / 320)) })
+        this.time.delayedCall(ms + 1700, () => {
+          col.destroy()
+          base.destroy()
+        })
+        floatText(this, gapX, LANE_FLOOR_Y - 120, '缺口喺呢度', '#fff0a0', { size: 12, dur: 900 })
+      },
+      warnSpot: (x, ms) => {
+        const z = this.add.ellipse(x, LANE_FLOOR_Y + 2, 96, 12, 0xff5030, 0.55).setDepth(DEPTH.SHADOW + 5)
+        const col = this.add.rectangle(x, LANE_FLOOR_Y / 2, 96, LANE_FLOOR_Y, 0xff5030, 0.12).setDepth(DEPTH.SHADOW + 4)
+        this.tweens.add({ targets: [z, col], alpha: { from: 0.1, to: 0.7 }, duration: 110, yoyo: true, repeat: Math.max(1, Math.round(ms / 220)) })
+        this.time.delayedCall(ms + 60, () => {
+          z.destroy()
+          col.destroy()
+        })
+      },
+      cue: (x, y, label) => {
+        SFX.siren()
+        floatText(this, x, y - 30, label, '#ff8a50', { size: 16, dur: 700 })
+      },
+      wave: (x, dir) => this.throwKnife(x, LANE_FLOOR_Y, dir, false, 210, 1500, true),
       reflect: (x) => {
         // Wrong owl: its mirror flashes moonlight back at the nearest hero.
         const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
@@ -5321,7 +5376,7 @@ export class GameScene extends Phaser.Scene {
         if (!h) return
         const beam = this.add.line(0, 0, x, LANE_FLOOR_Y - 40, h.x, h.y - 24, 0xe8f0ff, 0.8).setOrigin(0).setDepth(DEPTH.FX).setLineWidth(3)
         this.tweens.add({ targets: beam, alpha: 0, duration: 260, onComplete: () => beam.destroy() })
-        this.hazardHit(h, { knockX: (Math.sign(h.x - x) || 1) * 200, knockY: -320, label: '反光 -1' })
+        this.hazardHit(h, { knockX: (Math.sign(h.x - x) || 1) * 260, knockY: -320, label: '反光 -1', boss: true })
       },
       spawnDecoy: (x) => {
         const d = new OwlDecoy(this, x, LANE_FLOOR_Y - 40, this.s2Hooks())

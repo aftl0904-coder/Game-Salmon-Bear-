@@ -28,3 +28,30 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - **Stage 1 卡位**：量度到兩個原因。(a) 紅魚追到 16/32px 台階牆邊就 `setVelocityX(0)`，停喺牆前 ATTACK 狀態郁唔到（實測 975px 停 5 秒以上）；(b) 玩家行入 16px 矮台階要跳先過。已修：敵人唔再被矮台階阻擋；玩家對 ≤18px 矮台階自動踏上；敵人喺窄坑（≤90px）邊卡住 0.7 秒會跳過去。重跑 stage 1 bot 行足全程無卡位。**未確認**呢個就係 Alan 見到嗰個位（無法同佢確認），如果仲有，請俾 x 位置或截圖。
 - **敵人移動 review（stage 1–5 逐段 sample）**：卡住嘅係上面（a）同 stage 5 大堂 x≈688 嘅坑邊紅魚（原因同樣係坑邊阻擋）；設計上唔郁嘅：`MarketStall`／`StallKeeper`（stage 3 攤檔）、`ClockPunch`（stage 4 定時炸彈）；偏慢：蜜僵（約 16px/s，倫寶 105px/s）、鏡影漂浮 34px/s、紅魚 51px/s（約倫寶一半，永遠追唔到玩家）。量度時多次「冇郁」其實係我 teleport 去咖啡車位置觸發小遊戲暫停，已排除。**未驗證**：個別敵人慢係咪「太慢」係手感判斷，要真人。
 - **Stage 1 加長 50% 試做**：`scripts/level/extend_stage1.py` 由 `stage1.base.json` 生成新 `stage1.json`（世界闊度 3800 → 5700，`worldW` 欄位 + `WORLD_W` 改為可按關設定）。內容係**回收**舊段落（S3/S4/S5/S1 複製、紅魚部分換桶仔、加 1 隻機械豬、多 1 個存檔點、金鮭掉落冇複製），唔係新設計。bot 跑足全程冇卡位、validators 全過。**未驗證**：真人節奏／難度、美術重複感、其他 4 關。
+
+## 貓頭鷹大佬 (MirrorOwl) 戰鬥手感 Pilot（2026-11-01 夜）
+
+只改貓頭鷹 + 全域受擊。腳本：`scripts/qa/owl/*.mjs`；截圖：`docs/qa-owl/`。
+
+### 已確認事實（Playwright + swiftshader 實跑，~27fps）
+- 受擊「冇擊退」真正原因：`hurtHero` / `hitByFishBullet` 設咗 knock 之後即刻 `freezeActors()` 歸零速度；之後 hero 最大水平速度只有 `moveSpeed+60`(≈171) 都會吞 knock。`hazardHit` default `knockX:0` 冇人用（所有 caller 都有傳值），唔係根因。
+  修正：freeze 完重新套用 knock；hurt-lock 期間放寬 `HURT_MAX_VX=380`；大佬攻擊用 `BOSS_HURT_LOCK_MS=550`(扣 200ms freeze 後實際約 350ms 可移動) + `BOSS_KNOCK_X=360`；雜兵 lock 維持 260。
+  量度（實測位移）：雜兵 28–36px（之前 0）；大佬子彈 78px；貓頭鷹接觸 72px（之前 0）。未去到 ~100px。
+- 貓頭鷹 Phase 1 羽幕：warn 光柱（500ms）→ 羽毛出現 → 下墜(190px/s)；缺口 = 玩家平均位置 ±55–85px（靠邊時自動換邊，否則 clamp 會令缺口剛好壓喺玩家頭上）。
+  bot 睇到 cue 先反應：反應 350/600ms 4 次全避開；900ms 反應 4 次中 1 次中；企定唔郁 4 次中 3 次中。
+- Rest 反擊窗 1.6s、免費 3 下；第 4 下 → 「貪心！」tell 500ms → 兩邊地面波（要跳）。實測 forced hits：rest→tell→blast，企喺旁邊冇跳會中 1 血。
+- Phase 2：observe 2.4s（3 隻，只有真身有水面漣漪+倒影）→ tell2 650ms（真身飛去鎖定位置上方 + 紅色落點）→ plunge（只有落點有傷害）→ window2 1.2s（3 下免費，第 4 下 → 同一個貪心反打）→ 重新洗位。避開 plunge 實測成功。
+- 重大舊 bug（已修）：`OwlDecoy` 從未 `syncDepth()` / 未播 anim → depth 0，分身喺實戰中完全睇唔到。修正後三隻可見（`docs/qa-owl/phase2-three-owls-ripple.png`）。
+- 倒影：原本 depth 0 + 位置喺橋面下 → 完全睇唔到。而家 depth 104、擺喺水面帶 + 一圈月光漣漪（因為貓頭鷹身體會遮住倒影本身）。
+- Phase 3：dive 前 450ms cue（橙色 + 「！」）；weak 窗傷害由 ×3 改 ×2，第 4 下 → 貪心反打，所以一個窗打唔死（12HP 要 ≥2 窗）。
+- rise / land 期間唔再有接觸傷害（之前企邊度都會被無預警撞）。
+- bot 全程 fight（boy 遠程，單命 6HP，normal）：反應 350ms polite n=4 → 1 勝；反應 700ms n=3 → 0 勝；貪心 n=3 → 0 勝。死亡位置主要係 phase 2→3（反光、window2 邊緣、guard 接觸/dive）。
+
+### 估計（未驗證）
+- 「真人 4–5 次過關」只可以用 bot 勝率（~25% 單命）粗略估：偏難但可玩；真正手感必須人手。
+- 反光懲罰對 boy 遠程特別重（子彈途經分身會觸發）；girl 近戰較少受影響。未量化。
+- 倒影／漣漪夠唔夠明顯，我睇咗截圖覺得見到，但係人眼判斷。
+
+### 未驗證
+- 2P 對貓頭鷹新階段、真手掣 / 觸控、真機 60fps 下 cap 3 下嘅時機（swiftshader 27fps 下 rest 窗通常得 3 下，第 4 下要真機先測到）。
+- 全域 knock 改動同樣令其他 4 個大佬嘅命中擊退變咗（`hurtHero` / `hitByFishBullet` 共用；hurt-lock 與 boss-damp 只對貓頭鷹生效）。
