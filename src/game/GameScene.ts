@@ -10,7 +10,7 @@ import {
 } from './pixelSnap'
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
-import { unlockStage, markFriendSaved } from './progress'
+import { unlockStage, markFriendSaved, savedFriends } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
@@ -4197,6 +4197,15 @@ export class GameScene extends Phaser.Scene {
     this.playOutro()
   }
 
+  /**
+   * Perfect ending: every friend rescued. `friendsSaved` only covers the current stage run, so the
+   * check reads the persistent save (markFriendSaved runs when a cage opens, this run included).
+   */
+  private perfectEnding() {
+    const saved = new Set([...savedFriends(), ...this.friendsSaved])
+    return (Object.keys(FRIENDS) as string[]).every((id) => saved.has(id))
+  }
+
   /** C2 (first real honey → 噗噗's ear twitches → note to 蜜樹丘), then the clear card. */
   private outroOn = false
   private clearAt = 0
@@ -4210,7 +4219,7 @@ export class GameScene extends Phaser.Scene {
     SFX.win()
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
     this.time.delayedCall(1800, () => {
-      this.storyIntro = playCutscene(this, this.tower ? 'C11' : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
+      this.storyIntro = playCutscene(this, this.tower ? (this.perfectEnding() ? 'C11_PERFECT' : 'C11') : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
         this.storyIntro = null
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         this.win()

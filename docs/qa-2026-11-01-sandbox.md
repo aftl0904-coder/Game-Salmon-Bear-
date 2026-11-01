@@ -55,3 +55,9 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 ### 未驗證
 - 2P 對貓頭鷹新階段、真手掣 / 觸控、真機 60fps 下 cap 3 下嘅時機（swiftshader 27fps 下 rest 窗通常得 3 下，第 4 下要真機先測到）。
 - 全域 knock 改動同樣令其他 4 個大佬嘅命中擊退變咗（`hurtHero` / `hitByFishBullet` 共用；hurt-lock 與 boss-damp 只對貓頭鷹生效）。
+
+## 補充：大佬傷害 / 完美結局分支
+
+- 大佬傷害：新增 `engine/bossDamage.ts`（`bossHitDamage`：實際 dmg ÷ 基礎 3，四捨五入，封頂）。基礎一下 = 以前嘅 1（weak 窗 ×3，貓頭鷹 ×2）。普通窗封頂 2、weak 窗封頂 5（貓頭鷹 4）。QueenBee / MirrorOwl / MudMane / TriBoss 四個 override 都已改；實測 dmg 3/5/8/15 → 普通 1/2/2/2；weak 窗 3/5/5/5（貓頭鷹 2/3/4/4）。Stage 1「武者」係普通 PatrolEnemy（hp 18、直接用實際 dmg、冇封頂），未改。
+- 完美結局：`C11_PERFECT`（`data/story.json`，對白全部 placeholder「［完美結局對白 #n — 待 Alan 填寫］」，舞台指令照抄 C11）。條件 `perfectEnding()`：11 個朋友全部喺存檔（`savedFriends()` + 今次 `friendsSaved`）。實測：0/11、10/11 → 原 C11；11/11 → C11_PERFECT（截圖 `docs/qa-owl/ending-*.png`）。
+- Guide：刪走「五罐蜂蜜」，改成「救全部 11 個小朋友」。
