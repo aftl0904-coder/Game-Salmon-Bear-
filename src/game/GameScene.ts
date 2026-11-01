@@ -10,7 +10,7 @@ import {
 } from './pixelSnap'
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
-import { unlockStage, markFriendSaved, savedFriends } from './progress'
+import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
@@ -3855,6 +3855,9 @@ export class GameScene extends Phaser.Scene {
     const look = isFriendId(id) ? FRIENDS[id] : null
     if (!pal || !look) return
     if (!this.friendsSaved.includes(id)) this.friendsSaved.push(id)
+    const run = new Set((this.registry.get('runFriends') as string[] | undefined) ?? [])
+    run.add(id)
+    this.registry.set('runFriends', [...run])
     markFriendSaved(id)
     this.tweens.killTweensOf(pal)
     pal.setAngle(0).clearTint().setDepth(DEPTH.BREAKABLE + 2)
@@ -4198,12 +4201,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   /**
-   * Perfect ending: every friend rescued. `friendsSaved` only covers the current stage run, so the
-   * check reads the persistent save (markFriendSaved runs when a cage opens, this run included).
+   * Perfect ending: all 11 friends freed within the same run (registry `runFriends`, reset by the
+   * main menu when a run starts). `friendsSaved` is per stage and the browser save accumulates
+   * across sessions, so neither is used here.
    */
   private perfectEnding() {
-    const saved = new Set([...savedFriends(), ...this.friendsSaved])
-    return (Object.keys(FRIENDS) as string[]).every((id) => saved.has(id))
+    const run = new Set([...((this.registry.get('runFriends') as string[] | undefined) ?? []), ...this.friendsSaved])
+    return (Object.keys(FRIENDS) as string[]).every((id) => run.has(id))
   }
 
   /** C2 (first real honey → 噗噗's ear twitches → note to 蜜樹丘), then the clear card. */
