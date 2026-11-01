@@ -147,3 +147,16 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 ## Boss card 文案：武者王（data/bosses.json `altar` entry）
 - 只改 name / title / lines / why，portrait 仍為 null。
 - 實跑 stage 1 → 傳送到 x=5300 觸發，截圖 `docs/qa-king/card-montage.png`：標題、副題、三行 lines、why 全部顯示新文字，無 pageerror。
+
+## 敵人跳窿（keepEnemyOnTerrain，只講 pit/gap）
+**修正前（實測）**：stage 1 pit 1872+144，chaser 喺窿邊 50px 停低 → 700ms 後 `leaping` 但 x 由 1850 跳去 1482（反方向）。
+原因（code）：pit 搜尋 `find(...)` 缺上界，條件對任何喺 lead 後面嘅窿都成立，永遠揀陣列第一個窄窿（≤90px）；寬窿（>90）則因闊度上限直接 return。結果：第一個窄窿OK，之後嘅窿全部跳錯方向或企定。
+**修正後**：
+- 以 lead 所在嘅窿為準（containment ±6px），移除闊度上限。
+- 相鄰窿之間嘅島 < 2×half+8 視為同一個缺口。
+- 跳躍時間 520ms 起，每多 1px 闊度 +4ms（上限 1000ms）；弧高 34 + 0.15×闊度。
+- 狀態：CHASE / ATTACK（卡≥700ms）會跳；PATROL / HURT / DEAD 唔跳（維持）；flying 唔受影響。
+**實測**（`scripts/qa/owl/gaphop.mjs`，chaser 窿前 50px，hero 窿後 120px；log 喺 `docs/qa-gaphop/`）：
+stage1 窿 1184/1872(144)/2464/3152(144)/4524 跳過；stage2 1980(104)/2860 跳過；stage3 2560(96)/2860 跳過；stage4 760/1040/2040 跳過；stage5 1980/2760 跳過。
+每條各一次，5 關同時跑令 swiftshader 變慢，個別窿首次無記到「跳過」，之後用單獨 `trace.mjs` 跑 stage1 pit672 見到 ATTACK/CHASE 700ms 後 `L` 跳過。
+未能實測：stage1 5116、stage4 3300、stage5 3160（喺 boss 觸發線後面，傳送 hero 過去會觸發 boss 清走敵人，屬測試手法限制）；stage2/3/4/5 嘅首個窿同 stage1 672 一樣通過單獨 trace 或漏測，詳見 log。

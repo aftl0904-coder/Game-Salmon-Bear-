@@ -2068,7 +2068,7 @@ export class GameScene extends Phaser.Scene {
     this.prevLeadX = leadX
   }
 
-  /** Enemies walk the base floor only: stop at pit edges; low steps are walked through (they never climb, but must not stall against them). */
+  /** Enemies walk the base floor only: stop at pit edges and hop any pit once a chaser has been stuck 700ms; low steps are walked through. */
   private keepEnemyOnTerrain(e: PatrolEnemy, dt: number) {
     if (!terrainEnabled() || !e.active || !e.body) return
     if ((e as unknown as { flying?: boolean }).flying) return
@@ -2091,19 +2091,33 @@ export class GameScene extends Phaser.Scene {
     const ms = ((e.getData('blockedMs') as number | undefined) ?? 0) + dt
     e.setData('blockedMs', ms)
     if (ms < 700 || e.getData('leaping')) return
-    const pit = terrainPits().find((p) => (dir > 0 ? p.x0 : p.x1) - lead <= 4 && (dir > 0 ? lead - p.x0 : p.x1 - lead) >= -4 && p.x1 - p.x0 <= 90)
-    if (!pit) return
-    const toX = dir > 0 ? pit.x1 + half + 4 : pit.x0 - half - 4
+    const pits = terrainPits()
+    const first = pits.find((p) => (dir > 0 ? lead >= p.x0 - 6 && lead < p.x1 : lead <= p.x1 + 6 && lead > p.x0))
+    if (!first) return
+    // Chained pits whose islands are too small to stand on count as one gap.
+    const margin = half * 2 + 8
+    let near = first.x0
+    let far = first.x1
+    for (let grew = true; grew; ) {
+      grew = false
+      for (const p of pits) {
+        if (dir > 0 && p.x0 > far && p.x0 - far < margin) { far = p.x1; grew = true }
+        if (dir < 0 && p.x1 < near && near - p.x1 < margin) { near = p.x0; grew = true }
+      }
+    }
+    const width = far - near
+    const toX = dir > 0 ? far + half + 4 : near - half - 4
     e.setData('leaping', true)
     e.setData('blockedMs', 0)
     const y0 = e.y
+    const arc = 34 + Math.min(width, 200) * 0.15
     this.tweens.add({
       targets: e,
       x: toX,
-      duration: 520,
+      duration: Phaser.Math.Clamp(520 + Math.max(0, width - 60) * 4, 520, 1000),
       ease: 'Sine.inOut',
       onUpdate: (tw) => {
-        e.y = y0 - Math.sin(tw.progress * Math.PI) * 34
+        e.y = y0 - Math.sin(tw.progress * Math.PI) * arc
       },
       onComplete: () => {
         e.y = y0
