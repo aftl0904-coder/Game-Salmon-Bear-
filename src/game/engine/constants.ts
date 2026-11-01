@@ -18,7 +18,12 @@ export function L(n: number) {
  * Stage length — previous 7600 shortened −25%, then × LAYOUT_SCALE.
  * Spawn X positions should use `sx()` / STAGE_LEN_MUL.
  */
-export const WORLD_W = L(5700)
+export const BASE_WORLD_W = L(5700)
+/** Live binding: a stage JSON may set `worldW` (see GameScene.create) to run longer than the shared default. */
+export let WORLD_W = BASE_WORLD_W
+export function setWorldW(w: number) {
+  WORLD_W = Math.round(w)
+}
 export const WORLD_H = GAME_H
 /** Multiply legacy absolute stage X coords by this (WORLD_W design / 7600), then layout scale. */
 export const STAGE_LEN_MUL = 0.75 * LAYOUT_SCALE

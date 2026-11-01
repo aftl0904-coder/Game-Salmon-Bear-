@@ -1,0 +1,459 @@
+{
+  "id": "ST-01",
+  "name": "百畝樹林",
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "physicsRef": {
+    "note": "2026-10-31 speed/jump tuning (Alan: stage1 64px pit was unclearable, chars felt slow): moveSpeed 倫寶 95→105px/s, 琪寶寶 115→127px/s; full-jump target height 60→70px. Computed full-jump air time ≈0.84s → far ≈88px (倫寶) / ≈107px (琪寶寶), high ≈70px; tap jump unchanged ≈24px/~0.53s far. Still well under the 112/144px pits that are meant to require the platform/moving-board, not a single jump.",
+    "maxPitPx": 64,
+    "maxStepPx": 40
+  },
+  "segments": [
+    {
+      "id": "S1",
+      "role": "teach",
+      "x0": 0,
+      "x1": 560,
+      "note": "起步。第一隻紅魚；地刺教矮跳。"
+    },
+    {
+      "id": "S2",
+      "role": "teach",
+      "x0": 560,
+      "x1": 860,
+      "note": "第一個坑，32px，前後無敵人。"
+    },
+    {
+      "id": "S3",
+      "role": "test",
+      "x0": 860,
+      "x1": 1300,
+      "note": "矮台階 16px + 48px 坑 + 紅魚。"
+    },
+    {
+      "id": "S4",
+      "role": "rest",
+      "x0": 1300,
+      "x1": 1500,
+      "note": "存檔點 + 蜂蜜。"
+    },
+    {
+      "id": "S5",
+      "role": "test",
+      "x0": 1500,
+      "x1": 2140,
+      "note": "帽仔兵 + 刺球；寬坑中間有木板，木板上有蜂蜜（冒險獎勵）。"
+    },
+    {
+      "id": "S6",
+      "role": "rest",
+      "x0": 2140,
+      "x1": 2320,
+      "note": "存檔點。"
+    },
+    {
+      "id": "S7",
+      "role": "twist",
+      "x0": 2320,
+      "x1": 3040,
+      "note": "32px 高台（要長按跳）、64px 坑、地刺、機械豬守衛。 上路：地刺上面有兩塊木板，再上秘密高台有壽司。"
+    },
+    {
+      "id": "S8",
+      "role": "rest",
+      "x0": 3040,
+      "x1": 3200,
+      "note": "存檔點 + 蜂蜜。"
+    },
+    {
+      "id": "S9",
+      "role": "boss",
+      "x0": 3200,
+      "x1": 3800,
+      "note": "移動木板坑、祭壇伏兵，終點蜂巢。"
+    }
+  ],
+  "pits": [
+    {
+      "x": 672,
+      "w": 32
+    },
+    {
+      "x": 1184,
+      "w": 40
+    },
+    {
+      "x": 1872,
+      "w": 144,
+      "note": "中間有 platform，唔可以一跳過"
+    },
+    {
+      "x": 2624,
+      "w": 64
+    },
+    {
+      "x": 3216,
+      "w": 112,
+      "note": "移動木板坑"
+    }
+  ],
+  "steps": [
+    {
+      "x": 992,
+      "w": 128,
+      "h": 16
+    },
+    {
+      "x": 2416,
+      "w": 112,
+      "h": 32
+    }
+  ],
+  "platforms": [
+    {
+      "x": 1904,
+      "w": 64,
+      "h": 24
+    },
+    {
+      "x": 1040,
+      "w": 48,
+      "h": 56,
+      "note": "台階上嘅高台：隱藏金幣"
+    },
+    {
+      "x": 2740,
+      "w": 56,
+      "h": 40,
+      "note": "地刺上面嘅上路（可以避開地刺同機械豬）"
+    },
+    {
+      "x": 2830,
+      "w": 56,
+      "h": 56
+    },
+    {
+      "x": 2930,
+      "w": 40,
+      "h": 84,
+      "note": "秘密高台：壽司"
+    }
+  ],
+  "spikes": [
+    {
+      "x": 420,
+      "n": 2
+    },
+    {
+      "x": 2800,
+      "n": 3
+    }
+  ],
+  "durians": [
+    1660,
+    2340,
+    3460
+  ],
+  "honey": [
+    {
+      "x": 1400,
+      "h": 36,
+      "note": "休息區"
+    },
+    {
+      "x": 1936,
+      "h": 56,
+      "note": "木板上方，要跳上木板先拎到"
+    },
+    {
+      "x": 3120,
+      "h": 36,
+      "note": "休息區"
+    }
+  ],
+  "checkpoints": [
+    1340,
+    3080
+  ],
+  "enemies": [
+    {
+      "x": 520,
+      "species": "fish",
+      "kind": "blocker",
+      "unlockX": 300
+    },
+    {
+      "x": 1080,
+      "species": "fish",
+      "kind": "chaser",
+      "unlockX": 860
+    },
+    {
+      "x": 1290,
+      "species": "fish",
+      "kind": "chaser",
+      "unlockX": 1100
+    },
+    {
+      "x": 1700,
+      "species": "barrel",
+      "kind": "ambusher",
+      "unlockX": 1500
+    },
+    {
+      "x": 1790,
+      "species": "fish",
+      "kind": "chaser",
+      "unlockX": 1560
+    },
+    {
+      "x": 2100,
+      "species": "barrel",
+      "kind": "ambusher",
+      "unlockX": 2040
+    },
+    {
+      "x": 2560,
+      "species": "fish",
+      "kind": "chaser",
+      "unlockX": 2360
+    },
+    {
+      "x": 2900,
+      "species": "elephant",
+      "kind": "guardian",
+      "unlockX": 2700
+    },
+    {
+      "x": 2980,
+      "species": "barrel",
+      "kind": "ambusher",
+      "unlockX": 2760
+    }
+  ],
+  "altarAmbush": [
+    {
+      "x": 3420,
+      "species": "barrel"
+    },
+    {
+      "x": 3500,
+      "species": "fish"
+    },
+    {
+      "x": 3560,
+      "species": "elephant"
+    },
+    {
+      "x": 3620,
+      "species": "barrel"
+    }
+  ],
+  "altarTriggerX": 3380,
+  "movingPlatforms": [
+    {
+      "x": 3248,
+      "w": 48,
+      "h": 16,
+      "range": 28,
+      "periodMs": 2600,
+      "note": "左右移動，睇準時機跳上去"
+    }
+  ],
+  "crushers": [
+    {
+      "x": 1530,
+      "restH": 78,
+      "warnMs": 450,
+      "downMs": 140,
+      "stayMs": 500,
+      "upMs": 900,
+      "idleMs": 900,
+      "note": "天花尖刺塊，睇節奏衝過去"
+    }
+  ],
+  "breakables": [
+    {
+      "x": 360,
+      "kind": "lantern",
+      "loot": "coin"
+    },
+    {
+      "x": 860,
+      "kind": "lantern",
+      "loot": "power",
+      "note": "第一個金鮭：教武器升級"
+    },
+    {
+      "x": 1440,
+      "kind": "pot",
+      "loot": "food"
+    },
+    {
+      "x": 2230,
+      "kind": "lantern",
+      "loot": "coin"
+    },
+    {
+      "x": 2290,
+      "kind": "lantern",
+      "loot": "power"
+    },
+    {
+      "x": 2960,
+      "kind": "pot",
+      "loot": "food",
+      "note": "機械豬前補血"
+    },
+    {
+      "x": 3140,
+      "kind": "lantern",
+      "loot": "power"
+    }
+  ],
+  "decor": {
+    "note": "背景物件（玩家身後）。front 嘅草由程式每約 230px 自動排，避開坑同台階。",
+    "back": [
+      {
+        "x": 140,
+        "kind": "picnic"
+      },
+      {
+        "x": 250,
+        "kind": "sign-post"
+      },
+      {
+        "x": 330,
+        "kind": "stump-a"
+      },
+      {
+        "x": 470,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 560,
+        "kind": "rock-b"
+      },
+      {
+        "x": 800,
+        "kind": "billboard"
+      },
+      {
+        "x": 900,
+        "kind": "rock-a"
+      },
+      {
+        "x": 1480,
+        "kind": "rock-c"
+      },
+      {
+        "x": 1640,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 1780,
+        "kind": "stump-a"
+      },
+      {
+        "x": 2080,
+        "kind": "rock-b"
+      },
+      {
+        "x": 2280,
+        "kind": "fence"
+      },
+      {
+        "x": 2380,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 2560,
+        "kind": "stump-b"
+      },
+      {
+        "x": 2760,
+        "kind": "rock-a"
+      },
+      {
+        "x": 2950,
+        "kind": "stump-a"
+      },
+      {
+        "x": 3160,
+        "kind": "mushrooms"
+      },
+      {
+        "x": 3460,
+        "kind": "stone-altar"
+      },
+      {
+        "x": 3560,
+        "kind": "rock-b"
+      },
+      {
+        "x": 3620,
+        "kind": "fence"
+      }
+    ]
+  },
+  "coins": [
+    {
+      "x": 1050,
+      "h": 72
+    },
+    {
+      "x": 1064,
+      "h": 76
+    },
+    {
+      "x": 1078,
+      "h": 72
+    },
+    {
+      "x": 2756,
+      "h": 56
+    },
+    {
+      "x": 2780,
+      "h": 58
+    },
+    {
+      "x": 2846,
+      "h": 72
+    },
+    {
+      "x": 2870,
+      "h": 74
+    },
+    {
+      "x": 3360,
+      "h": 28
+    },
+    {
+      "x": 3384,
+      "h": 40
+    },
+    {
+      "x": 3408,
+      "h": 28
+    }
+  ],
+  "secrets": [
+    {
+      "x": 2950,
+      "h": 100,
+      "kind": "sushi"
+    }
+  ],
+  "friends": [
+    {
+      "x": 760,
+      "id": "huihui"
+    },
+    {
+      "x": 1064,
+      "id": "guard",
+      "h": 56,
+      "note": "木板上面：跳上去先救到"
+    }
+  ]
+}

@@ -60,6 +60,8 @@ import {
 } from './engine/terrain'
 import {
   WORLD_W,
+  BASE_WORLD_W,
+  setWorldW,
   WORLD_H,
   GAME_W,
   GAME_H,
@@ -392,6 +394,7 @@ export class GameScene extends Phaser.Scene {
     const sn = (this.registry.get('stageNo') as number) || 1
     this.stageNo = STAGES[sn] ? sn : 1
     ST = STAGES[this.stageNo]!
+    setWorldW((ST as unknown as { worldW?: number }).worldW ?? BASE_WORLD_W)
     this.tree = ST.theme === 'tree'
     this.market = ST.theme === 'market'
     this.depot = ST.theme === 'depot'
