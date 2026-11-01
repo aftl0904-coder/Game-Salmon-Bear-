@@ -1897,6 +1897,7 @@ export class GameScene extends Phaser.Scene {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
     SFX.hurt()
+    buzz(HAPTIC.hurt)
     freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
     freezeActors(this, this.combatActors().filter((a) => a !== h), HIT_CONFIRM_FREEZE_MS)
     this.dropWeaponLv(h)
@@ -2019,6 +2020,7 @@ export class GameScene extends Phaser.Scene {
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
     SFX.die()
+    buzz(HAPTIC.die)
     const lost = dropOnDeath(h.role as Who)
     if (lost) {
       floatText(this, h.x, h.y - 100, `跌咗：${gearById(lost.id).name} Lv${lost.from} → Lv${lost.from - 1}`, '#ff9a8a', { size: 13, dur: 2000 })
