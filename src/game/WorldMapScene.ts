@@ -373,7 +373,7 @@ export class MapScene extends Phaser.Scene {
     cam.setRotation(0).setZoom(RENDER_SCALE)
     if (d.stageNo) this.registry.set('stageNo', d.stageNo)
     if (d.next === 'credits') this.scene.start('credits')
-    else if (d.next === 'bike') this.scene.start('bike', { to: d.to })
+    else if (d.next === 'bike') this.scene.start(d.from === 2 && d.to === 3 ? 'claw' : 'bike', { to: d.to })
     else this.scene.start('play')
   }
 }

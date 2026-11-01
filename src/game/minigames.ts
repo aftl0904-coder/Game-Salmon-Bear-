@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import { GAME_W, GAME_H } from './display'
 import { DEPTH } from './engine/depth'
 import { FONT_UI } from './ui/fonts'
+import { markHd } from './heroAnims'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { floatText } from './fx'
@@ -17,9 +18,9 @@ import { BlowMeter, buzz, HAPTIC, isTouchDevice, micLevel, micReady, phonePrefs,
 export type Mini<T = void> = { done: Promise<T>; destroy: () => void }
 export type CoffeeResult = { sugar: number; stirred: number }
 
-function frame(scene: Phaser.Scene, title: string) {
+function frame(scene: Phaser.Scene, title: string, dim = 0.72) {
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 260)
-  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0c0806, 0.72).setOrigin(0).setInteractive())
+  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0c0806, dim).setOrigin(0).setInteractive())
   const t = scene.add
     .text(GAME_W / 2, 76, title, { fontFamily: FONT_UI, fontSize: '18px', color: '#ffe08a', stroke: '#2a1408', strokeThickness: 4 })
     .setOrigin(0.5)
@@ -955,4 +956,240 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
   draw()
   drawDyn()
   return { done, destroy }
+}
+
+// ── 夜市抓抓機：左右移動夾爪，揀準時機落爪 ───────────────────────────────
+
+export type ClawResult = { coins: number; caught: number; drops: number }
+type PrizeKind = 'lobster' | 'shrimp' | 'boot' | 'can' | 'gold'
+type Prize = { kind: PrizeKind; spr: Phaser.GameObjects.Image; x: number; vx: number; zone: number; value: number }
+
+/** Coin value, art, size and how often each prize turns up on the belt. */
+export const CLAW_PRIZES: Record<PrizeKind, { tex: string; value: number; zone: number; weight: number; label: string }> = {
+  lobster: { tex: 'claw-lobster', value: 6, zone: 15, weight: 22, label: '龍蝦' },
+  shrimp: { tex: 'claw-shrimp', value: 3, zone: 12, weight: 32, label: '蝦' },
+  boot: { tex: 'claw-boot', value: 1, zone: 11, weight: 24, label: '舊鞋' },
+  can: { tex: 'claw-can', value: 1, zone: 10, weight: 18, label: '罐頭' },
+  gold: { tex: 'claw-lobster', value: 12, zone: 15, weight: 4, label: '金龍蝦' },
+}
+export const CLAW_TIME_MS = 18000
+const CLAW_X0 = 92
+const CLAW_X1 = 548
+const CLAW_RAIL_Y = 124
+const CLAW_BELT_Y = 292
+const CLAW_BOTTOM_Y = 262
+
+export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
+  const ui = frame(scene, '夜市抓抓機', 0.4)
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? '左右掣移夾爪，攻擊掣落爪' : '←→ 移動夾爪　攻擊鍵／空白鍵 落爪')
+  for (const k of Object.values(CLAW_PRIZES)) if (scene.textures.exists(k.tex)) markHd(scene.textures.get(k.tex), 2)
+
+  const g = scene.add.graphics()
+  const gClaw = scene.add.graphics()
+  const timeTxt = scene.add.text(GAME_W - 70, 76, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#8ff0ff', stroke: '#06202a', strokeThickness: 3 }).setOrigin(1, 0.5)
+  const coinTxt = scene.add.text(70, 76, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a', stroke: '#2a1408', strokeThickness: 3 }).setOrigin(0, 0.5)
+  ui.root.add([g, gClaw, timeTxt, coinTxt])
+
+  const pick = (): PrizeKind => {
+    const total = Object.values(CLAW_PRIZES).reduce((a, p) => a + p.weight, 0)
+    let r = Phaser.Math.FloatBetween(0, total)
+    for (const [k, p] of Object.entries(CLAW_PRIZES)) {
+      r -= p.weight
+      if (r <= 0) return k as PrizeKind
+    }
+    return 'shrimp'
+  }
+  const belt: Prize[] = []
+  const spawn = (x: number, kind: PrizeKind = pick()): Prize => {
+    const def = CLAW_PRIZES[kind]
+    const spr = scene.add.image(x, CLAW_BELT_Y, def.tex).setOrigin(0.5, 1)
+    if (kind === 'gold') spr.setTint(0xffd040)
+    ui.root.add(spr)
+    const speed = kind === 'gold' ? 82 : Phaser.Math.Between(26, 58)
+    return { kind, spr, x, vx: (Phaser.Math.Between(0, 1) ? 1 : -1) * speed, zone: def.zone, value: def.value }
+  }
+  for (let i = 0; i < 5; i++) belt.push(spawn(CLAW_X0 + 20 + i * 92, i === 0 ? 'lobster' : pick()))
+
+  let clawX = GAME_W / 2
+  let clawY = CLAW_RAIL_Y + 8
+  let state: 'idle' | 'down' | 'grab' | 'up' = 'idle'
+  let stateT = 0
+  let carried: Prize | null = null
+  let left = timeMs
+  let finished = false
+  let flip = 0
+  const armedAt = scene.time.now + 450
+  const res: ClawResult = { coins: 0, caught: 0, drops: 0 }
+  let resolve!: (r: ClawResult) => void
+  const done = new Promise<ClawResult>((r) => (resolve = r))
+  const keys = new Set<string>()
+
+  const draw = () => {
+    g.clear()
+    // neon cabinet: glass, rail, belt
+    g.fillStyle(0x0a0818, 0.55).fillRect(58, 98, GAME_W - 116, 210)
+    g.lineStyle(3, 0xff4fd8, 1).strokeRect(58, 98, GAME_W - 116, 210)
+    g.lineStyle(1, 0x4ff0ff, 0.9).strokeRect(63, 103, GAME_W - 126, 200)
+    g.fillStyle(0x4ff0ff, 0.8).fillRect(70, CLAW_RAIL_Y - 4, GAME_W - 140, 3)
+    g.fillStyle(0x1a1228, 1).fillRect(66, CLAW_BELT_Y, GAME_W - 132, 12)
+    g.fillStyle(0xff4fd8, 0.55)
+    for (let x = ((flip * 0.04) % 24) + 70; x < GAME_W - 70; x += 24) g.fillRect(x, CLAW_BELT_Y + 5, 12, 2)
+    if (state === 'idle') {
+      // Where the claw will come down.
+      g.fillStyle(0x8ff0ff, 0.35)
+      for (let y = clawY + 30; y < CLAW_BELT_Y; y += 8) g.fillRect(clawX - 1, y, 2, 4)
+    }
+  }
+  const drawClaw = () => {
+    gClaw.clear()
+    gClaw.fillStyle(0x4ff0ff, 1).fillRect(clawX - 7, CLAW_RAIL_Y - 8, 14, 8)
+    gClaw.fillStyle(0xc8c8d8, 1).fillRect(clawX - 1, CLAW_RAIL_Y, 2, clawY - CLAW_RAIL_Y)
+    const closed = state === 'grab' || state === 'up'
+    const spread = closed ? 5 : 13
+    gClaw.fillStyle(0x1a1228, 1).fillRect(clawX - 8, clawY - 2, 16, 8)
+    gClaw.fillStyle(0xe0e0f0, 1).fillRect(clawX - 6, clawY - 1, 12, 6)
+    for (const sgn of [-1, 1]) {
+      gClaw.fillStyle(0x1a1228, 1).fillRect(clawX + sgn * spread - 2, clawY + 4, 5, 22)
+      gClaw.fillStyle(0xc8c8d8, 1).fillRect(clawX + sgn * spread - 1, clawY + 5, 3, 20)
+      gClaw.fillStyle(0xc8c8d8, 1).fillRect(clawX + sgn * spread - (sgn > 0 ? 4 : -1), clawY + 22, 6, 3)
+    }
+  }
+  const labelText = () => {
+    timeTxt.setText(`${Math.ceil(Math.max(0, left) / 1000)} 秒`)
+    coinTxt.setText(`◎ ${res.coins}`)
+    ui.bar.width = 216 * Phaser.Math.Clamp(left / timeMs, 0, 1)
+  }
+
+  const resolveGrab = () => {
+    res.drops++
+    let best: Prize | null = null
+    let bestD = Infinity
+    for (const p of belt) {
+      const d = Math.abs(p.x - clawX)
+      if (d <= p.zone && d < bestD) {
+        best = p
+        bestD = d
+      }
+    }
+    if (best) {
+      carried = best
+      belt.splice(belt.indexOf(best), 1)
+      res.caught++
+      SFX.coin()
+      buzz(HAPTIC.power)
+    } else {
+      SFX.blip(200)
+      buzz(30)
+      floatText(scene, clawX, CLAW_BOTTOM_Y - 30, '落空', '#ff8a6a', { size: 13, dur: 600 })
+    }
+  }
+  const banked = () => {
+    if (!carried) return
+    const p = carried
+    carried = null
+    res.coins += p.value
+    SFX.sparkle()
+    floatText(scene, clawX, CLAW_RAIL_Y + 30, `${CLAW_PRIZES[p.kind].label} ＋${p.value}`, p.kind === 'gold' ? '#ffe040' : '#ffd8a0', { size: p.value >= 6 ? 16 : 13, dur: 900 })
+    p.spr.destroy()
+    belt.push(spawn(Phaser.Math.Between(0, 1) ? CLAW_X0 + 4 : CLAW_X1 - 4))
+  }
+  const drop = () => {
+    if (finished || state !== 'idle' || scene.time.now < armedAt || left <= 0) return
+    state = 'down'
+    stateT = 0
+    SFX.blip(520)
+  }
+
+  const tick = (_t: number, dt: number) => {
+    if (finished) return
+    flip += dt
+    if (scene.time.now >= armedAt) left -= dt
+    // Prizes ride the belt and bounce at the ends, so the drop has to be timed.
+    for (const p of belt) {
+      p.x += p.vx * (dt / 1000)
+      if (p.x < CLAW_X0 - 10) {
+        p.x = CLAW_X0 - 10
+        p.vx = Math.abs(p.vx)
+      } else if (p.x > CLAW_X1 + 10) {
+        p.x = CLAW_X1 + 10
+        p.vx = -Math.abs(p.vx)
+      }
+      p.spr.setPosition(p.x, CLAW_BELT_Y)
+    }
+    stateT += dt
+    if (state === 'idle') {
+      const l = keys.has('ArrowLeft') || keys.has('KeyA') || TouchInput.isDown('left')
+      const r = keys.has('ArrowRight') || keys.has('KeyD') || TouchInput.isDown('right')
+      clawX = Phaser.Math.Clamp(clawX + ((r ? 1 : 0) - (l ? 1 : 0)) * 190 * (dt / 1000), CLAW_X0, CLAW_X1)
+      clawY = CLAW_RAIL_Y + 8
+      if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) drop()
+      if (left <= 0) return finish()
+    } else if (state === 'down') {
+      clawY = CLAW_RAIL_Y + 8 + (CLAW_BOTTOM_Y - CLAW_RAIL_Y - 8) * Math.min(1, stateT / 430)
+      if (stateT >= 430) {
+        state = 'grab'
+        stateT = 0
+        resolveGrab()
+      }
+    } else if (state === 'grab') {
+      if (stateT >= 190) {
+        state = 'up'
+        stateT = 0
+      }
+    } else {
+      clawY = CLAW_BOTTOM_Y - (CLAW_BOTTOM_Y - CLAW_RAIL_Y - 8) * Math.min(1, stateT / 430)
+      if (stateT >= 430) {
+        banked()
+        state = 'idle'
+        stateT = 0
+      }
+    }
+    if (carried) carried.spr.setPosition(clawX, clawY + 26 + carried.spr.displayHeight * 0.3)
+    draw()
+    drawClaw()
+    labelText()
+  }
+  const onKeyDown = (e: KeyboardEvent) => {
+    keys.add(e.code)
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK', 'ArrowUp'].includes(e.code) && !e.repeat) drop()
+  }
+  const onKeyUp = (e: KeyboardEvent) => keys.delete(e.code)
+  scene.input.keyboard?.on('keydown', onKeyDown)
+  scene.input.keyboard?.on('keyup', onKeyUp)
+  scene.events.on('update', tick)
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onKeyDown)
+    scene.input.keyboard?.off('keyup', onKeyUp)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    ui.bar.width = 0
+    timeTxt.setText('時間到！')
+    ui.title.setText(res.coins >= 20 ? '大豐收！' : res.caught > 0 ? `夾到 ${res.caught} 隻` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(900, destroy)
+  }
+  draw()
+  drawClaw()
+  labelText()
+  return {
+    done,
+    destroy,
+    /** Read-only view for tests. */
+    debug: () => ({ clawX, clawY, state, left, belt: belt.map((p) => ({ kind: p.kind, x: p.x, vx: p.vx, zone: p.zone })), res: { ...res }, carried: carried?.kind ?? null }),
+    /** Test hook: move the claw to x. */
+    setClawX: (x: number) => {
+      clawX = Phaser.Math.Clamp(x, CLAW_X0, CLAW_X1)
+    },
+    drop,
+  }
 }

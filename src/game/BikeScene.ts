@@ -29,7 +29,7 @@ type Rider = {
   pedalKeys: () => boolean
 }
 
-const DEST_NAMES: Record<number, string> = { 2: '蜜樹丘', 3: '月影夜市', 4: '鹽霧工地', 5: '△畝大廈' }
+export const DEST_NAMES: Record<number, string> = { 2: '蜜樹丘', 3: '月影夜市', 4: '鹽霧工地', 5: '△畝大廈' }
 const ROAD_Y = 316
 const SPEED = 230
 const LENGTH = 9000
