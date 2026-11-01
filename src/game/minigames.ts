@@ -718,6 +718,43 @@ export function timingGame(scene: Phaser.Scene, title: string, verb: string, rou
 
 // ── 傾斜電話：揈個波入窿 ────────────────────────────────────────────────
 
+type TiltPt = { x: number; y: number }
+
+/**
+ * Tray layout for one round of tiltGame (ball starts at 0,0). The hole is far enough away to leave
+ * room for a pit on the way, and the first pit is deliberately parked on the straight start→hole
+ * line (a few px off-centre, still inside the ball+pit contact distance) so rolling straight in
+ * drops the ball: the player has to curve round it. Extra pits (later rounds) are random.
+ */
+export function tiltLayout(round: number, halfW: number, halfH: number, rand: (a: number, b: number) => number = Phaser.Math.FloatBetween): { hole: TiltPt; pits: TiltPt[] } {
+  const START_CLEAR = 32
+  const HOLE_CLEAR = 38
+  const rnd = (): TiltPt => ({ x: rand(-halfW + 24, halfW - 24), y: rand(-halfH + 18, halfH - 18) })
+  const farEnough = (p: TiltPt, pts: TiltPt[], min: number) => pts.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= min)
+  let hole = rnd()
+  for (let i = 0; i < 400 && Math.hypot(hole.x, hole.y) < START_CLEAR + HOLE_CLEAR + 6; i++) hole = rnd()
+  const len = Math.hypot(hole.x, hole.y)
+  const pits: TiltPt[] = []
+  if (len >= START_CLEAR + HOLE_CLEAR) {
+    const t = rand(START_CLEAR / len, 1 - HOLE_CLEAR / len)
+    const nx = -hole.y / len
+    const ny = hole.x / len
+    const off = rand(-6, 6)
+    pits.push({ x: hole.x * t + nx * off, y: hole.y * t + ny * off })
+  }
+  const n = Math.min(3, 1 + Math.floor((round - 1) / 1.5))
+  for (let i = pits.length; i < n; i++) {
+    let p = rnd()
+    let tries = 0
+    while ((Math.hypot(p.x, p.y) < 36 || Math.hypot(p.x - hole.x, p.y - hole.y) < 44 || !farEnough(p, pits, 40)) && tries < 300) {
+      p = rnd()
+      tries++
+    }
+    pits.push(p)
+  }
+  return { hole, pits }
+}
+
 /**
  * Tilt the phone (or hold a direction) to roll a ball across a tray into the glowing hole —
  * avoid the dark pits, which drop the ball and cost the round (第 4 關・開椰青嘅泰國人).
@@ -759,7 +796,6 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
   const started = scene.time.now
   let finished = false
 
-  const farEnough = (p: Pt, pts: Pt[], min: number) => pts.every((q) => Math.hypot(p.x - q.x, p.y - q.y) >= min)
   const newRound = () => {
     roundMs = Math.max(3600, 7000 - (round - 1) * 700)
     bx = 0
@@ -767,22 +803,9 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
     vx = 0
     vy = 0
     dropped = false
-    const rnd = (): Pt => ({ x: Phaser.Math.FloatBetween(-HALF_W + 24, HALF_W - 24), y: Phaser.Math.FloatBetween(-HALF_H + 18, HALF_H - 18) })
-    let h = rnd()
-    while (Math.hypot(h.x, h.y) < 40) h = rnd()
-    hole = h
-    const n = Math.min(3, 1 + Math.floor((round - 1) / 1.5))
-    const ps: Pt[] = []
-    for (let i = 0; i < n; i++) {
-      let p = rnd()
-      let tries = 0
-      while ((Math.hypot(p.x, p.y) < 36 || Math.hypot(p.x - hole.x, p.y - hole.y) < 44 || !farEnough(p, ps, 40)) && tries < 20) {
-        p = rnd()
-        tries++
-      }
-      ps.push(p)
-    }
-    pits = ps
+    const layout = tiltLayout(round, HALF_W, HALF_H)
+    hole = layout.hole
+    pits = layout.pits
     roundStart = scene.time.now
   }
 
