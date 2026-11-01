@@ -5586,7 +5586,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Stage 1 clear card → straight into 蜜樹丘 (coins carry over). */
-  /** On to the next stage: the world map, with the bike leg between stages 1 and 2. */
+  /** On to the next stage: the world map, then the bike leg to the stage that was picked. */
   private goNextStage() {
     if (this.registry.get('leavingToMenu')) return
     const to = this.stageNo + 1
@@ -5608,8 +5608,7 @@ export class GameScene extends Phaser.Scene {
       const from = this.stageNo
       // Alan: let the player pick which unlocked stage to go to here, instead of
       // always auto-advancing into `to`.
-      if (from === 1) this.scene.start('worldmap', { from, to, next: 'bike', pick: true })
-      else this.scene.start('worldmap', { from, to, next: 'play', stageNo: to, pick: true })
+      this.scene.start('worldmap', { from, to, next: 'bike', stageNo: to, pick: true })
     })
   }
 
