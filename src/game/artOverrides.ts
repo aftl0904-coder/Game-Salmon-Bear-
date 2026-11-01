@@ -31,6 +31,10 @@ export const ART_OVERRIDES: Record<string, string> = {
   'cs-cart': '/art/props/coffee-cart.png',
   'cs-mama': '/art/props/mama.png',
   'cs-mama-offer': '/art/props/mama-offer.png',
+  'cs-keeper2': '/art/props/keeper2.png',
+  'cs-keeper3': '/art/props/keeper3.png',
+  'cs-keeper4': '/art/props/keeper4.png',
+  'cs-keeper5': '/art/props/keeper5.png',
   // Goal: the honey tree with the glowing hive.
   goal3d: '/art/props/honey-tree.png',
   // Scenery (data/levels/stage1.json "decor").

@@ -3189,15 +3189,13 @@ export class GameScene extends Phaser.Scene {
       if (isStall) {
         if (this.textures.exists('cs-cart')) {
           const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
-          // Until Cursor's own keepers land, each stage tints the cart to its own stall.
           if (this.stageNo === 2) cart.setTint(0xffd9a0)
           if (this.stageNo === 3) cart.setTint(0xd8c0ff)
           enablePixelSprite(cart)
         }
-        if (this.textures.exists('cs-mama')) {
-          const mama = this.add.image(x - 8, top + 1, 'cs-mama').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
-          if (this.stageNo === 2) mama.setTint(0xcfe4ff)
-          if (this.stageNo === 3) mama.setTint(0xffd0c0)
+        const keeperKey = this.keeperTex()
+        if (this.textures.exists(keeperKey)) {
+          const mama = this.add.image(x - 8, top + 1, keeperKey).setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
           enablePixelSprite(mama)
           this.checkpointMamas.push(mama)
           this.tweens.add({ targets: mama, scaleY: { from: 1, to: 1.02 }, duration: 900, yoyo: true, repeat: -1 })
@@ -3217,6 +3215,12 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** Each stage's stall keeper has its own sprite; stage 1 is 咖啡媽媽 (`cs-mama`). */
+  private keeperTex(): string {
+    const k = `cs-keeper${this.stageNo}`
+    return this.stageNo > 1 && this.textures.exists(k) ? k : 'cs-mama'
+  }
+
   /** This stage's food stall (data/stalls.json). */
   private stall(): Stall {
     return STALLS[String(this.stageNo)] ?? STALLS['1']!
@@ -3232,7 +3236,10 @@ export class GameScene extends Phaser.Scene {
         SFX.coin()
         const i = this.checkpointXs.indexOf(x)
         const mama = this.checkpointMamas[i]
-        if (mama && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
+        if (mama) {
+          if (this.stageNo === 1 && this.textures.exists('cs-mama-offer')) mama.setTexture('cs-mama-offer')
+          else this.tweens.add({ targets: mama, y: mama.y - 6, duration: 140, yoyo: true, repeat: 1, ease: 'Sine.out' })
+        }
         // Only the first checkpoint is the stall; later ones just save and heal.
         if (this.coffeeDone || x !== this.checkpointXs[0]) {
           this.drinkCoffee()

@@ -67,3 +67,16 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - C 完美結局：改成「同一次 run 救晒 11 個」（registry `runFriends`，主選單開新 run 時清空；唔再讀瀏覽器存檔）。實測 10/11 → false、11/11 → true、只有存檔無 run → false。Stage 1「武者」(PatrolEnemy boss) 加 `receiveHit` 封頂：以基礎一下(3)為單位 1–2 倍，實測 dmg 3/5/8/15 → 3/6/6/6（hp 18 節奏不變）。
 - D 單車：1→2、2→3、3→4、4→5 全部經 `worldmap(next:'bike')`；`BikeScene.init({to})` 決定目的地名、配樂(`stage{to}`)、完成後 `stageNo`。背景圖維持同一組。實測四段都入到 bike、目的地名正確、Enter 略過後入正確關卡。揀去非預設關嘅話仍然跳過單車（沿用舊行為）。
 - E 聖經金句：`data/verses.json`（1–5 關），WorldMapScene 揀關時頂部顯示對應經文（跟住 ←→ 更新），確認後停 2.6 秒或按 Enter/A/點擊先出發；finale→credits 路徑唔顯示。
+
+## 2026-11-02 攤檔檔主造型 + 椰青波波黑窿
+
+### 1) 5 個檔主各有造型
+- 新增 `public/art/props/keeper2..5.png`（夾餅叔叔／蛋撻哥哥／開椰青嘅泰國人／刺身師傅，手持各自食物），以 `mama.png` 作風格參考，AI 生成後用 `scripts/qa/owl/keeper_key.py` 去綠底、裁切、縮到 128px 高（res 2）。
+- `GameScene.keeperTex()` 按關卡揀 `cs-keeper{N}`，stage 1 保持 `cs-mama`；移走 stage 2/3 檔主染色。stage 2–5 冇另畫「遞出」姿勢，到達 checkpoint 時改為小跳一下（stage 1 仍換 `cs-mama-offer`）。
+- 實測：`scripts/qa/owl/keepers.mjs` 逐關開、傳送到檔口，截圖 `docs/qa-keepers/stage{1..5}-{before,reached}.png`；5 關檔主 texture 分別係 cs-mama / cs-keeper2..5，displayHeight ≈ 64，console 0 error。
+- 未驗證：人手睇過美術一致性（AI 圖縮細後唔係逐 pixel 手畫）；cutscene 內頭像／對話立繪仍用舊嘅，未改。
+
+### 2) 椰青 tiltGame 黑窿
+- `minigames.ts` 新增 `tiltLayout()`：第 1 個黑窿放喺起點→目標窿連線上（隨機插值點 + ±6px 側向偏移），其餘黑窿照舊隨機。
+- 統計（`tilt.mjs`、`tilt2.mjs`，1 萬次）：連線被擋 100%，最小窿距起點／目標窿／黑窿互相 ≥ 36／38／40，BFS 驗證全部可解。
+- 實機輸入（`tiltplay2.mjs`，朴素「直線瞄準目標窿」控制器）：頭兩回合波都跌入線上黑窿（`tilt-pit-fall.png`），第 4 回合要繞先入到窿。樣本細、控制器唔係真人，只證明邏輯有效，難度手感需人手測。
