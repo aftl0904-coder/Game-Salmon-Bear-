@@ -193,9 +193,16 @@ type Stage1 = {
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
-/** 耐力: a full bar is 1. A sword swing costs a fifth, a roe shot a seventh. */
+/**
+ * 耐力: a full bar is 1. A sword swing costs a fifth.
+ * The roe shot's cooldown (893ms) is longer than STAM_REST_MS (380ms), so continuous
+ * fire was spending most of its wait resting — the old 0.14 cost (≈0.16/s drained)
+ * was more than cancelled out by regen between shots, so the bar barely moved.
+ * 0.52 brings continuous-fire drain (÷0.893s cooldown) in line with the sword's
+ * continuous-swing drain (0.2 ÷ 0.344s ≈ 0.58/s) — Alan, 2026-11-02.
+ */
 const STAM_SWORD = 0.2
-const STAM_SHOT = 0.14
+const STAM_SHOT = 0.52
 const STAM_RECOVER = 0.55
 const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
