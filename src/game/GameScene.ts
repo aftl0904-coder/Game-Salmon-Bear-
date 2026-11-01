@@ -12,6 +12,8 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { openConfirm, openGamble } from './clearMenus'
+import { attachGearFx, type GearFx } from './gearFx'
 import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
@@ -205,7 +207,13 @@ const STAM_RECOVER = 0.55
 const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
 const FINAL_STAGE = 5
-type ClearAction = 'shop' | 'next' | 'credits' | 'menu'
+/** 瞓覺: coins for a full heal on the clear card. Only worth it because HP carries to the next stage. */
+const SLEEP_COST = 12
+/** 賭檔: flat stake, 50% double / 50% lose. */
+const GAMBLE_BET = 20
+/** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
+const CARRY_HP_BETWEEN_STAGES = true
+type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
 type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
@@ -423,6 +431,7 @@ export class GameScene extends Phaser.Scene {
     this.coffeeDone = false
     this.bossBar = null
     this.clearCardAction = null
+    this.clearModal = false
     this.clearCardMove = null
     this.clearBtns = []
     this.clearSel = 0
@@ -470,6 +479,9 @@ export class GameScene extends Phaser.Scene {
     this.drawWorld()
     this.buildLevel()
     this.spawnCast()
+    this.applyCarriedHp()
+    this.gearFx = []
+    for (const h of [this.boy, this.girl]) if (h) this.gearFx.push(attachGearFx(this, h))
     if (this.registry.get('cheat')) {
       for (const h of [this.boy, this.girl]) h?.setData('wlv', WEAPON_MAX_LV)
       this.specialCharges = 1
@@ -2039,8 +2051,9 @@ export class GameScene extends Phaser.Scene {
     if (!h.alive || h.pose === 'die') return
     SFX.die()
     const lost = dropOnDeath(h.role as Who)
-    if (lost) {
-      floatText(this, h.x, h.y - 100, `跌咗：${gearById(lost.id).name} Lv${lost.from} → Lv${lost.from - 1}`, '#ff9a8a', { size: 13, dur: 2000 })
+    for (const f of this.gearFx) f.refresh()
+    if (lost.length) {
+      floatText(this, h.x, h.y - 100, `裝備全部清走：${lost.map((l) => `${gearById(l.id).name}Lv${l.from}`).join('、')}`, '#ff9a8a', { size: 13, dur: 2600 })
     }
     beginDeathPose(h)
     this.tweens.add({
@@ -3349,6 +3362,7 @@ export class GameScene extends Phaser.Scene {
       }
       this.refreshHearts()
       this.refreshCoins()
+      for (const f of this.gearFx) f.refresh()
       onClose?.()
     })
   }
@@ -4254,6 +4268,115 @@ export class GameScene extends Phaser.Scene {
     })
   }
   private clearOverlay: Phaser.GameObjects.Container | null = null
+  /** A pop-up (shop / sleep / gamble) is on top of the clear card and owns the keys. */
+  private clearModal = false
+  private clearStatus: Phaser.GameObjects.Text | null = null
+  /** Released a beat late so the Enter that closes a pop-up cannot also hit the card behind it. */
+  private closeClearModal() {
+    this.time.delayedCall(180, () => {
+      this.clearModal = false
+    })
+  }
+
+  private gearFx: GearFx[] = []
+
+  /** HP left at the last clear card (+ any 瞓覺) comes with you into the next stage, never below 1. */
+  private applyCarriedHp() {
+    const carried = this.registry.get('carryHp') as Partial<Record<Who, number>> | undefined
+    this.registry.set('carryHp', undefined)
+    if (!CARRY_HP_BETWEEN_STAGES || !carried) return
+    for (const h of [this.boy, this.girl]) {
+      if (!h) continue
+      const w = h.role as Who
+      const hp = carried[w]
+      if (typeof hp === 'number') h.hp = Phaser.Math.Clamp(Math.round(hp), 1, this.heroMaxHp(h))
+    }
+  }
+
+  private clearHeroes(): Hero[] {
+    return [this.boy, this.girl].filter((h): h is Hero => !!h)
+  }
+  private heroMaxHp(h: Hero) {
+    return MAX_HP + bonusHearts(h.role as Who)
+  }
+  private canSleep() {
+    const need = this.clearHeroes().some((h) => h.hp < this.heroMaxHp(h))
+    return need && this.clearHeroes().some((h) => this.purseOf(h.role as Who) >= SLEEP_COST)
+  }
+  private canGamble() {
+    return this.clearHeroes().some((h) => this.purseOf(h.role as Who) >= GAMBLE_BET)
+  }
+  /** Who pays a shared price: whoever is richest. */
+  private richestHero(): Hero {
+    const hs = this.clearHeroes()
+    return hs.reduce((a, b) => (this.purseOf(b.role as Who) > this.purseOf(a.role as Who) ? b : a), hs[0]!)
+  }
+
+  /** Greys out 瞓覺 / 賭檔 as coins and HP change, and refreshes the status line above the buttons. */
+  private refreshClearCard() {
+    for (const b of this.clearBtns) {
+      if (b.id === 'sleep') b.on = this.canSleep()
+      else if (b.id === 'gamble') b.on = this.canGamble()
+      else continue
+      b.bg.setStrokeStyle(2, b.on ? 0xc8902a : 0x6a5a40)
+    }
+    if (this.clearBtns[this.clearSel] && !this.clearBtns[this.clearSel]!.on) {
+      const n = this.clearBtns.length
+      for (let k = 1; k <= n; k++) {
+        const j = (this.clearSel + k) % n
+        if (this.clearBtns[j]!.on) {
+          this.clearSel = j
+          break
+        }
+      }
+    }
+    this.drawClearSel()
+    this.clearStatus?.setText(
+      this.clearHeroes()
+        .map((h) => `${h.role === 'girl' ? '琪寶寶' : '倫寶'}　♥ ${Math.max(0, h.hp)}/${this.heroMaxHp(h)}　幣 ×${this.purseOf(h.role as Who)}`)
+        .join('　　'),
+    )
+  }
+
+  private async sleepAtClearCard() {
+    this.clearModal = true
+    const payer = this.richestHero()
+    const ok = await openConfirm(this, {
+      title: '瞓一覺？',
+      lines: [`${SLEEP_COST} 幣瞓一覺，全隊回滿血。`, `由${payer.role === 'girl' ? '琪寶寶' : '倫寶'}畀（幣 ×${this.purseOf(payer.role as Who)}）`],
+      yes: `瞓（${SLEEP_COST}幣）`,
+      no: '唔瞓',
+      canYes: this.canSleep(),
+      why: this.clearHeroes().every((h) => h.hp >= this.heroMaxHp(h)) ? '已經滿血喇。' : `幣唔夠，要 ${SLEEP_COST} 個。`,
+    })
+    if (ok && this.canSleep()) {
+      this.addCoins(payer.role as Who, -SLEEP_COST)
+      for (const h of this.clearHeroes()) h.hp = this.heroMaxHp(h)
+      this.emitHealth()
+      SFX.sparkle()
+      this.clearToast('Zzz…　瞓醒喇，回滿血！', '#9ad8ff')
+    }
+    this.refreshClearCard()
+    this.closeClearModal()
+  }
+
+  private async gambleAtClearCard() {
+    this.clearModal = true
+    await openGamble(this, {
+      heroes: this.clearHeroes().map((h) => h.role as Who),
+      purse: (w) => this.purseOf(w),
+      pay: (w, d) => this.addCoins(w, d),
+      bet: GAMBLE_BET,
+    })
+    this.refreshClearCard()
+    this.closeClearModal()
+  }
+
+  private clearToast(msg: string, color: string) {
+    const t = this.add.text(0, GAME_H / 2 - 74, msg, { fontFamily: FONT_UI, fontSize: '13px', color, stroke: '#1a0e06', strokeThickness: 3 }).setOrigin(0.5)
+    this.clearOverlay?.add(t)
+    this.tweens.add({ targets: t, y: t.y - 14, alpha: 0, delay: 900, duration: 700, onComplete: () => t.destroy() })
+  }
   private clearBtns: ClearButton[] = []
   private clearSel = 0
   private clearCardMove: ((d: number) => void) | null = null
@@ -4410,6 +4533,8 @@ export class GameScene extends Phaser.Scene {
     const btnY = H / 2 - 28
     const defs: Array<{ id: ClearAction; label: string; on: boolean }> = [
       { id: 'shop', label: '小朋友檔口 ◎', on: true },
+      ...(CARRY_HP_BETWEEN_STAGES ? [{ id: 'sleep' as const, label: `瞓覺 ${SLEEP_COST}幣`, on: this.canSleep() }] : []),
+      { id: 'gamble', label: '賭檔', on: this.canGamble() },
       this.stageNo >= FINAL_STAGE
         ? { id: 'credits', label: '片尾字幕 ▶', on: true }
         : { id: 'next', label: STAGES[this.stageNo + 1] ? `前往第${'一二三四五'[this.stageNo]}關 ▶` : `第${'一二三四五'[this.stageNo]}關　製作中`, on: !!STAGES[this.stageNo + 1] },
@@ -4431,11 +4556,18 @@ export class GameScene extends Phaser.Scene {
       overlay.add([bg, tx])
       bg.setAlpha(0.4)
       tx.setAlpha(0.4)
-      if (d.on) bg.setInteractive({ useHandCursor: true })
+      bg.setInteractive({ useHandCursor: true })
       buttons.push({ id: d.id, bg, tx, on: d.on })
     })
     this.clearBtns = buttons
-    this.clearSel = Math.max(0, buttons.findIndex((b) => b.id !== 'shop' && b.on))
+    this.clearModal = false
+    this.clearStatus = this.add
+      .text(0, btnY - 26, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#e8d8b0' })
+      .setOrigin(0.5)
+    overlay.add(this.clearStatus)
+    this.clearSel = Math.max(0, buttons.findIndex((b) => (b.id === 'next' || b.id === 'credits' || b.id === 'menu') && b.on))
+
+    this.refreshClearCard()
 
     // ── Tally sequence (a press skips to the end) ──
     const timers: Phaser.Time.TimerEvent[] = []
@@ -4540,7 +4672,19 @@ export class GameScene extends Phaser.Scene {
       if (left || this.registry.get('leavingToMenu')) return
       if (id === 'shop') {
         // The stall sits on top of the clear card; the card is still there behind it.
-        this.openGearShop(() => this.drawClearSel())
+        this.clearModal = true
+        this.openGearShop(() => {
+          this.closeClearModal()
+          this.drawClearSel()
+        })
+        return
+      }
+      if (id === 'sleep') {
+        void this.sleepAtClearCard()
+        return
+      }
+      if (id === 'gamble') {
+        void this.gambleAtClearCard()
         return
       }
       left = true
@@ -4553,6 +4697,7 @@ export class GameScene extends Phaser.Scene {
     }
     /** Enter / Start: finish the tally first, then run the highlighted button. */
     const activate = () => {
+      if (this.clearModal) return
       if (!this.tallyDone) {
         this.finishTally?.()
         return
@@ -4561,7 +4706,7 @@ export class GameScene extends Phaser.Scene {
       if (b?.on) leaveBy(b.id)
     }
     const move = (d: number) => {
-      if (!this.tallyDone || !this.clearBtns.length) return
+      if (this.clearModal || !this.tallyDone || !this.clearBtns.length) return
       for (let i = 0; i < this.clearBtns.length; i++) {
         this.clearSel = (this.clearSel + d + this.clearBtns.length) % this.clearBtns.length
         if (this.clearBtns[this.clearSel]?.on) break
@@ -4580,19 +4725,18 @@ export class GameScene extends Phaser.Scene {
     this.clearCardAction = activate
     this.clearCardMove = move
     this.clearBtns.forEach((b, i) => {
-      if (!b.on) return
       b.bg.on('pointerover', () => {
+        if (!b.on || this.clearModal) return
         this.clearSel = i
         this.drawClearSel()
       })
-      b.bg.on('pointerup', () => {
+      const press = () => {
+        if (!b.on || this.clearModal) return
         this.clearSel = i
         leaveBy(b.id)
-      })
-      b.tx.setInteractive({ useHandCursor: true }).on('pointerup', () => {
-        this.clearSel = i
-        leaveBy(b.id)
-      })
+      }
+      b.bg.on('pointerup', press)
+      b.tx.setInteractive({ useHandCursor: true }).on('pointerup', press)
     })
     overlay.add(
       this.add
@@ -4600,11 +4744,11 @@ export class GameScene extends Phaser.Scene {
         .setOrigin(0.5),
     )
     const toMenu = () => {
-      if (left) return
+      if (left || this.clearModal) return
       left = true
       this.goMenu()
     }
-    this.input.keyboard?.once('keydown-ESC', toMenu)
+    this.input.keyboard?.on('keydown-ESC', toMenu)
     this.events.once('shutdown', () => this.input.keyboard?.off('keydown-ESC', toMenu))
   }
 
@@ -5602,6 +5746,9 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('stageNo', to)
     this.registry.set('carryCoins', this.coinStock)
     this.registry.set('carryPurse', { ...this.purse })
+    const carryHp: Partial<Record<Who, number>> = {}
+    for (const h of this.clearHeroes()) carryHp[h.role as Who] = h.hp
+    this.registry.set('carryHp', carryHp)
     this.registry.set('winScreenShown', false)
     try {
       this.physics.resume()

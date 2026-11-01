@@ -80,3 +80,22 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - `minigames.ts` 新增 `tiltLayout()`：第 1 個黑窿放喺起點→目標窿連線上（隨機插值點 + ±6px 側向偏移），其餘黑窿照舊隨機。
 - 統計（`tilt.mjs`、`tilt2.mjs`，1 萬次）：連線被擋 100%，最小窿距起點／目標窿／黑窿互相 ≥ 36／38／40，BFS 驗證全部可解。
 - 實機輸入（`tiltplay2.mjs`，朴素「直線瞄準目標窿」控制器）：頭兩回合波都跌入線上黑窿（`tilt-pit-fall.png`），第 4 回合要繞先入到窿。樣本細、控制器唔係真人，只證明邏輯有效，難度手感需人手測。
+
+## 2026-11-02 死亡清裝備 / 通關卡「瞓覺」「賭檔」/ 裝備視覺化
+
+### 1) 死亡全清裝備
+- `gear.ts dropOnDeath(who)`：該角色 6 項全部歸 0（含大心心、金劍／金槍），回傳被清走嘅清單；`GameScene.knockOut` 顯示「裝備全部清走：…」。只清死咗嗰個角色（2P 另一個唔受影響）。
+- 實測 `scripts/qa/gear/death_wipe.mjs`：girl {heart3,sword3,armour2,boots3,charm2} 死一次 → 全 0；boy 嘅 localStorage 不變。截圖 `docs/qa-gear/death-float.png`。
+
+### 2) 通關卡新按鈕
+- `ClearAction` 加 `sleep` / `gamble`，新增 `clearMenus.ts`（確認彈窗、擲幣彈窗）。
+- 瞓覺 12 幣：確認後全隊回滿血，由較多幣嗰個角色畀；已滿血或幣唔夠 → 掣灰色、彈窗唔可確認。賭檔：落注 20 幣，50% 變 40、50% 輸晒；擲幣動畫約 1.4 秒。
+- 實測 `sleep_gamble.mjs`：幣 60、HP 2/6 → 瞓覺後 HP 6/6、幣 48；賭檔強制贏 48→68、強制輸 68→48；彈窗開咗時 Enter／Esc 唔會誤觸背後嘅「下一關／返主選單」。`broke_carry.mjs`：幣 5 時兩粒掣灰色並被方向鍵跳過。
+- 發現：原本每關開始都係滿血，「瞓覺回滿血」會冇作用。所以加咗 `CARRY_HP_BETWEEN_STAGES = true`：通關時剩餘 HP 帶入下一關（最少 1）。實測 HP 2 → 第 3 關開局 HP 2。呢個係平衡改動，要退返原樣只需將常數改 false（瞓覺掣會一齊隱藏）。
+- 順手：通關卡 Esc 原本係 `once` 直接返主選單，現在彈窗／小朋友檔口開住時唔會誤觸（`shop_esc.mjs`：檔口內 Esc 只關檔口）。
+
+### 3) 裝備視覺化（`gearFx.ts`，唔畫新圖）
+- 盔甲：疊一份同幀 sprite，銅／銀／金染色（透明度 0.4／0.46／0.5）＋ 每 2.4 秒一次加色閃光。
+- 劍（琪）／槍（倫）：武器手邊 1／2／3 條光線，顏色銅／銀／金，閃爍。
+- 實測 `gear_fx.mjs` 截圖 `docs/qa-gear/tiers-zoom.png`（上排琪寶寶、下排倫寶，左至右 0–3 級）。
+- 未驗證：光線位置係固定偏移，唔會跟住每格動畫嘅劍位置移動（揮劍時光線留喺原位）；金色整體偏黃要人手睇係咪接受；冇加心心／鞋／蜜符視覺（brief 只要求盔甲同武器）。
