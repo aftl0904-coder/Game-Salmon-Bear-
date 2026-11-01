@@ -116,3 +116,10 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - Stage 4：anticip→charge→recover→platform→summon→volley→approach→windup→strike→exposed→死，逐個 act 打印 `anims.currentAnim.key`，全部對應正確（ride/charge/walk/summon/nailgun/walk/windup/strike/hurt/defeat），console 0 error。截圖 `docs/qa-bossart/mudmane-acts.png`、`defeat-4-5.png`。
 - Stage 5：idle/point/rain/shield/hurt 對應 act 正確，強制擊殺 → unmask → defeat 播完，勝利流程進入通關卡。
 - 未驗證：人手打過兩場 boss 嘅手感（電單車衝撞箱 96px 係估計）；泥鬃嘅釘槍子彈（`nail.png` FX）同泥浪仍用舊嘅代碼畫；「hurt」第一格係全白受擊閃光（原圖就係咁）；bike 表有少量紅色邊緣（原圖輪輻透底色殘留，縮細後幾乎睇唔到）；Stage 4 三隻雜兵仍係 placeholder。
+
+## Stage 1 mini-boss 武者王 (WarriorKing)
+
+- Change: the altar ambush (4 mobs rushing at once) is replaced by a real boss fight. `WarriorKing extends AnimEnemy` (`src/game/enemies/Stage1Boss.ts`, `hatsoldier` set, 1.5x, HP 50), `boss` field added to `data/levels/stage1.json` (trigger 5280, arena 5240–5690). The reveal reuses `startQueenFight` / `queenReveal` / boss bar / `onQueenEvent`; the 4 old altar mobs are now the P2 (2) and P3 (2) summons. Defeat -> `kingDefeated()` -> `bossOn` -> existing honey-tree `checkWin` -> C2 outro.
+- Test: `scripts/qa/owl/king_acts.mjs` (STAGE=1, Playwright + swiftshader, hero kept alive). Screenshots in `docs/qa-king/`.
+- Observed (log): P1 stalk -> throw-low/throw-high; P2 (hp 33/50) +2 summons, throw / windup / dash / recover; P3 (hp 17/50) +2 summons, fan / windup / dash / exposed; exposed hit 16->13 (x3), normal hit 13->12; defeat -> bar removed, minions dead, `bossOn` true, standing on the goal -> `outro`.
+- Not verified: dash contact damage on a real hero (test keeps the hero invulnerable), fan fairness (low/high shots overlapping), pacing/difficulty by a human, 2P.

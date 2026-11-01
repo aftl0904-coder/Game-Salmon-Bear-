@@ -49,6 +49,7 @@ import { MirrorOwl, OwlDecoy, OwlCrate, LobsterGuard, StallKeeper, MarketStall, 
 import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hooks } from './enemies/Stage2Enemies'
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
+import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
 import { Stage2World } from './stage2World'
 import {
   setTerrain,
@@ -180,7 +181,7 @@ type Stage1 = {
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'queen' | 'mirrorowl' | 'mudmane' | 'triboss'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss'; triggerX: number; arenaX0: number; arenaX1: number }
   /** Stage 3 (月影夜市) extras — see stage3World.ts. */
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
@@ -338,7 +339,6 @@ export class GameScene extends Phaser.Scene {
   private boyGoal = false
   private girlGoal = false
   private bossOn = false
-  private altarAmbushOn = false
   private honeyGot = 0
   private petJetting = false
   private scorePts = 0
@@ -368,7 +368,7 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean }> = []
-  private queen: QueenBee | MirrorOwl | MudMane | TriBoss | null = null
+  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | null = null
   /** 月影夜市 (stage 3). */
   private market = false
   private s3world: Stage3World | null = null
@@ -440,7 +440,6 @@ export class GameScene extends Phaser.Scene {
     this.awaitingContinue = false
     this.started = false
     this.bossOn = false
-    this.altarAmbushOn = false
     this.boyGoal = false
     this.girlGoal = false
     this.honeyGot = 0
@@ -1002,27 +1001,7 @@ export class GameScene extends Phaser.Scene {
 
     this.tickStageBeats()
 
-    // Altar climax: 2–3 barrel ambushers wake with clear telegraph before boss.
-    if (!this.altarAmbushOn && this.leadX() > ST.altarTriggerX) {
-      this.triggerAltarAmbush()
-    }
-
-    // Stage 1 has no boss (design bible): beat the altar ambush, then the honey tree opens.
-    if (!this.bossOn && this.altarAmbushOn) {
-      const ambushLeft = this.enemies.getChildren().some((o) => {
-        const e = o as PatrolEnemy
-        // Deferred (not yet walked in) ambushers count as still to beat.
-        return e.altarAmbush && e.fsm !== 'DEAD'
-      })
-      if (!ambushLeft) {
-        this.bossOn = true
-        SFX.powerUp()
-        playSong('stage1')
-        this.cameras.main.flash(200, 255, 230, 150)
-        floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '伏兵退散！去蜂巢樹！', '#ffe08a', { size: 18, dur: 2200 })
-        this.emitScore('伏兵退散！去蜂巢樹拎第一罐真蜂蜜')
-      }
-    }
+    this.tickStage1Boss()
 
     this.updateCameraFollow()
 
@@ -4941,11 +4920,6 @@ export class GameScene extends Phaser.Scene {
       place(en)
       if (!solo && n % 3 === 0) place(en, 58)
     }
-    for (const en of ST.altarAmbush) {
-      const a = this.mkEnemy(en.x, GROUND_Y, 'ambusher', undefined, en.species as EnemySpecies, 0)
-      a.altarAmbush = true
-      this.deferEnemy(a, ST.altarTriggerX - 120, 'altar')
-    }
   }
 
   private deferEnemy(e: PatrolEnemy, unlockX: number, wave: string) {
@@ -5061,36 +5035,6 @@ export class GameScene extends Phaser.Scene {
       if (supportTopAt(xx, LANE_FLOOR_Y, 20) !== null) return xx
     }
     return x
-  }
-
-  /** Wake altar ambushers — they already enter from the right; just harden chase. */
-  private triggerAltarAmbush() {
-    this.altarAmbushOn = true
-    this.showWarning()
-    // Stage 1 has no boss: the card explains who sent the ambush, then play resumes.
-    this.physics.pause()
-    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-    const card = playBossCard(this, 'altar', () => {
-      if (this.storyIntro === card) this.storyIntro = null
-      if (this.ended || !this.scene.isActive()) return
-      this.physics.resume()
-      this.resetPauseKeys()
-      this.pauseReadyAt = this.time.now + 800
-    })
-    this.storyIntro = card
-    SFX.boss()
-    playSong('ambush')
-    this.cameras.main.flash(160, 255, 120, 80)
-    this.emitScore('蜂巢伏兵！疾風桶突襲')
-    floatText(this, this.cameras.main.scrollX + GAME_W / 2, L(120), '蜂巢伏兵！', '#ff6644')
-    this.enemies.getChildren().forEach((o) => {
-      const e = o as PatrolEnemy
-      if (!e.active || !e.altarAmbush || e.fsm === 'DEAD') return
-      e.setTint(0xff2222)
-      e.setFsm('CHASE')
-      e.setVelocityX(-ENEMY_SPEED)
-      impactRing(this, e.x, e.y - 20, 0xff5533, 16)
-    })
   }
 
   /** SNES boss alarm: red bands, scrolling WARNING, siren. Calls onDone after ~2.2 s. */
@@ -5579,6 +5523,82 @@ export class GameScene extends Phaser.Scene {
     return e
   }
 
+  /** Stage 1's altar climax: the trigger, the arena clamp and the HP bar; the fight itself is WarriorKing. */
+  private tickStage1Boss() {
+    const b = ST.boss
+    if (this.stageNo !== 1 || !b) return
+    if (!this.bossFight && !this.bossOn && this.leadX() >= b.triggerX) this.startQueenFight()
+    if (this.bossFight) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h) continue
+        const x = Phaser.Math.Clamp(h.x, b.arenaX0 + 14, b.arenaX1 - 14)
+        if (x !== h.x) {
+          h.x = x
+          ;(h.body as Phaser.Physics.Arcade.Body).velocity.x = 0
+        }
+      }
+    }
+    this.updateBossBar()
+  }
+
+  private kingHooks(): KingHooks {
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      throwBarrel: (x, y, dir, vx, vy, high) => this.kingBarrel(x, y, dir, vx, vy, high),
+      summon: (slot) => this.summonAltarGuard(slot),
+      bossEvent: (kind) => this.onQueenEvent(kind),
+    }
+  }
+
+  /** 武者王's barrel: the same rock as the barrel soldiers, with an optional climb/drop for the fan. */
+  private kingBarrel(x: number, y: number, dir: 1 | -1, vx: number, vy: number, high: boolean) {
+    if (this.ended || !this.bossFight) return
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const shot = this.enemyShots.create(x, y, key) as Phaser.Physics.Arcade.Sprite
+    shot.setDepth(DEPTH.FX - 2)
+    enableActorSprite(shot)
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(8, 8)
+    shot.setVelocity(dir * vx, vy)
+    shot.setData('lane', 0)
+    shot.setData('dmg', 1)
+    this.tweens.add({ targets: shot, angle: dir * 360, duration: 500, repeat: -1 })
+    this.markShot(shot, high ? 0xff9a50 : 0xffd060)
+    if (vy === 0) floatText(this, x, LANE_FLOOR_Y - 70, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
+    this.entities.add(shot, 'projectile')
+    this.time.delayedCall(2200, () => {
+      if (shot.active) shot.destroy()
+    })
+  }
+
+  /** The original altar roster (barrel / fish / elephant / barrel), now called in two at a time from the arena edge. */
+  private summonAltarGuard(slot: number) {
+    const def = ST.altarAmbush[slot]
+    const b = ST.boss
+    if (!def || !b || this.ended || !this.bossFight) return
+    const q = this.queen
+    const fromRight = !q || q.x < (b.arenaX0 + b.arenaX1) / 2
+    const x = fromRight ? b.arenaX1 - 30 : b.arenaX0 + 30
+    const a = this.mkEnemy(x, GROUND_Y, 'ambusher', undefined, def.species as EnemySpecies, 0)
+    a.setTint(0xff2222)
+    a.setFsm('CHASE')
+    a.setVelocityX(fromRight ? -ENEMY_SPEED : ENEMY_SPEED)
+    playFx(this, 'enemy-poof', a.x, a.y - 20)
+    impactRing(this, a.x, a.y - 20, 0xff5533, 16)
+  }
+
+  private kingDefeated() {
+    if (this.ended) return
+    this.bossFight = false
+    this.bossOn = true
+    SFX.powerUp()
+    playSong('stage1')
+    this.cameras.main.flash(200, 255, 230, 150)
+    floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '伏兵退散！去蜂巢樹！', '#ffe08a', { size: 18, dur: 2200 })
+    this.emitScore('武者王倒下！去蜂巢樹拎第一罐真蜂蜜')
+  }
+
   private startQueenFight() {
     const b = ST.boss!
     this.bossFight = true
@@ -5591,15 +5611,16 @@ export class GameScene extends Phaser.Scene {
       e.disableBody(true, true)
       this.time.delayedCall(0, () => e.destroy())
     }
-    // The arena is exactly one screen: lock the camera on it.
-    this.cameras.main.setBounds(b.arenaX0, 0, b.arenaX1 - b.arenaX0, WORLD_H)
+    // Stages 2-5: the arena is exactly one screen, so lock the camera on it. 武者王's altar is
+    // narrower than the screen and sits at the world's end, so his camera stays free.
+    if (this.stageNo !== 1) this.cameras.main.setBounds(b.arenaX0, 0, b.arenaX1 - b.arenaX0, WORLD_H)
     stopBgm()
     this.physics.pause()
     for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
     if (this.scene.isActive('UIScene')) this.scene.setVisible(false, 'UIScene')
     // Block play while the alarm runs (storyIntro stops update), then the reveal cutscene.
     this.storyIntro = { destroy: () => undefined }
-    const kind = b.kind as string
+    const kind = this.stageNo === 1 ? 'altar' : (b.kind as string)
     this.showWarning(() => {
       if (this.ended) return
       if (hasBossCard(kind)) {
@@ -5613,7 +5634,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.stageNo === 1 ? '武者王' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -5625,29 +5646,31 @@ export class GameScene extends Phaser.Scene {
       if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
       this.resetPauseKeys()
       this.pauseReadyAt = this.time.now + 1200
-      playSong(this.tower ? 'boss5' : this.depot ? 'boss4' : this.market ? 'boss3' : 'boss2')
+      playSong(this.stageNo === 1 ? 'ambush' : this.tower ? 'boss5' : this.depot ? 'boss4' : this.market ? 'boss3' : 'boss2')
       SFX.boss()
-      const q = this.tower
+      const q = this.stageNo === 1
+        ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
+        : this.tower
         ? new TriBoss(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.triHooks())
         : this.depot
           ? new MudMane(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.mudHooks())
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => this.queenDefeated()
+      q.onDefeated = () => (this.stageNo === 1 ? this.kingDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
       this.queen = q
       this.buildBossBar()
-      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
+      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.stageNo === 1 ? '#ff7a4a' : this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
       // Last-chance full heal: one 極上壽司船 near the arena entrance, before the boss.
       if (!this.bossSushiSpawned) {
         this.bossSushiSpawned = true
-        this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, 'deluxe')
+        this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, this.stageNo === 1 ? 'salmon' : 'deluxe')
       }
     }
-    if (this.depot) {
-      // No dedicated reveal cutscene for 泥鬃 yet — his 來歷卡 (bossCard) already told the story.
+    if (this.depot || this.stageNo === 1) {
+      // No dedicated reveal cutscene for 泥鬃 / 武者王 — their 來歷卡 (bossCard) already told the story.
       this.storyIntro = { destroy: () => undefined }
       this.time.delayedCall(260, reveal)
       return
@@ -5688,7 +5711,7 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
+        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
         '#ffe08a',
         { size: 16, dur: 2000 },
       )
@@ -5699,13 +5722,13 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
+        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
         '#ff9a3a',
         { size: 16, dur: 2000 },
       )
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
     } else if (kind === 'finale' && this.queen) {
       SFX.sparkle()
       this.cameras.main.flash(200, 255, 220, 160)
@@ -5714,7 +5737,7 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen) floatText(this, this.queen.x, this.queen.y - 120, this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy

@@ -356,6 +356,7 @@
   }
  ],
  "altarTriggerX": 5280,
+ "boss": { "kind": "warriorking", "triggerX": 5280, "arenaX0": 5240, "arenaX1": 5690 },
  "movingPlatforms": [
   {
    "x": 5148,
