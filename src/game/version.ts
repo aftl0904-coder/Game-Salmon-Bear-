@@ -12,8 +12,10 @@
 declare const __BUILD_TIME__: string
 
 // A = Cursor 獨力開發嗰段（開荒到交 Claude 接手之前）。
-// B = Claude 接手做plan/decide/review、Cursor執行呢個階段開始，由 B001.001 計。
-export const VERSION = 'B001.001'
+// B = Claude 接手做plan/decide/review、Cursor執行呢個階段開始。
+// B010.001 係由PR#59(2x解像度)數到依家main嘅實際進度（9個feature級改動+呢個版本角落本身
+// 做第10個feature，35個patch級改動歸零跟住呢個新feature），唔係由頭computed，2026-11-02 一次性對齊。
+export const VERSION = 'B010.001'
 
 /** 字串化做「YYYY-MM-DD HH:mm」，用緊玩家所在時區顯示。 */
 export function buildTimeLabel(): string {
