@@ -61,3 +61,9 @@ Scripts: `scripts/qa/*.mjs` (Playwright + swiftshader, dev server on port 47313;
 - 大佬傷害：新增 `engine/bossDamage.ts`（`bossHitDamage`：實際 dmg ÷ 基礎 3，四捨五入，封頂）。基礎一下 = 以前嘅 1（weak 窗 ×3，貓頭鷹 ×2）。普通窗封頂 2、weak 窗封頂 5（貓頭鷹 4）。QueenBee / MirrorOwl / MudMane / TriBoss 四個 override 都已改；實測 dmg 3/5/8/15 → 普通 1/2/2/2；weak 窗 3/5/5/5（貓頭鷹 2/3/4/4）。Stage 1「武者」係普通 PatrolEnemy（hp 18、直接用實際 dmg、冇封頂），未改。
 - 完美結局：`C11_PERFECT`（`data/story.json`，對白全部 placeholder「［完美結局對白 #n — 待 Alan 填寫］」，舞台指令照抄 C11）。條件 `perfectEnding()`：11 個朋友全部喺存檔（`savedFriends()` + 今次 `friendsSaved`）。實測：0/11、10/11 → 原 C11；11/11 → C11_PERFECT（截圖 `docs/qa-owl/ending-*.png`）。
 - Guide：刪走「五罐蜂蜜」，改成「救全部 11 個小朋友」。
+
+## 待辦整合 C / D / E（2026-11-02）
+
+- C 完美結局：改成「同一次 run 救晒 11 個」（registry `runFriends`，主選單開新 run 時清空；唔再讀瀏覽器存檔）。實測 10/11 → false、11/11 → true、只有存檔無 run → false。Stage 1「武者」(PatrolEnemy boss) 加 `receiveHit` 封頂：以基礎一下(3)為單位 1–2 倍，實測 dmg 3/5/8/15 → 3/6/6/6（hp 18 節奏不變）。
+- D 單車：1→2、2→3、3→4、4→5 全部經 `worldmap(next:'bike')`；`BikeScene.init({to})` 決定目的地名、配樂(`stage{to}`)、完成後 `stageNo`。背景圖維持同一組。實測四段都入到 bike、目的地名正確、Enter 略過後入正確關卡。揀去非預設關嘅話仍然跳過單車（沿用舊行為）。
+- E 聖經金句：`data/verses.json`（1–5 關），WorldMapScene 揀關時頂部顯示對應經文（跟住 ←→ 更新），確認後停 2.6 秒或按 Enter/A/點擊先出發；finale→credits 路徑唔顯示。
