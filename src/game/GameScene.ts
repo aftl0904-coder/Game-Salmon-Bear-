@@ -3261,7 +3261,7 @@ export class GameScene extends Phaser.Scene {
     }
     const mini = stirCoffee(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.sugar + (r.stirred >= 1 ? 2 : 0), r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)))
+    void mini.done.then((r) => after(r.stirred >= 1 ? 3 : 0, r.stirred >= 1 ? 300 : 0))
   }
 
   /**
