@@ -40,6 +40,11 @@ top-right:
     story doc), a △ shape on top — the same mark as C1's △畝大廈, no letters.
     - Places 9 and 10 are the same tower: badge 9 at its base, badge 10 at its top. The road ends
       at the base; 9 → 10 is a lift ride straight up the tower's side.
+    - **Hong Kong-style refuse collection point (Alan, original element):** in the back lane at
+      the foot of the tower, right where the road meets it — a small low building with a roller
+      shutter, large green wheeled bins, a row of three-colour recycling bins, stacked cardboard,
+      a handcart. Generic shapes only: no government logos, no text. It sits right next to the
+      glossy tower on purpose — the rubbish behind the luxury. Small at map scale, but readable.
 
 Mood: grey-violet smog, LED glare from the mall, withered trees, a dried-up river bed, amber
 fake-honey pipes running between the buildings. Darker and foggier from 6 → 10, the same way C1
@@ -55,6 +60,8 @@ and every place sit on the same pixels — only the state of the land changes:
 - rooftop gardens and small solar panels on the mall and the exhibition hall
 - the cages along 7 are open and empty; a small sanctuary meadow beside the hall
 - bees, birds and a few small animals
+- the refuse collection point at the tower's foot is now a tidy recycling station: clean
+  bins in neat rows, no overflowing rubbish, a few potted plants by the shutter
 - on a hill near the tower: the giant guardian bear and 噗噗 side by side — small, not the focus
 - **the △ on top of the tower is replaced by a new mark (Alan's design):** six thin, tall,
   dark-green rectangles standing upright side by side, with one curved line flowing through the
