@@ -28,7 +28,9 @@ top-right:
 6. **購物中心** (left, near the coast) — the luxury mall: the glass diamond-lattice dome entrance
    and twin mirrored towers from Stage 6 (match `art-src/props/stage6/dome-entrance.png` and
    `mall-far.png` — on the PR #65 branch until it merges). Half-hidden behind it: the rusty
-   abandoned honey factory with dead chimneys (`factory-far.png`).
+   abandoned honey factory with dead chimneys (`factory-far.png`). The factory carries a faded,
+   peeling **red horizontal rectangular sign** with white blocks standing in for characters — no
+   real text, not based on any real brand (Alan, 2026-11-03). Same sign as in Stage 6 segment D.
 7. **森友展銷中心** (centre-bottom) — a long exhibition hall with a glass roof; along one side,
    rows of small cages / crates as silhouettes. Sad, not graphic.
 8. **配方控制中心** (right-middle) — a windowless data-centre block: cooling units, pipes, tanks
@@ -79,6 +81,8 @@ in order.
 
 Same as `art-src/map/map-walk.png` (same size, same baseline, `walk` [4] facing right) but
 倫寶 + 琪寶寶 only, no 噗噗 — for the trips into 8 and 9, while 噗噗 is away from the team.
+琪寶寶 carries the blue handheld electric fan from ART-REQUEST-18, not the old paper fan — in
+this sheet and in any redrawn `map-walk.png`.
 
 ## Code — after the art lands
 
