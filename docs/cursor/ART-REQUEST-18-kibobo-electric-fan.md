@@ -55,7 +55,7 @@ Model sheet first, then everything else with it as the reference:
 ## Text and sound
 
 - `data/story.json` line 404: 「風口我嚟！把扇一開，我飄得上最高嗰格。」 →
-  「風口我嚟！風扇一開，我飄得上最高嗰格。」 **(wording waits for Alan's OK)**
+  「風口我嚟！風扇一開，我飄得上最高嗰格。」 **(confirmed by Alan, 2026-11-03)**
 - `docs/bible/game-design.md` and `docs/bible/characters.md`: 「紙扇」 → 「手提電風扇」.
 - Optional: a soft motor whirr layered under the existing wind sound on glide/float.
 
