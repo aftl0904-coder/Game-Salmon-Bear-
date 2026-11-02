@@ -3061,7 +3061,6 @@ export class GameScene extends Phaser.Scene {
       if (!near) continue
       this.cageSaid = true
       const px = this.pet?.x ?? c.x - 60
-      this.emitScore('噗噗望住籠入面嘅影子……')
       floatText(this, px, LANE_FLOOR_Y - 96, '噗噗隻耳仔輕輕郁咗一下……', '#ffd6e8', { size: 12, rise: 8, dur: 3200 })
       if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
       break
