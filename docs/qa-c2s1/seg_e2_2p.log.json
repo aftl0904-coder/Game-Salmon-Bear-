@@ -1,0 +1,59 @@
+{
+ "mode": "2p",
+ "pet": {
+  "x": 337,
+  "hx": 4700
+ },
+ "gotShot": {
+  "bolt": true,
+  "sweep": true
+ },
+ "petDuring": {
+  "x": 4701,
+  "hx": 4725,
+  "vis": true
+ },
+ "dbg": {
+  "paused": false,
+  "now": 29553.1,
+  "pw": false,
+  "tscale": 1,
+  "q": true,
+  "hp": 0,
+  "fsm": "DEAD",
+  "act": "stalk",
+  "active": false,
+  "ended": false,
+  "jars": [
+   [
+    470,
+    true,
+    null
+   ],
+   [
+    4960,
+    true,
+    true
+   ]
+  ]
+ },
+ "jar": {
+  "x": 4960,
+  "y": 244
+ },
+ "cleared_before_pick": {
+  "ended": false,
+  "outro": false
+ },
+ "after": {
+  "ended": true,
+  "outro": true,
+  "texts": [
+   "咖啡車・存檔",
+   "存檔點",
+   "存檔點",
+   "存檔點"
+  ]
+ },
+ "errs": []
+}
