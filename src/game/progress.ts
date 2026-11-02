@@ -39,3 +39,22 @@ export function markFriendSaved(id: string) {
     /* private mode */
   }
 }
+
+/** Set once 第二大陸 is cleared (the same flag the main menu's 「重溫快樂結局」 reads): the 大陸2 world map turns green. */
+const C2KEY = 'sake-kuma-c2-cleared-v1'
+
+export function c2Cleared(): boolean {
+  try {
+    return localStorage.getItem(C2KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+export function markC2Cleared() {
+  try {
+    localStorage.setItem(C2KEY, '1')
+  } catch {
+    /* private mode */
+  }
+}

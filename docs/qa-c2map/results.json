@@ -1,0 +1,1659 @@
+[
+ {
+  "profile": "Desktop",
+  "name": "A reach menu",
+  "ok": true
+ },
+ {
+  "profile": "Desktop",
+  "name": "A menu→stage 6 shows C2 dark map, banner/title 大陸2・第一關・購物中心, party starts at pier (trio sheet)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "大陸2・第一關・購物中心",
+   "party": [
+    125,
+    298,
+    "map-walk"
+   ],
+   "open": [
+    6
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "？",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "A map → play with stageNo 6 (no input needed after confirm)",
+  "ok": true,
+  "detail": {
+   "seen": [
+    "menu",
+    "worldmap"
+   ],
+   "stageNo": 6
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "HUD plaque shows full 大陸2・第一關・購物中心, and every C2 title fits ≤150 art px (shortened display only when needed)",
+  "ok": true,
+  "detail": {
+   "shown": "大陸2・第一關・購物中心",
+   "shownW": 127,
+   "w": [
+    [
+     "大陸2・第一關・購物中心",
+     127
+    ],
+    [
+     "大陸2・第二關・森友展銷中心",
+     149
+    ],
+    [
+     "大陸2・第三關・配方控制中心",
+     149
+    ],
+    [
+     "大陸2・第四關・地底監禁層",
+     138
+    ],
+    [
+     "大陸2・第五關・頂層控制室",
+     138
+    ]
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "A no page/console errors",
+  "ok": true,
+  "detail": []
+ },
+ {
+  "profile": "Desktop",
+  "name": "B pier → 6 (from=to=6, as the menu does): arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 8741,
+    "x": 187.5,
+    "y": 209,
+    "to": 6,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 203,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    125,
+    298,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B 6 → 7: arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7062,
+    "x": 275,
+    "y": 296.5,
+    "to": 7,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 209,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B 7 → 8 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 10396,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 182.5,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    275,
+    296.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B 8 → 9 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 5593,
+    "x": 494,
+    "y": 154,
+    "to": 9,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 148,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    539,
+    188.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B 9 → 10 (lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7923,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    494,
+    154,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B 6 → 10 chain (walk, duo-free, lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 17338,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B tap/Enter mid-walk skips straight to the place (≈ 2 s dive, not the 10 s walk)",
+  "ok": true,
+  "detail": {
+   "walkingNow": true,
+   "sk": {
+    "ms": 6189,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   }
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B pick on C2: only 6–8 open, 5 icon frames from map-icons-c2, banner is ◀ 大陸2・第三關・配方控制中心 ▶",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "◀　大陸2・第三關・配方控制中心　▶",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7,
+    8
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "★",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "B tapping badge 7 travels to 7 (touch alone is enough)",
+  "ok": true,
+  "detail": {
+   "ms": 8696,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "C flag set → C2 map is the green texture; places/roads unchanged (arrives at same place)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-green",
+   "banner": "大陸2・第二關・森友展銷中心",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "C green trip 6 → 7 arrives",
+  "ok": true,
+  "detail": {
+   "ms": 7341,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "D C1 pick screen: map-world, banner ◀ 第二關・蜜樹丘 ▶, icons from map-icons, open [1,2], 5 badges",
+  "ok": true,
+  "detail": {
+   "bg": "map-world",
+   "banner": "◀　第二關・蜜樹丘　▶",
+   "party": [
+    150,
+    239,
+    "map-walk"
+   ],
+   "open": [
+    1,
+    2
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "1",
+     "map-icons",
+     0
+    ],
+    [
+     "2",
+     "map-icons",
+     1
+    ],
+    [
+     "3",
+     "map-icons",
+     2
+    ],
+    [
+     "4",
+     "map-icons",
+     3
+    ],
+    [
+     "5",
+     "map-icons",
+     4
+    ]
+   ],
+   "cm": 1,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "D tap badge 2 → bike (unchanged)",
+  "ok": true,
+  "detail": "bike"
+ },
+ {
+  "profile": "Desktop",
+  "name": "D C1 2 → 3 walks the road with the trio sheet and arrives at place 3",
+  "ok": true,
+  "detail": {
+   "a23": {
+    "ms": 7744,
+    "x": 360,
+    "y": 210,
+    "to": 3,
+    "next": "bike",
+    "tex": "map-walk"
+   },
+   "w23party": [
+    235,
+    135,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "D C1 1 → 3 (no road mapped) behaves as before: no chained walk, party stays put, then arrives",
+  "ok": true,
+  "detail": {
+   "ms": 5840,
+   "x": 150,
+   "y": 239,
+   "to": 3,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "D C1 5 → credits hop still works",
+  "ok": true,
+  "detail": {
+   "ms": 3287,
+   "x": 546,
+   "y": 84,
+   "to": 5,
+   "next": "credits",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Desktop",
+  "name": "D unknown stage 11: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "大陸2・第六關",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "Desktop",
+  "name": "D unknown stage 0: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "第一關・百畝樹林",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "Desktop",
+  "name": "D no page/console errors",
+  "ok": true,
+  "detail": []
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "A reach menu",
+  "ok": true
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "A menu→stage 6 shows C2 dark map, banner/title 大陸2・第一關・購物中心, party starts at pier (trio sheet)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "大陸2・第一關・購物中心",
+   "party": [
+    125,
+    298,
+    "map-walk"
+   ],
+   "open": [
+    6
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "？",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "A map → play with stageNo 6 (no input needed after confirm)",
+  "ok": true,
+  "detail": {
+   "seen": [
+    "menu",
+    "worldmap"
+   ],
+   "stageNo": 6
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "HUD plaque shows full 大陸2・第一關・購物中心, and every C2 title fits ≤150 art px (shortened display only when needed)",
+  "ok": true,
+  "detail": {
+   "shown": "大陸2・第一關・購物中心",
+   "shownW": 127,
+   "w": [
+    [
+     "大陸2・第一關・購物中心",
+     127
+    ],
+    [
+     "大陸2・第二關・森友展銷中心",
+     149
+    ],
+    [
+     "大陸2・第三關・配方控制中心",
+     149
+    ],
+    [
+     "大陸2・第四關・地底監禁層",
+     138
+    ],
+    [
+     "大陸2・第五關・頂層控制室",
+     138
+    ]
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "A no page/console errors",
+  "ok": true,
+  "detail": []
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B pier → 6 (from=to=6, as the menu does): arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 8777,
+    "x": 187.5,
+    "y": 209,
+    "to": 6,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 203,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    125,
+    298,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B 6 → 7: arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7090,
+    "x": 275,
+    "y": 296.5,
+    "to": 7,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 209,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B 7 → 8 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 10669,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 182.5,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    275,
+    296.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B 8 → 9 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 5623,
+    "x": 494,
+    "y": 154,
+    "to": 9,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 148,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    539,
+    188.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B 9 → 10 (lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7952,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    494,
+    154,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B 6 → 10 chain (walk, duo-free, lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 17601,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B tap/Enter mid-walk skips straight to the place (≈ 2 s dive, not the 10 s walk)",
+  "ok": true,
+  "detail": {
+   "walkingNow": true,
+   "sk": {
+    "ms": 6277,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   }
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B pick on C2: only 6–8 open, 5 icon frames from map-icons-c2, banner is ◀ 大陸2・第三關・配方控制中心 ▶",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "◀　大陸2・第三關・配方控制中心　▶",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7,
+    8
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "★",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "B tapping badge 7 travels to 7 (touch alone is enough)",
+  "ok": true,
+  "detail": {
+   "ms": 8977,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "C flag set → C2 map is the green texture; places/roads unchanged (arrives at same place)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-green",
+   "banner": "大陸2・第二關・森友展銷中心",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "C green trip 6 → 7 arrives",
+  "ok": true,
+  "detail": {
+   "ms": 7533,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D C1 pick screen: map-world, banner ◀ 第二關・蜜樹丘 ▶, icons from map-icons, open [1,2], 5 badges",
+  "ok": true,
+  "detail": {
+   "bg": "map-world",
+   "banner": "◀　第二關・蜜樹丘　▶",
+   "party": [
+    150,
+    239,
+    "map-walk"
+   ],
+   "open": [
+    1,
+    2
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "1",
+     "map-icons",
+     0
+    ],
+    [
+     "2",
+     "map-icons",
+     1
+    ],
+    [
+     "3",
+     "map-icons",
+     2
+    ],
+    [
+     "4",
+     "map-icons",
+     3
+    ],
+    [
+     "5",
+     "map-icons",
+     4
+    ]
+   ],
+   "cm": 1,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D tap badge 2 → bike (unchanged)",
+  "ok": true,
+  "detail": "bike"
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D C1 2 → 3 walks the road with the trio sheet and arrives at place 3",
+  "ok": true,
+  "detail": {
+   "a23": {
+    "ms": 7797,
+    "x": 360,
+    "y": 210,
+    "to": 3,
+    "next": "bike",
+    "tex": "map-walk"
+   },
+   "w23party": [
+    235,
+    135,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D C1 1 → 3 (no road mapped) behaves as before: no chained walk, party stays put, then arrives",
+  "ok": true,
+  "detail": {
+   "ms": 5871,
+   "x": 150,
+   "y": 239,
+   "to": 3,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D C1 5 → credits hop still works",
+  "ok": true,
+  "detail": {
+   "ms": 3260,
+   "x": 546,
+   "y": 84,
+   "to": 5,
+   "next": "credits",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D unknown stage 11: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "大陸2・第六關",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D unknown stage 0: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "第一關・百畝樹林",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "Pixel 7 landscape",
+  "name": "D no page/console errors",
+  "ok": true,
+  "detail": []
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "A reach menu",
+  "ok": true
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "A menu→stage 6 shows C2 dark map, banner/title 大陸2・第一關・購物中心, party starts at pier (trio sheet)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "大陸2・第一關・購物中心",
+   "party": [
+    125,
+    298,
+    "map-walk"
+   ],
+   "open": [
+    6
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "？",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "A map → play with stageNo 6 (no input needed after confirm)",
+  "ok": true,
+  "detail": {
+   "seen": [
+    "menu",
+    "",
+    "worldmap"
+   ],
+   "stageNo": 6
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "HUD plaque shows full 大陸2・第一關・購物中心, and every C2 title fits ≤150 art px (shortened display only when needed)",
+  "ok": true,
+  "detail": {
+   "shown": "大陸2・第一關・購物中心",
+   "shownW": 127,
+   "w": [
+    [
+     "大陸2・第一關・購物中心",
+     127
+    ],
+    [
+     "大陸2・第二關・森友展銷中心",
+     149
+    ],
+    [
+     "大陸2・第三關・配方控制中心",
+     149
+    ],
+    [
+     "大陸2・第四關・地底監禁層",
+     138
+    ],
+    [
+     "大陸2・第五關・頂層控制室",
+     138
+    ]
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "A no page/console errors",
+  "ok": true,
+  "detail": []
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B pier → 6 (from=to=6, as the menu does): arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 8820,
+    "x": 187.5,
+    "y": 209,
+    "to": 6,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 203,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    125,
+    298,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B 6 → 7: arrives at place, sheet=map-walk",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7094,
+    "x": 275,
+    "y": 296.5,
+    "to": 7,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 209,
+    "tex": [
+     "map-walk"
+    ],
+    "car": false
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B 7 → 8 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 10756,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 182.5,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    275,
+    296.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B 8 → 9 (duo): arrives at place, sheet=map-walk-duo",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 5632,
+    "x": 494,
+    "y": 154,
+    "to": 9,
+    "next": "play",
+    "tex": "map-walk-duo"
+   },
+   "trace": {
+    "minY": 148,
+    "tex": [
+     "map-walk",
+     "map-walk-duo"
+    ],
+    "car": false
+   },
+   "startParty": [
+    539,
+    188.5,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B 9 → 10 (lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 7914,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    494,
+    154,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B 6 → 10 chain (walk, duo-free, lift): arrives at place, sheet=map-walk, lift car seen",
+  "ok": true,
+  "detail": {
+   "arr": {
+    "ms": 17771,
+    "x": 525,
+    "y": 41,
+    "to": 10,
+    "next": "play",
+    "tex": "map-walk"
+   },
+   "trace": {
+    "minY": 35,
+    "tex": [
+     "map-walk"
+    ],
+    "car": true
+   },
+   "startParty": [
+    187.5,
+    209,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B tap/Enter mid-walk skips straight to the place (≈ 2 s dive, not the 10 s walk)",
+  "ok": true,
+  "detail": {
+   "walkingNow": true,
+   "sk": {
+    "ms": 6283,
+    "x": 539,
+    "y": 188.5,
+    "to": 8,
+    "next": "play",
+    "tex": "map-walk-duo"
+   }
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B pick on C2: only 6–8 open, 5 icon frames from map-icons-c2, banner is ◀ 大陸2・第三關・配方控制中心 ▶",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-dark",
+   "banner": "◀　大陸2・第三關・配方控制中心　▶",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7,
+    8
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "★",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "B tapping badge 7 travels to 7 (touch alone is enough)",
+  "ok": true,
+  "detail": {
+   "ms": 9099,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "C flag set → C2 map is the green texture; places/roads unchanged (arrives at same place)",
+  "ok": true,
+  "detail": {
+   "bg": "map-c2-green",
+   "banner": "大陸2・第二關・森友展銷中心",
+   "party": [
+    187.5,
+    209,
+    "map-walk"
+   ],
+   "open": [
+    6,
+    7
+   ],
+   "picking": false,
+   "icons": [
+    [
+     "6",
+     "map-icons-c2",
+     0
+    ],
+    [
+     "7",
+     "map-icons-c2",
+     1
+    ],
+    [
+     "8",
+     "map-icons-c2",
+     2
+    ],
+    [
+     "9",
+     "map-icons-c2",
+     3
+    ],
+    [
+     "10",
+     "map-icons-c2",
+     4
+    ]
+   ],
+   "cm": 2,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "Enter／A　繼續"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "C green trip 6 → 7 arrives",
+  "ok": true,
+  "detail": {
+   "ms": 7522,
+   "x": 275,
+   "y": 296.5,
+   "to": 7,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D C1 pick screen: map-world, banner ◀ 第二關・蜜樹丘 ▶, icons from map-icons, open [1,2], 5 badges",
+  "ok": true,
+  "detail": {
+   "bg": "map-world",
+   "banner": "◀　第二關・蜜樹丘　▶",
+   "party": [
+    150,
+    239,
+    "map-walk"
+   ],
+   "open": [
+    1,
+    2
+   ],
+   "picking": true,
+   "icons": [
+    [
+     "1",
+     "map-icons",
+     0
+    ],
+    [
+     "2",
+     "map-icons",
+     1
+    ],
+    [
+     "3",
+     "map-icons",
+     2
+    ],
+    [
+     "4",
+     "map-icons",
+     3
+    ],
+    [
+     "5",
+     "map-icons",
+     4
+    ]
+   ],
+   "cm": 1,
+   "texts": [
+    "★",
+    "？",
+    "？",
+    "？",
+    "←→ 揀關卡　Enter／A 出發"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D tap badge 2 → bike (unchanged)",
+  "ok": true,
+  "detail": "bike"
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D C1 2 → 3 walks the road with the trio sheet and arrives at place 3",
+  "ok": true,
+  "detail": {
+   "a23": {
+    "ms": 7784,
+    "x": 360,
+    "y": 210,
+    "to": 3,
+    "next": "bike",
+    "tex": "map-walk"
+   },
+   "w23party": [
+    235,
+    135,
+    "map-walk"
+   ]
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D C1 1 → 3 (no road mapped) behaves as before: no chained walk, party stays put, then arrives",
+  "ok": true,
+  "detail": {
+   "ms": 5863,
+   "x": 150,
+   "y": 239,
+   "to": 3,
+   "next": "play",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D C1 5 → credits hop still works",
+  "ok": true,
+  "detail": {
+   "ms": 3285,
+   "x": 546,
+   "y": 84,
+   "to": 5,
+   "next": "credits",
+   "tex": "map-walk"
+  }
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D unknown stage 11: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "大陸2・第六關",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D unknown stage 0: plain title card, no throw",
+  "ok": true,
+  "detail": [
+   "第一關・百畝樹林",
+   "Enter／A　繼續　（輕觸畫面亦可）"
+  ]
+ },
+ {
+  "profile": "iPhone 13 landscape",
+  "name": "D no page/console errors",
+  "ok": true,
+  "detail": []
+ }
+]

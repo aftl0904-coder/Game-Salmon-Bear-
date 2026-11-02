@@ -4,6 +4,7 @@ import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
 import { maxStage } from './progress'
+import { stageTitle } from './stageNames'
 import { markHd, STORY_RES } from './heroAnims'
 
 /** Stages that exist so far (picker + progress). */
@@ -24,7 +25,6 @@ function c2Enabled(): boolean {
 function pickable(): number {
   return c2Enabled() ? 6 : Math.min(maxStage(), LAST_STAGE)
 }
-const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈', 6: '第六關・購物中心（第二大陸）' }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -213,7 +213,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private drawStage() {
-    const name = STAGE_NAMES[this.stageSel] ?? STAGE_NAMES[1]
+    const name = stageTitle(this.stageSel)
     this.stageText?.setText(`◀　繼續：${name}　▶`)
     this.stageRedrawBox?.()
   }

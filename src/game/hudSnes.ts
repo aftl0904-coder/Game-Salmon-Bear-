@@ -3,6 +3,7 @@ import { markHd } from './heroAnims'
 import { DEPTH } from './engine/depth'
 import { MAX_HP, GAME_W, GAME_H } from './engine/constants'
 import { FONT_UI } from './ui/fonts'
+import { titleFallbacks } from './stageNames'
 
 /**
  * SNES-style stage HUD (640×360): lacquered top band with gold trim.
@@ -103,6 +104,9 @@ function txt(scene: Phaser.Scene, x: number, y: number, s: string, size: number,
     })
     .setScrollFactor(0)
 }
+
+/** Widest stage-title text the HUD plaque takes before it switches to the shorter form. */
+const PLAQUE_MAX_W = 150
 
 export function buildSnesHud(
   scene: Phaser.Scene,
@@ -217,6 +221,11 @@ export function buildSnesHud(
   // Centre: stage plaque + honey / coins / 絕招.
   const cx = GAME_W / 2
   const plaque = txt(scene, cx, 1, opts.stageTitle, 11, '#ffd76a').setOrigin(0.5, 0)
+  // Long continent-form names (大陸2・第二關・森友展銷中心) drop the place name before they'd crowd the 2P cluster; the data keeps the full name.
+  for (const form of titleFallbacks(opts.stageTitle)) {
+    plaque.setText(form)
+    if (plaque.width <= PLAQUE_MAX_W) break
+  }
   const pw = Math.ceil(plaque.width) + 16
   g.fillStyle(0x3a2412, 1).fillRect(Math.round(cx - pw / 2), 1, pw, 13)
   g.fillStyle(0xc8902a, 1).fillRect(Math.round(cx - pw / 2), 14, pw, 1)
