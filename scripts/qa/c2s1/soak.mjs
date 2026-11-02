@@ -13,7 +13,9 @@ while (Date.now() - t0 < MINUTES * 60000) {
   const k = keys[Math.floor(Math.random() * keys.length)]
   if (Math.random() < 0.15) { held = k; await page.keyboard.down(k) } else if (held && Math.random() < 0.3) { await page.keyboard.up(held); held = null }
   else await page.keyboard.press(k).catch(() => {})
+  if (process.env.ASSIST && i % 25 === 0) await page.keyboard.press('Space').catch(() => {})
   if (i % 40 === 0) {
+    if (process.env.ASSIST) await run(`for (const h of [s.boy, s.girl]) if (h && h.alive && h.hp <= 2) h.hp = 5`).catch(() => {})
     const st = stops[Math.floor(Math.random() * stops.length)]
     const info = await run(`const alive = [s.boy, s.girl].filter(h => h && h.alive); return { ended: s.ended, x: alive[0] ? Math.round(alive[0].x) : null, now: Math.round(s.time.now), actors: s.enemies.getChildren().length, shots: s.enemyShots.getChildren().length, q: !!s.queen }`).catch((e) => ({ err: String(e) }))
     log.samples.push(info)
@@ -23,6 +25,6 @@ while (Date.now() - t0 < MINUTES * 60000) {
 }
 if (held) await page.keyboard.up(held)
 log.errs = errs
-fs.writeFileSync(`${OUT}/soak_${mode}.log.json`, JSON.stringify(log, null, 1))
+fs.writeFileSync(`${OUT}/soak_${mode}${process.env.ASSIST ? '_assist' : ''}.log.json`, JSON.stringify(log, null, 1))
 console.log('done', log.samples.length, 'samples', log.stops.join(','), 'errs', errs.length, errs.slice(0, 5))
 await b.close()

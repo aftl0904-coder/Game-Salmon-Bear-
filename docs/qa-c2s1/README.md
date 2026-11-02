@@ -36,13 +36,18 @@
 - Stage 1 / Stage 5 開局正常；Stage 5 通關卡仍然係「片尾字幕」按鈕（`R-stage5-clear.png`）。
 - 亂按 / 長按 soak：2P 一次（`soak_2p_run1.log.json`，只傳送到 A、D，終局 game over）、1P 一次（`soak_1p.log.json`，遊戲內時間 366 秒，隨機傳送 A–E 各段 28 次，0 error、冇 crash）。
 
+## Merge 前補測（第二輪）
+
+- **音樂**：新增 `mall`（關卡，104 BPM D 小調）同 `mallboss`（Boss，144 BPM D 小調）兩首，用現有 audio.ts 嘅音符格式寫，接駁 GameScene（唔再借 stage5/boss5）。`music.mjs` 確認兩首真係出聲（debugPeak > 0）、冇 error。**好唔好聽未有人聽過**。
+- **2P 全關（真實按鍵、冇傳送）**：`walk.mjs` 用 P1(WASD/F/G) + P2(方向鍵/,/.) 由 A 走到 E，真係打死 boss（P1→P2→P3）、拎蜜罐、通關卡（`W-2p-*.png`、`walk_2p.log.json`）。牆鐘 152 秒，期間 5 次死亡後按 Space 繼續、5 次 HP≤1 時由 bot 補血（log 有記錄）— 所以呢個係「功能走得通」，唔係「公平難度」證明。
+- **連續 10 分鐘+**：`soak_1p_assist.log.json`：1P 隨機亂按／長按 11 分鐘，遊戲內時間 668 秒，隨機傳送 A–E 各段，補血 + 死咗按 Space 繼續，155 個取樣全部未 game over，0 error、冇 crash。冇補血嗰次（`soak_1p_11min_noassist`）喺約 325 秒 game over，之後停喺結算畫面，所以唔算連續玩。
+- **bot 測試搵到嘅限制（唔係遊戲 bug）**：bot 唔識跳台階會卡喺 x=1373；已改 bot 跳台階/坑。
+
 ## 未驗證 / 需人手測試
 
-- 手感、難度曲線、boss 公平度（P2 偵察機 + 掃描、P3 連擊）— 只確認功能運作，未有人玩。
-- 真正 10 分鐘連續遊玩（最長一次 soak 係遊戲內 366 秒）。
-- 音效/音樂：沿用 stage 5 同 boss5 嘅曲，未有新曲。
+- **人手試玩**（我做唔到，需要真人）：手感、難度曲線、boss 公平度（P2 偵察機 + 掃描、P3 連擊）— 只確認功能運作，未有人玩。
+- 新音樂嘅音樂性（只確認有聲、冇 error）。
 - 手機觸控、真實 GPU。
-- 2P 完整打穿全關（只測咗 E 段 + 傳送）。
 
 ## 已知限制 / 如實披露
 

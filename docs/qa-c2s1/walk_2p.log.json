@@ -1,0 +1,912 @@
+{
+ "mode": "2p",
+ "samples": [
+  {
+   "wall": 4,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 13819,
+   "xs": [
+    619,
+    795
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 11,
+   "deaths": 0
+  },
+  {
+   "wall": 8,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 18153,
+   "xs": [
+    631,
+    807
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 11,
+   "deaths": 0
+  },
+  {
+   "wall": 12,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 21802,
+   "xs": [
+    631,
+    807
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 11,
+   "deaths": 0
+  },
+  {
+   "wall": 16,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 25602,
+   "xs": [
+    849,
+    1003
+   ],
+   "hps": [
+    6,
+    5
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 10,
+   "deaths": 0
+  },
+  {
+   "wall": 20,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 29536,
+   "xs": [
+    1231,
+    1301
+   ],
+   "hps": [
+    5,
+    4
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 10,
+   "deaths": 0
+  },
+  {
+   "wall": 24,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 34185,
+   "xs": [
+    1602,
+    1517
+   ],
+   "hps": [
+    4,
+    2
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 9,
+   "deaths": 0
+  },
+  {
+   "wall": 29,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 38568,
+   "xs": [
+    1404,
+    1382
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 9,
+   "deaths": 1
+  },
+  {
+   "wall": 33,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 42485,
+   "xs": [
+    1870,
+    1854
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 9,
+   "deaths": 1
+  },
+  {
+   "wall": 36,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 46218,
+   "xs": [
+    2147,
+    2141
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 7,
+   "deaths": 1
+  },
+  {
+   "wall": 41,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 50568,
+   "xs": [
+    2481,
+    2477
+   ],
+   "hps": [
+    5,
+    5
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 6,
+   "deaths": 1
+  },
+  {
+   "wall": 45,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 54568,
+   "xs": [
+    2940,
+    2800
+   ],
+   "hps": [
+    5,
+    4
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 6,
+   "deaths": 1
+  },
+  {
+   "wall": 49,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 59184,
+   "xs": [
+    3280,
+    3332
+   ],
+   "hps": [
+    5,
+    5
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 4,
+   "deaths": 1
+  },
+  {
+   "wall": 55,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 64684,
+   "xs": [
+    3661,
+    3749
+   ],
+   "hps": [
+    4,
+    5
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 3,
+   "deaths": 1
+  },
+  {
+   "wall": 60,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 69834,
+   "xs": [
+    4042,
+    4041
+   ],
+   "hps": [
+    3,
+    3
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 1
+  },
+  {
+   "wall": 65,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 74667,
+   "xs": [
+    4533,
+    4276
+   ],
+   "hps": [
+    4,
+    2
+   ],
+   "q": null,
+   "bossFight": false,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 1
+  },
+  {
+   "wall": 69,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 78684,
+   "xs": [
+    4706,
+    4707
+   ],
+   "hps": [
+    6,
+    2
+   ],
+   "q": {
+    "act": "intro",
+    "ph": 1,
+    "hp": 55
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 1
+  },
+  {
+   "wall": 73,
+   "assist": 1,
+   "ended": false,
+   "outro": false,
+   "now": 82967,
+   "xs": [
+    5045,
+    5033
+   ],
+   "hps": [
+    3,
+    4
+   ],
+   "q": {
+    "act": "stalk",
+    "ph": 1,
+    "hp": 50
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 1
+  },
+  {
+   "wall": 77,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 86583,
+   "xs": [
+    4688,
+    4688
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 1,
+    "hp": 48
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 2
+  },
+  {
+   "wall": 80,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 90150,
+   "xs": [
+    5019,
+    5018
+   ],
+   "hps": [
+    5,
+    5
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 1,
+    "hp": 45
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 2
+  },
+  {
+   "wall": 84,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 93733,
+   "xs": [
+    5232,
+    5236
+   ],
+   "hps": [
+    3,
+    3
+   ],
+   "q": {
+    "act": "windup",
+    "ph": 1,
+    "hp": 38
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 2
+  },
+  {
+   "wall": 87,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 97333,
+   "xs": [
+    5232,
+    5232
+   ],
+   "hps": [
+    2,
+    2
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 1,
+    "hp": 37
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 2
+  },
+  {
+   "wall": 91,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 100849,
+   "xs": [
+    4688,
+    4688
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 2,
+    "hp": 36
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 3
+  },
+  {
+   "wall": 95,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 104716,
+   "xs": [
+    5057,
+    5058
+   ],
+   "hps": [
+    5,
+    5
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 2,
+    "hp": 32
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 3
+  },
+  {
+   "wall": 98,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 108316,
+   "xs": [
+    5195,
+    5232
+   ],
+   "hps": [
+    2,
+    3
+   ],
+   "q": {
+    "act": "barrage",
+    "ph": 2,
+    "hp": 27
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 3
+  },
+  {
+   "wall": 102,
+   "assist": 1,
+   "ended": false,
+   "outro": false,
+   "now": 111766,
+   "xs": [
+    5232,
+    5223
+   ],
+   "hps": [
+    0,
+    4
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 2,
+    "hp": 26
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 3
+  },
+  {
+   "wall": 105,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 115282,
+   "xs": [
+    4976,
+    4978
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 2,
+    "hp": 25
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 109,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 118865,
+   "xs": [
+    5232,
+    5236
+   ],
+   "hps": [
+    3,
+    4
+   ],
+   "q": {
+    "act": "barrage",
+    "ph": 3,
+    "hp": 14
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 113,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 122815,
+   "xs": [
+    5232,
+    5232
+   ],
+   "hps": [
+    2,
+    3
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 13
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 116,
+   "assist": 1,
+   "ended": false,
+   "outro": false,
+   "now": 126348,
+   "xs": [
+    5234,
+    5236
+   ],
+   "hps": [
+    4,
+    3
+   ],
+   "q": {
+    "act": "barrage",
+    "ph": 3,
+    "hp": 13
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 120,
+   "assist": 1,
+   "ended": false,
+   "outro": false,
+   "now": 129881,
+   "xs": [
+    5236,
+    5236
+   ],
+   "hps": [
+    2,
+    4
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 11
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 124,
+   "assist": 1,
+   "ended": false,
+   "outro": false,
+   "now": 133431,
+   "xs": [
+    5204,
+    5234
+   ],
+   "hps": [
+    4,
+    4
+   ],
+   "q": {
+    "act": "barrage",
+    "ph": 3,
+    "hp": 11
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 127,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 137015,
+   "xs": [
+    5232,
+    5232
+   ],
+   "hps": [
+    2,
+    2
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 9
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 131,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 140514,
+   "xs": [
+    5232,
+    5232
+   ],
+   "hps": [
+    2,
+    2
+   ],
+   "q": {
+    "act": "windup",
+    "ph": 3,
+    "hp": 9
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 4
+  },
+  {
+   "wall": 134,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 144164,
+   "xs": [
+    4688,
+    4688
+   ],
+   "hps": [
+    6,
+    6
+   ],
+   "q": {
+    "act": "windup",
+    "ph": 3,
+    "hp": 9
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 5
+  },
+  {
+   "wall": 138,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 147731,
+   "xs": [
+    5032,
+    5031
+   ],
+   "hps": [
+    5,
+    5
+   ],
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 6
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 5
+  },
+  {
+   "wall": 141,
+   "assist": 0,
+   "ended": false,
+   "outro": false,
+   "now": 151264,
+   "xs": [
+    5232,
+    5232
+   ],
+   "hps": [
+    3,
+    3
+   ],
+   "q": {
+    "act": "intro",
+    "ph": 3,
+    "hp": 0
+   },
+   "bossFight": true,
+   "jar": 1,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 5
+  },
+  {
+   "wall": 145,
+   "assist": 0,
+   "ended": true,
+   "outro": true,
+   "now": 155297,
+   "xs": [
+    4904,
+    4819
+   ],
+   "hps": [
+    3,
+    3
+   ],
+   "q": {
+    "act": "intro",
+    "ph": 3,
+    "hp": 0
+   },
+   "bossFight": true,
+   "jar": 0,
+   "sceneActive": true,
+   "keys": "play+UIScene",
+   "pend": 0,
+   "deaths": 5
+  }
+ ],
+ "assists": 5,
+ "shots": [],
+ "result": "cleared",
+ "wallSec": 152,
+ "errs": []
+}
