@@ -220,6 +220,8 @@ const STAM_REST_MS = 380
 const FINAL_STAGE = 5
 /** 瞓覺: coins for a full heal on the clear card. Only worth it because HP carries to the next stage. */
 const SLEEP_COST = 12
+/** Taps this soon after the clear card is built are ignored (the tap that skipped the cutscene). */
+const CLEAR_TAP_GRACE_MS = 450
 /** 賭檔: flat stake, 50% double / 50% lose. */
 const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
@@ -4672,6 +4674,7 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: t, y: t.y - 14, alpha: 0, delay: 900, duration: 700, onComplete: () => t.destroy() })
   }
   private clearBtns: ClearButton[] = []
+  private clearBuiltAt = 0
   private clearSel = 0
   private clearCardMove: ((d: number) => void) | null = null
   private tallyDone = false
@@ -4958,6 +4961,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setScroll(0, 0)
     this.cameras.main.fadeIn(280, 255, 236, 180)
 
+    this.clearBuiltAt = this.time.now
     this.buildClearCard()
     const overlay = this.clearOverlay!
     let left = false
@@ -5024,13 +5028,25 @@ export class GameScene extends Phaser.Scene {
         this.clearSel = i
         this.drawClearSel()
       })
+      // A tap counts only when the finger went DOWN on this button after the card was built:
+      // the tap that dismissed the outro cutscene (or a finger still held on the pad when
+      // win() stopped UIScene) otherwise lifts over a button and fires it by accident.
+      let armed = false
+      const arm = () => {
+        armed = this.time.now - this.clearBuiltAt > CLEAR_TAP_GRACE_MS
+      }
       const press = () => {
-        if (!b.on || this.clearModal) return
+        const was = armed
+        armed = false
+        if (!was || !b.on || this.clearModal) return
         this.clearSel = i
         leaveBy(b.id)
       }
-      b.bg.on('pointerup', press)
-      b.tx.setInteractive({ useHandCursor: true }).on('pointerup', press)
+      for (const o of [b.bg, b.tx.setInteractive({ useHandCursor: true })]) {
+        o.on('pointerdown', arm)
+        o.on('pointerout', () => (armed = false))
+        o.on('pointerup', press)
+      }
     })
     overlay.add(
       this.add

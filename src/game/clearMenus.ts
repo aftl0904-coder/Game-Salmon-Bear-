@@ -73,7 +73,16 @@ const YES_KEYS = ['Enter', 'Space', 'KeyF', 'KeyJ', 'KeyK']
 function makeBtn(scene: Phaser.Scene, root: Phaser.GameObjects.Container, cx: number, cy: number, label: string, onClick: () => void) {
   const bg = scene.add.rectangle(cx, cy, 120, 26, 0x4a2a14, 1).setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
   const tx = scene.add.text(cx, cy, label, { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' }).setOrigin(0.5)
-  bg.on('pointerup', onClick)
+  // Fire only when the finger went down on this button too — a pop-up that opens under a
+  // finger must not be answered by that same finger lifting.
+  let armed = false
+  bg.on('pointerdown', () => (armed = true))
+  bg.on('pointerout', () => (armed = false))
+  bg.on('pointerup', () => {
+    const was = armed
+    armed = false
+    if (was) onClick()
+  })
   root.add([bg, tx])
   return {
     set: (text: string) => tx.setText(text),
