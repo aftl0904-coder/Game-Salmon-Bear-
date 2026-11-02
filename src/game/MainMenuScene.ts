@@ -12,6 +12,7 @@ const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: 
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { versionLabel } from './version'
 
 type Mode = '1p' | '2p'
 type SoloCast = 'boy' | 'girl'
@@ -85,6 +86,14 @@ export class MainMenuScene extends Phaser.Scene {
     this.wireInput()
     mountTouchControls(this)
     mountMuteButton(this, 14, 8)
+    this.add
+      .text(width - 4, height - 4, versionLabel(), {
+        fontFamily: FONT_UI,
+        fontSize: '7px',
+        color: '#9a8a70',
+      })
+      .setOrigin(1, 1)
+      .setAlpha(0.75)
     this.refresh(true)
   }
 
