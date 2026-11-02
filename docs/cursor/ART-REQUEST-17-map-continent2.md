@@ -56,7 +56,10 @@ and every place sit on the same pixels — only the state of the land changes:
 - the cages along 7 are open and empty; a small sanctuary meadow beside the hall
 - bees, birds and a few small animals
 - on a hill near the tower: the giant guardian bear and 噗噗 side by side — small, not the focus
-- [Alan decides — see below] the △ on the tower replaced by a leaf-shaped mark
+- **the △ on top of the tower is replaced by a new mark (Alan's design):** six thin, tall,
+  dark-green rectangles standing upright side by side, with one curved line flowing through the
+  middle of them from left to right. Abstract shape only, no letters. It must read clearly at
+  map size — keep the rectangles evenly spaced and the curve smooth.
 
 This is the payoff of the ending (森林共生式發展). Warm, not flashy.
 
@@ -65,7 +68,7 @@ This is the payoff of the ending (森林共生式發展). Warm, not flashy.
 Same cell size as `art-src/map/map-icons.png` (70×64 after processing). Badges for places 6–10,
 in order.
 
-### N4 (optional) `map-walk-duo.png`
+### N4 `map-walk-duo.png` (confirmed by Alan)
 
 Same as `art-src/map/map-walk.png` (same size, same baseline, `walk` [4] facing right) but
 倫寶 + 琪寶寶 only, no 噗噗 — for the trips into 8 and 9, while 噗噗 is away from the team.
@@ -79,8 +82,12 @@ Same as `art-src/map/map-walk.png` (same size, same baseline, `walk` [4] facing 
 - No `PLACES[n]!`-style lookups anywhere. An unknown stage falls back to a plain transition and
   never throws.
 - 9 → 10: a vertical lift tween up the side of the tower instead of a road walk.
-- Walk sprite: the duo sheet for trips whose destination is 8 or 9 (if N4 exists), otherwise
-  `map-walk`.
+- Walk sprite: the duo sheet for trips whose destination is 8 or 9, otherwise `map-walk`.
+- Stage names for 6–10 use the continent form everywhere they show (map banner, HUD plaque,
+  clear card, stage-select): 「大陸2・第一關・購物中心」, 「大陸2・第二關・森友展銷中心」,
+  「大陸2・第三關・配方控制中心」, 「大陸2・第四關・地底監禁層」, 「大陸2・第五關・頂層控制室」.
+  Continent 1 names stay as they are. The HUD plaque currently ellipsizes long titles — check
+  these fit on a phone, and shorten the display (not the data) if they don't.
 - Stage picking: the C2 map offers C2 stages (6–10) only; the C1 map offers 1–5 only.
 - Remove PR #65's temporary black transition once this works.
 
@@ -93,10 +100,9 @@ Same as `art-src/map/map-walk.png` (same size, same baseline, `walk` [4] facing 
 - [ ] The C1 map behaves exactly as before (stages 1 → 5).
 - [ ] No console errors. Screenshots + log in `docs/qa-c2map/`.
 
-## Alan decides
+## Decided by Alan (2026-11-03)
 
-1. Green version: keep the △ on the tower, or change it to a leaf mark?
-   Claude suggests the leaf — it shows the company really changed.
-2. Make the duo walk sprite (N4)? Small cost, keeps 噗噗's absence consistent.
-3. How C2 stage names show on screen: 「第六關・購物中心」 or 「大陸2・第一關・購物中心」?
-   Claude suggests the second, since the main menu already splits the two continents.
+1. Green version tower mark: replace the △ with six upright dark-green rectangles crossed by a
+   left-to-right curve (see N2).
+2. Duo walk sprite (N4): yes.
+3. Continent 2 stage names show as 「大陸2・第X關・…」 (see Code).
