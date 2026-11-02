@@ -339,6 +339,8 @@ export type SongId =
   | 'boss4'
   | 'stage5'
   | 'boss5'
+  | 'mall'
+  | 'mallboss'
   | 'ending'
   | 'sad'
   | 'story'
@@ -579,6 +581,38 @@ const SONGS: Record<SongId, Song> = {
     bassStyle: 'drive',
     leadWave: 'pulse12',
     harmBars: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+    vol: 1,
+  },
+  // 第二大陸・購物中心：貴氣商場廣播感，底下有啲唔對路 (104 BPM)，D 小調
+  mall: {
+    bpm: 104,
+    chords: ['Dm', 'Bb', 'F', 'C', 'Dm', 'Gm', 'A', 'Dm'],
+    lead: `
+      D5 - - - F5 - A5 - - - G5 - F5 - E5 -   | D5 - - - F5 - - - Bb5 - - - A5 - G5 -
+      A5 - - - C6 - - - A5 - G5 - F5 - - -   | E5 - - - G5 - - - C6 - - - . . . .
+      F5 - - - A5 - D6 - - - C6 - A5 - F5 -   | G5 - - - Bb5 - - - D6 - C6 - Bb5 - A5 -
+      C#6 - - - E6 - - - A5 - - - . . G5 -   | D6 - - - - - - - A5 - - - F5 - - -`,
+    drums: ['k . h . s . h . k . h . s . h .', 'k . h . s . h h k . h k s . h .'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'walk',
+    leadWave: 'triangle',
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    vol: 0.88,
+  },
+  // 商場保安總監 Boss：警報巡邏、步步進逼 (144 BPM)，D 小調
+  mallboss: {
+    bpm: 144,
+    chords: ['Dm', 'Dm', 'Bb', 'A', 'Gm', 'Dm', 'Bb', 'A'],
+    lead: `
+      D5 . D5 . F5 - A5 - D6 - . C6 - A5 - .   | D5 . D5 . F5 - A5 - C6 - Bb5 - A5 - . .
+      Bb4 . Bb4 . D5 - F5 - Bb5 - A5 - F5 - . .   | C#5 . C#5 . E5 - G5 - A5 - G5 - E5 - . .
+      G5 - - - Bb5 - D6 - - - C6 - Bb5 - G5 -   | F5 - - - A5 - D6 - F6 - E6 - D6 - A5 -
+      D6 - - - Bb5 - F5 - D5 - F5 - Bb5 - - -   | A5 - C#6 - E6 - - - A6 - G6 - E6 - . .`,
+    drums: ['k . h k s . h k k . h k s . h h', 'k k h k s . h k k k h . s s h h'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'drive',
+    leadWave: 'pulse12',
+    harmBars: [0, 1, 2, 3, 4, 5, 6, 7],
     vol: 1,
   },
   // 悲傷：噗噗變灰 (72 BPM)，A 小調，三角波主旋律 + 琶音

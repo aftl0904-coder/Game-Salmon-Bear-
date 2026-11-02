@@ -499,7 +499,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(300, 40, 100, 140)
 
     unlockAudio()
-    playSong(this.tower || this.mall ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
+    playSong(this.mall ? 'mall' : this.tower ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
 
     this.drawWorld()
     this.buildLevel()
@@ -4209,7 +4209,7 @@ export class GameScene extends Phaser.Scene {
       if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
     })
     const handle = (this.mall ? (cb: () => void) => this.mallIntro(cb) : (cb: () => void) => playCutscene(this, this.tower ? 'C8' : this.depot ? 'C7' : this.market ? 'C5' : this.tree ? 'C3' : 'C1', cb))(() => {
-        playSong(this.tower || this.mall ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
+        playSong(this.mall ? 'mall' : this.tower ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -6283,7 +6283,7 @@ export class GameScene extends Phaser.Scene {
       if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
       this.resetPauseKeys()
       this.pauseReadyAt = this.time.now + 1200
-      playSong(this.stageNo === 1 ? 'ambush' : this.tower || this.mall ? 'boss5' : this.depot ? 'boss4' : this.market ? 'boss3' : 'boss2')
+      playSong(this.stageNo === 1 ? 'ambush' : this.mall ? 'mallboss' : this.tower ? 'boss5' : this.depot ? 'boss4' : this.market ? 'boss3' : 'boss2')
       SFX.boss()
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
