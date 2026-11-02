@@ -18,7 +18,12 @@ export function L(n: number) {
  * Stage length — previous 7600 shortened −25%, then × LAYOUT_SCALE.
  * Spawn X positions should use `sx()` / STAGE_LEN_MUL.
  */
-export const WORLD_W = L(5700)
+export const BASE_WORLD_W = L(5700)
+/** Live binding: a stage JSON may set `worldW` (see GameScene.create) to run longer than the shared default. */
+export let WORLD_W = BASE_WORLD_W
+export function setWorldW(w: number) {
+  WORLD_W = Math.round(w)
+}
 export const WORLD_H = GAME_H
 /** Multiply legacy absolute stage X coords by this (WORLD_W design / 7600), then layout scale. */
 export const STAGE_LEN_MUL = 0.75 * LAYOUT_SCALE
@@ -149,6 +154,14 @@ export const COYOTE_MS = 100
 /** Jump input buffer (~100ms). */
 export const JUMP_BUF_MS = 100
 export const HURT_LOCK_MS = 260
+/** Boss-class hits: longer lock + slower slide so the hero is really pushed out of melee range. */
+export const BOSS_HURT_LOCK_MS = 550
+export const BOSS_KNOCK_X = 360
+/** Per-60fps-frame horizontal damping while hurt-locked (grounded). */
+export const HURT_DAMP = 0.82
+/** Horizontal speed cap while in hurt-lock (normal cap is moveSpeed + 60, which used to swallow knockback). */
+export const HURT_MAX_VX = 380
+export const BOSS_HURT_DAMP = 0.955
 /** Player hurt i-frames (1.5s blink). */
 export const HURT_IFRAME_MS = 1500
 export const FALL_Y = L(530)

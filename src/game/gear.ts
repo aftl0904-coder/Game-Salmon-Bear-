@@ -51,16 +51,16 @@ export const GEAR: GearDef[] = [
     name: '劍',
     who: 'girl',
     price: [10, 22, 40],
-    tiers: ['銅劍：劍長 ×1.35', '銀劍：劍長 ×1.7，傷害 +1', '金劍：唔會跌級'],
-    blurb: '攻擊力。琪寶寶用。買咗之後中招最多跌返買咗嗰級。',
+    tiers: ['銅劍：劍長 ×1.35', '銀劍：劍長 ×1.7，傷害 +1', '金劍：中招唔會跌級'],
+    blurb: '攻擊力。琪寶寶用。買咗之後中招最多跌返買咗嗰級（死咗就全清）。',
   },
   {
     id: 'gun',
     name: '三文魚槍',
     who: 'boy',
     price: [10, 22, 40],
-    tiers: ['銅槍：一次兩粒', '銀槍：扇形三粒，射程 ×1.4', '金槍：唔會跌級'],
-    blurb: '攻擊力。倫寶用。買咗之後中招最多跌返買咗嗰級。',
+    tiers: ['銅槍：一次兩粒', '銀槍：扇形三粒，射程 ×1.4', '金槍：中招唔會跌級'],
+    blurb: '攻擊力。倫寶用。買咗之後中招最多跌返買咗嗰級（死咗就全清）。',
   },
   {
     id: 'armour',
@@ -139,29 +139,20 @@ export function buy(who: Who, id: GearId): boolean {
 }
 
 /**
- * Death: drop one tier of the most valuable thing carried, never below 0.
- * Tier 3 sword / gun are marked 「唔會跌級」, so they are skipped.
+ * Death wipes everything this hero carries — all six items back to tier 0, no exceptions
+ * (金劍／金槍嘅「唔會跌級」只係指受傷，死咗一樣清晒). Returns what was lost.
  */
-export function dropOnDeath(who: Who): { id: GearId; from: number } | null {
+export function dropOnDeath(who: Who): Array<{ id: GearId; from: number }> {
   const s = read()
   const t = s[who]
-  let best: GearId | null = null
-  let bestVal = 0
+  const lost: Array<{ id: GearId; from: number }> = []
   for (const g of GEAR) {
     const cur = t[g.id] ?? 0
-    if (cur <= 0) continue
-    if ((g.id === 'sword' || g.id === 'gun') && cur >= MAX_TIER) continue
-    const val = g.price[cur - 1]!
-    if (val > bestVal) {
-      bestVal = val
-      best = g.id
-    }
+    if (cur > 0) lost.push({ id: g.id, from: cur })
   }
-  if (!best) return null
-  const from = t[best]!
-  t[best] = from - 1
+  s[who] = empty()
   write(s)
-  return { id: best, from }
+  return lost
 }
 
 export function resetGear() {

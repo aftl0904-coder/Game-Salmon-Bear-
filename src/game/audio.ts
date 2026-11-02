@@ -9,6 +9,8 @@ let master: GainNode | null = null
 /** Scheduled BGM sources (pruned as they finish; stopped on song change). */
 let bgmNodes: Array<{ n: AudioScheduledSourceNode; end: number }> = []
 let bgmPlaying = false
+/** Measured 2026-11: music peaks sat around 0.07–0.22 at 0.42; 0.6 keeps the worst case well under clipping. */
+const MASTER_GAIN = 0.6
 let muted = false
 let bgmTimer: number | null = null
 /** Suppress loop BGM while fanfare plays. */
@@ -35,7 +37,7 @@ export function setMuted(next: boolean) {
     /* ignore */
   }
   if (master) {
-    master.gain.value = muted ? 0 : 0.42
+    master.gain.value = muted ? 0 : MASTER_GAIN
   }
   if (muted) stopBgm()
   else {
@@ -53,7 +55,7 @@ function ac(): AudioContext {
   if (!ctx) {
     ctx = new AudioContext()
     master = ctx.createGain()
-    master.gain.value = muted ? 0 : 0.42
+    master.gain.value = muted ? 0 : MASTER_GAIN
     master.connect(ctx.destination)
   }
   return ctx

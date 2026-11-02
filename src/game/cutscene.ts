@@ -44,8 +44,7 @@ type Step =
 type Scene = { title: string; stage?: 'forest' | 'tree' | 'market'; steps: Step[] }
 const STORY = storyRaw as unknown as { scenes: Record<string, Scene> }
 
-export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9' | 'C8' | 'C10' | 'C11'
-
+export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9' | 'C8' | 'C10' | 'C10' | 'C11' | 'C11_PERFECT'
 /** Who can talk: name, stage sprite (anim set / still), portrait strip and blip pitch. */
 type CastEntry = { name: string; set: AnimSetId | null; tex: string | null; portrait: string | null; pitch: number; color: string; idle?: string }
 const CAST: Record<string, CastEntry> = {

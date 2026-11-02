@@ -292,7 +292,9 @@ export class BootScene extends Phaser.Scene {
       'lm-river',
     ]) {
       if (!this.textures.exists(key)) continue
-      thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
+      const hdRes = this.textures.get(key).source[0]?.resolution ?? 1
+      thickenSpriteOutline(this, key, OUTLINE_WIDTH * hdRes, OUTLINE_INK)
+      if (hdRes > 1) markHd(this.textures.get(key), hdRes)
       setActorNearestFilter(this, key)
     }
   }

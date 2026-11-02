@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { ANIM_SETS, animTex, logicalCell, portraitTex, stillTex } from './heroAnims'
+import { ANIM_SETS, PORTRAIT_RES, STORY_RES, animTex, logicalCell, markHd, portraitTex, stillTex } from './heroAnims'
 
 /**
  * Owner-supplied art slots (public/art/custom/custom.json + images in that folder).
@@ -73,6 +73,7 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
   if (!slot) return
   const meta = ANIM_SETS.pupu
   const { w: fw, h: fh } = logicalCell(meta)
+  const r = meta.res ?? 1
   const h = Math.min(fh, slot.height ?? 60)
   const names = Object.keys(meta.anims)
   const listFor = (name: string): { files: string[]; grey: boolean } => {
@@ -87,8 +88,8 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
   if (plan.length) {
     const total = plan.reduce((s, p) => s + p.files.length, 0)
     const c = document.createElement('canvas')
-    c.width = fw * total
-    c.height = fh
+    c.width = fw * r * total
+    c.height = fh * r
     const ctx = c.getContext('2d')!
     let i = 0
     const starts: Record<string, { start: number; count: number }> = {}
@@ -96,7 +97,7 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
       starts[p.n] = { start: i, count: p.files.length }
       for (const f of p.files) {
         const src = img(scene, f)
-        if (src) drawFit(ctx, src, i * fw, fw, fh, h, p.grey)
+        if (src) drawFit(ctx, src, i * fw * r, fw * r, fh * r, h * r, p.grey)
         i++
       }
     }
@@ -104,7 +105,8 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
     for (const n of names) scene.anims.remove(`pupu-${n}`)
     if (scene.textures.exists(key)) scene.textures.remove(key)
     const tex = scene.textures.addCanvas(key, c)!
-    for (let f = 0; f < total; f++) tex.add(f, 0, f * fw, 0, fw, fh)
+    for (let f = 0; f < total; f++) tex.add(f, 0, f * fw * r, 0, fw * r, fh * r)
+    markHd(tex, r)
     for (const n of names) {
       const a = meta.anims[n]!
       const s = starts[n] ?? starts.idle ?? { start: 0, count: 1 }
@@ -117,11 +119,11 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
     }
     // Legacy still key used by a few fallbacks.
     const still = document.createElement('canvas')
-    still.width = fw
-    still.height = fh
-    still.getContext('2d')!.drawImage(c, 0, 0, fw, fh, 0, 0, fw, fh)
+    still.width = fw * r
+    still.height = fh * r
+    still.getContext('2d')!.drawImage(c, 0, 0, fw * r, fh * r, 0, 0, fw * r, fh * r)
     if (scene.textures.exists('art-bear')) scene.textures.remove('art-bear')
-    scene.textures.addCanvas('art-bear', still)
+    markHd(scene.textures.addCanvas('art-bear', still)!, r)
   }
   // Portrait strip: 3 faces of 72×72 (neutral / happy / shocked), plus a grey copy for the hollow bear.
   const p = slot.portrait
@@ -129,14 +131,16 @@ function applyPupu(scene: Phaser.Scene, slot: PupuSlot | null | undefined) {
   if (faces.length && faces.every(Boolean)) {
     for (const [id, grey] of [['pupu', false], ['pupu-hollow', true]] as const) {
       const c = document.createElement('canvas')
-      c.width = 72 * 3
-      c.height = 72
+      const pr = PORTRAIT_RES
+      c.width = 72 * pr * 3
+      c.height = 72 * pr
       const ctx = c.getContext('2d')!
-      for (let j = 0; j < 3; j++) drawFit(ctx, faces[Math.min(j, faces.length - 1)]!, j * 72, 72, 72, 72, grey)
+      for (let j = 0; j < 3; j++) drawFit(ctx, faces[Math.min(j, faces.length - 1)]!, j * 72 * pr, 72 * pr, 72 * pr, 72 * pr, grey)
       const key = portraitTex(id)
       if (scene.textures.exists(key)) scene.textures.remove(key)
       const tex = scene.textures.addCanvas(key, c)!
-      for (let j = 0; j < 3; j++) tex.add(j, 0, j * 72, 0, 72, 72)
+      for (let j = 0; j < 3; j++) tex.add(j, 0, j * 72 * pr, 0, 72 * pr, 72 * pr)
+      markHd(tex, pr)
     }
   }
 }
@@ -149,14 +153,15 @@ function applyStills(scene: Phaser.Scene, stills: Record<string, string> | null 
     const sw = (src as HTMLImageElement).width
     const sh = (src as HTMLImageElement).height
     const c = document.createElement('canvas')
-    c.width = 640
-    c.height = 360
-    const s = Math.max(640 / sw, 360 / sh)
+    const sr = STORY_RES
+    c.width = 640 * sr
+    c.height = 360 * sr
+    const s = Math.max((640 * sr) / sw, (360 * sr) / sh)
     const ctx = c.getContext('2d')!
     ctx.imageSmoothingEnabled = true
-    ctx.drawImage(src, (640 - sw * s) / 2, (360 - sh * s) / 2, sw * s, sh * s)
+    ctx.drawImage(src, (640 * sr - sw * s) / 2, (360 * sr - sh * s) / 2, sw * s, sh * s)
     const key = stillTex(id)
     if (scene.textures.exists(key)) scene.textures.remove(key)
-    scene.textures.addCanvas(key, c)
+    markHd(scene.textures.addCanvas(key, c)!, sr)
   }
 }

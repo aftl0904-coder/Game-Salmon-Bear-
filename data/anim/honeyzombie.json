@@ -1,0 +1,37 @@
+{
+ "frameWidth": 232,
+ "frameHeight": 114,
+ "anchorX": 116,
+ "res": 2,
+ "columns": 13,
+ "cell1x": [
+  116,
+  57
+ ],
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "reach": {
+   "start": 4,
+   "count": 3,
+   "fps": 6,
+   "loop": false
+  },
+  "hit": {
+   "start": 7,
+   "count": 2,
+   "fps": 10,
+   "loop": false
+  },
+  "die": {
+   "start": 9,
+   "count": 4,
+   "fps": 7,
+   "loop": false
+  }
+ }
+}

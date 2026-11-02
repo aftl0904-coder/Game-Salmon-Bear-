@@ -7,6 +7,8 @@ import {
   GIRL_SPEED,
   HURT_IFRAME_MS,
   HURT_LOCK_MS,
+  HURT_DAMP,
+  HURT_MAX_VX,
   LANE_DEFAULT,
   LANE_SNAP_SPEED,
   MAX_FALL,
@@ -34,7 +36,8 @@ import {
   tapApexVelocity,
 } from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
-import { landingTopAt, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
+import { landingTopAt, stepUpTop, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
+import { floatText } from './fx'
 import {
   enableActorSprite,
   setDiePoseVisual,
@@ -44,6 +47,9 @@ import {
   setPixelPose,
   setRunPose,
 } from './pixelSnap'
+
+/** Steps up to this many px high are walked up without jumping. */
+const STEP_UP_MAX = 18
 
 export type HeroPose = 'idle' | 'run' | 'jump' | 'hurt' | 'die'
 export type PlayerRole = 'boy' | 'girl'
@@ -72,6 +78,12 @@ const MELEE_OFFSET_X = 40
 /** Torso-centered so ±1 lane bodies still overlap. */
 const MELEE_OFFSET_Y = -52
 
+/** Head-stomp rebound as a multiple of the full-jump launch velocity. */
+export const STOMP_BOUNCE_V = 0.8
+export const STOMP_SUPER_V = 1.3
+/** Jump pressed within this window of a stomp (before or after) upgrades the bounce. */
+export const STOMP_SUPER_MS = 100
+
 /**
  * Arcade player — single-lane side-scroller (stage 1).
  * Jump / crouch / hitbox / speed from data/player.json.
@@ -82,6 +94,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   atkCd = 0
   hurtCd = 0
   hurtLock = 0
+  hurtDamp = HURT_DAMP
   grace = 0
   role: PlayerRole = 'boy'
   /** Boots from the gear shop scale the jump (gear.ts jumpMul). */
@@ -90,6 +103,15 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   stam = 1
   /** Time of the last attack, for the stamina recovery delay. */
   lastAtkAt = 0
+  /** 連擊 meter 0..1 (separate from 絕招 honey charge): filled by landing hits, decays when idle. */
+  combo = 0
+  comboHitAt = 0
+  comboHoldMs = 0
+  comboCasting = false
+  /** Time of the last jump press — a press just before a head-stomp turns it into a super bounce. */
+  lastJumpPressAt = -9999
+  stompAt = -9999
+  stompBoosted = true
   baseScale = 1
   coyote = 0
   jumpBuf = 0
@@ -270,12 +292,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.coyote = Math.max(0, this.coyote - dt)
     }
 
-    if (opts.jumpJust) this.jumpBuf = PLAYER.jump.bufferMs
-    else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
+    if (opts.jumpJust) {
+      this.jumpBuf = PLAYER.jump.bufferMs
+      this.lastJumpPressAt = now
+      if (!this.stompBoosted && now - this.stompAt <= STOMP_SUPER_MS) {
+        this.stompBoosted = true
+        this.setVelocityY(STOMP_SUPER_V * fullApexVelocity() * this.jumpMul)
+        floatText(this.scene, this.x, this.y - 70, '超級彈跳！', '#ffe070', { size: 12, dur: 700 })
+      }
+    } else this.jumpBuf = Math.max(0, this.jumpBuf - dt)
 
     this.atkCd = Math.max(0, this.atkCd - dt)
     this.hurtCd = Math.max(0, this.hurtCd - dt)
     this.hurtLock = Math.max(0, this.hurtLock - dt)
+    if (this.hurtLock <= 0) this.hurtDamp = HURT_DAMP
+    const vxCap = this.hurtLock > 0 ? HURT_MAX_VX : this.moveSpeed + 60
+    if (body.maxVelocity.x !== vxCap) body.setMaxVelocityX(vxCap)
     this.tickIFrameFlash(now)
     this.syncAttackHitbox(now)
     this.applyAirGravity(body)
@@ -291,7 +323,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     if (this.hurtLock > 0 || this.hp <= 0 || !this.alive) {
-      if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * 0.82)
+      if (this.hurtLock > 0 && grounded) this.setVelocityX(body.velocity.x * Math.pow(this.hurtDamp, dt / 16.667))
       this.holdLaneFloor(body, dt)
       fsmUpdate(this, {
         now,
@@ -336,7 +368,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (terrainEnabled() && vx !== 0) {
       // Raised steps are walls: can't walk into them, must jump up.
       const nx = this.x + (vx * dt) / 1000
-      const clampX = wallClampX(nx, this.y, Math.sign(vx), this.footHalfW + 2)
+      const hw = this.footHalfW + 2
+      const rise = grounded ? stepUpTop(nx, this.y, Math.sign(vx), hw, STEP_UP_MAX) : null
+      if (rise !== null) {
+        this.setY(rise)
+        this.setX(nx)
+        body.reset(this.x, this.y)
+      }
+      const clampX = rise !== null ? null : wallClampX(nx, this.y, Math.sign(vx), hw)
       if (clampX !== null) {
         this.setX(clampX)
         vx = 0
@@ -397,6 +436,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     })
     this.syncActorDepth()
     this.applyPose(grounded, vx)
+  }
+
+  /** Head-stomp rebound: forced upward velocity; `super` when jump was pressed within STOMP_SUPER_MS before landing. */
+  stompBounce(now: number, superBounce: boolean) {
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = true
+    body.setGravity(0, 0)
+    this.laneJumping = true
+    this.jumpCutApplied = true
+    this.jumpHoldMs = 0
+    this.jumpConsumed = true
+    this.coyote = 0
+    this.floating = false
+    this.stompAt = now
+    this.stompBoosted = superBounce
+    this.setVelocityY((superBounce ? STOMP_SUPER_V : STOMP_BOUNCE_V) * fullApexVelocity() * this.jumpMul)
+    fsmEnter(this, 'JUMP', now)
   }
 
   /** Standing / crouch hurtbox from data/player.json. */

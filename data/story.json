@@ -932,6 +932,38 @@
         { "still": null },
         { "card": "鮭鮭熊", "sub": "全部真蜂蜜搵齊・森林獲救" }
       ]
+    },
+    "C11_PERFECT": {
+      "title": "結局・完美結局（待填）",
+      "stage": "tower",
+      "steps": [
+        { "music": "sad" },
+        { "actor": "lunbo", "x": 200 },
+        { "actor": "pupu", "x": 270, "grey": 0.7 },
+        { "actor": "kibobo", "x": 330 },
+        { "wait": 600 },
+        { "say": "narr", "text": "［完美結局對白 #1 — 待 Alan 填寫］" },
+        { "say": "kibobo", "text": "［完美結局對白 #2 — 待 Alan 填寫］", "face": 1 },
+        { "prop": "jar", "kind": "jar-real", "x": 300, "drop": true },
+        { "sfx": "sparkle" },
+        { "say": "kibobo", "text": "［完美結局對白 #3 — 待 Alan 填寫］", "face": 1 },
+        { "move": "pupu", "x": 296, "ms": 380 },
+        { "sfx": "gulp" },
+        { "remove": "jar" },
+        { "colour": "pupu", "amount": 1, "ms": 2000 },
+        { "music": "victory" },
+        { "say": "pupu", "text": "［完美結局對白 #4 — 待 Alan 填寫］" },
+        { "ear": "pupu" },
+        { "fx": "flash" },
+        { "still": "ending-1" },
+        { "say": "narr", "text": "［完美結局對白 #5 — 待 Alan 填寫］" },
+        { "still": "ending-2" },
+        { "say": "lunbo", "text": "［完美結局對白 #6 — 待 Alan 填寫］", "face": 1 },
+        { "say": "kibobo", "text": "［完美結局對白 #7 — 待 Alan 填寫］" },
+        { "still": "ending-3" },
+        { "still": null },
+        { "card": "鮭鮭熊", "sub": "［完美結局字卡 — 待 Alan 填寫］" }
+      ]
     }
   }
 }

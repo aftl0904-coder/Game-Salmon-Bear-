@@ -18,6 +18,11 @@ export const ART_OVERRIDES: Record<string, string> = {
   // Cursor stage-1 props (scripts/art/slice_props.py) replace the earlier hand-pixelled stand-ins.
   'prop-break-lantern': '/art/props/lantern.png',
   'prop-break-pot': '/art/props/honey-pot.png',
+  // Painted replacements for the old isoArt.ts procedural breakables.
+  crate3d: '/art/props/crate3d.png',
+  chest3d: '/art/props/chest3d.png',
+  pot3d: '/art/props/pot3d.png',
+  'prop-lantern3d': '/art/props/lantern3d.png',
   // Cutscene props (data/story.json).
   'cs-jar-fake': '/art/items/jar-fake.png',
   'cs-jar-real': '/art/items/jar-real.png',
@@ -26,6 +31,10 @@ export const ART_OVERRIDES: Record<string, string> = {
   'cs-cart': '/art/props/coffee-cart.png',
   'cs-mama': '/art/props/mama.png',
   'cs-mama-offer': '/art/props/mama-offer.png',
+  'cs-keeper2': '/art/props/keeper2.png',
+  'cs-keeper3': '/art/props/keeper3.png',
+  'cs-keeper4': '/art/props/keeper4.png',
+  'cs-keeper5': '/art/props/keeper5.png',
   // Goal: the honey tree with the glowing hive.
   goal3d: '/art/props/honey-tree.png',
   // Scenery (data/levels/stage1.json "decor").

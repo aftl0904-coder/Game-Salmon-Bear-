@@ -1,0 +1,73 @@
+{
+ "frameWidth": 226,
+ "frameHeight": 242,
+ "anchorX": 113,
+ "res": 2,
+ "columns": 18,
+ "cell1x": [
+  110,
+  96
+ ],
+ "anims": {
+  "ride": {
+   "start": 0,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "charge": {
+   "start": 4,
+   "count": 4,
+   "fps": 12,
+   "loop": true
+  },
+  "walk": {
+   "start": 8,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "summon": {
+   "start": 12,
+   "count": 3,
+   "fps": 6,
+   "loop": true
+  },
+  "nailgun": {
+   "start": 15,
+   "count": 4,
+   "fps": 8,
+   "loop": true
+  },
+  "punch": {
+   "start": 19,
+   "count": 4,
+   "fps": 8,
+   "loop": false
+  },
+  "hurt": {
+   "start": 23,
+   "count": 2,
+   "fps": 10,
+   "loop": false
+  },
+  "defeat": {
+   "start": 25,
+   "count": 5,
+   "fps": 6,
+   "loop": false
+  },
+  "windup": {
+   "start": 19,
+   "count": 2,
+   "fps": 5,
+   "loop": false
+  },
+  "strike": {
+   "start": 21,
+   "count": 2,
+   "fps": 8,
+   "loop": false
+  }
+ }
+}

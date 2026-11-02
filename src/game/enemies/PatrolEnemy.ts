@@ -7,7 +7,8 @@ import {
 import { actorDepth } from '../engine/depth'
 import { enableActorSprite, WALK_FRAMES } from '../pixelSnap'
 import { freezeActors, isActorFrozen } from '../fx'
-import { ATTACK_COMMIT_FREEZE_MS, ACTOR_DISPLAY_SCALE, WEAPON_DISPLAY_SCALE } from '../engine/constants'
+import { ATTACK_COMMIT_FREEZE_MS, ACTOR_DISPLAY_SCALE, WEAPON_DISPLAY_SCALE, PLAYER_ATTACK_DMG } from '../engine/constants'
+import { bossHitDamage } from '../engine/bossDamage'
 import {
   type EnemyKind,
   type EnemySpecies,
@@ -19,7 +20,7 @@ import {
   pickTarget,
 } from '../enemyAi'
 import { difficultyHpMul, getDifficulty } from '../difficulty'
-import { Enemy, type EnemyFsm, type EnemyHooks, type EnemyTickCtx } from './Enemy'
+import { Enemy, type EnemyHitResult, type EnemyFsm, type EnemyHooks, type EnemyTickCtx } from './Enemy'
 
 type AtkPhase = 'none' | 'windup' | 'strike' | 'recover' | 'pause' | 'charge'
 
@@ -479,6 +480,12 @@ export class PatrolEnemy extends Enemy {
       chargePrefer: st.chargePrefer || sp.chargePrefer,
       label: sp.label,
     }
+  }
+
+  /** Stage 1 武者: gear counts, but at most two base hits per blow (same cap as the other bosses). */
+  override receiveHit(dmg: number, dir: number): EnemyHitResult {
+    const capped = this.kind === 'boss' ? bossHitDamage(dmg) * PLAYER_ATTACK_DMG : dmg
+    return super.receiveHit(capped, dir)
   }
 
   private syncBossPhase() {

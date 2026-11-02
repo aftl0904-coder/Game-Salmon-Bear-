@@ -31,11 +31,20 @@ export function canTakeDamage(h: CombatActor, now: number): boolean {
   return true
 }
 
+/** 連擊特殊招 super armor: damage still lands, but no hurt pose / lock / knockback. */
+export function hasSuperArmor(h: Phaser.GameObjects.GameObject, now: number): boolean {
+  return now < ((h.getData('superArmorUntil') as number | undefined) ?? 0)
+}
+
 /** Apply HP loss + knockback + hurt lock. Returns remaining HP (may be 0). */
 export function applyDamage(h: CombatActor, opts: DamageOpts): number {
   const amount = opts.amount ?? 1
   h.hp = Math.max(0, h.hp - amount)
   h.hurtCd = opts.iframeMs ?? HURT_IFRAME_MS
+  if (hasSuperArmor(h, opts.now) && h.hp > 0) {
+    h.setTint(0xffa0a0)
+    return h.hp
+  }
   h.hurtLock = opts.lockMs ?? HURT_LOCK_MS
   h.pose = 'hurt'
   if (opts.knockbackX !== undefined) h.setVelocityX(opts.knockbackX)
@@ -46,6 +55,7 @@ export function applyDamage(h: CombatActor, opts: DamageOpts): number {
 
 /** Visual hurt squash — SNES hit reaction (pixel-safe, no micro-shear). */
 export function applyHurtPose(h: CombatActor, dir: number = -1) {
+  if (hasSuperArmor(h, h.scene.time.now) && h.hp > 0) return
   h.pose = 'hurt'
   h.hurtLock = Math.max(h.hurtLock, HURT_LOCK_MS)
   h.facing = dir < 0 ? -1 : 1

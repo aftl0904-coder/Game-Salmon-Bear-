@@ -13,6 +13,11 @@ from slice_anim import fg_mask, downscale  # noqa: E402
 PROPS = {
     'lantern': ('props/stage1/lantern.png', 40, 'largest'),
     'honey-pot': ('props/stage1/honey-pot.png', 24, 'largest'),
+    # Breakables that used to be isoArt.ts procedural paints (pot3d / chest3d / crate3d / prop-lantern3d).
+    'crate3d': ('props/stage1/crate3d.png', 26, 'largest'),
+    'chest3d': ('props/stage1/chest3d.png', 26, 'largest'),
+    'pot3d': ('props/stage1/pot3d.png', 30, 'largest'),
+    'lantern3d': ('props/stage1/lantern3d.png', 40, 'largest'),
     'stump-a': ('props/stage1/stump-a.png', 26, 'largest'),
     'stump-b': ('props/stage1/stump-b.png', 20, 'largest'),
     'rock-a': ('props/stage1/rock-a.png', 14, 'largest'),

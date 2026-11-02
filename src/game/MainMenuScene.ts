@@ -440,6 +440,8 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('stageRound', 1)
     this.registry.set('stageNo', this.stageSel)
     this.registry.set('carryCoins', undefined)
+    this.registry.set('carryHp', undefined)
+    this.registry.set('runFriends', [])
     // Only a true new run (starting from stage 1) draws a fresh charm —
     // picking up at a later-cleared stage keeps whatever this run already rolled.
     const next = this.stageSel === 1 ? 'gacha' : 'worldmap'

@@ -9,7 +9,7 @@ import { p2Pad, btn as padBtn } from './gamepadBridge'
 import meta from '../../data/anim/map-bike.json'
 
 /**
- * 單車追逐 — auto-scrolling ride uphill from 百畝樹林 to 蜜樹丘 (between stage 1 and 2).
+ * 單車追逐 — auto-scrolling ride between any two stages (destination + song come from `to`; art is shared).
  * Jump rocks, logs and cones; ramps launch you; bee swarms fly at jump height (stay low);
  * honey puddles slow you. Coins carry over as continues. No damage — a crash just wobbles.
  */
@@ -29,6 +29,7 @@ type Rider = {
   pedalKeys: () => boolean
 }
 
+export const DEST_NAMES: Record<number, string> = { 2: '蜜樹丘', 3: '月影夜市', 4: '鹽霧工地', 5: '△畝大廈' }
 const ROAD_Y = 316
 const SPEED = 230
 const LENGTH = 9000
@@ -64,9 +65,19 @@ export class BikeScene extends Phaser.Scene {
   private marker!: Phaser.GameObjects.Rectangle
   private finished = false
   private padPrev: Record<string, boolean> = {}
+  private toStage = 2
 
   constructor() {
     super('bike')
+  }
+
+  init(data?: { to?: number }) {
+    const to = data?.to ?? (this.registry.get('stageNo') as number | undefined) ?? 2
+    this.toStage = DEST_NAMES[to] ? to : 2
+  }
+
+  private destName() {
+    return DEST_NAMES[this.toStage] ?? DEST_NAMES[2]!
   }
 
   preload() {
@@ -95,7 +106,7 @@ export class BikeScene extends Phaser.Scene {
     const W = GAME_W
     this.cameras.main.fadeIn(400, 255, 250, 235)
     unlockAudio()
-    playSong('stage1')
+    playSong(`stage${this.toStage}` as 'stage2')
 
     // Far layer stays put (the honey tree is the goal on the horizon); it grows a little as you near it.
     this.far = this.add.image(W / 2, 360, 'bike-far').setOrigin(0.5, 1)
@@ -138,7 +149,7 @@ export class BikeScene extends Phaser.Scene {
     const g = this.add.graphics().setDepth(50)
     g.fillStyle(0x1c120c, 0.85).fillRect(170, 8, 300, 14)
     g.fillStyle(0xc8902a, 1).fillRect(176, 14, 288, 2)
-    this.add.text(474, 15, '蜜樹丘', { fontFamily: FONT_UI, fontSize: '9px', color: '#ffd76a' }).setOrigin(0, 0.5).setDepth(51)
+    this.add.text(474, 15, this.destName(), { fontFamily: FONT_UI, fontSize: '9px', color: '#ffd76a' }).setOrigin(0, 0.5).setDepth(51)
     this.marker = this.add.rectangle(176, 15, 6, 8, 0xffe08a).setDepth(51)
     this.coinText = this.add
       .text(12, 8, '◎ 0', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
@@ -345,7 +356,7 @@ export class BikeScene extends Phaser.Scene {
     // Coins collected become extra continues for 蜜樹丘.
     const carry = ((this.registry.get('carryCoins') as number | undefined) ?? 5) + this.coins
     this.registry.set('carryCoins', carry)
-    this.registry.set('stageNo', 2)
+    this.registry.set('stageNo', this.toStage)
     const W = GAME_W
     if (!skipped) {
       SFX.win()
@@ -353,7 +364,7 @@ export class BikeScene extends Phaser.Scene {
       const bg = this.add.graphics()
       bg.fillStyle(0xc8902a, 1).fillRect(-132, -40, 264, 80)
       bg.fillStyle(0x1c120c, 0.96).fillRect(-130, -38, 260, 76)
-      const a = this.add.text(0, -18, '到咗蜜樹丘！', { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a' }).setOrigin(0.5)
+      const a = this.add.text(0, -18, `到咗${this.destName()}！`, { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a' }).setOrigin(0.5)
       const b = this.add
         .text(0, 14, `金幣 ＋${this.coins}　撞到 ${this.crashes} 次${this.crashes === 0 ? '　完美！' : ''}`, {
           fontFamily: FONT_UI,

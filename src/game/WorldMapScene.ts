@@ -5,6 +5,11 @@ import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import meta from '../../data/anim/map-bike.json'
 import { markHd } from './heroAnims'
+import versesRaw from '../../data/verses.json'
+
+const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
+/** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
+const VERSE_HOLD_MS = 2600
 
 /**
  * SNES world map between stages. The party walks the dotted road from one place to the
@@ -51,6 +56,11 @@ export class MapScene extends Phaser.Scene {
   private pickTween: Phaser.Tweens.Tween | null = null
   private bannerLabel!: Phaser.GameObjects.Text
   private hint!: Phaser.GameObjects.Text
+  private versePanel!: Phaser.GameObjects.Container
+  private verseBg!: Phaser.GameObjects.Graphics
+  private verseText!: Phaser.GameObjects.Text
+  /** Set while the verse is showing after a stage was chosen; running it starts the trip. */
+  private verseGo: (() => void) | null = null
 
   constructor() {
     super('worldmap')
@@ -71,6 +81,7 @@ export class MapScene extends Phaser.Scene {
     this.leaving = false
     this.walking = false
     this.picking = false
+    this.verseGo = null
     this.icons = {}
     this.pickTween = null
     const cam = this.cameras.main
@@ -137,6 +148,13 @@ export class MapScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setScrollFactor(0)
 
+    this.verseBg = this.add.graphics()
+    this.verseText = this.add
+      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff2d0', align: 'center', wordWrap: { width: 360, useAdvancedWrap: true }, lineSpacing: 3 })
+      .setOrigin(0.5)
+    this.versePanel = this.add.container(320, 50, [this.verseBg, this.verseText]).setScrollFactor(0).setDepth(20)
+    this.versePanel.setVisible(false)
+
     const kb = this.input.keyboard
     const confirm = () => (this.picking ? this.confirmPick() : this.skip())
     const left = () => this.picking && this.movePick(-1)
@@ -169,10 +187,49 @@ export class MapScene extends Phaser.Scene {
       this.picking = true
       this.updateBanner()
       this.highlightPick()
+      this.showVerse(data.to)
     } else {
       this.updateBanner()
-      this.beginTravel(data.to)
+      this.travelAfterVerse(data.to)
     }
+  }
+
+  /** Show the stage's verse for a moment (or until a key), then walk. The finale → credits hop has none. */
+  private travelAfterVerse(to: number) {
+    if (this.data_.next === 'credits' || !VERSES[String(to)]) {
+      this.beginTravel(to)
+      return
+    }
+    this.showVerse(to)
+    this.hint.setText('Enter／A　繼續')
+    let done = false
+    const go = () => {
+      if (done) return
+      done = true
+      this.verseGo = null
+      this.hint.setText('Enter／A　略過')
+      this.beginTravel(to)
+    }
+    this.verseGo = go
+    this.time.delayedCall(VERSE_HOLD_MS, go)
+  }
+
+  private showVerse(stage: number) {
+    const v = VERSES[String(stage)]
+    if (!v) {
+      this.versePanel.setVisible(false)
+      return
+    }
+    // CJK has no spaces to wrap on, so break by character count.
+    const body = `「${v.text}」`.match(/.{1,24}/g)!.join('\n')
+    this.verseText.setText(`${body}\n— ${v.ref}`)
+    const w = Math.max(240, this.verseText.width + 28)
+    const h = this.verseText.height + 16
+    this.verseBg.clear()
+    this.verseBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4)
+    this.verseBg.fillStyle(0x1c120c, 0.94).fillRect(-w / 2, -h / 2, w, h)
+    this.versePanel.setY(10 + h / 2 + 10)
+    this.versePanel.setVisible(true)
   }
 
   update() {
@@ -198,6 +255,7 @@ export class MapScene extends Phaser.Scene {
     this.pickIndex = stage
     SFX.blip(520)
     this.updateBanner()
+    this.showVerse(stage)
     this.highlightPick()
   }
 
@@ -236,7 +294,7 @@ export class MapScene extends Phaser.Scene {
     this.data_.stageNo = chosen
     this.registry.set('stageNo', chosen)
     this.updateBanner()
-    this.beginTravel(chosen)
+    this.travelAfterVerse(chosen)
   }
 
   /** Walk the road to `to` if one's mapped, otherwise a short beat, then arrive(). */
@@ -275,6 +333,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   private skip() {
+    if (this.verseGo) {
+      this.verseGo()
+      return
+    }
     if (this.walking && this.walkTween) {
       this.walkTween.stop()
       const dest = PLACES[this.data_.to]!
@@ -311,7 +373,7 @@ export class MapScene extends Phaser.Scene {
     cam.setRotation(0).setZoom(RENDER_SCALE)
     if (d.stageNo) this.registry.set('stageNo', d.stageNo)
     if (d.next === 'credits') this.scene.start('credits')
-    else if (d.next === 'bike') this.scene.start('bike')
+    else if (d.next === 'bike') this.scene.start(d.from === 2 && d.to === 3 ? 'claw' : 'bike', { to: d.to })
     else this.scene.start('play')
   }
 }

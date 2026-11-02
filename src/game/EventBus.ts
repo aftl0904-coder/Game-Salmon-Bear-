@@ -16,6 +16,9 @@ export type AggregateHealthPayload = {
   /** 耐力 0..1 per hero (GameScene.tickStamina). */
   stamL?: number
   stamR?: number
+  /** 連擊 meter 0..1 per hero. */
+  comboL?: number
+  comboR?: number
 }
 
 export type ScorePayload = {
