@@ -64,6 +64,15 @@ PROPS = {
     's3-hotspring-rock': ('props/stage3/hotspring-rock.png', 40, 'all'),
     's3-wood-bridge': ('props/stage3/wood-bridge.png', 56, 'all'),
     's3-market-ground': ('props/stage3/market-ground.png', 40, 'all'),
+    # stage 6 · 購物中心 (Continent 2, stage 1)
+    's6-dome': ('props/stage6/dome-entrance.png', 150, 'largest'),
+    's6-robotarm': ('props/stage6/props-sheet.png', 70, (30, 100, 400, 560)),
+    's6-debris': ('props/stage6/props-sheet.png', 30, (400, 100, 700, 560)),
+    's6-drone': ('props/stage6/props-sheet.png', 26, (700, 100, 950, 560)),
+    's6-cage': ('props/stage6/props-sheet.png', 46, (950, 100, 1270, 560)),
+    's6-shop-a': ('props/stage6/shopfronts.png', 92, (0, 100, 440, 600)),
+    's6-shop-b': ('props/stage6/shopfronts.png', 92, (440, 100, 850, 600)),
+    's6-shop-c': ('props/stage6/shopfronts.png', 92, (850, 100, 1280, 600)),
     'mama': ('gen/coffee-mama.png', 64, 0),
     'mama-offer': ('gen/coffee-mama.png', 64, 1),
 }
