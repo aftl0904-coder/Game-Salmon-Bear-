@@ -3230,5 +3230,37 @@
     "rows": 1,
     "facing": "right",
     "prompt": "ult-honey-slash 6 frames 320x160 golden honey sword-energy slash sweep sparkling honey trail fade PURE BLACK additive. ART-16 C 蜜光斬."
+  },
+  {
+    "file": "art-src/map/c2/world-map-c2-dark.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "map",
+    "prompt": "ART-17 N1. 1280x720 SNES-style top-down coastal company city, grim/foggy, NO characters/text. Dirt road (path exists pier->mall->hall->data centre east side->tower foot; also a few short side branches): wooden pier+boat+warm lamp (BL, only warm light) -> luxury mall glass diamond dome + twin glass towers + rusty honey factory with peeling red rectangular sign (white blocks, no text) -> glass-roof exhibition hall with cages/crates -> amber-tank data centre with blue slits -> tall dark-glass HQ tower (triangle on roof) with underground grated gate + HK-style refuse collection point at foot (TR). Dry cracked river bed top-centre to sea with plank bridge. Generated from refs world-map.png, dome-entrance.png, factory-far.png; 5 gen passes."
+  },
+  {
+    "file": "art-src/map/c2/world-map-c2-green.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "map",
+    "prompt": "ART-17 N2. Same composition as world-map-c2-dark.png (generated with N1 as reference; 50% blend check shows buildings/roads/river bed on the same pixels). Blue sky, river flows in the former dry bed, leafy trees, green corridor, rooftop gardens + solar panels, open empty cages + meadow, bees/birds/rabbit/deer, tidy recycling station, guardian bear + cub on hill. Tower roof triangle replaced by six upright dark-green rectangles crossed by one light-green left-to-right curve (drawn programmatically on the roof, not generated)."
+  },
+  {
+    "file": "art-src/map/c2/map-icons-c2.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-17 N3. Magenta sheet 5 round place icons L->R, same layout as map-icons.png: 6 mall dome (dusk), 7 glass-roof exhibition hall + crates, 8 amber-tank data centre, 9 grated underground gate with red lights, 10 tower top with glowing triangle at night."
+  },
+  {
+    "file": "art-src/map/c2/map-walk-duo.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-17 N4. Magenta walk[4] facing RIGHT, same canvas/size/baseline as map-walk.png but only 倫寶 + 琪寶寶 (no 噗噗). 琪寶寶 carries a small blue handheld electric fan hanging on her back from a strap (ART-18 look). Ref map-walk.png."
   }
 ]
