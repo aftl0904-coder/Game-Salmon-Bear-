@@ -73,6 +73,9 @@ PROPS = {
     's6-shop-a': ('props/stage6/shopfronts.png', 92, (0, 100, 440, 600)),
     's6-shop-b': ('props/stage6/shopfronts.png', 92, (440, 100, 850, 600)),
     's6-shop-c': ('props/stage6/shopfronts.png', 92, (850, 100, 1280, 600)),
+    's6-factory-wall': ('props/stage6/factory-props.png', 88, (0, 100, 440, 600)),
+    's6-conveyor': ('props/stage6/factory-props.png', 44, (440, 100, 860, 600)),
+    's6-boxstack': ('props/stage6/factory-props.png', 56, (860, 100, 1280, 600)),
     'mama': ('gen/coffee-mama.png', 64, 0),
     'mama-offer': ('gen/coffee-mama.png', 64, 1),
 }

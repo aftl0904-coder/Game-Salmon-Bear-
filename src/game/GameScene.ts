@@ -3033,6 +3033,10 @@ export class GameScene extends Phaser.Scene {
       sg.fillRect(d.x - 14, 34, 28, 3).fillRect(d.x - 6, 37, 12, 3)
       sg.fillStyle(0x8a5a32, 1).fillRect(d.x - 10, 34, 2, 7).fillRect(d.x + 6, 34, 2, 5)
     }
+    // D · abandoned honey factory: faded red sign on the wall, stopped conveyors and crates still holding small honey cakes (set dressing only).
+    prop('s6-factory-wall', 3262, DEPTH.PROP - 3)
+    for (const x of [3496, 4096]) prop('s6-conveyor', x, DEPTH.PROP - 2)
+    for (const x of [3352, 3990, 4410]) prop('s6-boxstack', x, DEPTH.PROP - 2)
     // E · the boss arena keeps the factory backdrop, with warning-amber floor lamps at both ends.
     const lamps = this.add.graphics().setDepth(DEPTH.PROP - 2).setBlendMode(Phaser.BlendModes.ADD)
     for (const x of [ST.boss?.arenaX0 ?? 4640, ST.boss?.arenaX1 ?? 5280]) {

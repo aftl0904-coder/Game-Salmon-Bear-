@@ -1,0 +1,28 @@
+{
+ "D": {
+  "seen": [
+   "honeyzombie@3537",
+   "robotarm@3560",
+   "honeyzombie@3954",
+   "robotarm@4180",
+   "honeyzombie@4374"
+  ],
+  "pending": 0
+ },
+ "dark": {
+  "dark": 0.6199999999999998,
+  "zones": [
+   {
+    "x0": 3180,
+    "x1": 4540
+   }
+  ]
+ },
+ "cage1": 0,
+ "cage2": {
+  "count": 0,
+  "said": true
+ },
+ "darkOutside": 0.000621350372206884,
+ "errs": []
+}
