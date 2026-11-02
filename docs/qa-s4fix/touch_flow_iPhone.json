@@ -1,0 +1,305 @@
+{
+ "profile": "iPhone 13 landscape",
+ "log": [
+  {
+   "t": 0,
+   "scenes": "studio",
+   "what": "enter"
+  },
+  {
+   "t": 1,
+   "scenes": "logo",
+   "what": "enter"
+  },
+  {
+   "t": 2,
+   "scenes": "difficulty",
+   "what": "enter"
+  },
+  {
+   "t": 4,
+   "scenes": "menu",
+   "what": "enter"
+  },
+  {
+   "t": 7,
+   "scenes": "gacha",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 10,
+   "scenes": "worldmap",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 15,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 82,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "pad-right-moved",
+   "dx": 124
+  },
+  {
+   "t": 82,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "forced-outro"
+  },
+  {
+   "t": 111,
+   "scenes": "play",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 116,
+   "scenes": "play",
+   "stage": 1,
+   "what": "tap-next",
+   "on": true
+  },
+  {
+   "t": 118,
+   "scenes": "worldmap",
+   "stage": 2,
+   "what": "enter"
+  },
+  {
+   "t": 125,
+   "scenes": "bike",
+   "stage": 2,
+   "what": "enter"
+  },
+  {
+   "t": 171,
+   "scenes": "play+UIScene",
+   "stage": 2,
+   "what": "enter"
+  },
+  {
+   "t": 193,
+   "scenes": "play+UIScene",
+   "stage": 2,
+   "what": "pad-right-moved",
+   "dx": 128
+  },
+  {
+   "t": 194,
+   "scenes": "play+UIScene",
+   "stage": 2,
+   "what": "forced-outro"
+  },
+  {
+   "t": 226,
+   "scenes": "play",
+   "stage": 2,
+   "what": "enter"
+  },
+  {
+   "t": 230,
+   "scenes": "play",
+   "stage": 2,
+   "what": "tap-next",
+   "on": true
+  },
+  {
+   "t": 233,
+   "scenes": "worldmap",
+   "stage": 3,
+   "what": "enter"
+  },
+  {
+   "t": 239,
+   "scenes": "claw",
+   "stage": 3,
+   "what": "enter"
+  },
+  {
+   "t": 263,
+   "scenes": "play+UIScene",
+   "stage": 3,
+   "what": "enter"
+  },
+  {
+   "t": 284,
+   "scenes": "play+UIScene",
+   "stage": 3,
+   "what": "pad-right-moved",
+   "dx": 124
+  },
+  {
+   "t": 284,
+   "scenes": "play+UIScene",
+   "stage": 3,
+   "what": "forced-outro"
+  },
+  {
+   "t": 316,
+   "scenes": "play",
+   "stage": 3,
+   "what": "enter"
+  },
+  {
+   "t": 321,
+   "scenes": "play",
+   "stage": 3,
+   "what": "tap-next",
+   "on": true
+  },
+  {
+   "t": 323,
+   "scenes": "worldmap",
+   "stage": 4,
+   "what": "enter"
+  },
+  {
+   "t": 329,
+   "scenes": "bike",
+   "stage": 4,
+   "what": "enter"
+  },
+  {
+   "t": 375,
+   "scenes": "play+UIScene",
+   "stage": 4,
+   "what": "enter"
+  },
+  {
+   "t": 388,
+   "scenes": "play+UIScene",
+   "stage": 4,
+   "what": "pad-right-moved",
+   "dx": 126
+  },
+  {
+   "t": 388,
+   "scenes": "play+UIScene",
+   "stage": 4,
+   "what": "forced-outro"
+  },
+  {
+   "t": 410,
+   "scenes": "play",
+   "stage": 4,
+   "what": "enter"
+  },
+  {
+   "t": 418,
+   "scenes": "play",
+   "stage": 4,
+   "what": "shop-opened",
+   "modal": true
+  },
+  {
+   "t": 420,
+   "scenes": "play",
+   "stage": 4,
+   "what": "shop-closed-by-touch",
+   "modalAfter": false
+  },
+  {
+   "t": 420,
+   "scenes": "play",
+   "stage": 4,
+   "what": "sleep-greyed"
+  },
+  {
+   "t": 423,
+   "scenes": "play",
+   "stage": 4,
+   "what": "gamble-opened",
+   "modal": true
+  },
+  {
+   "t": 425,
+   "scenes": "play",
+   "stage": 4,
+   "what": "gamble-closed-by-touch",
+   "modalAfter": false
+  },
+  {
+   "t": 425,
+   "scenes": "play",
+   "stage": 4,
+   "what": "tap-next",
+   "on": true
+  },
+  {
+   "t": 427,
+   "scenes": "worldmap",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 433,
+   "scenes": "bike",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 479,
+   "scenes": "play+UIScene",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 493,
+   "scenes": "play+UIScene",
+   "stage": 5,
+   "what": "pad-right-moved",
+   "dx": 165
+  },
+  {
+   "t": 493,
+   "scenes": "play+UIScene",
+   "stage": 5,
+   "what": "forced-outro"
+  },
+  {
+   "t": 519,
+   "scenes": "play",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 523,
+   "scenes": "play",
+   "stage": 5,
+   "what": "tap-credits",
+   "on": true
+  },
+  {
+   "t": 526,
+   "scenes": "worldmap",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 529,
+   "scenes": "credits",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 530,
+   "scenes": "menu",
+   "stage": 5,
+   "what": "enter"
+  },
+  {
+   "t": 530,
+   "scenes": "menu",
+   "stage": 5,
+   "what": "BACK-AT-MENU-AFTER-CREDITS"
+  }
+ ],
+ "errs": [],
+ "visitedCredits": true
+}
