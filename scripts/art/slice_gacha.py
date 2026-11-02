@@ -11,13 +11,14 @@ from PIL import Image
 sys.path.insert(0, os.path.dirname(__file__))
 from slice_anim import fg_mask, downscale  # noqa: E402
 
+RES = 2  # machine drawn at RES x; GachaScene marks it HD (heroAnims.markHd)
 MACHINE_HEIGHT = 240
 
-def quantize(rgba):
+def quantize(rgba, soft=False):
     out = Image.fromarray(rgba, 'RGBA')
     alpha = out.split()[3]
     q = out.convert('RGB').quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-    q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+    q.putalpha(alpha if soft else alpha.point(lambda v: 255 if v > 127 else 0))
     return q
 
 def main():
@@ -29,10 +30,13 @@ def main():
     m = fg_mask(a)
     ys, xs = np.where(m)
     y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-    C, A = downscale(a[y0:y1, x0:x1], m[y0:y1, x0:x1], MACHINE_HEIGHT / (y1 - y0))
+    C, A = downscale(a[y0:y1, x0:x1], m[y0:y1, x0:x1], MACHINE_HEIGHT * RES / (y1 - y0), True)
     rgba = np.dstack([C, (A * 255).astype(np.uint8)])
-    quantize(rgba).save('public/art/props/gacha-machine.png')
-    print('gacha-machine', quantize(rgba).size)
+    q = quantize(rgba, True)
+    W, H = q.size
+    pad = Image.new('RGBA', (W + -W % RES, H + -H % RES), (0, 0, 0, 0)); pad.paste(q, (0, 0))
+    pad.save('public/art/props/gacha-machine.png')
+    print('gacha-machine', pad.size)
 
     sheet = Image.open(os.path.join(root, 'art-src/props/gacha-capsule-sheet.png')).convert('RGB')
     a = np.array(sheet)

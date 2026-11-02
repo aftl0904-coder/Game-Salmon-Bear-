@@ -1,4 +1,6 @@
 import type Phaser from 'phaser'
+import hdProps from '../../data/props-hd.json'
+import { markHd } from './heroAnims'
 
 /**
  * Hand-pixelled PNGs that replace procedural paints (scripts/art/*.py).
@@ -92,7 +94,10 @@ export function applyArtOverrides(scene: Phaser.Scene): string[] {
     ctx.imageSmoothingEnabled = false
     ctx.drawImage(img, 0, 0)
     if (scene.textures.exists(key)) scene.textures.remove(key)
-    scene.textures.addCanvas(key, canvas)
+    const tex = scene.textures.addCanvas(key, canvas)
+    // Props sliced at RES× (scripts/art/slice_props.py) show at their logical size.
+    const name = ART_OVERRIDES[key]!.split('/').pop()!.replace(/\.png$/, '')
+    if (tex) markHd(tex, (hdProps as Record<string, number>)[name] ?? 1)
     done.push(key)
   }
   return done

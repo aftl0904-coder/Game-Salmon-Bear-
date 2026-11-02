@@ -1,3 +1,4 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { TouchInput } from './touchInput'
 import { unlockAudio } from './audio'
@@ -27,7 +28,8 @@ export class LogoScene extends Phaser.Scene {
 
   create() {
     if (this.textures.exists('story-cover')) return this.createCover()
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#5a98c8')
     this.cameras.main.fadeIn(420, 50, 90, 130)
 
@@ -185,7 +187,8 @@ export class LogoScene extends Phaser.Scene {
 
   /** Title over the cover illustration (art-src/story/cover.png). */
   private createCover() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#000000')
     this.cameras.main.fadeIn(600, 0, 0, 0)
     const cover = this.add.image(width / 2, height / 2, 'story-cover')

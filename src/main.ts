@@ -15,7 +15,8 @@ import { GachaScene } from './game/GachaScene'
 import { installGamepadBridge } from './game/gamepadBridge'
 import { installFullscreen } from './game/phone'
 import { terrainSolids, terrainPits, supportTopAt } from './game/engine/terrain'
-import { GAME_W, GAME_H, phaserConfig } from './game/display'
+import { CANVAS_W, CANVAS_H, phaserConfig } from './game/display'
+import { installHd } from './game/hd'
 import { installFit } from './game/fitCanvas'
 import { jumpGravity } from './game/config/playerData'
 
@@ -39,6 +40,7 @@ window.visualViewport?.addEventListener('resize', updateOrientationUi)
 let game: Phaser.Game
 
 function bootGame() {
+  installHd()
   game = new Phaser.Game({
     ...phaserConfig,
     parent: root,
@@ -47,8 +49,8 @@ function bootGame() {
     scene: [BootScene, StudioScene, LogoScene, DifficultyScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene, MapScene, BikeScene, GachaScene],
     scale: {
       mode: Phaser.Scale.NONE,
-      width: GAME_W,
-      height: GAME_H,
+      width: CANVAS_W,
+      height: CANVAS_H,
       parent: root,
     },
     render: {
@@ -74,7 +76,7 @@ function bootGame() {
     }
     const splash = document.getElementById('boot-splash')
     if (splash) splash.remove()
-    installFit(game, GAME_W, GAME_H)
+    installFit(game, CANVAS_W, CANVAS_H)
     updateOrientationUi()
   })
 }

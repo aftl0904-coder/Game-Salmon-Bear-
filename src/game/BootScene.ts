@@ -1,5 +1,6 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
-import { createHeroAnims, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
+import { createHeroAnims, markHd, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
 import { createFxAnims, preloadFxAnims } from './fxAnims'
 import { registerTiles } from './tiles'
 import { registerWorldArt } from './worldArt'
@@ -34,6 +35,8 @@ import {
   TARGET_H_ITEM,
 } from './engine/constants'
 
+const HD_PROP_RES = 2
+
 
 /** Boot — asset preload + stage config into registry, then logo splash. */
 export class BootScene extends Phaser.Scene {
@@ -42,7 +45,8 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#3a2818')
 
     const g = this.add.graphics()
@@ -135,6 +139,9 @@ export class BootScene extends Phaser.Scene {
     this.registry.set('artOverrides', applyArtOverrides(this))
     // Frame-by-frame cast (Cursor action sheets) — also swaps the old stills to the new designs.
     createHeroAnims(this)
+    for (const key of this.textures.getTextureKeys()) {
+      if (key.startsWith('friend-') || key === 'gacha-machine' || key.startsWith('tile-ground-') || key === 'bg-bush-strip') markHd(this.textures.get(key), HD_PROP_RES)
+    }
     createFxAnims(this)
     this.applyCelCoinTexture()
     this.bakeCastTextures()
@@ -238,8 +245,10 @@ export class BootScene extends Phaser.Scene {
     for (const key of playObjects) {
       if (!this.textures.exists(key)) continue
       if (REPLACED_STILLS.has(key)) continue
+      const hdRes = this.textures.get(key).source[0]?.resolution ?? 1
       bakePixelTexture(this, key, BAKE_RES_FACTOR)
-      thickenSpriteOutline(this, key, OUTLINE_WIDTH, OUTLINE_INK)
+      thickenSpriteOutline(this, key, OUTLINE_WIDTH * hdRes, OUTLINE_INK)
+      markHd(this.textures.get(key), hdRes)
       setActorNearestFilter(this, key)
     }
 

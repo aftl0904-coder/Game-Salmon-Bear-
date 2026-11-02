@@ -1,7 +1,7 @@
 {
- "frameWidth": 66,
- "frameHeight": 56,
- "anchorX": 33,
+ "frameWidth": 132,
+ "frameHeight": 112,
+ "anchorX": 66,
  "anims": {
   "float": {
    "start": 0,
@@ -33,5 +33,11 @@
    "fps": 10,
    "loop": false
   }
- }
+ },
+ "res": 2,
+ "columns": 17,
+ "cell1x": [
+  66,
+  56
+ ]
 }

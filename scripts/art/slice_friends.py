@@ -34,6 +34,8 @@ from slice_anim import fg_mask, downscale  # noqa: E402
 # id -> target content height in px (matches the old procedural placeholder's
 # ~40px bears; 'tall' friends get more so they still read taller; sitting-pose
 # friends (tigercub/snowcat/fleecy) are wider than tall so get a bit less).
+RES = 2  # pixels per logical px; BootScene marks the textures HD (heroAnims.markHd)
+
 FRIEND_TARGETS = {
     'huihui': 38,
     'guard': 46,
@@ -95,19 +97,22 @@ def blobs(mask, min_area=250):
     return out
 
 
-def quantize(rgba, colors=48):
+def quantize(rgba, colors=48 * RES):
     img = Image.fromarray(rgba, 'RGBA')
     alpha = img.split()[3]
     q = img.convert('RGB').quantize(colors=colors, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-    q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
-    return q
+    q.putalpha(alpha)
+    W, H = q.size
+    pad = Image.new('RGBA', (W + -W % RES, H + -H % RES), (0, 0, 0, 0))
+    pad.paste(q, (0, 0))
+    return pad
 
 
 def crop_scale(a, m, box, target_h):
     x0, y0, x1, y1 = box
     sub_a, sub_m = a[y0:y1, x0:x1], m[y0:y1, x0:x1]
-    s = target_h / (y1 - y0)
-    C, A = downscale(sub_a, sub_m, s)
+    s = target_h * RES / (y1 - y0)
+    C, A = downscale(sub_a, sub_m, s, True)
     rgba = np.dstack([C, (A * 255).astype(np.uint8)])
     return quantize(rgba)
 

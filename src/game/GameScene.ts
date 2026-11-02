@@ -193,9 +193,16 @@ type Stage1 = {
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
-/** 耐力: a full bar is 1. A sword swing costs a fifth, a roe shot a seventh. */
+/**
+ * 耐力: a full bar is 1. A sword swing costs a fifth.
+ * The roe shot's cooldown (893ms) is longer than STAM_REST_MS (380ms), so continuous
+ * fire was spending most of its wait resting — the old 0.14 cost (≈0.16/s drained)
+ * was more than cancelled out by regen between shots, so the bar barely moved.
+ * 0.52 brings continuous-fire drain (÷0.893s cooldown) in line with the sword's
+ * continuous-swing drain (0.2 ÷ 0.344s ≈ 0.58/s) — Alan, 2026-11-02.
+ */
 const STAM_SWORD = 0.2
-const STAM_SHOT = 0.14
+const STAM_SHOT = 0.52
 const STAM_RECOVER = 0.55
 const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
@@ -539,7 +546,7 @@ export class GameScene extends Phaser.Scene {
     const cam = this.cameras.main
     const pad = GameScene.CAM_EDGE_PAD
     const left = cam.scrollX + pad
-    const right = cam.scrollX + cam.width - pad
+    const right = cam.scrollX + cam.displayWidth - pad
     for (const h of [this.boy, g]) {
       if (h.x < left) {
         h.x = left
@@ -1890,6 +1897,7 @@ export class GameScene extends Phaser.Scene {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
     SFX.hurt()
+    buzz(HAPTIC.hurt)
     freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
     freezeActors(this, this.combatActors().filter((a) => a !== h), HIT_CONFIRM_FREEZE_MS)
     this.dropWeaponLv(h)
@@ -2012,6 +2020,7 @@ export class GameScene extends Phaser.Scene {
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
     SFX.die()
+    buzz(HAPTIC.die)
     const lost = dropOnDeath(h.role as Who)
     if (lost) {
       floatText(this, h.x, h.y - 100, `跌咗：${gearById(lost.id).name} Lv${lost.from} → Lv${lost.from - 1}`, '#ff9a8a', { size: 13, dur: 2000 })
@@ -3261,7 +3270,7 @@ export class GameScene extends Phaser.Scene {
     }
     const mini = stirCoffee(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.sugar + (r.stirred >= 1 ? 2 : 0), r.sugar * 100 + (r.stirred >= 1 ? 200 : 0)))
+    void mini.done.then((r) => after(r.stirred >= 1 ? 3 : 0, r.stirred >= 1 ? 300 : 0))
   }
 
   /**
@@ -4785,7 +4794,7 @@ export class GameScene extends Phaser.Scene {
         ? Math.max(24, cam.scrollX - 48 - stagger * 36)
         : wave === 'altar'
           ? WORLD_W - 30 - (stagger % 4) * 46
-          : Math.min(WORLD_W - 24, cam.scrollX + cam.width + 48 + stagger * 140)
+          : Math.min(WORLD_W - 24, cam.scrollX + cam.displayWidth + 48 + stagger * 140)
       stagger += 1
       if (terrainEnabled()) enterX = this.nearestBaseFloorX(enterX, fromLeft ? 1 : -1)
       const enterY = laneY(e.lane)
@@ -4917,7 +4926,7 @@ export class GameScene extends Phaser.Scene {
     this.s2Pending = this.s2Pending.filter((p) => {
       if (this.bossFight) return false
       if (lead < p.unlockX) return true
-      let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.width + 24 + k * 38))
+      let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.displayWidth + 24 + k * 38))
       k++
       if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
       if (p.species === 'stallkeeper') x = p.x

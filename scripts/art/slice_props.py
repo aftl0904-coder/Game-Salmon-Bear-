@@ -2,7 +2,7 @@
 """Stage props: art-src/props/<stage>/*.png and a few art-src/gen sheets (flat magenta / black bg)
 → public/art/props/<name>.png, cropped to the object and scaled to an in-game height.
 Run: python3 scripts/art/slice_props.py [art-root]"""
-import sys, os
+import sys, os, json
 import numpy as np
 from PIL import Image
 from scipy import ndimage
@@ -63,12 +63,16 @@ PROPS = {
     'mama-offer': ('gen/coffee-mama.png', 64, 1),
 }
 
+RES = 2  # sheet pixels per logical pixel; the engine shows HD props at 1/RES (artOverrides.ts)
+HD_EXCLUDE = set()
+
 TRIM = {'s3-market-ground': (10, 3, 10, 2), 's3-market-mid': (4, 0, 4, 0)}
 
 def main():
     root = sys.argv[1] if len(sys.argv) > 1 else '.'
     os.makedirs('public/art/props', exist_ok=True)
     only = [x for x in os.environ.get('ONLY', '').split(',') if x]
+    hd = {}
     for name, (src, target, pick) in PROPS.items():
         if only and not any(name.startswith(o) for o in only): continue
         im = Image.open(os.path.join(root, 'art-src', src))
@@ -99,19 +103,27 @@ def main():
         mm = m & np.isin(lab, keep)
         ys, xs = np.where(mm)
         y0, y1, x0, x1 = ys.min(), ys.max() + 1, xs.min(), xs.max() + 1
-        C, A = downscale(a[y0:y1, x0:x1], mm[y0:y1, x0:x1], target / (y1 - y0))
-        rgba = np.dstack([C, (A * 255).astype(np.uint8)])
+        res = 1 if name in HD_EXCLUDE else RES
+        C, A = downscale(a[y0:y1, x0:x1], mm[y0:y1, x0:x1], res * target / (y1 - y0), res > 1)
+        rgba = np.dstack([C, (A * 255).round().astype(np.uint8)])
         r, g, b = C[..., 0].astype(int), C[..., 1].astype(int), C[..., 2].astype(int)
         rgba[..., 3][(r > 170) & (g < 120) & (b > 120) & (r - g > 90)] = 0  # magenta fringe
         out = Image.fromarray(rgba, 'RGBA')
         alpha = out.split()[3]
-        q = out.convert('RGB').quantize(colors=48, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-        q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
+        q = out.convert('RGB').quantize(colors=48 * res, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+        q.putalpha(alpha if res > 1 else alpha.point(lambda v: 255 if v > 127 else 0))
+        if res > 1:  # logical (size / res) must stay integral
+            W, H = q.size
+            pad = Image.new('RGBA', (W + -W % res, H + -H % res), (0, 0, 0, 0)); pad.paste(q, (0, 0)); q = pad
         if name in TRIM:  # strips meant to tile: cut the rounded ends / soft top
-            l, t, r, b = TRIM[name]
+            l, t, r, b = (v * res for v in TRIM[name])
             q = q.crop((l, t, q.width - r, q.height - b))
         q.save(f'public/art/props/{name}.png')
+        if res > 1: hd[name] = res
         print(name, q.size)
+    if not only:
+        os.makedirs('data', exist_ok=True)
+        json.dump(hd, open('data/props-hd.json', 'w'), indent=1, sort_keys=True)
 
 if __name__ == '__main__':
     main()

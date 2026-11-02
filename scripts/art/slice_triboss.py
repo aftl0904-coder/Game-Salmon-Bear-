@@ -20,6 +20,9 @@ from slice_anim import fg_mask, split, downscale  # noqa: E402
 OUT_IMG = 'public/art/anim/triboss.png'
 OUT_JSON = 'data/anim/triboss.json'
 SRC_DIR = 'art-src/anim/boss/triboss'
+RES = 2  # frames drawn RES x bigger, shown at 1/RES (heroAnims.markHd)
+MAX_SHEET_W = 4096
+CELL_1X = (86, 102)  # keep the 1x logical cell so the boss body/offsets stay identical
 HEIGHT = 100  # target standing height, px — adult businessman, taller than the 72px heroes
 
 # anim name -> (source file stem, frame count, fps, loop)
@@ -63,13 +66,13 @@ def main():
     # across its 5 frames, so its own median height undershoots and over-scales it).
     idle_frs = load_frames(ANIMS['idle'][0], ANIMS['idle'][1])
     ref_h = float(np.median([m_.shape[0] for _, m_ in idle_frs]))
-    ref_scale = HEIGHT / ref_h
+    ref_scale = HEIGHT * RES / ref_h
 
     sheets = {}
     report = {}
     for anim, (stem, n, fps, loop) in ANIMS.items():
         frs = idle_frs if anim == 'idle' else load_frames(stem, n)
-        scaled = [downscale(rgb, m_, ref_scale) for rgb, m_ in frs]
+        scaled = [downscale(rgb, m_, ref_scale, True) for rgb, m_ in frs]
         sheets[anim] = scaled
         report[anim] = (round(ref_scale, 4), len(frs))
 
@@ -83,30 +86,34 @@ def main():
             items.append((anim, C, A, ax))
 
     half = max(max(ax for _, _, _, ax in items), max(A.shape[1] - ax for _, _, A, ax in items)) + 2
-    left = half
-    cw = half * 2
-    chh = max(A.shape[0] for _, _, A, _ in items) + 2
-    sheet = Image.new('RGBA', (cw * len(items), chh), (0, 0, 0, 0))
+    cw = max(half * 2, CELL_1X[0] * RES)
+    chh = max(max(A.shape[0] for _, _, A, _ in items) + 2, CELL_1X[1] * RES)
+    cw += -cw % RES
+    chh += -chh % RES
+    left = cw // 2
+    cols = max(1, min(len(items), MAX_SHEET_W // cw))
+    rows = -(-len(items) // cols)
+    sheet = Image.new('RGBA', (cw * cols, chh * rows), (0, 0, 0, 0))
     anims = {}
     i = 0
     for anim, C, A, ax in items:
         h, w = A.shape
         rgba = np.dstack([C, (A * 255).astype(np.uint8)])
         tile = Image.fromarray(rgba, 'RGBA')
-        sheet.paste(tile, (i * cw + left - ax, chh - 1 - h), tile)
+        sheet.paste(tile, ((i % cols) * cw + left - ax, (i // cols) * chh + chh - 1 - h))
         anims.setdefault(anim, {'start': i, 'count': 0})
         anims[anim]['count'] += 1
         i += 1
 
     alpha = sheet.split()[3]
-    q = sheet.convert('RGB').quantize(colors=56, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
-    q.putalpha(alpha.point(lambda v: 255 if v > 127 else 0))
-    q.save(OUT_IMG)
+    q = sheet.convert('RGB').quantize(colors=56 * RES, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+    q.putalpha(alpha)
+    q.save(OUT_IMG, optimize=True)
 
     for anim, (_, n, fps, loop) in ANIMS.items():
         if anim in anims:
             anims[anim].update(fps=fps, loop=loop)
-    json.dump({'frameWidth': cw, 'frameHeight': chh, 'anchorX': left, 'anims': anims}, open(OUT_JSON, 'w'), indent=1)
+    json.dump({'frameWidth': cw, 'frameHeight': chh, 'anchorX': left, 'res': RES, 'columns': cols, 'cell1x': list(CELL_1X), 'anims': anims}, open(OUT_JSON, 'w'), indent=1)
     print('triboss cell', cw, chh, 'frames', i)
     print('scale report (factor, frames)', report)
 

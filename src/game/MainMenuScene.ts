@@ -1,8 +1,10 @@
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
 import { maxStage } from './progress'
+import { markHd, STORY_RES } from './heroAnims'
 
 /** Stages that exist so far (picker + progress). */
 const LAST_STAGE = 5
@@ -53,7 +55,8 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   create() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#000000')
     this.cameras.main.fadeIn(300, 0, 0, 0)
     this.cursor = 0
@@ -129,7 +132,7 @@ export class MainMenuScene extends Phaser.Scene {
     SFX.sparkle()
     this.cameras.main.flash(300, 255, 230, 140)
     const t = this.add
-      .text(this.scale.width / 2, 120, on ? '★ 秘技成功！金鮭滿級・無限絕招 ★' : '秘技已關閉', {
+      .text(GAME_W / 2, 120, on ? '★ 秘技成功！金鮭滿級・無限絕招 ★' : '秘技已關閉', {
         fontFamily: FONT_UI,
         fontSize: '13px',
         color: '#ffe08a',
@@ -237,8 +240,8 @@ export class MainMenuScene extends Phaser.Scene {
   private bakeShade(key: string, box: { x: number; y: number; w: number; h: number }) {
     if (this.textures.exists(key)) return
     const src = this.textures.get('story-cover').getSourceImage() as HTMLImageElement | HTMLCanvasElement
-    const W = 640
-    const H = 360
+    const W = GAME_W * STORY_RES
+    const H = GAME_H * STORY_RES
     const c = document.createElement('canvas')
     c.width = W
     c.height = H
@@ -250,14 +253,14 @@ export class MainMenuScene extends Phaser.Scene {
     m.width = W
     m.height = H
     const mc = m.getContext('2d')!
-    mc.filter = 'blur(5px)'
+    mc.filter = `blur(${5 * STORY_RES}px)`
     mc.fillStyle = '#fff'
     mc.beginPath()
-    mc.ellipse(box.x + box.w / 2, box.y + box.h / 2, box.w / 2, box.h / 2 + 10, 0, 0, Math.PI * 2)
+    mc.ellipse((box.x + box.w / 2) * STORY_RES, (box.y + box.h / 2) * STORY_RES, (box.w / 2) * STORY_RES, (box.h / 2 + 10) * STORY_RES, 0, 0, Math.PI * 2)
     mc.fill()
     ctx.globalCompositeOperation = 'destination-in'
     ctx.drawImage(m, 0, 0)
-    this.textures.addCanvas(key, c)
+    markHd(this.textures.addCanvas(key, c)!, STORY_RES)
   }
 
   private buildTitle(width: number) {
@@ -346,7 +349,7 @@ export class MainMenuScene extends Phaser.Scene {
     const p = this.plaques[i]
     if (!p) return
     const { g, x } = p
-    const y = this.scale.height - 26
+    const y = GAME_H - 26
     const x0 = x - PLAQUE_W / 2
     const y0 = y - PLAQUE_H / 2
     g.clear()

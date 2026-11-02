@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { GAME_W, GAME_H } from './display'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
@@ -23,7 +24,8 @@ export class DifficultyScene extends Phaser.Scene {
   }
 
   create() {
-    const { width, height } = this.scale
+    const width = GAME_W
+    const height = GAME_H
     this.cameras.main.setBackgroundColor('#140c08')
     this.cameras.main.fadeIn(260, 0, 0, 0)
     this.starting = false

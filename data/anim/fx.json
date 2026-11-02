@@ -1,123 +1,143 @@
 {
  "hit-spark": {
-  "frameWidth": 36,
-  "frameHeight": 31,
+  "frameWidth": 72,
+  "frameHeight": 62,
   "count": 4,
-  "fps": 24
+  "fps": 24,
+  "res": 2
  },
  "enemy-poof": {
-  "frameWidth": 54,
-  "frameHeight": 44,
+  "frameWidth": 108,
+  "frameHeight": 88,
   "count": 5,
-  "fps": 16
+  "fps": 16,
+  "res": 2
  },
  "roe-splash": {
-  "frameWidth": 26,
-  "frameHeight": 28,
+  "frameWidth": 52,
+  "frameHeight": 56,
   "count": 4,
-  "fps": 22
+  "fps": 22,
+  "res": 2
  },
  "muzzle-flash": {
-  "frameWidth": 24,
-  "frameHeight": 24,
+  "frameWidth": 48,
+  "frameHeight": 48,
   "count": 3,
-  "fps": 30
+  "fps": 30,
+  "res": 2
  },
  "slash-arc-1": {
-  "frameWidth": 72,
-  "frameHeight": 71,
+  "frameWidth": 144,
+  "frameHeight": 142,
   "count": 4,
-  "fps": 30
+  "fps": 30,
+  "res": 2
  },
  "slash-arc-2": {
-  "frameWidth": 72,
-  "frameHeight": 60,
+  "frameWidth": 144,
+  "frameHeight": 120,
   "count": 4,
-  "fps": 30
+  "fps": 30,
+  "res": 2
  },
  "slash-arc-3": {
-  "frameWidth": 80,
-  "frameHeight": 82,
+  "frameWidth": 160,
+  "frameHeight": 164,
   "count": 5,
-  "fps": 30
+  "fps": 30,
+  "res": 2
  },
  "lantern-break": {
-  "frameWidth": 44,
-  "frameHeight": 52,
+  "frameWidth": 88,
+  "frameHeight": 104,
   "count": 4,
-  "fps": 16
+  "fps": 16,
+  "res": 2
  },
  "pot-break": {
-  "frameWidth": 44,
-  "frameHeight": 40,
+  "frameWidth": 88,
+  "frameHeight": 80,
   "count": 4,
-  "fps": 16
+  "fps": 16,
+  "res": 2
  },
  "coin-spin": {
-  "frameWidth": 17,
-  "frameHeight": 18,
+  "frameWidth": 34,
+  "frameHeight": 36,
   "count": 4,
-  "fps": 12
+  "fps": 12,
+  "res": 2
  },
  "power-up": {
-  "frameWidth": 58,
-  "frameHeight": 47,
+  "frameWidth": 116,
+  "frameHeight": 94,
   "count": 4,
-  "fps": 16
+  "fps": 16,
+  "res": 2
  },
  "dust-step": {
-  "frameWidth": 20,
-  "frameHeight": 8,
+  "frameWidth": 40,
+  "frameHeight": 16,
   "count": 3,
-  "fps": 18
+  "fps": 18,
+  "res": 2
  },
  "land-dust": {
-  "frameWidth": 36,
-  "frameHeight": 25,
+  "frameWidth": 72,
+  "frameHeight": 50,
   "count": 4,
-  "fps": 18
+  "fps": 18,
+  "res": 2
  },
  "honey-sparkle": {
-  "frameWidth": 28,
-  "frameHeight": 24,
+  "frameWidth": 56,
+  "frameHeight": 48,
   "count": 4,
-  "fps": 12
+  "fps": 12,
+  "res": 2
  },
  "armour-clank": {
-  "frameWidth": 32,
-  "frameHeight": 29,
+  "frameWidth": 64,
+  "frameHeight": 58,
   "count": 3,
-  "fps": 24
+  "fps": 24,
+  "res": 2
  },
  "wind-vent": {
-  "frameWidth": 25,
-  "frameHeight": 42,
+  "frameWidth": 50,
+  "frameHeight": 84,
   "count": 3,
-  "fps": 10
+  "fps": 10,
+  "res": 2
  },
  "honey-drip": {
-  "frameWidth": 7,
-  "frameHeight": 18,
+  "frameWidth": 14,
+  "frameHeight": 36,
   "count": 3,
-  "fps": 6
+  "fps": 6,
+  "res": 2
  },
  "honey-stream": {
-  "frameWidth": 92,
-  "frameHeight": 51,
+  "frameWidth": 184,
+  "frameHeight": 102,
   "count": 4,
-  "fps": 14
+  "fps": 14,
+  "res": 2
  },
  "honey-puddle": {
-  "frameWidth": 62,
-  "frameHeight": 38,
+  "frameWidth": 124,
+  "frameHeight": 76,
   "count": 3,
-  "fps": 8
+  "fps": 8,
+  "res": 2
  },
  "swarm": {
-  "frameWidth": 66,
-  "frameHeight": 66,
+  "frameWidth": 132,
+  "frameHeight": 132,
   "count": 3,
-  "fps": 12
+  "fps": 12,
+  "res": 2
  },
  "charge-aura": {
   "frameWidth": 128,

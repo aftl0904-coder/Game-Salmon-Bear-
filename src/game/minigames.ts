@@ -5,17 +5,17 @@ import { FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { floatText } from './fx'
-import { BlowMeter, buzz, HAPTIC, isTouchDevice, micLevel, micReady, phonePrefs, startMic, startMotion, stopMic, takeShake, tilt, tiltY } from './phone'
+import { buzz, HAPTIC, isTouchDevice, startMotion, takeShake, tilt, tiltY } from './phone'
 
 /**
  * Little phone-feel minigames shown as overlays (they never block the story: each has a
  * generous timeout that finishes it for you).
  *  - shakeHoney: shake the phone (or mash) to mix the picnic honey
- *  - stirCoffee: draw circles (or rotate the stick / arrows) to stir 咖啡媽媽's coffee, then blow on it
+ *  - stirCoffee: draw circles (or rotate the stick / arrows) to stir 咖啡媽媽's coffee
  */
 
 export type Mini<T = void> = { done: Promise<T>; destroy: () => void }
-export type CoffeeResult = { sugar: number; stirred: number }
+export type CoffeeResult = { stirred: number }
 
 function frame(scene: Phaser.Scene, title: string) {
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 260)
@@ -215,17 +215,17 @@ export function shakeHoney(scene: Phaser.Scene): Mini {
   return { done, destroy }
 }
 
-// ── 攪咖啡 + 吹凍佢 ─────────────────────────────────────────────────────
+// ── 攪咖啡 ─────────────────────────────────────────────────────────────
 
 const DIRS: Record<string, number> = {
   ArrowUp: 0, KeyW: 0, ArrowRight: 1, KeyD: 1, ArrowDown: 2, KeyS: 2, ArrowLeft: 3, KeyA: 3,
 }
 
-/** Stir for up to 8 s (sugar cubes pop up — tap them within 1.5 s for points), then blow. */
+/** Stir for up to 8 s, then done. */
 export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   const ui = frame(scene, '咖啡媽媽：攪勻杯咖啡先飲！')
   const touch = isTouchDevice()
-  ui.hint.setText(touch ? '手指喺杯上面打圈・見到方糖快啲撳！' : '方向鍵轉圈（↑→↓←）・見到方糖撳 K')
+  ui.hint.setText(touch ? '手指喺杯上面打圈' : '方向鍵轉圈（↑→↓←）')
   const cx = GAME_W / 2
   const cy = GAME_H / 2 + 16
   const R = 62
@@ -238,72 +238,18 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   g.fillStyle(0x5a3418, 1).fillCircle(cx, cy, R)
   const swirl = scene.add.graphics()
   const spoon = scene.add.graphics()
-  const steam = scene.add.container(0, 0)
-  ui.root.add([g, swirl, spoon, steam])
+  ui.root.add([g, swirl, spoon])
   let acc = 0 // radians stirred (signed)
   let prevA: number | null = null
   let prevDir = -1
-  let phase: 'stir' | 'blow' | 'end' = 'stir'
-  let cool = 0
-  const blow = new BlowMeter()
-  let holding = false
-  const result: CoffeeResult = { sugar: 0, stirred: 0 }
+  let phase: 'stir' | 'end' = 'stir'
+  const result: CoffeeResult = { stirred: 0 }
   let resolve!: (r: CoffeeResult) => void
   const done = new Promise<CoffeeResult>((r) => (resolve = r))
   const started = scene.time.now
-  let blowAt = 0
   const STIR_MS = 8000
   const timer = scene.add.text(GAME_W / 2 + 128, GAME_H - 72, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(0, 0.5)
-  const sugarTxt = scene.add.text(GAME_W / 2 - 128, GAME_H - 72, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffffff' }).setOrigin(1, 0.5)
-  ui.root.add([timer, sugarTxt])
-
-  // ── Sugar cubes (dance-game style): pop up around the cup, 1.5 s to grab each ──
-  if (!scene.textures.exists('mg-sugar')) {
-    const sg = scene.make.graphics({ x: 0, y: 0 }, false)
-    sg.fillStyle(0x1a1210, 1).fillRect(0, 0, 18, 18)
-    sg.fillStyle(0xffffff, 1).fillRect(1, 1, 16, 16)
-    sg.fillStyle(0xe4e0ea, 1).fillRect(1, 11, 16, 6).fillRect(11, 1, 6, 16)
-    sg.fillStyle(0xffffff, 1).fillRect(3, 3, 3, 3)
-    sg.generateTexture('mg-sugar', 18, 18)
-    sg.destroy()
-  }
-  type Cube = { img: Phaser.GameObjects.Image; ring: Phaser.GameObjects.Arc; until: number }
-  const cubes: Cube[] = []
-  let nextCube = started + 900
-  const grab = (c: Cube) => {
-    const i = cubes.indexOf(c)
-    if (i < 0) return
-    cubes.splice(i, 1)
-    result.sugar++
-    sugarTxt.setText(`方糖 ×${result.sugar}`)
-    SFX.coin()
-    buzz(25)
-    const pop = scene.add.text(c.img.x, c.img.y - 14, '+100', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a', stroke: '#2a1408', strokeThickness: 3 }).setOrigin(0.5)
-    ui.root.add(pop)
-    scene.tweens.add({ targets: pop, y: pop.y - 20, alpha: 0, duration: 600, onComplete: () => pop.destroy() })
-    // Plop into the cup.
-    c.ring.destroy()
-    c.img.disableInteractive()
-    scene.tweens.add({ targets: c.img, x: cx, y: cy, scale: 0.4, alpha: 0, duration: 260, ease: 'Quad.in', onComplete: () => c.img.destroy() })
-  }
-  const spawnCube = () => {
-    const a = Phaser.Math.FloatBetween(0, Math.PI * 2)
-    const r = Phaser.Math.Between(100, 150)
-    const x = Phaser.Math.Clamp(cx + Math.cos(a) * r * 1.4, 40, GAME_W - 40)
-    const y = Phaser.Math.Clamp(cy + Math.sin(a) * r * 0.7, 70, GAME_H - 100)
-    const ring = scene.add.circle(x, y, 18, 0xffe08a, 0).setStrokeStyle(2, 0xffe08a, 1)
-    const img = scene.add.image(x, y, 'mg-sugar').setScale(0.2).setInteractive({ useHandCursor: true })
-    ui.root.add([ring, img])
-    scene.tweens.add({ targets: img, scale: 1.4, duration: 160, ease: 'Back.out' })
-    scene.tweens.add({ targets: ring, scale: 0.55, duration: 1500 })
-    const c: Cube = { img, ring, until: scene.time.now + 1500 }
-    img.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
-      ev?.stopPropagation?.()
-      grab(c)
-    })
-    cubes.push(c)
-    SFX.blip(980)
-  }
+  ui.root.add([timer])
 
   const turnBy = (d: number) => {
     acc += d
@@ -325,11 +271,9 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   }
   const onDown = (p: Phaser.Input.Pointer) => {
     prevA = Math.atan2(p.y - cy, p.x - cx)
-    holding = true
   }
   const onUp = () => {
     prevA = null
-    holding = false
   }
   const dirStep = (d: number) => {
     if (prevDir >= 0) {
@@ -340,12 +284,8 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   }
   const onKey = (e: KeyboardEvent) => {
     if (phase === 'stir' && e.code in DIRS) dirStep(DIRS[e.code]!)
-    if (phase === 'stir' && ['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code) && cubes[0]) grab(cubes[0])
-    if (phase === 'blow') holding = true
   }
-  const onKeyUp = () => {
-    if (phase === 'blow') holding = false
-  }
+  const onKeyUp = () => {}
   scene.input.on('pointermove', onMove)
   scene.input.on('pointerdown', onDown)
   scene.input.on('pointerup', onUp)
@@ -353,23 +293,12 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
   scene.input.keyboard?.on('keyup', onKeyUp)
 
   const NEED = Math.PI * 2 * 3 // three full turns
-  const tick = (_t: number, dt: number) => {
+  const tick = (_t: number, _dt: number) => {
     if (phase === 'end') return
     if (phase === 'stir') {
       // Touch pad / gamepad stick: rotate through the four directions.
       for (const [k, d] of [['up', 0], ['right', 1], ['down', 2], ['left', 3]] as const) if (TouchInput.justPressed(k)) dirStep(d)
-      if (cubes[0] && TouchInput.justPressed('attack')) grab(cubes[0])
       const now = scene.time.now
-      if (now >= nextCube) {
-        spawnCube()
-        nextCube = now + Phaser.Math.Between(1300, 2100)
-      }
-      for (const c of [...cubes]) {
-        if (now > c.until) {
-          cubes.splice(cubes.indexOf(c), 1)
-          scene.tweens.add({ targets: [c.img, c.ring], alpha: 0, duration: 150, onComplete: () => (c.img.destroy(), c.ring.destroy()) })
-        }
-      }
       const left = Math.max(0, STIR_MS - (now - started))
       timer.setText(`${(left / 1000).toFixed(1)}秒`).setColor(left < 2500 ? '#ff8a6a' : '#ffe08a')
       const p = Math.min(1, Math.abs(acc) / NEED)
@@ -397,40 +326,8 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
       spoon.lineStyle(3, 0xc8c8d0, 1).lineBetween(cx + Math.cos(sa) * 30, cy + Math.sin(sa) * 30, cx + Math.cos(sa) * 30 + 30, cy + Math.sin(sa) * 30 - 70)
       spoon.fillStyle(0xc8c8d0, 1).fillEllipse(cx + Math.cos(sa) * 30, cy + Math.sin(sa) * 30, 12, 8)
       result.stirred = p
-      if (p >= 1 || left <= 0) startBlow()
-    } else if (phase === 'blow') {
-      if (anyPress()) cool += 0.12
-      const lv = micReady() ? micLevel() : 0
-      const secs = blow.update(dt, lv)
-      if (holding) cool += dt / 900
-      cool = Math.max(cool, secs / 0.7)
-      ui.bar.width = 216 * Math.min(1, cool)
-      if (lv > 0.08 && scene.time.now % 3 < 1) buzz(10)
-      // Steam: thinner as it cools.
-      if (Math.random() < 0.25 * (1 - Math.min(1, cool))) {
-        const s = scene.add.circle(cx + Phaser.Math.Between(-30, 30), cy - 20, Phaser.Math.Between(6, 12), 0xffffff, 0.5)
-        steam.add(s)
-        scene.tweens.add({ targets: s, y: s.y - 70, x: s.x + (lv > 0.08 || holding ? 40 : Phaser.Math.Between(-10, 10)), alpha: 0, scale: 1.8, duration: 1100, onComplete: () => s.destroy() })
-      }
-      timer.setText(`${(Math.max(0, 4000 - (scene.time.now - blowAt)) / 1000).toFixed(1)}秒`)
-      if (cool >= 1 || scene.time.now - blowAt > 4000) finish()
+      if (p >= 1 || left <= 0) finish()
     }
-  }
-  const startBlow = () => {
-    phase = 'blow'
-    for (const c of cubes) (c.img.destroy(), c.ring.destroy())
-    cubes.length = 0
-    blowAt = scene.time.now
-    holding = false
-    swirl.clear()
-    spoon.clear()
-    g.fillStyle(0xc89a6a, 1).fillCircle(cx, cy, R)
-    ui.bar.width = 0
-    ui.title.setText('好熱呀！吹凍佢先')
-    ui.hint.setText(touch ? '對住電話吹氣（或者撳住畫面）' : '撳住任何一個鍵')
-    SFX.sparkle()
-    buzz(30)
-    void startMic()
   }
   const finish = () => {
     phase = 'end'
@@ -438,7 +335,6 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
     ui.title.setText(result.stirred >= 1 ? '啱啱好！飲啦～' : '未攪勻……都飲咗先！')
     SFX.gulp()
     buzz(HAPTIC.power)
-    if (!phonePrefs.mic) stopMic()
     scene.time.delayedCall(800, () => {
       destroy()
     })
