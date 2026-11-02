@@ -1,0 +1,64 @@
+{
+ "profile": "Pixel 7 landscape",
+ "log": [
+  {
+   "t": 0,
+   "scenes": "studio",
+   "what": "enter"
+  },
+  {
+   "t": 1,
+   "scenes": "logo",
+   "what": "enter"
+  },
+  {
+   "t": 2,
+   "scenes": "difficulty",
+   "what": "enter"
+  },
+  {
+   "t": 4,
+   "scenes": "menu",
+   "what": "enter"
+  },
+  {
+   "t": 7,
+   "scenes": "gacha",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 10,
+   "scenes": "worldmap",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 15,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "enter"
+  },
+  {
+   "t": 86,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "pad-right-moved",
+   "dx": 127
+  },
+  {
+   "t": 86,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "forced-outro"
+  },
+  {
+   "t": 106,
+   "scenes": "play+UIScene",
+   "stage": 1,
+   "what": "STUCK"
+  }
+ ],
+ "errs": [],
+ "visitedCredits": false
+}

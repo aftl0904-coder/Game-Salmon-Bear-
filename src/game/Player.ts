@@ -36,7 +36,7 @@ import {
   tapApexVelocity,
 } from './config/playerData'
 import { EventBus, GameEvents } from './EventBus'
-import { landingTopAt, stepUpTop, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
+import { embeddedStepTop, landingTopAt, stepUpTop, supportTopAt, terrainEnabled, wallClampX } from './engine/terrain'
 import { floatText } from './fx'
 import {
   enableActorSprite,
@@ -531,6 +531,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private holdLaneFloor(body: Phaser.Physics.Arcade.Body, dt: number) {
     if (this.laneJumping) return
     if (terrainEnabled()) {
+      const embedded = embeddedStepTop(this.x, this.y)
+      if (embedded !== null) this.setY(embedded)
       const top = this.terrainSupport()
       this.prevFeetY = this.y
       if (top === null) {

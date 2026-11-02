@@ -5,9 +5,11 @@ import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
 import { actorDepth } from '../engine/depth'
 import { bossHitDamage } from '../engine/bossDamage'
+import { supportTopAt } from '../engine/terrain'
+import { leapEnemy } from './leap'
 
 /**
- * Stage 4 · 鹽霧工地 cast: 蜜僵 (slow shambling zombie, groups), 的士怪 (headlight-warn
+ * Stage 4 · 鹽霧工地 cast: 蜜僵 (zombie pack that surges, hops pits and lunges), 的士怪 (headlight-warn
  * then high-speed charge), 打卡鐘怪 (countdown then a radial paper burst), and the boss
  * 泥鬃 (motorcycle foreman).
  *
@@ -21,21 +23,39 @@ type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: numbe
 
 // ── 蜜僵 ─────────────────────────────────────────────────────────────────
 
-/** Shambles slowly towards the nearest hero; hits leave a sticky honey puddle underfoot. */
+/** Pace (px/s) — a zombie alternates a lull and a rush, so a pack never moves in lockstep. */
+const ZOMBIE_LULL = 42
+const ZOMBIE_RUSH = 118
+/** Lunge: stops 240 ms (tinted — the tell), then hops the gap to the hero. */
+const ZOMBIE_LUNGE_WINDUP_MS = 240
+const ZOMBIE_LUNGE_COOLDOWN_MS = 2600
+
+/** Closes in on the nearest hero in surges, hops pits at once and lunges when close; hits leave a sticky honey puddle underfoot. */
 export class HoneyZombie extends AnimEnemy {
   onSplatter?: (x: number) => void
+  private rushing = false
+  private paceLeft = 0
+  private lungeCd = 0
+  private lungeWind = 0
+  private lungeDir: 1 | -1 = 1
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 'honeyzombie'
     this.hp = this.maxHp = 2
     this.hurtMs = 260
     this.bodyBox(30, 44)
+    this.setData('hopWaitMs', 120)
+    this.rushing = Math.random() < 0.5
+    this.paceLeft = 200 + Math.random() * 700
+    this.lungeCd = 800 + Math.random() * 1400
   }
   canHurtPlayer() {
     return this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT' && this.contactCd <= 0
   }
   receiveHit(dmg: number, dir: number): EnemyHitResult {
     this.onSplatter?.(this.x)
+    this.lungeWind = 0
+    this.clearTint()
     return super.receiveHit(dmg, dir)
   }
   tick(dt: number, ctx: Ctx) {
@@ -43,6 +63,10 @@ export class HoneyZombie extends AnimEnemy {
     const now = this.scene.time.now
     this.contactCd = Math.max(0, this.contactCd - dt)
     if (isActorFrozen(this, now)) return
+    if (this.getData('leaping')) {
+      this.anim('walk')
+      return
+    }
     this.y = this.s2.floorY()
     if (this.fsm === 'HURT') {
       this.think -= dt
@@ -50,12 +74,42 @@ export class HoneyZombie extends AnimEnemy {
       this.setVelocity(0, 0)
       return
     }
+    // Starts as PATROL; the pit-hop in GameScene only fires for chasers.
+    if (this.fsm === 'PATROL') this.setFsm('CHASE')
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
     const dx = tgt.x - this.x
+    const dir = (Math.sign(dx) || 1) as 1 | -1
     this.setFlipX(dx < 0)
+    this.lungeCd = Math.max(0, this.lungeCd - dt)
+
+    if (this.lungeWind > 0) {
+      this.lungeWind -= dt
+      this.setVelocityX(0)
+      this.anim('reach')
+      this.setTint(0xffc890)
+      if (this.lungeWind <= 0) {
+        this.clearTint()
+        const reach = Math.min(Math.abs(dx) + 8, 150)
+        const toX = this.x + this.lungeDir * reach
+        if (supportTopAt(toX, this.s2.floorY(), 1) !== null) leapEnemy(this.scene, this, toX, 30, 420)
+      }
+      return
+    }
+
+    this.paceLeft -= dt
+    if (this.paceLeft <= 0) {
+      this.rushing = !this.rushing
+      this.paceLeft = this.rushing ? 500 + Math.random() * 600 : 600 + Math.random() * 900
+    }
     const near = Math.abs(dx) < 46
+    if (!near && this.lungeCd <= 0 && Math.abs(dx) > 70 && Math.abs(dx) < 170) {
+      this.lungeCd = ZOMBIE_LUNGE_COOLDOWN_MS
+      this.lungeWind = ZOMBIE_LUNGE_WINDUP_MS
+      this.lungeDir = dir
+      return
+    }
     this.anim(near ? 'reach' : 'walk')
-    this.setVelocityX(Math.sign(dx) * (near ? 8 : 16))
+    this.setVelocityX(dir * (near ? 20 : this.rushing ? ZOMBIE_RUSH : ZOMBIE_LULL))
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
 }
@@ -212,10 +266,16 @@ export type MudHooks = {
   mudWave: (x0: number, x1: number, dir: 1 | -1) => void
   spawnZombie: (x: number) => void
   nail: (x: number, y: number, dir: 1 | -1, high: boolean) => void
+  /** The charge lane lights up for `ms` before he goes — the boss's tell, so the dodge is readable. */
+  warn: (x0: number, x1: number, dir: 1 | -1, ms: number) => void
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
 }
 
 /** Which of the boss's animations each act plays (data/anim/mudmane.json). */
+/** Charge pacing (ms). Gap between two charges = RECOVER + ANTICIP, which has to be long enough to walk onto a stone and read the tell. */
+const CHARGE_ANTICIP_MS = 900
+const CHARGE_RECOVER_MS = 1100
+
 const MUD_ANIM: Record<MudMane['act'], string> = {
   intro: 'ride',
   anticip: 'ride',
@@ -239,6 +299,7 @@ export class MudMane extends AnimEnemy {
   arenaX1 = 0
   private lastHitAt = 0
   private nailsThrown = 0
+  private warned = false
   private mh: MudHooks
   onDefeated?: () => void
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, mh: MudHooks) {
@@ -289,6 +350,7 @@ export class MudMane extends AnimEnemy {
   private go(a: MudMane['act']) {
     this.act = a
     this.t = 0
+    this.warned = false
     this.anim(MUD_ANIM[a])
     this.box(a === 'charge' ? 96 : 44, a === 'charge' ? 50 : 56)
   }
@@ -316,11 +378,15 @@ export class MudMane extends AnimEnemy {
         break
       // ── Phase 1: 衝撞 (motorcycle charge) ──
       case 'anticip':
-        this.setTint(0xffd8a0)
-        this.setFlipX(this.dirX < 0)
-        if (this.t > 700) {
-          this.clearTint()
+        if (!this.warned) {
+          this.warned = true
           this.dirX = (Math.sign(tgt.x - this.x) || this.dirX) as 1 | -1
+          this.mh.warn(this.arenaX0, this.arenaX1, this.dirX, CHARGE_ANTICIP_MS)
+        }
+        this.setTint(Math.floor(this.t / 110) % 2 === 0 ? 0xffd8a0 : 0xff7040)
+        this.setFlipX(this.dirX < 0)
+        if (this.t > CHARGE_ANTICIP_MS) {
+          this.clearTint()
           this.mh.mudWave(this.arenaX0, this.arenaX1, this.dirX)
           this.go('charge')
         }
@@ -334,7 +400,7 @@ export class MudMane extends AnimEnemy {
         }
         break
       case 'recover':
-        if (this.t > 500) this.go('anticip')
+        if (this.t > CHARGE_RECOVER_MS) this.go('anticip')
         break
       // ── Phase 2: 蜜僵潮＋釘槍 ──
       case 'platform':

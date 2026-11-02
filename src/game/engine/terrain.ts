@@ -98,6 +98,22 @@ export function groundTopBelow(x: number, feetY: number, halfW = 4): number | nu
 }
 
 /**
+ * Top of a raised step the feet are *inside* (centre within the step span, feet below its top), else
+ * null. A respawn / knockback that drops an actor on the base floor under a step leaves it embedded;
+ * callers lift it onto the step top.
+ */
+export function embeddedStepTop(x: number, feetY: number): number | null {
+  if (!enabled) return null
+  let best: number | null = null
+  for (const s of solids) {
+    if (s.oneWay || s.kind !== 'step') continue
+    if (x <= s.x0 || x >= s.x1) continue
+    if (feetY > s.top + 3 && feetY <= worldFloorY + 6 && (best === null || s.top < best)) best = s.top
+  }
+  return best
+}
+
+/**
  * Solid (non one-way) wall blocking horizontal movement: a step whose top is
  * higher than the feet. Returns the x the actor must be clamped to, else null.
  */

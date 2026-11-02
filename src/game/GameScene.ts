@@ -48,6 +48,7 @@ import { Stage4World, type Stage4Data } from './stage4World'
 import { Stage5World, type Stage5Data } from './stage5World'
 import { MirrorOwl, OwlDecoy, OwlCrate, LobsterGuard, StallKeeper, MarketStall, MirrorShade, type OwlHooks } from './enemies/Stage3Enemies'
 import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hooks } from './enemies/Stage2Enemies'
+import { leapEnemy } from './enemies/leap'
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
@@ -2039,7 +2040,10 @@ export class GameScene extends Phaser.Scene {
    * knockback can carry the hero past its edge). Never further back than the last checkpoint passed.
    */
   private respawnXFor(fallX: number): number {
-    const onBase = (x: number) => supportTopAt(x, LANE_FLOOR_Y, 8) !== null && wallClampX(x, LANE_FLOOR_Y, 1, 8) === null
+    const onBase = (x: number) =>
+      supportTopAt(x, LANE_FLOOR_Y, 8) !== null &&
+      wallClampX(x, LANE_FLOOR_Y, 1, 8) === null &&
+      !terrainSolids().some((q) => !q.oneWay && q.kind === 'step' && x + 8 > q.x0 && x - 8 < q.x1)
     let best: { x0: number; x1: number } | null = null
     for (const p of terrainPits()) {
       const d = fallX < p.x0 ? p.x0 - fallX : fallX > p.x1 ? fallX - p.x1 : 0
@@ -2289,7 +2293,7 @@ export class GameScene extends Phaser.Scene {
     // A chaser stuck at a narrow pit edge hops across instead of jittering there forever.
     const ms = ((e.getData('blockedMs') as number | undefined) ?? 0) + dt
     e.setData('blockedMs', ms)
-    if (ms < 700 || e.getData('leaping')) return
+    if (ms < ((e.getData('hopWaitMs') as number | undefined) ?? 700) || e.getData('leaping')) return
     const pits = terrainPits()
     const first = pits.find((p) => (dir > 0 ? lead >= p.x0 - 6 && lead < p.x1 : lead <= p.x1 + 6 && lead > p.x0))
     if (!first) return
@@ -2306,23 +2310,8 @@ export class GameScene extends Phaser.Scene {
     }
     const width = far - near
     const toX = dir > 0 ? far + half + 4 : near - half - 4
-    e.setData('leaping', true)
-    e.setData('blockedMs', 0)
-    const y0 = e.y
     const arc = 34 + Math.min(width, 200) * 0.15
-    this.tweens.add({
-      targets: e,
-      x: toX,
-      duration: Phaser.Math.Clamp(520 + Math.max(0, width - 60) * 4, 520, 1000),
-      ease: 'Sine.inOut',
-      onUpdate: (tw) => {
-        e.y = y0 - Math.sin(tw.progress * Math.PI) * arc
-      },
-      onComplete: () => {
-        e.y = y0
-        e.setData('leaping', false)
-      },
-    })
+    leapEnemy(this, e, toX, arc, Phaser.Math.Clamp(520 + Math.max(0, width - 60) * 4, 520, 1000))
   }
 
   /** Active 琪寶寶 — 2P girl or 1P solo girl (stored in boy slot). */
@@ -5634,9 +5623,20 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.shake(200, 0.003)
   }
 
+  /** 泥鬃's tell: the charge lane glows red on the floor and a 「衝！」 marks the side he comes from. */
+  private mudWarn(x0: number, x1: number, dir: 1 | -1, ms: number) {
+    SFX.siren()
+    const y = LANE_FLOOR_Y + 3
+    const band = this.add.rectangle((x0 + x1) / 2, y, x1 - x0, 8, 0xff5030, 0.2).setDepth(DEPTH.SHADOW + 5)
+    this.tweens.add({ targets: band, fillAlpha: 0.55, duration: 150, yoyo: true, repeat: Math.max(0, Math.round(ms / 300) - 1) })
+    this.time.delayedCall(ms, () => band.destroy())
+    floatText(this, dir > 0 ? x0 + 70 : x1 - 70, LANE_FLOOR_Y - 90, dir > 0 ? '衝！ ▶▶' : '◀◀ 衝！', '#ff9a6a', { size: 14, dur: ms })
+  }
+
   private mudHooks(): MudHooks {
     return {
       floorY: () => LANE_FLOOR_Y,
+      warn: (x0, x1, dir, ms) => this.mudWarn(x0, x1, dir, ms),
       mudWave: (x0, x1, dir) => this.mudWave(x0, x1, dir),
       spawnZombie: (x) => {
         if (this.ended || !this.bossFight) return
@@ -5984,7 +5984,7 @@ export class GameScene extends Phaser.Scene {
         : this.tower
         ? new TriBoss(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.triHooks())
         : this.depot
-          ? new MudMane(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.mudHooks())
+          ? new MudMane(this, b.arenaX1 - 30, b.arenaX0, b.arenaX1, this.mudHooks())
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())

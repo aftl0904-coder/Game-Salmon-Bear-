@@ -3,7 +3,7 @@ import { GAME_W, GAME_H } from './display'
 import { DEPTH } from './engine/depth'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
-import { TouchInput } from './touchInput'
+import { TouchInput, isPhonePlay } from './touchInput'
 import { buzz, HAPTIC } from './phone'
 import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
@@ -82,7 +82,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     .text(GAME_W / 2, GAME_H - 38, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#d8c8a8', align: 'center', wordWrap: { width: GAME_W - 80 } })
     .setOrigin(0.5)
   const hint = scene.add
-    .text(GAME_W / 2, GAME_H - 16, '↑↓ 揀　攻擊＝買　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Start＝走', {
+    .text(GAME_W / 2, GAME_H - 16, (isPhonePlay() ? '撳一下揀　再撳一下買　撳「離開」走' : '↑↓ 揀　攻擊＝買　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Start＝走'), {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#f0dcb0',
@@ -261,12 +261,11 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       }
     })
   })
-  const leaveBtn = scene.add
-    .text(GAME_W / 2, GAME_H - 16, '　　　　　　', { fontFamily: FONT_UI, fontSize: '11px' })
-    .setOrigin(0.5)
-    .setInteractive({ useHandCursor: true })
-  leaveBtn.on('pointerdown', () => leave())
-  root.add(leaveBtn)
+  // The pad lives in UIScene, which is stopped on the clear screen — on a phone this is the only way out.
+  const leaveBg = scene.add.rectangle(GAME_W - 74, 78, 96, 28, 0x3a2410, 1).setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+  const leaveTx = scene.add.text(GAME_W - 74, 78, '離開 ✕', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe8b0' }).setOrigin(0.5)
+  leaveBg.on('pointerdown', () => leave())
+  root.add([leaveBg, leaveTx])
 
   draw()
   return { done, destroy: leave }

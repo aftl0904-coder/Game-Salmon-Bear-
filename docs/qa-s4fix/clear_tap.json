@@ -1,0 +1,254 @@
+{
+ "iphone13L": {
+  "info": {
+   "canvas": {
+    "x": 71,
+    "y": 0,
+    "w": 608,
+    "h": 342
+   },
+   "vw": 750,
+   "vh": 342,
+   "tally": true,
+   "ui": false,
+   "btns": [
+    {
+     "id": "shop",
+     "on": true,
+     "x": 92.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "sleep",
+     "on": false,
+     "x": 208,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "gamble",
+     "on": false,
+     "x": 320,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "next",
+     "on": true,
+     "x": 435.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "menu",
+     "on": true,
+     "x": 551,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    }
+   ],
+   "cam": {
+    "zoom": 2,
+    "sx": 0,
+    "w": 1280
+   }
+  },
+  "pt": {
+   "x": 484.72499999999997,
+   "y": 315.4
+  },
+  "before": {
+   "leaving": false,
+   "active": [
+    "play"
+   ]
+  },
+  "after": {
+   "leaving": false,
+   "stageNo": 5,
+   "active": [
+    "worldmap"
+   ]
+  },
+  "errs": []
+ },
+ "pixel7L": {
+  "info": {
+   "canvas": {
+    "x": 112,
+    "y": 0,
+    "w": 640,
+    "h": 360
+   },
+   "vw": 863,
+   "vh": 360,
+   "tally": true,
+   "ui": false,
+   "btns": [
+    {
+     "id": "shop",
+     "on": true,
+     "x": 92.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "sleep",
+     "on": false,
+     "x": 208,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "gamble",
+     "on": false,
+     "x": 320,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "next",
+     "on": true,
+     "x": 435.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "menu",
+     "on": true,
+     "x": 551,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    }
+   ],
+   "cam": {
+    "zoom": 2,
+    "sx": 0,
+    "w": 1280
+   }
+  },
+  "pt": {
+   "x": 547.5,
+   "y": 332
+  },
+  "before": {
+   "leaving": false,
+   "active": [
+    "play"
+   ]
+  },
+  "after": {
+   "leaving": false,
+   "stageNo": 5,
+   "active": [
+    "worldmap"
+   ]
+  },
+  "errs": []
+ },
+ "smallAndroidL": {
+  "info": {
+   "canvas": {
+    "x": 36,
+    "y": 0,
+    "w": 569,
+    "h": 320
+   },
+   "vw": 640,
+   "vh": 320,
+   "tally": true,
+   "ui": false,
+   "btns": [
+    {
+     "id": "shop",
+     "on": true,
+     "x": 92.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "sleep",
+     "on": false,
+     "x": 208,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "gamble",
+     "on": false,
+     "x": 320,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "next",
+     "on": true,
+     "x": 435.5,
+     "y": 332,
+     "w": 111,
+     "h": 26,
+     "interactive": true
+    },
+    {
+     "id": "menu",
+     "on": true,
+     "x": 551,
+     "y": 332,
+     "w": 104,
+     "h": 26,
+     "interactive": true
+    }
+   ],
+   "cam": {
+    "zoom": 2,
+    "sx": 0,
+    "w": 1280
+   }
+  },
+  "pt": {
+   "x": 423.18671875,
+   "y": 295.16875
+  },
+  "before": {
+   "leaving": false,
+   "active": [
+    "play"
+   ]
+  },
+  "after": {
+   "leaving": false,
+   "stageNo": 5,
+   "active": [
+    "worldmap"
+   ]
+  },
+  "errs": []
+ }
+}
