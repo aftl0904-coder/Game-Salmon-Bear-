@@ -90,6 +90,9 @@ export const ART_OVERRIDES: Record<string, string> = {
   's6-shop-a': '/art/props/s6-shop-a.png',
   's6-shop-b': '/art/props/s6-shop-b.png',
   's6-shop-c': '/art/props/s6-shop-c.png',
+  's6-factory-wall': '/art/props/s6-factory-wall.png',
+  's6-conveyor': '/art/props/s6-conveyor.png',
+  's6-boxstack': '/art/props/s6-boxstack.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {
