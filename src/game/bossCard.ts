@@ -13,7 +13,7 @@ import { portraitTex } from './heroAnims'
  * Skippable with any button; auto-advances so an unattended screen still plays through.
  */
 
-export type BossId = 'altar' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss'
+export type BossId = 'altar' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector'
 type Entry = { name: string; title: string; portrait: string | null; lines: string[]; why: string }
 const BOSSES = (bossesRaw as unknown as { bosses: Record<string, Entry> }).bosses
 

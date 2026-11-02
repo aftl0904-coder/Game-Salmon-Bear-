@@ -81,6 +81,15 @@ export const ART_OVERRIDES: Record<string, string> = {
   's3-hotspring-rock': '/art/props/s3-hotspring-rock.png',
   's3-wood-bridge': '/art/props/s3-wood-bridge.png',
   's3-market-ground': '/art/props/s3-market-ground.png',
+  // Stage 6 · 購物中心 (data/levels/stage6.json)
+  's6-dome': '/art/props/s6-dome.png',
+  's6-robotarm': '/art/props/s6-robotarm.png',
+  's6-debris': '/art/props/s6-debris.png',
+  's6-drone': '/art/props/s6-drone.png',
+  's6-cage': '/art/props/s6-cage.png',
+  's6-shop-a': '/art/props/s6-shop-a.png',
+  's6-shop-b': '/art/props/s6-shop-b.png',
+  's6-shop-c': '/art/props/s6-shop-c.png',
 }
 
 export function preloadArtOverrides(scene: Phaser.Scene) {
