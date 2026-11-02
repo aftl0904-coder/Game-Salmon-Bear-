@@ -1,0 +1,723 @@
+{
+ "mode": "1p",
+ "timeline": [
+  {
+   "tag": "p1",
+   "key": "noq",
+   "bossFight": true,
+   "now": 9830,
+   "q": null,
+   "hero": [
+    4700,
+    6
+   ],
+   "drones": 0,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p1",
+   "key": "1/intro",
+   "bossFight": true,
+   "now": 17863,
+   "q": {
+    "act": "intro",
+    "ph": 1,
+    "hp": 55,
+    "x": 5130,
+    "fsm": "PATROL"
+   },
+   "hero": [
+    4700,
+    6
+   ],
+   "drones": 0,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p1",
+   "key": "1/stalk",
+   "bossFight": true,
+   "now": 19029,
+   "q": {
+    "act": "stalk",
+    "ph": 1,
+    "hp": 55,
+    "x": 5130,
+    "fsm": "PATROL"
+   },
+   "hero": [
+    4700,
+    6
+   ],
+   "drones": 0,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p1",
+   "key": "1/windup",
+   "bossFight": true,
+   "now": 22446,
+   "q": {
+    "act": "windup",
+    "ph": 1,
+    "hp": 55,
+    "x": 4933,
+    "fsm": "PATROL"
+   },
+   "hero": [
+    4700,
+    6
+   ],
+   "drones": 0,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p1",
+   "key": "1/barrage",
+   "bossFight": true,
+   "now": 22996,
+   "q": {
+    "act": "barrage",
+    "ph": 1,
+    "hp": 55,
+    "x": 4933,
+    "fsm": "PATROL"
+   },
+   "hero": [
+    4700,
+    6
+   ],
+   "drones": 0,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/stalk",
+   "bossFight": true,
+   "now": 23862,
+   "q": {
+    "act": "stalk",
+    "ph": 2,
+    "hp": 35,
+    "x": 4929,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4700,
+    5
+   ],
+   "drones": 1,
+   "ev": [],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/windup",
+   "bossFight": true,
+   "now": 25462,
+   "q": {
+    "act": "windup",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4654,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "drone-lock"
+   ],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/barrage",
+   "bossFight": true,
+   "now": 25962,
+   "q": {
+    "act": "barrage",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4654,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "drone-lock"
+   ],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/stalk",
+   "bossFight": true,
+   "now": 27062,
+   "q": {
+    "act": "stalk",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4654,
+    4
+   ],
+   "drones": 1,
+   "ev": [
+    "drone-lock"
+   ],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/windup",
+   "bossFight": true,
+   "now": 27962,
+   "q": {
+    "act": "windup",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4654,
+    4
+   ],
+   "drones": 1,
+   "ev": [
+    "drone-lock"
+   ],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/sweep",
+   "bossFight": true,
+   "now": 28479,
+   "q": {
+    "act": "sweep",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4654,
+    4
+   ],
+   "drones": 1,
+   "ev": [
+    "drone-lock",
+    "sweep-warn"
+   ],
+   "hz": 0
+  },
+  {
+   "tag": "p2",
+   "key": "2/exposed",
+   "bossFight": true,
+   "now": 32912,
+   "q": {
+    "act": "exposed",
+    "ph": 2,
+    "hp": 35,
+    "x": 4841,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    3
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p2",
+   "key": "2/stalk",
+   "bossFight": true,
+   "now": 34229,
+   "q": {
+    "act": "stalk",
+    "ph": 2,
+    "hp": 35,
+    "x": 4838,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    3
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p2",
+   "key": "2/windup",
+   "bossFight": true,
+   "now": 34995,
+   "q": {
+    "act": "windup",
+    "ph": 2,
+    "hp": 35,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    3
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p2",
+   "key": "2/barrage",
+   "bossFight": true,
+   "now": 35562,
+   "q": {
+    "act": "barrage",
+    "ph": 2,
+    "hp": 35,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    3
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p2",
+   "key": "2/stalk",
+   "bossFight": true,
+   "now": 36679,
+   "q": {
+    "act": "stalk",
+    "ph": 2,
+    "hp": 35,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4661,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p2",
+   "key": "2/windup",
+   "bossFight": true,
+   "now": 37595,
+   "q": {
+    "act": "windup",
+    "ph": 2,
+    "hp": 35,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4661,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p3",
+   "key": "3/stalk",
+   "bossFight": true,
+   "now": 38229,
+   "q": {
+    "act": "stalk",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4661,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-hit",
+    "drone-lock",
+    "sweep-warn"
+   ],
+   "hz": 1
+  },
+  {
+   "tag": "p3",
+   "key": "3/windup",
+   "bossFight": true,
+   "now": 38979,
+   "q": {
+    "act": "windup",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4682,
+    4
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 2
+  },
+  {
+   "tag": "p3",
+   "key": "3/sweep",
+   "bossFight": true,
+   "now": 39529,
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4684,
+    4
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "sweep-warn"
+   ],
+   "hz": 2
+  },
+  {
+   "tag": "p3",
+   "key": "3/exposed",
+   "bossFight": true,
+   "now": 43245,
+   "q": {
+    "act": "exposed",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4721,
+    3
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/stalk",
+   "bossFight": true,
+   "now": 44362,
+   "q": {
+    "act": "stalk",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4721,
+    3
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/windup",
+   "bossFight": true,
+   "now": 44945,
+   "q": {
+    "act": "windup",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4721,
+    3
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/barrage",
+   "bossFight": true,
+   "now": 45528,
+   "q": {
+    "act": "barrage",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4721,
+    3
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/windup",
+   "bossFight": true,
+   "now": 46528,
+   "q": {
+    "act": "windup",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-run",
+    "sweep-hit",
+    "drone-lock"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/sweep",
+   "bossFight": true,
+   "now": 47062,
+   "q": {
+    "act": "sweep",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4688,
+    5
+   ],
+   "drones": 1,
+   "ev": [
+    "sweep-hit",
+    "drone-lock",
+    "sweep-warn"
+   ],
+   "hz": 3
+  },
+  {
+   "tag": "p3",
+   "key": "3/exposed",
+   "bossFight": true,
+   "now": 50811,
+   "q": {
+    "act": "exposed",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4726,
+    4
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 4
+  },
+  {
+   "tag": "p3",
+   "key": "3/stalk",
+   "bossFight": true,
+   "now": 51945,
+   "q": {
+    "act": "stalk",
+    "ph": 3,
+    "hp": 14,
+    "x": 4836,
+    "fsm": "ATTACK"
+   },
+   "hero": [
+    4726,
+    4
+   ],
+   "drones": 0,
+   "ev": [
+    "sweep-warn",
+    "sweep-run",
+    "sweep-hit"
+   ],
+   "hz": 4
+  }
+ ],
+ "beforeTrigger": {
+  "bossFight": false,
+  "lead": 4650
+ },
+ "p1Hazards": {
+  "hz": [],
+  "ev": []
+ },
+ "afterP2force": {
+  "bossFight": true,
+  "now": 23796,
+  "q": {
+   "act": "stalk",
+   "ph": 2,
+   "hp": 35,
+   "x": 4933,
+   "fsm": "ATTACK"
+  },
+  "hero": [
+   4700,
+   5
+  ],
+  "drones": 0,
+  "ev": [],
+  "hz": 0
+ },
+ "p2": {
+  "drones": 1,
+  "ev": [
+   "drone-lock",
+   "sweep-warn",
+   "sweep-run",
+   "sweep-hit"
+  ],
+  "hz": 1
+ },
+ "afterP3force": {
+  "bossFight": true,
+  "now": 38179,
+  "q": {
+   "act": "stalk",
+   "ph": 3,
+   "hp": 14,
+   "x": 4836,
+   "fsm": "ATTACK"
+  },
+  "hero": [
+   4661,
+   5
+  ],
+  "drones": 1,
+  "ev": [
+   "sweep-hit",
+   "drone-lock",
+   "sweep-warn"
+  ],
+  "hz": 1
+ },
+ "p3": {
+  "ev": [
+   "drone-lock",
+   "sweep-warn",
+   "sweep-run",
+   "sweep-hit"
+  ],
+  "hz": 4,
+  "labels": [
+   "掃描 -1"
+  ]
+ },
+ "afterKill": {
+  "queen": true,
+  "bossFight": true,
+  "jars": 2,
+  "emits": [
+   "undefined",
+   "undefined",
+   "undefined",
+   "undefined",
+   "undefined",
+   "undefined"
+  ],
+  "drones": 0
+ },
+ "errs": []
+}

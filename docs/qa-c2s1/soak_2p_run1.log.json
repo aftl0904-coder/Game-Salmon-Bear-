@@ -1,0 +1,643 @@
+{
+ "stops": [
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300,
+  3300,
+  300
+ ],
+ "restarts": 0,
+ "samples": [
+  {
+   "ended": false,
+   "x": 286,
+   "now": 13231,
+   "actors": 5,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 360,
+   "now": 16964,
+   "actors": 5,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 298,
+   "now": 20881,
+   "actors": 5,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3300,
+   "now": 26330,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3309,
+   "now": 31647,
+   "actors": 15,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3302,
+   "now": 36813,
+   "actors": 15,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 242,
+   "now": 40897,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 168,
+   "now": 44580,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 266,
+   "now": 48280,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3398,
+   "now": 53113,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": true,
+   "x": 3320,
+   "now": 58596,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3100,
+   "now": 63479,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 281,
+   "now": 67662,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 291,
+   "now": 71445,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 213,
+   "now": 76128,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3249,
+   "now": 82028,
+   "actors": 15,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3175,
+   "now": 87495,
+   "actors": 15,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3024,
+   "now": 91978,
+   "actors": 15,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 330,
+   "now": 95794,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 391,
+   "now": 100028,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 380,
+   "now": 104811,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3332,
+   "now": 109960,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3100,
+   "now": 114677,
+   "actors": 15,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3057,
+   "now": 119193,
+   "actors": 14,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 273,
+   "now": 123010,
+   "actors": 14,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 195,
+   "now": 126893,
+   "actors": 14,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 183,
+   "now": 130676,
+   "actors": 14,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3276,
+   "now": 136276,
+   "actors": 14,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3272,
+   "now": 141276,
+   "actors": 13,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3104,
+   "now": 146492,
+   "actors": 13,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 333,
+   "now": 150392,
+   "actors": 13,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 330,
+   "now": 154959,
+   "actors": 13,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 315,
+   "now": 159425,
+   "actors": 13,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3250,
+   "now": 164292,
+   "actors": 13,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3097,
+   "now": 169708,
+   "actors": 12,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3097,
+   "now": 173991,
+   "actors": 12,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 280,
+   "now": 177891,
+   "actors": 12,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 281,
+   "now": 181608,
+   "actors": 12,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 277,
+   "now": 186274,
+   "actors": 12,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3233,
+   "now": 191924,
+   "actors": 12,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3048,
+   "now": 196990,
+   "actors": 12,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 2949,
+   "now": 202340,
+   "actors": 10,
+   "shots": 1,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 156,
+   "now": 206073,
+   "actors": 10,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 162,
+   "now": 209873,
+   "actors": 10,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "err": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'getChildren')\n    at eval (eval at <anonymous> (eval at evaluate (:370:30)), <anonymous>:3:175)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:112)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "err": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'getChildren')\n    at eval (eval at <anonymous> (eval at evaluate (:370:30)), <anonymous>:3:175)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:112)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "err": "Error: page.evaluate: TypeError: Cannot read properties of undefined (reading 'getChildren')\n    at eval (eval at <anonymous> (eval at evaluate (:370:30)), <anonymous>:3:175)\n    at eval (eval at evaluate (:370:30), <anonymous>:1:112)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "ended": false,
+   "x": 220,
+   "now": 15949,
+   "actors": 3,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 382,
+   "now": 21065,
+   "actors": 3,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 367,
+   "now": 24815,
+   "actors": 3,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 445,
+   "now": 28882,
+   "actors": 3,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3300,
+   "now": 33848,
+   "actors": 1,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3300,
+   "now": 39664,
+   "actors": 1,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 3114,
+   "now": 43814,
+   "actors": 4,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3179,
+   "now": 48098,
+   "actors": 5,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3120,
+   "now": 52114,
+   "actors": 7,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3140,
+   "now": 56147,
+   "actors": 9,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3110,
+   "now": 60430,
+   "actors": 11,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3150,
+   "now": 64780,
+   "actors": 12,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3111,
+   "now": 68863,
+   "actors": 15,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 73413,
+   "actors": 17,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3119,
+   "now": 78096,
+   "actors": 18,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 2440,
+   "now": 82413,
+   "actors": 22,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3460,
+   "now": 87046,
+   "actors": 24,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3114,
+   "now": 91862,
+   "actors": 25,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3114,
+   "now": 96596,
+   "actors": 29,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3115,
+   "now": 101445,
+   "actors": 30,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3114,
+   "now": 106312,
+   "actors": 33,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3114,
+   "now": 111262,
+   "actors": 35,
+   "shots": 5,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 3342,
+   "now": 116445,
+   "actors": 37,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 121611,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 126844,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 131894,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 136894,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 142227,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 147810,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 152827,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 157443,
+   "actors": 38,
+   "shots": 0,
+   "q": true
+  }
+ ],
+ "errs": []
+}

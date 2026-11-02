@@ -8,7 +8,23 @@ import { markHd, STORY_RES } from './heroAnims'
 
 /** Stages that exist so far (picker + progress). */
 const LAST_STAGE = 5
-const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈' }
+/** 第二大陸 (stage 6+) is work in progress: open it with ?c2=1 (remembered in this browser), ?c2=0 to hide it again. */
+const C2_KEY = 'sake-kuma-c2-v1'
+function c2Enabled(): boolean {
+  try {
+    const q = new URLSearchParams(window.location.search).get('c2')
+    if (q === '1') localStorage.setItem(C2_KEY, '1')
+    if (q === '0') localStorage.removeItem(C2_KEY)
+    return localStorage.getItem(C2_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+/** Highest stage the picker may land on. */
+function pickable(): number {
+  return c2Enabled() ? 6 : Math.min(maxStage(), LAST_STAGE)
+}
+const STAGE_NAMES: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈', 6: '第六關・購物中心（第二大陸）' }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -111,12 +127,12 @@ export class MainMenuScene extends Phaser.Scene {
 
   private onUp() {
     this.feedCode('U')
-    if (maxStage() >= 2) this.toggleStage(-1)
+    if (pickable() >= 2) this.toggleStage(-1)
     else this.move(-1)
   }
   private onDown() {
     this.feedCode('D')
-    if (maxStage() >= 2) this.toggleStage(1)
+    if (pickable() >= 2) this.toggleStage(1)
     else this.move(1)
   }
   private onLeft() {
@@ -156,7 +172,7 @@ export class MainMenuScene extends Phaser.Scene {
 
   /** "從 第一關 / 第二關 開始" — only shown once stage 1 has been cleared. */
   private buildStagePicker(width: number) {
-    if (maxStage() < 2) return
+    if (pickable() < 2) return
     // Alan: make this read clearly as "continue / load progress" rather than
     // an unlabelled stage-picker a returning player might not recognise as
     // their save. The pill below still works the same way (◀▶ cycles every
@@ -203,7 +219,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private toggleStage(dir: 1 | -1) {
-    const n = Math.min(maxStage(), LAST_STAGE)
+    const n = pickable()
     if (n < 2) return
     this.stageSel = ((this.stageSel - 1 + dir + n) % n) + 1
     SFX.blip(520)

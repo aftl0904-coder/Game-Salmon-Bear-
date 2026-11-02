@@ -40,6 +40,23 @@ const ROADS: Record<string, Array<[number, number]>> = {
 }
 const S = 0.5 // map art is shown at half size (1280×720 → 640×360)
 
+/** The map art only covers 第一大陸 (stages 1–5); anything past it gets a plain title card instead. */
+const MAP_LAST_STAGE = 5
+const C2_STAGE_NAMES: Record<number, string> = { 6: '購物中心' }
+const ORDINAL = '一二三四五六七八九十'
+function onMap(stage: number): boolean {
+  return PLACES[stage] !== undefined
+}
+/** Place for a stage that is on the map; stages past the map never get here, but never return undefined either. */
+function placeOf(stage: number) {
+  return PLACES[stage] ?? PLACES[MAP_LAST_STAGE]!
+}
+function c2Title(stage: number): string {
+  const n = stage - MAP_LAST_STAGE
+  const name = C2_STAGE_NAMES[stage]
+  return `大陸2・第${ORDINAL[n - 1] ?? n}關${name ? `・${name}` : ''}`
+}
+
 export class MapScene extends Phaser.Scene {
   private data_!: MapData
   private party!: Phaser.GameObjects.Sprite
@@ -61,6 +78,8 @@ export class MapScene extends Phaser.Scene {
   private verseText!: Phaser.GameObjects.Text
   /** Set while the verse is showing after a stage was chosen; running it starts the trip. */
   private verseGo: (() => void) | null = null
+  /** Set while the 大陸2 title card is up; running it leaves for the stage. */
+  private cardGo: (() => void) | null = null
 
   constructor() {
     super('worldmap')
@@ -82,8 +101,13 @@ export class MapScene extends Phaser.Scene {
     this.walking = false
     this.picking = false
     this.verseGo = null
+    this.cardGo = null
     this.icons = {}
     this.pickTween = null
+    if (!onMap(data.to)) {
+      this.showContinent2Card(data)
+      return
+    }
     const cam = this.cameras.main
     cam.setBackgroundColor('#0a1428')
     cam.setZoom(RENDER_SCALE).setRotation(0)
@@ -132,7 +156,7 @@ export class MapScene extends Phaser.Scene {
       }
     }
 
-    const start = PLACES[data.from] ?? PLACES[1]!
+    const start = placeOf(data.from)
     this.party = this.add.sprite(start.x * S, start.y * S + 4, 'map-walk', 0).setOrigin(0.5, 1)
     if (this.anims.exists('map-party-walk')) this.party.play('map-party-walk')
 
@@ -194,6 +218,68 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
+  /** Stages past the map (第二大陸): black card with the verse and the stage name, then straight into the stage. */
+  private showContinent2Card(data: MapData) {
+    const to = data.to
+    const cam = this.cameras.main
+    cam.setBackgroundColor('#000000')
+    cam.setZoom(RENDER_SCALE).setRotation(0)
+    cam.centerOn(320, 180)
+    cam.fadeIn(400, 0, 0, 0)
+    unlockAudio()
+    playSong('story')
+    this.registry.set('stageNo', to)
+    data.stageNo = to
+
+    const v = VERSES[String(to)]
+    if (v) {
+      const body = `「${v.text}」`.match(/.{1,22}/g)!.join('\n')
+      this.add
+        .text(320, 132, `${body}\n— ${v.ref}`, { fontFamily: FONT_UI, fontSize: '13px', color: '#fff2d0', align: 'center', lineSpacing: 6 })
+        .setOrigin(0.5)
+        .setScrollFactor(0)
+    }
+    this.add
+      .text(320, 252, c2Title(to), { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+    this.hint = this.add
+      .text(632, 8, 'Enter／A　繼續　（輕觸畫面亦可）', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
+      .setOrigin(1, 0)
+      .setScrollFactor(0)
+
+    let done = false
+    const go = () => {
+      if (done) return
+      done = true
+      this.cardGo = null
+      cam.fadeOut(350, 0, 0, 0)
+      this.time.delayedCall(380, () => {
+        if (data.next === 'credits') this.scene.start('credits')
+        else this.scene.start('play')
+      })
+    }
+    this.cardGo = go
+    // A finger still down from the previous screen must not skip the card the instant it appears.
+    const armedAt = this.time.now + 500
+    const tryGo = () => {
+      if (this.time.now >= armedAt) go()
+    }
+    this.time.delayedCall(VERSE_HOLD_MS + 500, go)
+    const kb = this.input.keyboard
+    kb?.on('keydown-ENTER', tryGo)
+    kb?.on('keydown-SPACE', tryGo)
+    kb?.on('keydown-F', tryGo)
+    this.input.on('pointerdown', tryGo)
+    this.events.once('shutdown', () => {
+      kb?.off('keydown-ENTER', tryGo)
+      kb?.off('keydown-SPACE', tryGo)
+      kb?.off('keydown-F', tryGo)
+      this.input.off('pointerdown', tryGo)
+      this.cardGo = null
+    })
+  }
+
   /** Show the stage's verse for a moment (or until a key), then walk. The finale → credits hop has none. */
   private travelAfterVerse(to: number) {
     if (this.data_.next === 'credits' || !VERSES[String(to)]) {
@@ -233,6 +319,10 @@ export class MapScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.cardGo) {
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.cardGo()
+      return
+    }
     if (this.picking) {
       if (TouchInput.justPressed('left')) this.movePick(-1)
       if (TouchInput.justPressed('right')) this.movePick(1)
@@ -268,7 +358,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private updateBanner() {
-    const dest = PLACES[this.picking ? this.pickIndex : this.data_.to] ?? PLACES[1]!
+    const dest = placeOf(this.picking ? this.pickIndex : this.data_.to)
     if (this.picking) {
       this.bannerLabel.setText(`◀　${dest.name}　▶`)
       this.hint.setText('←→ 揀關卡　Enter／A 出發')
@@ -339,7 +429,7 @@ export class MapScene extends Phaser.Scene {
     }
     if (this.walking && this.walkTween) {
       this.walkTween.stop()
-      const dest = PLACES[this.data_.to]!
+      const dest = placeOf(this.data_.to)
       this.party.setPosition(dest.x * S, dest.y * S + 4)
       this.arrive()
     } else if (!this.leaving) {
@@ -355,7 +445,7 @@ export class MapScene extends Phaser.Scene {
     this.party.anims.stop()
     SFX.coin()
     this.tweens.add({ targets: this.party, y: this.party.y - 6, duration: 140, yoyo: true })
-    const dest = PLACES[this.data_.to]!
+    const dest = placeOf(this.data_.to)
     const cam = this.cameras.main
     this.time.delayedCall(700, () => {
       SFX.powerUp()

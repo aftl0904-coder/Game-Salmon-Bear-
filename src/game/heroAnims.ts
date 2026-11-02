@@ -132,7 +132,7 @@ export function portraitTex(id: string) {
 /** Story stills (public/art/story): STORY_RES× pixels, shown at 640×360 logical. Later stages add theirs here. */
 export const STORY_STILLS = ['cover', 'c1-picnic', 'c1-hollow', 'c1-mama', 'c2-note', 'credits-bg', 'c2-bike', 's2-boss-intro', 'c3-queen', 'canopy-far',
   'c3-market', 's3-boss-intro', 'market-far', 'hotspring-far', 'c4-taxi', 'c5-bus', 'c6-screen', 'c7-boss', 'ending-1', 'ending-2',
-  'c10-unmask', 'ending-3', 'hq-far', 'rooftop-far'] as const
+  'c10-unmask', 'ending-3', 'hq-far', 'rooftop-far', 'mall-far', 'factory-far'] as const
 export const STORY_RES = 2
 export function stillTex(id: string) {
   return `story-${id}`

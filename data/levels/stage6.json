@@ -1,0 +1,98 @@
+{
+  "id": "ST-06",
+  "name": "第二大陸・購物中心",
+  "theme": "mall",
+  "worldW": 5700,
+  "units": "native px (640×360). floorY = feet line of the base ground. h = height above floor.",
+  "segments": [
+    { "id": "A", "role": "teach", "x0": 0, "x1": 855, "note": "中庭：大理石＋LED 廣告牌，玻璃菱格圓頂入口＋兩座鏡面塔；2–3 個保安蜜僵、1 罐易拎蜜。" },
+    { "id": "B", "role": "test", "x0": 855, "x1": 1995, "note": "店舖走廊：窿（追兵會跳）＋1–2 隻輸送機械臂（企定射擊）。" },
+    { "id": "C", "role": "twist", "x0": 1995, "x1": 3135, "note": "施工區：前半商場地磚、後半工地；天花碎石（先有光柱預警，著地先傷人）。" },
+    { "id": "D", "role": "reveal", "x0": 3135, "x1": 4560, "note": "廢棄蜜工場：暗幕＋蜜僵＋機械臂；遠處有個籠仔剪影（噗噗會有反應）。" },
+    { "id": "E", "role": "boss", "x0": 4560, "x1": 5700, "note": "商場保安總監（三階段）；擊倒後拎蜜罐收工。" }
+  ],
+
+  "pits": [
+    { "x": 1150, "w": 56, "note": "B・店舖走廊缺口（追兵跳）" },
+    { "x": 1560, "w": 64, "note": "B・第二個缺口" },
+    { "x": 1880, "w": 52, "note": "B・尾段缺口" },
+    { "x": 2540, "w": 48, "note": "C・施工區缺口" },
+    { "x": 3350, "w": 52, "note": "D・工場地板缺口" },
+    { "x": 4000, "w": 56, "note": "D・工場地板缺口" }
+  ],
+  "steps": [
+    { "x": 1380, "w": 90, "h": 26, "note": "B・行人台階" },
+    { "x": 2300, "w": 90, "h": 28, "note": "C・施工台階" }
+  ],
+  "platforms": [
+    { "x": 1130, "w": 96, "h": 38, "note": "B・過缺口平台" },
+    { "x": 1540, "w": 108, "h": 40, "note": "B・過缺口平台" },
+    { "x": 2760, "w": 80, "h": 46, "note": "C・鷹架平台" },
+    { "x": 3700, "w": 80, "h": 44, "note": "D・工場棧道" }
+  ],
+  "movingPlatforms": [],
+  "crushers": [],
+  "debris": [
+    { "x": 2230, "periodMs": 3400, "offsetMs": 600, "warnMs": 950, "note": "C・天花碎石" },
+    { "x": 2430, "periodMs": 3400, "offsetMs": 1700, "warnMs": 950 },
+    { "x": 2660, "periodMs": 3200, "offsetMs": 900, "warnMs": 950 },
+    { "x": 2880, "periodMs": 3200, "offsetMs": 2300, "warnMs": 950 },
+    { "x": 3040, "periodMs": 3000, "offsetMs": 1500, "warnMs": 950 }
+  ],
+  "cages": [{ "x": 3880, "note": "D・籠仔剪影（噗噗行近有反應）" }],
+  "spikes": [],
+  "durians": [],
+  "honey": [{ "x": 470, "h": 40, "note": "A・易拎蜜罐" }],
+  "checkpoints": [800, 1960, 3100, 4520],
+  "breakables": [
+    { "x": 380, "kind": "pot", "loot": "coin" },
+    { "x": 1000, "kind": "pot", "loot": "food" },
+    { "x": 2400, "kind": "pot", "loot": "coin" },
+    { "x": 3600, "kind": "pot", "loot": "food" }
+  ],
+
+  "enemies": [
+    { "x": 520, "species": "guard", "unlockX": 300 },
+    { "x": 660, "species": "guard", "unlockX": 420 },
+    { "x": 780, "species": "guard", "unlockX": 540 },
+
+    { "x": 1000, "species": "fish", "kind": "chaser", "unlockX": 860 },
+    { "x": 1280, "species": "robotarm", "unlockX": 920 },
+    { "x": 1420, "species": "fish", "kind": "chaser", "unlockX": 1250 },
+    { "x": 1720, "species": "robotarm", "unlockX": 1360 },
+    { "x": 1800, "species": "fish", "kind": "chaser", "unlockX": 1580 },
+
+    { "x": 2150, "species": "guard", "unlockX": 2000 },
+    { "x": 2720, "species": "guard", "unlockX": 2500 },
+
+    { "x": 3420, "species": "honeyzombie", "unlockX": 3150 },
+    { "x": 3560, "species": "robotarm", "unlockX": 3260 },
+    { "x": 3820, "species": "honeyzombie", "unlockX": 3560 },
+    { "x": 4180, "species": "robotarm", "unlockX": 3880 },
+    { "x": 4340, "species": "honeyzombie", "unlockX": 4020 }
+  ],
+  "altarAmbush": [],
+  "altarTriggerX": 99999,
+
+  "friends": [],
+  "decor": { "back": [], "hang": [] },
+  "coins": [
+    { "x": 300, "h": 40 },
+    { "x": 324, "h": 44 },
+    { "x": 1150, "h": 66 },
+    { "x": 1174, "h": 70 },
+    { "x": 1560, "h": 66 },
+    { "x": 1584, "h": 70 },
+    { "x": 2770, "h": 80 },
+    { "x": 2794, "h": 84 },
+    { "x": 3700, "h": 78 },
+    { "x": 3724, "h": 82 }
+  ],
+  "secrets": [],
+
+  "boss": { "kind": "securitydirector", "triggerX": 4680, "arenaX0": 4640, "arenaX1": 5280 },
+
+  "darkZones": [{ "x0": 3180, "x1": 4540 }],
+  "darkAlpha": 0.62,
+  "lanterns": []
+}
