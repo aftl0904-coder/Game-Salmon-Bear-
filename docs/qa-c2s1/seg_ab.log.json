@@ -1,0 +1,88 @@
+[
+ {
+  "k": "A.enemies",
+  "v": [
+   "guard@597",
+   "guard@927",
+   "guard@965"
+  ]
+ },
+ {
+  "k": "A.guardClassCount",
+  "v": 3
+ },
+ {
+  "k": "A.honeyJars",
+  "v": [
+   470
+  ]
+ },
+ {
+  "k": "A.honeyGot",
+  "v": 1
+ },
+ {
+  "k": "B.pit1150",
+  "v": {
+   "crossedMs": 1682,
+   "tail": [
+    "1128:CHASE",
+    "1145:ATTACK:L",
+    "1230:ATTACK:L"
+   ]
+  }
+ },
+ {
+  "k": "B.pit1560",
+  "v": {
+   "crossedMs": 2282,
+   "tail": [
+    "1539:CHASE",
+    "1577:ATTACK:L",
+    "1652:ATTACK"
+   ]
+  }
+ },
+ {
+  "k": "B.pit1880",
+  "v": {
+   "crossedMs": 1610,
+   "tail": [
+    "1859:CHASE",
+    "1863:ATTACK:L",
+    "1941:ATTACK:L"
+   ]
+  }
+ },
+ {
+  "k": "B.arm.spawned",
+  "v": [
+   {
+    "x": 1280,
+    "y": 285,
+    "active": true
+   }
+  ]
+ },
+ {
+  "k": "B.arm.shots",
+  "v": [
+   {
+    "t": 26399,
+    "x": 1314,
+    "dir": 1,
+    "high": false
+   }
+  ]
+ },
+ {
+  "k": "B.arm.stayedPut",
+  "v": [
+   1280
+  ]
+ },
+ {
+  "k": "errs",
+  "v": []
+ }
+]

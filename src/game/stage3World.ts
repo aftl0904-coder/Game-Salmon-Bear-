@@ -28,6 +28,8 @@ export type Stage3Ctx = {
 
 export type Stage3Data = {
   darkZones?: Array<{ x0: number; x1: number; startLit?: boolean }>
+  /** Veil opacity inside dark zones (default 0.82 — the night market's near-black). */
+  darkAlpha?: number
   lanterns?: Array<{ x: number }>
   slippery?: Array<{ x0: number; x1: number }>
   /** 地面手感：黐腳（行慢）／彈床（踩落去彈起）。滑地用 slippery。 */
@@ -191,7 +193,7 @@ export class Stage3World {
 
     // ── Darkness ──
     const inDark = this.inZone(this.d.darkZones, lead) && !this.inZone((this.d.darkZones ?? []).filter((z) => z.startLit), lead - 400)
-    const target = inDark ? 0.82 : 0
+    const target = inDark ? (this.d.darkAlpha ?? 0.82) : 0
     this.dark += (target - this.dark) * Math.min(1, (dt / 1000) * 2.5)
     if (this.overlay && this.tex) {
       this.overlay.setVisible(this.dark > 0.02)

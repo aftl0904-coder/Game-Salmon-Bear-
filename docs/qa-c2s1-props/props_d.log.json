@@ -1,0 +1,61 @@
+{
+ "textures": [
+  [
+   "s6-factory-wall",
+   true
+  ],
+  [
+   "s6-conveyor",
+   true
+  ],
+  [
+   "s6-boxstack",
+   true
+  ]
+ ],
+ "placed": [
+  [
+   "s6-factory-wall",
+   3262,
+   287,
+   127,
+   false
+  ],
+  [
+   "s6-conveyor",
+   3496,
+   287,
+   128,
+   false
+  ],
+  [
+   "s6-conveyor",
+   4096,
+   287,
+   128,
+   false
+  ],
+  [
+   "s6-boxstack",
+   3352,
+   287,
+   128,
+   false
+  ],
+  [
+   "s6-boxstack",
+   3990,
+   287,
+   128,
+   false
+  ],
+  [
+   "s6-boxstack",
+   4410,
+   287,
+   128,
+   false
+  ]
+ ],
+ "errs": []
+}
