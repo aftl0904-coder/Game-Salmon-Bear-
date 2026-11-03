@@ -1,0 +1,27 @@
+{
+  "checks": [
+    "both clear score writers enforce nonzero carry, baseline and zero carry; later gear preserves eligibility; clearRank remains visible"
+  ],
+  "errors": [],
+  "passed": true,
+  "result": {
+    "rank": "B",
+    "rankIneligible": "B",
+    "legacy": 2,
+    "legacyGun": 1,
+    "ineligible": 0,
+    "baseline": 2,
+    "zeroCarry": 1,
+    "laterGear": 2,
+    "c2Nonzero": 0,
+    "validScores": [
+      {
+        "score": 99,
+        "timeSec": 12,
+        "honey": 0,
+        "mode": "1p",
+        "at": 0
+      }
+    ]
+  }
+}

@@ -1,0 +1,1 @@
+PASS minigames ["injected bike and claw results update the main checkpoint; bonus survives reload"]

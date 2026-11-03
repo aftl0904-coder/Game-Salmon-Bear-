@@ -5,6 +5,7 @@ import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { DEST_NAMES } from './BikeScene'
 import { clawGame, showTutorial, type ClawResult } from './minigames'
+import { saveTransitionCoins } from './run'
 
 /**
  * 龍蝦夜市抓抓機 — replaces the bike ride on the 蜜樹丘 → 月影夜市 leg only (the other legs keep
@@ -75,6 +76,7 @@ export class ClawScene extends Phaser.Scene {
     this.mini?.destroy()
     const coins = r?.coins ?? 0
     this.registry.set('carryCoins', ((this.registry.get('carryCoins') as number | undefined) ?? 5) + coins)
+    saveTransitionCoins(this.toStage, this.registry.get('carryCoins') as number)
     this.registry.set('stageNo', this.toStage)
     if (r) {
       SFX.win()

@@ -13,7 +13,9 @@ export function loadScores(): ScoreRow[] {
     const raw = localStorage.getItem(KEY)
     if (!raw) return []
     const list = JSON.parse(raw) as ScoreRow[]
-    return Array.isArray(list) ? list.slice(0, 10) : []
+    if (!Array.isArray(list)) return []
+    return list.filter((r) => r && Number.isFinite(r.score) && Number.isFinite(r.timeSec))
+      .slice(0, 10).map((r) => ({ score: r.score, timeSec: r.timeSec, honey: Number.isFinite(r.honey) ? r.honey : 0, mode: r.mode === '2p' ? '2p' : '1p', at: Number.isFinite(r.at) ? r.at : 0 }))
   } catch {
     return []
   }
@@ -23,7 +25,11 @@ export function saveScore(row: ScoreRow) {
   const list = loadScores()
   list.push(row)
   list.sort((a, b) => b.score - a.score || a.timeSec - b.timeSec)
-  localStorage.setItem(KEY, JSON.stringify(list.slice(0, 10)))
+  try {
+    localStorage.setItem(KEY, JSON.stringify(list.slice(0, 10)))
+  } catch {
+    /* Storage unavailable; the clear screen must still work. */
+  }
 }
 
 export function calcScore(opts: {
