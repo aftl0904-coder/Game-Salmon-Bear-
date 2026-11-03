@@ -9,6 +9,7 @@ import versesRaw from '../../data/verses.json'
 import { c2Cleared } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
+import { wrapVerse } from './ui/verseWrap'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -167,7 +168,7 @@ export class MapScene extends Phaser.Scene {
 
     this.verseBg = this.add.graphics()
     this.verseText = this.add
-      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff2d0', align: 'center', wordWrap: { width: 360, useAdvancedWrap: true }, lineSpacing: 3 })
+      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff2d0', align: 'center', lineSpacing: 3 })
       .setOrigin(0.5)
     this.versePanel = this.add.container(320, 50, [this.verseBg, this.verseText]).setScrollFactor(0).setDepth(20)
     this.versePanel.setVisible(false)
@@ -226,11 +227,12 @@ export class MapScene extends Phaser.Scene {
 
     const v = VERSES[String(to)]
     if (v) {
-      const body = `「${v.text}」`.match(/.{1,22}/g)!.join('\n')
-      this.add
+      const body = wrapVerse(v.text, 22)
+      const verseText = this.add
         .text(320, 132, `${body}\n— ${v.ref}`, { fontFamily: FONT_UI, fontSize: '13px', color: '#fff2d0', align: 'center', lineSpacing: 6 })
         .setOrigin(0.5)
         .setScrollFactor(0)
+      if (verseText.width > 560) verseText.setScale(560 / verseText.width)
     }
     this.add
       .text(320, 252, stageTitle(to), { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
@@ -299,11 +301,12 @@ export class MapScene extends Phaser.Scene {
       this.versePanel.setVisible(false)
       return
     }
-    // CJK has no spaces to wrap on, so break by character count.
-    const body = `「${v.text}」`.match(/.{1,24}/g)!.join('\n')
+    const body = wrapVerse(v.text, 24)
+    this.verseText.setScale(1)
     this.verseText.setText(`${body}\n— ${v.ref}`)
-    const w = Math.max(240, this.verseText.width + 28)
-    const h = this.verseText.height + 16
+    if (this.verseText.width > 360) this.verseText.setScale(360 / this.verseText.width)
+    const w = Math.max(240, this.verseText.displayWidth + 28)
+    const h = this.verseText.displayHeight + 16
     this.verseBg.clear()
     this.verseBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4)
     this.verseBg.fillStyle(0x1c120c, 0.94).fillRect(-w / 2, -h / 2, w, h)
