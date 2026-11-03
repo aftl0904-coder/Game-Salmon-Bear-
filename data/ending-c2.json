@@ -3,10 +3,10 @@
   { "id": 2, "title": "宣佈改變", "description": "記者會，宣佈「森林共生式發展」計劃取代拆遷", "image": "/art/story/ending-c2-02.png" },
   { "id": 3, "title": "動工重建", "description": "低碳建材重建，天台裝太陽能板", "image": "/art/story/ending-c2-03.png" },
   { "id": 4, "title": "森林回復", "description": "幼苗種返，蜜蜂傳粉，畫面由枯轉青", "image": "/art/story/ending-c2-04.png" },
-  { "id": 5, "title": "動物回歸", "description": "各種森林動物包括獲釋守護者返嚟", "image": null },
-  { "id": 6, "title": "社區共融", "description": "商場同森林並存，社區市集", "image": null },
+  { "id": 5, "title": "動物回歸", "description": "各種森林動物包括獲釋守護者返嚟", "image": "/art/story/ending-c2-05.png" },
+  { "id": 6, "title": "社區共融", "description": "商場同森林並存，社區市集", "image": "/art/story/ending-c2-06.png" },
   { "id": 7, "title": "朋友大重聚", "description": "救返嘅朋友大合照／大野餐", "image": "/art/story/ending-c2-07.png" },
-  { "id": 8, "title": "噗噗與守護者", "description": "親人同噗噗安定落嚟", "image": null },
-  { "id": 9, "title": "主角靜態一刻", "description": "倫寶／琪寶寶望夕陽下森林", "image": null },
-  { "id": 10, "title": "全景大合照", "description": "主角、朋友、噗噗、守護者，甚至大佬同框", "image": null }
+  { "id": 8, "title": "噗噗與守護者", "description": "親人同噗噗安定落嚟", "image": "/art/story/ending-c2-08.png" },
+  { "id": 9, "title": "主角靜態一刻", "description": "倫寶／琪寶寶望夕陽下森林", "image": "/art/story/ending-c2-09.png" },
+  { "id": 10, "title": "全景大合照", "description": "主角、朋友、噗噗、守護者，甚至大佬同框", "image": "/art/story/ending-c2-10.png" }
 ]
