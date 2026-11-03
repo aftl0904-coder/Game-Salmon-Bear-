@@ -1,0 +1,17 @@
+main=0014e63352a56e1b54bc1ec36a397b96aedca75d
+branch=c38378064085b4edd58fecd416483af64420f905
+
+> sake-kuma@0.0.0 validate:data
+> node scripts/validate/all-data.mjs
+
+OK   terrain.json
+OK   hazards.json
+OK   enemies.json
+OK   camera.json
+OK   signs.json
+OK   environment.json
+OK   palette.json
+OK   characters.json
+OK   companion.json
+
+All 9 data validators passed
