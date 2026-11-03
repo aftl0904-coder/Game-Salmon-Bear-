@@ -72,7 +72,7 @@ try {
   await page.waitForFunction(()=>!!window.__SAKE_GAME__.scene.getScene('play').queen,null,{timeout:10000})
   await page.evaluate(()=>{const q=window.__SAKE_GAME__.scene.getScene('play').queen;q.act='intro';q.t=-100000})
   await page.waitForTimeout(1000)
-  await page.evaluate(()=>{const h=window.__SAKE_GAME__.scene.getScene('play').boy,original=h.resolveLaneJumpLanding.bind(h);window.__landTrace=[];h.resolveLaneJumpLanding=(body)=>{const before={y:h.y,prev:h.prevFeetY,vy:body.velocity.y,hold:h.jumpHoldMs,jumping:h.laneJumping};original(body);if(before.jumping&&before.y<245)window.__landTrace.push({...before,afterY:h.y,afterJumping:h.laneJumping})}})
+  await page.evaluate(()=>{const h=window.__SAKE_GAME__.scene.getScene('play').boy,original=h.resolveLaneJumpLanding.bind(h);window.__landTrace=[];h.resolveLaneJumpLanding=(body)=>{const before={y:h.y,prev:h.prevFeetY,vy:body.velocity.y,hold:h.jumpHoldMs,jumping:h.laneJumping};original(body);if(before.jumping&&before.y<245)window.__landTrace.push({...before,afterY:h.y,afterJumping:h.laneJumping,bodyBottom:body.bottom})}})
   const beforeJump=await page.evaluate(()=>{const s=window.__SAKE_GAME__.scene.getScene('play'),h=s.boy;return{x:h.x,y:h.y,laneJumping:h.laneJumping,jumpConsumed:h.jumpConsumed,hurtLock:h.hurtLock,started:s.started,intro:!!s.storyIntro,paused:s.physics.world.isPaused,ui:s.scene.isActive('UIScene')}})
   const jumpTrace=[];await touchStart([[584,320]])
   for(let i=0;i<16;i++){await page.waitForTimeout(100);jumpTrace.push(await page.evaluate(()=>{const h=window.__SAKE_GAME__.scene.getScene('play').boy;return{y:Math.round(h.y*10)/10,vy:Math.round(h.body.velocity.y),jumping:h.laneJumping}}))}
@@ -81,6 +81,7 @@ try {
   report.rightPlatform=p;console.log('right-platform',JSON.stringify(p))
   await page.screenshot({path:`${OUT}/touch-07-boss-platform-${ROLE}.png`,scale:'css'})
   assert.ok(Math.abs(p.y-(floor-54))<3,'hero must jump up and land on right platform')
+  assert.ok(report.landingTrace.some(t=>!t.afterJumping && Math.abs(t.bodyBottom-(t.afterY-2))<4),'foot body is aligned in the landing frame')
   await page.evaluate((floor)=>{const s=window.__SAKE_GAME__.scene.getScene('play'),h=s.boy,q=s.queen;h.hp=50;h.graceUntil=0;h.hurtCd=0;q.go('charge');q.dirX=1;q.setPosition(3650,floor);q.body.reset(3650,floor)},floor)
   await page.waitForTimeout(1000)
   p=await page.evaluate(()=>{const s=window.__SAKE_GAME__.scene.getScene('play'),h=s.boy;return{x:h.x,y:h.y,hp:h.hp}})

@@ -9,10 +9,10 @@
       "dir": 1,
       "crossed": true,
       "leaped": true,
-      "maxLift": 41,
+      "maxLift": 37,
       "last": {
-        "x": 814,
-        "y": 244,
+        "x": 840,
+        "y": 250,
         "vx": 0,
         "leaping": true,
         "fsm": "CHASE"
@@ -26,9 +26,26 @@
       "dir": -1,
       "crossed": true,
       "leaped": true,
+      "maxLift": 40,
+      "last": {
+        "x": 738,
+        "y": 245,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        1040,
+        1096
+      ],
+      "dir": 1,
+      "crossed": true,
+      "leaped": true,
       "maxLift": 41,
       "last": {
-        "x": 749,
+        "x": 1122,
         "y": 244,
         "vx": 0,
         "leaping": true,
@@ -40,32 +57,15 @@
         1040,
         1096
       ],
-      "dir": 1,
-      "crossed": true,
-      "leaped": true,
-      "maxLift": 42,
-      "last": {
-        "x": 1114,
-        "y": 243,
-        "vx": 0,
-        "leaping": true,
-        "fsm": "CHASE"
-      }
-    },
-    {
-      "pit": [
-        1040,
-        1096
-      ],
       "dir": -1,
       "crossed": true,
       "leaped": true,
-      "maxLift": 42,
+      "maxLift": 41,
       "last": {
-        "x": 1002,
-        "y": 259,
-        "vx": 0,
-        "leaping": true,
+        "x": 1001,
+        "y": 285,
+        "vx": -43.659783410612086,
+        "leaping": false,
         "fsm": "CHASE"
       }
     },
@@ -77,12 +77,12 @@
       "dir": 1,
       "crossed": true,
       "leaped": true,
-      "maxLift": 39,
+      "maxLift": 40,
       "last": {
-        "x": 2133,
-        "y": 248,
-        "vx": 0,
-        "leaping": true,
+        "x": 2143,
+        "y": 285,
+        "vx": 42.92727147883954,
+        "leaping": false,
         "fsm": "CHASE"
       }
     },
@@ -94,10 +94,10 @@
       "dir": -1,
       "crossed": true,
       "leaped": true,
-      "maxLift": 38,
+      "maxLift": 43,
       "last": {
-        "x": 2013,
-        "y": 247,
+        "x": 2019,
+        "y": 242,
         "vx": 0,
         "leaping": true,
         "fsm": "CHASE"
@@ -146,8 +146,8 @@
     }
   },
   "pursuit": {
-    "min": 24.056414822250016,
-    "max": 47.99372731533699
+    "min": 24.96933754162152,
+    "max": 47.988073283294455
   },
   "beforeJump": {
     "x": 3715,
@@ -247,64 +247,71 @@
       "y": 244,
       "prev": 262,
       "vy": -149.66666666666669,
-      "hold": 234.99000000000015,
+      "hold": 234.9800000000003,
       "jumping": true,
       "afterY": 244,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 230.85555555555555
     },
     {
       "y": 233,
       "prev": 244,
       "vy": -91.33333333333334,
-      "hold": 314.9800000000003,
+      "hold": 316.65,
       "jumping": true,
       "afterY": 233,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 221.44444444444446
     },
     {
       "y": 223,
       "prev": 233,
       "vy": -33.00000000000001,
-      "hold": 394.9800000000003,
+      "hold": 396.6399999999994,
       "jumping": true,
       "afterY": 223,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 216.30555555555554
     },
     {
       "y": 218,
       "prev": 223,
       "vy": 25.33333333333332,
-      "hold": 473.3,
+      "hold": 476.62999999999954,
       "jumping": true,
       "afterY": 218,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 216.16666666666669
     },
     {
       "y": 218,
       "prev": 218,
       "vy": 85.06666666666666,
-      "hold": 551.6300000000003,
+      "hold": 553.2899999999994,
       "jumping": true,
       "afterY": 218,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 220.17777777777778
     },
     {
       "y": 222,
       "prev": 218,
       "vy": 159.73333333333335,
-      "hold": 629.9599999999999,
+      "hold": 629.9599999999991,
       "jumping": true,
       "afterY": 222,
-      "afterJumping": true
+      "afterJumping": true,
+      "bodyBottom": 230.82222222222222
     },
     {
       "y": 233,
       "prev": 222,
-      "vy": 234.40000000000003,
-      "hold": 709.95,
+      "vy": 219.4666666666667,
+      "hold": 706.619999999999,
       "jumping": true,
       "afterY": 231,
-      "afterJumping": false
+      "afterJumping": false,
+      "bodyBottom": 229
     }
   ],
   "rightPlatform": {
@@ -318,7 +325,7 @@
     "hp": 50
   },
   "overBoss": {
-    "x": 3432,
+    "x": 3438,
     "y": 285,
     "hp": 48,
     "alive": true
@@ -327,50 +334,50 @@
     {
       "kind": "warn",
       "hi": true,
-      "t": 45148,
-      "wall": 45157.30000000028
+      "t": 45104.6,
+      "wall": 45120.40000000037
     },
     {
       "kind": "fire",
       "hi": true,
-      "t": 46214.6,
-      "wall": 46229.10000000009
+      "t": 46154.4,
+      "wall": 46167.300000000745
     },
     {
       "kind": "warn",
       "hi": false,
-      "t": 46297.9,
-      "wall": 46304.89999999991
+      "t": 46237.8,
+      "wall": 46248.200000000186
     },
     {
       "kind": "fire",
       "hi": false,
-      "t": 47347.8,
-      "wall": 47354.30000000028
+      "t": 47304.4,
+      "wall": 47321.800000000745
     },
     {
       "kind": "warn",
       "hi": true,
-      "t": 47431.2,
-      "wall": 47441.60000000009
+      "t": 47387.8,
+      "wall": 47397.10000000056
     },
     {
       "kind": "fire",
       "hi": true,
-      "t": 48531.1,
-      "wall": 48543
+      "t": 48504.4,
+      "wall": 48513.800000000745
     },
     {
       "kind": "warn",
       "hi": false,
-      "t": 48597.8,
-      "wall": 48608.89999999991
+      "t": 48571,
+      "wall": 48587.200000000186
     },
     {
       "kind": "fire",
       "hi": false,
-      "t": 49697.8,
-      "wall": 49706.10000000009
+      "t": 49537.7,
+      "wall": 49550
     }
   ],
   "passed": true

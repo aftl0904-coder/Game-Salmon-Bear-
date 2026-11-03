@@ -503,6 +503,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       // rates its previous position can otherwise pull the sprite back below
       // the ledge on the next physics step, undoing this landing.
       body.reset(this.x, top)
+      // reset() initially uses the sprite's top-left rather than the body's
+      // foot offset. Same-frame overlap checks need the actual foot hitbox.
+      body.updateFromGameObject()
+      body.prev.copy(body.position)
+      body.prevFrame.copy(body.position)
       body.setVelocityX(vx)
       body.velocity.y = 0
       body.allowGravity = false

@@ -28,16 +28,16 @@
     },
     "offscreen": [],
     "right": 69,
-    "left": -60,
+    "left": -66,
     "crouch": true,
     "jumpMinVy": -313,
-    "attackCd": 703,
+    "attackCd": 669.6800000000003,
     "weapon": [
       "normal",
       "heavy"
     ],
     "multitouch": {
-      "dx": 133,
+      "dx": 103,
       "jumpMinVy": -313
     },
     "pauseByTouch": true,
@@ -72,17 +72,17 @@
       "start": "40x28"
     },
     "offscreen": [],
-    "right": 69,
+    "right": 75,
     "left": -68,
     "crouch": true,
     "jumpMinVy": -313,
-    "attackCd": 663,
+    "attackCd": 686.3200000000004,
     "weapon": [
       "normal",
       "heavy"
     ],
     "multitouch": {
-      "dx": 129,
+      "dx": 121,
       "jumpMinVy": -313
     },
     "pauseByTouch": true,
@@ -117,17 +117,17 @@
       "start": "36x25"
     },
     "offscreen": [],
-    "right": 66,
-    "left": -71,
+    "right": 71,
+    "left": -62,
     "crouch": true,
     "jumpMinVy": -313,
-    "attackCd": 619.7,
+    "attackCd": 789.6700000000001,
     "weapon": [
       "normal",
       "heavy"
     ],
     "multitouch": {
-      "dx": 150,
+      "dx": 110,
       "jumpMinVy": -313
     },
     "pauseByTouch": true,
