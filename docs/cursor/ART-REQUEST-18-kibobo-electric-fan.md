@@ -9,7 +9,7 @@ as the reference for every later image.
 
 ## Timing
 
-**Start only after the Stage 4 mobile fixes (clear-card touch, 泥鬃 platform, 蜜僵 speed) are
+**Start only after the Stage 4 mobile fixes (clear-card touch, 泥怪 platform, 蜜僵 speed) are
 merged.** Continent 1 is this Christmas's build — don't run both at once.
 
 ## What changes (Alan, 2026-11-03)

@@ -6,7 +6,7 @@ import { actorDepth } from '../engine/depth'
 import { bossHitDamage } from '../engine/bossDamage'
 
 /**
- * Stage 5 · △畝大廈 final boss: △畝大佬 (the man behind the triangle mask). No new jumping
+ * Stage 5 · △畝大廈 final boss: Trinity (the man behind the triangle mask). No new jumping
  * mobs here — the bible calls for "精英" (elite) reskins of the first four stages' own
  * enemies instead (see GameScene.markElite), so this file only has the boss.
  *

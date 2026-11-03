@@ -33,7 +33,7 @@ Tone gets darker:
   - What it is: a walking punch-card time clock with little legs.
   - Sheets: `walk` [4], `tick` [3] (shaking, about to burst), `burst` [4] (papers fly out — also draw a single `paper` FX [3] spinning), `hit` [2], `die` [4].
 
-### Boss → `art-src/anim/boss/mudmane/` **泥鬃（電單車工頭）** (~110 px)
+### Boss → `art-src/anim/boss/mudmane/` **泥怪（電單車工頭）** (~110 px)
 - What it is: a big foreman in a hard hat and a long mud-brown cape with a honey-coloured △ seal on it. He rides a heavy dirt motorbike.
 - `model-sheet.png`
 - Sheets:
@@ -66,7 +66,7 @@ Tone gets darker:
 
 ### Story stills → `art-src/story/` (16:9, no text)
 - `c7-site.png`: the taxi stops at a foggy construction site in the rain; 倫寶, 琪寶寶 and a 30%-coloured 噗噗 look at bulldozed tree stumps.
-- `s4-boss-intro.png`: 泥鬃 revving his motorbike on a muddy ramp under a crane, the △ seal on his cape glowing.
+- `s4-boss-intro.png`: 泥怪 revving his motorbike on a muddy ramp under a crane, the △ seal on his cape glowing.
 
 ---
 
@@ -76,7 +76,7 @@ Tone gets darker:
 - `elite-mark.png` [2]: a small red △ mark (blinking), drawn on magenta. It floats over elite enemies.
   - No new elite sprites are needed; Claude tints and marks the existing ones.
 
-### Boss → `art-src/anim/boss/triboss/` **△畝大佬** (~128 px)
+### Boss → `art-src/anim/boss/triboss/` **Trinity** (~128 px)
 - What it is: a tall businessman in a dark suit with a polished △ mask, a gold tie-pin shaped like a honey drop, and a remote control.
 - `model-sheet.png`
 - Sheets:
@@ -104,7 +104,7 @@ Tone gets darker:
 - `hotspring-heal.png` [3]: a small hot-spring pool with steam (the full-heal point)
 
 ### Story stills → `art-src/story/` (16:9, no text)
-- `c10-unmask.png`: in the control room, △畝大佬 lifts his △ mask in front of a big screen showing a mall blueprint over the forest (no letters).
+- `c10-unmask.png`: in the control room, Trinity lifts his △ mask in front of a big screen showing a mall blueprint over the forest (no letters).
 - `ending-3.png`: sunrise picnic; fully-coloured 噗噗 jumping happily with 倫寶 and 琪寶寶; 咖啡媽媽, the queen bee, the mirror owl and the old foreman wave from the back.
 - (already done, no need to redo: `c6-screen.png`, `c7-boss.png`, `ending-1.png`, `ending-2.png`)
 

@@ -1,0 +1,22 @@
+{
+  "mode": "desktop",
+  "cases": [
+    {
+      "id": "mudmane",
+      "name": "泥怪",
+      "title": "爛泥灣工地發瘟判頭",
+      "hudName": "泥怪",
+      "input": "keyboard"
+    },
+    {
+      "id": "triboss",
+      "name": "Trinity",
+      "title": "派嘢嗰個",
+      "hudName": "Trinity",
+      "input": "keyboard"
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "guide": "HTML text names and role verified; embedded images are separate, historical screenshots"
+}

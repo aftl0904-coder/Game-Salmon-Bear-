@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage 5 boss △畝大佬: art-src/anim/boss/triboss/*.png (flat magenta, 1280×720, one
+"""Stage 5 boss Trinity: art-src/anim/boss/triboss/*.png (flat magenta, 1280×720, one
 combined sheet per action) → public/art/anim/triboss.png + data/anim/triboss.json,
 same atlas format as scripts/art/slice_anim.py (frameWidth/frameHeight/anims).
 

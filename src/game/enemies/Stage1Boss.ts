@@ -8,7 +8,7 @@ import { bossHitDamage } from '../engine/bossDamage'
 /**
  * 武者王 — stage 1's mini-boss at the altar. He is the ordinary 帽仔兵 (the 'hatsoldier'
  * set, so no new art) blown up to 1.5× and given a three-phase fight written the same way as
- * 泥鬃 (Stage4Enemies.ts): qphase, an act state machine in tick(), a weak window with ×3
+ * 泥怪 (Stage4Enemies.ts): qphase, an act state machine in tick(), a weak window with ×3
  * damage, and the same reveal / HP bar / bossEvent plumbing in GameScene.
  *
  *  P1 (100–67%)  barrel throws every 1.8 s, same low/high rhythm the three barrel soldiers teach.

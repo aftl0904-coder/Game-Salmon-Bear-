@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Stage 4 boss 泥鬃: art-src/anim/boss/mudmane/*.png (flat magenta, 1280x720, one combined
+"""Stage 4 boss 泥怪: art-src/anim/boss/mudmane/*.png (flat magenta, 1280x720, one combined
 sheet per action) -> public/art/anim/mudmane.png + data/anim/mudmane.json, same atlas format
 as scripts/art/slice_anim.py / slice_triboss.py.
 
