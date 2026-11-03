@@ -116,5 +116,5 @@ async function run(mode) {
 let exitCode = 0
 try { for (const mode of ['desktop-keyboard', 'mobile-touch']) await run(mode) }
 catch (e) { exitCode = 1; log('RESULT FAIL', e.stack || String(e)) }
-finally { await browser.close(); await writeFile(join(here, 'playwright.log'), logs.join('\n') + '\n') }
+finally { await browser.close(); await writeFile(join(here, 'playwright.txt'), logs.join('\n') + '\n') }
 process.exitCode = exitCode

@@ -13,8 +13,8 @@
 |---|---|---|
 | `npm run build` | PASS，exit 0；存在 Vite config、dynamic import、chunk size 警告 | [`build.txt`](build.txt) |
 | `npm run validate:data` | PASS，9 項 validator、exit 0；該命令並非 ending JSON／圖片內容驗證 | [`validate-data.txt`](validate-data.txt) |
-| 桌面 Chromium 1280×720 鍵盤 | 實際由選單按 R 進入，再按右鍵由 1 至 10；每圖 scene key、顯示、title／counter 正確、HTTP 200；完成後返回選單 | [`playwright.log`](playwright.log)、[十圖總覽](contact-desktop-keyboard.jpg)、[`screenshots/`](screenshots/) |
-| 模擬 Android 橫向 844×390 touch | 觸控選單結局按鈕及「下一張」，1 至 10 次序正確，其他檢查同上；完成後返回選單 | [`playwright.log`](playwright.log)、[十圖總覽](contact-mobile-touch.jpg)、[`screenshots/`](screenshots/) |
+| 桌面 Chromium 1280×720 鍵盤 | 實際由選單按 R 進入，再按右鍵由 1 至 10；每圖 scene key、顯示、title／counter 正確、HTTP 200；完成後返回選單 | [`playwright.txt`](playwright.txt)、[十圖總覽](contact-desktop-keyboard.jpg)、[`screenshots/`](screenshots/) |
+| 模擬 Android 橫向 844×390 touch | 觸控選單結局按鈕及「下一張」，1 至 10 次序正確，其他檢查同上；完成後返回選單 | [`playwright.txt`](playwright.txt)、[十圖總覽](contact-mobile-touch.jpg)、[`screenshots/`](screenshots/) |
 | 截圖圖像匹配 | 從兩組共 20 張實際 canvas 截圖的畫面裁取結局圖片，對全部 10 個候選原 PNG 以 80×45 RGB mean-squared error 排序，每張最接近預期圖 | [`render-match.txt`](render-match.txt)、[`verify-render.py`](verify-render.py) |
 
 截圖是執行時 Phaser 畫布，不是直接拼貼素材；contact sheet 由這 20 張獨立截圖縮放排列而成，檔案校驗值見 [`screenshot-sha256.txt`](screenshot-sha256.txt)。Playwright 記錄無 pageerror／requestfailed；十個圖片請求每個狀態 200。Playwright 1.49.0，headless Chromium 156.0.8078.47，Node v22.23.4；手機以 `isMobile`、`hasTouch` 同 Android user agent 模擬，唔係實體電話。
