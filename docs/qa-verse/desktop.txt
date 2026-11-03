@@ -1,0 +1,1 @@
+PASS {"mode":"desktop","cases":[{"screen":"map","startStage":3,"selectedStage":2,"text":"「我兒，你要吃蜜，因為是好的。吃蜂房下滴的蜜，\n便覺甘甜。」\n— 箴言 24:13","width":230},{"screen":"stage6-card","text":"「基督釋放了我們，叫我們得自由，\n所以要站立得穩，不要再被奴僕的軛挾制。」\n— 加拉太書 5:1","width":260,"height":60}],"errors":[],"passed":true}
