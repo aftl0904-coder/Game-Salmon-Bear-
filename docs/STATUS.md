@@ -3,8 +3,8 @@
 ## 2026-11-04 補充：大陸2第6關方案／集中美術批次
 
 - 本文件分支由重新核對的 `origin/main` `077af8b14b34b3e26d776e36705772fdd691639b` 建立；只寫文件及保存 QA，未改程式或遊戲數據。大陸2開場原文另由獨立分支實作，本分支不碰其檔案。
-- Alan 已確認第6關小怪改成原創人類保安（不得以蜜僵動畫換色），Boss 改成有掃描鏡頭及轉刷的原創大型商場洗地機，偵測後先預警、衝撞或近身轉刷，每輪留反擊空檔，後期加快但可避；不影響第7關馴獸師。行為數值、外觀、三階段及故事候選均在 [`bible/c2-stage1-security-cleaner-proposal.md`](bible/c2-stage1-security-cleaner-proposal.md) 標示為待 Alan 確認，未授權實作。
-- 集中 Cursor 素材見 [`cursor/ART-REQUEST-20-c2-original-batch.md`](cursor/ART-REQUEST-20-c2-original-batch.md)：第7關產品化蜜僵、FX、背景及固定物可先畫；馴獸師可先提概念、造型確認後再定稿。第6關需先確認細部外觀與動作，缺 brief 的第8–10關及批准狀態不明舊項目不得開畫。#88 `manus/c2-stage2-20261104` 是未合併 draft；其 ART-19 僅作第7關美術交接來源。第7關 D 噗噗反應、馴獸師 Boss 卡、離隊提示均 **待補**。
+- Alan 已確認第6關小怪改成原創人類保安（不得以蜜僵動畫換色），Boss 改成有掃描鏡頭及轉刷的原創大型商場洗地機，偵測後先預警、衝撞或近身轉刷，每輪留反擊空檔，後期加快但可避；不影響第7關馴獸師。已確認造型：保安深藍制服及帽；洗地機銀灰深藍、前方鏡頭及轉刷；第7關馴獸師棕綠工作服、鞭或繩。餘下造型細節由 Cursor 發揮。行為數值、三階段及故事候選仍在 [`bible/c2-stage1-security-cleaner-proposal.md`](bible/c2-stage1-security-cleaner-proposal.md) 標示為待 Alan 確認，未授權實作。
+- 集中 Cursor 素材見 [`cursor/ART-REQUEST-20-c2-original-batch.md`](cursor/ART-REQUEST-20-c2-original-batch.md)：第6關保安、洗地機，以及第7關馴獸師、產品化蜜僵、FX、背景及固定物可按確認方向一次製作；缺 brief 的第8–10關及批准狀態不明舊項目不得開畫。#88 `manus/c2-stage2-20261104` 是未合併 draft；其 ART-19 僅作第7關美術交接來源。第7關 D 噗噗反應、馴獸師 Boss 卡、離隊提示均 **待補**。
 - 按 Alan 要求，方案 §4 補上第6關 A–E 及前往第7關的候選故事／動作／對白；全屬待確認草稿，未改已確認的開場原文。大陸2開場實作見 draft #90，並非已合併或上線。
 - 本次 baseline build、9 項 data validation、桌面雙人鍵盤及模擬手機 P1 touch 落台 smoke 通過；使用注入測試點，未測第6關新設計／第7關、真機、真人通關及手感。證據與限制見 `docs/qa-c2-planning/`。
 
@@ -32,7 +32,7 @@
 - 第7至10關新增窿時，沿用 #78 `drawTerrainFeatures()` 的深色窿、兩側邊線及在窿口中斷嘅地面頂邊亮線；以 #78 合併後版本為基線。
 ## 4. 下一步次序
 1. **大陸1優先**：Alan 親測第5關 Boss 羽毛安全位過遠、合照太快；已定位潛在原因。預警／安全位及合照停留時間方案尚待 Alan 確認，不擅自改數值。
-2. **大陸2第1關**：開場對白 draft #90；人類保安及洗地機 Boss 方案／美術批次 draft #89，細部及故事建議先等 Alan 確認。
+2. **大陸2第1關**：開場對白 draft #90；人類保安及洗地機 Boss 方案／美術批次 draft #89，已確認造型可交 Cursor；戰鬥數值及其他故事建議先等 Alan 確認。
 3. **成長點數及大陸2其餘關卡**：成長系統獨立 PR，開局配點數與其餘未定細節先確認；第7關實作 draft #88 QA 未完成；第8–10關缺 brief，第10關完成時接 `markC2Cleared()`。
 ## 5. 主選單兩階段（Alan 已確認）
 - PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
