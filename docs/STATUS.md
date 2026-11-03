@@ -3,10 +3,11 @@
 ## 1. 現況
 
 - `main`：`17930a0369a9f177e91372a2456a41da19bd377f`（#65、#70 已合併）。
-- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）及草稿 [#73](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/73)（ART-18 風扇）。
+- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）、草稿 [#73](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/73)（ART-18 風扇）及 [#74](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/74)（2P 落台 QA）。
 - 地圖 code branch 疊住已合併嘅 #65，亦包含 #67 地圖美術 commit；#67 同 #68 嘅 diff 有重疊。
 - #73 與 `main` 三方合併預檢無文字衝突；`frameHeight` 由 178 改 180，與 ART-18 原 brief「cell size 不變」不同，待 Claude 審及遊戲內驗證；未改 Cursor branch。
-- [#70](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/70) 第4關修復已合併至 `17930a0`。第1、2、3、5關各抽一處高台，兩角色各自以單人模式嘅模擬手機 touch 同桌面鍵盤回歸通過；第4關物理、手機轉場、桌面及第6關 smoke 已重跑。未真機或完整打泥鬃，亦未涵蓋各關所有平台；釘槍節奏待日後評估。真正雙人模式落台回歸另開 PR。
+- [#70](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/70) 第4關修復已合併至 `17930a0`。第1、2、3、5關各抽一處高台，兩角色各自以單人模式嘅模擬手機 touch 同桌面鍵盤回歸通過；第4關物理、手機轉場、桌面及第6關 smoke 已重跑。未真機或完整打泥鬃，亦未涵蓋各關所有平台；釘槍節奏待日後評估。
+- #74 補真正 2P 場景：第1至5關各抽一處，桌面兩人同時鍵盤落台通過；手機 P1 純 touch、P2 同場靜止通過。現有遊戲沒有 P2 屏幕 touch 控制，P2 要鍵盤或第二個手掣；未真機及未測完整對戰。
 - 對 Claude 疑問的靜態核對：`shop.ts` 鍵盤處理包含 Enter 離開；`GameScene.ts` 敵人更新會呼叫共用 `keepEnemyOnTerrain`，蜜僵的 CHASE 狀態遇坑受阻約 700ms 後可觸發跳坑。未因核對而重跑遊戲。
 
 ## 2. 分工同 branch
@@ -26,7 +27,7 @@
 
 ## 4. 下一步次序
 
-1. 從最新 `main` 開獨立 branch，補雙人模式落台自動回歸。
+1. Claude 審 #74 雙人模式落台自動回歸，並留意手機 P2 touch 限制。
 2. Claude 審草稿 #71 嘅窿／地面方案；待 Alan 明確確認先實作。
 3. #72 修復經文斷行，已做文字、手機及桌面自動測試，待 Claude 審閱；與 #68 同改 `WorldMapScene.ts`，整合後需再驗證。
 4. 處理 Cursor 的 #67、#68；只按 Alan 明確指示合併。
