@@ -35,5 +35,5 @@
 
 - PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
 - PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 及實作 [#82](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82) 已合併（#82 `1f29d26`）。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**請只開一個分頁**：兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
-- 大陸2第2關（內部第7關）A–E brief 原文及問題清單在 [#83](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/83)，Claude 已審閱並提供答覆，見 `docs/bible/c2-stage2-answers.md`；本次文件補充後請 Claude 核對。#83 合併及設計細則經 Alan 確認前不開始實作。
-- 噗噗第7關 D 段只反應，擊敗 Boss 後離隊；**返隊時間待 Alan 日後決定，第7關不實作返隊**。第7關存檔級 once 嘅新本局與支線範圍待釐清（第6關籠子 once 只屬單次場景）；噗噗台詞、馴獸師 Boss 卡和離隊提示文字均待 Alan 拍板，不可自行補寫。
+- 大陸2第2關（內部第7關）A–E brief 原文及問題清單在 [#83](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/83)；Alan 已確認 Claude 答覆第3–9項同噗噗離隊旗標方案。等 Alan 指示合併 #83 後先開始實作；細節見 `docs/bible/c2-stage2-answers.md`。
+- 噗噗第7關 D 段只反應，擊敗 Boss 後離隊；旗標跟主線本局，支線事件不寫存檔。**返隊時間待 Alan 日後決定，第7關不實作返隊**。噗噗台詞、馴獸師 Boss 卡和離隊提示文字均待 Alan 拍板，不可自行補寫。
