@@ -2,8 +2,8 @@
 
 ## 1. 現況
 
-- 本次更新基於 `main` `eb91ae3`（合併 #78）。
-- 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇、#78 窿辨識。
+- 本次更新基於 `main` `ec6da2e`（合併 #80）。
+- 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇、#78 窿辨識、#80 主選單 PR1。
 - [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 窿辨識方案草稿已按 Alan 確認關閉，branch 保留。[#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78) 已合併（`eb91ae3`）；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未真機及完整泥鬃戰測試。#73 獨立 `fan-glide` 未喺遊戲驗證。#74 未測真機及完整對戰。
 
@@ -31,6 +31,6 @@
 
 ## 5. 主選單兩階段（Alan 已確認）
 
-- PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80)，封面／攻略互返、大陸入口及資料驅動的結局重溫佔位卡；build、資料驗證及手機／桌面自動 QA 通過，等 Claude 審。第10關完成旗標尚未接線，未真機或完整通關。
-- PR2：本局存檔、地圖攜帶標記、基準隔離及排名；成長點數另開 PR。由任一大陸第一關開始可選擇帶／不帶，直接選其他關開始則一律不帶。細節見 `docs/bible/menu-save-decisions.md`。
+- PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
+- PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) Claude 已審，排名規則 Alan 已確認；#81 待 Alan 明確指示合併，之後才開工 PR2。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
 - 大陸2第2關 A–E brief 等 Alan 上載；三項待拍板文字不能自行補寫。
