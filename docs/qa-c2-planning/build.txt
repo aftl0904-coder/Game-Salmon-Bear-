@@ -1,0 +1,27 @@
+
+> sake-kuma@0.0.0 build
+> tsc && vite build
+
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:23:28). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+vite v8.3.5 building client environment for production...
+transforming...
+[32m✓[0m 152 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[0m[32mindex.html                    [0m[1;2m    2.55 kB[0m[2m │ gzip:   1.38 kB[0m
+[2mdist/[0m[32mbible.html                    [0m[1;2m    2.62 kB[0m[2m │ gzip:   1.18 kB[0m
+[2mdist/[0m[2massets/[0m[35mgameData-CXPXAs2h.css  [0m[1;2m    1.85 kB[0m[2m │ gzip:   0.79 kB[0m
+[2mdist/[0m[2massets/[0m[36mbible-BGePqiKL.js      [0m[1;2m    9.86 kB[0m[2m │ gzip:   3.55 kB[0m
+[2mdist/[0m[2massets/[0m[36mgameData-CrIjd51t.js   [0m[1;2m   11.84 kB[0m[2m │ gzip:   5.62 kB[0m
+[2mdist/[0m[2massets/[0m[36mmain-Dy4JxFBw.js       [0m[33;1m1,903.58 kB[0m[2m │ gzip: 529.42 kB[0m
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/game/audio.ts is dynamically imported by src/main.ts but also statically imported by src/game/BikeScene.ts, src/game/ClawScene.ts, src/game/CreditsScene.ts, src/game/DifficultyScene.ts, src/game/GachaScene.ts, ..., dynamic import will not move module into another chunk.
+
+[plugin builtin:vite-reporter] [33;1m
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[0m
+✓ built in 1.29s

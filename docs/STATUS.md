@@ -1,5 +1,12 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## 2026-11-04 補充：大陸2第6關方案／集中美術批次
+
+- 本文件分支由重新核對的 `origin/main` `077af8b14b34b3e26d776e36705772fdd691639b` 建立；只寫文件及保存 QA，未改程式或遊戲數據。大陸2開場原文另由獨立分支實作，本分支不碰其檔案。
+- Alan 已確認第6關小怪改成原創人類保安（不得以蜜僵動畫換色），Boss 改成有掃描鏡頭及轉刷的原創大型商場洗地機，偵測後先預警、衝撞或近身轉刷，每輪留反擊空檔，後期加快但可避；不影響第7關馴獸師。行為數值、外觀、三階段及故事候選均在 [`bible/c2-stage1-security-cleaner-proposal.md`](bible/c2-stage1-security-cleaner-proposal.md) 標示為待 Alan 確認，未授權實作。
+- 集中 Cursor 素材見 [`cursor/ART-REQUEST-20-c2-original-batch.md`](cursor/ART-REQUEST-20-c2-original-batch.md)：第7關可按已確認 brief 先畫；第6關需先確認細部外觀與動作，缺 brief 的第8–10關及批准狀態不明舊項目不得開畫。#88 `manus/c2-stage2-20261104` 是未合併 draft；其 ART-19 僅作第7關美術交接來源。第7關 D 噗噗反應、馴獸師 Boss 卡、離隊提示均 **待補**。
+- 本次 baseline build、9 項 data validation、桌面雙人鍵盤及模擬手機 P1 touch 落台 smoke 通過；使用注入測試點，未測第6關新設計／第7關、真機、真人通關及手感。證據與限制見 `docs/qa-c2-planning/`。
+
 ## 1. 現況
 
 - 本次更新基於 `main` `c6654ef`（合併 #83）。
@@ -38,6 +45,6 @@
 
 ## 6. 大陸2結局圖
 
-- Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 為 draft，尚未合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
+- Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 已合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；不重畫結局十圖，凍結 Cursor branch 並維持一人一 branch。
 - 獨立 QA [#86](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/86) 只含測試證據，沒有重複 #85 素材。以 #83 merge `c6654ef` 加 #85 head `ccbc100` 在 detached worktree 合併預覽，無衝突；build、9 項資料驗證以及 Playwright 桌面鍵盤／模擬手機 touch 逐張重溫 1–10 通過。測試透過 localStorage 直接解鎖，並非真人完整通關或真機測試；第10關完成時仍要接 `markC2Cleared()` 自動解鎖。證據在 `docs/qa-ending-c2/preview-qa/`。
 - 預告片 #87 按 Alan 指示暫停製作，不因結局圖 QA 通過而視為獲接納。
