@@ -4,7 +4,7 @@
 
 - 本 branch 基於 `main` `285ae63`（合併 #74）。
 - 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇。
-- [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 為窿辨識方案草稿；未經 Alan 同意唔 close。窿辨識實作另開 `manus/pit-visibility-20261103`。
+- [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 為窿辨識方案草稿；未經 Alan 同意唔 close。實作在 [#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78)，待 Claude 審；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未真機及完整泥鬃戰測試。#73 獨立 `fan-glide` 未喺遊戲驗證。#74 未測真機及完整對戰。
 
 ## 2. 分工同 branch
@@ -24,5 +24,5 @@
 
 ## 4. 下一步次序
 
-1. 窿辨識實作及手機／桌面自動 QA，交 Claude 審。
+1. Claude 審 #78 窿辨識實作及手機／桌面自動 QA。
 2. 按已確認故事大綱處理主選單及存檔。
