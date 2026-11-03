@@ -5,6 +5,9 @@
 - 最新 `main`：`0014e63352a56e1b54bc1ec36a397b96aedca75d`（合併 #76）。
 - 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#70 第4關修復、#73 電風扇美術、#75 電風扇 QA、#76 地圖預覽 QA。
 - 未合併：[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69) 狀態文件、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 窿／地面方案、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72) 經文斷行、[#74](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/74) 雙人落台 QA。
+- #69（測試時 head `c28b039`）與 `0014e63` 無衝突，build 和資料驗證通過；原手機及桌面自動化 QA 用舊 main `dfd4413`，未於本次重新運行。
+- #72 與 `0014e63` 在 `src/game/WorldMapScene.ts` 有衝突，最新合併預覽尚未 build 或測試；原有文字／模擬手機／桌面測試基於舊 main，不能代表整合後通過。
+- #74 與 `0014e63` 無衝突，build 和資料驗證通過；原手機及桌面落台 QA 用舊 main `17930a0`，未於本次重新運行。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未做真機及完整泥鬃戰測試。#73 風口實際播 `fan-float`，獨立 `fan-glide` 未喺遊戲驗證。
 - #74 舊版測試：第1至5關各抽一處，桌面兩人同時鍵盤落台通過；手機 P1 純 touch、P2 同場靜止通過。遊戲沒有 P2 屏幕 touch 控制；未真機及完整對戰。
 
