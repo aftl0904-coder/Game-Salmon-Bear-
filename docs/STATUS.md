@@ -3,8 +3,9 @@
 ## 1. 現況
 
 - `main`：`17930a0369a9f177e91372a2456a41da19bd377f`（#65、#70 已合併）。
-- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）及 [#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）。
+- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）及草稿 [#73](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/73)（ART-18 風扇）。
 - 地圖 code branch 疊住已合併嘅 #65，亦包含 #67 地圖美術 commit；#67 同 #68 嘅 diff 有重疊。
+- #73 與 `main` 三方合併預檢無文字衝突；`frameHeight` 由 178 改 180，與 ART-18 原 brief「cell size 不變」不同，待 Claude 審及遊戲內驗證；未改 Cursor branch。
 - [#70](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/70) 第4關修復已合併至 `17930a0`。第1、2、3、5關各抽一處高台，兩角色各自以單人模式嘅模擬手機 touch 同桌面鍵盤回歸通過；第4關物理、手機轉場、桌面及第6關 smoke 已重跑。未真機或完整打泥鬃，亦未涵蓋各關所有平台；釘槍節奏待日後評估。真正雙人模式落台回歸另開 PR。
 - 對 Claude 疑問的靜態核對：`shop.ts` 鍵盤處理包含 Enter 離開；`GameScene.ts` 敵人更新會呼叫共用 `keepEnemyOnTerrain`，蜜僵的 CHASE 狀態遇坑受阻約 700ms 後可觸發跳坑。未因核對而重跑遊戲。
 
