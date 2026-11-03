@@ -4,21 +4,22 @@
 
 - 本文件分支由重新核對的 `origin/main` `077af8b14b34b3e26d776e36705772fdd691639b` 建立；只寫文件及保存 QA，未改程式或遊戲數據。大陸2開場原文另由獨立分支實作，本分支不碰其檔案。
 - Alan 已確認第6關小怪改成原創人類保安（不得以蜜僵動畫換色），Boss 改成有掃描鏡頭及轉刷的原創大型商場洗地機，偵測後先預警、衝撞或近身轉刷，每輪留反擊空檔，後期加快但可避；不影響第7關馴獸師。行為數值、外觀、三階段及故事候選均在 [`bible/c2-stage1-security-cleaner-proposal.md`](bible/c2-stage1-security-cleaner-proposal.md) 標示為待 Alan 確認，未授權實作。
-- 集中 Cursor 素材見 [`cursor/ART-REQUEST-20-c2-original-batch.md`](cursor/ART-REQUEST-20-c2-original-batch.md)：第7關可按已確認 brief 先畫；第6關需先確認細部外觀與動作，缺 brief 的第8–10關及批准狀態不明舊項目不得開畫。#88 `manus/c2-stage2-20261104` 是未合併 draft；其 ART-19 僅作第7關美術交接來源。第7關 D 噗噗反應、馴獸師 Boss 卡、離隊提示均 **待補**。
+- 集中 Cursor 素材見 [`cursor/ART-REQUEST-20-c2-original-batch.md`](cursor/ART-REQUEST-20-c2-original-batch.md)：第7關產品化蜜僵、FX、背景及固定物可先畫；馴獸師可先提概念、造型確認後再定稿。第6關需先確認細部外觀與動作，缺 brief 的第8–10關及批准狀態不明舊項目不得開畫。#88 `manus/c2-stage2-20261104` 是未合併 draft；其 ART-19 僅作第7關美術交接來源。第7關 D 噗噗反應、馴獸師 Boss 卡、離隊提示均 **待補**。
+- 按 Alan 要求，方案 §4 補上第6關 A–E 及前往第7關的候選故事／動作／對白；全屬待確認草稿，未改已確認的開場原文。大陸2開場實作見 draft #90，並非已合併或上線。
 - 本次 baseline build、9 項 data validation、桌面雙人鍵盤及模擬手機 P1 touch 落台 smoke 通過；使用注入測試點，未測第6關新設計／第7關、真機、真人通關及手感。證據與限制見 `docs/qa-c2-planning/`。
 
 ## 1. 現況
 
-- 本次更新基於 `main` `c6654ef`（合併 #83）。
+- 本次更新基於 `main` `077af8b`（合併 #86）；下方其他歷史紀錄保留原有驗證時間。
 - 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇、#78 窿辨識、#80 主選單 PR1、#81 存檔方案、#82 存檔實作、#83 大陸2第2關 brief。
 - [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 窿辨識方案草稿已按 Alan 確認關閉，branch 保留。[#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78) 已合併（`eb91ae3`）；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未真機及完整泥鬃戰測試。#73 獨立 `fan-glide` 未喺遊戲驗證。#74 未測真機及完整對戰。
 
 ## 2. 分工同 branch
 
-- Alan：決定設計同合併；遊戲完成前不親自試玩。
-- Manus：寫 code、跑自動化 QA、開獨立 branch／PR。
-- Claude：對 diff 審 PR、記錄設計決定及寫 brief；唔寫 code。
+- Alan：決定設計、合併及何時親自試玩。
+- Manus：寫 code、跑自動化 QA、開獨立 branch／PR；Claude 休息時按 Alan 指示兼顧規劃及審核。
+- Claude：平時對 diff 審 PR、記錄設計決定及寫 brief；唔寫 code。
 - Cursor：地圖雙人風扇 #77 已合併；`cursor/` branch 凍結，改內容須先經 Alan 批准。一條 branch 只由一個人改。
 
 ## 3. 已確認決定
@@ -29,15 +30,11 @@
 - 手機 2P：Alan 唔會兩人同機用手機玩，**唔做 P2 touch 控制**。
 - 第1至6關窿辨識：採用 #71 的 A＋B；窿內加深、兩側高對比邊線、地面頂邊連續亮邊但窿口中斷。只改外觀，不改碰撞、坑寬、平台或敵人。
 - 第7至10關新增窿時，沿用 #78 `drawTerrainFeatures()` 的深色窿、兩側邊線及在窿口中斷嘅地面頂邊亮線；以 #78 合併後版本為基線。
-
 ## 4. 下一步次序
-
-1. **主選單及存檔**：#80、#82 已合併；成長點數另開 PR，細節不清楚須先確認。
-2. **大陸2第2關（森友展銷中心）**：Claude 整理 A–E 已確認 brief 並交代來源，Cursor 做原創美術，Manus 實作；欠缺或未確認嘅設計先由 Alan 決定。
-3. **大陸2第3–5關 brief**：Claude 整理故事及分關 brief，Alan 確認未決設計，Cursor 做原創美術，Manus 按關卡次序實作；第10關完成時接現有 `markC2Cleared()`。
-
+1. **大陸1優先**：Alan 親測第5關 Boss 羽毛安全位過遠、合照太快；已定位潛在原因。預警／安全位及合照停留時間方案尚待 Alan 確認，不擅自改數值。
+2. **大陸2第1關**：開場對白 draft #90；人類保安及洗地機 Boss 方案／美術批次 draft #89，細部及故事建議先等 Alan 確認。
+3. **成長點數及大陸2其餘關卡**：成長系統獨立 PR，開局配點數與其餘未定細節先確認；第7關實作 draft #88 QA 未完成；第8–10關缺 brief，第10關完成時接 `markC2Cleared()`。
 ## 5. 主選單兩階段（Alan 已確認）
-
 - PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
 - PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 及實作 [#82](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82) 已合併（#82 `1f29d26`）。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**請只開一個分頁**：兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
 - 大陸2第2關（內部第7關）A–E brief 原文及問題清單在 [#83](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/83)，已合併（`c6654ef`）；Alan 已確認 Claude 答覆第3–9項同噗噗離隊旗標方案。細節見 `docs/bible/c2-stage2-answers.md`。

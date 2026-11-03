@@ -14,17 +14,17 @@ From: Manus → Cursor；2026-11-04。基於 main `077af8b`。**一次集中交�
 
 | 優先 | 狀態及可以做甚麼 | 來源 |
 |---|---|---|
-| P0 | **可先畫第7關原創馴獸師、產品化蜜僵、鞭／鏈網 FX、A–E 背景及靜態 props**，按 §1 已有 brief；完成仍需 Alan 審美術。不能補任何未定對白。 | main `c2-stage2-brief.md`、`c2-stage2-answers.md`；未合併 #88 的 ART-19 素材規格。 |
+| P0 | **可先畫第7關產品化蜜僵、鞭／鏈網 FX、A–E 背景及靜態 props**；馴獸師可先提概念，具體服裝未確認前不做定稿或整套動作。完成仍需 Alan 審美術，不補未定對白。 | main `c2-stage2-brief.md`、`c2-stage2-answers.md`；未合併 #88 的 ART-19 素材規格。 |
 | P1 | 第6關人類保安及大型洗地機的身份、原創要求、洗地機鏡頭／轉刷、偵測預警及攻擊方向已確認；**制服／機體設計、顏色與具體動作未獲確認，§2 列完整待畫清單但先停，請 Alan 拍板後才按核准版本開畫。** | Alan 本次指示；`docs/bible/c2-stage1-security-cleaner-proposal.md`。 |
 | 核對 | 其他舊請求及第8–10關只列 §3，不可擅自開畫、重畫或把有檔名當批准。 | main 實際樹及各舊 brief。 |
 
-## 1. 第7關（大陸2第2關）——可先畫的已確認素材
+## 1. 第7關（大陸2第2關）——可先畫的素材與待確認角色
 
 設計及動作規格來源：`/tmp/salmon-c2-stage2-impl/docs/cursor/ART-REQUEST-19-c2-stage2.md`（#88 的未合併檔；如 Cursor 無法看到該路徑，可依本節，不需要 checkout 或修改 #88）。延續 main 的 `c2-stage2-brief.md` / `c2-stage2-answers.md`：籠／鏈／網是靜態布景，Boss 的飛行鏈網才是攻擊 FX。所有名稱下的檔案皆為**PNG 原圖**。無任何物件需要改程式或數據。
 
 ### P0-A 馴獸師 Boss，原創角色，非第6關洗地機
 
-`art-src/anim/boss/c2-trainer/`；大小、朝向、基線、動作密度參考現有 `art-src/anim/boss/triboss/` 及 `data/anim/triboss.json`（只參考切格，**不可畫成同一人物**）。原創訓練場管理人，鞭／繩輪廓可辨；具體色彩、服裝細節待 Alan 確認，若沒有足夠清楚的設定，先提交待確認，不自行定案。
+`art-src/anim/boss/c2-trainer/`；大小、朝向、基線、動作密度參考現有 `art-src/anim/boss/triboss/` 及 `data/anim/triboss.json`（只參考切格，**不可畫成同一人物**）。原創訓練場管理人，鞭／繩輪廓可辨；具體色彩、服裝細節待 Alan 確認。可以先交概念草稿供確認，**不要在確認前定稿或畫整套角色動作**。
 
 | 檔案 | 動作／用途 | 優先 |
 |---|---|---|
