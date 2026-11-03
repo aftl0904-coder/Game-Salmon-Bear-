@@ -1405,7 +1405,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top fan on back city bike. Same 72px scale."
+    "prompt": "琪寶寶 bike-ride 4 frames magenta facing RIGHT. Cream top blue electric fan on back city bike. Same 72px scale."
   },
   {
     "file": "art-src/anim/kibobo/crouch.png",
@@ -1421,7 +1421,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Open fan overhead updraft lift. Same 72px scale."
+    "prompt": "琪寶寶 fan-float 3 frames magenta facing RIGHT. Blue electric fan overhead updraft lift. Same 72px scale."
   },
   {
     "file": "art-src/anim/kibobo/fan-glide.png",
@@ -1429,7 +1429,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 fan-glide: high float fan overhead, mid descent, near land squat. OPEN paper fan held overhead. 琪寶寶 locked cream top. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 fan-glide: high float fan overhead, mid descent, near land squat. blue electric fan held overhead. 琪寶寶 locked cream top. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
     "file": "art-src/anim/kibobo/hurt.png",
@@ -1445,7 +1445,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 idle breathe. 琪寶寶 locked: high ponytail purple tie, cream top, dark slim trousers, purple sneakers, sword, paper fan on BACK. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 3 idle breathe. 琪寶寶 locked: high ponytail purple tie, cream top, dark slim trousers, purple sneakers, sword, blue electric fan on back. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
     "file": "art-src/anim/kibobo/jump.png",
@@ -1469,7 +1469,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET on magenta #FF00FF. 琪寶寶: young woman, long dark hair HIGH PONYTAIL, cream/pastel short top (not purple), dark slim trousers, sneakers, short straight sword, round paper fan with ribs+tassel on back. Four views: front, side RIGHT, back showing fan, 3/4. Native 72px 8× NN. Refs: salmon-boy.png, heroes.png, kibobo-poses.png."
+    "prompt": "Top-tier 16-bit SNES pixel art MODEL SHEET on magenta #FF00FF. 琪寶寶: young woman, long dark hair HIGH PONYTAIL, cream/pastel short top (not purple), dark slim trousers, sneakers, short straight sword, blue handheld electric fan (round guard grille, light-blue/white blades, short handle; on back via strap). Four views: front, side RIGHT, back showing fan, 3/4. Native 72px 8× NN. Refs: salmon-boy.png, heroes.png, kibobo-poses.png."
   },
   {
     "file": "art-src/anim/kibobo/moto-jump.png",
@@ -1493,7 +1493,7 @@
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 DISTINCT run frames, ponytail/tassel follow-through. 琪寶寶 locked cream top + sword + fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 5 DISTINCT run frames, ponytail/tassel follow-through. 琪寶寶 locked cream top + sword + electric fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
     "file": "art-src/anim/kibobo/slash1.png",
@@ -1501,7 +1501,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash1 horizontal: wind-up, smear slash, follow-through, recover. 琪寶寶 locked cream top sword fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Side RIGHT. 4 slash1 horizontal: wind-up, smear slash, follow-through, recover. 琪寶寶 locked cream top sword electric fan. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
     "file": "art-src/anim/kibobo/slash2.png",
@@ -1525,7 +1525,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Facing RIGHT. 3 win: smile ready, raise sword/fan cheer, hold victory. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
+    "prompt": "16-bit SNES pixel art SPRITE SHEET magenta #FF00FF. Facing RIGHT. 3 win: smile ready, raise sword/electric fan cheer, hold victory. 琪寶寶 locked. Native 72px 8× NN. Refs: kibobo/model-sheet.png."
   },
   {
     "file": "art-src/anim/lunbo/bike-jump.png",
@@ -3085,7 +3085,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "front",
-    "prompt": "16:9 title key art: 倫寶 orange hoodie salmon gun + 琪寶寶 cream top sword fan + 噗噗 original bear before 百畝樹林 golden hour faint triangle shadow; top 35% empty for logo; NO TEXT. Refs model-sheets."
+    "prompt": "16:9 title key art: 倫寶 orange hoodie salmon gun + 琪寶寶 cream top sword electric fan + 噗噗 original bear before 百畝樹林 golden hour faint triangle shadow; top 35% empty for logo; NO TEXT. Refs model-sheets."
   },
   {
     "file": "art-src/story/credits-bg.png",
