@@ -12,3 +12,9 @@
 
 ## 結局底圖（art-src/story/ending-c2/plates/，1280×720，無人物）
 P1 枯綠化牆窗前（#1）｜P2 記者會台（#2）｜P3 商場天台（#3）｜P4 商場廣場（枯）（#4、#5、#6、#10 共用鏡位）｜P5 夕陽森林邊（#7、#8、#9）。
+
+## Alan 已揀：Ken B、大熊 A（2026-11-03）
+- 正式角色圖：`art-src/story/ending-c2/ken-model-sheet.png`、`bear-big-caged-sheet.png`
+- 結局圖 #1–#4：`art-src/story/ending-c2-01..04.png` → `public/art/story/ending-c2-0N.png`，`data/ending-c2.json` 嘅 `image` 已填 #1–#4（只改呢四個欄位）。
+- #2 講者：資料檔冇寫邊個宣佈，所以畫成背向、睇唔到樣嘅剪影。
+- #5–#10 等守護者／親人／朋友名單同 #7 大合照定大野餐確認。
