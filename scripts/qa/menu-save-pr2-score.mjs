@@ -13,9 +13,10 @@ try{
  await page.goto(BASE);await page.waitForFunction(()=>window.__SAKE_GAME__?.scene.isActive('logo'),null,{timeout:30000});await page.waitForTimeout(1800)
  await page.evaluate(async()=>{
    localStorage.setItem('sake-kuma-gear-v1',JSON.stringify({boy:{gun:1},girl:{}}))
+   localStorage.setItem('sake-kuma-progress-v1',JSON.stringify({maxStage:2}))
    const r=await import('/src/game/run.ts'),game=window.__SAKE_GAME__
    game.registry.set('difficulty','normal');game.registry.set('stageRound',1)
-   r.startNewRun(1,true,'1p','boy',game.registry)
+   r.getRun();r.resumeMain(game.registry)
    for(const s of game.scene.getScenes(true))game.scene.stop(s.scene.key)
    game.scene.start('play')
  })
@@ -30,14 +31,18 @@ try{
    const reset=()=>localStorage.removeItem('sake-kuma-scores-v1')
    const prepare=()=>{s.ended=false;s.started=true;s.bossOn=true;s.boyGoal=true;s.girlGoal=true;for(const e of s.enemies.getChildren())if(e.boss)e.active=false}
    const rank=s.clearRank(3,6)
+   const legacyGun=g.activeGear().boy.gun
+   reset();s.queenDefeated();prepare();s.checkWin();const legacy=count()
+   r.startNewRun(1,true,'1p','boy',game.registry);s.ended=false
    reset();s.queenDefeated();prepare();s.checkWin();const ineligible=count(),rankIneligible=s.clearRank(3,6)
    r.startNewRun(1,false,'1p','boy',game.registry);reset();s.ended=false;s.queenDefeated();prepare();s.checkWin();const baseline=count()
    r.startNewRun(6,true,'1p','boy',game.registry);reset();s.ended=false;s.queenDefeated();const zeroCarry=count()
    g.buy('boy','gun');s.ended=false;s.queenDefeated();const laterGear=count()
    r.startNewRun(6,true,'1p','boy',game.registry);reset();s.ended=false;s.queenDefeated();prepare();s.checkWin();const c2Nonzero=count()
-   return{rank,rankIneligible,ineligible,baseline,zeroCarry,laterGear,c2Nonzero,validScores}
+   return{rank,rankIneligible,legacy,legacyGun,ineligible,baseline,zeroCarry,laterGear,c2Nonzero,validScores}
  })
  assert.equal(result.ineligible,0);assert.equal(result.baseline,2);assert.equal(result.zeroCarry,1);assert.equal(result.laterGear,2);assert.equal(result.c2Nonzero,0);assert.equal(result.rank,result.rankIneligible)
+ assert.equal(result.legacyGun,1);assert.equal(result.legacy,2,'both actual score writers accept migrated legacy gear')
  assert.equal(result.validScores.length,1);assert.equal(result.validScores[0].timeSec,12)
  assert.deepEqual(errors,[]);report.checks.push('both clear score writers enforce nonzero carry, baseline and zero carry; later gear preserves eligibility; clearRank remains visible')
  report.result=result;report.passed=true;console.log('PASS score',JSON.stringify(result))

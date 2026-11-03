@@ -3,7 +3,7 @@
   "profile": "Pixel 7 landscape",
   "checks": [
     "cover→guide→game; locked replay; closed C2 gate",
-    "C1 first stage keeps existing gacha flow",
+    "new C1 player starts baseline directly without a choice dialog; gacha flow retained",
     "open C2 gate; actual C2 selection enters world map at stage 6",
     "simulated C2 flag unlocks all 10 descriptions, finishes back at menu, leaves save data unchanged",
     "C2 gate can be turned off without deleting completion flag"

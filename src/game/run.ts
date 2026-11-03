@@ -149,7 +149,7 @@ export function getRun(): Run | null {
     const gear = storedGear()
     const next = Math.min(6, Math.max(1, maxStage()))
     if (next === 1 && !nonzeroGear(gear)) return (main = null)
-    main = { version: 1, runId: newRunId(), startStage: 1, lastCleared: next - 1, nextStage: next, gear, growth: {}, eligible: !nonzeroGear(gear), friends: [], charm: null, mode: '1p', solo: 'boy', legacyModeUnknown: true }
+    main = { version: 1, runId: newRunId(), startStage: 1, lastCleared: next - 1, nextStage: next, gear, growth: {}, eligible: true, friends: [], charm: null, mode: '1p', solo: 'boy', legacyModeUnknown: true }
     save()
     return main
   } catch { storageOk = false; storageWarning('讀取存檔失敗，請檢查瀏覽器儲存設定。'); return (main = null) }
@@ -157,6 +157,17 @@ export function getRun(): Run | null {
 export function canSaveRun() { return storageOk }
 export function isSideTrip() { return context === 'side' }
 export function scoreEligible() { return context === 'side' ? sideEligible : context === 'main' ? (main?.eligible ?? true) : true }
+/** A fresh player with no old loadout can begin at baseline without a redundant choice. */
+export function needsStartChoice() {
+  return !!getRun() || nonzeroGear(storedGear())
+}
+/** Explain a destructive restart without claiming an unplayed stage was cleared. */
+export function restartWarning(stage: 1 | 6): string | null {
+  const r = getRun()
+  if (!r || (r.lastCleared === 0 && r.nextStage === stage)) return null
+  const progress = r.lastCleared > 0 ? `已打到第${r.lastCleared}關` : `目前停喺第${r.nextStage}關`
+  return `會取代目前本局（${progress}）`
+}
 export function rememberCharm(charm: CharmId) {
   if (main && context === 'main') { main.charm = charm; save() }
 }

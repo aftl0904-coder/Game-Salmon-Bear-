@@ -26,6 +26,7 @@ try {
       const old = localStorage.getItem('sake-kuma-gear-v1')
       const migrated = structuredClone(r.getRun())
       r.resumeMain(reg)
+      const migratedEligible = r.scoreEligible()
       r.saveClear(4, { coins: 33, purse: { boy: 30, girl: 3 }, hp: { boy: 2, girl: 3 }, friends: ['huihui'] })
       const mainBefore = localStorage.getItem('sake-kuma-run-v1')
       const gearBefore = localStorage.getItem('sake-kuma-gear-v1')
@@ -38,10 +39,10 @@ try {
       const sideRun = localStorage.getItem('sake-kuma-run-v1')
       const sideGear = localStorage.getItem('sake-kuma-gear-v1')
       const restored = structuredClone(r.resumeMain(reg))
-      return { migrated, old, mainBefore, gearBefore, baseline, sideEligible, bought, loss, sideRun, sideGear, restored, reg: reg.data, flag: localStorage.getItem('sake-kuma-c2-cleared-v1') }
+      return { migrated, migratedEligible, old, mainBefore, gearBefore, baseline, sideEligible, bought, loss, sideRun, sideGear, restored, reg: reg.data, flag: localStorage.getItem('sake-kuma-c2-cleared-v1') }
     })
     assert.equal(result.migrated.lastCleared, 3); assert.equal(result.migrated.nextStage, 4)
-    assert.equal(result.migrated.gear.boy.gun, 2); assert.equal(result.migrated.eligible, false)
+    assert.equal(result.migrated.gear.boy.gun, 2); assert.equal(result.migrated.eligible, true); assert.equal(result.migratedEligible, true)
     assert.equal(result.gearBefore, result.old); assert.equal(result.baseline.boy.gun, 0)
     assert.equal(result.sideEligible, true); assert.equal(result.bought, true); assert.equal(result.loss[0].from, 1)
     assert.equal(result.mainBefore, result.sideRun, 'side clear must not write main run')
@@ -50,7 +51,7 @@ try {
     assert.equal(result.reg.playMode, '2p'); assert.equal(result.reg.soloCast, 'girl')
     assert.equal(result.reg.carryHp.boy, 2); assert.equal(result.reg.carryPurse.girl, 3)
     assert.deepEqual(result.reg.runFriends, ['huihui']); assert.equal(result.flag, '1')
-    report.checks.push('legacy maxStage−1; nonzero gear; isolated side buy/death; main HP/coins/friends restored')
+    report.checks.push('legacy maxStage−1 with nonzero earned gear remains eligible; isolated side buy/death; main HP/coins/friends restored')
     await context.close()
   }
   {
@@ -74,6 +75,19 @@ try {
     assert.deepEqual(result.laterGear, { eligible: true, sword: 1 })
     assert.equal(result.zeroCarried, true); assert.equal(result.zero, 0)
     report.checks.push('stage 1/6 start: nonzero carry ineligible; baseline eligible; new gear preserves eligibility; zero carry eligible')
+    await context.close()
+  }
+  {
+    const {page,context}=await makePage({'sake-kuma-run-v1':'{"version":1,"noMain":true}','sake-kuma-gear-v1':JSON.stringify({boy:{gun:2},girl:{}})})
+    const result=await evaluate(page,async()=>{
+      const r=await import('/src/game/run.ts'),g=await import('/src/game/gear.ts')
+      const initial=r.getRun(),needsChoice=r.needsStartChoice()
+      r.startNewRun(1,true,'1p','boy',{set(){}})
+      return {initial,needsChoice,gun:g.activeGear().boy.gun,eligible:r.scoreEligible(),warning:r.restartWarning(1)}
+    })
+    assert.equal(result.initial,null);assert.equal(result.needsChoice,true)
+    assert.equal(result.gun,2);assert.equal(result.eligible,false);assert.equal(result.warning,null)
+    report.checks.push('nonzero old gear without a main run still offers carry; same-stage unplayed run is not misreported as progress')
     await context.close()
   }
   {

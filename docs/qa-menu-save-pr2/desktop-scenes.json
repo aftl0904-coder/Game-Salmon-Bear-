@@ -2,7 +2,7 @@
   "mode": "desktop",
   "checks": [
     "shop and gamble save each outcome before exit; replay side returns to stage3 without changing main save",
-    "map stage1 starts a new stage1 run; keyboard repeat cannot auto-confirm and Down selects baseline",
+    "map restart warns about stage 2 and defaults to cancel; keyboard repeat cannot auto-confirm",
     "injected stage5 win → normal credits → C2 entry via touch/key → stage6, without setting C2-cleared flag",
     "closed C2 gate returns side-trip completion to menu, not stage6"
   ],

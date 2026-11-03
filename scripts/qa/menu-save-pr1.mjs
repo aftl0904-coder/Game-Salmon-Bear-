@@ -73,14 +73,10 @@ try {
   report.checks.push('cover→guide→game; locked replay; closed C2 gate')
   if (MODE === 'mobile') await tap(320, 334)
   else await page.keyboard.press('Enter')
-  await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
-  await page.waitForTimeout(300)
-  await screen('c1-carry-choice')
-  if (MODE === 'mobile') await tap(320, 163)
-  else { await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter') }
   await active('gacha')
   assert.equal(await page.evaluate(() => window.__SAKE_GAME__.registry.get('stageNo')), 1)
-  report.checks.push('C1 first stage keeps existing gacha flow')
+  assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('sake-kuma-run-v1')).eligible), true)
+  report.checks.push('new C1 player starts baseline directly without a choice dialog; gacha flow retained')
 
   await boot('?c2=1')
   assert.equal(await page.evaluate(() => localStorage.getItem('sake-kuma-c2-v1')), '1', 'gate saved on cover')
@@ -102,9 +98,15 @@ try {
   else await page.keyboard.press('Enter')
   await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
   await page.waitForTimeout(300)
+  const dialog = await page.evaluate(() => {
+    const d = window.__SAKE_GAME__.scene.getScene('menu').startDialog
+    return { selected: d.selected, labels: d.choices.map(c=>c.label.text), texts: d.root.list.filter(x=>typeof x.text==='string').map(x=>x.text) }
+  })
+  assert.equal(dialog.labels[dialog.selected], '取消')
+  assert.ok(dialog.texts.some(t=>t.includes('會取代目前本局') && t.includes('目前停喺第1關')))
   await screen('c2-carry-choice')
-  if (MODE === 'mobile') await tap(320, 163)
-  else { await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter') }
+  if (MODE === 'mobile') await tap(320, 171)
+  else { await page.keyboard.press('ArrowUp'); await page.keyboard.press('Enter') }
   await active('worldmap')
   assert.equal(await page.evaluate(() => window.__SAKE_GAME__.registry.get('stageNo')), 6)
   await screen('c2-worldmap')

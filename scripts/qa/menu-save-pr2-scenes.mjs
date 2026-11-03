@@ -74,14 +74,19 @@ try {
    await page.keyboard.press('ArrowLeft');await page.keyboard.press('ArrowLeft')
    await page.keyboard.down('Enter');await page.keyboard.down('Enter');await page.keyboard.up('Enter')
    assert.ok(await page.evaluate(()=>!!window.__SAKE_GAME__.scene.getScene('worldmap').startDialog),'repeat Enter must not confirm')
-   await page.keyboard.press('ArrowDown')
-   assert.equal(await page.evaluate(()=>window.__SAKE_GAME__.scene.getScene('worldmap').startDialog.index),1,'down selects baseline')
+   assert.equal(await page.evaluate(()=>window.__SAKE_GAME__.scene.getScene('worldmap').startDialog.index),2,'cancel is the default')
+   await page.keyboard.press('ArrowUp')
+   assert.equal(await page.evaluate(()=>window.__SAKE_GAME__.scene.getScene('worldmap').startDialog.index),1,'up selects baseline')
  }
  await page.waitForFunction(()=>!!window.__SAKE_GAME__.scene.getScene('worldmap').startDialog)
- if(MODE==='mobile')await tap(320,182);else await page.keyboard.press('Enter')
+ const mapDialog=await page.evaluate(()=>{const d=window.__SAKE_GAME__.scene.getScene('worldmap').startDialog;return{index:d.index,texts:d.root.list.filter(x=>typeof x.text==='string').map(x=>x.text)}})
+ if(MODE==='mobile')assert.equal(mapDialog.index,2,'cancel is the default')
+ assert.ok(mapDialog.texts.some(t=>t.includes('會取代目前本局（已打到第2關）')))
+ await shot('restart-warning')
+ if(MODE==='mobile')await tap(320,176);else await page.keyboard.press('Enter')
  await active('gacha')
  assert.equal(await page.evaluate(()=>window.__SAKE_GAME__.registry.get('stageNo')),1,'map restart must enter stage 1')
- report.checks.push('map stage1 starts a new stage1 run; keyboard repeat cannot auto-confirm and Down selects baseline')
+ report.checks.push('map restart warns about stage 2 and defaults to cancel; keyboard repeat cannot auto-confirm')
  // A separately injected sequential stage-5 checkpoint exercises the genuine credits UI.
  await page.evaluate(async()=>{
    const r=await import('/src/game/run.ts'),game=window.__SAKE_GAME__

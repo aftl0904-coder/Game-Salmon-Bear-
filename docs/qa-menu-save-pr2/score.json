@@ -7,6 +7,8 @@
   "result": {
     "rank": "B",
     "rankIneligible": "B",
+    "legacy": 2,
+    "legacyGun": 1,
     "ineligible": 0,
     "baseline": 2,
     "zeroCarry": 1,

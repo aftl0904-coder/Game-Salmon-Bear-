@@ -7,7 +7,7 @@ import { c2Cleared, maxStage } from './progress'
 import { stageTitle } from './stageNames'
 import { markHd, STORY_RES } from './heroAnims'
 import { c2Enabled } from './c2Gate'
-import { getRun, iconFor, resumeMain, startNewRun, startSideTrip } from './run'
+import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
 
 /** Stages that exist so far (picker + progress). */
 const LAST_STAGE = 5
@@ -521,7 +521,8 @@ export class MainMenuScene extends Phaser.Scene {
     const choice = this.choices[this.cursor]
     if (!choice) return
     if (this.stageSel === 1 || this.stageSel === 6) {
-      this.openStartDialog(choice)
+      if (needsStartChoice()) this.openStartDialog(choice)
+      else this.begin(choice, 'baseline')
       return
     }
     const current = getRun()
@@ -531,19 +532,21 @@ export class MainMenuScene extends Phaser.Scene {
 
   private openStartDialog(choice: MenuChoice) {
     const stage = this.stageSel as 1 | 6
+    const warning = restartWarning(stage)
     const root = this.add.container(0, 0).setDepth(1000)
     const cover = this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x000000, 0.75).setInteractive()
     cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
     root.add(cover)
     root.add(this.add.rectangle(GAME_W / 2, GAME_H / 2, 360, 190, 0x241810, 0.98).setStrokeStyle(2, 0xc8902a))
     root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 76, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
+    if (warning) root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 60, warning, { fontFamily: FONT_UI, fontSize: '11px', color: '#ffba99' }).setOrigin(0.5))
     const items: Array<{ text: string; action: () => void }> = []
     if (getRun()?.nextStage === stage) items.push({ text: '✅ 繼續本局', action: () => this.begin(choice, 'continue') })
     items.push({ text: '⚪ 開新局：帶', action: () => this.begin(choice, 'carry') })
     items.push({ text: '⚪ 開新局：唔帶', action: () => this.begin(choice, 'baseline') })
     items.push({ text: '取消', action: () => this.closeStartDialog() })
     const choices = items.map((item, i) => {
-      const y = GAME_H / 2 - 48 + i * 31
+      const y = GAME_H / 2 - (warning ? 40 : 48) + i * 31
       const bg = this.add.rectangle(GAME_W / 2, y, 300, 27, 0x4a2a14, 1).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
       const label = this.add.text(GAME_W / 2, y, item.text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
       bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => {
@@ -554,7 +557,7 @@ export class MainMenuScene extends Phaser.Scene {
       root.add([bg, label])
       return { label, action: item.action }
     })
-    this.startDialog = { root, choices, selected: 0 }
+    this.startDialog = { root, choices, selected: choices.length - 1 }
     this.drawStartDialog()
     this.inputReadyAt = this.time.now + 250
   }

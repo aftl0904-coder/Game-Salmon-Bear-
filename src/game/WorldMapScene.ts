@@ -10,7 +10,7 @@ import { c2Cleared } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
-import { getRun, iconFor, resumeMain, startNewRun, startSideTrip } from './run'
+import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -402,7 +402,8 @@ export class MapScene extends Phaser.Scene {
     if (!this.picking || this.startDialog) return
     const chosen = this.pickIndex
     if (getRun()?.nextStage !== chosen && (chosen === 1 || chosen === 6)) {
-      this.showStartDialog(chosen)
+      if (needsStartChoice()) this.showStartDialog(chosen)
+      else this.beginNewRun(chosen, false)
       return
     }
     if (getRun()?.nextStage === chosen) resumeMain(this.registry)
@@ -427,31 +428,34 @@ export class MapScene extends Phaser.Scene {
   }
 
   private showStartDialog(stage: 1 | 6) {
+    const warning = restartWarning(stage)
     const root = this.add.container(0, 0).setScrollFactor(0).setDepth(1000)
     const cover = this.add.rectangle(320, 180, 640, 360, 0x000000, 0.8).setInteractive()
     cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
-    root.add([cover, this.add.rectangle(320, 180, 360, 160, 0x241810).setStrokeStyle(2, 0xc8902a)])
-    root.add(this.add.text(320, 120, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
-    const choose = (carry: boolean) => {
-      this.startDialog?.root.destroy()
-      this.startDialog = null
-      const mode = (this.registry.get('playMode') as '1p' | '2p') ?? '1p'
-      const solo = (this.registry.get('soloCast') as 'boy' | 'girl') ?? 'boy'
-      startNewRun(stage, carry, mode, solo, this.registry)
-      if (stage === 1) { this.scene.start('gacha'); return }
-      this.finishPick(stage)
-    }
-    const actions = [() => choose(true), () => choose(false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
+    root.add([cover, this.add.rectangle(320, 180, 360, 190, 0x241810).setStrokeStyle(2, 0xc8902a)])
+    root.add(this.add.text(320, 104, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
+    if (warning) root.add(this.add.text(320, 120, warning, { fontFamily: FONT_UI, fontSize: '11px', color: '#ffba99' }).setOrigin(0.5))
+    const actions = [() => this.beginNewRun(stage, true), () => this.beginNewRun(stage, false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
     const labels = ['⚪ 開新局：帶', '⚪ 開新局：唔帶', '取消'].map((text, i) => {
-      const y = 151 + i * 31
+      const y = 145 + i * 31
       const bg = this.add.rectangle(320, y, 300, 26, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
       const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
       bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => { e?.stopPropagation?.(); actions[i]?.() })
       root.add([bg, label])
       return label
     })
-    this.startDialog = { root, index: 0, labels, actions }
+    this.startDialog = { root, index: actions.length - 1, labels, actions }
     this.drawStartDialog()
+  }
+
+  private beginNewRun(stage: 1 | 6, carry: boolean) {
+    this.startDialog?.root.destroy()
+    this.startDialog = null
+    const mode = (this.registry.get('playMode') as '1p' | '2p') ?? '1p'
+    const solo = (this.registry.get('soloCast') as 'boy' | 'girl') ?? 'boy'
+    startNewRun(stage, carry, mode, solo, this.registry)
+    if (stage === 1) { this.scene.start('gacha'); return }
+    this.finishPick(stage)
   }
 
   private drawStartDialog() {

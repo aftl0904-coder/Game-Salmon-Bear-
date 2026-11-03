@@ -1,7 +1,8 @@
 {
   "checks": [
-    "legacy maxStage−1; nonzero gear; isolated side buy/death; main HP/coins/friends restored",
+    "legacy maxStage−1 with nonzero earned gear remains eligible; isolated side buy/death; main HP/coins/friends restored",
     "stage 1/6 start: nonzero carry ineligible; baseline eligible; new gear preserves eligibility; zero carry eligible",
+    "nonzero old gear without a main run still offers carry; same-stage unplayed run is not misreported as progress",
     "injected stage 1→5 checkpoints persist across reload; stage 6 restores gear, HP, coins, charm and eligibility",
     "corrupt JSON is not silently overwritten; blocked storage does not crash",
     "side-only progress is not migrated as a main run; temporary gear cannot leak into a new run",

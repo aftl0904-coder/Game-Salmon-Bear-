@@ -32,5 +32,5 @@
 ## 5. 主選單兩階段（Alan 已確認）
 
 - PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
-- PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 已按 Alan 指示合併；Manus 已實作並跑自動 QA，開出 [#82 草稿](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82)。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**草稿待審，兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。** 成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
+- PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 已按 Alan 指示合併；Manus 實作 [#82](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82)，待 Claude 再審及 Alan 指示合併。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**請只開一個分頁**：兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
 - 大陸2第2關 A–E brief 等 Alan 上載；三項待拍板文字不能自行補寫。
