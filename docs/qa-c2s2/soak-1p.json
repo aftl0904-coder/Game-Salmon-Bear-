@@ -1,0 +1,644 @@
+{
+  "description": "1P automated keyboard operation; seeded checkpoint, no teleport, hp manipulation or victory injection; not a human playthrough",
+  "start": "2026-11-03T16:39:33.125Z",
+  "samples": [
+    {
+      "elapsed": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 220,
+      "hp": 5,
+      "now": 17678
+    },
+    {
+      "elapsed": 10,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 1222,
+      "hp": 6,
+      "now": 27760.9
+    },
+    {
+      "elapsed": 21,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 2250,
+      "hp": 5,
+      "now": 38127.2
+    },
+    {
+      "elapsed": 31,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 3112,
+      "hp": 3,
+      "now": 48460.1
+    },
+    {
+      "elapsed": 41,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 4101,
+      "hp": 5,
+      "now": 58826.3
+    },
+    {
+      "elapsed": 51,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 4784,
+      "hp": 6,
+      "boss": 1,
+      "now": 68909.2
+    },
+    {
+      "elapsed": 62,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5266,
+      "hp": 0,
+      "boss": 1,
+      "now": 79108.8
+    },
+    {
+      "elapsed": 72,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5266,
+      "hp": 2,
+      "boss": 1,
+      "now": 89125.1
+    },
+    {
+      "elapsed": 82,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5038,
+      "hp": 5,
+      "boss": 1,
+      "now": 99524.7
+    },
+    {
+      "elapsed": 92,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5169,
+      "hp": 3,
+      "boss": 1,
+      "now": 109691
+    },
+    {
+      "elapsed": 103,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 4783,
+      "hp": 6,
+      "boss": 1,
+      "now": 120140.6
+    },
+    {
+      "elapsed": 113,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5266,
+      "hp": 0,
+      "boss": 1,
+      "now": 130606.8
+    },
+    {
+      "elapsed": 123,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5271,
+      "hp": 1,
+      "boss": 1,
+      "now": 140956.4
+    },
+    {
+      "elapsed": 133,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5088,
+      "hp": 0,
+      "boss": 2,
+      "now": 150889.3
+    },
+    {
+      "elapsed": 144,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5266,
+      "hp": 1,
+      "boss": 2,
+      "now": 161238.9
+    },
+    {
+      "elapsed": 154,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5058,
+      "hp": 6,
+      "boss": 2,
+      "now": 171321.8
+    },
+    {
+      "elapsed": 165,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5052,
+      "hp": 4,
+      "boss": 2,
+      "now": 181888.1
+    },
+    {
+      "elapsed": 175,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5275,
+      "hp": 1,
+      "boss": 2,
+      "now": 192571
+    },
+    {
+      "elapsed": 185,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 4959,
+      "hp": 6,
+      "boss": 2,
+      "now": 202104
+    },
+    {
+      "elapsed": 195,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 4911,
+      "hp": 6,
+      "boss": 2,
+      "now": 212886.9
+    },
+    {
+      "elapsed": 206,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": true,
+      "intro": false,
+      "continue": true,
+      "x": 5266,
+      "hp": 0,
+      "boss": 3,
+      "now": 222936.4
+    },
+    {
+      "elapsed": 216,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5275,
+      "hp": 1,
+      "boss": 3,
+      "now": 233319.3
+    },
+    {
+      "elapsed": 226,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5274,
+      "hp": 1,
+      "boss": 3,
+      "now": 243535.6
+    },
+    {
+      "elapsed": 236,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5211,
+      "hp": 1,
+      "boss": 3,
+      "now": 253851.8
+    },
+    {
+      "elapsed": 246,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5077,
+      "hp": 3,
+      "boss": 3,
+      "now": 263834.8
+    },
+    {
+      "elapsed": 257,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5041,
+      "hp": 5,
+      "boss": 3,
+      "now": 274184.3
+    },
+    {
+      "elapsed": 267,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 5074,
+      "hp": 5,
+      "boss": 3,
+      "now": 284567.3
+    },
+    {
+      "elapsed": 278,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": false,
+      "ended": false,
+      "intro": true,
+      "continue": false,
+      "x": 220,
+      "hp": 6,
+      "now": 294833.5
+    },
+    {
+      "elapsed": 288,
+      "active": [
+        "UIScene",
+        "pause"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 365,
+      "hp": 4,
+      "now": 305483.1
+    },
+    {
+      "elapsed": 299,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 275,
+      "hp": 6,
+      "now": 316099.3
+    },
+    {
+      "elapsed": 309,
+      "active": [
+        "UIScene",
+        "pause"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 362,
+      "hp": 3,
+      "now": 326015.6
+    },
+    {
+      "elapsed": 319,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 390,
+      "hp": 0,
+      "now": 336598.6
+    },
+    {
+      "elapsed": 329,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 409,
+      "hp": 3,
+      "now": 346798.1
+    },
+    {
+      "elapsed": 339,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": true,
+      "intro": false,
+      "continue": true,
+      "x": 399,
+      "hp": 0,
+      "now": 356931
+    },
+    {
+      "elapsed": 349,
+      "active": [
+        "UIScene",
+        "pause"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 407,
+      "hp": 4,
+      "now": 366697.3
+    },
+    {
+      "elapsed": 360,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 418,
+      "hp": 1,
+      "now": 377380.3
+    },
+    {
+      "elapsed": 370,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 382,
+      "hp": 5,
+      "now": 387763.2
+    },
+    {
+      "elapsed": 380,
+      "active": [
+        "UIScene",
+        "pause"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 405,
+      "hp": 2,
+      "now": 397729.4
+    },
+    {
+      "elapsed": 390,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 382,
+      "hp": 5,
+      "now": 408062.4
+    },
+    {
+      "elapsed": 401,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continue": false,
+      "x": 383,
+      "hp": 3,
+      "now": 418178.6
+    },
+    {
+      "elapsed": 411,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 5,
+      "started": true,
+      "ended": true,
+      "intro": false,
+      "continue": false,
+      "x": 410,
+      "hp": 0,
+      "now": 428094.9
+    }
+  ],
+  "errors": []
+}

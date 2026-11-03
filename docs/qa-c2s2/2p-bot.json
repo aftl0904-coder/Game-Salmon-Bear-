@@ -1,0 +1,361 @@
+{
+  "description": "2P keyboard bot from normal menu, stage-6-cleared checkpoint; no teleport, HP edit or forced win",
+  "samples": [
+    {
+      "elapsed": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 220,
+      "x2": 380,
+      "hp1": 5,
+      "hp2": 5,
+      "win": false
+    },
+    {
+      "elapsed": 11,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 1018,
+      "x2": 1165,
+      "hp1": 6,
+      "hp2": 4,
+      "win": false
+    },
+    {
+      "elapsed": 21,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 1959,
+      "x2": 2293,
+      "hp1": 6,
+      "hp2": 6,
+      "win": false
+    },
+    {
+      "elapsed": 31,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 2307,
+      "x2": 2748,
+      "hp1": 2,
+      "hp2": 1,
+      "win": false
+    },
+    {
+      "elapsed": 42,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 3173,
+      "x2": 3234,
+      "hp1": 6,
+      "hp2": 6,
+      "win": false
+    },
+    {
+      "elapsed": 52,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4060,
+      "x2": 4338,
+      "hp1": 3,
+      "hp2": 6,
+      "win": false
+    },
+    {
+      "elapsed": 63,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4931,
+      "x2": 5005,
+      "hp1": 5,
+      "hp2": 5,
+      "phase": 1,
+      "win": false
+    },
+    {
+      "elapsed": 73,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4908,
+      "x2": 4918,
+      "hp1": 6,
+      "hp2": 5,
+      "phase": 1,
+      "win": false
+    },
+    {
+      "elapsed": 83,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5239,
+      "x2": 5240,
+      "hp1": 3,
+      "hp2": 1,
+      "phase": 1,
+      "win": false
+    },
+    {
+      "elapsed": 94,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5232,
+      "x2": 5232,
+      "hp1": 2,
+      "hp2": 2,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 104,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5057,
+      "x2": 5232,
+      "hp1": 1,
+      "hp2": 2,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 115,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5232,
+      "x2": 5112,
+      "hp1": 4,
+      "hp2": 0,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 125,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4751,
+      "x2": 4764,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 135,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4831,
+      "x2": 4847,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 145,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": true,
+      "continued": true,
+      "intro": false,
+      "x1": 5232,
+      "x2": 5258,
+      "hp1": 0,
+      "hp2": 2,
+      "phase": 2,
+      "win": false
+    },
+    {
+      "elapsed": 156,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4745,
+      "x2": 4748,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 3,
+      "win": false
+    },
+    {
+      "elapsed": 166,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4772,
+      "x2": 4775,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 3,
+      "win": false
+    },
+    {
+      "elapsed": 177,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5239,
+      "x2": 5240,
+      "hp1": 2,
+      "hp2": 1,
+      "phase": 3,
+      "win": false
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "durationSec": 180,
+  "final": {
+    "active": [
+      "play"
+    ],
+    "stage": 7,
+    "mode": "2p",
+    "started": true,
+    "ended": true,
+    "continued": false,
+    "intro": false,
+    "x1": 5239,
+    "x2": 5240,
+    "hp1": 2,
+    "hp2": 1,
+    "phase": 3,
+    "win": true
+  }
+}

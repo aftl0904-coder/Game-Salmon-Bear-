@@ -26,8 +26,10 @@ export type Run = {
   mode: Mode
   solo: Solo
   legacyModeUnknown?: boolean
+  /** Main-run companion departure; absent in older saves means false. */
+  puffLeft: boolean
 }
-type Checkpoint = { coins: number; purse: Amounts; hp: Amounts; friends: string[] }
+type Checkpoint = { coins: number; purse: Amounts; hp: Amounts; friends: string[]; puffLeft?: boolean }
 let main: Run | null | undefined
 let context: 'none' | 'main' | 'side' = 'none'
 let sideEligible = true
@@ -88,7 +90,7 @@ function parseRun(value: unknown): Run | null {
   const gear = copyGear(r.gear)
   const coins = typeof r.coins === 'number' && Number.isFinite(r.coins) && r.coins >= 0 ? Math.floor(r.coins) : undefined
   const charm = r.charm && charmIds.includes(r.charm) ? r.charm : null
-  return { version: 1, runId: typeof r.runId === 'string' && r.runId ? r.runId : 'legacy-run', startStage: r.startStage, lastCleared: r.lastCleared!, nextStage: r.nextStage!, gear, growth: growthOf(r.growth), eligible: r.eligible, coins, purse: numbers(r.purse), hp: numbers(r.hp), friends: Array.isArray(r.friends) ? r.friends.filter((x): x is string => typeof x === 'string') : [], charm, mode: r.mode === '2p' ? '2p' : '1p', solo: r.solo === 'girl' ? 'girl' : 'boy', legacyModeUnknown: r.legacyModeUnknown === true }
+  return { version: 1, runId: typeof r.runId === 'string' && r.runId ? r.runId : 'legacy-run', startStage: r.startStage, lastCleared: r.lastCleared!, nextStage: r.nextStage!, gear, growth: growthOf(r.growth), eligible: r.eligible, coins, purse: numbers(r.purse), hp: numbers(r.hp), friends: Array.isArray(r.friends) ? r.friends.filter((x): x is string => typeof x === 'string') : [], charm, mode: r.mode === '2p' ? '2p' : '1p', solo: r.solo === 'girl' ? 'girl' : 'boy', legacyModeUnknown: r.legacyModeUnknown === true, puffLeft: r.puffLeft === true }
 }
 function save(syncGear = false) {
   if (!main) return
@@ -149,13 +151,15 @@ export function getRun(): Run | null {
     const gear = storedGear()
     const next = Math.min(6, Math.max(1, maxStage()))
     if (next === 1 && !nonzeroGear(gear)) return (main = null)
-    main = { version: 1, runId: newRunId(), startStage: 1, lastCleared: next - 1, nextStage: next, gear, growth: {}, eligible: true, friends: [], charm: null, mode: '1p', solo: 'boy', legacyModeUnknown: true }
+    main = { version: 1, runId: newRunId(), startStage: 1, lastCleared: next - 1, nextStage: next, gear, growth: {}, eligible: true, friends: [], charm: null, mode: '1p', solo: 'boy', legacyModeUnknown: true, puffLeft: false }
     save()
     return main
   } catch { storageOk = false; storageWarning('讀取存檔失敗，請檢查瀏覽器儲存設定。'); return (main = null) }
 }
 export function canSaveRun() { return storageOk }
 export function isSideTrip() { return context === 'side' }
+/** Side trips use the original party independently of the main-run flag. */
+export function puffAway() { return context === 'main' && getRun()?.puffLeft === true }
 export function scoreEligible() { return context === 'side' ? sideEligible : context === 'main' ? (main?.eligible ?? true) : true }
 /** A fresh player with no old loadout can begin at baseline without a redundant choice. */
 export function needsStartChoice() {
@@ -196,7 +200,7 @@ export function startNewRun(stage: 1 | 6, carry: boolean, mode: Mode, solo: Solo
   const previousGrowth = existing ? growthOf(existing.growth) : {}
   const gear = carry ? previousGear : emptyGear()
   const growth = carry ? previousGrowth : {}
-  main = { version: 1, runId: newRunId(), startStage: stage, lastCleared: 0, nextStage: stage, gear, growth, eligible: !nonzeroGear(gear) && !Object.values(growth).some((n) => n > 0), friends: [], charm: null, mode, solo }
+  main = { version: 1, runId: newRunId(), startStage: stage, lastCleared: 0, nextStage: stage, gear, growth, eligible: !nonzeroGear(gear) && !Object.values(growth).some((n) => n > 0), friends: [], charm: null, mode, solo, puffLeft: false }
   context = 'main'
   clearCharm()
   bindMainGear()
@@ -260,5 +264,7 @@ export function saveClear(stage: number, state: Checkpoint) {
   r.hp = numbers(state.hp)
   r.friends = [...state.friends]
   r.charm = activeCharm()
+  // Committed in the same single run snapshot as the clear, never on a side trip.
+  if (stage === 7 && state.puffLeft) r.puffLeft = true
   save()
 }

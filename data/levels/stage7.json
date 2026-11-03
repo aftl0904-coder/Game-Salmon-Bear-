@@ -1,0 +1,47 @@
+{
+  "id": "ST-07",
+  "name": "森友展銷中心",
+  "theme": "mall",
+  "worldW": 5700,
+  "segments": [
+    { "id": "A", "x0": 0, "x1": 855, "note": "迎賓展示廳" },
+    { "id": "B", "x0": 855, "x1": 1995, "note": "分類走廊" },
+    { "id": "C", "x0": 1995, "x1": 3135, "note": "訓練表演場" },
+    { "id": "D", "x0": 3135, "x1": 4560, "note": "後臺籠舍區" },
+    { "id": "E", "x0": 4560, "x1": 5700, "note": "Boss arena" }
+  ],
+  "pits": [{ "x": 2320, "w": 56 }, { "x": 2780, "w": 64 }],
+  "steps": [], "platforms": [], "movingPlatforms": [], "crushers": [],
+  "spikes": [], "durians": [],
+  "honey": [{ "x": 470, "h": 40 }],
+  "checkpoints": [800, 1960, 3100, 4520],
+  "breakables": [{ "x": 380, "kind": "pot", "loot": "coin" }, { "x": 1800, "kind": "pot", "loot": "food" }, { "x": 3510, "kind": "pot", "loot": "food" }],
+  "enemies": [
+    { "x": 520, "species": "guard", "unlockX": 300 },
+    { "x": 760, "species": "guard", "unlockX": 540 },
+    { "x": 1030, "species": "guard", "unlockX": 880 },
+    { "x": 1240, "species": "honeyzombie", "unlockX": 1050, "product": true },
+    { "x": 1530, "species": "guard", "unlockX": 1360 },
+    { "x": 1820, "species": "honeyzombie", "unlockX": 1650, "product": true },
+    { "x": 2100, "species": "guard", "unlockX": 2000 },
+    { "x": 2510, "species": "robotarm", "unlockX": 2280 },
+    { "x": 2920, "species": "guard", "unlockX": 2680 },
+    { "x": 3260, "species": "guard", "unlockX": 3150 },
+    { "x": 3450, "species": "honeyzombie", "unlockX": 3260, "product": true },
+    { "x": 3670, "species": "guard", "unlockX": 3470 },
+    { "x": 3880, "species": "honeyzombie", "unlockX": 3700, "product": true },
+    { "x": 4090, "species": "guard", "unlockX": 3910 },
+    { "x": 4320, "species": "honeyzombie", "unlockX": 4110, "product": true }
+  ],
+  "altarAmbush": [], "altarTriggerX": 99999, "friends": [], "decor": { "back": [], "hang": [] }, "coins": [], "secrets": [],
+  "boss": { "kind": "trainer", "triggerX": 4680, "arenaX0": 4640, "arenaX1": 5280 },
+  "trainer": { "hp": 55, "phase2At": 0.66, "phase3Below": 0.3, "phase3Rate": 1.3, "summonPerCycle": 1, "summonMaxAlive": 2, "chainWarnMs": 800, "chainLifeMs": 1500, "chainWidth": 108, "chainSpeed": 120 },
+  "reactionX": 4390,
+  "staticDecor": [
+    { "x": 300, "kind": "cage", "number": 1 }, { "x": 690, "kind": "cage", "number": 2 },
+    { "x": 960, "kind": "cage", "number": 3 }, { "x": 1320, "kind": "cage", "number": 4 }, { "x": 1710, "kind": "cage", "number": 5 },
+    { "x": 2150, "kind": "chain" }, { "x": 2580, "kind": "net" }, { "x": 3000, "kind": "chain" },
+    { "x": 3300, "kind": "cage", "number": 6 }, { "x": 3670, "kind": "net" }, { "x": 4050, "kind": "cage", "number": 7 }, { "x": 4410, "kind": "chain" }
+  ],
+  "darkZones": [{ "x0": 3180, "x1": 4540 }], "darkAlpha": 0.62, "lanterns": []
+}

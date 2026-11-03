@@ -13,7 +13,7 @@ import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNew
 const LAST_STAGE = 5
 /** Highest stage the picker may land on. */
 function pickable(): number {
-  return c2Enabled() ? 6 : Math.min(maxStage(), LAST_STAGE)
+  return c2Enabled() ? Math.min(7, Math.max(6, maxStage(), getRun()?.nextStage ?? 1)) : Math.min(maxStage(), LAST_STAGE)
 }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
