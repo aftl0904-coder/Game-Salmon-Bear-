@@ -1,6 +1,6 @@
 # 大陸2第2關：實作前唔清楚清單
 
-來源：Alan 於 2026-11-03 轉貼嘅 `c2-stage2-brief.md`；以下保留原問題供對照。Claude 其後答覆見 `c2-stage2-answers.md`：離隊時機轉述為 Alan 已拍板，其他設計細則須按項目規矩由 Alan 確認。未釐清前不實作第7關。
+來源：Alan 於 2026-11-03 轉貼嘅 `c2-stage2-brief.md`；以下保留原問題供對照。Claude 其後答覆見 `c2-stage2-answers.md`：Alan 已確認第3–9項及噗噗離隊旗標方案。三項文案及噗噗返隊時間仍待 Alan 決定；#83 合併前不實作第7關。
 
 ## 原有問題（答覆及待定事項見獨立文件）
 
@@ -18,4 +18,4 @@
 
 - 大陸2第2關係內部第7關，仍受 `?c2=1` 測試閘控制；A–E 主題及百分比分佈、P1／P2 招式方向、P3 血量低於 30% 已定。
 - 盡量重用 terrain recycle-segment、pit-hop、現有 Boss 模板及 melee／turret／projectile，不另寫 AI；B/C/D 固定裝飾／機關不可被拖走或複製。
-- A–E 及 Boss 自動測試記錄放 `docs/qa-c2s2/`，build、2P bot、1P 穩定性、固定機關及噗噗 once 均屬原 brief 驗收要求。以上問題釐清並得到設計確認前，唔開工做關卡。
+- A–E 及 Boss 自動測試記錄放 `docs/qa-c2s2/`，build、2P bot、1P 穩定性、固定機關及噗噗 once 均屬原 brief 驗收要求。#83 合併後先開關卡實作分支；三項未定文案用「待補」。
