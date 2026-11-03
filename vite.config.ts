@@ -31,12 +31,14 @@ export default defineConfig({
       configureServer(server) {
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/bible' || req.url === '/bible/') req.url = '/bible.html'
+          if (req.url === '/guide' || req.url === '/guide/') req.url = '/guide/index.html'
           next()
         })
       },
       configurePreviewServer(server) {
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/bible' || req.url === '/bible/') req.url = '/bible.html'
+          if (req.url === '/guide' || req.url === '/guide/') req.url = '/guide/index.html'
           next()
         })
       },
