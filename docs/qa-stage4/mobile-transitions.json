@@ -1,0 +1,41 @@
+{
+  "iphone13L": {
+    "passed": true,
+    "actions": [
+      "clear",
+      "shop-switch-buy-exit-long-touch",
+      "sleep",
+      "gamble-win-and-loss",
+      "worldmap-select",
+      "bike-skip",
+      "credits-menu"
+    ],
+    "errors": []
+  },
+  "pixel7L": {
+    "passed": true,
+    "actions": [
+      "clear",
+      "shop-switch-buy-exit-long-touch",
+      "sleep",
+      "gamble-win-and-loss",
+      "worldmap-select",
+      "bike-skip",
+      "credits-menu"
+    ],
+    "errors": []
+  },
+  "smallAndroidL": {
+    "passed": true,
+    "actions": [
+      "clear",
+      "shop-switch-buy-exit-long-touch",
+      "sleep",
+      "gamble-win-and-loss",
+      "worldmap-select",
+      "bike-skip",
+      "credits-menu"
+    ],
+    "errors": []
+  }
+}

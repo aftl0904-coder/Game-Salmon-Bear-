@@ -1,0 +1,157 @@
+{
+  "beforeJump": {
+    "x": 3715,
+    "y": 285,
+    "laneJumping": false,
+    "jumpConsumed": false,
+    "hurtLock": 0,
+    "started": true,
+    "intro": false,
+    "paused": false,
+    "ui": true
+  },
+  "jumpTrace": [
+    {
+      "y": 258,
+      "vy": -243,
+      "jumping": true
+    },
+    {
+      "y": 227,
+      "vy": -115,
+      "jumping": true
+    },
+    {
+      "y": 218,
+      "vy": 14,
+      "jumping": true
+    },
+    {
+      "y": 237,
+      "vy": 178,
+      "jumping": true
+    },
+    {
+      "y": 250,
+      "vy": 0,
+      "jumping": true
+    },
+    {
+      "y": 262,
+      "vy": 133,
+      "jumping": true
+    },
+    {
+      "y": 287,
+      "vy": 0,
+      "jumping": true
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 285,
+      "vy": 0,
+      "jumping": false
+    }
+  ],
+  "landingTrace": [
+    {
+      "y": 241,
+      "prev": 258,
+      "vy": -114.66666666666669,
+      "hold": 269.98999999999944,
+      "jumping": true,
+      "afterY": 241,
+      "afterJumping": true
+    },
+    {
+      "y": 227,
+      "prev": 241,
+      "vy": -56.333333333333336,
+      "hold": 359.97999999999956,
+      "jumping": true,
+      "afterY": 227,
+      "afterJumping": true
+    },
+    {
+      "y": 220,
+      "prev": 227,
+      "vy": 13.666666666666655,
+      "hold": 451.6399999999994,
+      "jumping": true,
+      "afterY": 220,
+      "afterJumping": true
+    },
+    {
+      "y": 218,
+      "prev": 220,
+      "vy": 88.33333333333333,
+      "hold": 544.969999999999,
+      "jumping": true,
+      "afterY": 218,
+      "afterJumping": true
+    },
+    {
+      "y": 223,
+      "prev": 218,
+      "vy": 177.93333333333334,
+      "hold": 636.6399999999987,
+      "jumping": true,
+      "afterY": 223,
+      "afterJumping": true
+    },
+    {
+      "y": 237,
+      "prev": 223,
+      "vy": 252.60000000000002,
+      "hold": 728.3099999999991,
+      "jumping": true,
+      "afterY": 231,
+      "afterJumping": false
+    }
+  ],
+  "rightPlatform": {
+    "x": 3715,
+    "y": 285,
+    "jumping": false
+  },
+  "error": "AssertionError [ERR_ASSERTION]: hero must jump up and land on right platform\n    at file:///tmp/salmon-bear-readonly/scripts/qa/stage4-physics.mjs:83:10"
+}

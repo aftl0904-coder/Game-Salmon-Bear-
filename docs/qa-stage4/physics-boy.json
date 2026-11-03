@@ -1,0 +1,350 @@
+{
+  "role": "boy",
+  "cases": [
+    {
+      "pit": [
+        760,
+        808
+      ],
+      "dir": 1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 41,
+      "last": {
+        "x": 820,
+        "y": 244,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        760,
+        808
+      ],
+      "dir": -1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 39,
+      "last": {
+        "x": 722,
+        "y": 246,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        1040,
+        1096
+      ],
+      "dir": 1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 42,
+      "last": {
+        "x": 1114,
+        "y": 243,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        1040,
+        1096
+      ],
+      "dir": -1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 39,
+      "last": {
+        "x": 1003,
+        "y": 254,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        2040,
+        2104
+      ],
+      "dir": 1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 42,
+      "last": {
+        "x": 2132,
+        "y": 243,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "pit": [
+        2040,
+        2104
+      ],
+      "dir": -1,
+      "crossed": true,
+      "leaped": true,
+      "maxLift": 43,
+      "last": {
+        "x": 2030,
+        "y": 242,
+        "vx": 0,
+        "leaping": true,
+        "fsm": "CHASE"
+      }
+    },
+    {
+      "interruptedByDamage": 1,
+      "x": 726,
+      "y": 285,
+      "leaping": false,
+      "fsm": "HURT",
+      "top": 285
+    },
+    {
+      "interruptedByDamage": 99,
+      "x": 726,
+      "y": 285,
+      "leaping": false,
+      "fsm": "DEAD",
+      "top": 285
+    }
+  ],
+  "errors": [],
+  "terrain": {
+    "floor": 285,
+    "pits": [
+      {
+        "x0": 760,
+        "x1": 808
+      },
+      {
+        "x0": 1040,
+        "x1": 1096
+      },
+      {
+        "x0": 2040,
+        "x1": 2104
+      }
+    ],
+    "rightPlatform": {
+      "x0": 3690,
+      "x1": 3770,
+      "top": 231,
+      "oneWay": true,
+      "kind": "platform"
+    }
+  },
+  "pursuit": {
+    "min": 35.852961676579746,
+    "max": 47.99372731533699
+  },
+  "beforeJump": {
+    "x": 3715,
+    "y": 285,
+    "laneJumping": false,
+    "jumpConsumed": false,
+    "hurtLock": 0,
+    "started": true,
+    "intro": false,
+    "paused": false,
+    "ui": true
+  },
+  "jumpTrace": [
+    {
+      "y": 285,
+      "vy": -313,
+      "jumping": true
+    },
+    {
+      "y": 230,
+      "vy": -138,
+      "jumping": true
+    },
+    {
+      "y": 219,
+      "vy": -56,
+      "jumping": true
+    },
+    {
+      "y": 229,
+      "vy": 142,
+      "jumping": true
+    },
+    {
+      "y": 252,
+      "vy": 246,
+      "jumping": true
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    },
+    {
+      "y": 231,
+      "vy": 0,
+      "jumping": false
+    }
+  ],
+  "landingTrace": [
+    {
+      "y": 230,
+      "prev": 250,
+      "vy": -56.333333333333336,
+      "hold": 363.3199999999997,
+      "jumping": true,
+      "afterY": 230,
+      "afterJumping": true
+    },
+    {
+      "y": 219,
+      "prev": 230,
+      "vy": 36.999999999999986,
+      "hold": 484.98999999999944,
+      "jumping": true,
+      "afterY": 219,
+      "afterJumping": true
+    },
+    {
+      "y": 218,
+      "prev": 219,
+      "vy": 141.53333333333333,
+      "hold": 608.3199999999997,
+      "jumping": true,
+      "afterY": 218,
+      "afterJumping": true
+    },
+    {
+      "y": 229,
+      "prev": 218,
+      "vy": 246.0666666666667,
+      "hold": 731.65,
+      "jumping": true,
+      "afterY": 229,
+      "afterJumping": true
+    }
+  ],
+  "rightPlatform": {
+    "x": 3715,
+    "y": 231,
+    "jumping": false
+  },
+  "refugeDuringCharge": {
+    "x": 3715,
+    "y": 231,
+    "hp": 50
+  },
+  "overBoss": {
+    "x": 3421,
+    "y": 285,
+    "hp": 48,
+    "alive": true
+  },
+  "nails": [
+    {
+      "kind": "warn",
+      "hi": true,
+      "t": 50742.7,
+      "wall": 50752.5
+    },
+    {
+      "kind": "fire",
+      "hi": true,
+      "t": 51892.7,
+      "wall": 51896.10000000009
+    },
+    {
+      "kind": "warn",
+      "hi": false,
+      "t": 51976,
+      "wall": 51978.89999999991
+    },
+    {
+      "kind": "fire",
+      "hi": false,
+      "t": 53009.3,
+      "wall": 53015.69999999972
+    },
+    {
+      "kind": "warn",
+      "hi": true,
+      "t": 53075.9,
+      "wall": 53094
+    },
+    {
+      "kind": "fire",
+      "hi": true,
+      "t": 54159.3,
+      "wall": 54177
+    },
+    {
+      "kind": "warn",
+      "hi": false,
+      "t": 54242.6,
+      "wall": 54252.39999999991
+    },
+    {
+      "kind": "fire",
+      "hi": false,
+      "t": 55292.5,
+      "wall": 55307.69999999972
+    }
+  ],
+  "passed": true
+}

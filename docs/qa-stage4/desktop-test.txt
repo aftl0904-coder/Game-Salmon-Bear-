@@ -1,0 +1,1 @@
+desktop {"errors":[],"passed":true,"actions":["move","jump","clear","shop-exit","sleep","gamble-exit","worldmap","bike-to-stage5"]}

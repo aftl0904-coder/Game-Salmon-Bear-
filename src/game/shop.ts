@@ -3,7 +3,7 @@ import { GAME_W, GAME_H } from './display'
 import { DEPTH } from './engine/depth'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
-import { TouchInput } from './touchInput'
+import { TouchInput, isPhonePlay } from './touchInput'
 import { buzz, HAPTIC } from './phone'
 import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
@@ -82,7 +82,9 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     .text(GAME_W / 2, GAME_H - 38, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#d8c8a8', align: 'center', wordWrap: { width: GAME_W - 80 } })
     .setOrigin(0.5)
   const hint = scene.add
-    .text(GAME_W / 2, GAME_H - 16, '↑↓ 揀　攻擊＝買　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Start＝走', {
+    .text(GAME_W / 2, GAME_H - 16, isPhonePlay()
+      ? '點貨品購買　' + (heroes.length > 1 ? '點換人轉角色　' : '') + '點離開返回'
+      : '↑↓ 揀　攻擊＝買　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Enter＝走', {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#f0dcb0',
@@ -261,12 +263,20 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       }
     })
   })
-  const leaveBtn = scene.add
-    .text(GAME_W / 2, GAME_H - 16, '　　　　　　', { fontFamily: FONT_UI, fontSize: '11px' })
-    .setOrigin(0.5)
-    .setInteractive({ useHandCursor: true })
-  leaveBtn.on('pointerdown', () => leave())
-  root.add(leaveBtn)
+  // The gameplay HUD is intentionally hidden on the clear screen. Keep these
+  // actions visible and directly tappable instead of relying on its Start pad.
+  const leaveBg = scene.add.rectangle(GAME_W - 48, GAME_H - 17, 80, 28, 0x4a2a14, 1)
+    .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+  const leaveLabel = scene.add.text(GAME_W - 48, GAME_H - 17, '離開', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8' }).setOrigin(0.5)
+  leaveBg.on('pointerdown', () => leave())
+  root.add([leaveBg, leaveLabel])
+  if (heroes.length > 1) {
+    const swapBg = scene.add.rectangle(220, 138, 70, 24, 0x4a2a14, 1)
+      .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+    const swapLabel = scene.add.text(220, 138, '換人', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe9a8' }).setOrigin(0.5)
+    swapBg.on('pointerdown', swapWho)
+    root.add([swapBg, swapLabel])
+  }
 
   draw()
   return { done, destroy: leave }
