@@ -44,7 +44,7 @@ type Step =
 type Scene = { title: string; stage?: 'forest' | 'tree' | 'market'; steps: Step[] }
 const STORY = storyRaw as unknown as { scenes: Record<string, Scene> }
 
-export type CutsceneId = 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9' | 'C8' | 'C10' | 'C10' | 'C11' | 'C11_PERFECT'
+export type CutsceneId = 'C2_INTRO' | 'C1' | 'C2' | 'C3' | 'B2' | 'C4' | 'C5' | 'B3' | 'C6' | 'C7' | 'C9' | 'C8' | 'C10' | 'C10' | 'C11' | 'C11_PERFECT'
 /** Who can talk: name, stage sprite (anim set / still), portrait strip and blip pitch. */
 type CastEntry = { name: string; set: AnimSetId | null; tex: string | null; portrait: string | null; pitch: number; color: string; idle?: string }
 const CAST: Record<string, CastEntry> = {
@@ -399,9 +399,17 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
         await tween({ targets: old, alpha: 0, duration: 350 })
         old.destroy()
       }
-      if (s.still && scene.textures.exists(stillTex(s.still))) {
+      // The C2 entrance uses the existing Stage 6 dome prop, not a new story illustration.
+      // A neutral background also keeps the subtitle truthful if that prop is unavailable.
+      const mallDoor = s.still === 'c2-mall-door'
+      if (s.still && (mallDoor || scene.textures.exists(stillTex(s.still)))) {
         const c = scene.add.container(0, 0).setAlpha(0)
-        c.add(scene.add.image(GAME_W / 2, GAME_H / 2, stillTex(s.still)))
+        if (mallDoor) {
+          c.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x100f19).setOrigin(0))
+          if (scene.textures.exists('s6-dome')) c.add(scene.add.image(GAME_W / 2, 130, 's6-dome').setScale(2))
+        } else {
+          c.add(scene.add.image(GAME_W / 2, GAME_H / 2, stillTex(s.still)))
+        }
         if (s.text) {
           // Words written on the illustration (e.g. the note) — never baked into the art.
           c.add(

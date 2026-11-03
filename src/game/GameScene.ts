@@ -4225,10 +4225,7 @@ export class GameScene extends Phaser.Scene {
   }
 
 
-  /**
-   * After cast select: 3 story acts (7s each, A/攻 skips act).
-   * Every transition ≥1s black; after last act → 2s black → gameplay.
-   */
+  /** Play the selected stage's story before enabling gameplay. */
   private showIntro() {
     this.boy.setVelocity(0, 0)
     this.girl?.setVelocity(0, 0)
@@ -4238,7 +4235,7 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(0, () => {
       if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
     })
-    const handle = (this.mall ? (cb: () => void) => this.mallIntro(cb) : (cb: () => void) => playCutscene(this, this.tower ? 'C8' : this.depot ? 'C7' : this.market ? 'C5' : this.tree ? 'C3' : 'C1', cb))(() => {
+    const handle = playCutscene(this, this.mall ? 'C2_INTRO' : this.tower ? 'C8' : this.depot ? 'C7' : this.market ? 'C5' : this.tree ? 'C3' : 'C1', () => {
         playSong(this.mall ? 'mall' : this.tower ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
@@ -4272,30 +4269,6 @@ export class GameScene extends Phaser.Scene {
     })
     this.storyIntro = handle
     this.events.once('shutdown', () => handle.destroy())
-  }
-
-  /** Continent 2 opener: a short title card (no story cutscene exists for it yet). */
-  private mallIntro(onDone: () => void): { destroy: () => void } {
-    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 220)
-    root.add(this.add.rectangle(0, 0, GAME_W, GAME_H, 0x05040a, 1).setOrigin(0))
-    root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 30, '第二大陸', { fontFamily: FONT_UI, fontSize: '14px', color: '#d8b8ff' }).setOrigin(0.5))
-    root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 4, '購物中心', { fontFamily: FONT_TITLE, fontSize: '34px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 }).setOrigin(0.5))
-    root.add(this.add.text(GAME_W / 2, GAME_H / 2 + 34, '△畝想剷平森林起嘅商場——原來母公司真係起咗。', { fontFamily: FONT_UI, fontSize: '12px', color: '#e8d8b0' }).setOrigin(0.5))
-    let dead = false
-    const done = () => {
-      if (dead) return
-      dead = true
-      this.tweens.add({ targets: root, alpha: 0, duration: 400, onComplete: () => root.destroy(true) })
-      onDone()
-    }
-    const t = this.time.delayedCall(2800, done)
-    return {
-      destroy: () => {
-        dead = true
-        t.remove(false)
-        root.destroy(true)
-      },
-    }
   }
 
   // ── Goemon-style stage mechanics ─────────────────────────────────────────
