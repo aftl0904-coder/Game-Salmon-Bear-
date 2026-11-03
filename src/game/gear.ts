@@ -95,20 +95,71 @@ export function gearById(id: GearId): GearDef {
 }
 
 const empty = (): Tiers => ({ heart: 0, sword: 0, gun: 0, armour: 0, boots: 0, charm: 0 })
-type Save = { boy: Tiers; girl: Tiers }
+export type GearLoadout = { boy: Tiers; girl: Tiers }
+type Save = GearLoadout
 
-function read(): Save {
+/** A run/side trip owns its loadout; null retains the legacy behaviour outside a run. */
+let active: Save | null = null
+let persistActive = false
+let onActiveChange: ((value: Save) => void) | null = null
+
+export function emptyGear(): GearLoadout {
+  return { boy: empty(), girl: empty() }
+}
+
+export function copyGear(value: GearLoadout): GearLoadout {
+  const copy = (t: Tiers): Tiers => {
+    const result = empty()
+    for (const id of Object.keys(result) as GearId[]) {
+      const n = Number(t?.[id])
+      result[id] = Number.isFinite(n) ? Math.min(MAX_TIER, Math.max(0, Math.floor(n))) : 0
+    }
+    return result
+  }
+  return { boy: copy(value?.boy), girl: copy(value?.girl) }
+}
+
+export function storedGear(): GearLoadout {
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<Save>
-    return { boy: { ...empty(), ...(raw.boy ?? {}) }, girl: { ...empty(), ...(raw.girl ?? {}) } }
+    return copyGear({ boy: raw?.boy ?? empty(), girl: raw?.girl ?? empty() })
   } catch {
-    return { boy: empty(), girl: empty() }
+    return emptyGear()
   }
 }
 
-function write(s: Save) {
+export function activeGear(): GearLoadout {
+  return active ? copyGear(active) : storedGear()
+}
+
+export function persistStoredGear(value: GearLoadout): boolean {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s))
+    localStorage.setItem(KEY, JSON.stringify(copyGear(value)))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function useGear(value: GearLoadout, persist: boolean, onChange?: (value: GearLoadout) => void) {
+  active = copyGear(value)
+  persistActive = persist
+  onActiveChange = onChange ?? null
+}
+
+function read(): Save {
+  return activeGear()
+}
+
+function write(s: Save) {
+  const value = copyGear(s)
+  if (active) {
+    active = value
+    onActiveChange?.(copyGear(value))
+    if (!persistActive) return
+  }
+  try {
+    localStorage.setItem(KEY, JSON.stringify(value))
   } catch {
     /* private mode — gear just doesn't carry over */
   }

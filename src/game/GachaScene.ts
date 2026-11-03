@@ -5,6 +5,7 @@ import { TouchInput } from './touchInput'
 import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { CHARMS, rollCharm, setActiveCharm, type CharmDef, type CharmId } from './charms'
+import { rememberCharm } from './run'
 
 /**
  * 扭蛋機: one random charm per run, drawn right before stage 1 starts
@@ -96,6 +97,7 @@ export class GachaScene extends Phaser.Scene {
     // QA hook (bots): registry 'forceCharm' skips the real roll for deterministic testing.
     const forced = this.registry.get('forceCharm') as CharmId | undefined
     const charm = forced ? setActiveCharm(forced) : rollCharm()
+    rememberCharm(charm.id)
     const finalFrame = Math.max(0, CHARMS.findIndex((c) => c.id === charm.id))
 
     if (this.textures.exists('gacha-capsules')) {

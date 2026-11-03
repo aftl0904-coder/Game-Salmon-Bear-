@@ -10,6 +10,7 @@ import { c2Cleared } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
+import { getRun, iconFor, resumeMain, startNewRun, startSideTrip } from './run'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -58,6 +59,7 @@ export class MapScene extends Phaser.Scene {
   private verseGo: (() => void) | null = null
   /** Set while the plain title card is up (a stage no map knows); running it leaves for the stage. */
   private cardGo: (() => void) | null = null
+  private startDialog: { root: Phaser.GameObjects.Container; index: number; labels: Phaser.GameObjects.Text[]; actions: Array<() => void> } | null = null
 
   constructor() {
     super('worldmap')
@@ -88,6 +90,7 @@ export class MapScene extends Phaser.Scene {
     this.picking = false
     this.verseGo = null
     this.cardGo = null
+    this.startDialog = null
     this.icons = {}
     this.pickTween = null
     const cm = mapForStage(data.to)
@@ -138,6 +141,7 @@ export class MapScene extends Phaser.Scene {
       this.icons[i] = icon
       if (!open) icon.setTint(0x555566).setAlpha(0.8)
       if (!open) this.add.text(x, y - 14, '？', { fontFamily: FONT_UI, fontSize: '10px', color: '#e8e0ff' }).setOrigin(0.5)
+      this.add.text(x, y + 1, iconFor(i), { fontFamily: FONT_UI, fontSize: '10px', color: '#ffffff', stroke: '#1a0e06', strokeThickness: 2 }).setOrigin(0.5)
       if (i < data.to || (i === data.to && data.from > data.to)) {
         this.add.text(x + 8, y - 26, '★', { fontFamily: FONT_UI, fontSize: '9px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
       }
@@ -174,9 +178,11 @@ export class MapScene extends Phaser.Scene {
     this.versePanel.setVisible(false)
 
     const kb = this.input.keyboard
-    const confirm = () => (this.picking ? this.confirmPick() : this.skip())
-    const left = () => this.picking && this.movePick(-1)
-    const right = () => this.picking && this.movePick(1)
+    const confirm = (e: KeyboardEvent) => { if (!e.repeat) this.startDialog ? this.confirmStartDialog() : this.picking ? this.confirmPick() : this.skip() }
+    const left = () => this.startDialog ? this.moveStartDialog(-1) : this.picking && this.movePick(-1)
+    const right = () => this.startDialog ? this.moveStartDialog(1) : this.picking && this.movePick(1)
+    const up = () => { if (this.startDialog) this.moveStartDialog(-1) }
+    const down = () => { if (this.startDialog) this.moveStartDialog(1) }
     kb?.on('keydown-ENTER', confirm)
     kb?.on('keydown-SPACE', confirm)
     kb?.on('keydown-F', confirm)
@@ -184,10 +190,14 @@ export class MapScene extends Phaser.Scene {
     kb?.on('keydown-RIGHT', right)
     kb?.on('keydown-A', left)
     kb?.on('keydown-D', right)
+    kb?.on('keydown-UP', up)
+    kb?.on('keydown-W', up)
+    kb?.on('keydown-DOWN', down)
+    kb?.on('keydown-S', down)
     const pointerConfirm = () => {
       // Taps on an interactive badge already call confirmPick via its own handler;
       // this generic pointerdown is for "tap anywhere to confirm/skip" elsewhere.
-      if (!this.picking) this.skip()
+      if (!this.picking && !this.startDialog) this.skip()
     }
     this.input.on('pointerdown', pointerConfirm)
     this.events.once('shutdown', () => {
@@ -198,6 +208,10 @@ export class MapScene extends Phaser.Scene {
       kb?.off('keydown-RIGHT', right)
       kb?.off('keydown-A', left)
       kb?.off('keydown-D', right)
+      kb?.off('keydown-UP', up)
+      kb?.off('keydown-W', up)
+      kb?.off('keydown-DOWN', down)
+      kb?.off('keydown-S', down)
       this.input.off('pointerdown', pointerConfirm)
     })
 
@@ -315,6 +329,12 @@ export class MapScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.startDialog) {
+      if (TouchInput.justPressed('left') || TouchInput.justPressed('up')) this.moveStartDialog(-1)
+      if (TouchInput.justPressed('right') || TouchInput.justPressed('down')) this.moveStartDialog(1)
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.confirmStartDialog()
+      return
+    }
     if (this.cardGo) {
       if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.cardGo()
       return
@@ -337,7 +357,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private selectPick(stage: number) {
-    if (!this.openStages.includes(stage) || stage === this.pickIndex) return
+    if (this.startDialog || !this.openStages.includes(stage) || stage === this.pickIndex) return
     this.pickIndex = stage
     SFX.blip(520)
     this.updateBanner()
@@ -368,7 +388,7 @@ export class MapScene extends Phaser.Scene {
   private updateBanner() {
     const dest = this.placeOf(this.picking ? this.pickIndex : this.data_.to)
     if (this.picking) {
-      this.bannerLabel.setText(`◀　${dest.name}　▶`)
+      this.bannerLabel.setText(`◀ ${iconFor(this.pickIndex)} ${dest.name} ▶`)
       this.hint.setText('←→ 揀關卡　Enter／A 出發')
     } else {
       this.bannerLabel.setText(this.data_.next === 'credits' ? `下一站：${dest.name}` : dest.name)
@@ -379,12 +399,22 @@ export class MapScene extends Phaser.Scene {
 
   /** Lock in the highlighted stage and start the trip there. */
   private confirmPick() {
-    if (!this.picking) return
+    if (!this.picking || this.startDialog) return
+    const chosen = this.pickIndex
+    if (getRun()?.nextStage !== chosen && (chosen === 1 || chosen === 6)) {
+      this.showStartDialog(chosen)
+      return
+    }
+    if (getRun()?.nextStage === chosen) resumeMain(this.registry)
+    else startSideTrip(this.registry)
+    this.finishPick(chosen)
+  }
+
+  private finishPick(chosen: number) {
     this.picking = false
     this.pickTween?.stop()
     for (const icon of Object.values(this.icons)) icon.setScale(0.62)
     SFX.powerUp()
-    const chosen = this.pickIndex
     const wasDefault = chosen === this.data_.to
     this.data_.to = chosen
     // The stage1→2 bike minigame insert only fires on the expected default path —
@@ -394,6 +424,48 @@ export class MapScene extends Phaser.Scene {
     this.registry.set('stageNo', chosen)
     this.updateBanner()
     this.travelAfterVerse(chosen)
+  }
+
+  private showStartDialog(stage: 1 | 6) {
+    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(1000)
+    const cover = this.add.rectangle(320, 180, 640, 360, 0x000000, 0.8).setInteractive()
+    cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
+    root.add([cover, this.add.rectangle(320, 180, 360, 160, 0x241810).setStrokeStyle(2, 0xc8902a)])
+    root.add(this.add.text(320, 120, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
+    const choose = (carry: boolean) => {
+      this.startDialog?.root.destroy()
+      this.startDialog = null
+      const mode = (this.registry.get('playMode') as '1p' | '2p') ?? '1p'
+      const solo = (this.registry.get('soloCast') as 'boy' | 'girl') ?? 'boy'
+      startNewRun(stage, carry, mode, solo, this.registry)
+      if (stage === 1) { this.scene.start('gacha'); return }
+      this.finishPick(stage)
+    }
+    const actions = [() => choose(true), () => choose(false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
+    const labels = ['⚪ 開新局：帶', '⚪ 開新局：唔帶', '取消'].map((text, i) => {
+      const y = 151 + i * 31
+      const bg = this.add.rectangle(320, y, 300, 26, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
+      const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
+      bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => { e?.stopPropagation?.(); actions[i]?.() })
+      root.add([bg, label])
+      return label
+    })
+    this.startDialog = { root, index: 0, labels, actions }
+    this.drawStartDialog()
+  }
+
+  private drawStartDialog() {
+    this.startDialog?.labels.forEach((label, i) => label.setColor(i === this.startDialog?.index ? '#ffffff' : '#cdbb9c'))
+  }
+  private moveStartDialog(dir: number) {
+    const d = this.startDialog
+    if (!d) return
+    d.index = (d.index + dir + d.actions.length) % d.actions.length
+    this.drawStartDialog()
+  }
+  private confirmStartDialog() {
+    const d = this.startDialog
+    if (d) d.actions[d.index]?.()
   }
 
   /** Walk the road(s) to `to` if mapped (大陸2 chains places and rides the tower lift), otherwise a short beat, then arrive(). */

@@ -4,6 +4,8 @@ import { playSong, stopBgm, SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { animTex, hasAnimSet, type AnimSetId } from './heroAnims'
+import { c2Enabled } from './c2Gate'
+import { getRun, isSideTrip, resumeMain } from './run'
 
 /**
  * SNES staff roll: the cast parades across the bottom while the credits scroll up,
@@ -116,12 +118,13 @@ export class CreditsScene extends Phaser.Scene {
     })
 
     const kb = this.input.keyboard
-    const go = () => this.leave()
-    kb?.on('keydown', go)
-    this.input.on('pointerdown', go)
+    const goKey = (e: KeyboardEvent) => this.leave(e.code === 'Digit2')
+    const goPointer = () => this.leave()
+    kb?.on('keydown', goKey)
+    this.input.on('pointerdown', goPointer)
     this.events.once('shutdown', () => {
-      kb?.off('keydown', go)
-      this.input.off('pointerdown', go)
+      kb?.off('keydown', goKey)
+      this.input.off('pointerdown', goPointer)
     })
   }
 
@@ -140,13 +143,19 @@ export class CreditsScene extends Phaser.Scene {
       .setAlpha(0)
     this.tweens.add({ targets: fin, alpha: 1, duration: 900 })
     SFX.sparkle()
+    const canGoC2 = !isSideTrip() && c2Enabled() && getRun()?.lastCleared === 5 && getRun()?.nextStage === 6
+    if (canGoC2) {
+      const b = this.add.rectangle(W / 2, H - 47, 180, 26, 0x4a2a14, 0.96).setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+      this.add.text(W / 2, H - 47, '前往大陸2 [2]', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
+      b.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => { e?.stopPropagation?.(); this.leave(true) })
+    }
     const hint = this.add
-      .text(W / 2, H - 10, '按任意鍵回選單', { fontFamily: FONT_UI, fontSize: '10px', color: '#e8d8b0' })
+      .text(W / 2, H - 10, isSideTrip() && getRun() ? '按任意鍵返回主線' : '按任意鍵回選單', { fontFamily: FONT_UI, fontSize: '10px', color: '#e8d8b0' })
       .setOrigin(0.5, 1)
     this.tweens.add({ targets: hint, alpha: 0.3, duration: 600, yoyo: true, repeat: -1 })
   }
 
-  private leave() {
+  private leave(toC2 = false) {
     if (this.time.now < this.readyAt) return
     // During the roll the first press only speeds to the end; after it, back to the menu.
     if (!this.done) {
@@ -159,7 +168,14 @@ export class CreditsScene extends Phaser.Scene {
       return
     }
     this.readyAt = Number.POSITIVE_INFINITY
+    const side = isSideTrip()
+    const run = getRun()
+    const goC2 = toC2 && !side && c2Enabled() && run?.lastCleared === 5 && run.nextStage === 6
+    const destination = goC2 || side ? resumeMain(this.registry) : null
     this.cameras.main.fadeOut(500, 0, 0, 0)
-    this.time.delayedCall(520, () => this.scene.start('menu'))
+    this.time.delayedCall(520, () => {
+      if (destination && destination.nextStage <= 6 && (destination.nextStage < 6 || c2Enabled())) this.scene.start('worldmap', { from: destination.nextStage, to: destination.nextStage, next: 'play', stageNo: destination.nextStage })
+      else this.scene.start('menu')
+    })
   }
 }

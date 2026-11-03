@@ -11,10 +11,12 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
+import { getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
 import { attachGearFx, type GearFx } from './gearFx'
-import { bonusHearts, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
+import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
@@ -3833,6 +3835,11 @@ export class GameScene extends Phaser.Scene {
     const shop = openShop(this, {
       purse: (w) => this.purseOf(w),
       pay: (w, d) => this.addCoins(w, d),
+      purchase: (w, item, price) => runTransaction(() => {
+        this.addCoins(w, -price)
+        buyGear(w, item)
+        if (this.registry.get('winScreenShown')) this.saveCurrentClear()
+      }),
       friends: () => this.friendsSaved,
       heroes,
       stage: this.stageNo,
@@ -3849,6 +3856,7 @@ export class GameScene extends Phaser.Scene {
       this.refreshHearts()
       this.refreshCoins()
       for (const f of this.gearFx) f.refresh()
+      if (this.registry.get('winScreenShown')) this.saveCurrentClear()
       onClose?.()
     })
   }
@@ -4831,7 +4839,7 @@ export class GameScene extends Phaser.Scene {
     this.scorePts = calcScore({
       timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl?.hp ?? 0, deaths: this.deaths,
     })
-    saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
+    if (scoreEligible()) saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
     this.playOutro()
   }
 
@@ -4923,6 +4931,11 @@ export class GameScene extends Phaser.Scene {
   private clearHeroes(): Hero[] {
     return [this.boy, this.girl].filter((h): h is Hero => !!h)
   }
+  private saveCurrentClear() {
+    const hp: Partial<Record<Who, number>> = {}
+    for (const h of this.clearHeroes()) hp[h.role as Who] = h.hp
+    saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [] })
+  }
   private heroMaxHp(h: Hero) {
     return MAX_HP + bonusHearts(h.role as Who)
   }
@@ -4963,6 +4976,7 @@ export class GameScene extends Phaser.Scene {
         .map((h) => `${h.role === 'girl' ? '琪寶寶' : '倫寶'}　♥ ${Math.max(0, h.hp)}/${this.heroMaxHp(h)}　幣 ×${this.purseOf(h.role as Who)}`)
         .join('　　'),
     )
+    if (this.registry.get('winScreenShown')) this.saveCurrentClear()
   }
 
   private async sleepAtClearCard() {
@@ -4992,7 +5006,7 @@ export class GameScene extends Phaser.Scene {
     await openGamble(this, {
       heroes: this.clearHeroes().map((h) => h.role as Who),
       purse: (w) => this.purseOf(w),
-      pay: (w, d) => this.addCoins(w, d),
+      pay: (w, d) => { this.addCoins(w, d); this.saveCurrentClear() },
       bet: GAMBLE_BET,
     })
     this.refreshClearCard()
@@ -5121,7 +5135,7 @@ export class GameScene extends Phaser.Scene {
     const total = Math.max(0, rows.reduce((a, r) => a + r.pts, 0))
     const rowH = rows.length > 6 ? 19 : 22
     const best = loadScores()[0]
-    const record = !!best && best.score <= total
+    const record = scoreEligible() && !!best && best.score <= total
     const rowTexts: Phaser.GameObjects.Text[] = []
     rows.forEach((r, i) => {
       const y = py + 18 + i * rowH
@@ -5162,7 +5176,9 @@ export class GameScene extends Phaser.Scene {
       { id: 'shop', label: '小朋友檔口 ◎', on: true },
       ...(CARRY_HP_BETWEEN_STAGES ? [{ id: 'sleep' as const, label: `瞓覺 ${SLEEP_COST}幣`, on: this.canSleep() }] : []),
       { id: 'gamble', label: '賭檔', on: this.canGamble() },
-      this.stageNo === FINAL_STAGE
+      isSideTrip() && this.stageNo !== FINAL_STAGE
+        ? { id: 'next', label: getRun() ? '返回主線 ▶' : '返主選單', on: true }
+        : this.stageNo === FINAL_STAGE
         ? { id: 'credits', label: '片尾字幕 ▶', on: true }
         : this.stageNo > FINAL_STAGE
           ? { id: 'next', label: '第二大陸・下一關　製作中', on: false }
@@ -5266,6 +5282,7 @@ export class GameScene extends Phaser.Scene {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
     unlockStage(Math.min(this.stageNo + 1, FINAL_STAGE))
+    this.saveCurrentClear()
     this.ended = true
     this.awaitingContinue = false
     // Drop story intro if still open so it never covers the clear card.
@@ -6454,7 +6471,7 @@ export class GameScene extends Phaser.Scene {
     this.scorePts =
       calcScore({ timeSec, honey: this.honeyGot, hpBoy: this.boy.hp, hpGirl: this.girl?.hp ?? 0, deaths: this.deaths }) +
       this.killBonus
-    saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
+    if (scoreEligible()) saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
     this.time.delayedCall(600, () => this.playOutro())
   }
 
@@ -6462,8 +6479,22 @@ export class GameScene extends Phaser.Scene {
   /** On to the next stage: the world map, then the bike leg to the stage that was picked. */
   private goNextStage() {
     if (this.registry.get('leavingToMenu')) return
+    if (isSideTrip()) {
+      const run = resumeMain(this.registry)
+      if (!run || !STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled())) { this.goMenu(); return }
+      this.registry.set('leavingToMenu', true)
+      this.registry.set('winScreenShown', false)
+      this.cameras.main.fadeOut(300, 0, 0, 0)
+      this.time.delayedCall(320, () => {
+        this.registry.set('leavingToMenu', false)
+        this.stopUi()
+        this.scene.start('worldmap', { from: run.nextStage, to: run.nextStage, next: 'play', stageNo: run.nextStage })
+      })
+      return
+    }
     const to = this.stageNo + 1
     if (!STAGES[to]) return
+    this.saveCurrentClear()
     this.registry.set('leavingToMenu', true)
     this.registry.set('stageNo', to)
     this.registry.set('carryCoins', this.coinStock)

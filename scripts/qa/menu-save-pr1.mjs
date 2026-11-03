@@ -73,6 +73,11 @@ try {
   report.checks.push('cover→guide→game; locked replay; closed C2 gate')
   if (MODE === 'mobile') await tap(320, 334)
   else await page.keyboard.press('Enter')
+  await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
+  await page.waitForTimeout(300)
+  await screen('c1-carry-choice')
+  if (MODE === 'mobile') await tap(320, 163)
+  else { await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter') }
   await active('gacha')
   assert.equal(await page.evaluate(() => window.__SAKE_GAME__.registry.get('stageNo')), 1)
   report.checks.push('C1 first stage keeps existing gacha flow')
@@ -95,6 +100,11 @@ try {
   await screen('menu-c2')
   if (MODE === 'mobile') await tap(320, 334)
   else await page.keyboard.press('Enter')
+  await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
+  await page.waitForTimeout(300)
+  await screen('c2-carry-choice')
+  if (MODE === 'mobile') await tap(320, 163)
+  else { await page.keyboard.press('ArrowDown'); await page.keyboard.press('Enter') }
   await active('worldmap')
   assert.equal(await page.evaluate(() => window.__SAKE_GAME__.registry.get('stageNo')), 6)
   await screen('c2-worldmap')

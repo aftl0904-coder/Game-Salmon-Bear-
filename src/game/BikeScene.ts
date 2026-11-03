@@ -7,6 +7,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { animTex, hasAnimSet, markHd, type AnimSetId } from './heroAnims'
 import { p2Pad, btn as padBtn } from './gamepadBridge'
 import meta from '../../data/anim/map-bike.json'
+import { saveTransitionCoins } from './run'
 
 /**
  * 單車追逐 — auto-scrolling ride between any two stages (destination + song come from `to`; art is shared).
@@ -356,6 +357,7 @@ export class BikeScene extends Phaser.Scene {
     // Coins collected become extra continues for 蜜樹丘.
     const carry = ((this.registry.get('carryCoins') as number | undefined) ?? 5) + this.coins
     this.registry.set('carryCoins', carry)
+    saveTransitionCoins(this.toStage, carry)
     this.registry.set('stageNo', this.toStage)
     const W = GAME_W
     if (!skipped) {

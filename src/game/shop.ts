@@ -20,6 +20,8 @@ export type ShopHooks = {
   purse: (who: Who) => number
   /** Spend (negative) or refund (positive). */
   pay: (who: Who, delta: number) => void
+  /** Commit a purchase together with its purse update, if supplied. */
+  purchase?: (who: Who, item: GearDef['id'], price: number) => void
   /** Ids of the friends freed so far — they stand behind the counter. */
   friends: () => string[]
   /** Who is playing: one hero, or both in 2P. */
@@ -210,8 +212,8 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       blurb.setText(`唔夠幣，仲爭 ${p - hooks.purse(who)} 個。`)
       return
     }
-    hooks.pay(who, -p)
-    buy(who, g.id)
+    if (hooks.purchase) hooks.purchase(who, g.id, p)
+    else { hooks.pay(who, -p); buy(who, g.id) }
     SFX.powerUp()
     buzz(HAPTIC.power)
     const t2 = tierOf(who, g.id)

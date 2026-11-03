@@ -7,6 +7,7 @@ import { c2Cleared, maxStage } from './progress'
 import { stageTitle } from './stageNames'
 import { markHd, STORY_RES } from './heroAnims'
 import { c2Enabled } from './c2Gate'
+import { getRun, iconFor, resumeMain, startNewRun, startSideTrip } from './run'
 
 /** Stages that exist so far (picker + progress). */
 const LAST_STAGE = 5
@@ -54,6 +55,7 @@ export class MainMenuScene extends Phaser.Scene {
   private stageText: Phaser.GameObjects.Text | null = null
   private stageRedrawBox: (() => void) | null = null
   private continentButtons: Array<{ stage: number; bg: Phaser.GameObjects.Rectangle; label: Phaser.GameObjects.Text }> = []
+  private startDialog: { root: Phaser.GameObjects.Container; choices: Array<{ label: Phaser.GameObjects.Text; action: () => void }>; selected: number } | null = null
   /** Secret code progress (↑↑↓↓←→←→BA). */
   private code: string[] = []
 
@@ -73,10 +75,12 @@ export class MainMenuScene extends Phaser.Scene {
     this.shade = {}
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
-    this.stageSel = Math.min(maxStage(), LAST_STAGE)
+    const savedStage = getRun()?.nextStage
+    this.stageSel = savedStage && savedStage <= pickable() ? savedStage : Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
     this.stageRedrawBox = null
     this.continentButtons = []
+    this.startDialog = null
     this.code = []
 
     this.choices = [
@@ -107,6 +111,12 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.startDialog) {
+      if (TouchInput.justPressed('up') || TouchInput.justPressed('left')) this.moveStartDialog(-1)
+      if (TouchInput.justPressed('down') || TouchInput.justPressed('right')) this.moveStartDialog(1)
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.activateStartDialog()
+      return
+    }
     if (TouchInput.justPressed('up')) this.onUp()
     if (TouchInput.justPressed('down')) this.onDown()
     if (TouchInput.justPressed('left')) this.onLeft()
@@ -119,20 +129,24 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private onUp() {
+    if (this.startDialog) return this.moveStartDialog(-1)
     this.feedCode('U')
     if (pickable() >= 2) this.toggleStage(-1)
     else this.move(-1)
   }
   private onDown() {
+    if (this.startDialog) return this.moveStartDialog(1)
     this.feedCode('D')
     if (pickable() >= 2) this.toggleStage(1)
     else this.move(1)
   }
   private onLeft() {
+    if (this.startDialog) return this.moveStartDialog(-1)
     this.feedCode('L')
     this.move(-1)
   }
   private onRight() {
+    if (this.startDialog) return this.moveStartDialog(1)
     this.feedCode('R')
     this.move(1)
   }
@@ -207,7 +221,8 @@ export class MainMenuScene extends Phaser.Scene {
 
   private drawStage() {
     const name = stageTitle(this.stageSel)
-    this.stageText?.setText(`◀　繼續：${name}　▶`)
+    const icon = iconFor(this.stageSel)
+    this.stageText?.setText(`◀ ${icon} ${icon === '✅' ? '繼續' : '選關'}：${name} ▶`)
     this.stageRedrawBox?.()
     this.drawContinents()
   }
@@ -246,7 +261,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private chooseContinent(stage: number) {
-    if (this.starting || this.time.now < this.inputReadyAt || (stage === 6 && !c2Enabled())) return
+    if (this.starting || this.startDialog || this.time.now < this.inputReadyAt || (stage === 6 && !c2Enabled())) return
     this.stageSel = stage
     SFX.blip(520)
     this.drawStage()
@@ -265,7 +280,7 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private openEnding() {
-    if (this.starting || this.time.now < this.inputReadyAt || !c2Cleared()) return
+    if (this.starting || this.startDialog || this.time.now < this.inputReadyAt || !c2Cleared()) return
     this.starting = true
     unlockAudio()
     this.scene.start('ending-c2')
@@ -444,8 +459,8 @@ export class MainMenuScene extends Phaser.Scene {
 
   private wireInput() {
     const kb = this.input.keyboard!
-    const onStart = () => this.confirmStart()
-    const map: [string, () => void][] = [
+    const onStart = (e: KeyboardEvent) => { if (!e.repeat) this.confirmStart() }
+    const map: [string, (e: KeyboardEvent) => void][] = [
       ['keydown-UP', () => this.onUp()],
       ['keydown-W', () => this.onUp()],
       ['keydown-DOWN', () => this.onDown()],
@@ -454,7 +469,7 @@ export class MainMenuScene extends Phaser.Scene {
       ['keydown-RIGHT', () => this.onRight()],
       ['keydown-D', () => this.onRight()],
       // A is also "left" (WASD) — but as the last key of the code it fires the secret instead.
-      ['keydown-A', () => (this.feedCode('A') ? undefined : this.move(-1))],
+      ['keydown-A', () => (this.startDialog ? this.moveStartDialog(-1) : this.feedCode('A') ? undefined : this.move(-1))],
       ['keydown-B', () => void this.feedCode('B')],
       ['keydown-ONE', () => this.chooseContinent(1)],
       ['keydown-TWO', () => this.chooseContinent(6)],
@@ -463,6 +478,7 @@ export class MainMenuScene extends Phaser.Scene {
       ['keydown-SPACE', onStart],
       ['keydown-F', onStart],
       ['keydown-J', onStart],
+      ['keydown-ESC', () => this.closeStartDialog()],
     ]
     for (const [ev, fn] of map) kb.on(ev, fn)
     this.events.once('shutdown', () => {
@@ -501,8 +517,71 @@ export class MainMenuScene extends Phaser.Scene {
   private confirmStart() {
     if (this.starting) return
     if (this.time.now < this.inputReadyAt) return
+    if (this.startDialog) return this.activateStartDialog()
     const choice = this.choices[this.cursor]
     if (!choice) return
+    if (this.stageSel === 1 || this.stageSel === 6) {
+      this.openStartDialog(choice)
+      return
+    }
+    const current = getRun()
+    if (current && current.nextStage === this.stageSel) this.begin(choice, 'continue')
+    else this.begin(choice, 'side')
+  }
+
+  private openStartDialog(choice: MenuChoice) {
+    const stage = this.stageSel as 1 | 6
+    const root = this.add.container(0, 0).setDepth(1000)
+    const cover = this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x000000, 0.75).setInteractive()
+    cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
+    root.add(cover)
+    root.add(this.add.rectangle(GAME_W / 2, GAME_H / 2, 360, 190, 0x241810, 0.98).setStrokeStyle(2, 0xc8902a))
+    root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 76, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
+    const items: Array<{ text: string; action: () => void }> = []
+    if (getRun()?.nextStage === stage) items.push({ text: '✅ 繼續本局', action: () => this.begin(choice, 'continue') })
+    items.push({ text: '⚪ 開新局：帶', action: () => this.begin(choice, 'carry') })
+    items.push({ text: '⚪ 開新局：唔帶', action: () => this.begin(choice, 'baseline') })
+    items.push({ text: '取消', action: () => this.closeStartDialog() })
+    const choices = items.map((item, i) => {
+      const y = GAME_H / 2 - 48 + i * 31
+      const bg = this.add.rectangle(GAME_W / 2, y, 300, 27, 0x4a2a14, 1).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
+      const label = this.add.text(GAME_W / 2, y, item.text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
+      bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => {
+        e?.stopPropagation?.()
+        this.startDialog!.selected = i
+        this.activateStartDialog()
+      })
+      root.add([bg, label])
+      return { label, action: item.action }
+    })
+    this.startDialog = { root, choices, selected: 0 }
+    this.drawStartDialog()
+    this.inputReadyAt = this.time.now + 250
+  }
+
+  private drawStartDialog() {
+    this.startDialog?.choices.forEach((c, i) => c.label.setColor(i === this.startDialog?.selected ? '#ffffff' : '#cdbb9c'))
+  }
+  private moveStartDialog(dir: number) {
+    const d = this.startDialog
+    if (!d) return
+    d.selected = (d.selected + dir + d.choices.length) % d.choices.length
+    SFX.blip(520)
+    this.drawStartDialog()
+  }
+  private activateStartDialog() {
+    if (!this.startDialog || this.time.now < this.inputReadyAt) return
+    this.startDialog.choices[this.startDialog.selected]?.action()
+  }
+  private closeStartDialog() {
+    if (!this.startDialog) return
+    this.startDialog.root.destroy()
+    this.startDialog = null
+    this.inputReadyAt = this.time.now + 250
+  }
+
+  private begin(choice: MenuChoice, path: 'continue' | 'side' | 'carry' | 'baseline') {
+    if (this.startDialog) { this.startDialog.root.destroy(); this.startDialog = null }
     this.starting = true
     unlockAudio()
     SFX.powerUp()
@@ -512,12 +591,12 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('soloCast', choice.solo ?? 'boy')
     this.registry.set('stageRound', 1)
     this.registry.set('stageNo', this.stageSel)
-    this.registry.set('carryCoins', undefined)
-    this.registry.set('carryHp', undefined)
-    this.registry.set('runFriends', [])
+    if (path === 'continue') resumeMain(this.registry)
+    else if (path === 'side') startSideTrip(this.registry)
+    else startNewRun(this.stageSel as 1 | 6, path === 'carry', choice.mode, choice.solo ?? 'boy', this.registry)
     // Only a true new run (starting from stage 1) draws a fresh charm —
     // picking up at a later-cleared stage keeps whatever this run already rolled.
-    const next = this.stageSel === 1 ? 'gacha' : 'worldmap'
+    const next = this.stageSel === 1 && (path !== 'continue' || !getRun()?.charm) ? 'gacha' : 'worldmap'
     this.time.delayedCall(360, () => this.cameras.main.fadeOut(300, 0, 0, 0))
     this.time.delayedCall(680, () =>
       next === 'gacha'
