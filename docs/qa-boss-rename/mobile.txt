@@ -1,0 +1,1 @@
+PASS mobile: Boss cards, HUD names, guide HTML and touch

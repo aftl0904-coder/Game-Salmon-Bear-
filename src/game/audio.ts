@@ -531,7 +531,7 @@ const SONGS: Record<SongId, Song> = {
     padBars: [0, 1, 4, 5],
     vol: 0.9,
   },
-  // 泥鬃 Boss：電單車衝撞，急躁 (144 BPM)，C 小調
+  // 泥怪 Boss：電單車衝撞，急躁 (144 BPM)，C 小調
   boss4: {
     bpm: 144,
     chords: ['Cm', 'Cm', 'Ab', 'Bb', 'Cm', 'Gm', 'Ab', 'Bb', 'Fm', 'Cm', 'Ab', 'Bb'],
@@ -565,7 +565,7 @@ const SONGS: Record<SongId, Song> = {
     padBars: [0, 4],
     vol: 0.92,
   },
-  // △畝大佬 Boss：三段變奏，由沉著到暴走 (150 BPM)，C 小調
+  // Trinity Boss：三段變奏，由沉著到暴走 (150 BPM)，C 小調
   boss5: {
     bpm: 150,
     chords: ['Cm', 'Cm', 'Ab', 'Bb', 'Gm', 'Gm', 'Ab', 'Bb', 'Fm', 'Cm', 'Gm', 'Bb'],

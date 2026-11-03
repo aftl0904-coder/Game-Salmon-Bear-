@@ -9,7 +9,7 @@ import { bossHitDamage } from '../engine/bossDamage'
 /**
  * Stage 4 · 鹽霧工地 cast: 蜜僵 (uneven-pacing chaser, groups), 的士怪 (headlight-warn
  * then high-speed charge), 打卡鐘怪 (countdown then a radial paper burst), and the boss
- * 泥鬃 (motorcycle foreman).
+ * 泥怪 (motorcycle foreman).
  *
  * All four run on real frame animation (art-src/anim/enemies/E-11..E-13 and boss/mudmane →
  * scripts/art/slice_stage4mobs.py / slice_mudmane.py → the 'honeyzombie' / 'taximonster' /
@@ -225,7 +225,7 @@ export class ClockPunch extends AnimEnemy {
   }
 }
 
-// ── 泥鬃 (Boss) ──────────────────────────────────────────────────────────
+// ── 泥怪 (Boss) ──────────────────────────────────────────────────────────
 
 export type MudHooks = {
   floorY: () => number

@@ -1866,7 +1866,7 @@ export class GameScene extends Phaser.Scene {
       const bonus = pe.kind === 'boss' ? SCORE_BOSS_KILL : SCORE_KILL
       this.addScorePop(pe.x, pe.y - 72, bonus)
       if (pe.kind === 'boss')
-        this.emitScore(this.tower ? '大佬醒返喇！' : this.depot ? '泥鬃醒返喇！' : this.market ? '鏡鴞醒返喇！' : this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
+        this.emitScore(this.tower ? '大佬醒返喇！' : this.depot ? '泥怪醒返喇！' : this.market ? '鏡鴞醒返喇！' : this.tree ? '女王蜂醒返喇！' : '武者倒下！搶回樹頂蜂巢！')
     }
     return true
   }
@@ -5967,7 +5967,7 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.flash(200, 150, 220, 255)
   }
 
-  /** 泥鬃's nail-gun volley: alternates low (jump) / high (crouch), reusing 油甘魚's throw read. */
+  /** 泥怪's nail-gun volley: alternates low (jump) / high (crouch), reusing 油甘魚's throw read. */
   private throwNail(x: number, feet: number, dir: 1 | -1, high: boolean) {
     if (this.ended) return
     const key = this.textures.exists('s4-nail') ? 's4-nail' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
@@ -5987,7 +5987,7 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** 泥鬃's low mud wave ahead of a charge — purely telegraphs the charging body, no separate hit. */
+  /** 泥怪's low mud wave ahead of a charge — purely telegraphs the charging body, no separate hit. */
   private mudWave(x0: number, x1: number, dir: 1 | -1) {
     SFX.siren()
     const y = LANE_FLOOR_Y + 3
@@ -6018,7 +6018,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** △畝大佬's ceiling honey-rain (phase 1) — a handful of falling hazards, feather-rain style. */
+  /** Trinity's ceiling honey-rain (phase 1) — a handful of falling hazards, feather-rain style. */
   private honeyRain(x0: number, x1: number) {
     SFX.siren()
     const key = this.textures.exists('fx-honey') ? 'fx-honey' : 'coin'
@@ -6037,7 +6037,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** △畝大佬's rooftop dozer: warning band, then a body sweeps the arena floor (jump it). */
+  /** Trinity's rooftop dozer: warning band, then a body sweeps the arena floor (jump it). */
   private dozerRun(x0: number, x1: number, dir: 1 | -1) {
     SFX.siren()
     const y = LANE_FLOOR_Y + 3
@@ -6332,9 +6332,9 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
+  /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥怪 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? 'Trinity' : this.depot ? '泥怪' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -6372,7 +6372,7 @@ export class GameScene extends Phaser.Scene {
       }
     }
     if (this.depot || this.mall || this.stageNo === 1) {
-      // No dedicated reveal cutscene for 泥鬃 / 武者王 — their 來歷卡 (bossCard) already told the story.
+      // No dedicated reveal cutscene for 泥怪 / 武者王 — their 來歷卡 (bossCard) already told the story.
       this.storyIntro = { destroy: () => undefined }
       this.time.delayedCall(260, reveal)
       return

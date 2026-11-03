@@ -58,8 +58,8 @@ const CAST: Record<string, CastEntry> = {
   queenEvil: { name: '蜜冠女王蜂', set: 'queen', tex: null, portrait: null, pitch: 180, color: '#ff9a3a', idle: 'hover' },
   owl: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl', pitch: 220, color: '#d8e0ff', idle: 'perch' },
   owlEvil: { name: '月橋鏡鴞', set: 'mirrorowl', tex: null, portrait: 'mirror-owl-evil', pitch: 160, color: '#b8c0ff', idle: 'perch' },
-  /** △畝大佬: no painted portrait yet (C10 reuses the c7-boss full-screen still instead). */
-  triboss: { name: '△畝大佬', set: null, tex: null, portrait: null, pitch: 140, color: '#ff6a4a' },
+  /** Trinity: no painted portrait yet (C10 reuses the c7-boss full-screen still instead). */
+  triboss: { name: 'Trinity', set: null, tex: null, portrait: null, pitch: 140, color: '#ff6a4a' },
 }
 
 const PROP_TEX: Record<string, string> = {
