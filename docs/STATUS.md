@@ -4,7 +4,7 @@
 
 - 本 branch 基於 `main` `285ae63`（合併 #74）。
 - 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇。
-- [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 為窿辨識方案草稿；未經 Alan 同意唔 close。實作在 [#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78)，待 Claude 審；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
+- [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 為窿辨識方案草稿；#78 合併後須先問 Alan 才可 close。實作在 [#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78)：Claude 審完無阻塞，等 Alan 講 `merge PR #78`；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未真機及完整泥鬃戰測試。#73 獨立 `fan-glide` 未喺遊戲驗證。#74 未測真機及完整對戰。
 
 ## 2. 分工同 branch
@@ -21,8 +21,10 @@
 - Alan 確認可跑自動化手機／電腦測試；唔自行做手動試玩。
 - 手機 2P：Alan 唔會兩人同機用手機玩，**唔做 P2 touch 控制**。
 - 第1至6關窿辨識：採用 #71 的 A＋B；窿內加深、兩側高對比邊線、地面頂邊連續亮邊但窿口中斷。只改外觀，不改碰撞、坑寬、平台或敵人。
+- 第7至10關新增窿時，沿用 #78 `drawTerrainFeatures()` 的深色窿、兩側邊線及在窿口中斷嘅地面頂邊亮線；以 #78 合併後版本為基線。
 
 ## 4. 下一步次序
 
-1. Claude 審 #78 窿辨識實作及手機／桌面自動 QA。
-2. 按已確認故事大綱處理主選單及存檔。
+1. **主選單及存檔**：Manus 按已確認大綱實作；沿用現有進度、裝備與大陸2完成旗標，細節不清楚須先確認。
+2. **大陸2第2關（森友展銷中心）**：Claude 整理 A–E 已確認 brief 並交代來源，Cursor 做原創美術，Manus 實作；欠缺或未確認嘅設計先由 Alan 決定。
+3. **大陸2第3–5關 brief**：Claude 整理故事及分關 brief，Alan 確認未決設計，Cursor 做原創美術，Manus 按關卡次序實作；第10關完成時接現有 `markC2Cleared()`。
