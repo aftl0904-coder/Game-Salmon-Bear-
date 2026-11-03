@@ -1,0 +1,10 @@
+PASS no pits
+PASS unordered, overlapping, clipping
+PASS empty and boundaries
+PASS stage 1: 7 actual pit openings
+PASS stage 2: 3 actual pit openings
+PASS stage 3: 3 actual pit openings
+PASS stage 4: 3 actual pit openings
+PASS stage 5: 4 actual pit openings
+PASS stage 6: 6 actual pit openings
+PASS 26 pit coordinates and surface-zone masks

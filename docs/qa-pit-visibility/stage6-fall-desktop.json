@@ -1,0 +1,47 @@
+{
+  "mode": "desktop",
+  "setup": "stage and start injected; fall driven only by touch or keyboard",
+  "passed": true,
+  "inputs": "keyboard D",
+  "pit": {
+    "x0": 1880,
+    "x1": 1932
+  },
+  "trace": [
+    {
+      "x": 1850,
+      "y": 285,
+      "hp": 6
+    },
+    {
+      "x": 1868,
+      "y": 285,
+      "hp": 6
+    },
+    {
+      "x": 1886,
+      "y": 285,
+      "hp": 6
+    },
+    {
+      "x": 1904,
+      "y": 288,
+      "hp": 6
+    },
+    {
+      "x": 1920,
+      "y": 308,
+      "hp": 6
+    },
+    {
+      "x": 1926,
+      "y": 354,
+      "hp": 6
+    },
+    {
+      "x": 1810,
+      "y": 285,
+      "hp": 5
+    }
+  ]
+}

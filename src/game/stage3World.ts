@@ -1,6 +1,8 @@
 import Phaser from 'phaser'
 import type { Player } from './Player'
 import { DEPTH } from './engine/depth'
+import { terrainPits } from './engine/terrain'
+import { groundVisualSpans } from './engine/terrainVisual'
 import { SFX } from './audio'
 import { floatText, burst } from './fx'
 import { markHd } from './heroAnims'
@@ -142,8 +144,11 @@ export class Stage3World {
     const s = this.ctx.scene
     const band = (list: Array<{ x0: number; x1: number }> | undefined, col: number, alpha: number) => {
       for (const z of list ?? []) {
-        const r = s.add.rectangle(z.x0, this.ctx.floorY, z.x1 - z.x0, 5, col, alpha).setOrigin(0, 0).setDepth(DEPTH.GROUND + 4)
-        s.tweens.add({ targets: r, alpha: { from: alpha * 0.5, to: alpha }, duration: 1400, yoyo: true, repeat: -1 })
+        // The colour is only a visual hint; never imply a floor across a real pit.
+        for (const span of groundVisualSpans(z.x0, z.x1, terrainPits())) {
+          const r = s.add.rectangle(span.x0, this.ctx.floorY, span.x1 - span.x0, 5, col, alpha).setOrigin(0, 0).setDepth(DEPTH.GROUND + 4)
+          s.tweens.add({ targets: r, alpha: { from: alpha * 0.5, to: alpha }, duration: 1400, yoyo: true, repeat: -1 })
+        }
       }
     }
     band(this.d.slippery, 0x8ad0ff, 0.35)

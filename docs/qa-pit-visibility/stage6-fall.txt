@@ -1,0 +1,2 @@
+PASS stage 6 mobile real input fell and respawned maxY 386
+PASS stage 6 desktop real input fell and respawned maxY 354

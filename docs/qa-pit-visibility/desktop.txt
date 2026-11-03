@@ -1,0 +1,17 @@
+PASS desktop 1 normal 672 dark= 0.000
+PASS desktop 1 fixed-plank 1872 dark= 0.000
+PASS desktop 1 moving-plank 5116 dark= 0.000
+PASS desktop 2 normal 700 dark= 0.000
+PASS desktop 2 moving-plank 1980 dark= 0.000
+PASS desktop 3 night 1040 dark= 0.143
+PASS desktop 3 night-moving-plank 2560 dark= 0.001
+PASS desktop 3 night-slippery 2860 dark= 0.000
+PASS desktop 4 night 1040 dark= 0.000
+PASS desktop 4 night-real-step 760 dark= 0.000
+PASS desktop 5 normal 2760 dark= 0.000
+PASS desktop 5 dark-plank 1980 dark= 0.817
+PASS desktop 5 real-step 620 dark= 0.057
+PASS desktop 6 normal 1880 dark= 0.000
+PASS desktop 6 fixed-plank 1150 dark= 0.000
+PASS desktop 6 dark 3350 dark= 0.618
+PASS desktop 6 dark 4000 dark= 0.620
