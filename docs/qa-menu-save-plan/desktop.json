@@ -1,0 +1,127 @@
+{
+  "mode": "desktop",
+  "setup": "2p; stage and initial positions injected; enemies and boss isolated",
+  "inputs": "P1 keyboard + P2 keyboard",
+  "cases": [
+    {
+      "stage": 1,
+      "kind": "platform",
+      "start": {
+        "mode": "2p",
+        "boy": {
+          "x": 1052,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        },
+        "girl": {
+          "x": 1072,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        }
+      },
+      "upper": {
+        "mode": "2p",
+        "boy": {
+          "x": 1052,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        },
+        "girl": {
+          "x": 1072,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        }
+      },
+      "lower": {
+        "mode": "2p",
+        "boy": {
+          "x": 945,
+          "y": 285,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 283,
+          "jumping": false
+        },
+        "girl": {
+          "x": 949,
+          "y": 285,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 283,
+          "jumping": false
+        }
+      },
+      "traces": {
+        "boy": {
+          "peak": 163,
+          "landings": [
+            {
+              "prior": {
+                "y": 255,
+                "vx": 0,
+                "jumping": true
+              },
+              "y": 229,
+              "vx": 0,
+              "bodyBottom": 227,
+              "at": 15950
+            },
+            {
+              "prior": {
+                "y": 287,
+                "vx": -105,
+                "jumping": true
+              },
+              "y": 285,
+              "vx": -105,
+              "bodyBottom": 283,
+              "at": 17353.800000000745
+            }
+          ]
+        },
+        "girl": {
+          "peak": 163,
+          "landings": [
+            {
+              "prior": {
+                "y": 248,
+                "vx": 0,
+                "jumping": true
+              },
+              "y": 229,
+              "vx": 0,
+              "bodyBottom": 227,
+              "at": 16004.199999999255
+            },
+            {
+              "prior": {
+                "y": 287,
+                "vx": -127,
+                "jumping": true
+              },
+              "y": 285,
+              "vx": -127,
+              "bodyBottom": 283,
+              "at": 17558.60000000149
+            }
+          ]
+        }
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
