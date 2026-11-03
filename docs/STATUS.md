@@ -6,7 +6,7 @@
 - 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#70 第4關修復、#73 電風扇美術、#75 電風扇 QA、#76 地圖預覽 QA。
 - 未合併：[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69) 狀態文件、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 窿／地面方案、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72) 經文斷行、[#74](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/74) 雙人落台 QA、[#77](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/77) 地圖雙人風扇美術。
 - #69（測試時 head `c28b039`）與 `0014e63` 無衝突，build 和資料驗證通過；原手機及桌面自動化 QA 用舊 main `dfd4413`，未於本次重新運行。
-- #72 與 `0014e63` 在 `src/game/WorldMapScene.ts` 有衝突，最新合併預覽尚未 build 或測試；原有文字／模擬手機／桌面測試基於舊 main，不能代表整合後通過。
+- #72 已 rebase 至 `0014e63` 並解決 `WorldMapScene.ts` 衝突；build、9 項資料驗證、十關文字，以及模擬 Pixel 7／iPhone 13 純 touch 同桌面鍵盤 QA 通過。第6–10關用 #68 新地圖經文，不恢復舊黑卡；尚未真機／完整遊玩，待 Claude 審。
 - #74 與 `0014e63` 無衝突，build 和資料驗證通過；原手機及桌面落台 QA 用舊 main `17930a0`，未於本次重新運行。
 - Claude 已審 #69／#74，回報無阻塞；等 Alan 指示。#77 改兩張遊戲地圖雙人素材、另加兩張 QA 比較圖；`map-bike.json` 不變，未真機或開遊戲睇地圖。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未做真機及完整泥鬃戰測試。#73 風口實際播 `fan-float`，獨立 `fan-glide` 未喺遊戲驗證。
@@ -33,6 +33,6 @@
 
 ## 5. 下一步次序
 
-1. Manus 處理 #72 與最新 main 衝突及新版地圖經文 QA，交 Claude 審閱。
+1. Claude 審已處理衝突同新版地圖經文 QA 嘅 #72。
 2. Claude 審 #77；#69／#74 已審，等 Alan 合併指示。
 3. #71 等 Alan 確認方向；再按已確認故事大綱處理主選單及存檔。
