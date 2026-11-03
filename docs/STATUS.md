@@ -3,10 +3,11 @@
 ## 1. 現況
 
 - `main`：`17930a0369a9f177e91372a2456a41da19bd377f`（#65、#70 已合併）。
-- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）、草稿 [#73](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/73)（ART-18 風扇）、[#74](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/74)（2P 落台 QA）及 [#75](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/75)（#73 合併預覽 QA 證據）。
+- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）、[#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件）、草稿 [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71)（窿／地面辨識方案）、[#72](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/72)（經文按標點斷行）、草稿 [#73](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/73)（ART-18 風扇）、[#74](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/74)（2P 落台 QA）、[#75](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/75)（#73 預覽 QA）及 [#76](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/76)（#67／#68 預覽 QA）。
 - 地圖 code branch 疊住已合併嘅 #65，亦包含 #67 地圖美術 commit；#67 同 #68 嘅 diff 有重疊。
+- #67、#68 各自與最新 main `17930a0` 合併預覽無衝突；各自 TypeScript／Vite build 同 9 項資料驗證通過，證據喺 #76。今次無跑地圖操作或真機；#68 的 `markC2Cleared()` 尚未接第10關。
 - #73 與 #67 合併後，Cursor 要將 N4 `art-src/map/c2/map-walk-duo.png` 的風扇跟 ART-18 新設計對齊；另開基於當時最新 `main` 的 branch，唔改凍結中嘅 Cursor branch。合併前 Cursor 等 STATUS 指示。
-- #73 保持草稿，Cursor 最新 commit `89be87b` 已補資產清單；`frameHeight` 由 178 改 180，與 ART-18 原 brief「cell size 不變」不同，待 Claude 重審；未改 Cursor branch。最新 main 合併預覽 build、9 項資料驗證及手機／桌面動作測試通過，證據喺 #75；鞋底疑有 1–2 畫面像素細縫待視覺覆核，風口實際播 `fan-float`，獨立 `fan-glide` 未喺遊戲驗證。
+- #73 保持草稿，Cursor 最新 commit `89be87b` 已補資產清單；`frameHeight` 由 178 改 180，與 ART-18 原 brief「cell size 不變」不同，未改 Cursor branch。最新 main 合併預覽 build、9 項資料驗證及手機／桌面動作測試通過，證據喺 #75；鞋底疑有 1–2 畫面像素細縫，風口實際播 `fan-float`，獨立 `fan-glide` 未喺遊戲驗證。Claude 已審 #73／#75，回報無阻塞；等 Alan 指示，#73 仍係 draft。
 - [#70](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/70) 第4關修復已合併至 `17930a0`。第1、2、3、5關各抽一處高台，兩角色各自以單人模式嘅模擬手機 touch 同桌面鍵盤回歸通過；第4關物理、手機轉場、桌面及第6關 smoke 已重跑。未真機或完整打泥鬃，亦未涵蓋各關所有平台；釘槍節奏待日後評估。
 - #74 補真正 2P 場景：第1至5關各抽一處，桌面兩人同時鍵盤落台通過；手機 P1 純 touch、P2 同場靜止通過。現有遊戲沒有 P2 屏幕 touch 控制，P2 要鍵盤或第二個手掣；未真機及未測完整對戰。
 - 對 Claude 疑問的靜態核對：`shop.ts` 鍵盤處理包含 Enter 離開；`GameScene.ts` 敵人更新會呼叫共用 `keepEnemyOnTerrain`，蜜僵的 CHASE 狀態遇坑受阻約 700ms 後可觸發跳坑。未因核對而重跑遊戲。
@@ -31,5 +32,5 @@
 1. Claude 審 #74 雙人模式落台自動回歸，並留意手機 P2 touch 限制。
 2. Claude 審草稿 #71 嘅窿／地面方案；待 Alan 明確確認先實作。
 3. #72 修復經文斷行，已做文字、手機及桌面自動測試，待 Claude 審閱；與 #68 同改 `WorldMapScene.ts`，整合後需再驗證。
-4. 處理 Cursor 的 #67、#68；只按 Alan 明確指示合併。
-5. Claude 重審 ART-18 草稿 #73 同 #75 證據；其後按已確認故事大綱處理主選單及存檔。Alan 遊戲完成前不親自試玩。
+4. Claude 審 Cursor 的 #67、#68 同 #76 預覽結果；只按 Alan 明確指示合併。
+5. #73／#75 已獲 Claude 審閱；其後按已確認故事大綱處理主選單及存檔。Alan 遊戲完成前不親自試玩。
