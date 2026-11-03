@@ -54,6 +54,7 @@ import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './
 import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { Stage6World, type Stage6Data } from './stage6World'
+import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
 import { Stage2World } from './stage2World'
 import {
@@ -733,8 +734,7 @@ export class GameScene extends Phaser.Scene {
     if (this.scene.isActive('UIScene') || this.scene.isSleeping('UIScene')) {
       this.scene.stop('UIScene')
     }
-    const titles: Record<number, string> = { 1: '第一關・百畝樹林', 2: '第二關・蜜樹丘', 3: '第三關・月影夜市', 4: '第四關・鹽霧工地', 5: '第五關・△畝大廈', 6: '第六關・購物中心' }
-    this.scene.launch('UIScene', { mode: this.mode, stageTitle: titles[this.stageNo] ?? titles[1] })
+    this.scene.launch('UIScene', { mode: this.mode, stageTitle: stageTitle(this.stageNo) })
     this.events.once('shutdown', this.stopUi, this)
   }
 
@@ -5036,7 +5036,7 @@ export class GameScene extends Phaser.Scene {
     }
     // Title
     const title = this.add
-      .text(0, -H / 2 + 34, `${['', '第一關', '第二關', '第三關', '第四關', '第五關', '第六關'][this.stageNo] ?? '第一關'}　通關！`, {
+      .text(0, -H / 2 + 34, `${stageLabel(this.stageNo)}　通關！`, {
         fontFamily: FONT_TITLE,
         fontSize: '28px',
         color: '#ffd76a',

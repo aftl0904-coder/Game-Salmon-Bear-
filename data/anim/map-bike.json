@@ -16,5 +16,17 @@
     "frameHeight": 60,
     "count": 3,
     "res": 2
+  },
+  "c2icons": {
+    "frameWidth": 68,
+    "frameHeight": 64,
+    "count": 5,
+    "res": 2
+  },
+  "walkDuo": {
+    "frameWidth": 60,
+    "frameHeight": 60,
+    "count": 4,
+    "res": 2
   }
 }

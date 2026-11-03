@@ -6,6 +6,9 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import meta from '../../data/anim/map-bike.json'
 import { markHd } from './heroAnims'
 import versesRaw from '../../data/verses.json'
+import { c2Cleared } from './progress'
+import { stageTitle } from './stageNames'
+import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -24,38 +27,7 @@ const VERSE_HOLD_MS = 2600
  */
 export type MapData = { from: number; to: number; next: 'play' | 'bike' | 'credits'; stageNo?: number; pick?: boolean }
 
-/** Places on the 1280×720 map art (index 1–5). */
-const PLACES: Record<number, { x: number; y: number; name: string }> = {
-  1: { x: 300, y: 470, name: '第一關・百畝樹林' },
-  2: { x: 470, y: 262, name: '第二關・蜜樹丘' },
-  3: { x: 720, y: 412, name: '第三關・月影夜市' },
-  4: { x: 842, y: 196, name: '第四關・鹽霧工地' },
-  5: { x: 1092, y: 160, name: '第五關・△畝大廈' },
-}
-/** Road waypoints between consecutive places. */
-const ROADS: Record<string, Array<[number, number]>> = {
-  '1-2': [[300, 470], [380, 452], [440, 405], [500, 352], [484, 302], [470, 262]],
-  '2-3': [[470, 262], [484, 302], [510, 345], [580, 336], [650, 326], [704, 380], [720, 412]],
-  '3-4': [[720, 412], [760, 380], [790, 330], [800, 280], [820, 236], [842, 196]],
-}
 const S = 0.5 // map art is shown at half size (1280×720 → 640×360)
-
-/** The map art only covers 第一大陸 (stages 1–5); anything past it gets a plain title card instead. */
-const MAP_LAST_STAGE = 5
-const C2_STAGE_NAMES: Record<number, string> = { 6: '購物中心' }
-const ORDINAL = '一二三四五六七八九十'
-function onMap(stage: number): boolean {
-  return PLACES[stage] !== undefined
-}
-/** Place for a stage that is on the map; stages past the map never get here, but never return undefined either. */
-function placeOf(stage: number) {
-  return PLACES[stage] ?? PLACES[MAP_LAST_STAGE]!
-}
-function c2Title(stage: number): string {
-  const n = stage - MAP_LAST_STAGE
-  const name = C2_STAGE_NAMES[stage]
-  return `大陸2・第${ORDINAL[n - 1] ?? n}關${name ? `・${name}` : ''}`
-}
 
 export class MapScene extends Phaser.Scene {
   private data_!: MapData
@@ -63,6 +35,11 @@ export class MapScene extends Phaser.Scene {
   private leaving = false
   private walking = false
   private walkTween: Phaser.Tweens.TweenChain | null = null
+  /** The continent map this visit shows (null only for the plain title card). */
+  private cm!: ContinentMap
+  /** Road node the party starts from (0 = the 大陸2 pier). */
+  private fromNode = 0
+  private bannerBg!: Phaser.GameObjects.Graphics
 
   /** Stage numbers open for picking (1..max(to,from)), sorted. */
   private openStages: number[] = []
@@ -78,7 +55,7 @@ export class MapScene extends Phaser.Scene {
   private verseText!: Phaser.GameObjects.Text
   /** Set while the verse is showing after a stage was chosen; running it starts the trip. */
   private verseGo: (() => void) | null = null
-  /** Set while the 大陸2 title card is up; running it leaves for the stage. */
+  /** Set while the plain title card is up (a stage no map knows); running it leaves for the stage. */
   private cardGo: (() => void) | null = null
 
   constructor() {
@@ -91,12 +68,20 @@ export class MapScene extends Phaser.Scene {
       this.load.spritesheet('map-icons', '/art/map/icons.png', { frameWidth: meta.icons.frameWidth, frameHeight: meta.icons.frameHeight })
     if (!this.textures.exists('map-walk'))
       this.load.spritesheet('map-walk', '/art/map/walk.png', { frameWidth: meta.walk.frameWidth, frameHeight: meta.walk.frameHeight })
+    if (!this.textures.exists('map-c2-dark')) this.load.image('map-c2-dark', '/art/map/c2/world-map-dark.png')
+    if (!this.textures.exists('map-c2-green')) this.load.image('map-c2-green', '/art/map/c2/world-map-green.png')
+    if (!this.textures.exists('map-icons-c2'))
+      this.load.spritesheet('map-icons-c2', '/art/map/c2/icons.png', { frameWidth: meta.c2icons.frameWidth, frameHeight: meta.c2icons.frameHeight })
+    if (!this.textures.exists('map-walk-duo'))
+      this.load.spritesheet('map-walk-duo', '/art/map/c2/walk-duo.png', { frameWidth: meta.walkDuo.frameWidth, frameHeight: meta.walkDuo.frameHeight })
   }
 
   create(data: MapData) {
     this.data_ = data
     markHd(this.textures.get('map-icons'), meta.icons.res)
     markHd(this.textures.get('map-walk'), meta.walk.res)
+    markHd(this.textures.get('map-icons-c2'), meta.c2icons.res)
+    markHd(this.textures.get('map-walk-duo'), meta.walkDuo.res)
     this.leaving = false
     this.walking = false
     this.picking = false
@@ -104,10 +89,15 @@ export class MapScene extends Phaser.Scene {
     this.cardGo = null
     this.icons = {}
     this.pickTween = null
-    if (!onMap(data.to)) {
-      this.showContinent2Card(data)
+    const cm = mapForStage(data.to)
+    if (!cm) {
+      this.showTitleCard(data)
       return
     }
+    this.cm = cm
+    // 大陸2 is reached by sea: arriving from outside it (or picking its first stage from the menu) starts at the pier.
+    const bySea = !!cm.start && (data.from < cm.firstStage || (data.from === data.to && data.to === cm.firstStage))
+    this.fromNode = bySea ? 0 : data.from
     const cam = this.cameras.main
     cam.setBackgroundColor('#0a1428')
     cam.setZoom(RENDER_SCALE).setRotation(0)
@@ -116,13 +106,17 @@ export class MapScene extends Phaser.Scene {
     unlockAudio()
     playSong('story')
 
-    if (this.textures.exists('map-world')) this.add.image(0, 0, 'map-world').setOrigin(0).setScale(S)
+    const worldKey = cm.tex.worldGreen && c2Cleared() && this.textures.exists(cm.tex.worldGreen) ? cm.tex.worldGreen : cm.tex.world
+    if (this.textures.exists(worldKey)) this.add.image(0, 0, worldKey).setOrigin(0).setScale(S)
     if (!this.anims.exists('map-party-walk') && this.textures.exists('map-walk')) {
       this.anims.create({ key: 'map-party-walk', frames: this.anims.generateFrameNumbers('map-walk', { start: 0, end: 3 }), frameRate: 8, repeat: -1 })
     }
+    if (!this.anims.exists('map-duo-walk') && this.textures.exists('map-walk-duo')) {
+      this.anims.create({ key: 'map-duo-walk', frames: this.anims.generateFrameNumbers('map-walk-duo', { start: 0, end: 3 }), frameRate: 8, repeat: -1 })
+    }
 
     const maxOpen = Math.max(data.to, data.from)
-    this.openStages = Object.keys(PLACES)
+    this.openStages = Object.keys(cm.places)
       .map(Number)
       .filter((i) => i <= maxOpen)
       .sort((a, b) => a - b)
@@ -132,14 +126,14 @@ export class MapScene extends Phaser.Scene {
     this.pickIndex = data.to
 
     // Place badges: visited/current lit, later ones dim with a lock.
-    for (const [k, p] of Object.entries(PLACES)) {
+    for (const [k, p] of Object.entries(cm.places)) {
       const i = Number(k)
       const x = p.x * S
       const y = p.y * S
       const open = i <= maxOpen
       const ring = this.add.circle(x, y - 14, 11, 0x000000, 0.35)
       void ring
-      const icon = this.add.image(x, y - 14, 'map-icons', i - 1).setScale(0.62)
+      const icon = this.add.image(x, y - 14, cm.tex.icons, i - cm.firstStage).setScale(0.62)
       this.icons[i] = icon
       if (!open) icon.setTint(0x555566).setAlpha(0.8)
       if (!open) this.add.text(x, y - 14, '？', { fontFamily: FONT_UI, fontSize: '10px', color: '#e8e0ff' }).setOrigin(0.5)
@@ -156,17 +150,16 @@ export class MapScene extends Phaser.Scene {
       }
     }
 
-    const start = placeOf(data.from)
+    const start = (bySea ? cm.start : cm.places[data.from]) ?? cm.places[data.to]!
     this.party = this.add.sprite(start.x * S, start.y * S + 4, 'map-walk', 0).setOrigin(0.5, 1)
     if (this.anims.exists('map-party-walk')) this.party.play('map-party-walk')
 
     // Banner (live-updates with the current pick while picking).
     const banner = this.add.container(320, 330).setScrollFactor(0)
-    const bg = this.add.graphics()
-    bg.fillStyle(0xc8902a, 1).fillRect(-122, -15, 244, 30)
-    bg.fillStyle(0x1c120c, 0.96).fillRect(-120, -13, 240, 26)
+    this.bannerBg = this.add.graphics()
     this.bannerLabel = this.add.text(0, 0, '', { fontFamily: FONT_TITLE, fontSize: '14px', color: '#ffd76a' }).setOrigin(0.5)
-    banner.add([bg, this.bannerLabel])
+    banner.add([this.bannerBg, this.bannerLabel])
+    this.drawBannerBg()
     this.hint = this.add
       .text(632, 8, '', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
       .setOrigin(1, 0)
@@ -218,8 +211,8 @@ export class MapScene extends Phaser.Scene {
     }
   }
 
-  /** Stages past the map (第二大陸): black card with the verse and the stage name, then straight into the stage. */
-  private showContinent2Card(data: MapData) {
+  /** A stage no map knows: plain black card with the verse and the stage name, then straight into the stage. Never throws. */
+  private showTitleCard(data: MapData) {
     const to = data.to
     const cam = this.cameras.main
     cam.setBackgroundColor('#000000')
@@ -240,7 +233,7 @@ export class MapScene extends Phaser.Scene {
         .setScrollFactor(0)
     }
     this.add
-      .text(320, 252, c2Title(to), { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+      .text(320, 252, stageTitle(to), { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
       .setOrigin(0.5)
       .setScrollFactor(0)
     this.hint = this.add
@@ -357,8 +350,20 @@ export class MapScene extends Phaser.Scene {
     this.pickTween = this.tweens.add({ targets: icon, scale: 0.72, duration: 420, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
   }
 
+  private placeOf(stage: number) {
+    return this.cm.places[stage] ?? this.cm.start ?? Object.values(this.cm.places)[0]!
+  }
+
+  /** Banner plate: 244 wide as ever, wider only when a long continent-form name needs it. */
+  private drawBannerBg(textWidth = 0) {
+    const w = Math.max(244, Math.ceil(textWidth) + 28)
+    this.bannerBg.clear()
+    this.bannerBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -15, w + 4, 30)
+    this.bannerBg.fillStyle(0x1c120c, 0.96).fillRect(-w / 2, -13, w, 26)
+  }
+
   private updateBanner() {
-    const dest = placeOf(this.picking ? this.pickIndex : this.data_.to)
+    const dest = this.placeOf(this.picking ? this.pickIndex : this.data_.to)
     if (this.picking) {
       this.bannerLabel.setText(`◀　${dest.name}　▶`)
       this.hint.setText('←→ 揀關卡　Enter／A 出發')
@@ -366,6 +371,7 @@ export class MapScene extends Phaser.Scene {
       this.bannerLabel.setText(this.data_.next === 'credits' ? `下一站：${dest.name}` : dest.name)
       this.hint.setText('Enter／A　略過')
     }
+    this.drawBannerBg(this.bannerLabel.width)
   }
 
   /** Lock in the highlighted stage and start the trip there. */
@@ -387,39 +393,75 @@ export class MapScene extends Phaser.Scene {
     this.travelAfterVerse(chosen)
   }
 
-  /** Walk the road to `to` if one's mapped, otherwise a short beat, then arrive(). */
+  /** Walk the road(s) to `to` if mapped (大陸2 chains places and rides the tower lift), otherwise a short beat, then arrive(). */
   private beginTravel(to: number) {
-    const from = this.data_.from
-    const road = ROADS[`${from}-${to}`]
-    if (road) {
-      const g = this.add.graphics()
-      g.fillStyle(0xfff0c0, 0.9)
-      for (let j = 0; j < road.length - 1; j++) {
-        const [ax, ay] = road[j]!
-        const [bx, by] = road[j + 1]!
-        const d = Math.hypot(bx - ax, by - ay)
-        for (let t = 0; t < d; t += 12) {
-          const u = t / d
-          g.fillCircle((ax + (bx - ax) * u) * S, (ay + (by - ay) * u) * S, 1.2)
-        }
-      }
-      this.walking = true
-      this.walkTween = this.tweens.chain({
-        targets: this.party,
-        tweens: road.slice(1).map(([x, y], j) => {
-          const [px] = road[j]!
-          return {
-            x: x * S,
-            y: y * S + 4,
-            duration: Math.hypot(x - road[j]![0], y - road[j]![1]) * 9,
-            onStart: () => this.party.setFlipX(x < px),
-          }
-        }),
-        onComplete: () => this.arrive(),
-      })
-    } else {
+    const cm = this.cm
+    const legs = legsBetween(cm, this.fromNode, to)
+    if (!legs.length) {
       this.time.delayedCall(1300, () => this.arrive())
+      return
     }
+    // Trips into 8 and 9 happen while 噗噗 is away: the duo sheet instead of the trio.
+    if (cm.id === 2 && (to === 8 || to === 9) && this.textures.exists('map-walk-duo')) {
+      this.party.setTexture('map-walk-duo', 0)
+      if (this.anims.exists('map-duo-walk')) this.party.play('map-duo-walk')
+    }
+    const g = this.add.graphics()
+    g.fillStyle(0xfff0c0, 0.9)
+    const tweens: Phaser.Types.Tweens.TweenBuilderConfig[] = []
+    let prev = legs[0]!.kind === 'road' ? legs[0]!.pts[0]! : legs[0]!.from
+    const goTo = (x: number, y: number, duration: number, extra: Partial<Phaser.Types.Tweens.TweenBuilderConfig> = {}) => {
+      const px = prev[0]
+      tweens.push({ targets: this.party, x: x * S, y: y * S + 4, duration, onStart: () => this.party.setFlipX(x < px), ...extra })
+      prev = [x, y]
+    }
+    let car: Phaser.GameObjects.Rectangle | null = null
+    for (const leg of legs) {
+      if (leg.kind === 'road') {
+        this.dotRoad(g, leg.pts)
+        for (const [x, y] of leg.pts.slice(1)) goTo(x, y, Math.hypot(x - prev[0], y - prev[1]) * 9)
+      } else {
+        car = this.drawLift(g, leg, car)
+        goTo(leg.base[0], leg.base[1], Math.hypot(leg.base[0] - prev[0], leg.base[1] - prev[1]) * 9)
+        const lift = car
+        tweens.push({
+          targets: this.party,
+          x: leg.top[0] * S,
+          y: leg.top[1] * S + 4,
+          duration: 1500,
+          ease: 'Sine.inOut',
+          onStart: () => SFX.blip(330),
+          onUpdate: () => {
+            lift?.setPosition(this.party.x, this.party.y - 5).setVisible(true)
+          },
+        })
+        prev = leg.top
+        goTo(leg.to[0], leg.to[1], Math.hypot(leg.to[0] - prev[0], leg.to[1] - prev[1]) * 9)
+      }
+    }
+    this.walking = true
+    this.walkTween = this.tweens.chain({ targets: this.party, tweens, onComplete: () => this.arrive() })
+  }
+
+  private dotRoad(g: Phaser.GameObjects.Graphics, road: Array<[number, number]>) {
+    for (let j = 0; j < road.length - 1; j++) {
+      const [ax, ay] = road[j]!
+      const [bx, by] = road[j + 1]!
+      const d = Math.hypot(bx - ax, by - ay)
+      for (let t = 0; t < d; t += 12) {
+        const u = t / d
+        g.fillCircle((ax + (bx - ax) * u) * S, (ay + (by - ay) * u) * S, 1.2)
+      }
+    }
+  }
+
+  /** A thin rail up the tower's side and the little lift car that rides with the party. */
+  private drawLift(g: Phaser.GameObjects.Graphics, leg: Extract<Leg, { kind: 'lift' }>, old: Phaser.GameObjects.Rectangle | null) {
+    old?.destroy()
+    g.lineStyle(1.5, 0xfff0c0, 0.9)
+    g.lineBetween(leg.base[0] * S, leg.base[1] * S, leg.top[0] * S, leg.top[1] * S)
+    g.fillStyle(0xfff0c0, 0.9).fillCircle(leg.base[0] * S, leg.base[1] * S, 2).fillCircle(leg.top[0] * S, leg.top[1] * S, 2)
+    return this.add.rectangle(leg.base[0] * S, leg.base[1] * S, 12, 14, 0x2a2018, 0.9).setStrokeStyle(1, 0xffd76a).setVisible(false)
   }
 
   private skip() {
@@ -429,7 +471,7 @@ export class MapScene extends Phaser.Scene {
     }
     if (this.walking && this.walkTween) {
       this.walkTween.stop()
-      const dest = placeOf(this.data_.to)
+      const dest = this.placeOf(this.data_.to)
       this.party.setPosition(dest.x * S, dest.y * S + 4)
       this.arrive()
     } else if (!this.leaving) {
@@ -445,7 +487,7 @@ export class MapScene extends Phaser.Scene {
     this.party.anims.stop()
     SFX.coin()
     this.tweens.add({ targets: this.party, y: this.party.y - 6, duration: 140, yoyo: true })
-    const dest = placeOf(this.data_.to)
+    const dest = this.placeOf(this.data_.to)
     const cam = this.cameras.main
     this.time.delayedCall(700, () => {
       SFX.powerUp()
