@@ -497,10 +497,22 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       if (this.jumpHoldMs < 50 || body.velocity.y < 0) return
       const top = landingTopAt(this.x, prev, this.y, this.footHalfW)
       if (top === null) return
+      const vx = body.velocity.x
       this.setY(top)
+      // Keep the Arcade body on the same platform as the feet. At low frame
+      // rates its previous position can otherwise pull the sprite back below
+      // the ledge on the next physics step, undoing this landing.
+      body.reset(this.x, top)
+      // reset() initially uses the sprite's top-left rather than the body's
+      // foot offset. Same-frame overlap checks need the actual foot hitbox.
+      body.updateFromGameObject()
+      body.prev.copy(body.position)
+      body.prevFrame.copy(body.position)
+      body.setVelocityX(vx)
       body.velocity.y = 0
       body.allowGravity = false
       body.setGravity(0, 0)
+      this.prevFeetY = top
       this.laneJumping = false
       this.justLanded = true
       this.jumpCutApplied = false

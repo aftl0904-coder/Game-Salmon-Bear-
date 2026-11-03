@@ -7,7 +7,7 @@ import { actorDepth } from '../engine/depth'
 import { bossHitDamage } from '../engine/bossDamage'
 
 /**
- * Stage 4 · 鹽霧工地 cast: 蜜僵 (slow shambling zombie, groups), 的士怪 (headlight-warn
+ * Stage 4 · 鹽霧工地 cast: 蜜僵 (uneven-pacing chaser, groups), 的士怪 (headlight-warn
  * then high-speed charge), 打卡鐘怪 (countdown then a radial paper burst), and the boss
  * 泥鬃 (motorcycle foreman).
  *
@@ -21,20 +21,33 @@ type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: numbe
 
 // ── 蜜僵 ─────────────────────────────────────────────────────────────────
 
-/** Shambles slowly towards the nearest hero; hits leave a sticky honey puddle underfoot. */
+/** Pursues the nearest hero at an uneven pace; hits leave a honey puddle underfoot. */
 export class HoneyZombie extends AnimEnemy {
   onSplatter?: (x: number) => void
+  private strideMs = 0
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 'honeyzombie'
     this.hp = this.maxHp = 2
     this.hurtMs = 260
     this.bodyBox(30, 44)
+    this.setFsm('CHASE')
   }
   canHurtPlayer() {
     return this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT' && this.contactCd <= 0
   }
   receiveHit(dmg: number, dir: number): EnemyHitResult {
+    // Interrupt the shared pit-hop on a hit and land on the nearer safe bank.
+    if (this.getData('leaping')) {
+      const from = this.getData('pitHopFrom') as number
+      const to = this.getData('pitHopTo') as number
+      const tween = this.getData('pitHopTween') as Phaser.Tweens.Tween | undefined
+      tween?.stop()
+      this.setData('leaping', false)
+      this.setData('pitHopTween', undefined)
+      this.setPosition(Math.abs(this.x - from) <= Math.abs(this.x - to) ? from : to, this.s2.floorY())
+      ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
+    }
     this.onSplatter?.(this.x)
     return super.receiveHit(dmg, dir)
   }
@@ -43,6 +56,12 @@ export class HoneyZombie extends AnimEnemy {
     const now = this.scene.time.now
     this.contactCd = Math.max(0, this.contactCd - dt)
     if (isActorFrozen(this, now)) return
+    if (this.getData('leaping')) {
+      // The existing pit-hop tween owns position until it lands.
+      this.setVelocity(0, 0)
+      this.setDepth(actorDepth('enemy', this.lane, this.y))
+      return
+    }
     this.y = this.s2.floorY()
     if (this.fsm === 'HURT') {
       this.think -= dt
@@ -55,7 +74,9 @@ export class HoneyZombie extends AnimEnemy {
     this.setFlipX(dx < 0)
     const near = Math.abs(dx) < 46
     this.anim(near ? 'reach' : 'walk')
-    this.setVelocityX(Math.sign(dx) * (near ? 8 : 16))
+    this.strideMs += Math.min(dt, 50)
+    const speed = 36 + 12 * Math.sin(this.strideMs / 650)
+    this.setVelocityX(Math.abs(dx) < 5 ? 0 : Math.sign(dx) * speed)
     this.setDepth(actorDepth('enemy', this.lane, this.y))
   }
 }
@@ -211,6 +232,7 @@ export type MudHooks = {
   /** A low mud wave sweeps the ground in front of the charge — jump to avoid. */
   mudWave: (x0: number, x1: number, dir: 1 | -1) => void
   spawnZombie: (x: number) => void
+  warnNail: (x: number, high: boolean) => () => void
   nail: (x: number, y: number, dir: 1 | -1, high: boolean) => void
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
 }
@@ -239,6 +261,8 @@ export class MudMane extends AnimEnemy {
   arenaX1 = 0
   private lastHitAt = 0
   private nailsThrown = 0
+  private nailCueShown = false
+  private clearNailCue: (() => void) | null = null
   private mh: MudHooks
   onDefeated?: () => void
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, mh: MudHooks) {
@@ -261,7 +285,7 @@ export class MudMane extends AnimEnemy {
   }
   canHurtPlayer() {
     if (!this.active || this.fsm === 'DEAD') return false
-    if (this.act === 'intro' || this.act === 'recover' || this.act === 'exposed' || this.act === 'windup') return false
+    if (this.act === 'intro' || this.act === 'anticip' || this.act === 'recover' || this.act === 'exposed' || this.act === 'windup') return false
     return this.contactCd <= 0
   }
   receiveHit(dmg: number, dir: number): EnemyHitResult {
@@ -287,12 +311,18 @@ export class MudMane extends AnimEnemy {
     }
   }
   private go(a: MudMane['act']) {
+    if (this.act === 'volley' && a !== 'volley') {
+      this.clearNailCue?.()
+      this.clearNailCue = null
+    }
     this.act = a
     this.t = 0
     this.anim(MUD_ANIM[a])
     this.box(a === 'charge' ? 96 : 44, a === 'charge' ? 50 : 56)
   }
   protected override die(_dir: number) {
+    this.clearNailCue?.()
+    this.clearNailCue = null
     this.hp = 0
     this.act = 'intro'
     this.setFsm('DEAD')
@@ -306,7 +336,8 @@ export class MudMane extends AnimEnemy {
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') return
     this.contactCd = Math.max(0, this.contactCd - dt)
-    this.t += dt
+    // A long frame must not skip the visible warning after a phone resumes.
+    this.t += this.act === 'volley' ? Math.min(dt, 50) : dt
     const floor = this.mh.floorY()
     this.y = floor
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
@@ -334,7 +365,7 @@ export class MudMane extends AnimEnemy {
         }
         break
       case 'recover':
-        if (this.t > 500) this.go('anticip')
+        if (this.t > 900) this.go('anticip')
         break
       // ── Phase 2: 蜜僵潮＋釘槍 ──
       case 'platform':
@@ -347,16 +378,25 @@ export class MudMane extends AnimEnemy {
         if (this.t > 700 && this.t - dt <= 700) this.mh.spawnZombie(this.arenaX1 - 30)
         if (this.t > 1400) {
           this.nailsThrown = 0
+          this.nailCueShown = false
           this.go('volley')
         }
         break
       case 'volley':
-        if (this.t > 220 * (this.nailsThrown + 1) && this.nailsThrown < 4) {
+        if (this.nailsThrown < 4 && !this.nailCueShown) {
+          this.nailCueShown = true
+          this.t = 0
+          this.clearNailCue = this.mh.warnNail(this.x, this.nailsThrown % 2 === 0)
+        } else if (this.nailsThrown < 4 && this.t >= 700) {
+          this.clearNailCue?.()
+          this.clearNailCue = null
           const dir = (Math.sign(tgt.x - this.x) || 1) as 1 | -1
           this.mh.nail(this.x, floor - 10, dir, this.nailsThrown % 2 === 0)
           this.nailsThrown++
+          this.nailCueShown = false
+          this.t = 0
         }
-        if (this.nailsThrown >= 4 && this.t > 1200) this.go('platform')
+        if (this.nailsThrown >= 4 && this.t > 320) this.go('platform')
         break
       // ── Phase 3: 肉搏 ──
       case 'approach': {

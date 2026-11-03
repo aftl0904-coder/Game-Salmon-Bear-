@@ -1,0 +1,146 @@
+{
+  "iphone13L": {
+    "isPhonePlay": {
+      "coarse": true,
+      "touch": true,
+      "w": 750,
+      "h": 342
+    },
+    "canvas": {
+      "x": 71,
+      "y": 0,
+      "w": 608,
+      "h": 342,
+      "vw": 750,
+      "vh": 342,
+      "bufW": 1280,
+      "bufH": 720
+    },
+    "touchTargetsCssPx": {
+      "left": "42x38",
+      "right": "42x38",
+      "crouch": "46x38",
+      "jump": "46x46",
+      "attack": "42x42",
+      "special": "42x38",
+      "weaponSwitch": "44x38",
+      "start": "38x27"
+    },
+    "offscreen": [],
+    "right": 69,
+    "left": -66,
+    "crouch": true,
+    "jumpMinVy": -313,
+    "attackCd": 669.6800000000003,
+    "weapon": [
+      "normal",
+      "heavy"
+    ],
+    "multitouch": {
+      "dx": 103,
+      "jumpMinVy": -313
+    },
+    "pauseByTouch": true,
+    "errs": [],
+    "passed": true
+  },
+  "pixel7L": {
+    "isPhonePlay": {
+      "coarse": true,
+      "touch": true,
+      "w": 863,
+      "h": 360
+    },
+    "canvas": {
+      "x": 112,
+      "y": 0,
+      "w": 640,
+      "h": 360,
+      "vw": 863,
+      "vh": 360,
+      "bufW": 1280,
+      "bufH": 720
+    },
+    "touchTargetsCssPx": {
+      "left": "44x40",
+      "right": "44x40",
+      "crouch": "48x40",
+      "jump": "48x48",
+      "attack": "44x44",
+      "special": "44x40",
+      "weaponSwitch": "46x40",
+      "start": "40x28"
+    },
+    "offscreen": [],
+    "right": 75,
+    "left": -68,
+    "crouch": true,
+    "jumpMinVy": -313,
+    "attackCd": 686.3200000000004,
+    "weapon": [
+      "normal",
+      "heavy"
+    ],
+    "multitouch": {
+      "dx": 121,
+      "jumpMinVy": -313
+    },
+    "pauseByTouch": true,
+    "errs": [],
+    "passed": true
+  },
+  "smallAndroidL": {
+    "isPhonePlay": {
+      "coarse": true,
+      "touch": true,
+      "w": 640,
+      "h": 320
+    },
+    "canvas": {
+      "x": 36,
+      "y": 0,
+      "w": 569,
+      "h": 320,
+      "vw": 640,
+      "vh": 320,
+      "bufW": 1280,
+      "bufH": 720
+    },
+    "touchTargetsCssPx": {
+      "left": "39x36",
+      "right": "39x36",
+      "crouch": "43x36",
+      "jump": "43x43",
+      "attack": "39x39",
+      "special": "39x36",
+      "weaponSwitch": "41x36",
+      "start": "36x25"
+    },
+    "offscreen": [],
+    "right": 71,
+    "left": -62,
+    "crouch": true,
+    "jumpMinVy": -313,
+    "attackCd": 789.6700000000001,
+    "weapon": [
+      "normal",
+      "heavy"
+    ],
+    "multitouch": {
+      "dx": 110,
+      "jumpMinVy": -313
+    },
+    "pauseByTouch": true,
+    "errs": [],
+    "passed": true
+  },
+  "iphone13P": {
+    "isPhonePlay": {
+      "coarse": true,
+      "touch": true,
+      "w": 390,
+      "h": 664
+    },
+    "note": "Portrait intentionally shows rotate-phone prompt; gameplay not tested in portrait."
+  }
+}

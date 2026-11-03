@@ -2331,8 +2331,10 @@ export class GameScene extends Phaser.Scene {
     e.setData('leaping', true)
     e.setData('blockedMs', 0)
     const y0 = e.y
+    e.setData('pitHopFrom', e.x)
+    e.setData('pitHopTo', toX)
     const arc = 34 + Math.min(width, 200) * 0.15
-    this.tweens.add({
+    const hop = this.tweens.add({
       targets: e,
       x: toX,
       duration: Phaser.Math.Clamp(520 + Math.max(0, width - 60) * 4, 520, 1000),
@@ -2343,8 +2345,10 @@ export class GameScene extends Phaser.Scene {
       onComplete: () => {
         e.y = y0
         e.setData('leaping', false)
+        e.setData('pitHopTween', undefined)
       },
     })
+    e.setData('pitHopTween', hop)
   }
 
   /** Active 琪寶寶 — 2P girl or 1P solo girl (stored in boy slot). */
@@ -4875,9 +4879,16 @@ export class GameScene extends Phaser.Scene {
   private clearStatus: Phaser.GameObjects.Text | null = null
   /** Released a beat late so the Enter that closes a pop-up cannot also hit the card behind it. */
   private closeClearModal() {
-    this.time.delayedCall(180, () => {
+    const release = () => {
+      // A long touch can outlive the delay: do not expose the card until the
+      // pointer that dismissed the modal is up as well.
+      if (this.input.manager.pointers.some((p) => p.isDown)) {
+        this.time.delayedCall(50, release)
+        return
+      }
       this.clearModal = false
-    })
+    }
+    this.time.delayedCall(180, release)
   }
 
   private gearFx: GearFx[] = []
@@ -5265,6 +5276,9 @@ export class GameScene extends Phaser.Scene {
     SFX.continue()
     this.time.delayedCall(600, () => playSong('victory'))
     this.cameras.main.stopFollow()
+    // The boss locks camera bounds to the arena. Reset them before positioning
+    // the fixed clear UI, otherwise Phaser hit-tests its children at arena X.
+    this.cameras.main.removeBounds()
     this.cameras.main.setScroll(0, 0)
     this.cameras.main.fadeIn(280, 255, 236, 180)
 
@@ -5292,7 +5306,10 @@ export class GameScene extends Phaser.Scene {
         return
       }
       left = true
-      for (const b of this.clearBtns) b.bg.disableInteractive()
+      for (const b of this.clearBtns) {
+        b.bg.disableInteractive()
+        b.tx.disableInteractive()
+      }
       offKeys()
       this.resetPauseKeys()
       if (id === 'menu') this.goMenu()
@@ -5337,6 +5354,10 @@ export class GameScene extends Phaser.Scene {
       const press = () => {
         if (!b.on || this.clearModal) return
         this.clearSel = i
+        if (!this.tallyDone) {
+          this.finishTally?.()
+          return
+        }
         leaveBy(b.id)
       }
       b.bg.on('pointerup', press)
@@ -5660,10 +5681,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Closest x (stepping inward) whose base floor exists — enemies never spawn over pits / in steps. */
-  private nearestBaseFloorX(x: number, inwardDir: number): number {
+  private nearestBaseFloorX(x: number, inwardDir: number, halfW = 20): number {
     for (let i = 0; i < 80; i++) {
       const xx = x + inwardDir * i * 8
-      if (supportTopAt(xx, LANE_FLOOR_Y, 20) !== null) return xx
+      if (supportTopAt(xx, LANE_FLOOR_Y, halfW) !== null) return xx
     }
     return x
   }
@@ -5718,6 +5739,7 @@ export class GameScene extends Phaser.Scene {
       let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.displayWidth + 24 + k * 38))
       k++
       if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
+      if (p.species === 'honeyzombie') x = this.nearestBaseFloorX(x, -1, 1)
       if (p.species === 'stallkeeper' || p.species === 'robotarm') x = p.x
       this.spawnS2(p.species, x, p.elite)
       return false
@@ -5928,7 +5950,6 @@ export class GameScene extends Phaser.Scene {
     shot.setData('lane', 0)
     shot.setData('dmg', 1)
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 300, repeat: -1 })
-    floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffb070', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
     this.time.delayedCall(1700, () => {
       if (shot.active) shot.destroy()
@@ -5953,6 +5974,13 @@ export class GameScene extends Phaser.Scene {
         const z = new HoneyZombie(this, x, this.s2Hooks())
         z.onSplatter = (sx) => this.honeySplat(sx)
         this.addS2Enemy(z)
+      },
+      warnNail: (x, high) => {
+        SFX.blip(520)
+        const warning = this.add.text(x, LANE_FLOOR_Y - 105, high ? '高釘！準備蹲' : '低釘！準備跳', {
+          fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3,
+        }).setOrigin(0.5).setDepth(DEPTH.FX)
+        return () => warning.destroy()
       },
       nail: (x, y, dir, high) => this.throwNail(x, y, dir, high),
       bossEvent: (kind) => this.onQueenEvent(kind),

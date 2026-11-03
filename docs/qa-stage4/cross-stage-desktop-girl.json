@@ -1,0 +1,217 @@
+{
+  "mode": "desktop",
+  "role": "girl",
+  "setup": "stage and initial position injected; movement uses input",
+  "cases": [
+    {
+      "stage": 1,
+      "kind": "platform",
+      "start": {
+        "x": 1064,
+        "y": 229,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 227,
+        "jumping": false
+      },
+      "jumpPeak": 162,
+      "upper": {
+        "x": 1064,
+        "y": 229,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 227,
+        "jumping": false
+      },
+      "upperLanding": {
+        "prior": {
+          "y": 252,
+          "vx": 0,
+          "jumping": true
+        },
+        "y": 229,
+        "vx": 0,
+        "bodyBottom": 227,
+        "at": 15356.900000000373
+      },
+      "lower": {
+        "x": 950,
+        "y": 285,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 283,
+        "jumping": false
+      },
+      "lowerLanding": {
+        "prior": {
+          "y": 287,
+          "vx": -127,
+          "jumping": true
+        },
+        "y": 285,
+        "vx": -127,
+        "bodyBottom": 283,
+        "at": 17666.599999999627
+      },
+      "passed": true
+    },
+    {
+      "stage": 2,
+      "kind": "step",
+      "start": {
+        "x": 1155,
+        "y": 261,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 259,
+        "jumping": false
+      },
+      "jumpPeak": 193,
+      "upper": {
+        "x": 1155,
+        "y": 261,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 259,
+        "jumping": false
+      },
+      "upperLanding": {
+        "prior": {
+          "y": 271,
+          "vx": 0,
+          "jumping": true
+        },
+        "y": 261,
+        "vx": 0,
+        "bodyBottom": 259,
+        "at": 14858.200000000186
+      },
+      "lower": {
+        "x": 1029,
+        "y": 285,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 283,
+        "jumping": false
+      },
+      "lowerLanding": {
+        "prior": {
+          "y": 287,
+          "vx": -127,
+          "jumping": true
+        },
+        "y": 285,
+        "vx": -127,
+        "bodyBottom": 283,
+        "at": 17041.200000000186
+      },
+      "passed": true
+    },
+    {
+      "stage": 3,
+      "kind": "step",
+      "start": {
+        "x": 868,
+        "y": 269,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 267,
+        "jumping": false
+      },
+      "jumpPeak": 203,
+      "upper": {
+        "x": 868,
+        "y": 269,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 267,
+        "jumping": false
+      },
+      "upperLanding": {
+        "prior": {
+          "y": 281,
+          "vx": 0,
+          "jumping": true
+        },
+        "y": 269,
+        "vx": 0,
+        "bodyBottom": 267,
+        "at": 15896.800000000745
+      },
+      "lower": {
+        "x": 753,
+        "y": 285,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 283,
+        "jumping": false
+      },
+      "lowerLanding": {
+        "prior": {
+          "y": 287,
+          "vx": -127,
+          "jumping": true
+        },
+        "y": 285,
+        "vx": -127,
+        "bodyBottom": 283,
+        "at": 17815.700000000186
+      },
+      "passed": true
+    },
+    {
+      "stage": 5,
+      "kind": "step",
+      "start": {
+        "x": 1830,
+        "y": 253,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 251,
+        "jumping": false
+      },
+      "jumpPeak": 186,
+      "upper": {
+        "x": 1830,
+        "y": 253,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 251,
+        "jumping": false
+      },
+      "upperLanding": {
+        "prior": {
+          "y": 262,
+          "vx": 0,
+          "jumping": true
+        },
+        "y": 253,
+        "vx": 0,
+        "bodyBottom": 251,
+        "at": 15387.400000000373
+      },
+      "lower": {
+        "x": 1694,
+        "y": 285,
+        "vx": 0,
+        "vy": 0,
+        "bodyBottom": 283,
+        "jumping": false
+      },
+      "lowerLanding": {
+        "prior": {
+          "y": 287,
+          "vx": -127,
+          "jumping": true
+        },
+        "y": 285,
+        "vx": -127,
+        "bodyBottom": 283,
+        "at": 18085.700000000186
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

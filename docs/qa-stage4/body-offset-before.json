@@ -1,0 +1,16 @@
+{
+  "description": "PR 70 before same-frame foot-offset fix; automated stage 2, mobile, boy",
+  "stage": 2,
+  "upperLanding": {
+    "prior": {
+      "y": 267,
+      "vx": 105,
+      "jumping": true
+    },
+    "y": 261,
+    "vx": 105,
+    "bodyBottom": 204,
+    "at": 15738.599999999627
+  },
+  "note": "bodyBottom was 57px above sprite feet during the landing update; subsequent frame resynced."
+}

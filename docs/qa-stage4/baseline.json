@@ -1,0 +1,9 @@
+{
+  "pixel7L": {
+    "passed": true,
+    "baselineBugReproduced": true,
+    "cameraX": 3160,
+    "shopOpenedByTouch": false,
+    "errors": []
+  }
+}
