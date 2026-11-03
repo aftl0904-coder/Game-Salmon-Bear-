@@ -1,6 +1,6 @@
 # 第7關 brief 文件 PR QA
 
-基於 main `1f29d26`，只新增 brief、問題清單及更新 STATUS，沒有改遊戲程式或關卡資料。
+基於 main `1f29d26`，只新增 brief、問題清單、答覆及更新 STATUS，沒有改遊戲程式或關卡資料。下列測試在答覆文件加入前執行，後續只改文件，遊戲程式沒有變更。
 
 - `npm run build`：TypeScript 及 Vite 通過（`build.txt`；既有 Vite 警告見紀錄）。
 - `npm run validate:data`：九項通過（`data.txt`）。
