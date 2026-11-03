@@ -41,3 +41,9 @@
 - Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 為 draft，尚未合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
 - 獨立 QA [#86](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/86) 只含測試證據，沒有重複 #85 素材。以 #83 merge `c6654ef` 加 #85 head `ccbc100` 在 detached worktree 合併預覽，無衝突；build、9 項資料驗證以及 Playwright 桌面鍵盤／模擬手機 touch 逐張重溫 1–10 通過。測試透過 localStorage 直接解鎖，並非真人完整通關或真機測試；第10關完成時仍要接 `markC2Cleared()` 自動解鎖。證據在 `docs/qa-ending-c2/preview-qa/`。
 - 預告片 #87 按 Alan 指示暫停製作，不因結局圖 QA 通過而視為獲接納。
+
+
+## 7. 大陸2第1關已確認開場（本分支待審）
+- Alan 確認第6關入商場前的野餐與到達商場十句原文，見 `docs/bible/story.md` 第9節。使用現有遊戲過場與原有素材，不生成新美術；第1大陸結局／片尾及存檔流程不改。
+- 保安造型、清潔機器人 Boss 仍在討論；第7關三項文字仍待補，未改動第7關。
+- 本分支 build、9 項資料驗證、桌面鍵盤／模擬手機純 touch 直接入口逐句 QA，以及順序接駁入口跳過 QA 通過。順序接駁測試注入第1–4關存檔並以第5關勝利捷徑進入原有結局／片尾，不是完整通關；未真機、未完整檢查所有結局及存檔分支。詳見 `docs/qa-c2-intro/README.md`；未經 Alan 指示不合併。
