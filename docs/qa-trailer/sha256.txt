@@ -1,0 +1,10 @@
+110b16f6aa654713d4d633cdb6922e51db2bd3fc4bfa1316f38f8cd19fa52adf  docs/trailer/salmon-bear-trailer-first-cut.mp4
+004a5d7a4e629e95c3b1c71aeed010f6114875e897357d4c8ad93b4744340860  docs/trailer/source/cursor/bear-chained-dark.png
+eb281133147fc71595ace42254623b20ab90c6e4e8fedc378817d6df2ae1e7df  docs/trailer/source/cursor/c2s2-cage-corridor-dark.png
+318c42008f8b51655642fab96b336ff0714367b78d901c2e03a2957b3e45000b  docs/trailer/source/cursor/c2s2-expo-hall-dark.png
+fc21974473b52b1d0ad98ac0da31eeef879060026296f4b9aa8ee63da193af3f  docs/trailer/source/cursor/ken-optB-silhouette.png
+bdfd09dffaac62ee918e4155b822f2916ef4cffbfd667298a3da4f38e08ebff6  docs/trailer/source/cursor/leon-silhouette.png
+d5694e9fce8ead555341ddd539b1e000c07013c4e3147644f90d136e1f51729a  docs/trailer/source/ending-abstract.png
+5180dbe4aa02ad60c3cf5505a1978114462bca41a5b3deb74fa2c0d077b7f3c8  docs/trailer/source/game-audio.webm
+6e4957e39c7f7582bcff23b1de1b99300c7700263ac011b39e63bc7bf4717608  docs/trailer/source/stage1.webm
+78c153ca5d771c33f6f7dc2c4bbd988933b9a3813f495f0364c3421e56986324  docs/trailer/source/stage6.webm

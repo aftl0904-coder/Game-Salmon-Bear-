@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 .vercel
 __pycache__/
+
+# Trailer media is stored outside Git; Cursor's art remains on its original branch.
+docs/trailer/**/*.mp4
+docs/trailer/**/*.webm
+docs/trailer/source/cursor/

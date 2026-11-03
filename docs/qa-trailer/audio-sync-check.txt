@@ -1,0 +1,8 @@
+08s offset=+0.0ms correlation=1.000
+14s offset=+0.0ms correlation=1.000
+26s offset=+0.0ms correlation=1.000
+29s offset=+0.0ms correlation=1.000
+39s offset=+0.0ms correlation=1.000
+52s offset=+0.0ms correlation=1.000
+61s offset=+0.0ms correlation=1.000
+PASS: encoded audio matches timestamp-corrected recorded audio within one video frame; subjective listening not verified.
