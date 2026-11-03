@@ -1,0 +1,1 @@
+PASS {"duration_seconds": 75.0, "video": {"codec": "h264", "width": 1280, "height": 720, "fps": "30/1"}, "visual": {"sampled_frames": 75, "changed_intervals": 44}, "captions_exact_C1_match": true}

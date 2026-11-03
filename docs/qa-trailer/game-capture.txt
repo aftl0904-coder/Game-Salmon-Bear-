@@ -1,0 +1,2 @@
+{"stage":1,"initial":{"x":220,"y":285,"stageNo":1},"end":{"x":867,"y":285,"stageNo":1},"errors":[],"recording":"docs/trailer/source/stage1.webm","note":"stage setup injected; input keyboard; not full playthrough"}
+{"stage":6,"initial":{"x":220,"y":285,"stageNo":6},"end":{"x":790,"y":285,"stageNo":6},"errors":[],"recording":"docs/trailer/source/stage6.webm","note":"stage setup injected; input keyboard; not full playthrough"}

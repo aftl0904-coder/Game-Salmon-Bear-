@@ -1,0 +1,32 @@
+{
+  "mode": "desktop",
+  "setup": "stage 1 selected via debug scene injection; no enemy/state or velocity injection; input is real keyboard / CDP touch. Not full playthrough or physical device.",
+  "errors": [],
+  "before": {
+    "x": 220,
+    "y": 285,
+    "stageNo": 1
+  },
+  "after": {
+    "x": 344,
+    "y": 285,
+    "stageNo": 1
+  },
+  "passed": true
+}
+{
+  "mode": "mobile",
+  "setup": "stage 1 selected via debug scene injection; no enemy/state or velocity injection; input is real keyboard / CDP touch. Not full playthrough or physical device.",
+  "errors": [],
+  "before": {
+    "x": 220,
+    "y": 285,
+    "stageNo": 1
+  },
+  "after": {
+    "x": 448,
+    "y": 285,
+    "stageNo": 1
+  },
+  "passed": true
+}

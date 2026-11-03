@@ -1,0 +1,23 @@
+Created masked and composited production plates in /tmp/salmon-trailer-render/plates
+reused unchanged 00a
+reused unchanged 00b
+reused unchanged 01
+reused unchanged 02
+reused unchanged 04
+reused unchanged 03
+reused unchanged 05
+reused unchanged 06
+reused unchanged 07
+reused unchanged 08
+rendered 09
+rendered 09k
+reused unchanged 11
+rendered 10
+rendered 10l
+rendered 13a
+reused unchanged 14
+reused unchanged 15
+reused unchanged 16
+rendered 12
+rendered 13b
+completed docs/trailer/salmon-bear-trailer-first-cut.mp4
