@@ -1,0 +1,23 @@
+Rendered screenshot crop matched against all 10 public PNGs by RGB mean-squared error.
+Crop = game coordinates (170,97.5)-(470,266.5); source/screenshot resized to 80x45.
+desktop-keyboard 01: best=01, mse=1.59, second=04, second_mse=4740.58, PASS
+desktop-keyboard 02: best=02, mse=1.54, second=09, second_mse=3082.72, PASS
+desktop-keyboard 03: best=03, mse=2.41, second=04, second_mse=5712.89, PASS
+desktop-keyboard 04: best=04, mse=1.90, second=06, second_mse=1379.04, PASS
+desktop-keyboard 05: best=05, mse=4.75, second=06, second_mse=2933.63, PASS
+desktop-keyboard 06: best=06, mse=2.88, second=04, second_mse=1354.98, PASS
+desktop-keyboard 07: best=07, mse=4.47, second=09, second_mse=3036.67, PASS
+desktop-keyboard 08: best=08, mse=3.45, second=09, second_mse=927.33, PASS
+desktop-keyboard 09: best=09, mse=2.93, second=08, second_mse=933.13, PASS
+desktop-keyboard 10: best=10, mse=3.77, second=06, second_mse=3394.27, PASS
+mobile-touch 01: best=01, mse=6.53, second=04, second_mse=4727.51, PASS
+mobile-touch 02: best=02, mse=8.11, second=09, second_mse=3088.38, PASS
+mobile-touch 03: best=03, mse=11.72, second=04, second_mse=5666.59, PASS
+mobile-touch 04: best=04, mse=9.40, second=06, second_mse=1370.46, PASS
+mobile-touch 05: best=05, mse=18.41, second=06, second_mse=2894.75, PASS
+mobile-touch 06: best=06, mse=14.54, second=04, second_mse=1358.02, PASS
+mobile-touch 07: best=07, mse=17.79, second=09, second_mse=3026.16, PASS
+mobile-touch 08: best=08, mse=10.89, second=09, second_mse=926.50, PASS
+mobile-touch 09: best=09, mse=8.69, second=08, second_mse=923.86, PASS
+mobile-touch 10: best=10, mse=22.34, second=06, second_mse=3365.15, PASS
+RESULT PASS

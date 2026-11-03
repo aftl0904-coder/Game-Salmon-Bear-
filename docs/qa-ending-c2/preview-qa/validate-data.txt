@@ -1,0 +1,17 @@
+=== npm run validate:data ===
+
+> sake-kuma@0.0.0 validate:data
+> node scripts/validate/all-data.mjs
+
+OK   terrain.json
+OK   hazards.json
+OK   enemies.json
+OK   camera.json
+OK   signs.json
+OK   environment.json
+OK   palette.json
+OK   characters.json
+OK   companion.json
+
+All 9 data validators passed
+EXIT_CODE=0

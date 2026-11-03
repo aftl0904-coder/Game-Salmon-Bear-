@@ -1,0 +1,224 @@
+BASE c6654efd8420d36adc8034da340a598495028934
+HEAD ccbc100c6e3fdd07ffbc61eae8adee46de2167c4
+MERGE_BASE 1f29d26d8c7bcbdf502c8bc4901e2c776f79553e
+merge-tree: 56187f8e755fc05fe9d13e8dadafeb8e2c7a6af2
+git merge --no-commit --no-ff: Automatic merge went well; stopped before committing as requested
+
+=== Branch contribution (three-dot) ===
+A	art-src/logo/README.md
+A	art-src/logo/forest-group-logo-dark.png
+A	art-src/logo/forest-group-logo-dark.svg
+A	art-src/logo/forest-group-logo-light.png
+A	art-src/logo/forest-group-logo-light.svg
+A	art-src/story/ending-c2-01.png
+A	art-src/story/ending-c2-02.png
+A	art-src/story/ending-c2-03.png
+A	art-src/story/ending-c2-04.png
+A	art-src/story/ending-c2-05.png
+A	art-src/story/ending-c2-06.png
+A	art-src/story/ending-c2-07.png
+A	art-src/story/ending-c2-08.png
+A	art-src/story/ending-c2-09.png
+A	art-src/story/ending-c2-10.png
+A	art-src/story/ending-c2/bear-big-caged-sheet.png
+A	art-src/story/ending-c2/ken-model-sheet.png
+A	art-src/story/ending-c2/plates/P1-dead-wall.png
+A	art-src/story/ending-c2/plates/P2-press.png
+A	art-src/story/ending-c2/plates/P3-rooftop.png
+A	art-src/story/ending-c2/plates/P4-plaza-dead.png
+A	art-src/story/ending-c2/plates/P5-sunset.png
+A	art-src/trailer/c2/README.md
+A	art-src/trailer/c2/bear-chained-dark.png
+A	art-src/trailer/c2/c2s2-cage-corridor-dark.png
+A	art-src/trailer/c2/c2s2-expo-hall-dark.png
+A	art-src/trailer/c2/ken-optB-portrait.png
+A	art-src/trailer/c2/ken-optB-silhouette.png
+A	art-src/trailer/c2/ken-optC-portrait.png
+A	art-src/trailer/c2/ken-optC-silhouette.png
+A	art-src/trailer/c2/leon-silhouette-v1-lionhead.png
+A	art-src/trailer/c2/leon-silhouette.png
+M	data/ending-c2.json
+A	docs/qa-ending-c2/README.md
+A	docs/qa-ending-c2/bear-option-a.jpg
+A	docs/qa-ending-c2/bear-option-b.jpg
+A	docs/qa-ending-c2/end-05-animals.jpg
+A	docs/qa-ending-c2/end-06-market.jpg
+A	docs/qa-ending-c2/end-08-settle.jpg
+A	docs/qa-ending-c2/end-09-sunset.jpg
+A	docs/qa-ending-c2/end-10-group-v2.jpg
+A	docs/qa-ending-c2/ken-option-a.jpg
+A	docs/qa-ending-c2/ken-option-b.jpg
+A	public/art/story/ending-c2-01.png
+A	public/art/story/ending-c2-02.png
+A	public/art/story/ending-c2-03.png
+A	public/art/story/ending-c2-04.png
+A	public/art/story/ending-c2-05.png
+A	public/art/story/ending-c2-06.png
+A	public/art/story/ending-c2-07.png
+A	public/art/story/ending-c2-08.png
+A	public/art/story/ending-c2-09.png
+A	public/art/story/ending-c2-10.png
+
+=== Direct tree comparison (includes main-only changes) ===
+A	art-src/logo/README.md
+A	art-src/logo/forest-group-logo-dark.png
+A	art-src/logo/forest-group-logo-dark.svg
+A	art-src/logo/forest-group-logo-light.png
+A	art-src/logo/forest-group-logo-light.svg
+A	art-src/story/ending-c2-01.png
+A	art-src/story/ending-c2-02.png
+A	art-src/story/ending-c2-03.png
+A	art-src/story/ending-c2-04.png
+A	art-src/story/ending-c2-05.png
+A	art-src/story/ending-c2-06.png
+A	art-src/story/ending-c2-07.png
+A	art-src/story/ending-c2-08.png
+A	art-src/story/ending-c2-09.png
+A	art-src/story/ending-c2-10.png
+A	art-src/story/ending-c2/bear-big-caged-sheet.png
+A	art-src/story/ending-c2/ken-model-sheet.png
+A	art-src/story/ending-c2/plates/P1-dead-wall.png
+A	art-src/story/ending-c2/plates/P2-press.png
+A	art-src/story/ending-c2/plates/P3-rooftop.png
+A	art-src/story/ending-c2/plates/P4-plaza-dead.png
+A	art-src/story/ending-c2/plates/P5-sunset.png
+A	art-src/trailer/c2/README.md
+A	art-src/trailer/c2/bear-chained-dark.png
+A	art-src/trailer/c2/c2s2-cage-corridor-dark.png
+A	art-src/trailer/c2/c2s2-expo-hall-dark.png
+A	art-src/trailer/c2/ken-optB-portrait.png
+A	art-src/trailer/c2/ken-optB-silhouette.png
+A	art-src/trailer/c2/ken-optC-portrait.png
+A	art-src/trailer/c2/ken-optC-silhouette.png
+A	art-src/trailer/c2/leon-silhouette-v1-lionhead.png
+A	art-src/trailer/c2/leon-silhouette.png
+M	data/ending-c2.json
+M	docs/STATUS.md
+D	docs/bible/c2-stage2-answers.md
+D	docs/bible/c2-stage2-brief.md
+D	docs/bible/c2-stage2-open-questions.md
+D	docs/qa-c2s2-brief/README.md
+D	docs/qa-c2s2-brief/build.txt
+D	docs/qa-c2s2-brief/data.txt
+D	docs/qa-c2s2-brief/desktop-stage1.png
+D	docs/qa-c2s2-brief/desktop.json
+D	docs/qa-c2s2-brief/desktop.txt
+D	docs/qa-c2s2-brief/mobile-initial-timeout.txt
+D	docs/qa-c2s2-brief/mobile-stage1.png
+D	docs/qa-c2s2-brief/mobile.json
+D	docs/qa-c2s2-brief/mobile.txt
+A	docs/qa-ending-c2/README.md
+A	docs/qa-ending-c2/bear-option-a.jpg
+A	docs/qa-ending-c2/bear-option-b.jpg
+A	docs/qa-ending-c2/end-05-animals.jpg
+A	docs/qa-ending-c2/end-06-market.jpg
+A	docs/qa-ending-c2/end-08-settle.jpg
+A	docs/qa-ending-c2/end-09-sunset.jpg
+A	docs/qa-ending-c2/end-10-group-v2.jpg
+A	docs/qa-ending-c2/ken-option-a.jpg
+A	docs/qa-ending-c2/ken-option-b.jpg
+A	public/art/story/ending-c2-01.png
+A	public/art/story/ending-c2-02.png
+A	public/art/story/ending-c2-03.png
+A	public/art/story/ending-c2-04.png
+A	public/art/story/ending-c2-05.png
+A	public/art/story/ending-c2-06.png
+A	public/art/story/ending-c2-07.png
+A	public/art/story/ending-c2-08.png
+A	public/art/story/ending-c2-09.png
+A	public/art/story/ending-c2-10.png
+
+=== Text diff for all non-binary branch changes ===
+[1mdiff --git a/art-src/logo/README.md b/art-src/logo/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..54fbbad[m
+[1m--- /dev/null[m
+[1m+++ b/art-src/logo/README.md[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32mForest-group logo draft (SVG + PNG, no text). 6 green bars, heights 70/120/170/170/120/70 (mountain: shortest at the sides, tallest in the middle), one curve from left to right through the bars.[m
+[32m+[m[32mColours are placeholders (bars green, curve gold) — original logo file/colours were not in the repo, so this is rebuilt from Alan's description.[m
+[1mdiff --git a/art-src/trailer/c2/README.md b/art-src/trailer/c2/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b5e79c0[m
+[1m--- /dev/null[m
+[1m+++ b/art-src/trailer/c2/README.md[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32m# Trailer art (Continent 2) — 1280x720, no text, not wired into the game[m
+[32m+[m
+[32m+[m[32m| file | what |[m
+[32m+[m[32m|---|---|[m
+[32m+[m[32m| ken-optB-portrait / -silhouette | Ken option B (Alan's earlier pick: round, bald, gold round glasses, burgundy cardigan + black overcoat + cane), half-face dark portrait + full-body silhouette |[m
+[32m+[m[32m| ken-optC-portrait / -silhouette | Ken option C (new: tall, thin, slicked silver hair, half-moon glasses, high-collar coat, gloves, brass lion-head cane) |[m
+[32m+[m[32m| leon-silhouette | Leon, lion-headed HQ security director, dark silhouette in doorway |[m
+[32m+[m[32m| c2s2-expo-hall-dark | Stage 2 expo centre: glamorous but hollow showroom, dark |[m
+[32m+[m[32m| c2s2-cage-corridor-dark | Stage 2 cage corridor, dark |[m
+[32m+[m[32m| bear-chained-dark | 大噗噗 chained in a cage, dark |[m
+[32m+[m
+[32m+[m[32mEnding #10: the old man at the right edge is Ken (option B design).[m
+[32m+[m
+[32m+[m[32mUpdate: Alan chose Ken option B. Leon is a big-built human whose mane-like hairstyle hints at a lion (not an animal head); `leon-silhouette.png` is the new version, old lion-head one kept as `leon-silhouette-v1-lionhead.png`. Option C files are kept only as reference.[m
+[1mdiff --git a/data/ending-c2.json b/data/ending-c2.json[m
+[1mindex bbe13e5..303e509 100644[m
+[1m--- a/data/ending-c2.json[m
+[1m+++ b/data/ending-c2.json[m
+[36m@@ -1,12 +1,12 @@[m
+ [[m
+[31m-  { "id": 1, "title": "大佬醒覺", "description": "枯咗嘅綠化牆前望住窗外商場，眼神動搖", "image": null },[m
+[31m-  { "id": 2, "title": "宣佈改變", "description": "記者會，宣佈「森林共生式發展」計劃取代拆遷", "image": null },[m
+[31m-  { "id": 3, "title": "動工重建", "description": "低碳建材重建，天台裝太陽能板", "image": null },[m
+[31m-  { "id": 4, "title": "森林回復", "description": "幼苗種返，蜜蜂傳粉，畫面由枯轉青", "image": null },[m
+[31m-  { "id": 5, "title": "動物回歸", "description": "各種森林動物包括獲釋守護者返嚟", "image": null },[m
+[31m-  { "id": 6, "title": "社區共融", "description": "商場同森林並存，社區市集", "image": null },[m
+[31m-  { "id": 7, "title": "朋友大重聚", "description": "救返嘅朋友大合照／大野餐", "image": null },[m
+[31m-  { "id": 8, "title": "噗噗與守護者", "description": "親人同噗噗安定落嚟", "image": null },[m
+[31m-  { "id": 9, "title": "主角靜態一刻", "description": "倫寶／琪寶寶望夕陽下森林", "image": null },[m
+[31m-  { "id": 10, "title": "全景大合照", "description": "主角、朋友、噗噗、守護者，甚至大佬同框", "image": null }[m
+[32m+[m[32m  { "id": 1, "title": "大佬醒覺", "description": "枯咗嘅綠化牆前望住窗外商場，眼神動搖", "image": "/art/story/ending-c2-01.png" },[m
+[32m+[m[32m  { "id": 2, "title": "宣佈改變", "description": "記者會，宣佈「森林共生式發展」計劃取代拆遷", "image": "/art/story/ending-c2-02.png" },[m
+[32m+[m[32m  { "id": 3, "title": "動工重建", "description": "低碳建材重建，天台裝太陽能板", "image": "/art/story/ending-c2-03.png" },[m
+[32m+[m[32m  { "id": 4, "title": "森林回復", "description": "幼苗種返，蜜蜂傳粉，畫面由枯轉青", "image": "/art/story/ending-c2-04.png" },[m
+[32m+[m[32m  { "id": 5, "title": "動物回歸", "description": "各種森林動物包括獲釋守護者返嚟", "image": "/art/story/ending-c2-05.png" },[m
+[32m+[m[32m  { "id": 6, "title": "社區共融", "description": "商場同森林並存，社區市集", "image": "/art/story/ending-c2-06.png" },[m
+[32m+[m[32m  { "id": 7, "title": "朋友大重聚", "description": "救返嘅朋友大合照／大野餐", "image": "/art/story/ending-c2-07.png" },[m
+[32m+[m[32m  { "id": 8, "title": "噗噗與守護者", "description": "親人同噗噗安定落嚟", "image": "/art/story/ending-c2-08.png" },[m
+[32m+[m[32m  { "id": 9, "title": "主角靜態一刻", "description": "倫寶／琪寶寶望夕陽下森林", "image": "/art/story/ending-c2-09.png" },[m
+[32m+[m[32m  { "id": 10, "title": "全景大合照", "description": "主角、朋友、噗噗、守護者，甚至大佬同框", "image": "/art/story/ending-c2-10.png" }[m
+ ][m
+[1mdiff --git a/docs/qa-ending-c2/README.md b/docs/qa-ending-c2/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6ff0861[m
+[1m--- /dev/null[m
+[1m+++ b/docs/qa-ending-c2/README.md[m
+[36m@@ -0,0 +1,32 @@[m
+[32m+[m[32m# 大陸2 結局：角色方案同底圖（待審）[m
+[32m+[m
+[32m+[m[32m## Ken（集團大佬，只出圖、唔打）— 原創設計，唔指向任何真人[m
+[32m+[m[32m- `ken-option-a.jpg`：高瘦直身老人，銀灰後梳髮，深炭灰三件頭西裝＋深綠領帶，白手套交叉身前。笑得溫和但眼神冷平。較寫實、較「冷」。[m
+[32m+[m[32m- `ken-option-b.jpg`：矮圓軟身老人，頭頂光、兩邊白髮，金邊圓眼鏡反光令眼睛似冷碟，過分整齊嘅笑容；酒紅冷衫＋黑長大衣＋銀頭手杖。較「卡通」、較「笑裡藏刀」。[m
+[32m+[m[32m- 兩個都冇字、冇獅子象徵。[m
+[32m+[m
+[32m+[m[32m## 大熊（大陸2第3關最後，被困）— 同噗噗一眼分得開[m
+[32m+[m[32m共通：約噗噗 1.5 倍大、較圓、橙黃（金橘）毛（噗噗係杏色）、光肚冇衫、彩虹條紋頸巾。[m
+[32m+[m[32m- `bear-option-a.jpg`：坐喺現有木籠（金色鎖）入面，手搭住欄杆，微笑帶少少愁。一格畫面講得清「被困」。[m
+[32m+[m[32m- `bear-option-b.jpg`：坐地，一隻手腕上鐵鐐＋短鐵鏈鎖喺木樁，旁邊係打開咗嘅空木籠。較「放生前」，唔血腥。[m
+[32m+[m
+[32m+[m[32m## 結局底圖（art-src/story/ending-c2/plates/，1280×720，無人物）[m
+[32m+[m[32mP1 枯綠化牆窗前（#1）｜P2 記者會台（#2）｜P3 商場天台（#3）｜P4 商場廣場（枯）（#4、#5、#6、#10 共用鏡位）｜P5 夕陽森林邊（#7、#8、#9）。[m
+[32m+[m
+[32m+[m[32m## Alan 已揀：Ken B、大熊 A（2026-11-03）[m
+[32m+[m[32m- 正式角色圖：`art-src/story/ending-c2/ken-model-sheet.png`、`bear-big-caged-sheet.png`[m
+[32m+[m[32m- 結局圖 #1–#4：`art-src/story/ending-c2-01..04.png` → `public/art/story/ending-c2-0N.png`，`data/ending-c2.json` 嘅 `image` 已填 #1–#4（只改呢四個欄位）。[m
+[32m+[m[32m- #2 講者：資料檔冇寫邊個宣佈，所以畫成背向、睇唔到樣嘅剪影。[m
+[32m+[m[32m- #5–#10 等守護者／親人／朋友名單同 #7 大合照定大野餐確認。[m
+[32m+[m
+[32m+[m[32m## 大熊名：大噗噗（Alan 2026-11-03）[m
+[32m+[m[32m- 結局最尾，大噗噗會叫埋佢其他小朋友一齊參加野餐 → #7 用「大野餐」構圖：倫寶、琪寶寶、噗噗同被救返嘅大噗噗坐喺野餐毯，周圍有柴犬、虎仔、黑貓、北極熊仔、長頸鹿、粉紅熊仔等現有朋友造型一齊來食。`ending-c2-07.png`。[m
+[32m+[m[32m- 背景樹上有貓頭鷹、蜂后同攤主，係沿用大陸1野餐圖嘅常客，如唔要可以再改。[m
+[32m+[m[32m- 「大噗噗嘅其他小朋友」具體係邊啲（是否現有朋友）資料未寫，暫用現有朋友造型代表，Alan 可再指定。[m
+[32m+[m
+[32m+[m[32m## 補完 #5 #6 #8 #9 #10[m
+[32m+[m[32m- #5 動物回歸：P4 鏡頭轉青，獲釋守護者（紅外套高黑帽啡熊）由打開嘅蜜糖箱走出，周圍鹿、兔、狐狸、松鼠、刺蝟。[m
+[32m+[m[32m- #6 社區共融：P4 鏡頭，商場藤蔓＋市集攤檔（無文字）。[m
+[32m+[m[32m- #8 噗噗與守護者：P5 夕陽，噗噗、大噗噗、守護者坐埋一齊。（假設：「親人」用大噗噗；如另有指定親人角色請講。）[m
+[32m+[m[32m- #9 主角靜態一刻：倫寶／琪寶寶背影望夕陽森林。[m
+[32m+[m[32m- #10 全景大合照：主角、噗噗、大噗噗、守護者、朋友、地精同大佬（右邊微笑拎手杖）同框。第一版有枯樹同亂入公主，已重畫。[m
