@@ -3,24 +3,13 @@ import Phaser from 'phaser'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
-import { maxStage } from './progress'
+import { c2Cleared, maxStage } from './progress'
 import { stageTitle } from './stageNames'
 import { markHd, STORY_RES } from './heroAnims'
+import { c2Enabled } from './c2Gate'
 
 /** Stages that exist so far (picker + progress). */
 const LAST_STAGE = 5
-/** 第二大陸 (stage 6+) is work in progress: open it with ?c2=1 (remembered in this browser), ?c2=0 to hide it again. */
-const C2_KEY = 'sake-kuma-c2-v1'
-function c2Enabled(): boolean {
-  try {
-    const q = new URLSearchParams(window.location.search).get('c2')
-    if (q === '1') localStorage.setItem(C2_KEY, '1')
-    if (q === '0') localStorage.removeItem(C2_KEY)
-    return localStorage.getItem(C2_KEY) === '1'
-  } catch {
-    return false
-  }
-}
 /** Highest stage the picker may land on. */
 function pickable(): number {
   return c2Enabled() ? 6 : Math.min(maxStage(), LAST_STAGE)
@@ -64,6 +53,7 @@ export class MainMenuScene extends Phaser.Scene {
   private stageSel = 1
   private stageText: Phaser.GameObjects.Text | null = null
   private stageRedrawBox: (() => void) | null = null
+  private continentButtons: Array<{ stage: number; bg: Phaser.GameObjects.Rectangle; label: Phaser.GameObjects.Text }> = []
   /** Secret code progress (↑↑↓↓←→←→BA). */
   private code: string[] = []
 
@@ -86,6 +76,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.stageSel = Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
     this.stageRedrawBox = null
+    this.continentButtons = []
     this.code = []
 
     this.choices = [
@@ -99,6 +90,8 @@ export class MainMenuScene extends Phaser.Scene {
     this.buildPlaques(width, height)
     this.buildScores(width)
     this.buildStagePicker(width)
+    this.buildContinentPicker(width)
+    this.buildEndingEntry()
     this.wireInput()
     mountTouchControls(this)
     mountMuteButton(this, 14, 8)
@@ -178,12 +171,12 @@ export class MainMenuScene extends Phaser.Scene {
     // their save. The pill below still works the same way (◀▶ cycles every
     // unlocked stage) — this just names what it is.
     this.add
-      .text(width / 2, 86, '── 讀取進度 ──', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', stroke: '#1a0e06', strokeThickness: 2 })
+      .text(width / 2, 94, '── 讀取進度 ──', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', stroke: '#1a0e06', strokeThickness: 2 })
       .setOrigin(0.5)
       .setAlpha(0.85)
     // Gold-bordered pill (matches the plaques below) so this reads as a real,
     // clickable control rather than a caption easy to miss.
-    const y = 108
+    const y = 112
     const box = this.add.graphics()
     const label = this.add
       .text(width / 2, y, '', {
@@ -216,6 +209,7 @@ export class MainMenuScene extends Phaser.Scene {
     const name = stageTitle(this.stageSel)
     this.stageText?.setText(`◀　繼續：${name}　▶`)
     this.stageRedrawBox?.()
+    this.drawContinents()
   }
 
   private toggleStage(dir: 1 | -1) {
@@ -224,6 +218,57 @@ export class MainMenuScene extends Phaser.Scene {
     this.stageSel = ((this.stageSel - 1 + dir + n) % n) + 1
     SFX.blip(520)
     this.drawStage()
+  }
+
+  /** C2 remains behind the existing browser-persistent ?c2=1 development gate. */
+  private buildContinentPicker(width: number) {
+    const available = c2Enabled() ? [1, 6] : [1]
+    available.forEach((stage, i) => {
+      const x = available.length === 1 ? width / 2 : width / 2 + (i === 0 ? -62 : 62)
+      const bg = this.add.rectangle(x, 143, 112, 28, 0x241810, 0.94)
+        .setStrokeStyle(2, 0x8a7048).setInteractive({ useHandCursor: true })
+      const label = this.add.text(x, 143, stage === 1 ? '1 大陸1' : '2 大陸2', {
+        fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
+      }).setOrigin(0.5)
+      bg.on('pointerdown', () => this.chooseContinent(stage))
+      this.continentButtons.push({ stage, bg, label })
+    })
+    this.drawContinents()
+  }
+
+  private drawContinents() {
+    for (const b of this.continentButtons) {
+      const selected = b.stage === 1 ? this.stageSel < 6 : this.stageSel >= 6
+      b.bg.setFillStyle(selected ? 0x5a341b : 0x241810, 0.94)
+      b.bg.setStrokeStyle(2, selected ? 0xffd76a : 0x8a7048)
+      b.label.setColor(selected ? '#fff2d0' : '#cdbb9c')
+    }
+  }
+
+  private chooseContinent(stage: number) {
+    if (this.starting || this.time.now < this.inputReadyAt || (stage === 6 && !c2Enabled())) return
+    this.stageSel = stage
+    SFX.blip(520)
+    this.drawStage()
+  }
+
+  private buildEndingEntry() {
+    const unlocked = c2Cleared()
+    const x = 96
+    const bg = this.add.rectangle(x, 143, 158, 28, unlocked ? 0x4a2a14 : 0x282828, 0.94)
+      .setStrokeStyle(2, unlocked ? 0xc8902a : 0x696969)
+    const label = this.add.text(x, 143, unlocked ? '重溫快樂結局 [R]' : '重溫快樂結局（鎖住）', {
+      fontFamily: FONT_UI, fontSize: '11px', color: unlocked ? '#ffe9a8' : '#aaaaaa', stroke: '#1a0e06', strokeThickness: 2,
+    }).setOrigin(0.5)
+    if (unlocked) bg.setInteractive({ useHandCursor: true }).on('pointerdown', () => this.openEnding())
+    label.setAlpha(unlocked ? 1 : 0.7)
+  }
+
+  private openEnding() {
+    if (this.starting || this.time.now < this.inputReadyAt || !c2Cleared()) return
+    this.starting = true
+    unlockAudio()
+    this.scene.start('ending-c2')
   }
 
   private buildBackdrop(width: number, height: number) {
@@ -411,6 +456,9 @@ export class MainMenuScene extends Phaser.Scene {
       // A is also "left" (WASD) — but as the last key of the code it fires the secret instead.
       ['keydown-A', () => (this.feedCode('A') ? undefined : this.move(-1))],
       ['keydown-B', () => void this.feedCode('B')],
+      ['keydown-ONE', () => this.chooseContinent(1)],
+      ['keydown-TWO', () => this.chooseContinent(6)],
+      ['keydown-R', () => this.openEnding()],
       ['keydown-ENTER', onStart],
       ['keydown-SPACE', onStart],
       ['keydown-F', onStart],

@@ -5,6 +5,7 @@ import { unlockAudio } from './audio'
 import { enableActorSprite } from './pixelSnap'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { animTex, hasAnimSet } from './heroAnims'
+import { c2Enabled } from './c2Gate'
 
 /** Splash lineup: Cursor's painted sprite when it's loaded, else the old placeholder. */
 function castTex(scene: Phaser.Scene, set: 'lunbo' | 'kibobo' | 'pupu', fallback: string) {
@@ -15,8 +16,11 @@ function castTex(scene: Phaser.Scene, set: 'lunbo' | 'kibobo' | 'pupu', fallback
 export class LogoScene extends Phaser.Scene {
   /** Controllers send no key/pointer events: poll the virtual pad and call the current exit. */
   private padGo: (() => void) | null = null
+  private padMove: ((dir: number) => void) | null = null
 
   update() {
+    if (TouchInput.justPressed('left') || TouchInput.justPressed('up')) this.padMove?.(-1)
+    if (TouchInput.justPressed('right') || TouchInput.justPressed('down')) this.padMove?.(1)
     if (this.padGo && (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack'))) {
       unlockAudio()
       this.padGo()
@@ -27,6 +31,8 @@ export class LogoScene extends Phaser.Scene {
   }
 
   create() {
+    // Remember a test-gate query before the player can navigate to the guide.
+    c2Enabled()
     if (this.textures.exists('story-cover')) return this.createCover()
     const width = GAME_W
     const height = GAME_H
@@ -156,33 +162,7 @@ export class LogoScene extends Phaser.Scene {
       })
     }
 
-    this.add
-      .text(width / 2, height - 18, '按任意鍵略過', {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: '#3a2818',
-        backgroundColor: '#ffe08acc',
-        padding: { x: 8, y: 3 },
-      })
-      .setOrigin(0.5)
-      .setAlpha(0.85)
-
-    let left = false
-    const go = () => {
-      if (left) return
-      left = true
-      this.input?.off('pointerdown', go)
-      this.input?.keyboard?.off('keydown', go)
-      this.cameras?.main?.fadeOut(280, 40, 28, 16)
-      this.time.delayedCall(280, () => {
-        if (this.sys.isActive()) this.scene.start('difficulty')
-      })
-    }
-
-    this.time.delayedCall(3200, go)
-    this.input.once('pointerdown', go)
-    this.input.keyboard?.once('keydown', go)
-    this.padGo = go
+    this.addTitleActions(width, height)
   }
 
   /** Title over the cover illustration (art-src/story/cover.png). */
@@ -235,29 +215,65 @@ export class LogoScene extends Phaser.Scene {
         ease: 'Sine.inOut',
       })
     }
-    const press = this.add
-      .text(width / 2, height - 22, '按任意鍵開始', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a', stroke: '#1a0e06', strokeThickness: 3 })
-      .setOrigin(0.5)
-    this.tweens.add({ targets: press, alpha: 0.25, duration: 600, yoyo: true, repeat: -1 })
     this.add
       .text(width - 8, height - 8, 'ALAN FONG', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
       .setOrigin(1, 1)
       .setAlpha(0.7)
+    this.addTitleActions(width, height)
+  }
 
-    let left = false
-    const go = () => {
-      if (left) return
-      left = true
-      this.cameras?.main?.fadeOut(320, 0, 0, 0)
+  /** Explicit buttons: a guide tap must never fall through to the game-start handler. */
+  private addTitleActions(width: number, height: number) {
+    let selected = 0
+    let leaving = false
+    const readyAt = this.time.now + 500
+    const buttons = ['開始遊戲', '攻略'].map((label, i) => {
+      const x = width / 2 + (i === 0 ? -78 : 78)
+      const bg = this.add.rectangle(x, height - 30, 140, 30, 0x241810, 0.94)
+        .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+      const text = this.add.text(x, height - 30, label, {
+        fontFamily: FONT_UI, fontSize: '14px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
+      }).setOrigin(0.5)
+      return { bg, text }
+    })
+    const draw = () => buttons.forEach(({ bg, text }, i) => {
+      bg.setFillStyle(i === selected ? 0x5a341b : 0x241810, 0.94)
+      bg.setStrokeStyle(2, i === selected ? 0xffd76a : 0x8a7048)
+      text.setColor(i === selected ? '#fff2d0' : '#cdbb9c')
+    })
+    const move = (dir: number) => {
+      if (leaving || this.time.now < readyAt) return
+      selected = (selected + dir + buttons.length) % buttons.length
+      draw()
+    }
+    const activate = () => {
+      if (leaving || this.time.now < readyAt) return
+      leaving = true
+      unlockAudio()
+      if (selected === 1) {
+        window.location.assign('/guide/')
+        return
+      }
+      this.cameras.main.fadeOut(320, 0, 0, 0)
       this.time.delayedCall(320, () => {
         if (this.sys.isActive()) this.scene.start('difficulty')
       })
     }
-    // Title waits for the player (no auto-skip); ignore the press that skipped the studio splash.
-    this.time.delayedCall(500, () => {
-      this.input.once('pointerdown', go)
-      this.input.keyboard?.once('keydown', go)
-      this.padGo = go
+    buttons.forEach(({ bg }, i) => bg.on('pointerdown', () => { selected = i; draw(); activate() }))
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') move(-1)
+      else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') move(1)
+      else if (e.key === 'Enter' || e.key === ' ' || e.key.toLowerCase() === 'f' || e.key.toLowerCase() === 'j') activate()
+    }
+    this.input.keyboard?.on('keydown', onKey)
+    this.padGo = activate
+    this.padMove = move
+    this.events.once('shutdown', () => {
+      this.input.keyboard?.off('keydown', onKey)
+      this.padGo = null
+      this.padMove = null
+      TouchInput.clearAll()
     })
+    draw()
   }
 }
