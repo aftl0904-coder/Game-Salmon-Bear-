@@ -3,7 +3,7 @@
 ## 1. 現況
 
 - `main`：`dfd4413ec9b85f90743d4d669ff6151471596324`（PR #65：大陸2第1關商場已合併；待 Alan 試玩）。
-- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 地圖美術）同 [#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code），待審及試玩。
+- 開住嘅 PR：[#67](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/67)（ART-17 地圖美術）、[#68](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/68)（大陸2地圖 code）同 [#69](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/69)（STATUS 文件），待審及試玩。
 - 地圖 code branch 疊住已合併嘅 #65，亦包含 #67 地圖美術 commit；#67 同 #68 嘅 diff 有重疊。
 - `manus/stage4-mobile-fix-20261103`：第4關修復及 QA 進行中，未開 PR。
 
