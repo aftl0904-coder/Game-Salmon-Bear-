@@ -10,3 +10,5 @@
 | bear-chained-dark | 大噗噗 chained in a cage, dark |
 
 Ending #10: the old man at the right edge is Ken (option B design).
+
+Update: Alan chose Ken option B. Leon is a big-built human whose mane-like hairstyle hints at a lion (not an animal head); `leon-silhouette.png` is the new version, old lion-head one kept as `leon-silhouette-v1-lionhead.png`. Option C files are kept only as reference.
