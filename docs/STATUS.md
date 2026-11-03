@@ -33,4 +33,4 @@
 
 - PR1：[#80](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/80) 已按 Alan 指示合併；第10關完成旗標尚未接線，未真機或完整通關。
 - PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 及實作 [#82](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82) 已合併（#82 `1f29d26`）。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**請只開一個分頁**：兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
-- 大陸2第2關（內部第7關）A–E brief 已由 Alan 轉貼，原文見 `docs/bible/c2-stage2-brief.md`；未清楚事項見 `docs/bible/c2-stage2-open-questions.md`。噗噗台詞、馴獸師 Boss 卡和離隊提示文字均待 Alan 拍板，不可自行補寫；疑問確認前不開始實作。
+- 大陸2第2關（內部第7關）A–E brief 已由 Alan 轉貼，原文及問題清單隨 [#83](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/83) 待 Claude 審閱；分別見 `docs/bible/c2-stage2-brief.md` 及 `docs/bible/c2-stage2-open-questions.md`。噗噗台詞、馴獸師 Boss 卡和離隊提示文字均待 Alan 拍板，不可自行補寫；疑問確認前不開始實作。
