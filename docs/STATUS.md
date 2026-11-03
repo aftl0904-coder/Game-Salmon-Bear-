@@ -22,6 +22,8 @@
 - 手機 2P：Alan 唔會兩人同機用手機玩，**唔做 P2 touch 控制**。
 - 第1至6關窿辨識：採用 #71 的 A＋B；窿內加深、兩側高對比邊線、地面頂邊連續亮邊但窿口中斷。只改外觀，不改碰撞、坑寬、平台或敵人。
 - 第7至10關新增窿時，沿用 #78 `drawTerrainFeatures()` 的深色窿、兩側邊線及在窿口中斷嘅地面頂邊亮線；以 #78 合併後版本為基線。
+- Boss 改名 [#84](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/84) 待 Claude 審：第4關「泥怪」，稱號「爛泥灣工地發瘟判頭」；第5關「Trinity」，職位「項目經理」，原稱號「派嘢嗰個」暫保留。
+- 只改文字及資料，ID、機制及美術不變；攻略三張截圖內舊名交 Cursor 跟進；含「大佬」嘅歧義文字待 Claude／Alan 確認。
 
 ## 4. 下一步次序
 
@@ -35,8 +37,3 @@
 - PR2：方案 [#81](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/81) 及實作 [#82](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/82) 已合併（#82 `1f29d26`）。⚪ 只用於兩個大陸第一關開新局，✅ 順序延續，🚫 直接揀其他關及重玩舊關不帶；支線裝備、金幣與 HP 用記憶體隔離。**請只開一個分頁**：兩個分頁同時寫入仍可能互相覆蓋；未真機及完整通關。成長點數另開 PR。細節見 `docs/bible/menu-save-decisions.md`。
 - 大陸2第2關（內部第7關）A–E brief 原文及問題清單在 [#83](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/83)，Claude 已審閱並提供答覆，見 `docs/bible/c2-stage2-answers.md`；本次文件補充後請 Claude 核對。#83 合併及設計細則經 Alan 確認前不開始實作。
 - 噗噗第7關 D 段只反應，擊敗 Boss 後離隊；**返隊時間待 Alan 日後決定，第7關不實作返隊**。第7關存檔級 once 嘅新本局與支線範圍待釐清（第6關籠子 once 只屬單次場景）；噗噗台詞、馴獸師 Boss 卡和離隊提示文字均待 Alan 拍板，不可自行補寫。
-
-## 6. Boss 改名
-
-- 第4關顯示名稱「泥怪」、稱號「爛泥灣工地發瘟判頭」；第5關「Trinity」、職位「項目經理」，原稱號「派嘢嗰個」暫保留。
-- 僅文字及資料更名，內部 ID、機制與美術不變；攻略三張既有截圖仍有舊名，交 Cursor 跟進。帶「大佬」的歧義對白待 Claude／Alan 確認。
