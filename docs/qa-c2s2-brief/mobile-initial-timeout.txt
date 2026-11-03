@@ -1,0 +1,2 @@
+FAIL mobile 1 page.waitForFunction: Timeout 30000ms exceeded.
+    at /tmp/salmon-c2-stage2-brief/scripts/qa/two-player-landing.mjs:42:18 null

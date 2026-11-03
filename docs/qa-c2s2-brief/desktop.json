@@ -1,0 +1,149 @@
+{
+  "mode": "desktop",
+  "setup": "2p; stage and initial positions injected; enemies and boss isolated",
+  "inputs": "P1 keyboard + P2 keyboard",
+  "cases": [
+    {
+      "stage": 1,
+      "kind": "platform",
+      "start": {
+        "mode": "2p",
+        "boy": {
+          "x": 1052,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        },
+        "girl": {
+          "x": 1072,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        }
+      },
+      "upper": {
+        "mode": "2p",
+        "boy": {
+          "x": 1052,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        },
+        "girl": {
+          "x": 1072,
+          "y": 229,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 227,
+          "jumping": false
+        }
+      },
+      "lower": {
+        "mode": "2p",
+        "boy": {
+          "x": 938,
+          "y": 285,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 283,
+          "jumping": false
+        },
+        "girl": {
+          "x": 932,
+          "y": 285,
+          "vx": 0,
+          "vy": 0,
+          "bodyBottom": 283,
+          "jumping": false
+        }
+      },
+      "traces": {
+        "boy": {
+          "peak": 162,
+          "landings": [
+            {
+              "prior": {
+                "y": 238,
+                "vx": 0,
+                "jumping": true
+              },
+              "y": 229,
+              "vx": 0,
+              "bodyBottom": 227,
+              "at": 15242.900000002235
+            },
+            {
+              "prior": {
+                "y": 271,
+                "vx": -105,
+                "jumping": true
+              },
+              "y": 269,
+              "vx": -105,
+              "bodyBottom": 267,
+              "at": 16286.5
+            },
+            {
+              "prior": {
+                "y": 287,
+                "vx": -105,
+                "jumping": true
+              },
+              "y": 285,
+              "vx": -105,
+              "bodyBottom": 283,
+              "at": 16716
+            }
+          ]
+        },
+        "girl": {
+          "peak": 162,
+          "landings": [
+            {
+              "prior": {
+                "y": 242,
+                "vx": 0,
+                "jumping": true
+              },
+              "y": 229,
+              "vx": 0,
+              "bodyBottom": 227,
+              "at": 15286
+            },
+            {
+              "prior": {
+                "y": 282,
+                "vx": -127,
+                "jumping": true
+              },
+              "y": 269,
+              "vx": -127,
+              "bodyBottom": 267,
+              "at": 16499.900000002235
+            },
+            {
+              "prior": {
+                "y": 287,
+                "vx": -127,
+                "jumping": true
+              },
+              "y": 285,
+              "vx": -127,
+              "bodyBottom": 283,
+              "at": 16843.400000002235
+            }
+          ]
+        }
+      },
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
