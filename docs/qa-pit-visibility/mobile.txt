@@ -1,0 +1,17 @@
+PASS mobile 1 normal 672 dark= 0.000
+PASS mobile 1 fixed-plank 1872 dark= 0.000
+PASS mobile 1 moving-plank 5116 dark= 0.000
+PASS mobile 2 normal 700 dark= 0.000
+PASS mobile 2 moving-plank 1980 dark= 0.000
+PASS mobile 3 night 1040 dark= 0.037
+PASS mobile 3 night-moving-plank 2560 dark= 0.001
+PASS mobile 3 night-slippery 2860 dark= 0.000
+PASS mobile 4 night 1040 dark= 0.000
+PASS mobile 4 night-real-step 760 dark= 0.000
+PASS mobile 5 normal 2760 dark= 0.000
+PASS mobile 5 dark-plank 1980 dark= 0.818
+PASS mobile 5 real-step 620 dark= 0.074
+PASS mobile 6 normal 1880 dark= 0.000
+PASS mobile 6 fixed-plank 1150 dark= 0.000
+PASS mobile 6 dark 3350 dark= 0.619
+PASS mobile 6 dark 4000 dark= 0.620

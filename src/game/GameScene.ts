@@ -69,6 +69,7 @@ import {
   terrainSolids,
   type Solid,
 } from './engine/terrain'
+import { groundVisualSpans } from './engine/terrainVisual'
 import {
   WORLD_W,
   BASE_WORLD_W,
@@ -2790,7 +2791,8 @@ export class GameScene extends Phaser.Scene {
         if (!this.textures.exists('s3-hotspring-rock')) break
         // A pool drawn across a pit reads as solid rock and the player falls through it.
         const halfW = this.textures.get('s3-hotspring-rock').get().width / 2
-        if (terrainPits().some((p) => x + halfW > p.x0 - 8 && x - halfW < p.x1 + 8)) continue
+        // drawWorld runs before terrain is built, so use this stage's JSON rather than stale terrain.
+        if (ST.pits.some((p) => x + halfW > p.x - 8 && x - halfW < p.x + p.w + 8)) continue
         // Sit the pool into the paving, not on top of it, and let a little steam-light pool around it.
         const pool = this.add.image(x, LANE_FLOOR_Y + 7, 's3-hotspring-rock').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 4).setTint(0xa0a8c8)
         enablePixelSprite(pool)
@@ -3542,11 +3544,23 @@ export class GameScene extends Phaser.Scene {
   private drawTerrainFeatures() {
     const floor = LANE_FLOOR_Y
     const g = this.add.graphics().setDepth(DEPTH.GROUND + 2)
-    for (const p of ST.pits) {
-      // Dark drop with a lighter dirt lip on both edges.
-      g.fillStyle(0x140c12, 1).fillRect(p.x, floor, p.w, GAME_H - floor)
-      g.fillStyle(0x2a1a14, 1).fillRect(p.x, floor, p.w, 6)
-      g.fillStyle(0x5a3a22, 1).fillRect(p.x, floor, 2, GAME_H - floor).fillRect(p.x + p.w - 2, floor, 2, GAME_H - floor)
+    const pits = terrainPits()
+    const colors = this.tree ? { hole: 0x100b09, edge: 0xc49a63, top: 0xd8b575 }
+      : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
+      : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
+      : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
+      : this.mall ? { hole: 0x090b11, edge: 0xa8b5bd, top: 0xcbd1cb }
+      : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
+    for (const p of pits) {
+      // Only vertical walls inside the pit: never paint a horizontal lip across its mouth.
+      g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
+      g.fillStyle(colors.edge, 1).fillRect(p.x0, floor, 2, GAME_H - floor).fillRect(p.x1 - 2, floor, 2, GAME_H - floor)
+    }
+    // Paint above ground-surface tints, but below real steps, planks, props and darkness.
+    const groundEdge = this.add.graphics().setDepth(DEPTH.GROUND + 4.5)
+    groundEdge.fillStyle(colors.top, 1)
+    for (const span of groundVisualSpans(0, WORLD_W, pits)) {
+      groundEdge.fillRect(span.x0, floor, span.x1 - span.x0, 2)
     }
     for (const st of ST.steps) {
       const top = floor - st.h

@@ -1,0 +1,982 @@
+{
+  "mode": "mobile",
+  "base": "http://127.0.0.1:47318/",
+  "setup": "stage and hero position injected; enemies isolated; screenshot camera fixed on pit",
+  "cases": [
+    {
+      "stage": 1,
+      "x": 672,
+      "kind": "normal",
+      "width": 32,
+      "image": "mobile-s1-normal-672.png",
+      "dark": 0,
+      "hero": {
+        "x": 622,
+        "y": 285
+      },
+      "scrollX": 368,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 992,
+          "x1": 1120,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 1040,
+          "x1": 1088,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 1904,
+          "x1": 1968,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 2272,
+          "x1": 2400,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2320,
+          "x1": 2368,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 3184,
+          "x1": 3248,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 4316,
+          "x1": 4428,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 4640,
+          "x1": 4696,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 4730,
+          "x1": 4786,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 4830,
+          "x1": 4870,
+          "top": 201,
+          "kind": "platform"
+        },
+        {
+          "x0": 5176,
+          "x1": 5224,
+          "top": 269,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 1,
+      "x": 1872,
+      "kind": "fixed-plank",
+      "width": 144,
+      "image": "mobile-s1-fixed-plank-1872.png",
+      "dark": 0,
+      "hero": {
+        "x": 1822,
+        "y": 285
+      },
+      "scrollX": 1624,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 992,
+          "x1": 1120,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 1040,
+          "x1": 1088,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 1904,
+          "x1": 1968,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 2272,
+          "x1": 2400,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2320,
+          "x1": 2368,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 3184,
+          "x1": 3248,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 4316,
+          "x1": 4428,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 4640,
+          "x1": 4696,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 4730,
+          "x1": 4786,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 4830,
+          "x1": 4870,
+          "top": 201,
+          "kind": "platform"
+        },
+        {
+          "x0": 5168,
+          "x1": 5216,
+          "top": 269,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 1,
+      "x": 5116,
+      "kind": "moving-plank",
+      "width": 112,
+      "image": "mobile-s1-moving-plank-5116.png",
+      "dark": 0,
+      "hero": {
+        "x": 5066,
+        "y": 285
+      },
+      "scrollX": 4852,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 992,
+          "x1": 1120,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 1040,
+          "x1": 1088,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 1904,
+          "x1": 1968,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 2272,
+          "x1": 2400,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2320,
+          "x1": 2368,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 3184,
+          "x1": 3248,
+          "top": 261,
+          "kind": "platform"
+        },
+        {
+          "x0": 4316,
+          "x1": 4428,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 4640,
+          "x1": 4696,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 4730,
+          "x1": 4786,
+          "top": 229,
+          "kind": "platform"
+        },
+        {
+          "x0": 4830,
+          "x1": 4870,
+          "top": 201,
+          "kind": "platform"
+        },
+        {
+          "x0": 5128,
+          "x1": 5176,
+          "top": 269,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 2,
+      "x": 700,
+      "kind": "normal",
+      "width": 44,
+      "image": "mobile-s2-normal-700.png",
+      "dark": 0,
+      "hero": {
+        "x": 650,
+        "y": 285
+      },
+      "scrollX": 402,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 330,
+          "x1": 382,
+          "top": 145,
+          "kind": "platform"
+        },
+        {
+          "x0": 400,
+          "x1": 510,
+          "top": 197,
+          "kind": "platform"
+        },
+        {
+          "x0": 1100,
+          "x1": 1210,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 2017,
+          "x1": 2073,
+          "top": 271,
+          "kind": "platform"
+        },
+        {
+          "x0": 2420,
+          "x1": 2516,
+          "top": 265,
+          "kind": "step"
+        },
+        {
+          "x0": 2680,
+          "x1": 2790,
+          "top": 201,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 2,
+      "x": 1980,
+      "kind": "moving-plank",
+      "width": 104,
+      "image": "mobile-s2-moving-plank-1980.png",
+      "dark": 0,
+      "hero": {
+        "x": 1930,
+        "y": 285
+      },
+      "scrollX": 1712,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 330,
+          "x1": 382,
+          "top": 145,
+          "kind": "platform"
+        },
+        {
+          "x0": 400,
+          "x1": 510,
+          "top": 197,
+          "kind": "platform"
+        },
+        {
+          "x0": 1100,
+          "x1": 1210,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 1996,
+          "x1": 2052,
+          "top": 271,
+          "kind": "platform"
+        },
+        {
+          "x0": 2420,
+          "x1": 2516,
+          "top": 265,
+          "kind": "step"
+        },
+        {
+          "x0": 2680,
+          "x1": 2790,
+          "top": 201,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 3,
+      "x": 1040,
+      "kind": "night",
+      "width": 40,
+      "image": "mobile-s3-night-1040.png",
+      "dark": 0.03696646201588761,
+      "hero": {
+        "x": 990,
+        "y": 285
+      },
+      "scrollX": 740,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 820,
+          "x1": 916,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2420,
+          "x1": 2530,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 2591,
+          "x1": 2639,
+          "top": 275,
+          "kind": "platform"
+        },
+        {
+          "x0": 2700,
+          "x1": 2780,
+          "top": 225,
+          "kind": "platform"
+        },
+        {
+          "x0": 2790,
+          "x1": 2850,
+          "top": 181,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 3,
+      "x": 2560,
+      "kind": "night-moving-plank",
+      "width": 96,
+      "image": "mobile-s3-night-moving-plank-2560.png",
+      "dark": 0.0005898866388939079,
+      "hero": {
+        "x": 2510,
+        "y": 261
+      },
+      "scrollX": 2288,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 820,
+          "x1": 916,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2420,
+          "x1": 2530,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 2558,
+          "x1": 2606,
+          "top": 275,
+          "kind": "platform"
+        },
+        {
+          "x0": 2700,
+          "x1": 2780,
+          "top": 225,
+          "kind": "platform"
+        },
+        {
+          "x0": 2790,
+          "x1": 2850,
+          "top": 181,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 3,
+      "x": 2860,
+      "kind": "night-slippery",
+      "width": 56,
+      "image": "mobile-s3-night-slippery-2860.png",
+      "dark": 0.000004409448876576221,
+      "hero": {
+        "x": 2810,
+        "y": 181
+      },
+      "scrollX": 2568,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 820,
+          "x1": 916,
+          "top": 269,
+          "kind": "step"
+        },
+        {
+          "x0": 2420,
+          "x1": 2530,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 2598,
+          "x1": 2646,
+          "top": 275,
+          "kind": "platform"
+        },
+        {
+          "x0": 2700,
+          "x1": 2780,
+          "top": 225,
+          "kind": "platform"
+        },
+        {
+          "x0": 2790,
+          "x1": 2850,
+          "top": 181,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 4,
+      "x": 1040,
+      "kind": "night",
+      "width": 56,
+      "image": "mobile-s4-night-1040.png",
+      "dark": 0,
+      "hero": {
+        "x": 990,
+        "y": 285
+      },
+      "scrollX": 748,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 700,
+          "x1": 790,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 900,
+          "x1": 970,
+          "top": 237,
+          "kind": "platform"
+        },
+        {
+          "x0": 1620,
+          "x1": 1720,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 2150,
+          "x1": 2214,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 3220,
+          "x1": 3310,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 3690,
+          "x1": 3770,
+          "top": 231,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 4,
+      "x": 760,
+      "kind": "night-real-step",
+      "width": 48,
+      "image": "mobile-s4-night-real-step-760.png",
+      "dark": 0,
+      "hero": {
+        "x": 710,
+        "y": 253
+      },
+      "scrollX": 464,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 700,
+          "x1": 790,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 900,
+          "x1": 970,
+          "top": 237,
+          "kind": "platform"
+        },
+        {
+          "x0": 1620,
+          "x1": 1720,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 2150,
+          "x1": 2214,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 3220,
+          "x1": 3310,
+          "top": 261,
+          "kind": "step"
+        },
+        {
+          "x0": 3690,
+          "x1": 3770,
+          "top": 231,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 5,
+      "x": 2760,
+      "kind": "normal",
+      "width": 60,
+      "image": "mobile-s5-normal-2760.png",
+      "dark": 0,
+      "hero": {
+        "x": 2710,
+        "y": 285
+      },
+      "scrollX": 2470,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 560,
+          "x1": 650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 980,
+          "x1": 1050,
+          "top": 237,
+          "kind": "platform"
+        },
+        {
+          "x0": 1780,
+          "x1": 1880,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 2020,
+          "x1": 2084,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2560,
+          "x1": 2650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2820,
+          "x1": 2890,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 5,
+      "x": 1980,
+      "kind": "dark-plank",
+      "width": 56,
+      "image": "mobile-s5-dark-plank-1980.png",
+      "dark": 0.8178893976218968,
+      "hero": {
+        "x": 1930,
+        "y": 285
+      },
+      "scrollX": 1688,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 560,
+          "x1": 650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 980,
+          "x1": 1050,
+          "top": 237,
+          "kind": "platform"
+        },
+        {
+          "x0": 1780,
+          "x1": 1880,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 2020,
+          "x1": 2084,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2560,
+          "x1": 2650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2820,
+          "x1": 2890,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 5,
+      "x": 620,
+      "kind": "real-step",
+      "width": 44,
+      "image": "mobile-s5-real-step-620.png",
+      "dark": 0.07421809225322307,
+      "hero": {
+        "x": 570,
+        "y": 257
+      },
+      "scrollX": 322,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 560,
+          "x1": 650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 980,
+          "x1": 1050,
+          "top": 237,
+          "kind": "platform"
+        },
+        {
+          "x0": 1780,
+          "x1": 1880,
+          "top": 253,
+          "kind": "step"
+        },
+        {
+          "x0": 2020,
+          "x1": 2084,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2560,
+          "x1": 2650,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2820,
+          "x1": 2890,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 6,
+      "x": 1880,
+      "kind": "normal",
+      "width": 52,
+      "image": "mobile-s6-normal-1880.png",
+      "dark": 0,
+      "hero": {
+        "x": 1830,
+        "y": 285
+      },
+      "scrollX": 1586,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 1130,
+          "x1": 1226,
+          "top": 247,
+          "kind": "platform"
+        },
+        {
+          "x0": 1380,
+          "x1": 1470,
+          "top": 259,
+          "kind": "step"
+        },
+        {
+          "x0": 1540,
+          "x1": 1648,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2300,
+          "x1": 2390,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2760,
+          "x1": 2840,
+          "top": 239,
+          "kind": "platform"
+        },
+        {
+          "x0": 3700,
+          "x1": 3780,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 6,
+      "x": 1150,
+      "kind": "fixed-plank",
+      "width": 56,
+      "image": "mobile-s6-fixed-plank-1150.png",
+      "dark": 0,
+      "hero": {
+        "x": 1100,
+        "y": 285
+      },
+      "scrollX": 858,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 1130,
+          "x1": 1226,
+          "top": 247,
+          "kind": "platform"
+        },
+        {
+          "x0": 1380,
+          "x1": 1470,
+          "top": 259,
+          "kind": "step"
+        },
+        {
+          "x0": 1540,
+          "x1": 1648,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2300,
+          "x1": 2390,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2760,
+          "x1": 2840,
+          "top": 239,
+          "kind": "platform"
+        },
+        {
+          "x0": 3700,
+          "x1": 3780,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 6,
+      "x": 3350,
+      "kind": "dark",
+      "width": 52,
+      "image": "mobile-s6-dark-3350.png",
+      "dark": 0.6187438459947757,
+      "hero": {
+        "x": 3300,
+        "y": 285
+      },
+      "scrollX": 3056,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 1130,
+          "x1": 1226,
+          "top": 247,
+          "kind": "platform"
+        },
+        {
+          "x0": 1380,
+          "x1": 1470,
+          "top": 259,
+          "kind": "step"
+        },
+        {
+          "x0": 1540,
+          "x1": 1648,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2300,
+          "x1": 2390,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2760,
+          "x1": 2840,
+          "top": 239,
+          "kind": "platform"
+        },
+        {
+          "x0": 3700,
+          "x1": 3780,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "stage": 6,
+      "x": 4000,
+      "kind": "dark",
+      "width": 56,
+      "image": "mobile-s6-dark-4000.png",
+      "dark": 0.619999029437162,
+      "hero": {
+        "x": 3950,
+        "y": 285
+      },
+      "scrollX": 3708,
+      "zoom": 2,
+      "solids": [
+        {
+          "x0": 1130,
+          "x1": 1226,
+          "top": 247,
+          "kind": "platform"
+        },
+        {
+          "x0": 1380,
+          "x1": 1470,
+          "top": 259,
+          "kind": "step"
+        },
+        {
+          "x0": 1540,
+          "x1": 1648,
+          "top": 245,
+          "kind": "platform"
+        },
+        {
+          "x0": 2300,
+          "x1": 2390,
+          "top": 257,
+          "kind": "step"
+        },
+        {
+          "x0": 2760,
+          "x1": 2840,
+          "top": 239,
+          "kind": "platform"
+        },
+        {
+          "x0": 3700,
+          "x1": 3780,
+          "top": 241,
+          "kind": "platform"
+        }
+      ],
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
