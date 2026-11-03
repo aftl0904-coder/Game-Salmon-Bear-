@@ -1,0 +1,152 @@
+[
+  {
+    "mode": "desktop",
+    "route": "direct",
+    "checks": [
+      "Fresh boot → title → difficulty → actual C2 menu selection → world map",
+      {
+        "line": 1,
+        "speaker": "narration",
+        "text": "森林重新平靜，大家終於一齊野餐。"
+      },
+      {
+        "line": 2,
+        "speaker": "琪寶寶",
+        "text": "噗噗，今次可以慢慢食喇。"
+      },
+      {
+        "line": 3,
+        "speaker": "噗噗",
+        "text": "噗噗！"
+      },
+      {
+        "line": 4,
+        "speaker": "倫寶",
+        "text": "食飽之後，一齊去行商場？"
+      },
+      {
+        "line": 5,
+        "speaker": "琪寶寶",
+        "text": "好呀，叫埋啲朋友！"
+      },
+      {
+        "line": 6,
+        "speaker": "narration",
+        "text": "大家來到商場門前。"
+      },
+      {
+        "line": 7,
+        "speaker": "倫寶",
+        "text": "呢個商場……同之前講嗰間好似。"
+      },
+      {
+        "line": 8,
+        "speaker": "琪寶寶",
+        "text": "咦？入面好似有啲古怪。"
+      },
+      {
+        "line": 9,
+        "speaker": "噗噗",
+        "text": "噗……？"
+      },
+      {
+        "line": 10,
+        "speaker": "倫寶",
+        "text": "我哋入去睇清楚。"
+      },
+      "All ten exact lines and speaker labels observed in order and advanced by keyboard F",
+      "Run storage and C2-cleared flag unchanged while playing/skipping intro; stage 6 gameplay starts"
+    ],
+    "errors": [],
+    "passed": true,
+    "limitations": "Normal menu entry from fresh browser. Phone is emulated, not physical."
+  },
+  {
+    "mode": "mobile",
+    "route": "direct",
+    "checks": [
+      "Fresh boot → title → difficulty → actual C2 menu selection → world map",
+      {
+        "line": 1,
+        "speaker": "narration",
+        "text": "森林重新平靜，大家終於一齊野餐。"
+      },
+      {
+        "line": 2,
+        "speaker": "琪寶寶",
+        "text": "噗噗，今次可以慢慢食喇。"
+      },
+      {
+        "line": 3,
+        "speaker": "噗噗",
+        "text": "噗噗！"
+      },
+      {
+        "line": 4,
+        "speaker": "倫寶",
+        "text": "食飽之後，一齊去行商場？"
+      },
+      {
+        "line": 5,
+        "speaker": "琪寶寶",
+        "text": "好呀，叫埋啲朋友！"
+      },
+      {
+        "line": 6,
+        "speaker": "narration",
+        "text": "大家來到商場門前。"
+      },
+      {
+        "line": 7,
+        "speaker": "倫寶",
+        "text": "呢個商場……同之前講嗰間好似。"
+      },
+      {
+        "line": 8,
+        "speaker": "琪寶寶",
+        "text": "咦？入面好似有啲古怪。"
+      },
+      {
+        "line": 9,
+        "speaker": "噗噗",
+        "text": "噗……？"
+      },
+      {
+        "line": 10,
+        "speaker": "倫寶",
+        "text": "我哋入去睇清楚。"
+      },
+      "All ten exact lines and speaker labels observed in order and advanced by touch alone",
+      "Run storage and C2-cleared flag unchanged while playing/skipping intro; stage 6 gameplay starts"
+    ],
+    "errors": [],
+    "passed": true,
+    "limitations": "Normal menu entry from fresh browser. Phone is emulated, not physical."
+  },
+  {
+    "mode": "desktop",
+    "route": "sequential",
+    "checks": [
+      "Injected stage 5 playOutro showed existing C1 ending; skip → clear card saved nextStage=6",
+      "Existing C1 credits offered C2 and real UI entered map",
+      "Stage 6 opener skipped by Escape, resumed stage 6",
+      "Run storage and C2-cleared flag unchanged while playing/skipping intro; stage 6 gameplay starts"
+    ],
+    "errors": [],
+    "passed": true,
+    "limitations": "Injected C1 run checkpoints (stages 1–4) and invoked stage 5 playOutro; not a full playthrough."
+  },
+  {
+    "mode": "mobile",
+    "route": "sequential",
+    "checks": [
+      "Injected stage 5 playOutro showed existing C1 ending; skip → clear card saved nextStage=6",
+      "Existing C1 credits offered C2 and real UI entered map",
+      "Stage 6 opener skipped by touch alone, resumed stage 6",
+      "Run storage and C2-cleared flag unchanged while playing/skipping intro; stage 6 gameplay starts"
+    ],
+    "errors": [],
+    "passed": true,
+    "limitations": "Injected C1 run checkpoints (stages 1–4) and invoked stage 5 playOutro; not a full playthrough."
+  }
+]
