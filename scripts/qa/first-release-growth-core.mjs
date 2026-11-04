@@ -16,6 +16,11 @@ assert.equal(unspentGrowth(girl), 5, 'other role remains unchanged')
 const respec = redistributeGrowth(allocated, { hp: 0, atk: 0, def: 0, stam: 0, sp: 5 })
 assert.equal(respec.earned, 5)
 assert.equal(unspentGrowth(respec), 0)
+let repeated = respec
+for (let i = 0; i < 1000; i++) {
+  repeated = redistributeGrowth(repeated, i % 2 ? { hp: 5, atk: 0, def: 0, stam: 0, sp: 0 } : { hp: 0, atk: 0, def: 0, stam: 0, sp: 5 })
+  assert.equal(repeated.earned, 5)
+}
 for (const bad of [
   { hp: 1, atk: 1, def: 1, stam: 1, sp: 2 },
   { hp: -1, atk: 0, def: 0, stam: 0, sp: 0 },
@@ -23,6 +28,8 @@ for (const bad of [
   { hp: 0, atk: 0, def: 0, stam: 0, sp: 0, extra: 1 },
 ]) assert.throws(() => redistributeGrowth(boy, bad), RangeError)
 for (const bad of [null, {}, { earned: NaN, allocation: boy.allocation }, { earned: -1, allocation: boy.allocation }, { earned: 1, allocation: respec.allocation }]) assert.equal(isGrowthWallet(bad), false)
+assert.equal(isGrowthWallet({ ...boy, futureSchemaField: 1 }), false)
+assert.equal(isGrowthWallet({ earned: 5, allocation: Object.assign(Object.create(boy.allocation), { a: 0, b: 0, c: 0, d: 0, e: 0 }) }), false)
 for (const stage of [3, 5, 7]) for (const [rank, points] of Object.entries({ S: 3, A: 2, B: 1, C: 0 })) {
   assert.equal(growthRankPoints(stage, rank, true), points)
   assert.equal(growthRankPoints(stage, rank, false), 0)

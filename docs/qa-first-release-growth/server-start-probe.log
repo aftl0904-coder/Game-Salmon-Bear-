@@ -1,0 +1,2 @@
+Startup probe (before Vite ready): curl: (7) Failed to connect to 127.0.0.1 port 47931 after 0 ms: Could not connect to server
+Subsequent retries succeeded; server became ready and tests ran.

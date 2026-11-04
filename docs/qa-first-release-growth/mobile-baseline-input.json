@@ -1,0 +1,7 @@
+{
+  "mode": "mobile",
+  "setup": "injected menu scene, fresh isolated browser storage",
+  "passed": true,
+  "errors": [],
+  "result": "existing fresh stage 1 menu starts baseline; growth not integrated"
+}
