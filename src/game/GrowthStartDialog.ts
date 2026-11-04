@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GROWTH_AXES, type GrowthAllocation, type GrowthBranch, type GrowthHero } from './growth'
+import { GROWTH_AXES, type GrowthAllocation, type GrowthBranch, type GrowthHero, type GrowthWallet } from './growth'
 import { getRun, type NewGrowthSetup } from './run'
 import { FONT_UI } from './ui/fonts'
 
@@ -20,9 +20,16 @@ export class GrowthStartDialog {
   private totals = { boy: 5, girl: 5 }
   private allocations: Record<GrowthHero, GrowthAllocation> = { boy: empty(), girl: empty() }
   private readyAt: number
-  constructor(scene: Phaser.Scene, done: (setup: NewGrowthSetup) => boolean, cancel: () => void) {
+  private respec: boolean
+  constructor(scene: Phaser.Scene, done: (setup: NewGrowthSetup) => boolean, cancel: () => void, shop?: { wallets: Record<GrowthHero, GrowthWallet>; selected: GrowthHero }) {
     this.scene = scene; this.done = done; this.cancel = cancel
-    this.sources = [null, ...(getRun()?.growth.branches ?? [])]
+    this.respec = !!shop
+    this.sources = shop ? [] : [null, ...(getRun()?.growth.branches ?? [])]
+    if (shop) {
+      this.page = 'points'
+      for (const hero of heroes) { this.totals[hero] = shop.wallets[hero].earned; this.allocations[hero] = { ...shop.wallets[hero].allocation } }
+      this.selected = shop.selected === 'girl' ? 5 : 0
+    }
     this.root = scene.add.container(0, 0).setDepth(20000).setScrollFactor(0)
     this.readyAt = scene.time.now + 250
     this.draw()
@@ -63,7 +70,7 @@ export class GrowthStartDialog {
       return
     }
     const source = this.sources[this.source]
-    this.text(320, 30, source ? `來源：舊局 ${this.source}（不額外加 5）` : '來源：唔帶舊成長', 13)
+    this.text(320, 30, this.respec ? '商店免費重配（兩人各自點數）' : source ? `來源：舊局 ${this.source}（不額外加 5）` : '來源：唔帶舊成長', 13)
     this.text(320, 50, '←→ 減／加　↑↓ 揀項　Enter 加點／確認', 10, '#d8c49c')
     for (const [h, x] of [['boy', 202], ['girl', 438]] as const) {
       const used = GROWTH_AXES.reduce((s, axis) => s + this.allocations[h][axis], 0)
@@ -75,9 +82,9 @@ export class GrowthStartDialog {
       this.text(x, y, `${names[ai]}  ${this.allocations[hero][axis]}`, 13)
       this.button(x + 76, y, 33, 26, '＋', () => { this.selected = index; this.adjust(1) }, this.selected === index)
     }))
-    this.text(320, 260, '可留點；戰鬥效果及商店重配尚未接入', 10, '#ffba99')
-    this.button(174, 300, 130, 32, '返回揀來源', () => this.back(), this.selected === 10)
-    this.button(320, 300, 130, 32, '確認開新局', () => this.confirm(), this.selected === 11)
+    this.text(320, 260, this.respec ? '免費；可留點，不能跨角色轉點' : '可留點；未分配點暫無效果', 10, '#ffba99')
+    this.button(174, 300, 130, 32, this.respec ? '取消' : '返回揀來源', () => this.respec ? this.cancel() : this.back(), this.selected === 10)
+    this.button(320, 300, 130, 32, this.respec ? '保存配點' : '確認開新局', () => this.confirm(), this.selected === 11)
     this.button(466, 300, 130, 32, '取消', () => this.cancel(), this.selected === 12)
   }
   private shift(d: number) { this.source = (this.source + d + this.sources.length) % this.sources.length; this.draw() }
@@ -110,7 +117,7 @@ export class GrowthStartDialog {
     if (this.scene.time.now < this.readyAt) return
     if (this.page === 'source') return this.choose()
     if (this.selected < 10) return this.adjust(1)
-    if (this.selected === 10) return this.back()
+    if (this.selected === 10) return this.respec ? this.cancel() : this.back()
     if (this.selected === 11) return this.confirm()
     this.cancel()
   }

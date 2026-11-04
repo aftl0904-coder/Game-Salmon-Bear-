@@ -11,7 +11,7 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
-import { combatGrowth, getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { combatGrowth, getRun, isSideTrip, resumeMain, respecCurrentRun, runTransaction, saveClear, scoreEligible } from './run'
 import { combatGrowthEffects, type GrowthRank } from './growth'
 import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
@@ -3838,6 +3838,24 @@ export class GameScene extends Phaser.Scene {
       heroes,
       stage: this.stageNo,
       growth: combatGrowth,
+      wallets: () => isSideTrip() ? null : getRun()?.growth.branches.at(-1)?.heroes ?? null,
+      respec: (allocations) => {
+        if (isSideTrip()) return false
+        const hp: Partial<Record<Who, number>> = {}
+        for (const h of this.clearHeroes()) {
+          const who = h.role as Who
+          const cap = MAX_HP + bonusHearts(who) + combatGrowthEffects(allocations[who]).extraHearts
+          hp[who] = Math.min(h.hp, cap) // never heal or turn a live hero into a death
+        }
+        if (!respecCurrentRun(allocations, hp)) return false
+        for (const h of this.clearHeroes()) {
+          const who = h.role as Who
+          h.hp = hp[who]!
+          h.stam = Math.min(h.stam, this.heroStamMax(who))
+        }
+        this.refreshHearts()
+        return true
+      },
     })
     void shop.done.then(() => {
       if (this.ended && !this.clearOverlay) return

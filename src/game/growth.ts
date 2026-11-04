@@ -1,6 +1,6 @@
 /**
  * Growth-point and per-run provenance model. The ledger is stored with the
- * main-run checkpoint. New-run selection and bounded combat are wired; shop respec is not.
+ * main-run checkpoint. New-run selection, shop redistribution and bounded combat are wired.
  * previewGrowthEffects below remains a historical prototype only.
  * See docs/bible/first-release-growth-20261104.md for limits and remaining work.
  */

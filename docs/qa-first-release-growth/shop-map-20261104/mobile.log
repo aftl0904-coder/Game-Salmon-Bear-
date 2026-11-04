@@ -1,0 +1,5 @@
+FAIL mobile AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+'1p' !== '2p'
+
+    at file:///tmp/salmon-first-release-growth/scripts/qa/first-release-growth-shop-map.mjs:85:185

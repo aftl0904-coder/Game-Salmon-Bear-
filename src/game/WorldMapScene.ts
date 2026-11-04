@@ -186,7 +186,7 @@ export class MapScene extends Phaser.Scene {
     const right = () => this.growthDialog ? this.growthDialog.horizontal(1) : this.startDialog ? this.moveStartDialog(1) : this.picking && this.movePick(1)
     const up = () => { if (this.growthDialog) this.growthDialog.move(-1); else if (this.startDialog) this.moveStartDialog(-1) }
     const down = () => { if (this.growthDialog) this.growthDialog.move(1); else if (this.startDialog) this.moveStartDialog(1) }
-    const escape = () => this.growthDialog?.escape()
+    const escape = () => { if (this.growthDialog) this.growthDialog.escape(); else if (this.startDialog) { this.startDialog.root.destroy(); this.startDialog = null } }
     kb?.on('keydown-ESC', escape)
     kb?.on('keydown-ENTER', confirm)
     kb?.on('keydown-SPACE', confirm)
@@ -371,7 +371,7 @@ export class MapScene extends Phaser.Scene {
   }
 
   private selectPick(stage: number) {
-    if (this.startDialog || !this.openStages.includes(stage) || stage === this.pickIndex) return
+    if (this.startDialog || this.growthDialog || !this.openStages.includes(stage) || stage === this.pickIndex) return
     this.pickIndex = stage
     SFX.blip(520)
     this.updateBanner()
@@ -415,7 +415,7 @@ export class MapScene extends Phaser.Scene {
   private confirmPick() {
     if (!this.picking || this.startDialog || this.growthDialog) return
     const chosen = this.pickIndex
-    if (getRun()?.nextStage !== chosen && (chosen === 1 || chosen === 6)) {
+    if (chosen === 1 || chosen === 6) {
       if (needsStartChoice()) this.showStartDialog(chosen)
       else this.openGrowthSetup(chosen, false)
       return
@@ -449,9 +449,12 @@ export class MapScene extends Phaser.Scene {
     root.add([cover, this.add.rectangle(320, 180, 360, 190, 0x241810).setStrokeStyle(2, 0xc8902a)])
     root.add(this.add.text(320, 104, '開新局：先揀裝備，再揀成長來源', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
     if (warning) root.add(this.add.text(320, 120, warning, { fontFamily: FONT_UI, fontSize: '11px', color: '#ffba99' }).setOrigin(0.5))
-    const actions = [() => this.openGrowthSetup(stage, true), () => this.openGrowthSetup(stage, false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
-    const labels = ['⚪ 開新局：帶舊裝備', '⚪ 開新局：唔帶舊裝備', '取消'].map((text, i) => {
-      const y = 145 + i * 31
+    const items: Array<{ text: string; action: () => void }> = []
+    if (getRun()?.nextStage === stage) items.push({ text: '✅ 繼續本局', action: () => { this.startDialog?.root.destroy(); this.startDialog = null; resumeMain(this.registry); this.finishPick(stage) } })
+    items.push({ text: '⚪ 開新局：帶舊裝備', action: () => this.openGrowthSetup(stage, true) }, { text: '⚪ 開新局：唔帶舊裝備', action: () => this.openGrowthSetup(stage, false) }, { text: '取消', action: () => { this.startDialog?.root.destroy(); this.startDialog = null } })
+    const actions = items.map(item => item.action)
+    const labels = items.map(({ text }, i) => {
+      const y = (items.length === 4 ? 137 : 145) + i * 31
       const bg = this.add.rectangle(320, y, 300, 26, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
       const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
       bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => { e?.stopPropagation?.(); actions[i]?.() })

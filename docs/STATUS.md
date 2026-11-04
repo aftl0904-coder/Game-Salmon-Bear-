@@ -1,6 +1,10 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
-## 第一版五軸戰鬥 checkpoint（2026-11-04）
+## 第一版商店／地圖 checkpoint（2026-11-04）
+- 商店重配及地圖第一關入口已接入；兩角色獨立保額、支線拒絕永久重配、原子保存及 HP 不回血的方案見 [bible](bible/first-release-growth-20261104.md)。
+- [QA](qa-first-release-growth/README.md) 保存桌面、模擬手機觸控以及 fixture 失敗；未真機／真人／自然通關，地圖及後續回歸以 QA 的實際記錄為準。#95 維持 draft，不合併、不部署。
+
+## 第一版五軸戰鬥 checkpoint（2026-11-04，歷史）
 - 主線按各角色已分配成長接入五軸；支線為零基準、死亡保留成長清裝備；公式和上限見 [bible](bible/first-release-growth-20261104.md)。商店重配未做；不可合併。
 - [QA](qa-first-release-growth/README.md)：桌面鍵盤及模擬手機 touch 以注入配點／靜止目標比較實際場景與碰撞，發現並修正雙人絕招歸屬，失敗保留。注入式補血／跨關／死亡／支線檢查通過；未真機、真人、自然通關或全面平衡，所有 Boss 和裝備組合未測。
 ## 第一版新局成長 UI checkpoint（2026-11-04，歷史）

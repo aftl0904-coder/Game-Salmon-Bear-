@@ -194,6 +194,23 @@ export function combatGrowth(who: Who): GrowthAllocation {
   }
   return { hp: 0, atk: 0, def: 0, stam: 0, sp: 0 }
 }
+/** Atomic shop allocation: only the current main branch; neither wallet can gain points.
+ * Caller supplies already-clamped live HP. Failure leaves both memory and storage untouched. */
+export function respecCurrentRun(allocations: Record<Who, GrowthAllocation>, hp: Amounts): boolean {
+  const r = getRun()
+  if (!r || context !== 'main' || blocked) return false
+  try {
+    let growth = respecGrowthBook(r.growth, 'boy', allocations.boy)
+    growth = respecGrowthBook(growth, 'girl', allocations.girl)
+    const nextHp = { ...r.hp, ...hp }
+    for (const value of Object.values(nextHp)) if (!Number.isSafeInteger(value) || value! < 0) throw new RangeError('invalid HP')
+    return commit({ ...r, growth, hp: nextHp })
+  } catch {
+    storageOk = false
+    storageWarning('配點無效；本局及舊資料未改動。')
+    return false
+  }
+}
 export function scoreEligible() { return context === 'side' ? sideEligible : context === 'main' ? (main?.eligible ?? true) : true }
 /** A fresh player with no old loadout can begin at baseline without a redundant choice. */
 export function needsStartChoice() {

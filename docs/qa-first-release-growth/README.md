@@ -1,6 +1,13 @@
 # 第一版成長 checkpoint QA
 
-此 draft 已接入版本化本局存檔、主線發點及新局選源／配點 UI；**商店重配仍未接；五軸只完成局部戰鬥 checkpoint**，不能視作完整驗收或合併。
+此 draft 已接入版本化本局存檔、主線發點、新局選源／配點及商店重配；五軸只完成局部戰鬥 checkpoint，不能視作完整驗收或合併。
+
+## 2026-11-04：商店重配及地圖入口 checkpoint
+
+- [桌面首次 JSON](shop-map-20261104/desktop.json)／[模擬手機首次 JSON](shop-map-20261104/mobile.json)：**注入本局、遊戲場景及清關**，之後用真實桌面鍵盤或模擬手機純 touch 打開結算卡商店、兩人買裝換人，編輯兩人並取消，注入 quota 失敗後再試成功；兩人各5、不能超分、可留3點、原局以外分支及錢包／榜單資格不變。移除生命點時當前 HP 截至新上限；增加上限時不回血。另注入支線 context，UI 和 API 均拒絕永久重配，主線快照逐字不變。未自然通關。截圖包括 [桌面](shop-map-20261104/desktop-both-edited.png)、[手機](shop-map-20261104/mobile-both-edited.png)、[配額失敗](shop-map-20261104/mobile-quota-failure.png)。
+- 兩次整體測試**均未全部通過**：桌面地圖取消後測試再按左方向導致選錯關而逾時（[log](shop-map-20261104/desktop.log)、[截圖](shop-map-20261104/desktop-failure.png)）；手機第1關新局完成後 fixture 未把注入的2P模式寫入 registry，以 1P ≠ 2P 失敗（[log](shop-map-20261104/mobile.log)、[截圖](shop-map-20261104/mobile-failure.png)）。重試及退出碼見 [map-retry2](shop-map-20261104/map-retry2/) 和 [exits](shop-map-20261104/exits.log)。不能將商店部分通過說成整份腳本通過。
+- 修正測試 fixture 後，地圖單獨重試：[桌面鍵盤](shop-map-20261104/map-retry2/desktop.log)及[模擬手機純 touch](shop-map-20261104/map-retry2/mobile.log)均通過，注入第1／6關的已完成一關本局與地圖入口，實際操作警告、預設取消（原字串不變）、第1關選舊成長及第6關唔帶成長、配點；核對各局點數、開局資格及2P模式。不是自然到達地圖或完整榜單寫入。重試前一次曾中斷，目錄保留；首次兩次整體失敗仍保留。
+- [build](shop-map-20261104/build-final.log)、[validate:data](shop-map-20261104/validate.log) 通過；商店底部提示重排發生在首次截圖後，最終版位置尚須重拍畫面。其他關由地圖進支線、正常地圖續局、隊伍／榜單完整回歸、真機、真人及自然通關仍待驗證；跨分頁同時寫入未解。
 
 ## 2026-11-04：五軸戰鬥局部 checkpoint
 - [桌面鍵盤](combat-20261104/desktop-retry3.log)／[模擬手機純 touch](combat-20261104/mobile-retry2.log)：注入分配、真實場景及固定目標並停用敵 AI，0／1 點分別為生命 6→7、攻擊碰撞 3→4、防禦無敵 1500→1560ms、耐力上限 1→1.1／一秒回氣 0.55→0.5665、絕招碰撞 3→4。實際按 F／T 或手機「攻／絕」經 Phaser overlap，其餘直接呼叫場景方法；截圖及 JSON 同目錄。手機非真機；均非真人或自然通關。
