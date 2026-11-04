@@ -1,0 +1,15 @@
+{
+  "scope": "injected stage 3 checkpoint, stats and direct win(); real scene and localStorage; no natural boss battle",
+  "errors": [],
+  "passed": true,
+  "result": {
+    "stage": 3,
+    "expected": "S",
+    "shown": "S",
+    "nextStage": 4,
+    "award": "S",
+    "boy": 8,
+    "girl": 8,
+    "afterRepeatedWin": 8
+  }
+}

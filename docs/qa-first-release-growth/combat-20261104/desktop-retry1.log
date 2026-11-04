@@ -1,0 +1,5 @@
+FAIL desktop AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+0 !== 1
+
+    at file:///tmp/salmon-first-release-growth/scripts/qa/first-release-growth-combat.mjs:38:85

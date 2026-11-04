@@ -5,6 +5,8 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput, isPhonePlay } from './touchInput'
 import { buzz, HAPTIC } from './phone'
+import type { GrowthAllocation, GrowthWallet } from './growth'
+import { GrowthStartDialog } from './GrowthStartDialog'
 import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
 
@@ -28,6 +30,10 @@ export type ShopHooks = {
   heroes: Who[]
   /** The stage just cleared — late stock (the 蜜符) only appears from its own stage on. */
   stage: number
+  /** Points shown separately from gear; side trips omit wallets/save and stay baseline. */
+  growth?: (who: Who) => GrowthAllocation
+  wallets?: () => Record<Who, GrowthWallet> | null
+  respec?: (allocations: Record<Who, GrowthAllocation>) => boolean
 }
 
 export type Shop = { done: Promise<void>; destroy: () => void }
@@ -46,6 +52,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   const heroes = hooks.heroes
   let who: Who = heroes[0]!
   let sel = 0
+  let growthDialog: GrowthStartDialog | null = null
   let resolve!: () => void
   const done = new Promise<void>((r) => (resolve = r))
 
@@ -81,12 +88,12 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   const purseText = scene.add.text(28 + PW - 16, 136, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' }).setOrigin(1, 0)
   const whoText = scene.add.text(44, 136, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffd0e0' }).setOrigin(0, 0)
   const blurb = scene.add
-    .text(GAME_W / 2, GAME_H - 38, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#d8c8a8', align: 'center', wordWrap: { width: GAME_W - 80 } })
+    .text(GAME_W / 2, GAME_H - 52, '', { fontFamily: FONT_UI, fontSize: '11px', color: '#d8c8a8', align: 'center', wordWrap: { width: GAME_W - 80 } })
     .setOrigin(0.5)
   const hint = scene.add
-    .text(GAME_W / 2, GAME_H - 16, isPhonePlay()
-      ? '點貨品購買　' + (heroes.length > 1 ? '點換人轉角色　' : '') + '點離開返回'
-      : '↑↓ 揀　攻擊＝買　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Enter＝走', {
+    .text(GAME_W / 2, GAME_H - 32, isPhonePlay()
+      ? '點貨品購買　重配免費　' + (heroes.length > 1 ? '點換人轉角色　' : '') + '點離開返回'
+      : '↑↓ 揀　攻擊＝買　R＝重配　' + (heroes.length > 1 ? '←→ 換人　' : '') + 'Enter＝走', {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#f0dcb0',
@@ -122,10 +129,17 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       .text(lx, CY + Math.sin(a) * (R0 + 14), STAT_NAMES[id], { fontFamily: FONT_UI, fontSize: '9px', color: '#c8b890' })
       .setOrigin(0.5)
   })
-  root.add([pent, ...axisLabels])
+  const growthLegend = scene.add.text(CX, 294, '軸旁數字＝成長點', { fontFamily: FONT_UI, fontSize: '9px', color: '#c8b890' }).setOrigin(0.5)
+  root.add([pent, ...axisLabels, growthLegend])
 
   const drawPentagon = (w: Who) => {
     const v = stats(w)
+    const allocation = hooks.growth?.(w)
+    axisLabels.forEach((label, i) => {
+      const id = AXES[i]!
+      const points = allocation?.[id] ?? 0
+      label.setText(`${STAT_NAMES[id]}${points ? `+${points}` : ''}`)
+    })
     pent.clear()
     const pt = (i: number, r: number) => {
       const a = -Math.PI / 2 + (i * Math.PI * 2) / 5
@@ -227,6 +241,8 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     gone = true
     scene.events.off('update', tick)
     scene.input.keyboard?.off('keydown', onKey)
+    growthDialog?.destroy()
+    growthDialog = null
     root.destroy(true)
     resolve()
   }
@@ -234,7 +250,17 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
   const onKey = (e: KeyboardEvent) => {
     if (gone) return
     const k = e.code
-    if (['ArrowUp', 'KeyW'].includes(k)) move(-1)
+    if (growthDialog) {
+      if (['ArrowUp', 'KeyW'].includes(k)) growthDialog.move(-1)
+      else if (['ArrowDown', 'KeyS'].includes(k)) growthDialog.move(1)
+      else if (['ArrowLeft', 'KeyA'].includes(k)) growthDialog.horizontal(-1)
+      else if (['ArrowRight', 'KeyD'].includes(k)) growthDialog.horizontal(1)
+      else if (['Enter', 'Space', 'KeyF', 'KeyJ', 'KeyK'].includes(k) && !e.repeat) growthDialog.activate()
+      else if (k === 'Escape') growthDialog.escape()
+      return
+    }
+    if (k === 'KeyR') openRespec()
+    else if (['ArrowUp', 'KeyW'].includes(k)) move(-1)
     else if (['ArrowDown', 'KeyS'].includes(k)) move(1)
     else if (['ArrowLeft', 'KeyA', 'ArrowRight', 'KeyD'].includes(k)) swapWho()
     else if (['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(k)) tryBuy()
@@ -244,6 +270,14 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
 
   const tick = () => {
     if (gone) return
+    if (growthDialog) {
+      if (TouchInput.justPressed('up')) growthDialog.move(-1)
+      if (TouchInput.justPressed('down')) growthDialog.move(1)
+      if (TouchInput.justPressed('left')) growthDialog.horizontal(-1)
+      if (TouchInput.justPressed('right')) growthDialog.horizontal(1)
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) growthDialog.activate()
+      return
+    }
     if (TouchInput.justPressed('up')) move(-1)
     if (TouchInput.justPressed('down')) move(1)
     if (TouchInput.justPressed('left') || TouchInput.justPressed('right')) swapWho()
@@ -279,6 +313,22 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     swapBg.on('pointerdown', swapWho)
     root.add([swapBg, swapLabel])
   }
+
+  const openRespec = () => {
+    if (gone || growthDialog) return
+    const wallets = hooks.wallets?.()
+    if (!wallets || !hooks.respec) { blurb.setText('支線為基準，不能重配永久成長。'); return }
+    growthDialog = new GrowthStartDialog(scene, setup => {
+      const ok = hooks.respec!(setup.allocations)
+      if (ok) { growthDialog = null; draw() }
+      return ok
+    }, () => { growthDialog?.destroy(); growthDialog = null; draw() }, { wallets, selected: who })
+  }
+  const respecBg = scene.add.rectangle(410, GAME_H - 17, 104, 28, 0x4a2a14, 1)
+    .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+  const respecLabel = scene.add.text(410, GAME_H - 17, '免費重配 [R]', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe9a8' }).setOrigin(0.5)
+  respecBg.on('pointerdown', openRespec)
+  root.add([respecBg, respecLabel])
 
   draw()
   return { done, destroy: leave }

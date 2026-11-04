@@ -1,0 +1,2 @@
+FAIL desktop page.waitForFunction: Timeout 30000ms exceeded.
+    at /tmp/salmon-first-release-growth/scripts/qa/first-release-growth-shop-map.mjs:79:14

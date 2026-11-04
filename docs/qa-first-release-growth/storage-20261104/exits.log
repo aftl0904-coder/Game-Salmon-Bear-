@@ -1,0 +1,12 @@
+build=0
+validate=0
+ledger=0
+storage=0
+storage_reload=0
+scene_win=1
+scene_win_debug=1
+scene_win_fresh=0
+scene_write_failure_retry=0
+build_final=0
+validate_final=0
+ledger_final=0

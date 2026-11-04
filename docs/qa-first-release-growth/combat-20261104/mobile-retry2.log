@@ -1,0 +1,95 @@
+PASS mobile {
+  "hp": {
+    "baseline": {
+      "boyHp": 6,
+      "girlHp": 6,
+      "boyMax": 6,
+      "girlMax": 6,
+      "stam": 1,
+      "iframes": 1500,
+      "girlIframes": 1500
+    },
+    "allocated": {
+      "boyHp": 7,
+      "girlHp": 6,
+      "boyMax": 7,
+      "girlMax": 6,
+      "stam": 1,
+      "iframes": 1500,
+      "girlIframes": 1500
+    }
+  },
+  "def": {
+    "baseline": 1500,
+    "allocated": 1560,
+    "actualHazard": {
+      "hp": 6,
+      "hurtCd": 1560,
+      "incoming": 1
+    }
+  },
+  "stam": {
+    "baseline": 1,
+    "allocated": 1.1,
+    "recover": 0.5665000000000001
+  },
+  "atk": {
+    "baseline": {
+      "raw": 3,
+      "before": 100,
+      "after": 97,
+      "boss": false,
+      "ret": true
+    },
+    "allocated": {
+      "raw": 4,
+      "before": 100,
+      "after": 96,
+      "boss": false,
+      "ret": true
+    }
+  },
+  "sp": {
+    "baseline": {
+      "raw": 3,
+      "before": 100,
+      "after": 97,
+      "boss": false,
+      "ret": true
+    },
+    "allocated": {
+      "raw": 4,
+      "before": 100,
+      "after": 96,
+      "boss": false,
+      "ret": true
+    }
+  },
+  "boss": {
+    "baseline": {
+      "raw": 3,
+      "before": 100,
+      "after": 99,
+      "boss": true,
+      "ret": true
+    },
+    "allocated3": {
+      "raw": 5,
+      "before": 100,
+      "after": 98,
+      "boss": true,
+      "ret": true
+    }
+  },
+  "side": {
+    "allocation": {
+      "hp": 0,
+      "atk": 0,
+      "def": 0,
+      "stam": 0,
+      "sp": 0
+    },
+    "max": 6,
+    "unchanged": true
+  }
+}
