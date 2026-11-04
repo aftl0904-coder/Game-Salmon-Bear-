@@ -5,6 +5,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput, isPhonePlay } from './touchInput'
 import { buzz, HAPTIC } from './phone'
+import type { GrowthAllocation } from './growth'
 import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
 import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
 
@@ -28,6 +29,8 @@ export type ShopHooks = {
   heroes: Who[]
   /** The stage just cleared — late stock (the 蜜符) only appears from its own stage on. */
   stage: number
+  /** Points shown separately from gear; this does not provide a respec UI. */
+  growth?: (who: Who) => GrowthAllocation
 }
 
 export type Shop = { done: Promise<void>; destroy: () => void }
@@ -122,10 +125,17 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
       .text(lx, CY + Math.sin(a) * (R0 + 14), STAT_NAMES[id], { fontFamily: FONT_UI, fontSize: '9px', color: '#c8b890' })
       .setOrigin(0.5)
   })
-  root.add([pent, ...axisLabels])
+  const growthLegend = scene.add.text(CX, 294, '軸旁數字＝成長點', { fontFamily: FONT_UI, fontSize: '9px', color: '#c8b890' }).setOrigin(0.5)
+  root.add([pent, ...axisLabels, growthLegend])
 
   const drawPentagon = (w: Who) => {
     const v = stats(w)
+    const allocation = hooks.growth?.(w)
+    axisLabels.forEach((label, i) => {
+      const id = AXES[i]!
+      const points = allocation?.[id] ?? 0
+      label.setText(`${STAT_NAMES[id]}${points ? `+${points}` : ''}`)
+    })
     pent.clear()
     const pt = (i: number, r: number) => {
       const a = -Math.PI / 2 + (i * Math.PI * 2) / 5

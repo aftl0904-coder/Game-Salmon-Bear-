@@ -1,0 +1,43 @@
+{
+  "scope": "Injected run allocations, target and scene state; real GameScene and controls. Not a natural clear, physical device, or human playtest.",
+  "mode": "mobile",
+  "checks": {
+    "hp": {
+      "baseline": {
+        "boyHp": 6,
+        "girlHp": 6,
+        "boyMax": 6,
+        "girlMax": 6,
+        "stam": 1,
+        "iframes": 1500,
+        "girlIframes": 1500
+      },
+      "allocated": {
+        "boyHp": 7,
+        "girlHp": 6,
+        "boyMax": 7,
+        "girlMax": 6,
+        "stam": 1,
+        "iframes": 1500,
+        "girlIframes": 1500
+      }
+    },
+    "def": {
+      "baseline": 1500,
+      "allocated": 1560,
+      "actualHazard": {
+        "hp": 6,
+        "hurtCd": 1560,
+        "incoming": 1
+      }
+    },
+    "stam": {
+      "baseline": 1,
+      "allocated": 1.1,
+      "recover": 0.5665000000000001
+    }
+  },
+  "errors": [],
+  "error": "page.waitForFunction: Timeout 5000ms exceeded.\n    at attack (/tmp/salmon-first-release-growth/scripts/qa/first-release-growth-combat.mjs:36:432)\n    at /tmp/salmon-first-release-growth/async file:/tmp/salmon-first-release-growth/scripts/qa/first-release-growth-combat.mjs:37:13",
+  "passed": false
+}

@@ -1,6 +1,7 @@
 /**
  * Growth-point and per-run provenance model. The ledger is stored with the
- * main-run checkpoint; selection/respec UI and combat effects are not wired.
+ * main-run checkpoint. New-run selection and bounded combat are wired; shop respec is not.
+ * previewGrowthEffects below remains a historical prototype only.
  * See docs/bible/first-release-growth-20261104.md for limits and remaining work.
  */
 export const GROWTH_AXES = ['hp', 'atk', 'def', 'stam', 'sp'] as const
@@ -63,6 +64,18 @@ export function previewGrowthEffects(wallet: GrowthWallet) {
     staminaMultiplier: 1 + p.stam * 0.1,
     staminaRecoverMultiplier: 1 + p.stam * 0.03,
     specialExtraDamage: p.sp * 0.2,
+  }
+}
+
+/** Bounded, integer-safe combat bonuses. Allocations are validated by the run ledger. */
+export function combatGrowthEffects(p: GrowthAllocation) {
+  return {
+    extraHearts: Math.min(p.hp, 5),
+    attackBonus: Math.ceil(Math.min(p.atk, 5) / 2),
+    extraIframesMs: Math.min(p.def, 10) * 60,
+    staminaMultiplier: 1 + Math.min(p.stam, 10) * 0.1,
+    staminaRecoverMultiplier: 1 + Math.min(p.stam, 10) * 0.03,
+    specialBonus: Math.ceil(Math.min(p.sp, 5) / 2),
   }
 }
 

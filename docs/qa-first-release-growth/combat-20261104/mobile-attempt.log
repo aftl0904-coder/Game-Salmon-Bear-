@@ -1,0 +1,3 @@
+FAIL mobile page.waitForFunction: Timeout 5000ms exceeded.
+    at attack (/tmp/salmon-first-release-growth/scripts/qa/first-release-growth-combat.mjs:36:432)
+    at /tmp/salmon-first-release-growth/async file:/tmp/salmon-first-release-growth/scripts/qa/first-release-growth-combat.mjs:37:13

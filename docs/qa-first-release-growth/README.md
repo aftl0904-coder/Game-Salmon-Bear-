@@ -1,7 +1,12 @@
 # 第一版成長 checkpoint QA
 
-此 draft 已接入版本化本局存檔、主線發點及新局選源／配點 UI；**商店重配及五軸戰鬥效果仍未接**，不能視作完整驗收或合併。
+此 draft 已接入版本化本局存檔、主線發點及新局選源／配點 UI；**商店重配仍未接；五軸只完成局部戰鬥 checkpoint**，不能視作完整驗收或合併。
 
+## 2026-11-04：五軸戰鬥局部 checkpoint
+- [桌面鍵盤](combat-20261104/desktop-retry3.log)／[模擬手機純 touch](combat-20261104/mobile-retry2.log)：注入分配、真實場景及固定目標並停用敵 AI，0／1 點分別為生命 6→7、攻擊碰撞 3→4、防禦無敵 1500→1560ms、耐力上限 1→1.1／一秒回氣 0.55→0.5665、絕招碰撞 3→4。實際按 F／T 或手機「攻／絕」經 Phaser overlap，其餘直接呼叫場景方法；截圖及 JSON 同目錄。手機非真機；均非真人或自然通關。
+- 實際碰撞注入第1關 Boss：未配攻擊扣 1、攻擊3點扣 2；Boss 1點可被取整吸收，不是自然 Boss 戰。[生命週期](combat-20261104/lifecycle-attempt.log) 注入購裝、補血、checkpoint、死亡及復活，檢查跨關 HP、死亡清裝及保留成長、支線不讀主線、死亡不獲 S 和效果上限。
+- 首次桌面／手機碰撞逾時是 fixture 朝向與目標相反，原 log／JSON／截圖保留；其後[桌面重試](combat-20261104/desktop-retry2.log)及[手機重試](combat-20261104/mobile-retry1.log)發現絕招銷毀物件後才讀施放者，雙人錯歸屬；修正後上列通過，失敗均保留。[退出碼](combat-20261104/exits.log)、[build](combat-20261104/build-final.log)、[資料驗證](combat-20261104/validate-final.log)、[server](combat-20261104/server.log)。首輪關服務仍有 listener，已另行清理。
+- 商店免費重配、地圖入口完整驗收、所有 Boss／兩角色攻擊和多裝備／扭蛋組合、真人手感與自然通關仍待辦；不是全面平衡或完成驗收。
 ## 2026-11-04：支線、裝備及榜單補測
 
 - [桌面鍵盤](ui-20261104/extended/desktop.log)、[模擬手機純 touch](ui-20261104/extended/mobile.log) 均通過：再由正常封面／選單進第2關支線，確認支線符合榜單資格；**注入**支線購裝及清關後主線快照逐字不變。另**注入**主線買槍，經正常選單選帶舊裝備及不帶舊成長，新局保留槍、各5點且不具榜單資格；均非自然通關。退出碼見 [extended/exits.log](ui-20261104/extended/exits.log)。
