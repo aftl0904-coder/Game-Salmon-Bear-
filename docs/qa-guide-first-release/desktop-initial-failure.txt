@@ -1,0 +1,9 @@
+FAIL AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   'Failed to load resource: the server responded with a status of 404 (Not Found)'
++ ]
+- []
+
+    at file:///tmp/salmon-first-release-guide/docs/qa-guide-first-release/guide-navigation.mjs:91:10
