@@ -3589,7 +3589,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "background",
-    "prompt": "ART-20 S7 corridor-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04: 1080x720, left/right edges blended to tile seamlessly."
+    "prompt": "ART-20 S7 corridor-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04b: 1119x720, periodic content, cropped to an exact period with 32px blend; tiles without ghosting."
   },
   {
     "file": "art-src/props/stage7/training-mid.png",
@@ -3597,7 +3597,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "background",
-    "prompt": "ART-20 S7 training-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04: 1080x720, left/right edges blended to tile seamlessly."
+    "prompt": "ART-20 S7 training-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04b: 635x720, periodic content, cropped to an exact period with 32px blend; tiles without ghosting. bare iron wall hooks, no rope loops."
   },
   {
     "file": "art-src/props/stage7/backstage-far.png",
