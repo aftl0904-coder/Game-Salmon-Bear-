@@ -4,6 +4,7 @@
 
 - Alan 指定暫時做到可玩至**大陸2第2關（內部第7關）**；攻略更新到該處並標「待續」；第一版有攻略、角色集、遊戲三個入口。角色集收錄全部已畫角色，每人抽一個正常及兩個特別動作；按好／壞分組，再按各組登場順序排列。已記錄於 [`bible/first-release-scope.md`](bible/first-release-scope.md)。
 - Alan 於 2026-11-04 確認第一版公開大陸2、第7關待續後回地圖、各角色用三個按鈕選動作並即時可看；新局兩主角各5起始成長點、商店免費重配及保留舊成長選擇等詳見 [`bible/first-release-confirmations-20261104.md`](bible/first-release-confirmations-20261104.md)。第7關及大陸1待填對白只授權擬稿，仍等 Alan 審核。第7關 draft #88 與美術 draft #91 尚未合併；不假稱第一版完成。大陸1 bug 仍優先，第8–10關不屬此次指定的完成範圍。
+- 兩組對白已按授權寫成 [`bible/first-release-dialogue-drafts.md`](bible/first-release-dialogue-drafts.md)，包括第7關 Boss 卡的現有 `why` 欄位；**只供 Alan 審核，未放入遊戲且不得視作已批准**。大陸1私人句暫用通用草稿，不假設私人細節。
 - 攻略更新至第7關並標「待續」見 draft #92；最終 build／資料驗證與桌面鍵盤、模擬手機 touch 導航通過；第7關及洗地機仍標開發中，#84 Boss 更名未合併須同步。
 - 第5關 Boss 羽毛公平度與飛刀見 draft #93：手機局部重測 boy／girl 及 P1 touch＋P2 鍵盤走位通過，飛刀外觀 1.6 倍但原碰撞與傷害不變；舊失敗保留。仍未驗所有起點、真機或完整 Boss 戰。第一大陸大合照五秒／可跳過見 draft #94，手機自然播放時間的嚴格驗收仍失敗。兩者尚未 merge。
 
