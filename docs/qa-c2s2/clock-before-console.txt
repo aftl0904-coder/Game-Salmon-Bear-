@@ -1,0 +1,9 @@
+page.waitForFunction: Timeout 30000ms exceeded.
+    at active (/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-clock-diagnose.mjs:20:23)
+    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-clock-diagnose.mjs:25:174
+{"device":"mobile-1p-touch","phase":2,"stall":false,"sceneMs":[866.7000000000044,1466.5999999999985],"wallMs":[861.6000000014901,1451.5],"strict":false,"hit":true,"safe":null,"maxRaw":133.40000000000146}
+{"device":"mobile-1p-touch","phase":3,"stall":false,"sceneMs":[850,1566.5999999999985],"wallMs":[832.3000000044703,1572],"strict":true,"hit":true,"safe":null,"maxRaw":100.10000000000582}
+{"device":"mobile-1p-touch","phase":2,"stall":true,"sceneMs":[1166.5,1516.5999999999985],"wallMs":[1169.1000000014901,1512],"strict":false,"hit":true,"safe":null,"maxRaw":433.40000000000146}
+{"device":"mobile-1p-touch","phase":3,"stall":true,"sceneMs":[1233.300000000003,1599.8999999999942],"wallMs":[1242.5,1590.9000000059605],"strict":false,"hit":true,"safe":null,"maxRaw":450}
+{"device":"mobile-1p-touch","safeOnly":true,"result":{"start":{"hp":6,"n":15},"endHp":6,"x":4800,"events":[{"kind":"chain-warn","at":49043.4},{"kind":"chain-active","at":49860},{"kind":"chain-end","at":51343.3}]},"safePass":true}
+{"out":"docs/qa-c2s2/clock-before.json","passed":false}

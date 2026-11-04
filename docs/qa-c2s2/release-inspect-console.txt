@@ -1,0 +1,8 @@
+ISOLATED_NET_EVENTS {"e":[{"kind":"chain-warn","at":61728.8},{"kind":"chain-active","at":63028.8},{"kind":"chain-end","at":64778.6}],"startEvents":{"n":7,"ret":2300,"boyHp":6,"girlHp":6},"result":{"events":[{"kind":"reaction","at":40163},{"kind":"summon","at":51695.9},{"kind":"summon","at":54345.8},{"kind":"phase2","at":56029},{"kind":"chain-warn","at":57462.3},{"kind":"chain-active","at":58328.9},{"kind":"chain-end","at":60395.5},{"kind":"chain-warn","at":61728.8},{"kind":"chain-active","at":63028.8},{"kind":"chain-end","at":64778.6}],"boyHp":5,"girlHp":6}}
+P3_NET_EVENTS [{"kind":"chain-warn","at":68511.9},{"kind":"chain-active","at":69745.1},{"kind":"chain-end","at":71178.5}]
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+false !== true
+
+    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:71:9
+{"passed":false,"checks":["2P static scenery positions, counts and no bodies","D reaction once in this scene (injected positions)","Boss P1 and HP","P1 summon cap observation","P2 net timing (isolated injected invocation)","P2 net inside damaged and safe standing position unaffected (injected positions)","P3 threshold via injected HP","P3 net timing (isolated injected invocation)","departure once; one atomic run write at injected clear","reload keeps puffLeft after complete Boot"],"errors":[]}

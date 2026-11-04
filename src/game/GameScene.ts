@@ -11,7 +11,8 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
-import { getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { getRun, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { stage7GrowthHook } from './growthHook'
 import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -47,6 +48,7 @@ import stage3Raw from '../../data/levels/stage3.json'
 import stage4Raw from '../../data/levels/stage4.json'
 import stage5Raw from '../../data/levels/stage5.json'
 import stage6Raw from '../../data/levels/stage6.json'
+import stage7Raw from '../../data/levels/stage7.json'
 import { Stage3World, type Stage3Data } from './stage3World'
 import { Stage4World, type Stage4Data } from './stage4World'
 import { Stage5World, type Stage5Data } from './stage5World'
@@ -56,6 +58,7 @@ import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './
 import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { Stage6World, type Stage6Data } from './stage6World'
+import { ProductZombie } from './enemies/ProductZombie'
 import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
 import { Stage2World } from './stage2World'
@@ -173,7 +176,7 @@ type Stage1 = {
   durians: number[]
   honey: Array<{ x: number; h: number }>
   checkpoints: number[]
-  enemies: Array<{ x: number; species: string; kind?: string; unlockX: number; elite?: boolean }>
+  enemies: Array<{ x: number; species: string; kind?: string; unlockX: number; elite?: boolean; product?: boolean }>
   altarAmbush: Array<{ x: number; species: string }>
   altarTriggerX: number
   movingPlatforms?: Array<{ x: number; w: number; h: number; range: number; periodMs: number }>
@@ -192,7 +195,7 @@ type Stage1 = {
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'trainer'; triggerX: number; arenaX0: number; arenaX1: number }
   /** Stage 3 (月影夜市) extras — see stage3World.ts. */
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
@@ -213,6 +216,9 @@ type Stage1 = {
   darkAlpha?: Stage3Data['darkAlpha']
   debris?: Stage6Data['debris']
   cages?: Stage6Data['cages']
+  trainer?: typeof stage7Raw.trainer
+  reactionX?: number
+  staticDecor?: typeof stage7Raw.staticDecor
 }
 /** Weapon level (金鮭): 1–3, lose one on every hit taken. */
 const WEAPON_MAX_LV = 3
@@ -258,6 +264,7 @@ const STAGES: Record<number, Stage1> = {
   4: stage4Raw as unknown as Stage1,
   5: stage5Raw as unknown as Stage1,
   6: stage6Raw as unknown as Stage1,
+  7: stage7Raw as unknown as Stage1,
 }
 /** Current stage layout — picked in create() from registry `stageNo`. */
 let ST: Stage1 = STAGES[1]!
@@ -390,7 +397,7 @@ export class GameScene extends Phaser.Scene {
   stageNo = 1
   private tree = false
   private s2world: Stage2World | null = null
-  private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean }> = []
+  private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
   private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | null = null
   /** 月影夜市 (stage 3). */
   private market = false
@@ -401,6 +408,9 @@ export class GameScene extends Phaser.Scene {
   /** △畝大廈 (stage 5, final). */
   private tower = false
   private mall = false
+  private exhibit = false
+  private puffDeparturePending = false
+  private stage7Events: Array<{ kind: string; at: number }> = []
   private s6world: Stage6World | null = null
   private cageSaid = false
   private s5world: Stage5World | null = null
@@ -410,6 +420,7 @@ export class GameScene extends Phaser.Scene {
   private stalls: MarketStall[] = []
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
+  private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
   private bossFight = false
   /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
   private bossSushiSpawned = false
@@ -437,6 +448,10 @@ export class GameScene extends Phaser.Scene {
     this.depot = ST.theme === 'depot'
     this.tower = ST.theme === 'tower'
     this.mall = ST.theme === 'mall'
+    this.exhibit = this.stageNo === 7
+    this.puffDeparturePending = false
+    this.stage7Events = []
+    this.bossSushiSpawned = false
     this.s6world?.destroy()
     this.s6world = null
     this.cageSaid = false
@@ -1082,7 +1097,9 @@ export class GameScene extends Phaser.Scene {
   /** flat → platforms → ambush → altar — one readable story beat each. */
   private tickStageBeats() {
     const lead = this.leadX()
-    const beats: Array<{ x: number; title: string }> = this.mall
+    const beats: Array<{ x: number; title: string }> = this.exhibit
+      ? [{ x: 60, title: '迎賓展示廳' }, { x: 880, title: '分類走廊' }, { x: 2000, title: '訓練表演場' }, { x: 3160, title: '後臺籠舍區' }]
+      : this.mall
       ? [
           { x: 60, title: '購物中心・中庭' },
           { x: 880, title: '店舖走廊' },
@@ -3007,6 +3024,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private drawMallWorld() {
+    if (this.exhibit) { this.drawExhibitWorld(); return }
     this.makeMallFloors()
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x1c1a26, 1).fillRect(0, 0, WORLD_W, WORLD_H)
@@ -3054,6 +3072,67 @@ export class GameScene extends Phaser.Scene {
     this.buildGroundTiles()
   }
 
+  /** Exhibition scenery: same coordinates/layers, GameObjects only, never physics entities. */
+  private drawExhibitWorld() {
+    this.makeMallFloors()
+    this.bgClouds = []
+    this.bgMounts = []
+    this.mallFar = { mall: null, fac: null }
+    const bg = this.add.graphics().setDepth(DEPTH.SKY)
+    bg.fillStyle(0x28303a, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    bg.fillStyle(0x53606a, 1).fillRect(0, 42, WORLD_W, LANE_FLOOR_Y - 42)
+    for (let x = 0; x < WORLD_W; x += 180) {
+      bg.fillStyle(0x39434d, 1).fillRect(x, 42, 8, LANE_FLOOR_Y - 42)
+      bg.fillStyle(0x93adb4, 0.3).fillRect(x + 14, 55, 150, 76)
+      bg.lineStyle(3, 0x303b46, 1).strokeRect(x + 14, 55, 150, 76)
+    }
+    // Like the other stage far paintings, these are camera-fixed 640x360 images.
+    // B/C keep the existing backdrop because the supplied mid layers do not tile.
+    const far = (name: string) => this.textures.exists(`s7-${name}`)
+      ? this.add.image(GAME_W / 2, GAME_H / 2, `s7-${name}`).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setVisible(false)
+      : null
+    this.exhibitFar = { A: far('entrance-far'), D: far('backstage-far'), E: far('arena-far') }
+    this.exhibitFar.A?.setVisible(true)
+    const hasSign = this.textures.exists('s7-sign-blank')
+    if (hasSign) {
+      this.add.image(450, -1, 's7-sign-blank').setOrigin(0.5, 0).setDepth(DEPTH.PROP - 2)
+        .setName('stage7-static-sign-plate').setData('stage7-static', true)
+    }
+    const sign = this.add.text(450, 55, '森友展銷中心', { fontFamily: FONT_TITLE, fontSize: '20px', color: hasSign ? '#302c27' : '#fff2c0', ...(hasSign ? {} : { backgroundColor: '#54483b', padding: { x: 8, y: 4 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
+    sign.setData('stage7-static', true)
+    for (const [i, d] of (ST.staticDecor ?? []).entries()) {
+      if (d.kind === 'net' && this.textures.exists('s7-net-static')) {
+        this.add.image(d.x, LANE_FLOOR_Y - 66, 's7-net-static').setDepth(DEPTH.PROP - 1)
+          .setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
+      } else {
+        const g = this.add.graphics().setDepth(DEPTH.PROP - 1).setPosition(d.x, LANE_FLOOR_Y)
+        g.setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
+        if (d.kind === 'cage') {
+          g.fillStyle(0x1c252a, 1).fillRect(-42, -96, 84, 91)
+          // A caged-animal silhouette, scenery only; no actor or collision body.
+          g.fillStyle(0x8f7864, 1).fillCircle(0, -46, 18).fillCircle(-12, -64, 7).fillCircle(12, -64, 7)
+          g.lineStyle(3, 0xb2a47e, 1).strokeRect(-42, -96, 84, 91)
+          for (let x = -30; x <= 30; x += 15) g.lineBetween(x, -95, x, -6)
+          g.lineBetween(-42, -55, 42, -55)
+        } else if (d.kind === 'chain') {
+          g.lineStyle(3, 0xa99d82, 1)
+          for (let y = -120; y < -30; y += 12) g.strokeEllipse(0, y, 7, 11)
+        } else {
+          g.lineStyle(2, 0xa99d82, 0.85).strokeRect(-52, -100, 104, 68)
+          for (let x = -52; x <= 52; x += 13) g.lineBetween(x, -100, x, -32)
+          for (let y = -100; y <= -32; y += 13) g.lineBetween(-52, y, 52, y)
+        }
+      }
+      if (d.kind === 'cage') {
+        const hasPlate = this.textures.exists('s7-number-plate-blank')
+        if (hasPlate) this.add.image(d.x, LANE_FLOOR_Y - 104, 's7-number-plate-blank').setDepth(DEPTH.PROP - 0.5)
+          .setName(`stage7-static-plate-${i}`).setData('stage7-static', true)
+        const label = this.add.text(d.x, LANE_FLOOR_Y - 104, String(d.number ?? ''), { fontFamily: FONT_UI, fontSize: '11px', color: hasPlate ? '#302c27' : '#f7e9c3', ...(hasPlate ? {} : { backgroundColor: '#423b36', padding: { x: 4, y: 1 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP)
+        label.setName(`stage7-static-label-${i}`).setData('stage7-static', true)
+      }
+    }
+    this.buildGroundTiles()
+  }
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
@@ -3061,7 +3140,15 @@ export class GameScene extends Phaser.Scene {
     const k = Phaser.Math.Clamp((cx - 3135 + 200) / 320, 0, 1)
     this.mallFar.mall?.setAlpha(1 - k)
     this.mallFar.fac?.setAlpha(k)
-    this.tickCage()
+    if (this.exhibit) {
+      // Hard switch by camera centre at the existing A/B, C/D and D/E bounds.
+      // No tiling of artwork or changes to level segment coordinates.
+      this.exhibitFar.A?.setVisible(cx < stage7Raw.segments[0]!.x1)
+      this.exhibitFar.D?.setVisible(cx >= stage7Raw.segments[3]!.x0 && cx < stage7Raw.segments[3]!.x1)
+      this.exhibitFar.E?.setVisible(cx >= stage7Raw.segments[4]!.x0)
+      this.tickExhibitReaction()
+    }
+    else this.tickCage()
     this.tickStage2(dt)
   }
 
@@ -3079,6 +3166,67 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private tickExhibitReaction() {
+    if (this.cageSaid || !this.started || this.leadX() < (ST.reactionX ?? 4390)) return
+    this.cageSaid = true
+    this.stage7Events.push({ kind: 'reaction', at: this.time.now })
+    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗……噗噗？', '#ffd6e8', { size: 12, dur: 2200 })
+    if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
+  }
+  /** Clear event is in-memory until saveClear commits it with the rest of the run. */
+  private trainerDefeated() {
+    if (this.ended || this.puffDeparturePending) return
+    if (isSideTrip() || !puffAway()) {
+      this.puffDeparturePending = true
+      this.stage7Events.push({ kind: 'departure', at: this.time.now })
+      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗暫時離隊。', '#ffd6e8', { size: 12, dur: 1800 })
+      if (this.pet) { this.tweens.killTweensOf(this.pet); this.pet.destroy(); this.pet = null }
+      this.petShadow?.setVisible(false)
+      this.petJetting = false
+    }
+    this.queenDefeated()
+  }
+  /** Reuses enemyShots collision; scene timers are independent of P3 AI rate, but frame/delta dependent. */
+  private trainerChain(x0: number, x1: number): number {
+    const c = ST.trainer!
+    const target = Phaser.Math.Clamp(this.leadX(), x0 + c.chainWidth / 2 + 16, x1 - c.chainWidth / 2 - 16)
+    const y = LANE_FLOOR_Y - 20
+    const warning = this.add.rectangle(target, y, c.chainWidth, 40, 0xffb030, 0.25).setStrokeStyle(2, 0xffe080).setDepth(DEPTH.FX - 2)
+    this.stage7Events.push({ kind: 'chain-warn', at: this.time.now })
+    this.time.delayedCall(c.chainWarnMs, () => {
+      warning.destroy()
+      if (this.ended || !this.queen || this.queen.fsm === 'DEAD') return
+      const shot = this.enemyShots.create(target, y, 'coin') as Phaser.Physics.Arcade.Sprite
+      shot.setAlpha(0).setDepth(DEPTH.FX - 2)
+      const body = shot.body as Phaser.Physics.Arcade.Body
+      body.allowGravity = false
+      body.setSize(c.chainWidth, 40)
+      shot.setData('lane', 0).setData('dmg', 1).setData('boss', true).setData('persistentNet', new Set<Hero>())
+      this.entities.add(shot, 'projectile')
+      const net = this.add.graphics().setDepth(DEPTH.FX - 2)
+      net.fillStyle(0x95c9d1, 0.42).fillRect(target - c.chainWidth / 2, y - 20, c.chainWidth, 40)
+      net.lineStyle(2, 0xe4f2d7, 1).strokeRect(target - c.chainWidth / 2, y - 20, c.chainWidth, 40)
+      for (let x = target - c.chainWidth / 2; x <= target + c.chainWidth / 2; x += 14) net.lineBetween(x, y - 20, x, y + 20)
+      for (let yy = y - 20; yy <= y + 20; yy += 10) net.lineBetween(target - c.chainWidth / 2, yy, target + c.chainWidth / 2, yy)
+      this.stage7Events.push({ kind: 'chain-active', at: this.time.now })
+      this.time.delayedCall(c.chainLifeMs, () => { if (shot.active) shot.destroy(); net.destroy(); this.stage7Events.push({ kind: 'chain-end', at: this.time.now }) })
+    })
+    // SecurityDirector's internal clock is scaled in P3; do not shorten the configured scene timers.
+    return (c.chainWarnMs + c.chainLifeMs) * (this.queen?.qphase === 3 ? c.phase3Rate : 1)
+  }
+  private summonProduct() {
+    const c = ST.trainer!
+    const live = this.enemies.getChildren().filter((o) => {
+      const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string }
+      return e.active && e.getData('trainer-summon') && e.fsm !== 'DEAD'
+    }).length
+    for (let i = 0; i < Math.min(c.summonPerCycle, Math.max(0, c.summonMaxAlive - live)); i++) {
+      const x = Phaser.Math.Clamp((this.queen?.x ?? ST.boss!.arenaX1) - 90 - i * 40, ST.boss!.arenaX0 + 40, ST.boss!.arenaX1 - 40)
+      const z = this.addS2Enemy(new ProductZombie(this, x, this.s2Hooks()))
+      z.setData('trainer-summon', true)
+      this.stage7Events.push({ kind: 'summon', at: this.time.now })
+    }
+  }
   private armHooks(): ArmHooks {
     return {
       floorY: () => LANE_FLOOR_Y,
@@ -3108,11 +3256,16 @@ export class GameScene extends Phaser.Scene {
     const b = ST.boss!
     return {
       floorY: () => LANE_FLOOR_Y,
-      sweep: (x0, x1, dir, warnMs, speed) => this.s6world?.sweep(x0, x1, dir, warnMs, speed) ?? 0,
+      sweep: (x0, x1, dir, warnMs, speed) => {
+        if (!this.exhibit) return this.s6world?.sweep(x0, x1, dir, warnMs, speed) ?? 0
+        if (this.queen?.qphase === 1) { this.throwKnife(this.queen.x, LANE_FLOOR_Y, dir, false, speed, 1500, true); return 1500 }
+        return this.trainerChain(x0, x1)
+      },
       bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs, true),
       drone: (x0, x1, dir, speed) => this.s6world?.drone(x0 ?? b.arenaX0, x1 ?? b.arenaX1, dir, speed),
       droneCount: () => this.s6world?.droneCount() ?? 0,
-      bossEvent: (kind) => this.onQueenEvent(kind),
+      bossEvent: (kind) => { if (this.exhibit) this.stage7Events.push({ kind, at: this.time.now }); this.onQueenEvent(kind) },
+      ...(this.exhibit ? { trainer: { ...ST.trainer!, summon: () => this.summonProduct() } } : {}),
     }
   }
 
@@ -3991,6 +4144,15 @@ export class GameScene extends Phaser.Scene {
 
   /** 琪寶寶 sword／噗噗 — 電風扇已 stamp 喺 art-girl 背脊. */
   private attachGirlGear(g: Hero, lane: LaneId) {
+    if (puffAway()) {
+      // The sword is still attached even when the companion is absent.
+      if (g.animSet) { this.sword = null; return }
+      const grip = this.girlSwordAnchor(g, false)
+      const key = this.textures.exists('prop-sword') ? 'prop-sword' : 'fx-salmon-shot'
+      this.sword = this.add.image(grip.x, grip.y, key).setOrigin(0.12, 0.55).setDepth(actorDepth('hitbox', lane, g.y) + 0.2).setScale(grip.scale).setAngle(-18)
+      enableActorSprite(this.sword)
+      return
+    }
     const petStartX = g.x - PET_FOLLOW_BEHIND
     const petAnim = hasAnimSet(this, 'pupu')
     this.pet = this.physics.add.sprite(petStartX, g.y, petAnim ? animTex('pupu') : 'art-bear')
@@ -4192,8 +4354,10 @@ export class GameScene extends Phaser.Scene {
 
   private hitByFishBullet(h: Hero, shot: Phaser.Physics.Arcade.Sprite) {
     if (!shot.active || this.ended || !this.started) return
+    const netHits = shot.getData('persistentNet') as Set<Hero> | undefined
+    if (netHits?.has(h)) return
     if (!canTakeDamage(h, this.time.now)) {
-      shot.destroy()
+      if (!netHits) shot.destroy()
       return
     }
     const lane = shot.getData('lane') as number | undefined
@@ -4201,7 +4365,8 @@ export class GameScene extends Phaser.Scene {
     if (lane !== undefined && h.lane !== undefined && Math.abs(lane - h.lane) > 1) return
     const shotDmg = (shot.getData('dmg') as number) || FISH_BULLET_DMG
     const bossShot = !!shot.getData('boss')
-    shot.destroy()
+    if (netHits) netHits.add(h)
+    else shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
     const dmg = this.incoming(h, shotDmg)
     const bkx = this.safeKnockX(h, away * (bossShot ? BOSS_KNOCK_X : 180))
@@ -4254,7 +4419,7 @@ export class GameScene extends Phaser.Scene {
         )
         // data/signs.json SG-02 — display-only tutorial (no combat change)
         const tip = this.tree || this.market || this.depot || this.tower || this.mall ? null : tutorialSign()
-        if (this.mall) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '商場保安巡邏中——打爆佢哋，拎返蜜罐！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
+        if (this.mall && !this.exhibit) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '商場保安巡邏中——打爆佢哋，拎返蜜罐！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
         if (this.market) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '燈熄咗？打燈籠著返佢！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
         if (this.tree) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '踩入風口會彈高！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
         if (this.depot) floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '黃燈閃完會衝推土機！跳上平台！', '#ffe08a', { size: 12, rise: 10, dur: 3200 })
@@ -4279,8 +4444,8 @@ export class GameScene extends Phaser.Scene {
     const root = this.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 220)
     root.add(this.add.rectangle(0, 0, GAME_W, GAME_H, 0x05040a, 1).setOrigin(0))
     root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 30, '第二大陸', { fontFamily: FONT_UI, fontSize: '14px', color: '#d8b8ff' }).setOrigin(0.5))
-    root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 4, '購物中心', { fontFamily: FONT_TITLE, fontSize: '34px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 }).setOrigin(0.5))
-    root.add(this.add.text(GAME_W / 2, GAME_H / 2 + 34, '△畝想剷平森林起嘅商場——原來母公司真係起咗。', { fontFamily: FONT_UI, fontSize: '12px', color: '#e8d8b0' }).setOrigin(0.5))
+    root.add(this.add.text(GAME_W / 2, GAME_H / 2 - 4, this.exhibit ? '森友展銷中心' : '購物中心', { fontFamily: FONT_TITLE, fontSize: '34px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 }).setOrigin(0.5))
+    if (!this.exhibit) root.add(this.add.text(GAME_W / 2, GAME_H / 2 + 34, '△畝想剷平森林起嘅商場——原來母公司真係起咗。', { fontFamily: FONT_UI, fontSize: '12px', color: '#e8d8b0' }).setOrigin(0.5))
     let dead = false
     const done = () => {
       if (dead) return
@@ -4934,7 +5099,7 @@ export class GameScene extends Phaser.Scene {
   private saveCurrentClear() {
     const hp: Partial<Record<Who, number>> = {}
     for (const h of this.clearHeroes()) hp[h.role as Who] = h.hp
-    saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [] })
+    saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [], puffLeft: this.puffDeparturePending })
   }
   private heroMaxHp(h: Hero) {
     return MAX_HP + bonusHearts(h.role as Who)
@@ -5088,9 +5253,11 @@ export class GameScene extends Phaser.Scene {
     }
     actor(-W / 2 + 90, 'lunbo', 'win', 'art-salmon')
     const kb = actor(-W / 2 + 160, 'kibobo', 'win', 'art-girl')
-    const pu = actor(-W / 2 + 222, 'pupu', this.stageNo === 2 ? 'cute-pose' : 'idle', 'art-bear', true)
-    if (this.stageNo === 1) pu.setTint(0x9a9aa4)
-    this.tweens.add({ targets: pu, y: castY - 10, duration: 300, yoyo: true, repeat: -1, repeatDelay: 700, ease: 'Quad.out' })
+    if (!puffAway() && !this.puffDeparturePending) {
+      const pu = actor(-W / 2 + 222, 'pupu', this.stageNo === 2 ? 'cute-pose' : 'idle', 'art-bear', true)
+      if (this.stageNo === 1) pu.setTint(0x9a9aa4)
+      this.tweens.add({ targets: pu, y: castY - 10, duration: 300, yoyo: true, repeat: -1, repeatDelay: 700, ease: 'Quad.out' })
+    }
     void kb
     overlay.add(
       this.add
@@ -5156,6 +5323,7 @@ export class GameScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setAlpha(0)
     const rank = this.clearRank(hpLeft, hpMax)
+    if (this.exhibit && !isSideTrip()) stage7GrowthHook(rank)
     const rankCol = { S: '#ffd040', A: '#ff8a5a', B: '#8ad0ff', C: '#c0b0a0' }[rank]
     const stamp = this.add
       .text(px + 64, lineY + 38, rank, { fontFamily: FONT_TITLE, fontSize: '34px', color: rankCol, stroke: '#2a0e04', strokeThickness: 6 })
@@ -5180,6 +5348,10 @@ export class GameScene extends Phaser.Scene {
         ? { id: 'next', label: getRun() ? '返回主線 ▶' : '返主選單', on: true }
         : this.stageNo === FINAL_STAGE
         ? { id: 'credits', label: '片尾字幕 ▶', on: true }
+        : this.stageNo === 6
+          ? { id: 'next', label: '大陸2・第二關 ▶', on: true }
+        : this.stageNo === 7
+          ? { id: 'next', label: '待續 ▶', on: true }
         : this.stageNo > FINAL_STAGE
           ? { id: 'next', label: '第二大陸・下一關　製作中', on: false }
           : { id: 'next', label: `前往第${'一二三四五六'[this.stageNo]}關 ▶`, on: true },
@@ -5281,7 +5453,7 @@ export class GameScene extends Phaser.Scene {
   private win() {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
-    unlockStage(Math.min(this.stageNo + 1, FINAL_STAGE))
+    if (!isSideTrip()) unlockStage(Math.min(this.stageNo + 1, 7))
     this.saveCurrentClear()
     this.ended = true
     this.awaitingContinue = false
@@ -5345,6 +5517,7 @@ export class GameScene extends Phaser.Scene {
       this.resetPauseKeys()
       if (id === 'menu') this.goMenu()
       else if (id === 'credits') this.goCredits()
+      else if (this.stageNo === 7 && !isSideTrip()) this.showFirstReleaseContinued()
       else this.goNextStage()
     }
     /** Enter / Start: finish the tally first, then run the highlighted button. */
@@ -5577,7 +5750,7 @@ export class GameScene extends Phaser.Scene {
     const solo = this.mode === '1p'
     const place = (en: Stage1['enemies'][number], dx = 0) => {
       if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm'].includes(en.species)) {
-        this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite })
+        this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
       const kind = (en.kind ?? 'chaser') as EnemyKind
@@ -5593,6 +5766,8 @@ export class GameScene extends Phaser.Scene {
     let n = 0
     for (const en of ST.enemies) {
       n++
+      // Stage 7 uses the confirmed exact composition in either player mode.
+      if (this.exhibit) { place(en); continue }
       // Robot arms are fixed hazards placed by hand: never thinned or doubled.
       if (en.species === 'robotarm') {
         place(en)
@@ -5772,7 +5947,7 @@ export class GameScene extends Phaser.Scene {
       if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
       if (p.species === 'honeyzombie') x = this.nearestBaseFloorX(x, -1, 1)
       if (p.species === 'stallkeeper' || p.species === 'robotarm') x = p.x
-      this.spawnS2(p.species, x, p.elite)
+      this.spawnS2(p.species, x, p.elite, p.product)
       return false
     })
     const b = ST.boss
@@ -5809,7 +5984,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private spawnS2(species: string, x: number, elite = false) {
+  private spawnS2(species: string, x: number, elite = false, product = false) {
     if (species === 'lobster') {
       const e = this.addS2Enemy(new LobsterGuard(this, x, this.s2Hooks())).setFlipX(true)
       if (elite) e.markElite()
@@ -5836,7 +6011,7 @@ export class GameScene extends Phaser.Scene {
       return
     }
     if (species === 'guard') {
-      const z = new GuardZombie(this, x, this.s2Hooks())
+      const z = new GuardZombie(this, x, this.s2Hooks(), this.exhibit && x >= 1995 && x < 3135)
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
       return
@@ -5846,7 +6021,7 @@ export class GameScene extends Phaser.Scene {
       return
     }
     if (species === 'honeyzombie') {
-      const z = new HoneyZombie(this, x, this.s2Hooks())
+      const z = product ? new ProductZombie(this, x, this.s2Hooks()) : new HoneyZombie(this, x, this.s2Hooks())
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
       if (elite) z.markElite()
@@ -6334,7 +6509,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -6359,7 +6534,7 @@ export class GameScene extends Phaser.Scene {
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => (this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
+      q.onDefeated = () => (this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
       this.queen = q
@@ -6406,6 +6581,7 @@ export class GameScene extends Phaser.Scene {
 
   private onQueenEvent(kind: 'phase2' | 'phase3' | 'weak' | 'finale' | 'defeat') {
     const cx = this.cameras.main.scrollX + GAME_W / 2
+    if (this.exhibit && kind !== 'defeat') return
     if (kind === 'phase2') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 200, 90)
@@ -6439,7 +6615,7 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '制服帽跌咗！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '制服帽跌咗！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy
@@ -6475,13 +6651,50 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(600, () => this.playOutro())
   }
 
+  /** A distinct end card after tally; the stored nextStage=8 remains intact but is not playable. */
+  private showFirstReleaseContinued() {
+    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 200)
+    root.add(this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x100d18, 0.98))
+    root.add(this.add.text(GAME_W / 2, 142, '待續', { fontFamily: FONT_TITLE, fontSize: '48px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 }).setOrigin(0.5))
+    root.add(this.add.text(GAME_W / 2, 210, '故事將會繼續', { fontFamily: FONT_UI, fontSize: '16px', color: '#fff2d0' }).setOrigin(0.5))
+    const button = this.add.rectangle(GAME_W / 2, 265, 180, 36, 0x4a2a14).setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+    root.add(button)
+    root.add(this.add.text(GAME_W / 2, 265, '返回地圖', { fontFamily: FONT_UI, fontSize: '15px', color: '#ffe9a8' }).setOrigin(0.5))
+    const readyAt = this.time.now + 500
+    let done = false
+    const go = () => {
+      if (done || this.time.now < readyAt) return
+      done = true
+      this.input.keyboard?.off('keydown', onKey)
+      this.clearCardAction = null
+      this.returnToPublishedMap()
+    }
+    const onKey = (e: KeyboardEvent) => { if (!e.repeat && ['Enter', 'Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code)) go() }
+    this.input.keyboard?.on('keydown', onKey)
+    this.events.once('shutdown', () => this.input.keyboard?.off('keydown', onKey))
+    this.clearCardAction = go
+    button.on('pointerup', go)
+  }
+  /** Hold at the last published map, without ever starting the unimplemented stage 8. */
+  private returnToPublishedMap() {
+    this.registry.set('leavingToMenu', true)
+    this.registry.set('winScreenShown', false)
+    this.cameras.main.fadeOut(300, 0, 0, 0)
+    this.time.delayedCall(320, () => {
+      this.registry.set('leavingToMenu', false)
+      this.stopUi()
+      this.scene.start('worldmap', { from: 7, to: 7, next: 'play', pick: true })
+    })
+  }
   /** Stage 1 clear card → straight into 蜜樹丘 (coins carry over). */
   /** On to the next stage: the world map, then the bike leg to the stage that was picked. */
   private goNextStage() {
     if (this.registry.get('leavingToMenu')) return
     if (isSideTrip()) {
       const run = resumeMain(this.registry)
-      if (!run || !STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled())) { this.goMenu(); return }
+      if (!run) { this.goMenu(); return }
+      if (run.nextStage > 7) { this.returnToPublishedMap(); return }
+      if (!STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled())) { this.goMenu(); return }
       this.registry.set('leavingToMenu', true)
       this.registry.set('winScreenShown', false)
       this.cameras.main.fadeOut(300, 0, 0, 0)
@@ -6515,7 +6728,7 @@ export class GameScene extends Phaser.Scene {
       const from = this.stageNo
       // Alan: let the player pick which unlocked stage to go to here, instead of
       // always auto-advancing into `to`.
-      this.scene.start('worldmap', { from, to, next: 'bike', stageNo: to, pick: true })
+      this.scene.start('worldmap', { from, to, next: from >= 6 ? 'play' : 'bike', stageNo: to, pick: true })
     })
   }
 

@@ -1,0 +1,434 @@
+{
+  "description": "Synthetic model only; post-render means engine callback, NOT display presentation. No Phaser integration, collision, camera, real tab background or natural play tested.",
+  "cases": [
+    {
+      "name": "warning-not-before-800ms",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 100,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 100,
+          "damageAllowed": false
+        },
+        {
+          "t": 100,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 100
+        },
+        {
+          "t": 200,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 200,
+          "damageAllowed": false
+        },
+        {
+          "t": 200,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 200
+        },
+        {
+          "t": 300,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 300,
+          "damageAllowed": false
+        },
+        {
+          "t": 300,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 300
+        },
+        {
+          "t": 400,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 400,
+          "damageAllowed": false
+        },
+        {
+          "t": 400,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 400
+        },
+        {
+          "t": 500,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 500,
+          "damageAllowed": false
+        },
+        {
+          "t": 500,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 500
+        },
+        {
+          "t": 600,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 600,
+          "damageAllowed": false
+        },
+        {
+          "t": 600,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 600
+        },
+        {
+          "t": 700,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 700,
+          "damageAllowed": false
+        },
+        {
+          "t": 700,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 700
+        },
+        {
+          "t": 800,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        },
+        {
+          "t": 801,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        },
+        {
+          "t": 802,
+          "event": "engine-render",
+          "state": "active",
+          "elapsed": 0
+        },
+        {
+          "t": 803,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 1,
+          "damageAllowed": true
+        }
+      ]
+    },
+    {
+      "name": "warning-pause-does-not-count",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 200,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 200,
+          "damageAllowed": false
+        },
+        {
+          "t": 200,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 200
+        },
+        {
+          "t": 250,
+          "why": "pause",
+          "state": "warning",
+          "elapsed": 200
+        },
+        {
+          "t": 1250,
+          "why": "resume",
+          "state": "warning",
+          "elapsed": 200
+        },
+        {
+          "t": 1251,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 200,
+          "damageAllowed": false
+        },
+        {
+          "t": 1252,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 200
+        },
+        {
+          "t": 1851,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 799,
+          "damageAllowed": false
+        },
+        {
+          "t": 1851,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 799
+        },
+        {
+          "t": 1852,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        }
+      ]
+    },
+    {
+      "name": "active-resume-requires-new-render",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 800,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        },
+        {
+          "t": 801,
+          "event": "engine-render",
+          "state": "active",
+          "elapsed": 0
+        },
+        {
+          "t": 900,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 99,
+          "damageAllowed": true
+        },
+        {
+          "t": 900,
+          "event": "engine-render",
+          "state": "active",
+          "elapsed": 99
+        },
+        {
+          "t": 901,
+          "why": "pause",
+          "state": "active",
+          "elapsed": 99
+        },
+        {
+          "t": 1901,
+          "why": "resume",
+          "state": "active",
+          "elapsed": 99
+        },
+        {
+          "t": 1902,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 99,
+          "damageAllowed": false
+        },
+        {
+          "t": 1902,
+          "event": "engine-render",
+          "state": "active",
+          "elapsed": 99
+        },
+        {
+          "t": 1903,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 100,
+          "damageAllowed": true
+        }
+      ]
+    },
+    {
+      "name": "active-end-before-physics-at-1500",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 800,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        },
+        {
+          "t": 801,
+          "event": "engine-render",
+          "state": "active",
+          "elapsed": 0
+        },
+        {
+          "t": 2301,
+          "event": "pre-physics",
+          "state": "end",
+          "elapsed": 1500,
+          "damageAllowed": false
+        }
+      ]
+    },
+    {
+      "name": "short-low-fps-no-early-warning",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 125,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 125,
+          "damageAllowed": false
+        },
+        {
+          "t": 125,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 125
+        },
+        {
+          "t": 250,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 250,
+          "damageAllowed": false
+        },
+        {
+          "t": 250,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 250
+        },
+        {
+          "t": 375,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 375,
+          "damageAllowed": false
+        },
+        {
+          "t": 375,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 375
+        },
+        {
+          "t": 500,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 500,
+          "damageAllowed": false
+        },
+        {
+          "t": 500,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 500
+        },
+        {
+          "t": 625,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 625,
+          "damageAllowed": false
+        },
+        {
+          "t": 625,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 625
+        },
+        {
+          "t": 750,
+          "event": "pre-physics",
+          "state": "warning",
+          "elapsed": 750,
+          "damageAllowed": false
+        },
+        {
+          "t": 750,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 750
+        },
+        {
+          "t": 875,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        }
+      ]
+    },
+    {
+      "name": "counterexample-postrender-is-not-present",
+      "modelAssertions": "pass",
+      "trace": [
+        {
+          "t": 0,
+          "event": "engine-render",
+          "state": "warning",
+          "elapsed": 0
+        },
+        {
+          "t": 900,
+          "event": "pre-physics",
+          "state": "active",
+          "elapsed": 0,
+          "damageAllowed": false
+        },
+        {
+          "t": 901,
+          "event": "hypothetical-first-compositor-presentation",
+          "note": "independent of engine callbacks; not observed or measured"
+        }
+      ]
+    }
+  ],
+  "blockers": [
+    "Model cannot observe compositor presentation; POST_RENDER by itself does not establish visible-on-screen duration.",
+    "Model uses hypothetical callbacks; real hidden/visible, draw inclusion, physics multi-step, scene shutdown/death, camera obstruction and shared Boss phase transitions are untested.",
+    "A long stall can consume the active wall interval before any physics step; whether to skip or extend that frame-quantized damage window requires an integrated conservative policy and tests."
+  ],
+  "promotableToRuntime": false
+}

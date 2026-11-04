@@ -1,0 +1,104 @@
+{
+  "source_pr": 91,
+  "source_head": "7b198f735ebebfa14c5d07aa7388681745ade7e5",
+  "pillow": "13.0.0",
+  "numpy": "2.5.4",
+  "files": [
+    {
+      "source": "entrance-far.png",
+      "source_sha256": "b1418ce1066b1d3f6a8f3b84e2e335e4d55c97c48af025987af32b733e0d80a6",
+      "output": "entrance-far.png",
+      "output_size": [
+        640,
+        360
+      ],
+      "method": "RGB median-cut 64, no dithering; no resize"
+    },
+    {
+      "source": "backstage-far.png",
+      "source_sha256": "91279289c55ef0991140a86226d5625328ba3fd999931b3b5e0e1ec4a8bce33a",
+      "output": "backstage-far.png",
+      "output_size": [
+        640,
+        360
+      ],
+      "method": "RGB median-cut 64, no dithering; no resize"
+    },
+    {
+      "source": "arena-far.png",
+      "source_sha256": "e99627122dd3b173580177c312bc7d2259bd2c544b6dcc779c38541c454d7afd",
+      "output": "arena-far.png",
+      "output_size": [
+        640,
+        360
+      ],
+      "method": "RGB median-cut 64, no dithering; no resize"
+    },
+    {
+      "source": "net-static.png",
+      "source_sha256": "0e189aa6f2dc64b3a98bcad5895eeff37257e8d3bc315affa9833dc5891ff033",
+      "output": "net-static.png",
+      "source_crop_xyxy": [
+        97,
+        20,
+        543,
+        312
+      ],
+      "resized": [
+        104,
+        68
+      ],
+      "output_size": [
+        104,
+        68
+      ],
+      "visible_colors": 57,
+      "alpha": "binary",
+      "method": "magenta threshold, bounding box, nearest aspect fit, RGB median-cut 64/no dither, binary alpha"
+    },
+    {
+      "source": "number-plate-blank.png",
+      "source_sha256": "dbd900297fdd37c977ef01ad231240a3c59cb9c14ada14d59b5593e96a9da138",
+      "output": "number-plate-blank.png",
+      "source_crop_xyxy": [
+        171,
+        85,
+        468,
+        272
+      ],
+      "resized": [
+        20,
+        13
+      ],
+      "output_size": [
+        20,
+        13
+      ],
+      "visible_colors": 60,
+      "alpha": "binary",
+      "method": "magenta threshold, bounding box, nearest aspect fit, RGB median-cut 64/no dither, binary alpha"
+    },
+    {
+      "source": "sign-blank.png",
+      "source_sha256": "49d6d9783afa80dfaf9c456271185281b575cab818146b3e3e3e7aaadf3b28ae",
+      "output": "sign-blank.png",
+      "source_crop_xyxy": [
+        141,
+        63,
+        499,
+        265
+      ],
+      "resized": [
+        158,
+        89
+      ],
+      "output_size": [
+        158,
+        89
+      ],
+      "visible_colors": 63,
+      "alpha": "binary",
+      "method": "magenta threshold, bounding box, nearest aspect fit, RGB median-cut 64/no dither, binary alpha"
+    }
+  ]
+}

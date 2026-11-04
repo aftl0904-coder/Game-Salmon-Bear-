@@ -10,7 +10,7 @@ import { c2Cleared } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
-import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
+import { getRun, puffAway, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -119,7 +119,7 @@ export class MapScene extends Phaser.Scene {
       this.anims.create({ key: 'map-duo-walk', frames: this.anims.generateFrameNumbers('map-walk-duo', { start: 0, end: 3 }), frameRate: 8, repeat: -1 })
     }
 
-    const maxOpen = Math.max(data.to, data.from)
+    const maxOpen = Math.min(7, Math.max(data.to, data.from))
     this.openStages = Object.keys(cm.places)
       .map(Number)
       .filter((i) => i <= maxOpen)
@@ -481,7 +481,7 @@ export class MapScene extends Phaser.Scene {
       return
     }
     // Trips into 8 and 9 happen while 噗噗 is away: the duo sheet instead of the trio.
-    if (cm.id === 2 && (to === 8 || to === 9) && this.textures.exists('map-walk-duo')) {
+    if (cm.id === 2 && puffAway() && this.textures.exists('map-walk-duo')) {
       this.party.setTexture('map-walk-duo', 0)
       if (this.anims.exists('map-duo-walk')) this.party.play('map-duo-walk')
     }

@@ -24,11 +24,13 @@ const UNIFORM_TINT = 0xa8b8ec
 
 export class GuardZombie extends HoneyZombie {
   private cap: Phaser.GameObjects.Graphics
-  constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
+  private whip: Phaser.GameObjects.Graphics | null = null
+  constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, useWhip = false) {
     super(scene, x, hooks)
     this.species = 'guard'
     this.hp = this.maxHp = 3
     this.setTint(UNIFORM_TINT)
+    if (useWhip) this.whip = scene.add.graphics().setDepth(this.depth + 1)
     this.cap = scene.add.graphics().setDepth(this.depth + 1)
     this.cap.fillStyle(0x1c2a44, 1).fillRect(-8, -4, 16, 5).fillRect(-5, -7, 10, 3)
     this.cap.fillStyle(0x0e1626, 1).fillRect(-9, 0, 18, 2)
@@ -42,6 +44,13 @@ export class GuardZombie extends HoneyZombie {
   override tick(dt: number, ctx: Ctx) {
     super.tick(dt, ctx)
     this.syncCap()
+    if (this.whip) {
+      this.whip.clear().setDepth(this.depth + 1)
+      if (this.active && this.visible && this.anims.currentAnim?.key.includes('reach')) {
+        const dir = this.flipX ? -1 : 1
+        this.whip.lineStyle(2, 0xd9b780, 1).lineBetween(this.x + dir * 8, this.y - 28, this.x + dir * 40, this.y - 20)
+      }
+    }
   }
 
   private syncCap() {
@@ -56,11 +65,15 @@ export class GuardZombie extends HoneyZombie {
 
   protected override die(dir: number) {
     this.cap?.destroy()
+    this.whip?.destroy()
+    this.whip = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.cap?.destroy()
+    this.whip?.destroy()
+    this.whip = null
     super.destroy(fromScene)
   }
 }
@@ -177,6 +190,8 @@ export type DirectorHooks = {
   drone: (x0: number, x1: number, dir: 1 | -1, speed: number) => void
   droneCount: () => number
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
+  /** Optional stage-7 skin/rules; same phase state machine, not a new AI. */
+  trainer?: { hp: number; phase2At: number; phase3Below: number; phase3Rate: number; summon: () => void }
 }
 
 export const DIRECTOR_HP = 55
@@ -218,15 +233,15 @@ export class SecurityDirector extends AnimEnemy {
 
   constructor(scene: Phaser.Scene, x: number, arenaX0: number, arenaX1: number, dh: DirectorHooks) {
     super(scene, x, dh.floorY(), 'triboss', { floorY: dh.floorY }, 'idle')
-    this.species = 'securitydirector'
+    this.species = dh.trainer ? 'trainer' : 'securitydirector'
     this.kind = 'boss'
     this.boss = true
     this.dh = dh
-    this.hp = this.maxHp = DIRECTOR_HP
+    this.hp = this.maxHp = dh.trainer?.hp ?? DIRECTOR_HP
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
-    this.setTint(UNIFORM_TINT)
+    this.setTint(dh.trainer ? 0xc98c70 : UNIFORM_TINT)
     const body = this.body as Phaser.Physics.Arcade.Body
     body.setSize(44, 56)
     body.setOffset((this.frame.width - 44) / 2, this.frame.height - 56 - 6)
@@ -258,7 +273,7 @@ export class SecurityDirector extends AnimEnemy {
 
   private updatePhase() {
     const f = this.hp / this.maxHp
-    const next: 1 | 2 | 3 = f < DIRECTOR_P3_AT ? 3 : f <= DIRECTOR_P2_AT ? 2 : 1
+    const next: 1 | 2 | 3 = f < (this.dh.trainer?.phase3Below ?? DIRECTOR_P3_AT) ? 3 : f <= (this.dh.trainer?.phase2At ?? DIRECTOR_P2_AT) ? 2 : 1
     if (next <= this.qphase) return
     this.qphase = next
     this.dh.bossEvent(next === 2 ? 'phase2' : 'phase3')
@@ -270,7 +285,7 @@ export class SecurityDirector extends AnimEnemy {
     this.act = a
     this.t = 0
     this.fired = 0
-    this.setTint(UNIFORM_TINT)
+    this.setTint(this.dh.trainer ? 0xc98c70 : UNIFORM_TINT)
     this.setVelocity(0, 0)
     this.anim(ANIM[a])
   }
@@ -294,6 +309,7 @@ export class SecurityDirector extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') return
+    if (this.dh.trainer && this.qphase === 3) dt *= this.dh.trainer.phase3Rate
     this.contactCd = Math.max(0, this.contactCd - dt)
     this.t += dt
     const floor = this.dh.floorY()
@@ -320,15 +336,18 @@ export class SecurityDirector extends AnimEnemy {
         const dist = Math.abs(dx)
         // The barrage is close-range, so he walks up to it; the sweep can start from anywhere.
         const wantClose = this.next === 'barrage'
-        if (wantClose && dist > 150) this.setVelocityX(toward * 70)
+        if (wantClose && dist > 150) this.setVelocityX(toward * 70 * (this.dh.trainer && this.qphase === 3 ? this.dh.trainer.phase3Rate : 1))
         else this.setVelocityX(0)
         this.stalkLeft -= dt
-        if (this.qphase >= 2 && this.dh.droneCount() === 0 && this.stalkLeft < P.stalk - 200) {
+        if (!this.dh.trainer && this.qphase >= 2 && this.dh.droneCount() === 0 && this.stalkLeft < P.stalk - 200) {
           const dir: 1 | -1 = this.x < mid ? 1 : -1
           this.dh.drone(this.arenaX0, this.arenaX1, dir, this.qphase === 3 ? 105 : 85)
         }
         const ready = this.stalkLeft <= 0 && (!wantClose || dist <= 190 || this.stalkLeft < -2200)
-        if (ready) this.go('windup')
+        if (ready) {
+          if (this.qphase === 1) this.dh.trainer?.summon()
+          this.go('windup')
+        }
         break
       }
 

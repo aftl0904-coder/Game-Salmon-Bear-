@@ -1,0 +1,6 @@
+page.goto: net::ERR_CONNECTION_RESET at http://127.0.0.1:47419/
+Call log:
+[2m  - navigating to "http://127.0.0.1:47419/", waiting until "load"[22m
+
+    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-clock-diagnose.mjs:24:12
+{"out":"docs/qa-c2s2/clock-desktop-retry.json","passed":false}
