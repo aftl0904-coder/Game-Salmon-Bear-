@@ -1,0 +1,68 @@
+{
+  "description": "Chromium visibility environment probe only; no game or synthetic hidden event",
+  "at": "2026-11-04T02:37:46.821Z",
+  "load": [
+    10.73,
+    10.14,
+    11.1
+  ],
+  "modes": [
+    {
+      "headless": false,
+      "cases": [
+        {
+          "case": "tab-switch",
+          "during": {
+            "hidden": false,
+            "events": []
+          },
+          "after": {
+            "hidden": false,
+            "events": []
+          },
+          "observedHidden": false,
+          "observedReturn": false
+        },
+        {
+          "case": "window-minimize",
+          "after": {
+            "hidden": false,
+            "events": []
+          },
+          "observedHidden": false,
+          "observedReturn": false
+        }
+      ],
+      "errors": []
+    },
+    {
+      "headless": true,
+      "cases": [
+        {
+          "case": "tab-switch",
+          "during": {
+            "hidden": false,
+            "events": []
+          },
+          "after": {
+            "hidden": false,
+            "events": []
+          },
+          "observedHidden": false,
+          "observedReturn": false
+        },
+        {
+          "case": "window-minimize",
+          "after": {
+            "hidden": false,
+            "events": []
+          },
+          "observedHidden": false,
+          "observedReturn": false
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "passed": false
+}

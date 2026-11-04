@@ -1,5 +1,10 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## #88 前景狀態機嘗試 checkpoint（2026-11-04；仍 draft）
+- **未能安全落實，保留遊戲原碼、800／1500 ms 及傷害。** 已查 Phaser 4.2.1 事件次序並製作獨立合成狀態機模型；它不是遊戲修復。長 stall 的 1.5 秒期限與下一次 physics 碰撞機會仍需整合設計和驗證，`POST_RENDER` 亦不證明螢幕顯示。第6關共用 Boss 未改，完整回歸未做。
+- 桌面 2P 及模擬手機 1P 經注入局部單序重測仍失敗：兩組真實扣血均在首次 active scene render 前；桌面安全位置另一角色未扣血。人工 scene pause 有紀錄但不等於真正背景。切頁、最小化和獨立背景探針均無 hidden 事件，不能當 hidden／resume 通過。量到約 12–15 FPS，機器負載較高，非低負載基準；所有原始 trace、截圖和失敗保留，詳見 `docs/qa-c2s2/README.md`。
+- tsc + Vite build 及 10 項資料驗證 exit 0；模型合成斷言通過不代表 runtime 通過。測試 server 已關閉；沒有重跑 600 秒、沒有 merge／close／部署，#88 保持 draft。
+
 ## #88 逐幀安全 checkpoint（2026-11-04；仍 draft）
 - **阻塞，未改遊戲原碼或 800／1500 ms 設計。** 桌面注入站位的新 trace 顯示鏈網角色實際扣血發生在同一 frame 首次 active 場景 render callback 之前；畫面有可能同 frame 同時顯示網與扣血，不能據此聲稱已看到獨立無網扣血畫面，但單純更換 timer 仍不足以證明 pause／背景／物理與可見期間安全同步。
 - 本輪逐幀、位置注入、pause／背景模擬嘗試、可用設備模式、負載及失敗詳見 `docs/qa-c2s2/README.md`。既有對白保留；不降設計時長、不停傷害、不放寬斷言，尚未證明一影格界限或實機可見性。`frame-build.txt`、`frame-validate-data.txt` 記錄重新 build／10 項資料驗證。未重跑 600 秒，#88 不 merge／close／部署。

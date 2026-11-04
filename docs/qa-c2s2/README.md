@@ -1,5 +1,15 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## 新 checkpoint：狀態機嘗試與背景測試阻塞（2026-11-04）
+
+- **仍阻塞；本次沒有接入候選狀態機，遊戲原碼、800／1500 ms、安全位及傷害全部保留。** 純合成模型 `scripts/qa/c2s2-state-model.mjs`／`state-checkpoint-model.json` 嘗試以 monotonic time、前景 render 及 pre-physics 邊界區分 warning、active 與 end；pause／resume 丟棄未確認的時間、恢復後先 render 才能傷害。六項只是模型斷言及一個假設性反例，**不是 Phaser、畫面呈現、碰撞或遊戲修復驗收**。尤其若主執行緒在第一次 active engine render 後長時間停頓，當下一 physics 到達時 wall 期已過，模型會結束而沒有碰撞機會；若為補償而延長又須處理 1.5 秒及 Boss 節奏。模型不具備 compositor 訊號，也未處理完整 camera 遮擋、physics 多步、Boss phase 轉換與全部生命周期；不安全直接搬入遊戲。
+- **已核對 Phaser 4.2.1 本地來源**：`core/Game.js` 的 scene update 在 scene render 之前，全局 `POST_RENDER` 在 `renderer.postRender()` 之後；`scene/Systems.js` 的 scene `RENDER` 在 camera render 之後；`physics/arcade/ArcadePhysics.js` 把 `World.update` 訂到 scene `UPDATE`，而 `Systems.step()` 在 scene 自己的 `update()` 前發出該事件。`World.update` 可以同一 frame 多次 physics step；scene 暫停時仍可以 render。這些都是引擎事件，不證明 compositor 或實體螢幕已呈現。第7關沿用 `SecurityDirector` 的 AI sweep 是另一個平滑時鐘；單獨延長鏈網而不協調 AI／phase 轉換，可能令 Boss 提前進下一狀態。第6關完整 Boss 回歸本輪未做，原碼沒改。
+- **重新單序跑現有 production build 的注入測試，均失敗**：`state-checkpoint-desktop-2p.json`／`state-checkpoint-mobile-1p.json` 及 console。完整 Boot 後注入 stage、模式、Boss P2、玩家位置／HP，隔離其他敵人；手機入口只用 touch，但不是實機、真人或自然通關。桌面正常案例首次 warning→active scene render callback **888.6 ms**、active→消失 **1513.2 ms**，網內 boy HP 6→5 的實際碰撞比首次 active render **早 6.8 ms**，x=4800 的 girl 保持 6。手機正常案例分別 **934.5／1573.2 ms**，boy 6→5 比首次 active render **早 12.7 ms**；沒有單獨重做手機 safe-only，舊手機注入安全位記錄保留於下方。兩張 `state-checkpoint-*-warning.png` 實際拍到橙色預警。
+- **人工場景 pause-warning**：桌面及手機 pause/resume 前後記錄 HP 6、暫停時沒有 chain-active；恢復後仍分別在首次 active render 前 13.5／5.1 ms 扣血。warning 的 wall 時間包含停下的約一秒，不可當連續前景的 800 ms 證據。`hidden-active` 兩案都沒有 `visibilitychange`，`hiddenObserved:false`，**背景模擬失敗**，不是 hidden／resume 通過；active 中 scene pause、physics pause、真正 hidden、Boss 死亡／重啟清理及 P3 本輪未實測。
+- 額外獨立 `scripts/qa/c2s2-visibility-probe.mjs`／`state-checkpoint-visibility-probe.json`：headful／headless 的切頁與 CDP 視窗最小化均未收到 hidden 或 visible 事件，exit 1；沒有偽造 `document.hidden`。另在獨立 Xvfb 試實際 Ctrl+Tab 仍沒有事件；CDP `Emulation.setPageVisibilityOverride` 不存在，`Page.setWebLifecycleState(frozen)` 雖返回成功，`document.hidden` 仍 false，不是 hidden 驗證。所有嘗試均不能當通過；需要能產生真實 hidden/visible 的環境再逐幀驗證。
+- **負載／FPS**：本次兩案例單序、沒有同時跑本分支其他測試，但共享主機 6 CPU；啟動時 1 分鐘 load average 7.69／9.54，結束時 12.30，仍非低負載。正常案例取 pre-update 連續樣本間距，桌面平均約 **12.1 FPS**（30 samples、raw median 83.3 ms、max 116.7 ms），手機約 **15.2 FPS**（39 samples、raw median 66.7 ms、max 116.6 ms）；包括 instrumentation 負擔，非裝置性能基準。兩組 0 pageerror／console error 但各自 `passed:false`、exit 1。此前所有失敗檔案均保留。
+- `state-checkpoint-build.txt` tsc + Vite build exit 0（既有 config／chunk warnings），`state-checkpoint-validate.txt` 10 項資料檢查 exit 0。模型 exit 0 只代表合成斷言；visibility probe exit 1。測試 server `:47429` 已關閉。未重跑 600 秒，無 merge／close／部署；#88 保持 draft。
+
 ## 最新 checkpoint：可見時間及物理邊界（2026-11-04）
 
 - **仍阻塞；保留遊戲原碼。** 沒有修改 800／1500 ms、減傷／取消傷害、擴大容差或還原 Alan 對白，也沒有聲稱自然通關。Phaser Clock 使用 smoothed／截限 delta；RAF timestamp 和 wall clock 不是該累加量。只替換成 wall clock 不能處理顯示、碰撞先後和暫停。此前沒有逐幀資料的舊極端失敗仍不能斷言同源。
