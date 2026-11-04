@@ -1,0 +1,52 @@
+{
+  "mode": "desktop",
+  "setup": "stage 6 and positions injected; hero temporarily immune while observing guard phases; not a full run or evasion proof",
+  "transitions": [
+    {
+      "now": 26396,
+      "phase": "windup",
+      "elapsed": 0,
+      "fsm": "PATROL",
+      "x": 480,
+      "heroX": 450,
+      "heroHp": 6,
+      "marker": true,
+      "canHurt": false,
+      "texture": "mall-human-guard-placeholder"
+    },
+    {
+      "now": 28913,
+      "phase": "strike",
+      "elapsed": 0,
+      "fsm": "ATTACK",
+      "x": 480,
+      "heroX": 450,
+      "heroHp": 6,
+      "marker": false,
+      "canHurt": true,
+      "texture": "mall-human-guard-placeholder"
+    },
+    {
+      "now": 29913,
+      "phase": "recover",
+      "elapsed": 0,
+      "fsm": "PATROL",
+      "x": 446,
+      "heroX": 450,
+      "heroHp": 5,
+      "marker": false,
+      "canHurt": false,
+      "texture": "mall-human-guard-placeholder"
+    }
+  ],
+  "errors": [],
+  "input": {
+    "beforeX": 220,
+    "afterX": 288
+  },
+  "afterAttack": {
+    "hp": 3,
+    "heroHp": 5
+  },
+  "passed": true
+}
