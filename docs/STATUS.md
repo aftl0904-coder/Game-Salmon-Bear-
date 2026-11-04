@@ -41,3 +41,8 @@
 - Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 為 draft，尚未合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
 - 獨立 QA [#86](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/86) 只含測試證據，沒有重複 #85 素材。以 #83 merge `c6654ef` 加 #85 head `ccbc100` 在 detached worktree 合併預覽，無衝突；build、9 項資料驗證以及 Playwright 桌面鍵盤／模擬手機 touch 逐張重溫 1–10 通過。測試透過 localStorage 直接解鎖，並非真人完整通關或真機測試；第10關完成時仍要接 `markC2Cleared()` 自動解鎖。證據在 `docs/qa-ending-c2/preview-qa/`。
 - 預告片 #87 按 Alan 指示暫停製作，不因結局圖 QA 通過而視為獲接納。
+
+## 7. 第一版角色集 checkpoint（2026-11-04）
+- 本獨立分支從重新 fetch 的 main `077af8b` 開出，參考 Alan 已確認方向 `docs/bible/first-release-confirmations-20261104.md`。封面有遊戲、攻略、角色集三入口；草稿沿用 Phaser 原有資產，提供好／壞、前後與三個動作按鈕，無進度鎖。未知／未整合動作標待繪或待切格驗收，不重複充數。
+- **未完成第一版**：部分已畫人物只得靜態圖，許多動作欠繪或欠切格驗收；#91 原圖未通過 QA、沒有接入。舊 art folder 中未登場候選身份和原創性／切格須複核；第6關現版總監與已確認新洗地機分開記錄，不猜別名。詳細名單、缺口和原創美術 request 見 `docs/bible/first-release-gallery-inventory-20261104.md` 及 `ART-REQUEST-first-release-gallery-20261104.md`。
+- build、資料驗證及桌面／模擬手機純觸控 smoke 結果與截圖見 `docs/qa-first-release-gallery/`；不代表真機、真人完整通關或每個角色動作 QA。

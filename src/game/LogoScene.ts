@@ -227,8 +227,8 @@ export class LogoScene extends Phaser.Scene {
     let selected = 0
     let leaving = false
     const readyAt = this.time.now + 500
-    const buttons = ['開始遊戲', '攻略'].map((label, i) => {
-      const x = width / 2 + (i === 0 ? -78 : 78)
+    const buttons = ['開始遊戲', '攻略', '角色集'].map((label, i) => {
+      const x = width / 2 + (i - 1) * 152
       const bg = this.add.rectangle(x, height - 30, 140, 30, 0x241810, 0.94)
         .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
       const text = this.add.text(x, height - 30, label, {
@@ -252,6 +252,10 @@ export class LogoScene extends Phaser.Scene {
       unlockAudio()
       if (selected === 1) {
         window.location.assign('/guide/')
+        return
+      }
+      if (selected === 2) {
+        this.scene.start('gallery')
         return
       }
       this.cameras.main.fadeOut(320, 0, 0, 0)
