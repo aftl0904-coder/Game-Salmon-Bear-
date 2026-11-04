@@ -1,0 +1,18 @@
+CASE desktop-boy-worst {"damage":[0],"endX":[3258],"warningMs":4250,"hits":[],"errors":[]}
+PASS desktop-boy-worst
+CASE desktop-girl-worst {"damage":[0],"endX":[3448],"warningMs":3517,"hits":[],"errors":[]}
+PASS desktop-girl-worst
+CASE mobile-boy-worst {"damage":[0],"endX":[3164],"warningMs":4483,"hits":[],"errors":[]}
+PASS mobile-boy-worst
+CASE mobile-girl-worst {"damage":[0],"endX":[3267],"warningMs":2833,"hits":[],"errors":[]}
+PASS mobile-girl-worst
+CASE desktop-2p-separated {"damage":[0,0],"endX":[3307,3148],"warningMs":4283,"hits":[],"errors":[]}
+PASS desktop-2p-separated
+CASE desktop-left-island {"damage":[0],"endX":[3134],"warningMs":2317,"hits":[],"errors":[]}
+PASS desktop-left-island
+CASE desktop-right-edge {"damage":[0],"endX":[3716],"warningMs":2600,"hits":[],"errors":[]}
+PASS desktop-right-edge
+CASE desktop-hit-control {"damage":[1],"endX":[3324],"warningMs":2750,"hits":[{"kind":"projectile","t":22755.4,"hx":3340,"hp":6,"x":3340,"y":240,"feather":3340},{"kind":"projectile","t":22888.8,"hx":3340,"hp":5,"x":3366,"y":257.5,"feather":3366}],"errors":[]}
+PASS desktop-hit-control
+CASE desktop-storm {"damage":[0],"endX":[3281],"warningMs":2400,"hits":[],"errors":[]}
+PASS desktop-storm
