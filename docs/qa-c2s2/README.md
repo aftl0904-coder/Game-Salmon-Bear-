@@ -1,5 +1,17 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## 最新 checkpoint：可見時間及物理邊界（2026-11-04）
+
+- **仍阻塞；保留遊戲原碼。** 沒有修改 800／1500 ms、減傷／取消傷害、擴大容差或還原 Alan 對白，也沒有聲稱自然通關。Phaser Clock 使用 smoothed／截限 delta；RAF timestamp 和 wall clock 不是該累加量。只替換成 wall clock 不能處理顯示、碰撞先後和暫停。此前沒有逐幀資料的舊極端失敗仍不能斷言同源。
+- 新測 `scripts/qa/c2s2-frame-boundaries.mjs`：完整 Boot 後**注入第7關、模式、Boss phase、玩家位置和 HP，隔離敵人**，不注入勝利；實際呼叫既有 `trainerChain` 及 Arcade overlap／傷害，不是自然通關、真機或真人。手機 UI 使用 touch；手機 2P 只用注入模式檢測，現有產品不提供 P2 touch 控制。`frame-boundary-20261104.json` 保存每個 pre/post update、render callback、傷害、visibility 事件及 raw/smoothed delta，`frame-boundary-20261104-console.txt` 保留原始輸出。Scene render callback 只是引擎畫圖時點，不能證明 compositor／螢幕真正呈現，也未測 camera 遮擋等所有狀況。
+- **新實測失敗**：模擬手機 1P 前景 P2 單次，首次 warning render callback 到首次 active render callback 約 **711.7 ms**；首個真實扣血約在 warning callback 後 **704.0 ms**，同一 frame 的 active render callback **7.7 ms 後**才執行；active 到消失的兩個 render callback 約 **1689.0 ms**。同一案例 wall 事件間隔 704.3／1693.5 ms，最大 raw frame 200 ms，測量環境高負載、非低負載／60 FPS。這反映該次預警及活動渲染時間未達設計要求，不是以設定值冒充實測。
+- 桌面 1P 正常案例首次 warning→active render 約 928.9 ms、active→消失約 1580.9 ms；實際 HP 6→5 在 active render callback 前 6.0 ms。桌面 2P 正常案例 warning→active 約 814.2 ms、active→消失約 1505.3 ms，HP 6→5 於 active render 前 17.0 ms；注入 x=4800 的另一角色保持 6。模擬手機 2P 正常案例分別 809.6／1893.7 ms，網內角色扣血、網外角色保持 6。四模式共 12 案均無 pageerror／console error，但四組 `passed:false`；碰撞均在首次 active scene render callback 前發生。
+- `*-desktop-1p-warning.png` 和 `*-mobile-2p-warning.png` 實際拍到橙色預警；`*-desktop-2p-warning.png`、`*-mobile-1p-warning.png` 因截圖排程延誤實際拍到**網已生效及扣血**，檔名不是其階段證明。碰撞先於 scene render，不等同證明玩家見過獨立無網扣血畫面：該 frame 最終可以同時呈現網及扣血，實際呈現／背景打斷仍未證實。
+- 場景 pause-warning 人為停約一秒、再恢復：trace 記錄 pause／resume 時間和 HP，暫停中沒有活動事件；牽涉 pause 的 warning wall 差值包含非遊戲時間，**不能套前景 800 ms 斷言**。`hidden-active` 透過開第二個 Chromium 分頁嘗試切背景，但 trace **沒有 visibilitychange／hidden 事件**，因此這些案例是**背景模擬失敗**，不表示背景／恢復通過。測試原始資料照留；進程已載入腳本後，才更新磁碟腳本加 hidden 事件守門，且不把 pause wall 間隔誤當連續前景時長；當前證據是改守門前執行，不覆寫。
+- 測試開始時 1 分鐘 load average 10.56、6 CPU，執行期間升至 25；與其他工作共享主機，並非低負載基準。render instrumentation、截圖和 CPU／frame scheduling 本身均會影響時間，不把此測說成真機性能。舊手機 x=4800 safe-only 及桌面 2P safe／hit 數據保留於下方 clock checkpoint，均屬注入，不代表全場景安全位。
+- **後續須處理**：先定義從實際首次繪製起的有效前景時鐘及 pause、hidden、physics pause、背景恢復的狀態轉換；確保 warning 至少 800 ms，active 繪製後才允許 collision，且结束時與 physics step 和最後可見畫面同步，防止恢復首 frame 未顯示即造成傷害；處理場景重啟、Boss 死亡、長 stall 和相機視野，再以真正可控的背景／恢復及低負載環境逐幀測試各邊界、一影格上下界、1P/2P 安全站位和第6關共用 Boss 回歸。此輪未能安全完成整套約束，所以保留原碼與 draft 阻塞。無重跑 600 秒，真機、真人與完整實戰仍未驗證。
+- `frame-build.txt` 的 tsc + Vite build exit 0（既有 config／chunk warning）；`frame-validate-data.txt` 10 項資料驗證 exit 0；不等於 runtime 通過。逐幀腳本最終 JSON 明確 `passed:false`；外層 shell `${PIPESTATUS[0]}` 再次被互動執行器捕捉為空，不能聲稱 wrapper exit 0。測試 server `:47429` 已關閉。
+
 ## 最新 checkpoint：鏈網逐影格診斷及 Alan 已批准對白
 
 - **結論：鏈網時長仍阻塞，沒有修改 800／1500 ms 設定、沒有放寬舊斷言或聲稱自然通關。** `GameScene.trainerChain` 的兩個 `this.time.delayedCall` 用 Phaser Clock 累加平滑／限幅 delta；`stage7Events[].at` 則是 RAF 帶入 `this.time.now` 的最近一個影格時間戳，並非累加 delta。`performance.now()` 是另一個 wall-clock 取樣；事件程式執行時間與 RAF timestamp 本身可相差數十 ms。兩種時鐘不應混同。

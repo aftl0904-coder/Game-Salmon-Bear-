@@ -1,5 +1,9 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## #88 逐幀安全 checkpoint（2026-11-04；仍 draft）
+- **阻塞，未改遊戲原碼或 800／1500 ms 設計。** 桌面注入站位的新 trace 顯示鏈網角色實際扣血發生在同一 frame 首次 active 場景 render callback 之前；畫面有可能同 frame 同時顯示網與扣血，不能據此聲稱已看到獨立無網扣血畫面，但單純更換 timer 仍不足以證明 pause／背景／物理與可見期間安全同步。
+- 本輪逐幀、位置注入、pause／背景模擬嘗試、可用設備模式、負載及失敗詳見 `docs/qa-c2s2/README.md`。既有對白保留；不降設計時長、不停傷害、不放寬斷言，尚未證明一影格界限或實機可見性。`frame-build.txt`、`frame-validate-data.txt` 記錄重新 build／10 項資料驗證。未重跑 600 秒，#88 不 merge／close／部署。
+
 ## 最新 #88 checkpoint（2026-11-04）
 - Alan 已確認第7關及大陸1兩組對白；#88 **只接第7關** D 噗噗反應、馴獸師卡名稱／稱號／三行／提示及 Boss 後離隊提示，逐字見 `docs/bible/first-release-dialogue-drafts.md`。D 只反應、Boss 後離隊，主支線與旗標邏輯不變；大陸1結局不在本 PR。
 - 鏈網嚴格時間仍阻塞。已用逐影格 trace 證明 Phaser Timer 的平滑／限幅 delta 與事件 RAF timestamp 及 wall clock 不同；手機單次 1500 ms timer 實際 wall 約 1451.5 ms，受控主執行緒 stall 又令預警或活動延長。舊極端樣本無逐影格資料，不能確認每次歷史異常同源；未改時間、未放寬斷言，暫不冒險改遊戲計時。負載、frame resolution、P2/P3、安全位、失敗原檔及下一步詳見 `docs/qa-c2s2/README.md`。
