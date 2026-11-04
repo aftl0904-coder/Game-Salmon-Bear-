@@ -31,6 +31,8 @@ export class UIScene extends Phaser.Scene {
   private mpText!: Phaser.GameObjects.Text
   private mpMaxW = 62
   private maxHp = 6
+  private maxHpL = 6
+  private maxHpR = 6
   private stamL = 1
   private stamR = 1
   private comboL = 0
@@ -81,6 +83,7 @@ export class UIScene extends Phaser.Scene {
       this.mpText = hud.mpText
       this.mpMaxW = hud.mpMaxW
       this.maxHp = hud.maxHp
+      this.maxHpL = this.maxHpR = hud.maxHp
       this.targetHpL = this.dispHpL = this.maxHp
       this.targetHpR = this.dispHpR = this.maxHp
       this.targetMp = this.dispMp = 0
@@ -182,11 +185,11 @@ export class UIScene extends Phaser.Scene {
     this.dispMp += (this.targetMp - this.dispMp) * Math.min(1, (dt / 1000) * 10)
     // HP gauge: one continuous bar, fill = % of current max (incl. gear bonus hearts).
     // No number shown — just the fill, with a brighter red warning flash under 25%.
-    const pctL = this.maxHp > 0 ? Phaser.Math.Clamp(this.dispHpL / this.maxHp, 0, 1) : 0
+    const pctL = this.maxHpL > 0 ? Phaser.Math.Clamp(this.dispHpL / this.maxHpL, 0, 1) : 0
     this.hpFillL.width = Math.max(0, this.hpBarWL * pctL)
     this.hpFillL.fillColor = pctL < 0.25 ? 0xff5a4a : 0xe8384a
     if (this.hpFillR && this.hpFillR.scene) {
-      const pctR = this.maxHp > 0 ? Phaser.Math.Clamp(this.dispHpR / this.maxHp, 0, 1) : 0
+      const pctR = this.maxHpR > 0 ? Phaser.Math.Clamp(this.dispHpR / this.maxHpR, 0, 1) : 0
       this.hpFillR.width = Math.max(0, this.hpBarWR * pctR)
       this.hpFillR.fillColor = pctR < 0.25 ? 0xff5a4a : 0xe8384a
     }
@@ -241,6 +244,8 @@ export class UIScene extends Phaser.Scene {
       this.targetHpL = p.boyHp
       this.targetHpR = p.girlHp
       this.maxHp = p.maxHp
+      this.maxHpL = p.maxHpL ?? p.maxHp
+      this.maxHpR = p.maxHpR ?? p.maxHp
       if (p.stamL !== undefined) this.stamL = p.stamL
       if (p.stamR !== undefined) this.stamR = p.stamR
       if (p.comboL !== undefined) this.comboL = p.comboL

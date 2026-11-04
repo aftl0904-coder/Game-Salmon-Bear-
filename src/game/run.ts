@@ -186,6 +186,14 @@ export function getRun(): Run | null {
 }
 export function canSaveRun() { return storageOk }
 export function isSideTrip() { return context === 'side' }
+/** Main allocation only: side trips and unbound scenes are strictly baseline. */
+export function combatGrowth(who: Who): GrowthAllocation {
+  if (context === 'main' && main) {
+    const branch = main.growth.branches[main.growth.branches.length - 1]!
+    return { ...branch.heroes[who].allocation }
+  }
+  return { hp: 0, atk: 0, def: 0, stam: 0, sp: 0 }
+}
 export function scoreEligible() { return context === 'side' ? sideEligible : context === 'main' ? (main?.eligible ?? true) : true }
 /** A fresh player with no old loadout can begin at baseline without a redundant choice. */
 export function needsStartChoice() {

@@ -11,8 +11,8 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
-import { getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
-import type { GrowthRank } from './growth'
+import { combatGrowth, getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { combatGrowthEffects, type GrowthRank } from './growth'
 import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -509,6 +509,7 @@ export class GameScene extends Phaser.Scene {
     this.drawWorld()
     this.buildLevel()
     this.spawnCast()
+    this.initHeroStats()
     this.applyCarriedHp()
     this.gearFx = []
     for (const h of [this.boy, this.girl]) if (h) this.gearFx.push(attachGearFx(this, h))
@@ -659,7 +660,7 @@ export class GameScene extends Phaser.Scene {
     SFX.sparkle()
     for (const h of [this.boy, this.girl]) {
       if (!h?.alive) continue
-      h.stam = stamMax(h.role as Who)
+      h.stam = this.heroStamMax(h.role as Who)
       h.hurtCd = Math.max(h.hurtCd, 1500)
       startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, 1500)
       burst(this, h.x, h.y - 20, 0xffe08a, 10)
@@ -833,9 +834,11 @@ export class GameScene extends Phaser.Scene {
     EventBus.emit(GameEvents.PLAYER_HEALTH_CHANGED, {
       boyHp: Math.max(0, this.boy.hp),
       girlHp: Math.max(0, this.girl?.hp ?? 0),
-      maxHp: MAX_HP + Math.max(bonusHearts('boy'), bonusHearts('girl')),
-      stamL: this.boy.stam / stamMax(this.boy.role as Who),
-      stamR: this.girl ? this.girl.stam / stamMax(this.girl.role as Who) : 1,
+      maxHp: this.heroMaxHp(this.boy),
+      maxHpL: this.heroMaxHp(this.boy),
+      maxHpR: this.girl ? this.heroMaxHp(this.girl) : MAX_HP,
+      stamL: this.boy.stam / this.heroStamMax(this.boy.role as Who),
+      stamR: this.girl ? this.girl.stam / this.heroStamMax(this.girl.role as Who) : 1,
       comboL: this.boy.combo,
       comboR: this.girl ? this.girl.combo : 0,
     })
@@ -851,12 +854,12 @@ export class GameScene extends Phaser.Scene {
     for (const h of [this.boy, this.girl]) {
       if (!h) continue
       const who = h.role as Who
-      const max = stamMax(who)
+      const max = this.heroStamMax(who)
       // Still swinging (within STAM_REST_MS of the last attack) → no regen at all, so a
       // mash-attack flurry visibly runs the bar down instead of coasting on partial
       // recovery between hits (Alan, 2026-10-27: "唔好一味係咁咁攻擊就好似保命符").
       const resting = now - h.lastAtkAt > STAM_REST_MS
-      const rate = resting ? STAM_RECOVER * stamRecoverMul(who) : 0
+      const rate = resting ? STAM_RECOVER * stamRecoverMul(who) * combatGrowthEffects(combatGrowth(who)).staminaRecoverMultiplier : 0
       h.stam = Phaser.Math.Clamp(h.stam + (rate * dt) / 1000, 0, max)
       if (!h.comboCasting && h.combo > 0 && now - h.comboHitAt > CB.COMBO_IDLE_MS) {
         h.combo = Math.max(0, h.combo - (CB.COMBO_DECAY_PER_SEC * dt) / 1000)
@@ -3399,16 +3402,6 @@ export class GameScene extends Phaser.Scene {
 
     for (const sp of ST.spikes) this.spikes(sp.x, sp.n)
     for (const x of ST.durians) this.placeDurian(x)
-    // Gear bought at the friends' stall: jump height, extra hearts, weapon floor.
-    for (const h of [this.boy, this.girl]) {
-      if (!h) continue
-      const who = h.role as Who
-      h.jumpMul = jumpMul()
-      const extra = bonusHearts(who)
-      if (extra > 0) h.hp = Math.min(MAX_HP + extra, h.hp + extra)
-      h.stam = stamMax(who)
-      h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(who)))
-    }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
@@ -3844,6 +3837,7 @@ export class GameScene extends Phaser.Scene {
       friends: () => this.friendsSaved,
       heroes,
       stage: this.stageNo,
+      growth: combatGrowth,
     })
     void shop.done.then(() => {
       if (this.ended && !this.clearOverlay) return
@@ -3866,7 +3860,7 @@ export class GameScene extends Phaser.Scene {
   private drinkCoffee() {
     let healed = false
     for (const h of [this.boy, this.girl]) {
-      if (h?.alive && h.hp < MAX_HP + bonusHearts(h.role as Who)) {
+      if (h?.alive && h.hp < this.heroMaxHp(h)) {
         h.hp += 1
         healed = true
         floatText(this, h.x, h.y - 70, '+1HP', '#7dffb0', { size: 14 })
@@ -3912,7 +3906,7 @@ export class GameScene extends Phaser.Scene {
     item.disableBody(true, true)
     const tier = (item.getData('sushiTier') as SushiTier | undefined) ?? 'salmon'
     const def = SUSHI_TIERS[tier]
-    const effMax = MAX_HP + bonusHearts(h.role as Who)
+    const effMax = this.heroMaxHp(h)
     const heal = Math.max(1, Math.round(effMax * def.pct))
     const before = h.hp
     h.hp = Math.min(effMax, h.hp + heal)
@@ -3942,6 +3936,17 @@ export class GameScene extends Phaser.Scene {
     this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
   }
 
+  /** Actors exist only after spawnCast; seed full stats before restoring carried HP. */
+  private initHeroStats() {
+    for (const h of [this.boy, this.girl]) {
+      if (!h) continue
+      const who = h.role as Who
+      h.jumpMul = jumpMul()
+      h.hp = this.heroMaxHp(h)
+      h.stam = this.heroStamMax(who)
+      h.setData('wlv', Math.max(this.weaponLv(h), weaponFloor(who)))
+    }
+  }
   private spawnCast() {
     const grace = this.time.now + 1400
     const soloCast = (this.registry.get('soloCast') as 'boy' | 'girl') || 'boy'
@@ -4060,7 +4065,7 @@ export class GameScene extends Phaser.Scene {
         const key = (e as { entityId?: string }).entityId ?? `${e.x.toFixed(0)}:${e.y.toFixed(0)}`
         if (hitSet.has(key)) return
         hitSet.add(key)
-        if (this.damageEnemy(e, PLAYER_ATTACK_DMG, hero.facing, hero)) this.comboHit(hero, CB.COMBO_GAIN_MELEE)
+        if (this.damageEnemy(e, PLAYER_ATTACK_DMG + combatGrowthEffects(combatGrowth(hero.role as Who)).attackBonus, hero.facing, hero)) this.comboHit(hero, CB.COMBO_GAIN_MELEE)
       })
       this.physics.add.overlap(hero.attackHitbox, this.pots, (_a, pot) => {
         if (!hero.isMeleeActive()) return
@@ -4076,7 +4081,8 @@ export class GameScene extends Phaser.Scene {
       const key = (e as { entityId?: string }).entityId ?? `${e.x.toFixed(0)}:${e.y.toFixed(0)}`
       if (hitSet.has(key)) return
       hitSet.add(key)
-      const dmg = (box.getData('dmg') as number) || 1
+      const by = box.getData('by') as Who | undefined
+      const dmg = ((box.getData('dmg') as number) || 1) + (by ? combatGrowthEffects(combatGrowth(by)).attackBonus : 0)
       const dir = box.getData('radial') ? Math.sign(e.x - box.x) || 1 : (box.getData('dir') as number) || 1
       const landed = this.damageEnemy(e, dmg, dir)
       if (landed && !box.getData('combo')) this.comboHit(this.heroByRole(box.getData('by') as string | undefined), CB.COMBO_GAIN_MELEE)
@@ -4090,7 +4096,7 @@ export class GameScene extends Phaser.Scene {
       const byRole = s.getData('by') as string | undefined
       const fromCombo = !!s.getData('combo')
       s.destroy()
-      const landed = this.damageEnemy(e, Math.max(1, Math.round(PLAYER_ATTACK_DMG * pw)), Math.sign(e.x - this.boy.x) || 1)
+      const landed = this.damageEnemy(e, Math.max(1, Math.round(PLAYER_ATTACK_DMG * pw)) + (byRole === 'boy' || byRole === 'girl' ? combatGrowthEffects(combatGrowth(byRole)).attackBonus : 0), Math.sign(e.x - this.boy.x) || 1)
       if (landed && !fromCombo) this.comboHit(this.heroByRole(byRole), CB.COMBO_GAIN_SHOT)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
@@ -4098,9 +4104,9 @@ export class GameScene extends Phaser.Scene {
       const e = enemy as PatrolEnemy
       if (!e.active || e.isDead) return
       const g = this.girl
-      j.destroy()
       const caster = (j.getData('by') as Who | undefined) ?? ((g?.role ?? this.boy.role) as Who)
-      this.damageEnemy(e, specialPower(caster), Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
+      j.destroy()
+      this.damageEnemy(e, specialPower(caster) + combatGrowthEffects(combatGrowth(caster)).specialBonus, Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
     })
     // Enemy body ↔ player hurtbox
     this.physics.add.overlap(this.boy, this.enemies, (_b, e) => this.hurtHero(this.boy, e as PatrolEnemy))
@@ -4210,6 +4216,7 @@ export class GameScene extends Phaser.Scene {
       amount: dmg,
       knockbackX: bkx,
       knockbackY: -160,
+      iframeMs: this.iframes(h),
       lockMs: bossShot ? BOSS_HURT_LOCK_MS : undefined,
       now: this.time.now,
     })
@@ -4638,9 +4645,12 @@ export class GameScene extends Phaser.Scene {
     return Math.max(1, amount - damageCut(h.role as Who))
   }
 
-  /** i-frames after a hit: the charm stretches them. */
+  /** Gear charm first; additive permanent defence applies afterwards. */
   private iframes(h: Hero) {
-    return Math.round(HURT_IFRAME_MS * iframeMul(h.role as Who))
+    return Math.round(HURT_IFRAME_MS * iframeMul(h.role as Who)) + combatGrowthEffects(combatGrowth(h.role as Who)).extraIframesMs
+  }
+  private heroStamMax(who: Who) {
+    return stamMax(who) * combatGrowthEffects(combatGrowth(who)).staminaMultiplier
   }
 
   private takePowerUp(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
@@ -4939,7 +4949,7 @@ export class GameScene extends Phaser.Scene {
     return saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [] }, this.clearResultRank ?? undefined)
   }
   private heroMaxHp(h: Hero) {
-    return MAX_HP + bonusHearts(h.role as Who)
+    return MAX_HP + bonusHearts(h.role as Who) + combatGrowthEffects(combatGrowth(h.role as Who)).extraHearts
   }
   private canSleep() {
     const need = this.clearHeroes().some((h) => h.hp < this.heroMaxHp(h))
@@ -5464,6 +5474,8 @@ export class GameScene extends Phaser.Scene {
       h.awaitingContinue = false
       h.lane = LANE_DEFAULT
       reviveActor(h, cx + (h.role === 'girl' ? 60 : 0), laneY(LANE_DEFAULT), this.time.now, 2000)
+      h.hp = this.heroMaxHp(h)
+      h.stam = this.heroStamMax(h.role as Who)
       h.snapToLane(LANE_DEFAULT, h.x)
     }
     this.emitHealth()
@@ -5964,8 +5976,8 @@ export class GameScene extends Phaser.Scene {
     for (const h of [this.boy, this.girl]) {
       if (!h) continue
       const who = h.role as Who
-      h.hp = MAX_HP + bonusHearts(who)
-      h.stam = stamMax(who)
+      h.hp = this.heroMaxHp(h)
+      h.stam = this.heroStamMax(who)
       burst(this, h.x, h.y - 30, 0x5ad0ff, 14)
     }
     this.refreshHearts()
