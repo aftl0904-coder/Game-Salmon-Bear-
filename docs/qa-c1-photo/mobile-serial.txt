@@ -1,0 +1,9 @@
+
+CASE {"name":"mobile-normal-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"touch only after setup"}
+FAIL {"name":"mobile-normal-natural","error":"AssertionError [ERR_ASSERTION]: scene full opacity hold 5366.4000000000015ms\n    at run (file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:147:14)\n    at async file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:179:15","errors":[],"state":{"story":false,"clear":true}}
+
+CASE {"name":"mobile-perfect-skip","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":11,"input":"touch only after setup"}
+SKIP {"input":"touch 跳過 ▶▶","clearCardAfterMs":225,"duringOpaqueHold":true}
+CONTINUATION skip → clear card remains past original deadline → credits
+LINES {"id":"C11_PERFECT","count":7,"unchanged":true,"priorStillRetainsDialog":false}
+RESULT {"name":"mobile-perfect-skip","result":"PASS","physicalDevice":false,"completePlaythrough":false}
