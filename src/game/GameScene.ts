@@ -420,6 +420,7 @@ export class GameScene extends Phaser.Scene {
   private stalls: MarketStall[] = []
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
+  private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
   private bossFight = false
   /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
   private bossSushiSpawned = false
@@ -3071,7 +3072,7 @@ export class GameScene extends Phaser.Scene {
     this.buildGroundTiles()
   }
 
-  /** Placeholder exhibition architecture and static scenery: GameObjects only, never physics entities. */
+  /** Exhibition scenery: same coordinates/layers, GameObjects only, never physics entities. */
   private drawExhibitWorld() {
     this.makeMallFloors()
     this.bgClouds = []
@@ -3085,27 +3086,49 @@ export class GameScene extends Phaser.Scene {
       bg.fillStyle(0x93adb4, 0.3).fillRect(x + 14, 55, 150, 76)
       bg.lineStyle(3, 0x303b46, 1).strokeRect(x + 14, 55, 150, 76)
     }
-    const sign = this.add.text(450, 55, '森友展銷中心', { fontFamily: FONT_TITLE, fontSize: '20px', color: '#fff2c0', backgroundColor: '#54483b', padding: { x: 8, y: 4 } }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
+    // Like the other stage far paintings, these are camera-fixed 640x360 images.
+    // B/C keep the existing backdrop because the supplied mid layers do not tile.
+    const far = (name: string) => this.textures.exists(`s7-${name}`)
+      ? this.add.image(GAME_W / 2, GAME_H / 2, `s7-${name}`).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setVisible(false)
+      : null
+    this.exhibitFar = { A: far('entrance-far'), D: far('backstage-far'), E: far('arena-far') }
+    this.exhibitFar.A?.setVisible(true)
+    const hasSign = this.textures.exists('s7-sign-blank')
+    if (hasSign) {
+      this.add.image(450, -1, 's7-sign-blank').setOrigin(0.5, 0).setDepth(DEPTH.PROP - 2)
+        .setName('stage7-static-sign-plate').setData('stage7-static', true)
+    }
+    const sign = this.add.text(450, 55, '森友展銷中心', { fontFamily: FONT_TITLE, fontSize: '20px', color: hasSign ? '#302c27' : '#fff2c0', ...(hasSign ? {} : { backgroundColor: '#54483b', padding: { x: 8, y: 4 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
     sign.setData('stage7-static', true)
     for (const [i, d] of (ST.staticDecor ?? []).entries()) {
-      const g = this.add.graphics().setDepth(DEPTH.PROP - 1).setPosition(d.x, LANE_FLOOR_Y)
-      g.setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
-      if (d.kind === 'cage') {
-        g.fillStyle(0x1c252a, 1).fillRect(-42, -96, 84, 91)
-        // A caged-animal silhouette, scenery only; no actor or collision body.
-        g.fillStyle(0x8f7864, 1).fillCircle(0, -46, 18).fillCircle(-12, -64, 7).fillCircle(12, -64, 7)
-        g.lineStyle(3, 0xb2a47e, 1).strokeRect(-42, -96, 84, 91)
-        for (let x = -30; x <= 30; x += 15) g.lineBetween(x, -95, x, -6)
-        g.lineBetween(-42, -55, 42, -55)
-        const label = this.add.text(d.x, LANE_FLOOR_Y - 104, String(d.number ?? ''), { fontFamily: FONT_UI, fontSize: '11px', color: '#f7e9c3', backgroundColor: '#423b36', padding: { x: 4, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.PROP)
-        label.setName(`stage7-static-label-${i}`).setData('stage7-static', true)
-      } else if (d.kind === 'chain') {
-        g.lineStyle(3, 0xa99d82, 1)
-        for (let y = -120; y < -30; y += 12) g.strokeEllipse(0, y, 7, 11)
+      if (d.kind === 'net' && this.textures.exists('s7-net-static')) {
+        this.add.image(d.x, LANE_FLOOR_Y - 66, 's7-net-static').setDepth(DEPTH.PROP - 1)
+          .setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
       } else {
-        g.lineStyle(2, 0xa99d82, 0.85).strokeRect(-52, -100, 104, 68)
-        for (let x = -52; x <= 52; x += 13) g.lineBetween(x, -100, x, -32)
-        for (let y = -100; y <= -32; y += 13) g.lineBetween(-52, y, 52, y)
+        const g = this.add.graphics().setDepth(DEPTH.PROP - 1).setPosition(d.x, LANE_FLOOR_Y)
+        g.setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
+        if (d.kind === 'cage') {
+          g.fillStyle(0x1c252a, 1).fillRect(-42, -96, 84, 91)
+          // A caged-animal silhouette, scenery only; no actor or collision body.
+          g.fillStyle(0x8f7864, 1).fillCircle(0, -46, 18).fillCircle(-12, -64, 7).fillCircle(12, -64, 7)
+          g.lineStyle(3, 0xb2a47e, 1).strokeRect(-42, -96, 84, 91)
+          for (let x = -30; x <= 30; x += 15) g.lineBetween(x, -95, x, -6)
+          g.lineBetween(-42, -55, 42, -55)
+        } else if (d.kind === 'chain') {
+          g.lineStyle(3, 0xa99d82, 1)
+          for (let y = -120; y < -30; y += 12) g.strokeEllipse(0, y, 7, 11)
+        } else {
+          g.lineStyle(2, 0xa99d82, 0.85).strokeRect(-52, -100, 104, 68)
+          for (let x = -52; x <= 52; x += 13) g.lineBetween(x, -100, x, -32)
+          for (let y = -100; y <= -32; y += 13) g.lineBetween(-52, y, 52, y)
+        }
+      }
+      if (d.kind === 'cage') {
+        const hasPlate = this.textures.exists('s7-number-plate-blank')
+        if (hasPlate) this.add.image(d.x, LANE_FLOOR_Y - 104, 's7-number-plate-blank').setDepth(DEPTH.PROP - 0.5)
+          .setName(`stage7-static-plate-${i}`).setData('stage7-static', true)
+        const label = this.add.text(d.x, LANE_FLOOR_Y - 104, String(d.number ?? ''), { fontFamily: FONT_UI, fontSize: '11px', color: hasPlate ? '#302c27' : '#f7e9c3', ...(hasPlate ? {} : { backgroundColor: '#423b36', padding: { x: 4, y: 1 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP)
+        label.setName(`stage7-static-label-${i}`).setData('stage7-static', true)
       }
     }
     this.buildGroundTiles()
@@ -3117,7 +3140,14 @@ export class GameScene extends Phaser.Scene {
     const k = Phaser.Math.Clamp((cx - 3135 + 200) / 320, 0, 1)
     this.mallFar.mall?.setAlpha(1 - k)
     this.mallFar.fac?.setAlpha(k)
-    if (this.exhibit) this.tickExhibitReaction()
+    if (this.exhibit) {
+      // Hard switch by camera centre at the existing A/B, C/D and D/E bounds.
+      // No tiling of artwork or changes to level segment coordinates.
+      this.exhibitFar.A?.setVisible(cx < stage7Raw.segments[0]!.x1)
+      this.exhibitFar.D?.setVisible(cx >= stage7Raw.segments[3]!.x0 && cx < stage7Raw.segments[3]!.x1)
+      this.exhibitFar.E?.setVisible(cx >= stage7Raw.segments[4]!.x0)
+      this.tickExhibitReaction()
+    }
     else this.tickCage()
     this.tickStage2(dt)
   }

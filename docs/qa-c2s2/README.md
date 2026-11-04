@@ -1,5 +1,15 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## ART-20 局部接入與本次驗證（以下舊紀錄均在接入前）
+- 來源是未合併的 Cursor [#91](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/91) 精確 head `7b198f735ebebfa14c5d07aa7388681745ade7e5`；只提交六張實際 runtime 衍生圖至 `public/art/stage7/`，沒有複製 50 張原圖或修改 Cursor branch。運行本 PR 不依賴 #91 合併；**重製**才需要該 head 的素材、Python、Pillow 13.0.0、NumPy 2.5.4，執行 `python3 scripts/art/derive_stage7_art.py /path/to/cursor-worktree`。腳本核對來源 SHA-256；來源檔名、雜湊、裁切座標和輸出尺寸見 `public/art/stage7/manifest.json`，輸出日誌 `art20-derivation.txt`。
+- **已接入**：`entrance-far.png`（A）、`backstage-far.png`（D）、`arena-far.png`（E）保留 640×360，median-cut 64 色、無 dithering；camera-fixed 遠景於既有 A/B、C/D、D/E 界線按鏡頭中心硬切，B/C 延用既有背景，沒有平鋪不合格中景。D 沿用原暗幕。`net-static.png` 裁切及去磁紅、保比例 nearest 縮成 104×68，使用原網的位置和範圍；`number-plate-blank.png` 為 20×13，`sign-blank.png` 為 158×89。牌字和號碼仍由程式在原有座標繪製；固定物不具碰撞或傷害。六張輸出 ≤64 色，道具 alpha 二值。
+- **保留原佔位**：動物籠按原比例縮到既有寬 84 時只有 84×72，原籠高 91、原牌座標不能改，遊戲內牌會明顯懸空；試切效果證據 `art20-rejected-cage-floating-label.png`／`art20-rejected-cage-initial.json`，所以不接入、不提交籠圖。空籠與既有載有動物的籠用途不符；`chain-static.png` 為橫向 U 形，不能在既有窄直鏈位置保比例安全使用，仍用原鏈。`corridor-mid.png`／`training-mid.png` 平鋪接縫不合格；角色和 FX 整批切格／色數／透明度未過，特別兩張洗地機警示圖軸向錯列，全部不接入、不等待回修。Boss、角色、攻擊 FX 原佔位不變。
+- **接入後 build／資料**：`art20-build.txt` 的 tsc + Vite 通過（既有 config／大 chunk 警告）；`art20-validate-data.txt` 的 10 項通過。資料驗證不等於玩法通關。
+- **接入後 production build 自動短測**：`scripts/qa/c2s2-art20.mjs`，`art20-browser.txt`、`art20-desktop-2p.json`、`art20-mobile-1p.json`。兩者均以第6關已過測試存檔經正常入口進第7關，桌面 2P 實際鍵盤移動、模擬手機 1P touch 移動／跳／攻擊；六張 PNG HTTP 200、`image/png`，Phaser texture 尺寸正確，0 pageerror／console error／HTTP ≥400／requestfailed。`art20-*-normal-entry.png` 為正常入口。
+- A–E 其餘 `art20-*-injected-{A,B,C,D,E}.png` 是**注入玩家座標、隔離敵人**，不是正常全關；兩種模式均檢查 A/D/E 遠景和 B/C 原背景。B 段按鍵／touch 實際移動前後，28 個標記的固定 display objects 數量、座標、型別、depth、scale 一致，全部無 physics body；其中新增 7 個號牌底圖及 1 個招牌底圖，並非 2P 複製。這是局部結構／移動回歸，不是全關傷害或真人測試。
+- 中間失敗照留：`art20-first-entry-timeout.txt` 為首輪桌面入口逾時／整個命令被終止，非通過；`art20-initial-desktop-aborted-requests-failure.{json,png}` 與 `art20-initial-browser-failure.txt` 留有 Vite 開發模式多個 `net::ERR_ABORTED`；`art20-initial-mobile-boss-lock-failure.{json,png}` 在注入 E 後回 B 試移動，遇 Boss 入場鎖輸入而失敗。後來將靜態回歸移至進 E 前，且改用 production preview，結果如上；不把失敗抹掉。
+- **未重跑／未驗證**：素材接入後沒有重跑 600 秒、2P 正常入口全關、Boss phases／鏈網計時、pit-hop、存檔旗標。下文的 600 秒「通過」只是**素材接入前前段**結果，不能當本次素材驗收；舊 2P 全關同樣只代表接入前。原鏈網嚴格時間失敗及支線啟動 pageerror／timeout 仍未釐清；真機、真人完整通關、D 暗幕下所有實戰可讀性未驗證。PR 保持 draft。
+
 基底 main `077af8b14b34b3e26d776e36705772fdd691639b`。應優先處理大陸1 Boss／結局問題，因此 Alan／協調方要求停止新增及重跑耗時測試。以下只報目前結果；**不視為可合併驗收**。本資料夾包含原始 JSON、截圖及失敗日誌，保留可重現測試腳本 `scripts/qa/c2s2-*.mjs`。
 
 ## 已完成

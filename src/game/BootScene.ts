@@ -95,6 +95,10 @@ export class BootScene extends Phaser.Scene {
     // Pixel wallpaper (640×360 ≤64c)
     this.load.image('bg-wallpaper', '/art/bg-wallpaper-px.png')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
+    // Stage 7 only: derived from the reviewed #91 head (see art/stage7/manifest.json).
+    for (const name of ['entrance-far', 'backstage-far', 'arena-far', 'net-static', 'number-plate-blank', 'sign-blank']) {
+      this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)
+    }
     for (const meta of Object.values(ENEMY_SHEET_MAP)) {
       this.load.image(`enemy-sheet-${meta.id}`, `/art/enemies/${meta.id}.png`)
     }

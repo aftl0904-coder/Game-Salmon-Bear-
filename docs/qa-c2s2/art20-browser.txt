@@ -1,0 +1,14 @@
+entry desktop-2p 0 {"active":[],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 1 {"active":["studio"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 2 {"active":["logo"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 3 {"active":["difficulty"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 4 {"active":["menu"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 5 {"active":["worldmap"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 6 {"active":["worldmap"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 7 {"active":["worldmap"],"stage":1,"mode":"2p","started":false,"intro":false}
+entry desktop-2p 8 {"active":["play","UIScene"],"stage":7,"mode":"2p","started":false,"intro":true,"x1":220,"x2":380,"vy":0,"attackCd":0}
+entry desktop-2p 9 {"active":["play","UIScene"],"stage":7,"mode":"2p","started":false,"intro":true,"x1":220,"x2":380,"vy":0,"attackCd":0}
+entry desktop-2p 10 {"active":["play","UIScene"],"stage":7,"mode":"2p","started":false,"intro":true,"x1":220,"x2":380,"vy":0,"attackCd":0}
+entry desktop-2p 11 {"active":["play","UIScene"],"stage":7,"mode":"2p","started":true,"intro":false,"x1":220,"x2":380,"vy":0,"attackCd":0}
+{"kind":"desktop-2p","passed":true,"checks":["normal stage-7 entry via menu with seeded save; no position injection","normal entry both players move by keyboard","six actual PNG responses and Phaser textures","A backdrop (injected position, threats isolated)","B backdrop (injected position, threats isolated)","all fixed objects coordinates/count/type/depth/no body unchanged after injected-position player movement","C backdrop (injected position, threats isolated)","D backdrop (injected position, threats isolated)","E backdrop (injected position, threats isolated)"],"networkErrors":[],"errors":[]}
+{"kind":"mobile-1p","passed":true,"checks":["normal stage-7 entry via menu with seeded save; no position injection","normal entry touch right","normal entry touch jump","normal entry touch attack","six actual PNG responses and Phaser textures","A backdrop (injected position, threats isolated)","B backdrop (injected position, threats isolated)","all fixed objects coordinates/count/type/depth/no body unchanged after injected-position player movement","C backdrop (injected position, threats isolated)","D backdrop (injected position, threats isolated)","E backdrop (injected position, threats isolated)"],"networkErrors":[],"errors":[]}

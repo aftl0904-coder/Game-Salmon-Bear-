@@ -1,0 +1,161 @@
+{
+  "kind": "mobile-1p",
+  "description": "Seeded stage-6-complete save and normal menu entry; subsequent A–E positions injected and enemies isolated. Short automated check, not a full playthrough or physical device.",
+  "checks": [
+    {
+      "name": "normal stage-7 entry via menu with seeded save; no position injection",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "mode": "1p",
+        "started": true,
+        "intro": false,
+        "x1": 220,
+        "vy": 0,
+        "attackCd": 0
+      }
+    },
+    {
+      "name": "normal entry touch right",
+      "dx": 86
+    },
+    {
+      "name": "normal entry touch jump",
+      "minVy": -313
+    },
+    {
+      "name": "normal entry touch attack",
+      "attackCd": 893
+    },
+    {
+      "name": "six actual PNG responses and Phaser textures",
+      "textures": {
+        "entrance-far": {
+          "width": 640,
+          "height": 360
+        },
+        "backstage-far": {
+          "width": 640,
+          "height": 360
+        },
+        "arena-far": {
+          "width": 640,
+          "height": 360
+        },
+        "net-static": {
+          "width": 104,
+          "height": 68
+        },
+        "number-plate-blank": {
+          "width": 20,
+          "height": 13
+        },
+        "sign-blank": {
+          "width": 158,
+          "height": 89
+        }
+      }
+    },
+    {
+      "name": "A backdrop (injected position, threats isolated)",
+      "cx": 357,
+      "visible": {
+        "A": true,
+        "D": false,
+        "E": false
+      },
+      "playerX": 350
+    },
+    {
+      "name": "B backdrop (injected position, threats isolated)",
+      "cx": 1307,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 1300
+    },
+    {
+      "name": "C backdrop (injected position, threats isolated)",
+      "cx": 2507,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 2500
+    },
+    {
+      "name": "D backdrop (injected position, threats isolated)",
+      "cx": 3805.5,
+      "visible": {
+        "A": false,
+        "D": true,
+        "E": false
+      },
+      "playerX": 3800
+    },
+    {
+      "name": "E backdrop (injected position, threats isolated)",
+      "cx": 4960,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": true
+      },
+      "playerX": 4800
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/backstage-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/arena-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/number-plate-blank.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/entrance-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/net-static.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/sign-blank.png",
+      "status": 200,
+      "type": "image/png"
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(after.x1-before.x1>15)\n\n    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:73:38",
+  "failureState": {
+    "active": [
+      "play",
+      "UIScene"
+    ],
+    "stage": 7,
+    "mode": "1p",
+    "started": true,
+    "intro": true,
+    "x1": 1300,
+    "vy": 0,
+    "attackCd": 0
+  }
+}
