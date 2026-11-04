@@ -1,0 +1,24 @@
+[
+  {
+    "mode": "desktop",
+    "passed": true,
+    "checks": [
+      "cover→gallery; good/bad; next/previous; three actions; pending states",
+      "return to title; localStorage unchanged",
+      "guide entry still opens",
+      "game entry still opens difficulty"
+    ],
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "passed": true,
+    "checks": [
+      "cover→gallery; good/bad; next/previous; three actions; pending states",
+      "return to title; localStorage unchanged",
+      "guide entry still opens",
+      "game entry still opens difficulty"
+    ],
+    "errors": []
+  }
+]
