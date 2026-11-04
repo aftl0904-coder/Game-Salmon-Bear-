@@ -6077,7 +6077,7 @@ export class GameScene extends Phaser.Scene {
         z.onSplatter = (sx) => this.honeySplat(sx)
         this.addS2Enemy(z)
       },
-      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs),
+      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs, false, true),
       dozerRun: (x0, x1, dir) => this.dozerRun(x0, x1, dir),
       replayQueen: (x) => this.s2Hooks().spawnEgg?.(x),
       replayOwl: () => this.triFeathers(),
@@ -6137,7 +6137,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** 油甘魚攤主's kitchen knife: alternates low (jump) / high (crouch), spins. */
-  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900, boss = false) {
+  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900, boss = false, triVisual = false) {
     if (this.ended) return
     const key = this.textures.exists('s3-knife') ? 's3-knife' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
     const shot = this.enemyShots.create(x, feet - (high ? 19 : 7), key) as Phaser.Physics.Arcade.Sprite
@@ -6150,6 +6150,19 @@ export class GameScene extends Phaser.Scene {
     shot.setData('lane', 0)
     shot.setData('dmg', 1)
     if (boss) shot.setData('boss', true)
+    if (triVisual) {
+      // Only TriBoss gets the larger knife image. Scaling the physics sprite would also
+      // scale its Arcade body, so keep that sprite unscaled and render a separate image.
+      shot.setVisible(false)
+      const visual = this.add.image(shot.x, shot.y, key).setDepth(shot.depth).setScale(1.6)
+      shot.setData('triBoltVisual', visual)
+      const follow = () => visual.setPosition(shot.x, shot.y).setAngle(shot.angle)
+      this.events.on('postupdate', follow)
+      shot.once('destroy', () => {
+        this.events.off('postupdate', follow)
+        visual.destroy()
+      })
+    }
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 360, repeat: -1 })
     floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')
