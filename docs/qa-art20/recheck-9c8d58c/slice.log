@@ -1,0 +1,12 @@
+preview_guard cell 104 122 frames 25 scale vs ref {'idle': 0.808, 'walk': 1.0, 'detect': 0.8, 'warning': 0.84, 'attack': 0.8, 'recover': 0.8, 'hit': 0.8, 'defeat': 0.8}
+preview_product cell 154 134 frames 13 scale vs ref {'walk': 1.0, 'reach': 0.886, 'hit': 0.8, 'die': 1.071}
+triboss cell 320 262 frames 38
+scale report (factor, frames) {'idle': (0.8366, 4), 'move': (0.8366, 4), 'scan': (0.8366, 3), 'warn-charge': (0.8366, 3), 'charge': (0.8366, 4), 'charge-stop': (0.8366, 3), 'warn-brush': (0.8366, 3), 'brush-spin': (0.8366, 4), 'recover': (0.8366, 3), 'hurt': (0.8366, 2), 'defeat': (0.8366, 5)}
+triboss cell 192 224 frames 22
+scale report (factor, frames) {'idle': (0.6349, 4), 'point': (0.6349, 3), 'rain': (0.6349, 4), 'shield': (0.6349, 4), 'hurt': (0.6349, 2), 'defeat': (0.6349, 5)}
+scan-warning 162 46 2
+charge-warning 162 20 2
+brush-warning 162 160 2
+whip 162 64 3
+chain-net-warning 154 162 2
+chain-net 162 136 3
