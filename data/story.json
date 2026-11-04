@@ -928,7 +928,7 @@
         { "still": "ending-2" },
         { "say": "lunbo", "text": "不如而家就喺呢度，大家一齊野餐？", "face": 1 },
         { "say": "kibobo", "text": "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］" },
-        { "still": "ending-3" },
+        { "still": "ending-3", "hideDialog": true, "holdMs": 5000 },
         { "still": null },
         { "card": "鮭鮭熊", "sub": "全部真蜂蜜搵齊・森林獲救" }
       ]
@@ -960,7 +960,7 @@
         { "still": "ending-2" },
         { "say": "lunbo", "text": "［完美結局對白 #6 — 待 Alan 填寫］", "face": 1 },
         { "say": "kibobo", "text": "［完美結局對白 #7 — 待 Alan 填寫］" },
-        { "still": "ending-3" },
+        { "still": "ending-3", "hideDialog": true, "holdMs": 5000 },
         { "still": null },
         { "card": "鮭鮭熊", "sub": "［完美結局字卡 — 待 Alan 填寫］" }
       ]
