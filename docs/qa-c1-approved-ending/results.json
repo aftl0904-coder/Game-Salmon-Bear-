@@ -1,0 +1,450 @@
+[
+  {
+    "device": "desktop",
+    "id": "C11",
+    "injection": true,
+    "input": "keyboard F only",
+    "lines": [
+      {
+        "index": 1,
+        "speaker": "旁白",
+        "text": "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 459,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line1.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 2,
+        "speaker": "琪寶寶",
+        "text": "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line2.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 3,
+        "speaker": "琪寶寶",
+        "text": "飲埋呢罐，噗噗。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 136,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line3.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 4,
+        "speaker": "噗噗",
+        "text": "噗噗噗噗噗！！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 119,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line4.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 5,
+        "speaker": "旁白",
+        "text": "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 374,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line5.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 6,
+        "speaker": "倫寶",
+        "text": "不如而家就喺呢度，大家一齊野餐？",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 272,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line6.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 7,
+        "speaker": "琪寶寶",
+        "text": "好呀，大家齊齊喺度，呢餐一定特別好食！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "desktop-C11-line7.png",
+        "inputAdvanceObserved": true
+      }
+    ],
+    "errors": [],
+    "pass": true,
+    "card": {
+      "title": "鮭鮭熊",
+      "sub": "全部真蜂蜜搵齊・森林獲救",
+      "screenshot": "desktop-C11-card.png",
+      "bounds": {
+        "x": 235.5,
+        "y": 193.5,
+        "width": 169,
+        "height": 17
+      }
+    }
+  },
+  {
+    "device": "desktop",
+    "id": "C11_PERFECT",
+    "injection": true,
+    "input": "keyboard F only",
+    "lines": [
+      {
+        "index": 1,
+        "speaker": "旁白",
+        "text": "十一個朋友都返晒嚟，大家終於可以聚返埋一齊。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 374,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line1.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 2,
+        "speaker": "琪寶寶",
+        "text": "噗噗，最後一罐真蜜喺度。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 204,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line2.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 3,
+        "speaker": "琪寶寶",
+        "text": "飲咗佢啦，我哋陪住你。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 187,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line3.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 4,
+        "speaker": "噗噗",
+        "text": "噗噗！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 51,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line4.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 5,
+        "speaker": "旁白",
+        "text": "森林慢慢回復顏色，大家又可以聚埋一齊。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line5.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 6,
+        "speaker": "倫寶",
+        "text": "終於可以同大家一齊野餐喇。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 221,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line6.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 7,
+        "speaker": "琪寶寶",
+        "text": "有你哋喺度，呢一日就最完美。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 238,
+          "height": 20
+        },
+        "screenshot": "desktop-C11_PERFECT-line7.png",
+        "inputAdvanceObserved": true
+      }
+    ],
+    "errors": [],
+    "pass": true,
+    "card": {
+      "title": "鮭鮭熊",
+      "sub": "送給 最重要嘅妳",
+      "screenshot": "desktop-C11_PERFECT-card.png",
+      "bounds": {
+        "x": 267,
+        "y": 193.5,
+        "width": 106,
+        "height": 17
+      }
+    }
+  },
+  {
+    "device": "mobile",
+    "id": "C11",
+    "injection": true,
+    "input": "touchscreen taps only",
+    "lines": [
+      {
+        "index": 1,
+        "speaker": "旁白",
+        "text": "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 459,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line1.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 2,
+        "speaker": "琪寶寶",
+        "text": "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line2.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 3,
+        "speaker": "琪寶寶",
+        "text": "飲埋呢罐，噗噗。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 136,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line3.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 4,
+        "speaker": "噗噗",
+        "text": "噗噗噗噗噗！！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 119,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line4.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 5,
+        "speaker": "旁白",
+        "text": "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 374,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line5.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 6,
+        "speaker": "倫寶",
+        "text": "不如而家就喺呢度，大家一齊野餐？",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 272,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line6.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 7,
+        "speaker": "琪寶寶",
+        "text": "好呀，大家齊齊喺度，呢餐一定特別好食！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "mobile-C11-line7.png",
+        "inputAdvanceObserved": true
+      }
+    ],
+    "errors": [],
+    "pass": true,
+    "card": {
+      "title": "鮭鮭熊",
+      "sub": "全部真蜂蜜搵齊・森林獲救",
+      "screenshot": "mobile-C11-card.png",
+      "bounds": {
+        "x": 235.5,
+        "y": 193.5,
+        "width": 169,
+        "height": 17
+      }
+    }
+  },
+  {
+    "device": "mobile",
+    "id": "C11_PERFECT",
+    "injection": true,
+    "input": "touchscreen taps only",
+    "lines": [
+      {
+        "index": 1,
+        "speaker": "旁白",
+        "text": "十一個朋友都返晒嚟，大家終於可以聚返埋一齊。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 374,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line1.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 2,
+        "speaker": "琪寶寶",
+        "text": "噗噗，最後一罐真蜜喺度。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 204,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line2.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 3,
+        "speaker": "琪寶寶",
+        "text": "飲咗佢啦，我哋陪住你。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 187,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line3.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 4,
+        "speaker": "噗噗",
+        "text": "噗噗！",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 51,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line4.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 5,
+        "speaker": "旁白",
+        "text": "森林慢慢回復顏色，大家又可以聚埋一齊。",
+        "bounds": {
+          "x": 24,
+          "y": 278,
+          "width": 323,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line5.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 6,
+        "speaker": "倫寶",
+        "text": "終於可以同大家一齊野餐喇。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 221,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line6.png",
+        "inputAdvanceObserved": true
+      },
+      {
+        "index": 7,
+        "speaker": "琪寶寶",
+        "text": "有你哋喺度，呢一日就最完美。",
+        "bounds": {
+          "x": 106,
+          "y": 286,
+          "width": 238,
+          "height": 20
+        },
+        "screenshot": "mobile-C11_PERFECT-line7.png",
+        "inputAdvanceObserved": true
+      }
+    ],
+    "errors": [],
+    "pass": true,
+    "card": {
+      "title": "鮭鮭熊",
+      "sub": "送給 最重要嘅妳",
+      "screenshot": "mobile-C11_PERFECT-card.png",
+      "bounds": {
+        "x": 267,
+        "y": 193.5,
+        "width": 106,
+        "height": 17
+      }
+    }
+  }
+]
