@@ -1,0 +1,123 @@
+{
+  "mode": "mobile",
+  "setup": "stage and arena/hero positions injected; P2/P3 hp and one hit injected; dodge and attack via keyboard or native simulated touch; not a full playthrough",
+  "errors": [],
+  "rounds": [
+    {
+      "warn": {
+        "now": 29997,
+        "act": "warn",
+        "phase": 1,
+        "elapsed": 0,
+        "move": "charge",
+        "bossX": 5130,
+        "heroX": 5025,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": false,
+        "marker": true,
+        "body": {
+          "x": 5086,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "active": {
+        "now": 33314,
+        "act": "charge",
+        "phase": 1,
+        "elapsed": 0,
+        "move": "charge",
+        "bossX": 5130,
+        "heroX": 4798,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": true,
+        "marker": false,
+        "body": {
+          "x": 5086,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "recover": {
+        "now": 35064,
+        "act": "recover",
+        "phase": 1,
+        "elapsed": 250,
+        "move": "charge",
+        "bossX": 5010,
+        "heroX": 4724,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": false,
+        "marker": false,
+        "body": {
+          "x": 4966,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      }
+    }
+  ],
+  "counterattack": {
+    "before": {
+      "now": 36280,
+      "act": "recover",
+      "phase": 1,
+      "elapsed": 950,
+      "move": "charge",
+      "bossX": 5010,
+      "heroX": 4724,
+      "hp": 6,
+      "bossHp": 55,
+      "warning": {
+        "x0": 4966,
+        "x1": 5174
+      },
+      "canHurt": false,
+      "marker": false,
+      "body": {
+        "x": 4966,
+        "width": 88
+      },
+      "texture": "mall-scrubber-placeholder"
+    },
+    "after": {
+      "now": 38480,
+      "act": "warn",
+      "phase": 1,
+      "elapsed": 500,
+      "move": "charge",
+      "bossX": 5010,
+      "heroX": 4724,
+      "hp": 6,
+      "bossHp": 55,
+      "warning": {
+        "x0": 4846,
+        "x1": 5054
+      },
+      "canHurt": false,
+      "marker": true,
+      "body": {
+        "x": 4966,
+        "width": 88
+      },
+      "texture": "mall-scrubber-placeholder"
+    }
+  },
+  "passed": false,
+  "error": "Error: timed out waiting for state; last={\"now\":75529,\"act\":\"brush\",\"phase\":2,\"elapsed\":485,\"move\":\"brush\",\"bossX\":4890,\"heroX\":4843,\"hp\":0,\"bossHp\":32,\"warning\":{\"x0\":4832,\"x1\":4948},\"canHurt\":true,\"marker\":false,\"body\":{\"x\":4832,\"width\":116},\"texture\":\"mall-scrubber-placeholder\"}\n    at waitState (file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:30:9)\n    at async round (file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:57:19)\n    at async file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:69:3"
+}

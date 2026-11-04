@@ -1,0 +1,191 @@
+{
+  "mode": "desktop",
+  "setup": "stage and arena/hero positions injected; P2/P3 hp and one hit injected; dodge and attack via keyboard or native simulated touch; not a full playthrough",
+  "errors": [],
+  "rounds": [
+    {
+      "warn": {
+        "now": 38111,
+        "act": "warn",
+        "phase": 1,
+        "elapsed": 0,
+        "move": "charge",
+        "bossX": 5130,
+        "heroX": 5025,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": false,
+        "marker": true,
+        "body": {
+          "x": 5086,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "active": {
+        "now": 40795,
+        "act": "charge",
+        "phase": 1,
+        "elapsed": 0,
+        "move": "charge",
+        "bossX": 5130,
+        "heroX": 4763,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": true,
+        "marker": false,
+        "body": {
+          "x": 5086,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "recover": {
+        "now": 42061,
+        "act": "recover",
+        "phase": 1,
+        "elapsed": 0,
+        "move": "charge",
+        "bossX": 5010,
+        "heroX": 4749,
+        "hp": 6,
+        "bossHp": 55,
+        "warning": {
+          "x0": 4966,
+          "x1": 5174
+        },
+        "canHurt": false,
+        "marker": false,
+        "body": {
+          "x": 4950,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      }
+    },
+    {
+      "warn": {
+        "now": 49628,
+        "act": "warn",
+        "phase": 2,
+        "elapsed": 0,
+        "move": "brush",
+        "bossX": 5010,
+        "heroX": 4951,
+        "hp": 4,
+        "bossHp": 32,
+        "warning": {
+          "x0": 4952,
+          "x1": 5068
+        },
+        "canHurt": false,
+        "marker": true,
+        "body": {
+          "x": 4966,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "active": {
+        "now": 52828,
+        "act": "brush",
+        "phase": 2,
+        "elapsed": 0,
+        "move": "brush",
+        "bossX": 5010,
+        "heroX": 4654,
+        "hp": 6,
+        "bossHp": 32,
+        "warning": {
+          "x0": 4952,
+          "x1": 5068
+        },
+        "canHurt": true,
+        "marker": false,
+        "body": {
+          "x": 4966,
+          "width": 116
+        },
+        "texture": "mall-scrubber-placeholder"
+      },
+      "recover": {
+        "now": 53794,
+        "act": "recover",
+        "phase": 2,
+        "elapsed": 100,
+        "move": "brush",
+        "bossX": 5010,
+        "heroX": 4654,
+        "hp": 6,
+        "bossHp": 32,
+        "warning": {
+          "x0": 4952,
+          "x1": 5068
+        },
+        "canHurt": false,
+        "marker": false,
+        "body": {
+          "x": 4966,
+          "width": 88
+        },
+        "texture": "mall-scrubber-placeholder"
+      }
+    }
+  ],
+  "counterattack": {
+    "before": {
+      "now": 43145,
+      "act": "recover",
+      "phase": 1,
+      "elapsed": 600,
+      "move": "charge",
+      "bossX": 5010,
+      "heroX": 4749,
+      "hp": 6,
+      "bossHp": 55,
+      "warning": {
+        "x0": 4966,
+        "x1": 5174
+      },
+      "canHurt": false,
+      "marker": false,
+      "body": {
+        "x": 4966,
+        "width": 88
+      },
+      "texture": "mall-scrubber-placeholder"
+    },
+    "after": {
+      "now": 44478,
+      "act": "recover",
+      "phase": 1,
+      "elapsed": 1400,
+      "move": "charge",
+      "bossX": 5010,
+      "heroX": 4749,
+      "hp": 6,
+      "bossHp": 55,
+      "warning": {
+        "x0": 4966,
+        "x1": 5174
+      },
+      "canHurt": false,
+      "marker": false,
+      "body": {
+        "x": 4966,
+        "width": 88
+      },
+      "texture": "mall-scrubber-placeholder"
+    }
+  },
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: no HP loss during this dodge\n\n6 !== 4\n\n    at round (file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:61:12)\n    at async file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:69:3"
+}

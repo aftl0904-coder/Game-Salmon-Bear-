@@ -1,5 +1,7 @@
 # 大陸2第1關實作 checkpoint（2026-11-04）
 
+> **歷史快照：** 以下描述 `6ba07f4` 當時狀態；後續洗地機與故事初版已接入，但仍未驗收。最新結果請看 `docs/STATUS.md` 和 `docs/qa-c2-mall-scrubber/README.md`。
+
 **未完成、不可合併或部署。** 基於重新 fetch 的 main `077af8b14b34b3e26d776e36705772fdd691639b`，不是完整設計或驗收。完整 Alan 確認見 [first-release-confirmations](first-release-confirmations-20261104.md)；已採用較完整 A–E 與 6→7 對白原文見 [提案 §4](c2-stage1-security-cleaner-proposal.md)。提案標示較舊「待確認」的敘述由 2026-11-04 更新及 Alan 確認覆蓋，並非重新請 Alan 選擇。
 
 ## 已做：第6關人類保安（臨時）
