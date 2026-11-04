@@ -1,2 +1,3 @@
 First final verification command failed: bash: syntax error near unexpected token `;` (exit code 2).
 Retry PASS: branch and PR head b75a23777506b89de6deeb58fcf75cae28b65eb0; PR open/draft; main 077af8b14b34b3e26d776e36705772fdd691639b; port 47939 closed.
+Second verification-log commit command reported the same shell-wrapper syntax error and exit code 2, but its underlying add, commit and push did complete. Independently checked that remote and PR head were 4dc7b1d14d15f18e00dcff4e9da9b1af8fa8553a, PR remained open/draft and port 47939 was closed.
