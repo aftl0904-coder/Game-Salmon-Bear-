@@ -2,6 +2,10 @@
 
 From: Manus → Cursor；2026-11-04。基於 main `077af8b`。**Alan 已確認下列三個原創造型，可以按本清單一次開畫；其餘細節由 Cursor 發揮。這不是授權修改遊戲，未確認的玩法／新故事不得自行實作。** 本文件整合第6關新指示及第7關 `ART-REQUEST-19-c2-stage2.md`，後者只存在於 #88 `manus/c2-stage2-20261104`，**#88 是未合併 draft**，不是 main 已交付素材。#88 的 art request 作美術規格來源，不代表 #88 已通過 QA 或合併。
 
+## #91 回修補充（Alan 2026-11-04 確認）
+
+Cursor 可繼續按特別批准修改並推送 `cursor/c2-original-batch`。`training-mid.png` 中似吊頸繩的繩圈改為**掛鉤或盤好嘅繩**；`training-mid.png` 和 `corridor-mid.png` 的左右接駁亦須修正疊影，平鋪時不硬切、不重影。保持原創、圖內無文字及原尺寸；不改玩法或其他人的分支，不自行 merge／close。
+
 ## 開工與交付規則
 
 - Cursor 由開工時重新確認的最新 `origin/main` **自行開一條全新的、獨立 Cursor art branch**；不得覆蓋或編輯任何現有 `cursor/` branch，亦不在 Manus 文件分支工作。若 #20 尚未合併，以 Alan 提供的本文件和 #88 只讀文件作手稿；不得 merge #88 來取文件。
