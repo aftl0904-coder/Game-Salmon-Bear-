@@ -1,0 +1,2 @@
+First final verification command failed: bash: syntax error near unexpected token `;` (exit code 2).
+Retry PASS: branch and PR head b75a23777506b89de6deeb58fcf75cae28b65eb0; PR open/draft; main 077af8b14b34b3e26d776e36705772fdd691639b; port 47939 closed.
