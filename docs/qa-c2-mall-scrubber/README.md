@@ -2,6 +2,17 @@
 
 **歷史 checkpoint 以下為 `6ba07f4` 當時結果。** 本次已接入獨立洗地機初版及已批准 A–E／6→7 文字，但整項仍未完成、不可合併／部署；Boss 安全／操作驗收未通過，不可把以下人類保安紀錄當成洗地機通關證據。
 
+## 2026-11-04 碰撞及 P2 專項再查（仍為 checkpoint）
+
+- 確認 Phaser `Body.reset()` 先用精靈左上角，沒有即時加 offset；原 P2 桌面 active 抽樣 body `[4966,5082]` 超出 warning `[4952,5068]` 右邊 14px，恢復首幀亦可偏左 16px。現對移動／轉刷／恢復同步 offset 及物理 frame snapshots。實測範圍仍有限，不宣稱所有 FPS／狀態通過。
+- Boss 入場原先只清 active 敵人，但 `activateDeferredEnemies()` 會在後續重新啟用 inactive patrol。第6關現在入場清除 active 和 inactive、其獨立武器，Boss 戰中禁止 deferred patrol 啟用；其他關邏輯不改。首次測試入場前記到 1 隻 inactive patrol，戰中抽樣沒有其他 active／有 body 敵人；待自然進場和 projectile／hazard 完整檢查。
+- 原桌面 P2 HP 4→6 的候選原因是 Boss 入場時 arena 入口固定生成可補滿血的壽司；因當次沒有紀錄 pickup 事件，**不能斷言**原例一定是它。原手機 P2 死亡同樣沒有當時來源事件，不能事後認定是 Boss 或雜兵；deferred 復活確實是干擾路徑，但未重播證明它造成該次死亡。
+- `focus1-desktop.json`／`focus1-mobile.json` 是 1P 倫寶（基速 105）注入第6關／場地／角色位置，注入 P2/P3 血量、受擊和 moveCount，P1–P3 各一次用桌面鍵盤／Pixel 7 landscape 模擬 touch 走出預警；各次 HP 6→6。桌面 54 幀、手機 52 幀有效攻擊 body 對照 warning 未見超界；截圖 `focus1-*-p{1,2,3}-*` 只證明該次局部狀況。桌面恢復期實際按鍵使 Boss HP 55→52；手機 HP 55→54 的命中發生在 **scan** 而非 recover，不能說手機反擊空檔已證明。
+- 第一版牆邊測試沒有按移動：桌面記到 `hurtHero` 來源 `mall-scrubber`、HP 6→4，故整個 desktop 測試失敗（`focus1-desktop-failure.png`）；手機該次 HP 6→6，但沒有移動，原腳本輸出 `passed:true` **無效，不是牆邊可避證據**。腳本已改為預警時向右側出口移動，並要求逐幀 attack box 位於 warning、戰中無其他敵人、檢查每次受傷事件而非單看前後 HP，且反擊命中必須發生於 recover。先前失敗均保留。
+- 第二輪 `focus-desktop.json`：桌面 P1–P3 各次 HP 6→6，51 個有效 attack 抽樣無超框、無其他 active enemy；反擊在 recover 令 Boss 55→52。牆邊注入 Boss 4725／玩家 4654，由警示 `[4640,4769]` 內向右移至 4780，首次 charge／recover 仍 HP 6→6，**只是單個場邊局部例子**；當輪 desktop JSON 的 `frameChecks` 是在後續加嚴事件檢查前產生，已另核對事件空、首次命中在 recover。
+- 第二輪 `focus-mobile.json` **整體 FAIL**：P1–P3 三個注入例子各 HP 6→6，66 個有效 attack 抽樣無超框及無其他 active enemy；反擊從 recover 輸入，但實際命中已到 scan，Boss 55→54，不能當恢復期反擊通過。牆邊首個 warning 向右逃至 4785；逐幀顯示首次 charge 和隨後 recover 無扣血，但由於等待時截圖太慢，程式漏了首招並等到下一次 warning／charge，玩家沒有再次躲避，記錄 `mall-scrubber` 傷害 HP 6→4。不能將第二招受擊歸因於首次避位失敗；亦不能把整輪稱 pass。腳本現以 warningId 限定同一招，避免跨招，**此最後腳本修正尚未再跑**。
+- 逐幀 JSON 記錄角色/Boss body、角色攻擊 body、預警矩形、HP、其他敵人及壽司，包裝 `hurtHero`／`hazardHit`／`hitByFishBullet`／`takeSushi`／`knockOut` 記錄血量變化。這是插樁自動測試，並非自然全關、真人或真機；P2 死亡原例仍未取得來源。初次 build 因 TS typings 的 `autoFrame` 失敗（`focus-build.txt`），移除該不需使用欄位後 `focus-build-retry.txt` build 及 `focus-validate-retry.txt` 9 個 validator 通過（仍有既存 bundle 警告）。
+
 ## 2026-11-04 再續測試
 
 - `build-20261104-resume.txt`：tsc + Vite 通過（仍有既存 bundle 警告）；`validate-20261104-resume.txt`：9 項資料 validator 通過。

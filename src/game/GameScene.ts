@@ -5661,6 +5661,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   private activateDeferredEnemies() {
+    // Stage 6's arena is a solo boss encounter; deferred patrols must not
+    // activate after the boss warning/reveal has started.
+    if (this.mall && this.bossFight) return
     const lead = this.leadX()
     const cam = this.cameras.main
     const elapsed = this.started ? this.time.now - this.startedAt : 0
@@ -6336,8 +6339,13 @@ export class GameScene extends Phaser.Scene {
     // Stragglers don't follow into the throne room: they scatter in a puff.
     for (const o of [...this.enemies.getChildren()]) {
       const e = o as Phaser.Physics.Arcade.Sprite
-      if (!e.active) continue
-      playFx(this, 'enemy-poof', e.x, e.y - 20)
+      if (!e.active && !this.mall) continue
+      if (e.active) playFx(this, 'enemy-poof', e.x, e.y - 20)
+      // Patrol weapons are independent objects and are not destroyed with the sprite.
+      if (this.mall && e instanceof PatrolEnemy) {
+        e.weapon?.destroy()
+        e.weapon = null
+      }
       e.disableBody(true, true)
       this.time.delayedCall(0, () => e.destroy())
     }
