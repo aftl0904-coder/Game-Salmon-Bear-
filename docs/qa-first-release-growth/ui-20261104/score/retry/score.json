@@ -1,0 +1,17 @@
+{
+  "scope": "injected scene, starts and clear triggers; not natural gameplay",
+  "passed": true,
+  "result": {
+    "carried": {
+      "eligible": false,
+      "queen": 0,
+      "both": 0
+    },
+    "baseline": {
+      "eligible": true,
+      "queen": 1,
+      "both": 2
+    }
+  },
+  "errors": []
+}
