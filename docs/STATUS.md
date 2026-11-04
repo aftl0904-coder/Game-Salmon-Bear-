@@ -2,8 +2,8 @@
 
 ## 1. 現況
 
-- 本次更新基於 `main` `c6654ef`（合併 #83）。
-- 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇、#78 窿辨識、#80 主選單 PR1、#81 存檔方案、#82 存檔實作、#83 大陸2第2關 brief。
+- 本次更新基於重新 fetch 的 `main` `077af8b`（合併 #86）。
+- 已合併：#65 商場、#67 大陸2地圖美術、#68 大陸2地圖程式、#69 狀態文件、#70 第4關修復、#72 經文斷行、#73 電風扇美術、#74 雙人落台 QA、#75 電風扇 QA、#76 地圖預覽 QA、#77 地圖雙人風扇、#78 窿辨識、#80 主選單 PR1、#81 存檔方案、#82 存檔實作、#83 大陸2第2關 brief、#85 大陸2結局美術、#86 結局預覽 QA。
 - [#71](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/71) 窿辨識方案草稿已按 Alan 確認關閉，branch 保留。[#78](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/78) 已合併（`eb91ae3`）；build、資料驗證、六關模擬手機／桌面自動 QA 通過，未真機或完整通關。
 - #68 的 `markC2Cleared()` 尚未接第10關。#70 未真機及完整泥鬃戰測試。#73 獨立 `fan-glide` 未喺遊戲驗證。#74 未測真機及完整對戰。
 
@@ -38,6 +38,11 @@
 
 ## 6. 大陸2結局圖
 
-- Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 為 draft，尚未合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
+- Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 已合併（`572c0f4`）；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
 - 獨立 QA [#86](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/86) 只含測試證據，沒有重複 #85 素材。以 #83 merge `c6654ef` 加 #85 head `ccbc100` 在 detached worktree 合併預覽，無衝突；build、9 項資料驗證以及 Playwright 桌面鍵盤／模擬手機 touch 逐張重溫 1–10 通過。測試透過 localStorage 直接解鎖，並非真人完整通關或真機測試；第10關完成時仍要接 `markC2Cleared()` 自動解鎖。證據在 `docs/qa-ending-c2/preview-qa/`。
 - 預告片 #87 按 Alan 指示暫停製作，不因結局圖 QA 通過而視為獲接納。
+
+## 7. 第一版攻略（本分支，待審）
+- 基於重新 fetch 的 main `077af8b`，攻略範圍至大陸2第2關（內部第7關），以「待續」結尾；第7關 A–E 及離隊只標為**開發中目標設計**，三項未定文字保留「待補」。#88 仍未合併，其內容不可當成 main 已可玩。
+- 第6關現行 Boss 仍為商場保安總監；#89 記錄 Alan 已確認洗地機及人類保安造型，但均未實裝，戰鬥細節待確認。#90 的新開場尚未合併。#84 的第4／5關 Boss 改名尚未合併，本攻略沿用 main 現名；合併次序及衝突需協調，歷史截圖可能帶舊名。
+- 更正第1關武者王、Boss 傷害、存檔與護符等已確認舊資訊；攻略沒有改遊戲、角色或後續關故事。自動測試範圍與限制見 `docs/qa-guide-first-release/README.md`；未真機、未真人完整通關。

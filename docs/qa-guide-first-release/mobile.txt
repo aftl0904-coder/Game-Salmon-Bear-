@@ -1,0 +1,35 @@
+PASS {
+  "mode": "mobile",
+  "input": "simulated Pixel 7 landscape touch",
+  "checks": [
+    "normal cover → guide; current/WIP/待補 markers and first-stage boss; original start link",
+    "physically scrolled to both new sections and final 待續",
+    "original top 開始玩 link returns to game via touch/keyboard",
+    "return to playable game title via touch/keyboard; C2 gate preserved; no 404, console error, pageerror or failed request"
+  ],
+  "pageerrors": [],
+  "consoleErrors": [],
+  "http404": [],
+  "requestFailed": [],
+  "scroll": [
+    {
+      "selector": "#c2-stage1",
+      "before": 0,
+      "after": 11684,
+      "attempts": 46
+    },
+    {
+      "selector": "#c2-stage2",
+      "before": 11690,
+      "after": 11880,
+      "attempts": 1
+    },
+    {
+      "selector": "#to-be-continued",
+      "before": 11880,
+      "after": 13303,
+      "attempts": 6
+    }
+  ],
+  "passed": true
+}
