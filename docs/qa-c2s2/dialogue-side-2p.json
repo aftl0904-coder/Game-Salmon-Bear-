@@ -1,0 +1,57 @@
+{
+  "description": "Seeded main run next=8 and puffLeft=true; normal keyboard 2P menu entry into stage-7 side trip after Boot; defeat and clear are injected, not a real fight.",
+  "checks": [
+    {
+      "name": "normal side entry after full Boot, original companion present",
+      "entry": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "mode": "2p",
+        "started": true,
+        "intro": false,
+        "pet": true,
+        "events": [],
+        "run": "{\"version\":1,\"runId\":\"qa-side\",\"startStage\":6,\"lastCleared\":7,\"nextStage\":8,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"coins\":50,\"purse\":{\"boy\":20,\"girl\":20},\"hp\":{\"boy\":5,\"girl\":5},\"friends\":[],\"charm\":null,\"mode\":\"2p\",\"solo\":\"boy\",\"puffLeft\":true}",
+        "ending": null
+      }
+    },
+    {
+      "name": "injected defeat, side departure once and main snapshot byte-identical",
+      "done": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "mode": "2p",
+        "started": true,
+        "intro": false,
+        "pet": false,
+        "events": [
+          {
+            "kind": "departure",
+            "at": 24958.6
+          }
+        ],
+        "run": "{\"version\":1,\"runId\":\"qa-side\",\"startStage\":6,\"lastCleared\":7,\"nextStage\":8,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"coins\":50,\"purse\":{\"boy\":20,\"girl\":20},\"hp\":{\"boy\":5,\"girl\":5},\"friends\":[],\"charm\":null,\"mode\":\"2p\",\"solo\":\"boy\",\"puffLeft\":true}",
+        "ending": null
+      }
+    },
+    {
+      "name": "side returns to held mainline map without starting stage 8",
+      "map": {
+        "picking": true,
+        "open": [
+          6,
+          7
+        ],
+        "to": 7
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

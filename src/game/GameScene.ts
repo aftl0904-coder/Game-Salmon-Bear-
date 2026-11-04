@@ -3170,7 +3170,7 @@ export class GameScene extends Phaser.Scene {
     if (this.cageSaid || !this.started || this.leadX() < (ST.reactionX ?? 4390)) return
     this.cageSaid = true
     this.stage7Events.push({ kind: 'reaction', at: this.time.now })
-    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '待補', '#ffd6e8', { size: 12, dur: 2200 })
+    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗……噗噗？', '#ffd6e8', { size: 12, dur: 2200 })
     if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
   }
   /** Clear event is in-memory until saveClear commits it with the rest of the run. */
@@ -3179,14 +3179,14 @@ export class GameScene extends Phaser.Scene {
     if (isSideTrip() || !puffAway()) {
       this.puffDeparturePending = true
       this.stage7Events.push({ kind: 'departure', at: this.time.now })
-      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '待補', '#ffd6e8', { size: 12, dur: 1800 })
+      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗暫時離隊。', '#ffd6e8', { size: 12, dur: 1800 })
       if (this.pet) { this.tweens.killTweensOf(this.pet); this.pet.destroy(); this.pet = null }
       this.petShadow?.setVisible(false)
       this.petJetting = false
     }
     this.queenDefeated()
   }
-  /** Reuses enemyShots collision; warning and lifetime are real-time, independent of P3 AI rate. */
+  /** Reuses enemyShots collision; scene timers are independent of P3 AI rate, but frame/delta dependent. */
   private trainerChain(x0: number, x1: number): number {
     const c = ST.trainer!
     const target = Phaser.Math.Clamp(this.leadX(), x0 + c.chainWidth / 2 + 16, x1 - c.chainWidth / 2 - 16)
@@ -3211,7 +3211,7 @@ export class GameScene extends Phaser.Scene {
       this.stage7Events.push({ kind: 'chain-active', at: this.time.now })
       this.time.delayedCall(c.chainLifeMs, () => { if (shot.active) shot.destroy(); net.destroy(); this.stage7Events.push({ kind: 'chain-end', at: this.time.now }) })
     })
-    // SecurityDirector's internal clock is scaled in P3; do not shorten real warning/hazard.
+    // SecurityDirector's internal clock is scaled in P3; do not shorten the configured scene timers.
     return (c.chainWarnMs + c.chainLifeMs) * (this.queen?.qphase === 3 ? c.phase3Rate : 1)
   }
   private summonProduct() {
@@ -6509,7 +6509,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.exhibit ? '待補' : this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {

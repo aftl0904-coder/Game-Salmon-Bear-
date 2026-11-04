@@ -1,5 +1,7 @@
 # 大陸2第2關實作交接（draft，2026-11-04）
 
+最新確認：Alan 已批准並由本分支接入第7關 D 反應、馴獸師 Boss 卡及 Boss 後離隊提示，原文見 `first-release-dialogue-drafts.md`；以下舊有「待補」描述屬歷史。D 仍只反應、Boss 後才離隊。鏈網 800／1500 ms 保持原值，但逐影格測試仍未通過，須見 `docs/qa-c2s2/README.md`，不代表已驗收。
+
 基底 `main` `077af8b`；規格來源 `c2-stage2-brief.md`、`c2-stage2-answers.md`。首版公開大陸2入口，不依賴 `?c2=1`；第8關未實作，不提前開通。A–E 範圍及配置在 `data/levels/stage7.json`。
 
 | 段 | 實際選用（兩種模式均不自動稀疏／複製） |

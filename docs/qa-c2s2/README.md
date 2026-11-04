@@ -1,5 +1,20 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## 最新 checkpoint：鏈網逐影格診斷及 Alan 已批准對白
+
+- **結論：鏈網時長仍阻塞，沒有修改 800／1500 ms 設定、沒有放寬舊斷言或聲稱自然通關。** `GameScene.trainerChain` 的兩個 `this.time.delayedCall` 用 Phaser Clock 累加平滑／限幅 delta；`stage7Events[].at` 則是 RAF 帶入 `this.time.now` 的最近一個影格時間戳，並非累加 delta。`performance.now()` 是另一個 wall-clock 取樣；事件程式執行時間與 RAF timestamp 本身可相差數十 ms。兩種時鐘不應混同。
+- 單次重現不止是測試讀數：模擬手機 P2 無人為 stall 時，warning→active 的 scene timestamp 866.7 ms、wall 861.6 ms；active→end 的 scene timestamp **1466.6 ms**、wall **1451.5 ms**。該段 16 個更新的 raw delta 合計 1466.6 ms，平滑 delta 合計 1531.6 ms；Clock 到達 1500 ms，wall 卻不到 1500 ms。詳細每幀、每次 timer 及 `performance.now()` 原始數據 `clock-before.json`，不是由設定值推論；這只是該環境單次結果。
+- 控制實驗在 warning 或 active 中注入 **350 ms 主執行緒忙等**（只用來重現，不代表實機負載），RAF raw 單幀約 433–450 ms，但 Phaser 預設 `smoothStep=true`、`minFps=5`，超 200 ms 被歷史合理 delta 替代並平滑。桌面 P2 warning scene 1183.2／wall 1165.7 ms（raw 合計 1183.2，smoothed 876.63）；桌面 P3 active scene 1866.6／wall 1850.0 ms（raw 合計 1866.6，smoothed 1540.03）。手機同樣重現：P2 warning 1199.9／1189.2 ms、P3 active 2033.1／2036.6 ms。完整 `clock-desktop-retry2.json`、`clock-mobile-retry.json` 和同名 console；人為 stall 不等於先前測試負載的精確來源，舊 P2 1300／1749.8、P3 1233.2／1433.4 沒有逐影格資料，不能斷言每一個歷史失敗都由同一原因造成。
+- **解析度／負載**：兩次新樣本啟動時 1 分鐘 load average 16.82／17.38、容器 6 CPU；在非人為 stall 的樣本仍見最大 raw frame 116.7–166.6 ms，不能當低負載或 60 FPS 證據；影格邊界、渲染負擔與系統競爭均會影響 wall 量度。桌面無 stall P2 scene 850／1666.7 ms（失敗）、P3 816.6／1533.3 ms（單次舊斷言通過）；手機無 stall P2 833.4／1516.5 ms（單次通過）、P3 883.4／1666.5 ms（失敗）。P3 Boss clock return 2990 只抵銷 1.3 倍 AI clock，鏈網兩個配置不變。舊嚴格上下限仍保留，不因單次 pass 宣稱穩定。
+- **安全位／真傷害**：桌面注入 2P 站位：x=5000 正常被 Arcade 鏈網傷害，x=4800 的另一角色不扣血；手機注入 1P 先鎖定 x=5000、預警後將角色移到 x=4800，整次不扣血。原始手機 safe-only 標 P2，但 Boss 先前已不可逆升到 P3，所以實際為 P3；新腳本已更正標籤並要求重跑時驗證實際 phase。其餘敵人被隔離、HP／Boss phase／位置為注入，但沒有關閉目標的普通受傷判定；不是自然躲避、全場地安全位或真人全關。模擬手機不是真機。
+- **保留所有失敗**：`clock-before.json` 首輪桌面進選單 timeout；其中一項標 P2 的 stall 實際已不可逆升到 P3（`settings.phase=3`），不可當 P2；後續腳本改先 P2 再 P3 並驗證實際 phase。`clock-desktop-retry.*` 為 preview 連線重設；`clock-mobile-preview-port-conflict.txt` 留下第二個 server 啟動埠被佔而失敗，該次測試實際使用先前仍存活的本分支 production preview，之後兩個測試伺服器均已關閉。原有所有 `release-*`、`injected-*` 失敗未覆寫。
+- **尚待**：設計與驗證能保留 800／1500 ms、處理暫停／背景／卡頓與物理更新同步的局部計時修正；測量低負載及受控負載下各影格實際顯示和傷害，不可只改斷言。第6關共用 Boss 的完整回歸、所有重試／舊檔／重玩、真機、真人完整通關、素材接入後 600 秒／自然 2P 全關仍未驗證；按指示沒有重跑 600 秒。
+- **Alan 最新批准並已接入第7關文案**：逐字原文在 `docs/bible/first-release-dialogue-drafts.md`；D「噗……噗噗？」只反應，Boss 後提示「噗噗暫時離隊。」；馴獸師 Boss 名、稱號、三行及提示亦已逐字接入，D／離隊旗標及主支線規則不變。大陸1結局不屬本 PR。`dialogue-final-build.txt` 通過（既有 Vite config／chunk 警告）；`dialogue-final-validate-data.txt` 10 項通過，包含卡片逐字及 800／1500 資料檢查。
+- **接入後短測**：`dialogue-release-{desktop-keyboard,mobile-touch}-stage{6,7}.json` 各自 `passed:true`、0 pageerror／console error；無 query 正常選單入第6關，預置第6關完成存檔入第7關。第7關其後**注入位置和 Boss 開場／擊敗**：D 文字及無離隊、完整 Boss 卡四個文字欄位和畫面範圍、離隊提示、一次離隊、主線快照、待續及返回只開 6／7 的地圖通過；Boss 卡截圖可見。手機為模擬純 touch，非真機；D 浮字畫面偏淡，完整戰鬥可讀性仍待驗。`dialogue-side-2p.json`：正常選單 2P 支線入關、注入兩次擊敗、主線快照逐字不變及返回地圖通過。不是正常 Boss 戰或自然通關。
+- 測試外層 shell 最終 exit 2：互動執行器令 `${PIPESTATUS[0]}` 狀態捕獲為空並出現 `integer expression expected`；上列五個 **各自 JSON** 有 `passed:true`、console 無錯，不能把外層 command 說成 exit 0。獨立結果和 console 都保留。
+
+以下為歷史記錄；關於文案仍「待補」的敘述以本節最新批准／接入取代，所有當時的失敗結果仍有效。
+
 ## ART-20 局部接入與本次驗證（以下舊紀錄均在接入前）
 - 來源是未合併的 Cursor [#91](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/91) 精確 head `7b198f735ebebfa14c5d07aa7388681745ade7e5`；只提交六張實際 runtime 衍生圖至 `public/art/stage7/`，沒有複製 50 張原圖或修改 Cursor branch。運行本 PR 不依賴 #91 合併；**重製**才需要該 head 的素材、Python、Pillow 13.0.0、NumPy 2.5.4，執行 `python3 scripts/art/derive_stage7_art.py /path/to/cursor-worktree`。腳本核對來源 SHA-256；來源檔名、雜湊、裁切座標和輸出尺寸見 `public/art/stage7/manifest.json`，輸出日誌 `art20-derivation.txt`。
 - **已接入**：`entrance-far.png`（A）、`backstage-far.png`（D）、`arena-far.png`（E）保留 640×360，median-cut 64 色、無 dithering；camera-fixed 遠景於既有 A/B、C/D、D/E 界線按鏡頭中心硬切，B/C 延用既有背景，沒有平鋪不合格中景。D 沿用原暗幕。`net-static.png` 裁切及去磁紅、保比例 nearest 縮成 104×68，使用原網的位置和範圍；`number-plate-blank.png` 為 20×13，`sign-blank.png` 為 158×89。牌字和號碼仍由程式在原有座標繪製；固定物不具碰撞或傷害。六張輸出 ≤64 色，道具 alpha 二值。

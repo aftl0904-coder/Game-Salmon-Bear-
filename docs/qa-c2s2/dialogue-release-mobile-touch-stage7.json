@@ -1,0 +1,255 @@
+{
+  "name": "dialogue-release-mobile-touch-stage7",
+  "description": "Automated ordinary entry without c2 query; stage 7 uses a seeded stage-6-cleared save. End test invokes trainerDefeated directly; no real Boss fight or full playthrough. Simulated mobile is not a physical device.",
+  "checks": [
+    {
+      "name": "public C2 menu visible with no query",
+      "menu": {
+        "stage": 7,
+        "buttons": [
+          1,
+          6
+        ]
+      }
+    },
+    {
+      "name": "ordinary menu/map entry; no teleport",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "started": true,
+        "intro": false,
+        "win": false,
+        "events": [],
+        "run": {
+          "version": 1,
+          "runId": "qa-release",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 50,
+          "purse": {
+            "boy": 20
+          },
+          "hp": {
+            "boy": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "puffLeft": false
+        },
+        "ending": null
+      }
+    },
+    {
+      "name": "injected D reaction exact text, no departure",
+      "reaction": {
+        "text": [
+          "噗……噗噗？"
+        ],
+        "beforePet": false,
+        "afterPet": false,
+        "events": [
+          {
+            "kind": "reaction",
+            "at": 29858.2
+          }
+        ]
+      }
+    },
+    {
+      "name": "injected boss reveal renders exact approved card text within screen",
+      "card": [
+        {
+          "text": "馴獸師",
+          "bounds": {
+            "x": 278.5,
+            "y": 66,
+            "width": 83,
+            "height": 36
+          }
+        },
+        {
+          "text": "森友展銷中心・馴獸師",
+          "bounds": {
+            "x": 260,
+            "y": 105,
+            "width": 120,
+            "height": 14
+          }
+        },
+        {
+          "text": "光鮮展館嘅後面，排住一排又一排籠。\n馴獸師守住呢度，唔想有人行近。\n佢一聲令下，產品化蜜僵湧出嚟。",
+          "bounds": {
+            "x": 201,
+            "y": 176,
+            "width": 238,
+            "height": 67
+          }
+        },
+        {
+          "text": "小心鎖鏈同網，等有空檔先還擊！",
+          "bounds": {
+            "x": 230,
+            "y": 282,
+            "width": 180,
+            "height": 14
+          }
+        }
+      ]
+    },
+    {
+      "name": "injected defeat renders exact approved departure text",
+      "departure": [
+        "噗噗暫時離隊。"
+      ]
+    },
+    {
+      "name": "injected defeat → departure once and clear snapshot",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "started": true,
+        "intro": false,
+        "win": true,
+        "events": [
+          {
+            "kind": "reaction",
+            "at": 29858.2
+          },
+          {
+            "kind": "departure",
+            "at": 39257.8
+          }
+        ],
+        "run": {
+          "version": 1,
+          "runId": "qa-release",
+          "startStage": 6,
+          "lastCleared": 7,
+          "nextStage": 8,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 50,
+          "purse": {
+            "boy": 20
+          },
+          "hp": {
+            "boy": 6
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": true
+        },
+        "ending": null
+      }
+    },
+    {
+      "name": "distinct visible 待續 after tally (injected defeat)"
+    },
+    {
+      "name": "return to holding map; stage 8 unavailable, checkpoint preserved",
+      "map": {
+        "picking": true,
+        "open": [
+          6,
+          7
+        ],
+        "to": 7,
+        "stage": 7,
+        "run": {
+          "version": 1,
+          "runId": "qa-release",
+          "startStage": 6,
+          "lastCleared": 7,
+          "nextStage": 8,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 50,
+          "purse": {
+            "boy": 20
+          },
+          "hp": {
+            "boy": 6
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": true
+        },
+        "ending": null
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
