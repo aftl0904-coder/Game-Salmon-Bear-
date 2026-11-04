@@ -1,0 +1,837 @@
+{
+  "description": "1P automated keyboard operation in stage 7 from seeded stage-6 checkpoint; no teleport, HP editing, forced victory, or manual play. Patrols initial section only; not a full playthrough.",
+  "start": "2026-11-04T00:08:14.802Z",
+  "samples": [
+    {
+      "wallSec": 0,
+      "activeSec": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 220,
+      "hp": 5,
+      "win": false,
+      "now": 31208.6
+    },
+    {
+      "wallSec": 10,
+      "activeSec": 10,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 212,
+      "hp": 4,
+      "win": false,
+      "now": 41508.2
+    },
+    {
+      "wallSec": 21,
+      "activeSec": 21,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 183,
+      "hp": 4,
+      "win": false,
+      "now": 51907.8
+    },
+    {
+      "wallSec": 31,
+      "activeSec": 31,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 183,
+      "hp": 4,
+      "win": false,
+      "now": 62090.7
+    },
+    {
+      "wallSec": 41,
+      "activeSec": 41,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 233,
+      "hp": 4,
+      "win": false,
+      "now": 72057
+    },
+    {
+      "wallSec": 51,
+      "activeSec": 51,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 288,
+      "hp": 4,
+      "win": false,
+      "now": 82506.5
+    },
+    {
+      "wallSec": 62,
+      "activeSec": 61,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 317,
+      "hp": 4,
+      "win": false,
+      "now": 92722.8
+    },
+    {
+      "wallSec": 72,
+      "activeSec": 72,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 327,
+      "hp": 4,
+      "win": false,
+      "now": 103072.4
+    },
+    {
+      "wallSec": 82,
+      "activeSec": 82,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 288,
+      "hp": 4,
+      "win": false,
+      "now": 113105.3
+    },
+    {
+      "wallSec": 92,
+      "activeSec": 92,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 310,
+      "hp": 4,
+      "win": false,
+      "now": 123421.6
+    },
+    {
+      "wallSec": 103,
+      "activeSec": 103,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 353,
+      "hp": 4,
+      "win": false,
+      "now": 133821.2
+    },
+    {
+      "wallSec": 113,
+      "activeSec": 113,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 431,
+      "hp": 4,
+      "win": false,
+      "now": 143954.1
+    },
+    {
+      "wallSec": 123,
+      "activeSec": 123,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 408,
+      "hp": 4,
+      "win": false,
+      "now": 154037
+    },
+    {
+      "wallSec": 133,
+      "activeSec": 133,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 430,
+      "hp": 4,
+      "win": false,
+      "now": 164420
+    },
+    {
+      "wallSec": 144,
+      "activeSec": 144,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 477,
+      "hp": 4,
+      "win": false,
+      "now": 174769.6
+    },
+    {
+      "wallSec": 154,
+      "activeSec": 154,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 543,
+      "hp": 4,
+      "win": false,
+      "now": 184902.5
+    },
+    {
+      "wallSec": 164,
+      "activeSec": 164,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 639,
+      "hp": 4,
+      "win": false,
+      "now": 195268.7
+    },
+    {
+      "wallSec": 174,
+      "activeSec": 174,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 609,
+      "hp": 4,
+      "win": false,
+      "now": 205368.3
+    },
+    {
+      "wallSec": 184,
+      "activeSec": 184,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 641,
+      "hp": 4,
+      "win": false,
+      "now": 215617.9
+    },
+    {
+      "wallSec": 195,
+      "activeSec": 195,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 604,
+      "hp": 4,
+      "win": false,
+      "now": 226117.5
+    },
+    {
+      "wallSec": 205,
+      "activeSec": 205,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 608,
+      "hp": 4,
+      "win": false,
+      "now": 236333.7
+    },
+    {
+      "wallSec": 216,
+      "activeSec": 216,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 641,
+      "hp": 4,
+      "win": false,
+      "now": 246900
+    },
+    {
+      "wallSec": 226,
+      "activeSec": 226,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 556,
+      "hp": 4,
+      "win": false,
+      "now": 257066.2
+    },
+    {
+      "wallSec": 236,
+      "activeSec": 236,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 536,
+      "hp": 4,
+      "win": false,
+      "now": 267365.9
+    },
+    {
+      "wallSec": 246,
+      "activeSec": 246,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 428,
+      "hp": 4,
+      "win": false,
+      "now": 277715.5
+    },
+    {
+      "wallSec": 257,
+      "activeSec": 256,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 420,
+      "hp": 4,
+      "win": false,
+      "now": 287748.4
+    },
+    {
+      "wallSec": 267,
+      "activeSec": 267,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 432,
+      "hp": 4,
+      "win": false,
+      "now": 298164.6
+    },
+    {
+      "wallSec": 277,
+      "activeSec": 277,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 407,
+      "hp": 4,
+      "win": false,
+      "now": 308230.9
+    },
+    {
+      "wallSec": 287,
+      "activeSec": 287,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 450,
+      "hp": 4,
+      "win": false,
+      "now": 318297.2
+    },
+    {
+      "wallSec": 297,
+      "activeSec": 297,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 454,
+      "hp": 4,
+      "win": false,
+      "now": 328546.8
+    },
+    {
+      "wallSec": 308,
+      "activeSec": 308,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 355,
+      "hp": 4,
+      "win": false,
+      "now": 338929.6
+    },
+    {
+      "wallSec": 318,
+      "activeSec": 318,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 311,
+      "hp": 4,
+      "win": false,
+      "now": 349262.6
+    },
+    {
+      "wallSec": 328,
+      "activeSec": 328,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 216,
+      "hp": 4,
+      "win": false,
+      "now": 359362.1
+    },
+    {
+      "wallSec": 338,
+      "activeSec": 338,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 216,
+      "hp": 4,
+      "win": false,
+      "now": 369478.5
+    },
+    {
+      "wallSec": 349,
+      "activeSec": 349,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 235,
+      "hp": 4,
+      "win": false,
+      "now": 379994.7
+    },
+    {
+      "wallSec": 359,
+      "activeSec": 359,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 297,
+      "hp": 4,
+      "win": false,
+      "now": 390044.2
+    },
+    {
+      "wallSec": 369,
+      "activeSec": 369,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 321,
+      "hp": 4,
+      "win": false,
+      "now": 400027.2
+    },
+    {
+      "wallSec": 379,
+      "activeSec": 379,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 328,
+      "hp": 4,
+      "win": false,
+      "now": 410193.4
+    },
+    {
+      "wallSec": 389,
+      "activeSec": 389,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 406,
+      "hp": 4,
+      "win": false,
+      "now": 420576.3
+    },
+    {
+      "wallSec": 400,
+      "activeSec": 400,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 490,
+      "hp": 4,
+      "win": false,
+      "now": 430976
+    },
+    {
+      "wallSec": 410,
+      "activeSec": 410,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 609,
+      "hp": 4,
+      "win": false,
+      "now": 441242.2
+    },
+    {
+      "wallSec": 420,
+      "activeSec": 420,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 625,
+      "hp": 4,
+      "win": false,
+      "now": 451508.5
+    },
+    {
+      "wallSec": 430,
+      "activeSec": 430,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 662,
+      "hp": 4,
+      "win": false,
+      "now": 461508.1
+    },
+    {
+      "wallSec": 441,
+      "activeSec": 441,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 536,
+      "hp": 4,
+      "win": false,
+      "now": 471824.3
+    },
+    {
+      "wallSec": 451,
+      "activeSec": 451,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 487,
+      "hp": 4,
+      "win": false,
+      "now": 481923.9
+    },
+    {
+      "wallSec": 461,
+      "activeSec": 461,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 434,
+      "hp": 4,
+      "win": false,
+      "now": 492073.5
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "completed": false
+}

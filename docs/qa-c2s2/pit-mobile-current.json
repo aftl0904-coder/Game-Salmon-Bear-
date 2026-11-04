@@ -1,0 +1,452 @@
+{
+  "mode": "mobile",
+  "description": "Stage, enemy and player positions injected; other enemies removed. Enemy chase/pit-hop uses normal scene updates; player falls use only touch or keyboard. Not a full playthrough.",
+  "checks": [
+    {
+      "name": "enemy chase hops across pit",
+      "pit": {
+        "x": 2320,
+        "w": 56
+      },
+      "init": {
+        "enemyX": 2280,
+        "heroX": 2476
+      },
+      "trace": [
+        {
+          "x": 2284,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2287,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2287,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2287,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2287,
+          "y": 285,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2295,
+          "y": 285,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2339,
+          "y": 264,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2409,
+          "y": 246,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2415,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2419,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2427,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2437,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2446,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2454,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        }
+      ]
+    },
+    {
+      "name": "enemy chase hops across pit",
+      "pit": {
+        "x": 2780,
+        "w": 64
+      },
+      "init": {
+        "enemyX": 2740,
+        "heroX": 2944
+      },
+      "trace": [
+        {
+          "x": 2743,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2746,
+          "y": 285,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2768,
+          "y": 266,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2836,
+          "y": 242,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2879,
+          "y": 255,
+          "leaping": true,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2883,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2890,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2894,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2902,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        },
+        {
+          "x": 2910,
+          "y": 285,
+          "leaping": false,
+          "fsm": "CHASE"
+        }
+      ]
+    },
+    {
+      "name": "player walks into pit and respawns",
+      "pit": {
+        "x": 2320,
+        "w": 56
+      },
+      "trace": [
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2278,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2296,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2305,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2316,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2334,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2345,
+          "y": 289,
+          "hp": 6
+        },
+        {
+          "x": 2365,
+          "y": 319,
+          "hp": 6
+        },
+        {
+          "x": 2369,
+          "y": 371,
+          "hp": 6
+        },
+        {
+          "x": 2369,
+          "y": 402,
+          "hp": 6
+        },
+        {
+          "x": 2250,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2250,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2259,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2284,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2284,
+          "y": 285,
+          "hp": 5
+        }
+      ]
+    },
+    {
+      "name": "player walks into pit and respawns",
+      "pit": {
+        "x": 2780,
+        "w": 64
+      },
+      "trace": [
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2738,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2745,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2763,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2779,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2786,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2795,
+          "y": 285,
+          "hp": 6
+        },
+        {
+          "x": 2802,
+          "y": 287,
+          "hp": 6
+        },
+        {
+          "x": 2818,
+          "y": 306,
+          "hp": 6
+        },
+        {
+          "x": 2827,
+          "y": 325,
+          "hp": 6
+        },
+        {
+          "x": 2834,
+          "y": 345,
+          "hp": 6
+        },
+        {
+          "x": 2841,
+          "y": 375,
+          "hp": 6
+        },
+        {
+          "x": 2837,
+          "y": 402,
+          "hp": 6
+        },
+        {
+          "x": 2710,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2719,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2737,
+          "y": 285,
+          "hp": 5
+        },
+        {
+          "x": 2737,
+          "y": 285,
+          "hp": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

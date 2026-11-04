@@ -44,6 +44,7 @@
 
 ## 7. 大陸2第2關實作（draft，2026-11-04）
 
-- 獨立 branch `manus/c2-stage2-20261104`；不得 merge，先處理 Alan 最新回報的大陸1 Boss／結局問題。第7關 A–E、既有 Boss 皮膚及主線 `run.puffLeft` 已接線，敵人配置、素材缺口和待驗證設計見 `docs/bible/c2-stage2-implementation.md`。三項新文案只用「待補」；返隊未決，不實作。Cursor 可執行美術交接 `docs/cursor/ART-REQUEST-19-c2-stage2.md`。
-- build／既有 9 項資料驗證通過；1P ≥600 秒第7關、2P bot 全程自動 pass、手機 touch、真機、真人完整通關、P3 截圖、離隊旗標測試及鏈網時間／安全站位均未通過或未驗證。局部注入測試整體失敗，不能當完整通關；實際證據與原因在 `docs/qa-c2s2/README.md`。
+- 獨立 branch `manus/c2-stage2-20261104`，#88 保持 draft，不 merge／close。第7關 A–E、既有 Boss 皮膚及主線 `run.puffLeft` 已接線；三項文案仍「待補」，返隊不實作。#91 素材經另一組檢查，動畫切格、FX、場景接縫有問題；暫不匯入或複製，繼續使用佔位。
+- 2P 鍵盤 bot 經正常入口全關、正常續關及主線結算存檔斷言通過；模擬手機 touch 入口／移動／跳／攻擊短測、注入位置的 1P/2P 固定物和兩坑跳／墮坑短測通過。擴充資料驗證涵蓋第7關；build 結果及各項證據見 `docs/qa-c2s2/README.md`。
+- 鏈網事件已隔離，但並行負載下 P2／P3 實測時長有超出嚴格容差，保留失敗紀錄、不可當穩定通過；第6關共用 Boss 模板獨立回歸、真機及真人完整通關未驗證。1P 自動前段來回累計第7關有效操作 600 秒、wall 601 秒通過（非全關）；旗標短測中主線注入及重載已觀察，支線啟動出現 pageerror 與 timeout，成因未判定，舊檔、新局及支線未驗證。
 - 成長系統不在此 PR 實作；只保留空 `clearRank` hook，支線不發點。**第10關 `markC2Cleared()` 尚未接駁**，維持待辦。
