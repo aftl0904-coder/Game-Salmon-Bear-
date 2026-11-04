@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import assert from 'node:assert/strict'
 const mode = process.env.MODE || 'desktop'
 const out = 'docs/qa-c2-mall-scrubber'
+const label = process.env.QA_LABEL || 'focus'
 const report = { mode, setup: '1P boy (105px/s); injected stage 6, initial position and boss trigger; P2/P3 HP/receiveHit and moveCount injected; wall case additionally teleports boss and hero. Dodge and attack use keyboard or simulated native touch, not natural play, human or device.', errors: [], rounds: [], events: [], samples: [] }
 const browser = await chromium.launch({ executablePath: '/usr/bin/chromium', args: ['--use-gl=swiftshader','--enable-unsafe-swiftshader'] })
 const context = await browser.newContext(mode === 'mobile' ? { ...devices['Pixel 7 landscape'] } : { viewport:{width:1280,height:720} })
@@ -23,7 +24,7 @@ async function wait(pred, label, ms=35000) {
   while(Date.now()-start<ms) { const s=await state(); if(s && pred(s)) return s; await page.waitForTimeout(35) }
   throw Error(`timeout ${label}: ${JSON.stringify(await state())}`)
 }
-async function shot(label) { await page.screenshot({path:`${out}/focus-${mode}-${label}.png`}) }
+async function shot(phaseLabel) { await page.screenshot({path:`${out}/${label}-${mode}-${phaseLabel}.png`}) }
 try {
   await page.goto('http://127.0.0.1:47431/?c2=1')
   await page.waitForFunction(() => window.__SAKE_GAME__?.scene?.getScene('play') && window.__SAKE_GAME__.scene.getScenes(true).length, null,{timeout:30000})
@@ -100,7 +101,7 @@ finally {
   if(report.passed && (!active.length || outside.length || enemies.length || damageDuringTrials.length || !hitInRecovery)) {
     report.passed=false;report.error='Frame/event check failed: outside warning, unexpected enemy/damage, no active frames, or counter hit not in recovery'
   }
-  fs.writeFileSync(`${out}/focus-${mode}.json`,JSON.stringify(report,null,2)+'\n')
+  fs.writeFileSync(`${out}/${label}-${mode}.json`,JSON.stringify(report,null,2)+'\n')
   console.log(JSON.stringify({mode,passed:report.passed,error:report.error,events:report.events,rounds:report.rounds.length,frames:report.samples.length,counterattack:report.counterattack,wall:report.wall},null,2))
   await browser.close()
 }
