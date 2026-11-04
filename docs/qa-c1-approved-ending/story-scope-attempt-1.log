@@ -1,0 +1,4 @@
+  File "<stdin>", line 11
+    return sum((walk(x,y,p+'/'+str(i)) for i,(x,y) in enumerate(zip(a,b)),[])
+                                                                         ^
+SyntaxError: invalid syntax
