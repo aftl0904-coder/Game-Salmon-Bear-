@@ -1,5 +1,7 @@
 # ART-20 回修複驗（2026-11-04）
 
+> 歷史快照：後續 `4dab1f1` 已將繩圈換為掛鉤並回修兩張中景；最新結果見 [第二輪複驗](../recheck-4dab1f1/README.md)。本頁保留當時的原圖量度與試切風險。
+
 ## 結論
 
 只讀對象為 Cursor draft PR #91 head `9c8d58ca6fa87cd24ba409ecb38810c5a6e1949e`、main 基底 `077af8b14b34b3e26d776e36705772fdd691639b`。回修 commit 相對 `7b198f7` 只改 `art-src/`；沒有修改 Cursor 分支、合併或部署。原始問題及舊版證據保留在上一層 README。
