@@ -15,20 +15,20 @@
     {
       "selector": "#c2-stage1",
       "before": 0,
-      "after": 11684,
+      "after": 11558,
       "attempts": 46
     },
     {
       "selector": "#c2-stage2",
-      "before": 11690,
-      "after": 11880,
-      "attempts": 1
+      "before": 11559,
+      "after": 12113,
+      "attempts": 2
     },
     {
       "selector": "#to-be-continued",
-      "before": 11880,
-      "after": 13303,
-      "attempts": 6
+      "before": 12120,
+      "after": 13326,
+      "attempts": 5
     }
   ],
   "passed": true
