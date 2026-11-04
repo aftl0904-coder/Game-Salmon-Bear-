@@ -19,6 +19,7 @@ export function isGrowthWallet(value: unknown): value is GrowthWallet {
   if (Object.keys(allocation).length !== GROWTH_AXES.length) return false
   let used = 0
   for (const axis of GROWTH_AXES) {
+    if (!Object.hasOwn(allocation, axis)) return false
     const n = allocation[axis]
     if (!Number.isSafeInteger(n) || (n as number) < 0) return false
     used += n as number
