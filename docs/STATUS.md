@@ -41,3 +41,11 @@
 - Cursor 素材 [#85](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/85) 為 draft，尚未合併；包含結局十圖、人物與底圖、trailer 和 logo 草稿。Alan 已同 Cursor 確認圖片，唔再等佢揀；凍結 Cursor branch 並維持一人一 branch。
 - 獨立 QA [#86](https://github.com/aftl0904-coder/Game-Salmon-Bear-/pull/86) 只含測試證據，沒有重複 #85 素材。以 #83 merge `c6654ef` 加 #85 head `ccbc100` 在 detached worktree 合併預覽，無衝突；build、9 項資料驗證以及 Playwright 桌面鍵盤／模擬手機 touch 逐張重溫 1–10 通過。測試透過 localStorage 直接解鎖，並非真人完整通關或真機測試；第10關完成時仍要接 `markC2Cleared()` 自動解鎖。證據在 `docs/qa-ending-c2/preview-qa/`。
 - 預告片 #87 按 Alan 指示暫停製作，不因結局圖 QA 通過而視為獲接納。
+
+## 7. 大陸1結尾大合照停留（Alan 已確認，2026-11-04）
+
+- 由重新 fetch 的 `main` `077af8b` 開獨立 Manus branch：正常及完美結局的現有 `ending-3` 淡入完成、完整顯示後停留 5 秒，再沿原流程淡出；不把淡入／淡出算入 5 秒。舊對話框在此圖隱藏，右上原有跳過保留；鍵盤及純 touch 均可提前跳過。其他 `still` 預設不變，不改大陸2十圖。
+- `C11`／`C11_PERFECT` 原有對白及「待 Alan 填寫」保留，不自行代寫；不換圖。現有 `ending-3` 是六位角色同框，不是聲稱十一位朋友都出現的另一張 `ending-picnic`。
+- 舊版測試：桌面正常／完美自然停留實測 5116／5183ms；模擬手機 touch 完美分支跳過 225ms 到通關卡，其後可進片尾。手機正常自然播放錄得 5599.7ms、5366.4ms，兩次均超出舊腳本自行訂的 5300ms 上限，舊測仍為 FAIL，原 log 全保留。該上限不是 Alan 所確認的要求；沒有當時逐幀資料不能反推兩次精確成因。詳細審核見 [`qa-c1-photo/`](./qa-c1-photo/README.md)。
+- 測試以結局入口及朋友數注入；桌面鍵盤和模擬手機 touch 皆不代表真人完整通關或真機。由 Alan 審核 draft PR，不自行合併。
+- 2026-11-04 複核：修正慢幀時 scene 時戳早於圖片實際 render 提交的計時起點；本輪模擬手機純 touch 正常／完美自然 render 間隔 5268.0／5346.6ms，平均約 6.83／6.36 FPS；兩支自然到字卡、通關及片尾，兩支跳過同樣到片尾。逐幀及事件分解見 `qa-c1-photo/audit-20261104/`；舊 5300ms 腳本 FAIL 保留。四案例逐項 PASS，但原執行殼層退出碼擷取出錯，無法聲稱整個殼層 exit 0；自建 server 已關閉。未測真機、完整通關或背景／鎖屏。

@@ -1,0 +1,588 @@
+{
+  "photo": [
+    {
+      "wall": 60238.79999999702,
+      "scene": 60198.8,
+      "frame": 483,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60389.79999999702,
+      "scene": 60348.8,
+      "frame": 484,
+      "key": "story-ending-3",
+      "alpha": 0.32222222222222224,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60499.20000000298,
+      "scene": 60432.1,
+      "frame": 485,
+      "key": "story-ending-3",
+      "alpha": 0.5422222222222223,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60593.60000000149,
+      "scene": 60548.8,
+      "frame": 486,
+      "key": "story-ending-3",
+      "alpha": 0.7822222222222223,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60767.60000000149,
+      "scene": 60698.8,
+      "frame": 487,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60881.70000000298,
+      "scene": 60815.5,
+      "frame": 488,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 60949.70000000298,
+      "scene": 60932.2,
+      "frame": 489,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61100.79999999702,
+      "scene": 61048.8,
+      "frame": 490,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61270.79999999702,
+      "scene": 61198.8,
+      "frame": 491,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61370.79999999702,
+      "scene": 61332.1,
+      "frame": 492,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61558.10000000149,
+      "scene": 61498.8,
+      "frame": 493,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61678.10000000149,
+      "scene": 61648.8,
+      "frame": 494,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61689.89999999851,
+      "scene": 61665.4,
+      "frame": 495,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 61958.10000000149,
+      "scene": 61932,
+      "frame": 496,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62129.29999999702,
+      "scene": 62082,
+      "frame": 497,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62284.29999999702,
+      "scene": 62265.4,
+      "frame": 498,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62436.39999999851,
+      "scene": 62415.4,
+      "frame": 499,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62449.39999999851,
+      "scene": 62432.1,
+      "frame": 500,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62605.60000000149,
+      "scene": 62565.4,
+      "frame": 501,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 62897.29999999702,
+      "scene": 62848.7,
+      "frame": 502,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63002.79999999702,
+      "scene": 62982,
+      "frame": 503,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63150.60000000149,
+      "scene": 63132,
+      "frame": 504,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63370.70000000298,
+      "scene": 63332.1,
+      "frame": 505,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63539.60000000149,
+      "scene": 63482,
+      "frame": 506,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63687.89999999851,
+      "scene": 63632,
+      "frame": 507,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63800,
+      "scene": 63782,
+      "frame": 508,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 63984,
+      "scene": 63965.3,
+      "frame": 509,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64151.20000000298,
+      "scene": 64132,
+      "frame": 510,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64345.79999999702,
+      "scene": 64315.3,
+      "frame": 511,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64458.39999999851,
+      "scene": 64432,
+      "frame": 512,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64609.20000000298,
+      "scene": 64582,
+      "frame": 513,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64755.60000000149,
+      "scene": 64732,
+      "frame": 514,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 64871.10000000149,
+      "scene": 64848.6,
+      "frame": 515,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65005.60000000149,
+      "scene": 64982,
+      "frame": 516,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65177,
+      "scene": 65115.3,
+      "frame": 517,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65316.79999999702,
+      "scene": 65248.6,
+      "frame": 518,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65414.39999999851,
+      "scene": 65365.3,
+      "frame": 519,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65686,
+      "scene": 65615.2,
+      "frame": 520,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65807.60000000149,
+      "scene": 65781.9,
+      "frame": 521,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 65855.10000000149,
+      "scene": 65831.9,
+      "frame": 522,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 66035.60000000149,
+      "scene": 65981.9,
+      "frame": 523,
+      "key": "story-ending-3",
+      "alpha": 0.5714285714285714,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 66162.5,
+      "scene": 66115.3,
+      "frame": 524,
+      "key": "story-ending-3",
+      "alpha": 0.2114285714285714,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 66360.39999999851,
+      "scene": 66298.5,
+      "frame": 525,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    }
+  ],
+  "lines": [
+    "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+    "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+    "飲埋呢罐，噗噗。",
+    "噗噗噗噗噗！！",
+    "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+    "不如而家就喺呢度，大家一齊野餐？",
+    "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］"
+  ],
+  "errors": [],
+  "updates": [
+    {
+      "wall": 60843.39999999851,
+      "scene": 60815.5,
+      "frame": 488
+    },
+    {
+      "wall": 60935.5,
+      "scene": 60932.2,
+      "frame": 489
+    },
+    {
+      "wall": 61061.39999999851,
+      "scene": 61048.8,
+      "frame": 490
+    },
+    {
+      "wall": 61205.10000000149,
+      "scene": 61198.8,
+      "frame": 491
+    },
+    {
+      "wall": 61345.89999999851,
+      "scene": 61332.1,
+      "frame": 492
+    },
+    {
+      "wall": 61509.39999999851,
+      "scene": 61498.8,
+      "frame": 493
+    },
+    {
+      "wall": 61659.5,
+      "scene": 61648.8,
+      "frame": 494
+    },
+    {
+      "wall": 61679.79999999702,
+      "scene": 61665.4,
+      "frame": 495
+    },
+    {
+      "wall": 61948.20000000298,
+      "scene": 61932,
+      "frame": 496
+    },
+    {
+      "wall": 62089.5,
+      "scene": 62082,
+      "frame": 497
+    },
+    {
+      "wall": 62269.5,
+      "scene": 62265.4,
+      "frame": 498
+    },
+    {
+      "wall": 62425.5,
+      "scene": 62415.4,
+      "frame": 499
+    },
+    {
+      "wall": 62439.89999999851,
+      "scene": 62432.1,
+      "frame": 500
+    },
+    {
+      "wall": 62583,
+      "scene": 62565.4,
+      "frame": 501
+    },
+    {
+      "wall": 62868.10000000149,
+      "scene": 62848.7,
+      "frame": 502
+    },
+    {
+      "wall": 62986.89999999851,
+      "scene": 62982,
+      "frame": 503
+    },
+    {
+      "wall": 63136.29999999702,
+      "scene": 63132,
+      "frame": 504
+    },
+    {
+      "wall": 63336.10000000149,
+      "scene": 63332.1,
+      "frame": 505
+    },
+    {
+      "wall": 63496.79999999702,
+      "scene": 63482,
+      "frame": 506
+    },
+    {
+      "wall": 63645,
+      "scene": 63632,
+      "frame": 507
+    },
+    {
+      "wall": 63790.79999999702,
+      "scene": 63782,
+      "frame": 508
+    },
+    {
+      "wall": 63973.29999999702,
+      "scene": 63965.3,
+      "frame": 509
+    },
+    {
+      "wall": 64138.29999999702,
+      "scene": 64132,
+      "frame": 510
+    },
+    {
+      "wall": 64316,
+      "scene": 64315.3,
+      "frame": 511
+    },
+    {
+      "wall": 64445.70000000298,
+      "scene": 64432,
+      "frame": 512
+    },
+    {
+      "wall": 64590.70000000298,
+      "scene": 64582,
+      "frame": 513
+    },
+    {
+      "wall": 64747,
+      "scene": 64732,
+      "frame": 514
+    },
+    {
+      "wall": 64861.70000000298,
+      "scene": 64848.6,
+      "frame": 515
+    },
+    {
+      "wall": 64986.60000000149,
+      "scene": 64982,
+      "frame": 516
+    },
+    {
+      "wall": 65133.79999999702,
+      "scene": 65115.3,
+      "frame": 517
+    },
+    {
+      "wall": 65258.89999999851,
+      "scene": 65248.6,
+      "frame": 518
+    },
+    {
+      "wall": 65404.20000000298,
+      "scene": 65365.3,
+      "frame": 519
+    },
+    {
+      "wall": 65629,
+      "scene": 65615.2,
+      "frame": 520
+    },
+    {
+      "wall": 65784.10000000149,
+      "scene": 65781.9,
+      "frame": 521
+    }
+  ],
+  "holdStart": {
+    "wall": 60767.89999999851,
+    "scene": 60698.8,
+    "frame": 488
+  },
+  "holdEnd": {
+    "wall": 65784.20000000298,
+    "scene": 65781.9,
+    "frame": 521
+  },
+  "fadeAdd": {
+    "wall": 65816.10000000149,
+    "scene": 65781.9,
+    "frame": 522
+  }
+}

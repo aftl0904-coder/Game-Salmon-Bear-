@@ -1,0 +1,19 @@
+
+CASE {"name":"mobile-normal-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"touch only after setup"}
+FAIL {"name":"mobile-normal-natural","error":"AssertionError [ERR_ASSERTION]: scene full opacity hold 5599.699999999997ms\n    at run (file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:146:14)\n    at async file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:177:82","errors":[],"state":{"story":false,"clear":true}}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: scene full opacity hold 5599.699999999997ms
+    at run (file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:146:14)
+    at async file:///tmp/salmon-c1-photo-hold/docs/qa-c1-photo/photo-qa.mjs:177:82 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v22.23.4

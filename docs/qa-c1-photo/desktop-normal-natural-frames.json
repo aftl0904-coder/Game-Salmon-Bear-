@@ -1,0 +1,470 @@
+{
+  "photo": [
+    {
+      "wall": 45151,
+      "scene": 45147.6,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45340,
+      "scene": 45330.9,
+      "key": "story-ending-3",
+      "alpha": 0.42,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45353.10000000149,
+      "scene": 45347.6,
+      "key": "story-ending-3",
+      "alpha": 0.4488888888888889,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45457.79999999702,
+      "scene": 45447.5,
+      "key": "story-ending-3",
+      "alpha": 0.6822222222222222,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45644.20000000298,
+      "scene": 45630.9,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45687.10000000149,
+      "scene": 45680.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45752.70000000298,
+      "scene": 45747.5,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 45945.39999999851,
+      "scene": 45930.9,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46002.79999999702,
+      "scene": 45997.5,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46099.5,
+      "scene": 46080.9,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46227.60000000149,
+      "scene": 46214.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46475,
+      "scene": 46464.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46648.20000000298,
+      "scene": 46647.5,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46668.70000000298,
+      "scene": 46664.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46685.39999999851,
+      "scene": 46680.9,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46773.5,
+      "scene": 46764.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 46948.29999999702,
+      "scene": 46930.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47034.79999999702,
+      "scene": 47014.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47217.20000000298,
+      "scene": 47214.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47326.89999999851,
+      "scene": 47314.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47427.79999999702,
+      "scene": 47414.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47474.89999999851,
+      "scene": 47464.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47544.39999999851,
+      "scene": 47530.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47642.20000000298,
+      "scene": 47630.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47865.39999999851,
+      "scene": 47864.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47994.39999999851,
+      "scene": 47947.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48086,
+      "scene": 48047.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48135.89999999851,
+      "scene": 48114.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48284.20000000298,
+      "scene": 48280.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48326.89999999851,
+      "scene": 48314.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48514.79999999702,
+      "scene": 48514.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48551.39999999851,
+      "scene": 48547.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48634.10000000149,
+      "scene": 48614.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48734.70000000298,
+      "scene": 48730.7,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48841.5,
+      "scene": 48814.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48947.5,
+      "scene": 48930.7,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49058,
+      "scene": 49047.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49181.39999999851,
+      "scene": 49164,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49289.29999999702,
+      "scene": 49280.7,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49381.89999999851,
+      "scene": 49364,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49555.60000000149,
+      "scene": 49514,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49709.20000000298,
+      "scene": 49697.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49723.10000000149,
+      "scene": 49714.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49830.89999999851,
+      "scene": 49814,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49918,
+      "scene": 49914,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50021.89999999851,
+      "scene": 50014,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50167.70000000298,
+      "scene": 50164,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50224.60000000149,
+      "scene": 50214,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50327.70000000298,
+      "scene": 50314,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50428.70000000298,
+      "scene": 50414,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50515.39999999851,
+      "scene": 50497.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50682.39999999851,
+      "scene": 50680.6,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50704.70000000298,
+      "scene": 50697.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50759.5,
+      "scene": 50747.3,
+      "key": "story-ending-3",
+      "alpha": 0.8485714285714285,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50898.79999999702,
+      "scene": 50880.7,
+      "key": "story-ending-3",
+      "alpha": 0.4457142857142753,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 50950.10000000149,
+      "scene": 50930.7,
+      "key": "story-ending-3",
+      "alpha": 0.30000000000000004,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 51089.10000000149,
+      "scene": 51080.6,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    }
+  ],
+  "lines": [
+    "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+    "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+    "飲埋呢罐，噗噗。",
+    "噗噗噗噗噗！！",
+    "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+    "不如而家就喺呢度，大家一齊野餐？",
+    "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］"
+  ],
+  "errors": []
+}

@@ -35,8 +35,8 @@ type Step =
   | { fx: 'shadow' | 'flash' | 'shake' }
   | { sfx: 'gulp' | 'sparkle' | 'dread' | 'coin' }
   | { card: string; sub?: string }
-  /** Full-screen illustration over the stage (dialogue stays on top). `null` fades it out. */
-  | { still: string | null; text?: string }
+  /** Full-screen illustration; dialogue normally stays on top. `null` fades it out. */
+  | { still: string | null; text?: string; hideDialog?: boolean; holdMs?: number }
   /** Play one of an actor's own animations (e.g. the queen's `defeat`). */
   | { anim: string; name: string }
 
@@ -84,6 +84,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   const props = new Map<string, Phaser.GameObjects.Image>()
   let dead = false
   let finished = false
+  let holdUpdate: (() => void) | null = null
 
   // ── Stage ──────────────────────────────────────────────────────────────
   root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 1).setOrigin(0))
@@ -187,6 +188,22 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     new Promise<void>((res) => {
       if (dead) return res()
       scene.time.delayedCall(ms, () => res())
+    })
+  // TimerEvents accumulate capped frame deltas. Start on the monotonic clock
+  // after fade-in completes and its frame has been submitted for rendering;
+  // scene.time.now is the frame's earlier rAF timestamp, not the actual time now.
+  // The first update at or after the deadline resumes the original sequence.
+  const holdStill = (ms: number) =>
+    new Promise<void>((res) => {
+      if (dead) return res()
+      const until = performance.now() + ms
+      holdUpdate = () => {
+        if (!dead && performance.now() < until) return
+        if (holdUpdate) scene.events.off('update', holdUpdate)
+        holdUpdate = null
+        res()
+      }
+      scene.events.on('update', holdUpdate)
     })
   const tween = (cfg: Phaser.Types.Tweens.TweenBuilderConfig) =>
     new Promise<void>((res) => {
@@ -393,6 +410,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     } else if ('sfx' in s) {
       SFX[s.sfx]()
     } else if ('still' in s) {
+      if (s.hideDialog) dialog.setVisible(false)
       if (still) {
         const old = still
         still = null
@@ -413,6 +431,9 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
         stillLayer.add(c)
         still = c
         await tween({ targets: c, alpha: 1, duration: 450 })
+        // The optional hold begins only after the image is completely opaque;
+        // the next still step owns its separate 350 ms fade-out. Skip remains live.
+        if (!dead && s.holdMs) await holdStill(s.holdMs)
       }
     } else if ('card' in s) {
       dialog.setVisible(false)
@@ -441,10 +462,12 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
     poll.remove(false)
     kb?.off('keydown', onKey)
     scene.input?.off('pointerdown', onTap)
+    if (holdUpdate) scene.events.off('update', holdUpdate)
+    holdUpdate = null
     // During scene shutdown the containers may already be torn down — guard every list.
     try {
-      const objs = [actorLayer, propLayer, fxLayer].flatMap((c) => (c?.list ? [...c.list] : []))
-      scene.tweens?.killTweensOf([...objs, tint, nextMark])
+      const objs = [actorLayer, propLayer, fxLayer, stillLayer].flatMap((c) => (c?.list ? [...c.list] : []))
+      scene.tweens?.killTweensOf([...objs, root, tint, nextMark])
     } catch {
       /* scene already shutting down */
     }

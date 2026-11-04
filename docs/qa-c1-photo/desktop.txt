@@ -1,0 +1,22 @@
+
+CASE {"name":"desktop-normal-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"keyboard after setup"}
+TIMING {"firstFadeInToOpaqueSceneMs":483,"opaqueHoldSceneMs":5116,"opaqueHoldWallMs":5115,"fadeOutSampleSceneMs":333,"samples":57}
+CONTINUATION original end card → stage-5 clear card → credits
+LINES {"id":"C11","count":7,"unchanged":true,"priorStillRetainsDialog":true}
+RESULT {"name":"desktop-normal-natural","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"desktop-perfect-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":11,"input":"keyboard after setup"}
+TIMING {"firstFadeInToOpaqueSceneMs":650,"opaqueHoldSceneMs":5183,"opaqueHoldWallMs":5173,"fadeOutSampleSceneMs":567,"samples":47}
+CONTINUATION original end card → stage-5 clear card → credits
+LINES {"id":"C11_PERFECT","count":7,"unchanged":true,"priorStillRetainsDialog":true}
+RESULT {"name":"desktop-perfect-natural","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"desktop-normal-skip","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"keyboard after setup"}
+SKIP {"input":"Escape","clearCardAfterMs":196,"duringOpaqueHold":true}
+LINES {"id":"C11","count":7,"unchanged":true,"priorStillRetainsDialog":false}
+RESULT {"name":"desktop-normal-skip","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"desktop-perfect-skip","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":11,"input":"keyboard after setup"}
+SKIP {"input":"Escape","clearCardAfterMs":541,"duringOpaqueHold":true}
+LINES {"id":"C11_PERFECT","count":7,"unchanged":true,"priorStillRetainsDialog":false}
+RESULT {"name":"desktop-perfect-skip","result":"PASS","physicalDevice":false,"completePlaythrough":false}
