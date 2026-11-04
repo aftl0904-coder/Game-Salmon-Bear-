@@ -2,6 +2,13 @@
 
 **歷史 checkpoint 以下為 `6ba07f4` 當時結果。** 本次已接入獨立洗地機初版及已批准 A–E／6→7 文字，但整項仍未完成、不可合併／部署；Boss 安全／操作驗收未通過，不可把以下人類保安紀錄當成洗地機通關證據。
 
+## 2026-11-04 最新重測：P3 手機仍失敗
+
+- 以 `QA_LABEL=focus-final` 順序執行現有、包含牆邊 warningId 守門的腳本；關卡／角色位置及 P2、P3 狀態均注入，1P 倫寶以桌面鍵盤或模擬手機 touch 移動，並非真人、真機或自然通關。`focus-final-exits.txt` 記錄 **desktop exit 0、mobile exit 1**；外層執行器完成只表示執行兩項工作完畢，不等於兩項通過。
+- 桌面 JSON `focus-final-desktop.json` 為 pass：P1–P3 各一次、牆邊一例，52 幀有效攻擊框均未超出警告，沒有測試中的受傷事件，且實際反擊命中恢復期。此非全起點、2P 或整關驗收。
+- 手機 JSON `focus-final-mobile.json` **整體 fail**：P1、P2 單次沒扣血；P3 的警告及逃走是 `warningId=1`，但截圖／等待錯過第一次 charge，捕捉到的是 `warningId=2`，第二招記下 `mall-scrubber` 傷害 HP 6→4。故不能將第二招扣血歸因於第一次逃走，亦不能把 P3 或手機反擊視為通過；需在所有 P1–P3 分支都按 warningId 核對同一招並重新驗證，不得只放寬斷言。63 個有效框抽樣沒有超警告，沒有其他活躍敵人。
+- `focus-final-*.json`、`focus-final-*.log` 保留原始結果；四張挑選截圖為保持原尺寸的 256 色壓縮證據，未入庫其他截圖在本機 `/tmp/scrubber-focus-final-raw/`。重測後原 shell cleanup 沒有關掉 47431 listener，已檢查來源並手動停止專用伺服器，最後確認埠關閉。
+
 ## 2026-11-04 碰撞及 P2 專項再查（仍為 checkpoint）
 
 - 確認 Phaser `Body.reset()` 先用精靈左上角，沒有即時加 offset；原 P2 桌面 active 抽樣 body `[4966,5082]` 超出 warning `[4952,5068]` 右邊 14px，恢復首幀亦可偏左 16px。現對移動／轉刷／恢復同步 offset 及物理 frame snapshots。實測範圍仍有限，不宣稱所有 FPS／狀態通過。

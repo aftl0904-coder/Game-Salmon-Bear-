@@ -1,0 +1,132 @@
+{
+  "mode": "mobile",
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: P3 unchanged HP for this dodge\n\n4 !== 6\n\n    at dodge (file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-focus.mjs:58:12)\n    at async file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-focus.mjs:71:3",
+  "events": [
+    {
+      "name": "hurtHero",
+      "now": 50939,
+      "before": 6,
+      "source": "mall-scrubber",
+      "after": 4
+    }
+  ],
+  "rounds": 3,
+  "frames": 496,
+  "counterattack": {
+    "before": {
+      "now": 30906,
+      "act": "recover",
+      "phase": 1,
+      "elapsed": 698,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4894,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4888,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 196,
+          "y": 237,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 5010,
+        "y": 285,
+        "hp": 55,
+        "body": {
+          "x": 4966,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4966,
+        "x1": 5174,
+        "y0": 221,
+        "y1": 285,
+        "visible": false
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": [
+        {
+          "x": 4680,
+          "y": 280.1657142857143
+        }
+      ]
+    },
+    "after": {
+      "now": 33690,
+      "act": "warn",
+      "phase": 1,
+      "elapsed": 750,
+      "move": "charge",
+      "warningId": 2,
+      "hero": {
+        "x": 4955,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4949,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4971,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 5010,
+        "y": 285,
+        "hp": 54,
+        "body": {
+          "x": 4966,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4846,
+        "x1": 5054,
+        "y0": 221,
+        "y1": 285,
+        "visible": true
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": [
+        {
+          "x": 4680,
+          "y": 280.3885714285714
+        }
+      ]
+    }
+  }
+}
