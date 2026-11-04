@@ -1,7 +1,7 @@
 /**
- * Pure growth-point accounting checkpoint. NOT wired to gameplay or storage yet.
- * Persisting/rewarding across new runs is intentionally blocked pending the
- * decisions in docs/bible/first-release-growth-20261104.md.
+ * Pure growth-point and per-run provenance model. NOT wired to gameplay or storage yet.
+ * See docs/bible/first-release-growth-20261104.md for the confirmed rules and
+ * the atomic persistence / UI work required before this can be used by players.
  */
 export const GROWTH_AXES = ['hp', 'atk', 'def', 'stam', 'sp'] as const
 export type GrowthAxis = (typeof GROWTH_AXES)[number]
@@ -76,4 +76,135 @@ export function growthRankPoints(stage: number, rank: GrowthRank, mainFirstClear
     case 'C': return 0
     default: throw new RangeError('invalid rank')
   }
+}
+
+/**
+ * Isolated model, NOT a storage format in use. A book must eventually be saved
+ * inside the same atomic run snapshot as the corresponding stage transition.
+ * Archived branches are immutable: selecting one copies it into a new branch,
+ * never merges it with a different branch. Unknown fields fail closed.
+ */
+export type GrowthHero = 'boy' | 'girl'
+export type GrowthBranch = {
+  id: string
+  startStage: 1 | 6
+  nextStage: number
+  rewardFrom: number
+  sourceId: string | null
+  // Legacy runs can have zero seed. New/carry runs have at least five each.
+  seed: Record<GrowthHero, number>
+  heroes: Record<GrowthHero, GrowthWallet>
+  awards: Partial<Record<'3' | '5' | '7', GrowthRank>>
+}
+export type GrowthBook = { version: 1; activeId: string; branches: GrowthBranch[] }
+const HEROES: GrowthHero[] = ['boy', 'girl']
+const RANKS: GrowthRank[] = ['S', 'A', 'B', 'C']
+const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
+const keysAre = (v: Record<string, unknown>, keys: string[]) => Object.keys(v).length === keys.length && keys.every((k) => Object.hasOwn(v, k))
+const validId = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0 && v.length <= 128
+const safeAmount = (v: unknown): v is number => Number.isSafeInteger(v) && (v as number) >= 0
+const copyWallet = (w: GrowthWallet): GrowthWallet => ({ earned: w.earned, allocation: { ...w.allocation } })
+const copyBook = (book: GrowthBook): GrowthBook => ({
+  version: 1,
+  activeId: book.activeId,
+  branches: book.branches.map((b) => ({ ...b, seed: { ...b.seed }, heroes: { boy: copyWallet(b.heroes.boy), girl: copyWallet(b.heroes.girl) }, awards: { ...b.awards } })),
+})
+
+/** Validation rejects corrupt, unknown, inconsistent and duplicate provenance. */
+export function isGrowthBook(value: unknown): value is GrowthBook {
+  if (!object(value) || !keysAre(value, ['version', 'activeId', 'branches']) || value.version !== 1 || !validId(value.activeId) || !Array.isArray(value.branches) || !value.branches.length) return false
+  const seen = new Map<string, GrowthBranch>()
+  for (const candidate of value.branches) {
+    if (!object(candidate) || !keysAre(candidate, ['id', 'startStage', 'nextStage', 'rewardFrom', 'sourceId', 'seed', 'heroes', 'awards'])) return false
+    const b = candidate as unknown as GrowthBranch
+    if (!validId(b.id) || seen.has(b.id) || (b.startStage !== 1 && b.startStage !== 6) || !Number.isInteger(b.nextStage) || b.nextStage < b.startStage || b.nextStage > 11) return false
+    if (!Number.isInteger(b.rewardFrom) || b.rewardFrom < b.startStage || b.rewardFrom > b.nextStage) return false
+    if (b.sourceId !== null && (!validId(b.sourceId) || !seen.has(b.sourceId))) return false
+    if (!object(b.seed) || !keysAre(b.seed, HEROES) || !object(b.heroes) || !keysAre(b.heroes, HEROES) || !object(b.awards)) return false
+    let awardTotal = 0
+    for (const [stage, rank] of Object.entries(b.awards)) {
+      if (!['3', '5', '7'].includes(stage) || Number(stage) < b.rewardFrom || Number(stage) >= b.nextStage || !RANKS.includes(rank)) return false
+      awardTotal += growthRankPoints(Number(stage), rank, true)
+    }
+    for (const stage of [3, 5, 7]) {
+      if (stage >= b.rewardFrom && stage < b.nextStage && !Object.hasOwn(b.awards, String(stage))) return false
+    }
+    if (b.sourceId === null && !((b.seed.boy === 0 && b.seed.girl === 0) || (b.seed.boy === 5 && b.seed.girl === 5))) return false
+    if ((b.sourceId !== null || b.seed.boy === 5) && b.rewardFrom !== b.startStage) return false
+    for (const hero of HEROES) {
+      if (!safeAmount(b.seed[hero]) || !isGrowthWallet(b.heroes[hero])) return false
+      if (b.heroes[hero].earned !== b.seed[hero] + awardTotal) return false
+      if (b.sourceId && b.seed[hero] !== Math.max(5, seen.get(b.sourceId)!.heroes[hero].earned)) return false
+    }
+    seen.set(b.id, b)
+  }
+  return value.branches[value.branches.length - 1]?.id === value.activeId
+}
+function requireBook(book: GrowthBook) {
+  if (!isGrowthBook(book)) throw new RangeError('invalid growth book; preserve original data')
+}
+function active(book: GrowthBook): GrowthBranch { return book.branches.find((b) => b.id === book.activeId)! }
+function seedBranch(id: string, stage: 1 | 6, nextStage: number, points: number): GrowthBranch {
+  return { id, startStage: stage, nextStage, rewardFrom: nextStage, sourceId: null, seed: { boy: points, girl: points }, heroes: { boy: newGrowthWallet(points), girl: newGrowthWallet(points) }, awards: {} }
+}
+/** A fresh new run gets five points per hero; initial points are not old carry. */
+export function createGrowthBook(id: string, stage: 1 | 6): GrowthBook {
+  const book: GrowthBook = { version: 1, activeId: id, branches: [seedBranch(id, stage, stage, 5)] }
+  requireBook(book)
+  return book
+}
+/** Existing pre-growth runs get no retroactive invented rewards. Unknown growth is refused. */
+export function migrateEmptyLegacyGrowth(id: string, stage: 1 | 6, nextStage: number, oldGrowth: unknown): GrowthBook {
+  if (!object(oldGrowth) || Object.keys(oldGrowth).length !== 0) throw new RangeError('unknown legacy growth; preserve original data')
+  const book: GrowthBook = { version: 1, activeId: id, branches: [seedBranch(id, stage, nextStage, 0)] }
+  requireBook(book)
+  return book
+}
+/** Null source = no carry; otherwise choose any prior branch, never sum branches. */
+export function startGrowthBranch(book: GrowthBook, id: string, stage: 1 | 6, sourceId: string | null): { book: GrowthBook; carriedOldGrowth: boolean } {
+  requireBook(book)
+  if (!validId(id) || book.branches.some((b) => b.id === id)) throw new RangeError('invalid or duplicate branch id')
+  const source = sourceId === null ? null : book.branches.find((b) => b.id === sourceId)
+  if (sourceId !== null && !source) throw new RangeError('unknown growth source')
+  const next = copyBook(book)
+  const branch = seedBranch(id, stage, stage, 5)
+  branch.sourceId = sourceId
+  if (source) for (const hero of HEROES) {
+    branch.seed[hero] = Math.max(5, source.heroes[hero].earned)
+    branch.heroes[hero] = { earned: branch.seed[hero], allocation: { ...source.heroes[hero].allocation } }
+  }
+  next.branches.push(branch)
+  next.activeId = id
+  requireBook(next)
+  return { book: next, carriedOldGrowth: !!source && HEROES.some((hero) => source.heroes[hero].earned > 0) }
+}
+/** Both heroes receive the rank points, including solo play. Side events do nothing. */
+export function advanceGrowthBook(book: GrowthBook, stage: number, rank: GrowthRank, context: 'main' | 'side'): GrowthBook {
+  requireBook(book)
+  if (!Number.isInteger(stage) || stage < 1 || stage > 10 || !RANKS.includes(rank) || (context !== 'main' && context !== 'side')) throw new RangeError('invalid clear event')
+  const previous = active(book)
+  if (context === 'side' || stage < previous.nextStage) return copyBook(book)
+  if (stage !== previous.nextStage) throw new RangeError('out-of-order clear')
+  const next = copyBook(book)
+  const branch = active(next)
+  if ([3, 5, 7].includes(stage)) {
+    const key = String(stage) as '3' | '5' | '7'
+    if (Object.hasOwn(branch.awards, key)) throw new RangeError('award already recorded')
+    branch.awards[key] = rank
+    const points = growthRankPoints(stage, rank, true)
+    for (const hero of HEROES) branch.heroes[hero].earned += points
+  }
+  branch.nextStage++
+  requireBook(next)
+  return next
+}
+/** Free redistribution is limited to one hero of the current branch. */
+export function respecGrowthBook(book: GrowthBook, hero: GrowthHero, allocation: GrowthAllocation): GrowthBook {
+  requireBook(book)
+  if (!HEROES.includes(hero)) throw new RangeError('unknown hero')
+  const next = copyBook(book)
+  const branch = active(next)
+  branch.heroes[hero] = redistributeGrowth(branch.heroes[hero], allocation)
+  requireBook(next)
+  return next
 }
