@@ -1,0 +1,1 @@
+2026-11-04 約 09:54–09:55 HKT：首次背景工作顯示 running，但檢查時未建立 server.log 或 attempt-1.log，亦沒有對應 Vite／Playwright process；已停止該工作，改用一次性前景 shell 啟動並於退出時關閉 Vite。沒有測試結果可記錄。
