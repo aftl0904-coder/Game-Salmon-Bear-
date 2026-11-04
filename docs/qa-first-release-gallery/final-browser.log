@@ -1,0 +1,22 @@
+[
+  {
+    "mode": "desktop",
+    "passed": true,
+    "checks": [
+      "20 good / 25 bad including pending candidates",
+      "three actions and pending status",
+      "return via keyboard or touch"
+    ],
+    "errors": []
+  },
+  {
+    "mode": "mobile",
+    "passed": true,
+    "checks": [
+      "20 good / 25 bad including pending candidates",
+      "three actions and pending status",
+      "return via keyboard or touch"
+    ],
+    "errors": []
+  }
+]
