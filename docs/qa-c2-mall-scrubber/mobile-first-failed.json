@@ -1,0 +1,25 @@
+{
+  "mode": "mobile",
+  "setup": "stage 6 and positions injected; guard behaviour observed, not a full run",
+  "transitions": [
+    {
+      "now": 34286,
+      "phase": "windup",
+      "elapsed": 0,
+      "fsm": "PATROL",
+      "x": 480,
+      "heroX": 450,
+      "heroHp": 6,
+      "marker": true,
+      "canHurt": false,
+      "texture": "mall-human-guard-placeholder"
+    }
+  ],
+  "errors": [],
+  "input": {
+    "beforeX": 220,
+    "afterX": 314
+  },
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: observed windup → strike → recover\n    at file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-mall-guard-short.mjs:62:10"
+}

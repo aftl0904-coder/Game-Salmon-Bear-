@@ -1,0 +1,52 @@
+{
+  "mode": "mobile",
+  "setup": "stage 6 and positions injected; hero moved away by injection during windup; not a full run or evasion proof",
+  "transitions": [
+    {
+      "now": 20684,
+      "phase": "windup",
+      "elapsed": 0,
+      "fsm": "PATROL",
+      "x": 480,
+      "heroX": 450,
+      "heroHp": 6,
+      "marker": true,
+      "canHurt": false,
+      "texture": "mall-human-guard-placeholder"
+    },
+    {
+      "now": 22367,
+      "phase": "strike",
+      "elapsed": 0,
+      "fsm": "ATTACK",
+      "x": 480,
+      "heroX": 400,
+      "heroHp": 6,
+      "marker": false,
+      "canHurt": true,
+      "texture": "mall-human-guard-placeholder"
+    },
+    {
+      "now": 22717,
+      "phase": "recover",
+      "elapsed": 0,
+      "fsm": "PATROL",
+      "x": 480,
+      "heroX": 400,
+      "heroHp": 6,
+      "marker": false,
+      "canHurt": false,
+      "texture": "mall-human-guard-placeholder"
+    }
+  ],
+  "errors": [],
+  "input": {
+    "beforeX": 220,
+    "afterX": 310
+  },
+  "afterAttack": {
+    "hp": 0,
+    "heroHp": 6
+  },
+  "passed": true
+}
