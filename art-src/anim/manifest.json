@@ -3269,7 +3269,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard model-sheet; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard model-sheet; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/idle.png",
@@ -3277,7 +3277,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard idle; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard idle; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/walk.png",
@@ -3285,7 +3285,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard walk; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard walk; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/detect.png",
@@ -3293,7 +3293,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard detect; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard detect; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/warning.png",
@@ -3301,7 +3301,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard warning; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard warning; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/attack.png",
@@ -3309,7 +3309,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard attack; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard attack; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/recover.png",
@@ -3317,7 +3317,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard recover; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard recover; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/hit.png",
@@ -3325,7 +3325,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard hit; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard hit; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-human-guard/defeat.png",
@@ -3333,7 +3333,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 human guard defeat; deep navy original civilian mall guard, no marks/text, magenta."
+    "prompt": "ART-20 S6 human guard defeat; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/model-sheet.png",
@@ -3341,7 +3341,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber model-sheet; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber model-sheet; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/idle.png",
@@ -3349,7 +3349,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber idle; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber idle; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/move.png",
@@ -3357,7 +3357,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber move; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber move; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/scan.png",
@@ -3365,7 +3365,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber scan; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber scan; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/warn-charge.png",
@@ -3373,7 +3373,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber warn-charge; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber warn-charge; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/charge.png",
@@ -3381,7 +3381,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber charge; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber charge; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/charge-stop.png",
@@ -3389,7 +3389,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber charge-stop; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber charge-stop; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/warn-brush.png",
@@ -3397,7 +3397,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber warn-brush; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber warn-brush; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/brush-spin.png",
@@ -3405,7 +3405,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber brush-spin; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber brush-spin; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/recover.png",
@@ -3413,7 +3413,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber recover; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber recover; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/hurt.png",
@@ -3421,7 +3421,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber hurt; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber hurt; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-mall-scrubber/defeat.png",
@@ -3429,7 +3429,7 @@
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber defeat; silver-grey/deep navy autonomous machine, no brand/text, magenta."
+    "prompt": "ART-20 S6 mall scrubber defeat; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-mall-scrubber/scan-warning.png",
@@ -3437,7 +3437,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber scan-warning FX; shape-readable warning, no text, magenta."
+    "prompt": "ART-20 S6 mall scrubber scan-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-mall-scrubber/charge-warning.png",
@@ -3445,7 +3445,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber charge-warning FX; shape-readable warning, no text, magenta."
+    "prompt": "ART-20 S6 mall scrubber charge-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-mall-scrubber/brush-warning.png",
@@ -3453,7 +3453,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S6 mall scrubber brush-warning FX; shape-readable warning, no text, magenta."
+    "prompt": "ART-20 S6 mall scrubber brush-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/model-sheet.png",
@@ -3461,7 +3461,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer model-sheet; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer model-sheet; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/idle.png",
@@ -3469,7 +3469,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer idle; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer idle; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/point.png",
@@ -3477,7 +3477,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer point; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer point; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/rain.png",
@@ -3485,7 +3485,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer rain; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer rain; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/shield.png",
@@ -3493,7 +3493,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer shield; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer shield; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/hurt.png",
@@ -3501,7 +3501,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer hurt; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer hurt; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/boss/c2-trainer/defeat.png",
@@ -3509,7 +3509,7 @@
     "cols": 5,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer defeat; original brown/olive workwear and rope/whip, no text, magenta."
+    "prompt": "ART-20 S7 trainer defeat; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-product-zombie/model-sheet.png",
@@ -3517,7 +3517,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 product honey-zombie model-sheet; cage harness, chains and blank plate, no text, magenta."
+    "prompt": "ART-20 S7 product honey-zombie model-sheet; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-product-zombie/walk.png",
@@ -3525,7 +3525,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 product honey-zombie walk; cage harness, chains and blank plate, no text, magenta."
+    "prompt": "ART-20 S7 product honey-zombie walk; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-product-zombie/reach.png",
@@ -3533,7 +3533,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 product honey-zombie reach; cage harness, chains and blank plate, no text, magenta."
+    "prompt": "ART-20 S7 product honey-zombie reach; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-product-zombie/hit.png",
@@ -3541,7 +3541,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 product honey-zombie hit; cage harness, chains and blank plate, no text, magenta."
+    "prompt": "ART-20 S7 product honey-zombie hit; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/enemies/c2-product-zombie/die.png",
@@ -3549,7 +3549,7 @@
     "cols": 4,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 product honey-zombie die; cage harness, chains and blank plate, no text, magenta."
+    "prompt": "ART-20 S7 product honey-zombie die; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-trainer/whip.png",
@@ -3557,7 +3557,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer whip independent attack FX; no text, magenta."
+    "prompt": "ART-20 S7 trainer whip independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-trainer/chain-net-warning.png",
@@ -3565,7 +3565,7 @@
     "cols": 2,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer chain-net-warning independent attack FX; no text, magenta."
+    "prompt": "ART-20 S7 trainer chain-net-warning independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/anim/fx/c2-trainer/chain-net.png",
@@ -3573,7 +3573,7 @@
     "cols": 3,
     "rows": 1,
     "facing": "right",
-    "prompt": "ART-20 S7 trainer chain-net independent attack FX; no text, magenta."
+    "prompt": "ART-20 S7 trainer chain-net independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
   },
   {
     "file": "art-src/props/stage7/entrance-far.png",
@@ -3589,7 +3589,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "background",
-    "prompt": "ART-20 S7 corridor-mid environment; original exhibition/training facility, blank signage, no text/brands."
+    "prompt": "ART-20 S7 corridor-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04: 1080x720, left/right edges blended to tile seamlessly."
   },
   {
     "file": "art-src/props/stage7/training-mid.png",
@@ -3597,7 +3597,7 @@
     "cols": 1,
     "rows": 1,
     "facing": "background",
-    "prompt": "ART-20 S7 training-mid environment; original exhibition/training facility, blank signage, no text/brands."
+    "prompt": "ART-20 S7 training-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04: 1080x720, left/right edges blended to tile seamlessly."
   },
   {
     "file": "art-src/props/stage7/backstage-far.png",
