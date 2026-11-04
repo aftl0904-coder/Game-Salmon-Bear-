@@ -1,7 +1,7 @@
 /** Main-run checkpoint and ephemeral side trips. Legacy progress/gear keys remain intact. */
 import { activeCharm, clearCharm, setActiveCharm, type CharmId } from './charms'
 import { activeGear, copyGear, emptyGear, persistStoredGear, storedGear, useGear, type GearLoadout, type Who } from './gear'
-import { advanceGrowthBook, createGrowthBook, isGrowthBook, migrateEmptyLegacyGrowth, startGrowthBranch, type GrowthBook, type GrowthRank } from './growth'
+import { advanceGrowthBook, createGrowthBook, isGrowthBook, migrateEmptyLegacyGrowth, respecGrowthBook, startGrowthBranch, type GrowthAllocation, type GrowthBook, type GrowthRank } from './growth'
 import { maxStage } from './progress'
 
 const KEY = 'sake-kuma-run-v1'
@@ -9,6 +9,7 @@ type Mode = '1p' | '2p'
 type Solo = 'boy' | 'girl'
 type Registry = { set: (key: string, value: any) => unknown; get?: (key: string) => unknown }
 type Amounts = Partial<Record<Who, number>>
+export type NewGrowthSetup = { sourceId: string | null; allocations: { boy: GrowthAllocation; girl: GrowthAllocation } }
 export type Run = {
   version: 2
   runId: string
@@ -218,19 +219,36 @@ function clearRegistry(registry: Registry) {
   registry.set('carryHp', undefined)
   registry.set('runFriends', [])
 }
-/** Until archive selection UI exists, never replace a nonzero growth branch. */
-export function startNewRun(stage: 1 | 6, carry: boolean, mode: Mode, solo: Solo, registry: Registry): boolean {
+/** Legacy callers cannot bypass archive selection; explicit setup is committed atomically. */
+export function startNewRun(stage: 1 | 6, carry: boolean, mode: Mode, solo: Solo, registry: Registry, setup?: NewGrowthSetup): boolean {
   const existing = getRun()
   if (blocked) { storageWarning('本局存檔損壞或格式未知；已保留原文，不能開新局。'); return false }
-  if (existing && existing.growth.branches.some(b => b.heroes.boy.earned > 0 || b.heroes.girl.earned > 0)) {
-    storageWarning('舊成長取回介面尚未完成，暫不能開新局；原有本局及成長已保留。')
+  if (!setup && existing && existing.growth.branches.some(b => b.heroes.boy.earned > 0 || b.heroes.girl.earned > 0)) {
+    storageWarning('請先揀舊成長來源及確認配點；原有本局及成長已保留。')
     return false
   }
   const previousGear = existing ? copyGear(existing.gear) : storedGear()
   const gear = carry ? previousGear : emptyGear()
   const id = newRunId()
-  const growth = existing ? startGrowthBranch(existing.growth, id, stage, null).book : createGrowthBook(id, stage)
-  const candidate: Run = { version: 2, runId: id, startStage: stage, lastCleared: 0, nextStage: stage, gear, growth, eligible: !nonzeroGear(gear), friends: [], charm: null, mode, solo, ...(existing?.legacyRaw !== undefined ? { legacyRaw: existing.legacyRaw } : {}) }
+  let growth: GrowthBook, carriedOldGrowth = false
+  try {
+    if (existing) {
+      const result = startGrowthBranch(existing.growth, id, stage, setup?.sourceId ?? null)
+      growth = result.book
+      carriedOldGrowth = result.carriedOldGrowth
+    } else {
+      if (setup?.sourceId != null) throw new RangeError('unknown growth source')
+      growth = createGrowthBook(id, stage)
+    }
+    if (setup) {
+      growth = respecGrowthBook(growth, 'boy', setup.allocations.boy)
+      growth = respecGrowthBook(growth, 'girl', setup.allocations.girl)
+    }
+  } catch {
+    storageWarning('成長來源或配點無效；本局及舊資料未改動。')
+    return false
+  }
+  const candidate: Run = { version: 2, runId: id, startStage: stage, lastCleared: 0, nextStage: stage, gear, growth, eligible: !nonzeroGear(gear) && !carriedOldGrowth, friends: [], charm: null, mode, solo, ...(existing?.legacyRaw !== undefined ? { legacyRaw: existing.legacyRaw } : {}) }
   if (!commit(candidate)) return false
   context = 'main'
   clearCharm()

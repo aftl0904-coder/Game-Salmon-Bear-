@@ -1,6 +1,15 @@
 # 第一版成長 checkpoint QA
 
-此 draft 已接入版本化本局存檔和主線發點，**仍沒有玩家成長 UI、舊局取回或五軸戰鬥效果**；不能視作完成驗收或合併。
+此 draft 已接入版本化本局存檔、主線發點及新局選源／配點 UI；**商店重配及五軸戰鬥效果仍未接**，不能視作完整驗收或合併。
+
+## 2026-11-04：新局來源及雙角色配點首輪
+
+- [桌面鍵盤 log](ui-20261104/desktop.log)／[手機純 touch log](ui-20261104/mobile.log) 均從正常封面 → 難度 → 選角操作，沒有注入場景。兩人各5及各自加點見 [桌面](ui-20261104/desktop-points-both.png)、[手機](ui-20261104/mobile-points-both.png)；選不帶、選舊10、選另一局5、取消，核對所有來源保留、不合併及新局 `eligible`。手機為 Chromium Pixel 7 landscape 模擬器，不是真機或真人。
+- 為建立舊10資料，透過真實模組**注入**第1–5關清關事件（3=S、5=A）、購槍及解鎖進度；不是自然打 Boss。榜單目前只核對 run 的資格布林，未實際走排行榜寫入；支線選關、地圖入口與新局舊裝備帶入需補實際回歸。
+- 各以正常 UI 確認時注入 `localStorage.setItem` quota 失敗及損壞原始字串，驗證仍停留配點、原本快照逐字不變，恢復寫入後重試；見 [桌面失敗](ui-20261104/desktop-quota-failure.png)、[手機失敗](ui-20261104/mobile-quota-failure.png)、[桌面壞檔](ui-20261104/desktop-corrupt-blocked.png)、[手機壞檔](ui-20261104/mobile-corrupt-blocked.png)。舊版無明確配點呼叫仍阻擋非零重開。未證明跨分頁同時 compare/set 安全。
+- [build](ui-20261104/build.log)、[validate](ui-20261104/validate.log)、[純帳本模型](ui-20261104/ledger.log) 通過，退出碼 [exits](ui-20261104/exits.log)；Vite 有既有設定及 chunk 警告。後兩項為模型／資料檢查，不是玩家操作。自然通關、死亡／戰鬥效果、商店重配、真人及真機未測或未實作。
+
+以下版本化存檔為上一輪歷史記錄；其中「未有取回 UI」是當時狀態。
 
 ## 2026-11-04：版本化存檔 checkpoint
 
