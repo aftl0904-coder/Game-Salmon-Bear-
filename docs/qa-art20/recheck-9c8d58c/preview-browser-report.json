@@ -1,0 +1,365 @@
+{
+  "scope": "isolated Phaser asset preview only, not gameplay",
+  "views": [
+    {
+      "viewport": {
+        "name": "desktop",
+        "width": 1280,
+        "height": 720,
+        "mobile": false
+      },
+      "errors": [],
+      "frameSamples": [
+        [
+          {
+            "id": "preview_guard",
+            "frame": 1,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 1,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 1,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 1,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 1,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 1,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 2,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 2,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 2,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 2,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 2,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 2,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 4,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 4,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 4,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 4,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 2,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 1,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 1,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 1,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 1,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 1,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 1,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 2,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 3,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 3,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 3,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 3,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 1,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 1,
+            "anim": "chain-net"
+          }
+        ]
+      ],
+      "distinctFrameIndices": {
+        "preview_guard": 4,
+        "preview_scrubber": 4,
+        "preview_trainer": 4,
+        "preview_product": 4,
+        "charge-warning": 2,
+        "chain-net": 2
+      },
+      "allAnimated": true
+    },
+    {
+      "viewport": {
+        "name": "mobile-landscape",
+        "width": 844,
+        "height": 390,
+        "mobile": true
+      },
+      "errors": [],
+      "frameSamples": [
+        [
+          {
+            "id": "preview_guard",
+            "frame": 1,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 1,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 1,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 1,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 1,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 1,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 2,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 2,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 2,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 2,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 2,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 2,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 4,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 4,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 4,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 4,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 2,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 1,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 1,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 1,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 1,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 1,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 1,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 2,
+            "anim": "chain-net"
+          }
+        ],
+        [
+          {
+            "id": "preview_guard",
+            "frame": 2,
+            "anim": "preview_guard-walk"
+          },
+          {
+            "id": "preview_scrubber",
+            "frame": 2,
+            "anim": "preview_scrubber-idle"
+          },
+          {
+            "id": "preview_trainer",
+            "frame": 2,
+            "anim": "preview_trainer-idle"
+          },
+          {
+            "id": "preview_product",
+            "frame": 2,
+            "anim": "preview_product-walk"
+          },
+          {
+            "id": "charge-warning",
+            "frame": 2,
+            "anim": "charge-warning"
+          },
+          {
+            "id": "chain-net",
+            "frame": 3,
+            "anim": "chain-net"
+          }
+        ]
+      ],
+      "distinctFrameIndices": {
+        "preview_guard": 3,
+        "preview_scrubber": 3,
+        "preview_trainer": 3,
+        "preview_product": 3,
+        "charge-warning": 2,
+        "chain-net": 3
+      },
+      "allAnimated": true
+    }
+  ]
+}

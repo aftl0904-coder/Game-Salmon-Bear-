@@ -1,0 +1,33 @@
+{
+  "scope": "isolated Phaser tiles; not game; dimensions for test only",
+  "views": [
+    {
+      "mode": "desktop",
+      "asset": "corridor-mid",
+      "errors": [],
+      "canvas": 1,
+      "afterScrollPosition": 277
+    },
+    {
+      "mode": "desktop",
+      "asset": "training-mid",
+      "errors": [],
+      "canvas": 1,
+      "afterScrollPosition": 35
+    },
+    {
+      "mode": "mobile",
+      "asset": "corridor-mid",
+      "errors": [],
+      "canvas": 1,
+      "afterScrollPosition": 277
+    },
+    {
+      "mode": "mobile",
+      "asset": "training-mid",
+      "errors": [],
+      "canvas": 1,
+      "afterScrollPosition": 35
+    }
+  ]
+}

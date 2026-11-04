@@ -1,0 +1,30 @@
+{
+  "corridor-mid": {
+    "source_size": [
+      1119,
+      720
+    ],
+    "preview_size": [
+      560,
+      360
+    ],
+    "visible_colors": 64,
+    "seam_mae": 1.9055555555555554,
+    "within_adjacent_mae": 4.874922149340754,
+    "seam_p95": 7.0499999999999545
+  },
+  "training-mid": {
+    "source_size": [
+      635,
+      720
+    ],
+    "preview_size": [
+      318,
+      360
+    ],
+    "visible_colors": 64,
+    "seam_mae": 1.9157407407407407,
+    "within_adjacent_mae": 5.585118004439771,
+    "seam_p95": 8.049999999999955
+  }
+}

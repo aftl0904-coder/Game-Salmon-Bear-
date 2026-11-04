@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,"><title>ART-20 isolated background preview</title><style>html,body{margin:0;background:#151c27;color:#e6e8eb;font-family:system-ui}header{padding:8px;font-size:13px}canvas{display:block;max-width:100%;max-height:calc(100vh - 48px);image-rendering:pixelated}</style><script src="/node_modules/phaser/dist/phaser.min.js"></script></head>
+<body><header>獨立素材平鋪測試；非遊戲場景；比例只用於測試</header><div id="game"></div><script>
+const name = new URLSearchParams(location.search).get('name');
+if (!['corridor-mid','training-mid'].includes(name)) throw Error('invalid name');
+let tile;
+class Preview extends Phaser.Scene {
+ preload() { this.load.image('background', `/${name}-qa-normalized.png`); }
+ create() { const texture = this.textures.get('background').getSourceImage(); tile = this.add.tileSprite(0, 0, 640, 360, 'background').setOrigin(0); tile.tilePositionX = texture.width - 320; window.previewReady = true; }
+}
+window.shiftTile = n => { tile.tilePositionX += n; return tile.tilePositionX; };
+new Phaser.Game({type:Phaser.AUTO,parent:'game',width:640,height:360,pixelArt:true,roundPixels:true,audio:{noAudio:true},scene:Preview});
+</script></body></html>

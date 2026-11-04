@@ -1,0 +1,598 @@
+[
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/model-sheet.png",
+    "frames": 4,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      51,
+      43,
+      50,
+      53
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/idle.png",
+    "frames": 3,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      49,
+      51,
+      50
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/walk.png",
+    "frames": 4,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      37,
+      37,
+      40,
+      43
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/detect.png",
+    "frames": 3,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      46,
+      45,
+      49
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/warning.png",
+    "frames": 3,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      44,
+      36,
+      41
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/attack.png",
+    "frames": 3,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      43,
+      43,
+      39
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/recover.png",
+    "frames": 3,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      41,
+      51,
+      49
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/hit.png",
+    "frames": 2,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      47,
+      40
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-human-guard/defeat.png",
+    "frames": 4,
+    "cell": [
+      41,
+      56
+    ],
+    "colors": [
+      43,
+      43,
+      41,
+      36
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/model-sheet.png",
+    "frames": 4,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      59,
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/idle.png",
+    "frames": 4,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      59,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/move.png",
+    "frames": 4,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/scan.png",
+    "frames": 3,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      59
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/warn-charge.png",
+    "frames": 3,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/charge.png",
+    "frames": 4,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      59,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/charge-stop.png",
+    "frames": 3,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/warn-brush.png",
+    "frames": 3,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      58,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/brush-spin.png",
+    "frames": 4,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      59,
+      60,
+      59,
+      59
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/recover.png",
+    "frames": 3,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/hurt.png",
+    "frames": 2,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      59,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-mall-scrubber/defeat.png",
+    "frames": 5,
+    "cell": [
+      137,
+      128
+    ],
+    "colors": [
+      60,
+      59,
+      60,
+      60,
+      60
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-mall-scrubber/scan-warning.png",
+    "frames": 2,
+    "cell": [
+      149,
+      80
+    ],
+    "colors": [
+      50,
+      56
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-mall-scrubber/charge-warning.png",
+    "frames": 2,
+    "cell": [
+      149,
+      80
+    ],
+    "colors": [
+      49,
+      57
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-mall-scrubber/brush-warning.png",
+    "frames": 2,
+    "cell": [
+      149,
+      80
+    ],
+    "colors": [
+      55,
+      58
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/model-sheet.png",
+    "frames": 4,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      59,
+      57,
+      58,
+      56
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/idle.png",
+    "frames": 4,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      60,
+      58,
+      59,
+      59
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/point.png",
+    "frames": 3,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      59,
+      55,
+      53
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/rain.png",
+    "frames": 4,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      57,
+      57,
+      56,
+      54
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/shield.png",
+    "frames": 4,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      57,
+      53,
+      48,
+      51
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/hurt.png",
+    "frames": 2,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      52,
+      59
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/boss/c2-trainer/defeat.png",
+    "frames": 5,
+    "cell": [
+      69,
+      100
+    ],
+    "colors": [
+      54,
+      53,
+      54,
+      46,
+      53
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-product-zombie/model-sheet.png",
+    "frames": 4,
+    "cell": [
+      46,
+      56
+    ],
+    "colors": [
+      54,
+      52,
+      54,
+      50
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-product-zombie/walk.png",
+    "frames": 4,
+    "cell": [
+      46,
+      56
+    ],
+    "colors": [
+      50,
+      46,
+      48,
+      48
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-product-zombie/reach.png",
+    "frames": 3,
+    "cell": [
+      46,
+      56
+    ],
+    "colors": [
+      49,
+      45,
+      53
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-product-zombie/hit.png",
+    "frames": 2,
+    "cell": [
+      46,
+      56
+    ],
+    "colors": [
+      51,
+      47
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/enemies/c2-product-zombie/die.png",
+    "frames": 4,
+    "cell": [
+      46,
+      56
+    ],
+    "colors": [
+      49,
+      43,
+      56,
+      53
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-trainer/whip.png",
+    "frames": 3,
+    "cell": [
+      76,
+      80
+    ],
+    "colors": [
+      45,
+      40,
+      34
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-trainer/chain-net-warning.png",
+    "frames": 2,
+    "cell": [
+      76,
+      80
+    ],
+    "colors": [
+      50,
+      57
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  },
+  {
+    "source": "art-src/anim/fx/c2-trainer/chain-net.png",
+    "frames": 3,
+    "cell": [
+      76,
+      80
+    ],
+    "colors": [
+      53,
+      51,
+      54
+    ],
+    "partial_alpha_pixels": 0,
+    "pass": true
+  }
+]
