@@ -1,0 +1,12 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - `__dirname` (vite.config.ts:23:28). Use `import.meta.dirname` instead
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+  VITE v8.3.5  ready in 433 ms
+
+  ➜  Local:   http://127.0.0.1:47939/
+  ➜  press h + enter to show help
+Initial cleanup failed: port 47939 still listening after background test shell returned.
+LISTEN 0      511        127.0.0.1:47939      0.0.0.0:*    users:(("node",pid=123335,fd=24))
+ 123335 node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 47939 --strictPort
+PASS server closed after explicit SIGTERM

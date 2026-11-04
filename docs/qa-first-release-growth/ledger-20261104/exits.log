@@ -1,0 +1,7 @@
+desktop input exit=0
+mobile input exit=0
+state exit=0
+build exit=0
+validate exit=0
+core exit=0
+ledger exit=0
