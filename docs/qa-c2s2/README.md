@@ -1,5 +1,14 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## #91 回修後 B／C 中景接線 checkpoint（2026-11-04；未經瀏覽器驗收）
+
+- **局部接入，不是完成／可合併驗收。** 原圖只取 #91 精確 head `4dab1f198e2342201d54acdccf6bd0d518be92f6` 的 `corridor-mid.png`（1119×720）和 `training-mid.png`（635×720），來源快照兩檔的 Git blob 與該 commit 一致。另一組的原圖掛鉤及三次平鋪目視複驗結果記於 `/tmp/salmon-c2-stage6-planning/docs/qa-art20/recheck-4dab1f1/README.md`，屬原圖局部驗收，不是本次遊戲驗收。未複製其他原圖或改 Cursor branch。
+- `python3 scripts/art/derive_stage7_mid.py /tmp/salmon-art20-4dab-readonly` 核對兩個 SHA-256 與尺寸，按實際寬／高先 nearest 約等比縮至 **560×360／318×360**（奇數寬除二，半像素向上取整）、再 RGB median-cut ≤64 色、不加 dithering；兩圖皆不透明、64 色，遊戲 scale 1。各自來源與輸出 SHA、尺寸及 Pillow 版本見 `public/art/stage7/mid-manifest.json` 和 `mid-derivation.txt`。這是獨立於六張舊素材的 manifest，不改寫原來源紀錄；重製需指定原圖及 Pillow 13.0.0。用 `--out /tmp/其他目錄` 可獨立驗重製，`mid-repro.txt` 記錄本機三檔 byte-for-byte 相同。
+- 背景沿用 Phaser Camera-fixed image／TileSprite：B=[855,1995)、C=[1995,3135)，平鋪相位按各段世界起點和實際 560／318 寬；A/D/E 原固定遠景按鏡頭實際可見世界範圍裁切，不再只以鏡頭中心整屏切換，B/C 層在遠景之上、固定 props 和角色／實際地形之下。兩中景只顯示縮圖頭 240 行，放在 y=45–285，原圖下方橫地台／訓練欄杆不會落入此中景可視範圍；原有頂部底景與真正地面、兩個坑原碼保留。鏡頭可半邏輯像素，分段視窗共同取整，最壞約半邏輯像素世界對位誤差；實際渲染接縫仍待檢查。背景是無 body 的展示物，不改 terrain／AI／static decor／鏈網或設計數值。
+- **已做、非瀏覽器短測**：低優先級 `npm run build` exit 0（既有 Vite config／大 chunk 警告，`mid-build.txt`）；`npm run validate:data` 10 項 exit 0（`mid-validate-data.txt`）；`node --experimental-strip-types scripts/qa/c2s2-mid-layout.mjs` 驗 10,121 個半像素鏡頭位置的 A–E 純計算覆蓋和 560／318 週期（`mid-layout.txt`），**不是 Phaser 畫圖證明**。`mid-repro.txt` 為圖片及 manifest 重製；`mid-browser-syntax.txt` 只記 browser 腳本語法，沒有跑該腳本。
+- **待通知後才啟動瀏覽器**：先單序啟動本 branch production preview，例如 `npx vite preview --host 127.0.0.1 --port 47417 --strictPort`，然後分開跑 `QA_URL=http://127.0.0.1:47417/ QA_KIND=desktop-2p node scripts/qa/c2s2-mid-browser.mjs` 及 `QA_KIND=mobile-1p` 同命令；結束關閉 server。腳本採第6關完成測試存檔、正常選單入第7關，再注入鏡頭／部分角色位置並隔離敵人；覆蓋四個 A/B、B/C、C/D、D/E 交界、B/C 平鋪接縫、兩個 C 坑、短距離按鍵／touch、28 個固定物與兩個圖片 HTTP／尺寸。它只作結構短測，**即使 passed 亦不是視覺驗收或自然通關**。須逐張目視背景是否被覆蓋、線條有否誤導落腳、坑口／地面亮邊、角色／props／D 暗幕、移動與轉場是否有縫及相位突跳；另測前後移動、相機邊界、重啟／切場、第6關及真機。現時沒有上述新畫面、console、HTTP 或遊戲運行結果。
+- #88 仍 draft；本次不跑 Chromium、600 秒或全關。下列舊資料全部保留：鏈網時序／render 前扣血及 hidden 模擬失敗依然阻塞；原支線 pageerror／timeout、長測失敗等不能因這次素材接線視為已修復。舊「B/C 不合格、未接入」及舊鏡頭中心切換描述是**當時歷史**，以本節回修狀態取代。
+
 ## 新 checkpoint：狀態機嘗試與背景測試阻塞（2026-11-04）
 
 - **仍阻塞；本次沒有接入候選狀態機，遊戲原碼、800／1500 ms、安全位及傷害全部保留。** 純合成模型 `scripts/qa/c2s2-state-model.mjs`／`state-checkpoint-model.json` 嘗試以 monotonic time、前景 render 及 pre-physics 邊界區分 warning、active 與 end；pause／resume 丟棄未確認的時間、恢復後先 render 才能傷害。六項只是模型斷言及一個假設性反例，**不是 Phaser、畫面呈現、碰撞或遊戲修復驗收**。尤其若主執行緒在第一次 active engine render 後長時間停頓，當下一 physics 到達時 wall 期已過，模型會結束而沒有碰撞機會；若為補償而延長又須處理 1.5 秒及 Boss 節奏。模型不具備 compositor 訊號，也未處理完整 camera 遮擋、physics 多步、Boss phase 轉換與全部生命周期；不安全直接搬入遊戲。

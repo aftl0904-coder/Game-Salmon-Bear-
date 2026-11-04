@@ -96,7 +96,8 @@ export class BootScene extends Phaser.Scene {
     this.load.image('bg-wallpaper', '/art/bg-wallpaper-px.png')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
     // Stage 7 only: derived from the reviewed #91 head (see art/stage7/manifest.json).
-    for (const name of ['entrance-far', 'backstage-far', 'arena-far', 'net-static', 'number-plate-blank', 'sign-blank']) {
+    // The later reviewed B/C sources and derivation are recorded in mid-manifest.json.
+    for (const name of ['entrance-far', 'corridor-mid', 'training-mid', 'backstage-far', 'arena-far', 'net-static', 'number-plate-blank', 'sign-blank']) {
       this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)
     }
     for (const meta of Object.values(ENEMY_SHEET_MAP)) {

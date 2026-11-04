@@ -13,6 +13,7 @@ import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { getRun, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
 import { stage7GrowthHook } from './growthHook'
+import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -421,6 +422,7 @@ export class GameScene extends Phaser.Scene {
   private marketFar: { market: Phaser.GameObjects.Image | null; spring: Phaser.GameObjects.Image | null } = { market: null, spring: null }
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
   private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
+  private exhibitMid: { B: Phaser.GameObjects.TileSprite | null; C: Phaser.GameObjects.TileSprite | null } = { B: null, C: null }
   private bossFight = false
   /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
   private bossSushiSpawned = false
@@ -2448,6 +2450,7 @@ export class GameScene extends Phaser.Scene {
   private bushStrip: Phaser.GameObjects.TileSprite | null = null
 
   private animateBg() {
+    if (this.exhibit) this.updateExhibitBackdrops()
     if (this.duskWash) {
       // 森林深處: the light drops as the path nears the altar.
       const k = Phaser.Math.Clamp((this.cameras.main.scrollX - 1600) / 1600, 0, 1)
@@ -3086,13 +3089,26 @@ export class GameScene extends Phaser.Scene {
       bg.fillStyle(0x93adb4, 0.3).fillRect(x + 14, 55, 150, 76)
       bg.lineStyle(3, 0x303b46, 1).strokeRect(x + 14, 55, 150, 76)
     }
-    // Like the other stage far paintings, these are camera-fixed 640x360 images.
-    // B/C keep the existing backdrop because the supplied mid layers do not tile.
+    // Camera-fixed A/D/E paintings are clipped to their visible world segments.
     const far = (name: string) => this.textures.exists(`s7-${name}`)
-      ? this.add.image(GAME_W / 2, GAME_H / 2, `s7-${name}`).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setVisible(false)
+      ? this.add.image(0, 0, `s7-${name}`).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setVisible(false)
       : null
     this.exhibitFar = { A: far('entrance-far'), D: far('backstage-far'), E: far('arena-far') }
-    this.exhibitFar.A?.setVisible(true)
+    // The first 240 rows of each normalized 360px art start at y=45. The painted
+    // floors/railings begin at about row 240: keep them behind the real floor,
+    // especially over C's pits. The existing ceiling/base remains underneath.
+    const midTop = 45
+    const mid = (name: string, segment: string) => {
+      const key = `s7-${name}`
+      if (!this.textures.exists(key)) return null
+      this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+      const tile = this.add.tileSprite(0, midTop, GAME_W, LANE_FLOOR_Y - midTop, key)
+        .setOrigin(0).setScrollFactor(0).setDepth(DEPTH.SKY_BAND + 1).setVisible(false).setName(`stage7-mid-${segment}`)
+      enablePixelSprite(tile)
+      return tile
+    }
+    this.exhibitMid = { B: mid('corridor-mid', 'B'), C: mid('training-mid', 'C') }
+    this.updateExhibitBackdrops()
     const hasSign = this.textures.exists('s7-sign-blank')
     if (hasSign) {
       this.add.image(450, -1, 's7-sign-blank').setOrigin(0.5, 0).setDepth(DEPTH.PROP - 2)
@@ -3133,6 +3149,31 @@ export class GameScene extends Phaser.Scene {
     }
     this.buildGroundTiles()
   }
+
+  /** Reuse the existing camera-fixed backgrounds, sliced by visible world bounds. */
+  private updateExhibitBackdrops() {
+    const scrollX = this.cameras.main.scrollX
+    const segments = stage7Raw.segments
+    for (const [image, segment] of [
+      [this.exhibitFar.A, segments[0]!], [this.exhibitFar.D, segments[3]!], [this.exhibitFar.E, segments[4]!],
+    ] as const) {
+      if (!image) continue
+      const slice = stage7ViewportSlice(segment.x0, segment.x1, scrollX, GAME_W)
+      image.setVisible(!!slice)
+      if (slice) image.setCrop(slice.x, 0, slice.width, GAME_H)
+    }
+    for (const [tile, segment] of [
+      [this.exhibitMid.B, segments[1]!], [this.exhibitMid.C, segments[2]!],
+    ] as const) {
+      if (!tile) continue
+      const slice = stage7ViewportSlice(segment.x0, segment.x1, scrollX, GAME_W)
+      tile.setVisible(!!slice)
+      if (!slice) continue
+      tile.setX(slice.x).setSize(slice.width, tile.height)
+      tile.tilePositionX = slice.tileX
+    }
+  }
+
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
@@ -3141,11 +3182,6 @@ export class GameScene extends Phaser.Scene {
     this.mallFar.mall?.setAlpha(1 - k)
     this.mallFar.fac?.setAlpha(k)
     if (this.exhibit) {
-      // Hard switch by camera centre at the existing A/B, C/D and D/E bounds.
-      // No tiling of artwork or changes to level segment coordinates.
-      this.exhibitFar.A?.setVisible(cx < stage7Raw.segments[0]!.x1)
-      this.exhibitFar.D?.setVisible(cx >= stage7Raw.segments[3]!.x0 && cx < stage7Raw.segments[3]!.x1)
-      this.exhibitFar.E?.setVisible(cx >= stage7Raw.segments[4]!.x0)
       this.tickExhibitReaction()
     }
     else this.tickCage()

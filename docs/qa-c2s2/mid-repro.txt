@@ -1,0 +1,1 @@
+PASS: both PNGs and mid-manifest byte-for-byte reproduced with Pillow 13.0.0; no browser run.
