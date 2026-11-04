@@ -1,0 +1,11 @@
+PASS [
+  "12 browser-storage rank matrix cases, both heroes and 1000 same-stage event replays per case",
+  "side-trip injected clear leaves canonical bytes untouched; resume main",
+  "valid v1 empty-growth migration: exact raw retained inside v2, zero retroactive points, same eligibility",
+  "corrupt, unknown v1 growth/fields, invalid gear and injected migration quota failure preserve original bytes and block restart",
+  "injected clear write failure preserves prior snapshot and in-memory stage; retry awards once; old-growth restart blocked",
+  "injected source-switch v2 fixture survives actual storage read: old10, fresh6, carry old10 (not 15 or 16), archived provenance intact; no selection UI",
+  "browser reload and actual resume recover selected-source ledger and expected stage",
+  "tampered v2 provenance is rejected and byte-for-byte retained",
+  "stale sequential writer rejected; simultaneous cross-tab compare/set race not tested or guaranteed"
+]

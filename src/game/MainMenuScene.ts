@@ -596,7 +596,10 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('stageNo', this.stageSel)
     if (path === 'continue') resumeMain(this.registry)
     else if (path === 'side') startSideTrip(this.registry)
-    else startNewRun(this.stageSel as 1 | 6, path === 'carry', choice.mode, choice.solo ?? 'boy', this.registry)
+    else if (!startNewRun(this.stageSel as 1 | 6, path === 'carry', choice.mode, choice.solo ?? 'boy', this.registry)) {
+      this.starting = false
+      return
+    }
     // Only a true new run (starting from stage 1) draws a fresh charm —
     // picking up at a later-cleared stage keeps whatever this run already rolled.
     const next = this.stageSel === 1 && (path !== 'continue' || !getRun()?.charm) ? 'gacha' : 'worldmap'

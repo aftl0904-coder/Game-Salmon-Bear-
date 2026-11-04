@@ -1,0 +1,7 @@
+{
+  "mode": "desktop",
+  "setup": "injected menu scene, fresh isolated browser storage",
+  "passed": true,
+  "errors": [],
+  "result": "existing menu creates v2 5+5; restart with existing growth is blocked without changing storage; no growth UI"
+}
