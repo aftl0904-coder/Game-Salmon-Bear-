@@ -1,0 +1,37 @@
+
+ preview_guard cell 100 114 columns 25
+idle [{'height': 112, 'width': 32, 'near_cell_edge_px': 0}, {'height': 112, 'width': 32, 'near_cell_edge_px': 0}, {'height': 112, 'width': 33, 'near_cell_edge_px': 0}]
+walk [{'height': 112, 'width': 51, 'near_cell_edge_px': 0}, {'height': 112, 'width': 52, 'near_cell_edge_px': 0}, {'height': 112, 'width': 52, 'near_cell_edge_px': 0}, {'height': 112, 'width': 50, 'near_cell_edge_px': 0}]
+detect [{'height': 109, 'width': 49, 'near_cell_edge_px': 0}, {'height': 109, 'width': 48, 'near_cell_edge_px': 0}, {'height': 110, 'width': 57, 'near_cell_edge_px': 0}]
+warning [{'height': 112, 'width': 55, 'near_cell_edge_px': 0}, {'height': 95, 'width': 72, 'near_cell_edge_px': 0}, {'height': 103, 'width': 78, 'near_cell_edge_px': 0}]
+attack [{'height': 109, 'width': 66, 'near_cell_edge_px': 0}, {'height': 110, 'width': 77, 'near_cell_edge_px': 0}, {'height': 110, 'width': 74, 'near_cell_edge_px': 0}]
+recover [{'height': 107, 'width': 55, 'near_cell_edge_px': 0}, {'height': 104, 'width': 42, 'near_cell_edge_px': 0}, {'height': 109, 'width': 43, 'near_cell_edge_px': 0}]
+hit [{'height': 104, 'width': 59, 'near_cell_edge_px': 0}, {'height': 105, 'width': 65, 'near_cell_edge_px': 0}]
+defeat [{'height': 96, 'width': 64, 'near_cell_edge_px': 0}, {'height': 63, 'width': 66, 'near_cell_edge_px': 0}, {'height': 61, 'width': 74, 'near_cell_edge_px': 0}, {'height': 65, 'width': 65, 'near_cell_edge_px': 0}]
+
+ preview_product cell 180 122 columns 13
+walk [{'height': 112, 'width': 86, 'near_cell_edge_px': 0}, {'height': 112, 'width': 87, 'near_cell_edge_px': 0}, {'height': 112, 'width': 87, 'near_cell_edge_px': 0}, {'height': 112, 'width': 84, 'near_cell_edge_px': 0}]
+reach [{'height': 109, 'width': 101, 'near_cell_edge_px': 0}, {'height': 113, 'width': 129, 'near_cell_edge_px': 0}, {'height': 119, 'width': 84, 'near_cell_edge_px': 0}]
+hit [{'height': 106, 'width': 101, 'near_cell_edge_px': 0}, {'height': 106, 'width': 92, 'near_cell_edge_px': 0}]
+die [{'height': 116, 'width': 81, 'near_cell_edge_px': 0}, {'height': 89, 'width': 90, 'near_cell_edge_px': 0}, {'height': 98, 'width': 88, 'near_cell_edge_px': 0}, {'height': 54, 'width': 111, 'near_cell_edge_px': 0}]
+
+ preview_scrubber cell 490 286 columns 8
+idle [{'height': 256, 'width': 193, 'near_cell_edge_px': 0}, {'height': 256, 'width': 188, 'near_cell_edge_px': 0}, {'height': 256, 'width': 186, 'near_cell_edge_px': 0}, {'height': 256, 'width': 189, 'near_cell_edge_px': 0}]
+move [{'height': 229, 'width': 184, 'near_cell_edge_px': 0}, {'height': 229, 'width': 185, 'near_cell_edge_px': 0}, {'height': 229, 'width': 181, 'near_cell_edge_px': 0}, {'height': 229, 'width': 181, 'near_cell_edge_px': 0}]
+scan [{'height': 251, 'width': 214, 'near_cell_edge_px': 0}, {'height': 251, 'width': 255, 'near_cell_edge_px': 0}, {'height': 252, 'width': 245, 'near_cell_edge_px': 0}]
+warn-charge [{'height': 255, 'width': 185, 'near_cell_edge_px': 0}, {'height': 257, 'width': 219, 'near_cell_edge_px': 0}, {'height': 253, 'width': 280, 'near_cell_edge_px': 0}]
+charge [{'height': 212, 'width': 190, 'near_cell_edge_px': 0}, {'height': 211, 'width': 225, 'near_cell_edge_px': 0}, {'height': 211, 'width': 196, 'near_cell_edge_px': 0}, {'height': 207, 'width': 194, 'near_cell_edge_px': 0}]
+charge-stop [{'height': 243, 'width': 241, 'near_cell_edge_px': 0}, {'height': 246, 'width': 245, 'near_cell_edge_px': 0}, {'height': 242, 'width': 192, 'near_cell_edge_px': 0}]
+warn-brush [{'height': 249, 'width': 227, 'near_cell_edge_px': 0}, {'height': 264, 'width': 244, 'near_cell_edge_px': 0}, {'height': 266, 'width': 238, 'near_cell_edge_px': 0}]
+brush-spin [{'height': 249, 'width': 209, 'near_cell_edge_px': 0}, {'height': 249, 'width': 205, 'near_cell_edge_px': 0}, {'height': 249, 'width': 201, 'near_cell_edge_px': 0}, {'height': 248, 'width': 216, 'near_cell_edge_px': 0}]
+recover [{'height': 257, 'width': 225, 'near_cell_edge_px': 0}, {'height': 255, 'width': 228, 'near_cell_edge_px': 0}, {'height': 257, 'width': 208, 'near_cell_edge_px': 0}]
+hurt [{'height': 281, 'width': 311, 'near_cell_edge_px': 0}, {'height': 283, 'width': 348, 'near_cell_edge_px': 0}]
+defeat [{'height': 194, 'width': 148, 'near_cell_edge_px': 0}, {'height': 192, 'width': 157, 'near_cell_edge_px': 0}, {'height': 192, 'width': 160, 'near_cell_edge_px': 0}, {'height': 192, 'width': 170, 'near_cell_edge_px': 0}, {'height': 192, 'width': 142, 'near_cell_edge_px': 0}]
+
+ preview_trainer cell 194 204 columns 21
+idle [{'height': 200, 'width': 67, 'near_cell_edge_px': 0}, {'height': 200, 'width': 67, 'near_cell_edge_px': 0}, {'height': 200, 'width': 76, 'near_cell_edge_px': 0}, {'height': 200, 'width': 69, 'near_cell_edge_px': 0}]
+point [{'height': 193, 'width': 116, 'near_cell_edge_px': 0}, {'height': 164, 'width': 145, 'near_cell_edge_px': 0}, {'height': 161, 'width': 113, 'near_cell_edge_px': 0}]
+rain [{'height': 169, 'width': 86, 'near_cell_edge_px': 0}, {'height': 192, 'width': 97, 'near_cell_edge_px': 0}, {'height': 167, 'width': 90, 'near_cell_edge_px': 0}, {'height': 166, 'width': 114, 'near_cell_edge_px': 0}]
+shield [{'height': 168, 'width': 86, 'near_cell_edge_px': 0}, {'height': 167, 'width': 92, 'near_cell_edge_px': 0}, {'height': 167, 'width': 92, 'near_cell_edge_px': 0}, {'height': 168, 'width': 98, 'near_cell_edge_px': 0}]
+hurt [{'height': 195, 'width': 132, 'near_cell_edge_px': 0}, {'height': 193, 'width': 131, 'near_cell_edge_px': 0}]
+defeat [{'height': 131, 'width': 89, 'near_cell_edge_px': 0}, {'height': 125, 'width': 69, 'near_cell_edge_px': 0}, {'height': 84, 'width': 59, 'near_cell_edge_px': 0}, {'height': 83, 'width': 87, 'near_cell_edge_px': 0}, {'height': 85, 'width': 79, 'near_cell_edge_px': 0}]

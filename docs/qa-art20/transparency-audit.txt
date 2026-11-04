@@ -1,0 +1,10 @@
+processed/public/art/anim/preview_guard.png size 2500 114 transparent 214859 opaque 59683 semi-alpha 10458 visible-magenta-like 0 visible-colors-atlas 127
+processed/public/art/anim/preview_product.png size 2340 122 transparent 211939 opaque 67105 semi-alpha 6436 visible-magenta-like 0 visible-colors-atlas 128
+processed/public/art/anim/preview_scrubber.png size 3920 1430 transparent 4358494 opaque 1231363 semi-alpha 15743 visible-magenta-like 0 visible-colors-atlas 112
+processed/public/art/anim/preview_trainer.png size 4074 408 transparent 1507481 opaque 137640 semi-alpha 17071 visible-magenta-like 0 visible-colors-atlas 112
+processed/public/art/fx/brush-warning.png size 324 160 transparent 42117 opaque 6302 semi-alpha 3421 visible-magenta-like 0 visible-colors-atlas 50
+processed/public/art/fx/chain-net-warning.png size 308 162 transparent 40008 opaque 6533 semi-alpha 3355 visible-magenta-like 0 visible-colors-atlas 54
+processed/public/art/fx/chain-net.png size 486 136 transparent 53383 opaque 9866 semi-alpha 2847 visible-magenta-like 0 visible-colors-atlas 61
+processed/public/art/fx/charge-warning.png size 324 152 transparent 38302 opaque 8028 semi-alpha 2918 visible-magenta-like 0 visible-colors-atlas 54
+processed/public/art/fx/scan-warning.png size 196 162 transparent 28334 opaque 485 semi-alpha 2933 visible-magenta-like 0 visible-colors-atlas 18
+processed/public/art/fx/whip.png size 300 162 transparent 45416 opaque 1617 semi-alpha 1567 visible-magenta-like 0 visible-colors-atlas 41

@@ -1,0 +1,33 @@
+preview_guard idle per-frame-color-counts [121, 117, 116] over64 3
+preview_guard walk per-frame-color-counts [125, 122, 123, 125] over64 4
+preview_guard detect per-frame-color-counts [119, 125, 123] over64 3
+preview_guard warning per-frame-color-counts [125, 123, 125] over64 3
+preview_guard attack per-frame-color-counts [123, 125, 123] over64 3
+preview_guard recover per-frame-color-counts [124, 117, 119] over64 3
+preview_guard hit per-frame-color-counts [125, 123] over64 2
+preview_guard defeat per-frame-color-counts [126, 124, 123, 127] over64 4
+TOTAL preview_guard max 127 over64 25 of 25
+preview_product walk per-frame-color-counts [128, 128, 128, 128] over64 4
+preview_product reach per-frame-color-counts [127, 127, 128] over64 3
+preview_product hit per-frame-color-counts [128, 127] over64 2
+preview_product die per-frame-color-counts [128, 126, 125, 126] over64 4
+TOTAL preview_product max 128 over64 13 of 13
+preview_scrubber idle per-frame-color-counts [112, 112, 111, 112] over64 4
+preview_scrubber move per-frame-color-counts [111, 111, 111, 111] over64 4
+preview_scrubber scan per-frame-color-counts [111, 112, 111] over64 3
+preview_scrubber warn-charge per-frame-color-counts [111, 111, 112] over64 3
+preview_scrubber charge per-frame-color-counts [112, 112, 111, 110] over64 4
+preview_scrubber charge-stop per-frame-color-counts [112, 111, 112] over64 3
+preview_scrubber warn-brush per-frame-color-counts [108, 109, 111] over64 3
+preview_scrubber brush-spin per-frame-color-counts [112, 112, 111, 112] over64 4
+preview_scrubber recover per-frame-color-counts [111, 111, 112] over64 3
+preview_scrubber hurt per-frame-color-counts [112, 111] over64 2
+preview_scrubber defeat per-frame-color-counts [111, 112, 111, 111, 111] over64 5
+TOTAL preview_scrubber max 112 over64 38 of 38
+preview_trainer idle per-frame-color-counts [111, 111, 111, 111] over64 4
+preview_trainer point per-frame-color-counts [111, 110, 110] over64 3
+preview_trainer rain per-frame-color-counts [111, 110, 110, 111] over64 4
+preview_trainer shield per-frame-color-counts [111, 111, 111, 111] over64 4
+preview_trainer hurt per-frame-color-counts [112, 112] over64 2
+preview_trainer defeat per-frame-color-counts [111, 111, 111, 111, 110] over64 5
+TOTAL preview_trainer max 112 over64 22 of 22
