@@ -1,0 +1,2 @@
+desktop exit=0
+mobile exit=0

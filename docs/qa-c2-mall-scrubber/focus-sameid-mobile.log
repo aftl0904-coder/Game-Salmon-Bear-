@@ -1,0 +1,338 @@
+{
+  "mode": "mobile",
+  "passed": true,
+  "events": [],
+  "rounds": 3,
+  "frames": 405,
+  "counterattack": {
+    "before": {
+      "now": 27834,
+      "act": "recover",
+      "phase": 1,
+      "elapsed": 50,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4902,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4896,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 196,
+          "y": 237,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 5010,
+        "y": 285,
+        "hp": 55,
+        "body": {
+          "x": 4966,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4966,
+        "x1": 5174,
+        "y0": 221,
+        "y1": 285,
+        "visible": false
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": [
+        {
+          "x": 4680,
+          "y": 281.68285714285713
+        }
+      ]
+    },
+    "after": {
+      "now": 30400,
+      "act": "scan",
+      "phase": 1,
+      "elapsed": 600,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4963,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4957,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4979,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 5010,
+        "y": 285,
+        "hp": 52,
+        "body": {
+          "x": 4966,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4966,
+        "x1": 5174,
+        "y0": 221,
+        "y1": 285,
+        "visible": false
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": [
+        {
+          "x": 4680,
+          "y": 279.60857142857145
+        }
+      ]
+    }
+  },
+  "wall": {
+    "warn": {
+      "now": 40433,
+      "act": "warn",
+      "phase": 3,
+      "elapsed": 0,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4654,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4648,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4979,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 4725,
+        "y": 285,
+        "hp": 10,
+        "body": {
+          "x": 4681,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4640,
+        "x1": 4769,
+        "y0": 221,
+        "y1": 285,
+        "visible": true
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": [
+        {
+          "x": 4680,
+          "y": 281.5457142857142
+        }
+      ]
+    },
+    "escaped": {
+      "now": 42216,
+      "act": "warn",
+      "phase": 3,
+      "elapsed": 1675,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4784,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4778,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4979,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 4725,
+        "y": 285,
+        "hp": 10,
+        "body": {
+          "x": 4681,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4640,
+        "x1": 4769,
+        "y0": 221,
+        "y1": 285,
+        "visible": true
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": []
+    },
+    "active": {
+      "now": 42483,
+      "act": "charge",
+      "phase": 3,
+      "elapsed": 198,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4814,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4808,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4979,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 4693,
+        "y": 285,
+        "hp": 10,
+        "body": {
+          "x": 4649,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4640,
+        "x1": 4769,
+        "y0": 221,
+        "y1": 285,
+        "visible": false
+      },
+      "canHurt": true,
+      "enemies": [],
+      "sushi": []
+    },
+    "recover": {
+      "now": 42583,
+      "act": "recover",
+      "phase": 3,
+      "elapsed": 0,
+      "move": "charge",
+      "warningId": 1,
+      "hero": {
+        "x": 4814,
+        "y": 285,
+        "hp": 6,
+        "alive": true,
+        "body": {
+          "x": 4808,
+          "y": 259,
+          "w": 12,
+          "h": 24,
+          "enabled": true
+        },
+        "attack": {
+          "x": 4979,
+          "y": 185,
+          "w": 48,
+          "h": 96,
+          "enabled": false
+        },
+        "attackActive": false,
+        "speed": 105
+      },
+      "boss": {
+        "x": 4684,
+        "y": 285,
+        "hp": 10,
+        "body": {
+          "x": 4640,
+          "y": 224,
+          "w": 88,
+          "h": 61,
+          "enabled": true
+        }
+      },
+      "warning": {
+        "x0": 4640,
+        "x1": 4769,
+        "y0": 221,
+        "y1": 285,
+        "visible": false
+      },
+      "canHurt": false,
+      "enemies": [],
+      "sushi": []
+    }
+  }
+}
