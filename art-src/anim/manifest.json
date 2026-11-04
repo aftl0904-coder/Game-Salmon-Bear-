@@ -3262,5 +3262,405 @@
     "rows": 1,
     "facing": "right",
     "prompt": "ART-17 N4. Magenta walk[4] facing RIGHT, same canvas/size/baseline as map-walk.png but only 倫寶 + 琪寶寶 (no 噗噗). 琪寶寶 carries a small blue handheld electric fan hanging on her back from a strap (ART-18 look). Ref map-walk.png."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard model-sheet; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/idle.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard idle; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard walk; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/detect.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard detect; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/warning.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard warning; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/attack.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard attack; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/recover.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard recover; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard hit; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-human-guard/defeat.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 human guard defeat; deep navy original civilian mall guard, no marks/text, magenta. | FIX 2026-11-04: equal cells 256x352, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber model-sheet; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/idle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber idle; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/move.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber move; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/scan.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber scan; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/warn-charge.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber warn-charge; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/charge.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber charge; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/charge-stop.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber charge-stop; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/warn-brush.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber warn-brush; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/brush-spin.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber brush-spin; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/recover.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber recover; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber hurt; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-mall-scrubber/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber defeat; silver-grey/deep navy autonomous machine, no brand/text, magenta. | FIX 2026-11-04: equal cells 368x344, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-mall-scrubber/scan-warning.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber scan-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-mall-scrubber/charge-warning.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber charge-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-mall-scrubber/brush-warning.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S6 mall scrubber brush-warning FX; shape-readable warning, no text, magenta. | FIX 2026-11-04: equal cells 536x288, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer model-sheet; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/idle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer idle; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/point.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer point; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/rain.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer rain; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/shield.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer shield; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/hurt.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer hurt; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/boss/c2-trainer/defeat.png",
+    "frames": 5,
+    "cols": 5,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer defeat; original brown/olive workwear and rope/whip, no text, magenta. | FIX 2026-11-04: equal cells 264x384, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-product-zombie/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 product honey-zombie model-sheet; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-product-zombie/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 product honey-zombie walk; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-product-zombie/reach.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 product honey-zombie reach; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-product-zombie/hit.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 product honey-zombie hit; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/enemies/c2-product-zombie/die.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 product honey-zombie die; cage harness, chains and blank plate, no text, magenta. | FIX 2026-11-04: equal cells 376x456, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-trainer/whip.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer whip independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-trainer/chain-net-warning.png",
+    "frames": 2,
+    "cols": 2,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer chain-net-warning independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/anim/fx/c2-trainer/chain-net.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "ART-20 S7 trainer chain-net independent attack FX; no text, magenta. | FIX 2026-11-04: equal cells 288x304, common foot baseline, <=60 colours/frame, flat #FF00FF key."
+  },
+  {
+    "file": "art-src/props/stage7/entrance-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "background",
+    "prompt": "ART-20 S7 entrance-far environment; original exhibition/training facility, blank signage, no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/corridor-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "background",
+    "prompt": "ART-20 S7 corridor-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04b: 1119x720, periodic content, cropped to an exact period with 32px blend; tiles without ghosting."
+  },
+  {
+    "file": "art-src/props/stage7/training-mid.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "background",
+    "prompt": "ART-20 S7 training-mid environment; original exhibition/training facility, blank signage, no text/brands. | FIX 2026-11-04b: 635x720, periodic content, cropped to an exact period with 32px blend; tiles without ghosting. bare iron wall hooks, no rope loops."
+  },
+  {
+    "file": "art-src/props/stage7/backstage-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "background",
+    "prompt": "ART-20 S7 backstage-far environment; original exhibition/training facility, blank signage, no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/arena-far.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "background",
+    "prompt": "ART-20 S7 arena-far environment; original exhibition/training facility, blank signage, no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/cage-animal.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static cage-animal prop; isolated magenta, blank/no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/cage-empty.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static cage-empty prop; isolated magenta, blank/no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/chain-static.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static chain-static prop; isolated magenta, blank/no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/net-static.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static net-static prop; isolated magenta, blank/no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/number-plate-blank.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static number-plate-blank prop; isolated magenta, blank/no text/brands."
+  },
+  {
+    "file": "art-src/props/stage7/sign-blank.png",
+    "frames": 1,
+    "cols": 1,
+    "rows": 1,
+    "facing": "front",
+    "prompt": "ART-20 S7 static sign-blank prop; isolated magenta, blank/no text/brands."
   }
 ]
