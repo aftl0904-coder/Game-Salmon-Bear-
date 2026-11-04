@@ -1,0 +1,5 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+
+3 !== 4
+
+    at file:///tmp/salmon-first-release-growth/scripts/qa/first-release-growth-win.mjs:41:10

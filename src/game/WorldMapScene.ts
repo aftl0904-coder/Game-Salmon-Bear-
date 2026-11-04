@@ -453,7 +453,7 @@ export class MapScene extends Phaser.Scene {
     this.startDialog = null
     const mode = (this.registry.get('playMode') as '1p' | '2p') ?? '1p'
     const solo = (this.registry.get('soloCast') as 'boy' | 'girl') ?? 'boy'
-    startNewRun(stage, carry, mode, solo, this.registry)
+    if (!startNewRun(stage, carry, mode, solo, this.registry)) return
     if (stage === 1) { this.scene.start('gacha'); return }
     this.finishPick(stage)
   }

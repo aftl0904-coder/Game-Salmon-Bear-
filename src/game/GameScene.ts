@@ -12,6 +12,7 @@ import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { getRun, isSideTrip, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import type { GrowthRank } from './growth'
 import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -4931,10 +4932,11 @@ export class GameScene extends Phaser.Scene {
   private clearHeroes(): Hero[] {
     return [this.boy, this.girl].filter((h): h is Hero => !!h)
   }
+  private clearResultRank: GrowthRank | null = null
   private saveCurrentClear() {
     const hp: Partial<Record<Who, number>> = {}
     for (const h of this.clearHeroes()) hp[h.role as Who] = h.hp
-    saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [] })
+    return saveClear(this.stageNo, { coins: this.coinStock, purse: { ...this.purse }, hp, friends: (this.registry.get('runFriends') as string[] | undefined) ?? [] }, this.clearResultRank ?? undefined)
   }
   private heroMaxHp(h: Hero) {
     return MAX_HP + bonusHearts(h.role as Who)
@@ -5155,7 +5157,7 @@ export class GameScene extends Phaser.Scene {
       .text(px + pw - 14, lineY + 6, '0', { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 3 })
       .setOrigin(1, 0)
       .setAlpha(0)
-    const rank = this.clearRank(hpLeft, hpMax)
+    const rank = this.clearResultRank ?? this.clearRank(hpLeft, hpMax)
     const rankCol = { S: '#ffd040', A: '#ff8a5a', B: '#8ad0ff', C: '#c0b0a0' }[rank]
     const stamp = this.add
       .text(px + 64, lineY + 38, rank, { fontFamily: FONT_TITLE, fontSize: '34px', color: rankCol, stroke: '#2a0e04', strokeThickness: 6 })
@@ -5281,6 +5283,8 @@ export class GameScene extends Phaser.Scene {
   private win() {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
+    const hpLeft = Math.max(0, this.boy.hp) + Math.max(0, this.girl?.hp ?? 0)
+    this.clearResultRank = this.clearRank(hpLeft, MAX_HP * (this.girl ? 2 : 1))
     unlockStage(Math.min(this.stageNo + 1, FINAL_STAGE))
     this.saveCurrentClear()
     this.ended = true
@@ -5336,6 +5340,9 @@ export class GameScene extends Phaser.Scene {
         void this.gambleAtClearCard()
         return
       }
+      // On failure do not advance away from an unsaved main clear. The same
+      // frozen rank is retried; a successful replay cannot re-award points.
+      if ((id === 'next' || id === 'credits') && !isSideTrip() && getRun() && !this.saveCurrentClear()) return
       left = true
       for (const b of this.clearBtns) {
         b.bg.disableInteractive()

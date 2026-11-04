@@ -35,11 +35,38 @@ try {
   const run = await page.evaluate(() => JSON.parse(localStorage.getItem('sake-kuma-run-v1')))
   assert.equal(run.startStage, 1)
   assert.equal(run.eligible, true)
-  assert.deepEqual(run.growth, {}) // expected: this checkpoint is not integrated
+  assert.equal(run.version, 2)
+  assert.equal(run.growth.activeId, run.runId)
+  assert.equal(run.growth.branches[0].heroes.boy.earned, 5)
+  assert.equal(run.growth.branches[0].heroes.girl.earned, 5)
   assert.deepEqual(errors, [])
   await page.screenshot({ path: `${out}/${mode}-baseline-new-run.png`, scale: 'css' })
+  const before = await page.evaluate(() => localStorage.getItem('sake-kuma-run-v1'))
+  await page.evaluate(() => {
+    const game = window.__SAKE_GAME__
+    for (const scene of game.scene.getScenes(true)) game.scene.stop(scene.scene.key)
+    game.scene.start('menu')
+  })
+  await page.waitForFunction(() => window.__SAKE_GAME__?.scene.isActive('menu'))
+  await page.waitForTimeout(1200)
+  if (mode === 'mobile') {
+    const box = await page.locator('canvas').boundingBox()
+    const tap = async (x, y) => { await page.touchscreen.tap(box.x + box.width*x/640, box.y + box.height*y/360); await page.waitForTimeout(400) }
+    await tap(258, 143); await tap(320, 334)
+    await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
+    await tap(320, 194)
+  } else {
+    await page.keyboard.press('1'); await page.keyboard.press('Enter')
+    await page.waitForFunction(() => !!window.__SAKE_GAME__.scene.getScene('menu').startDialog)
+    await page.waitForTimeout(350)
+    await page.keyboard.press('ArrowUp'); await page.keyboard.press('Enter')
+  }
+  await page.waitForFunction(() => document.querySelector('#save-warning')?.textContent.includes('取回介面'))
+  assert.equal(await page.evaluate(() => localStorage.getItem('sake-kuma-run-v1')), before)
+  assert.equal(await page.evaluate(() => window.__SAKE_GAME__.scene.isActive('menu')), true)
+  await page.screenshot({ path: `${out}/${mode}-restart-blocked.png`, scale: 'css' })
   report.passed = true
-  report.result = 'existing fresh stage 1 menu starts baseline; growth not integrated'
+  report.result = 'existing menu creates v2 5+5; restart with existing growth is blocked without changing storage; no growth UI'
   console.log('PASS', mode, report.result)
 } catch (e) {
   report.error = e.stack ?? String(e)

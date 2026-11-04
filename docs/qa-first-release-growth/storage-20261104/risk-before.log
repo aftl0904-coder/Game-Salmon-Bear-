@@ -1,0 +1,10 @@
+{
+  "scenario": "isolated corrupt fixture followed by new run",
+  "result": {
+    "bad": "{corrupt fixture, NOT player data",
+    "loaded": null,
+    "after": "{\"version\":1,\"runId\":\"9ecfa595-5744-499b-b220-a318cddf269d\",\"startStage\":1,\"lastCleared\":0,\"nextStage\":1,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"friends\":[],\"charm\":null,\"mode\":\"1p\",\"solo\":\"boy\"}"
+  },
+  "preserved": false
+}
+exit=1 (nonzero confirms risk; disposable profile)

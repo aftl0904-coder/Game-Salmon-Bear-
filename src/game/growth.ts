@@ -1,7 +1,7 @@
 /**
- * Pure growth-point and per-run provenance model. NOT wired to gameplay or storage yet.
- * See docs/bible/first-release-growth-20261104.md for the confirmed rules and
- * the atomic persistence / UI work required before this can be used by players.
+ * Growth-point and per-run provenance model. The ledger is stored with the
+ * main-run checkpoint; selection/respec UI and combat effects are not wired.
+ * See docs/bible/first-release-growth-20261104.md for limits and remaining work.
  */
 export const GROWTH_AXES = ['hp', 'atk', 'def', 'stam', 'sp'] as const
 export type GrowthAxis = (typeof GROWTH_AXES)[number]
@@ -79,8 +79,7 @@ export function growthRankPoints(stage: number, rank: GrowthRank, mainFirstClear
 }
 
 /**
- * Isolated model, NOT a storage format in use. A book must eventually be saved
- * inside the same atomic run snapshot as the corresponding stage transition.
+ * A book is saved inside the same run snapshot as its stage transition.
  * Archived branches are immutable: selecting one copies it into a new branch,
  * never merges it with a different branch. Unknown fields fail closed.
  */
