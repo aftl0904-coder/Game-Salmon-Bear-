@@ -228,19 +228,20 @@ export class LogoScene extends Phaser.Scene {
     let leaving = false
     const readyAt = this.time.now + 500
     const items = [
-      { label: '開始遊戲', href: null as string | null },
-      { label: '攻略', href: '/guide/' },
-      { label: '貼紙', href: '/sticker/' },
+      { label: '開始遊戲', href: null as string | null, action: 'start' as const },
+      { label: '攻略', href: '/guide/', action: 'link' as const },
+      { label: '貼紙', href: '/sticker/', action: 'link' as const },
+      { label: '角色集', href: null as string | null, action: 'gallery' as const },
     ]
-    const gap = 124
+    const gap = 96
     const buttons = items.map((item, i) => {
-      const x = width / 2 + (i - 1) * gap
-      const bg = this.add.rectangle(x, height - 30, 112, 30, 0x241810, 0.94)
+      const x = width / 2 + (i - 1.5) * gap
+      const bg = this.add.rectangle(x, height - 30, 90, 30, 0x241810, 0.94)
         .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
       const text = this.add.text(x, height - 30, item.label, {
-        fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
+        fontFamily: FONT_UI, fontSize: '12px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
       }).setOrigin(0.5)
-      return { bg, text, href: item.href }
+      return { bg, text, href: item.href, action: item.action }
     })
     const draw = () => buttons.forEach(({ bg, text }, i) => {
       bg.setFillStyle(i === selected ? 0x5a341b : 0x241810, 0.94)
@@ -256,9 +257,13 @@ export class LogoScene extends Phaser.Scene {
       if (leaving || this.time.now < readyAt) return
       leaving = true
       unlockAudio()
-      const href = buttons[selected]?.href
-      if (href) {
-        window.location.assign(href)
+      const item = buttons[selected]
+      if (item?.action === 'link' && item.href) {
+        window.location.assign(item.href)
+        return
+      }
+      if (item?.action === 'gallery') {
+        this.scene.start('gallery')
         return
       }
       this.cameras.main.fadeOut(320, 0, 0, 0)

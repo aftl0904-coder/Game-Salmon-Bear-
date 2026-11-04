@@ -53,3 +53,7 @@
 - Alan 確認第6關入商場前的野餐與到達商場十句原文，見 `docs/bible/story.md` 第9節。使用現有遊戲過場與原有素材，不生成新美術；第1大陸結局／片尾及存檔流程不改。
 - 保安造型、清潔機器人 Boss 仍在討論；第7關三項文字仍待補，未改動第7關。
 - 本分支 build、9 項資料驗證、桌面鍵盤／模擬手機純 touch 直接入口逐句 QA，以及順序接駁入口跳過 QA 通過。順序接駁測試注入第1–4關存檔並以第5關勝利捷徑進入原有結局／片尾，不是完整通關；未真機、未完整檢查所有結局及存檔分支。詳見 `docs/qa-c2-intro/README.md`；未經 Alan 指示不合併。
+## 8. 第一版角色集 checkpoint（2026-11-04）
+- 本獨立分支從重新 fetch 的 main `077af8b` 開出，參考 Alan 已確認方向 `docs/bible/first-release-confirmations-20261104.md`。封面有遊戲、攻略、角色集三入口；草稿沿用 Phaser 原有資產，提供好／壞、前後與三個動作按鈕，無進度鎖。未知／未整合動作標待繪或待切格驗收，不重複充數。
+- **未完成第一版**：部分已畫人物只得靜態圖，許多動作欠繪或欠切格驗收；#91 原圖未通過 QA、沒有接入。舊 art folder 中未登場候選身份和原創性／切格須複核；第6關現版總監與已確認新洗地機分開記錄，不猜別名。詳細名單、缺口和原創美術 request 見 `docs/bible/first-release-gallery-inventory-20261104.md` 及 `ART-REQUEST-first-release-gallery-20261104.md`。
+- build、資料驗證及桌面／模擬手機純觸控 smoke 結果與截圖見 `docs/qa-first-release-gallery/`；不代表真機、真人完整通關或每個角色動作 QA。
