@@ -5350,6 +5350,8 @@ export class GameScene extends Phaser.Scene {
         ? { id: 'credits', label: '片尾字幕 ▶', on: true }
         : this.stageNo === 6
           ? { id: 'next', label: '大陸2・第二關 ▶', on: true }
+        : this.stageNo === 7
+          ? { id: 'next', label: '待續 ▶', on: true }
         : this.stageNo > FINAL_STAGE
           ? { id: 'next', label: '第二大陸・下一關　製作中', on: false }
           : { id: 'next', label: `前往第${'一二三四五六'[this.stageNo]}關 ▶`, on: true },
@@ -5515,6 +5517,7 @@ export class GameScene extends Phaser.Scene {
       this.resetPauseKeys()
       if (id === 'menu') this.goMenu()
       else if (id === 'credits') this.goCredits()
+      else if (this.stageNo === 7 && !isSideTrip()) this.showFirstReleaseContinued()
       else this.goNextStage()
     }
     /** Enter / Start: finish the tally first, then run the highlighted button. */
@@ -6648,13 +6651,50 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(600, () => this.playOutro())
   }
 
+  /** A distinct end card after tally; the stored nextStage=8 remains intact but is not playable. */
+  private showFirstReleaseContinued() {
+    const root = this.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 200)
+    root.add(this.add.rectangle(GAME_W / 2, GAME_H / 2, GAME_W, GAME_H, 0x100d18, 0.98))
+    root.add(this.add.text(GAME_W / 2, 142, '待續', { fontFamily: FONT_TITLE, fontSize: '48px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 6 }).setOrigin(0.5))
+    root.add(this.add.text(GAME_W / 2, 210, '故事將會繼續', { fontFamily: FONT_UI, fontSize: '16px', color: '#fff2d0' }).setOrigin(0.5))
+    const button = this.add.rectangle(GAME_W / 2, 265, 180, 36, 0x4a2a14).setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
+    root.add(button)
+    root.add(this.add.text(GAME_W / 2, 265, '返回地圖', { fontFamily: FONT_UI, fontSize: '15px', color: '#ffe9a8' }).setOrigin(0.5))
+    const readyAt = this.time.now + 500
+    let done = false
+    const go = () => {
+      if (done || this.time.now < readyAt) return
+      done = true
+      this.input.keyboard?.off('keydown', onKey)
+      this.clearCardAction = null
+      this.returnToPublishedMap()
+    }
+    const onKey = (e: KeyboardEvent) => { if (!e.repeat && ['Enter', 'Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code)) go() }
+    this.input.keyboard?.on('keydown', onKey)
+    this.events.once('shutdown', () => this.input.keyboard?.off('keydown', onKey))
+    this.clearCardAction = go
+    button.on('pointerup', go)
+  }
+  /** Hold at the last published map, without ever starting the unimplemented stage 8. */
+  private returnToPublishedMap() {
+    this.registry.set('leavingToMenu', true)
+    this.registry.set('winScreenShown', false)
+    this.cameras.main.fadeOut(300, 0, 0, 0)
+    this.time.delayedCall(320, () => {
+      this.registry.set('leavingToMenu', false)
+      this.stopUi()
+      this.scene.start('worldmap', { from: 7, to: 7, next: 'play', pick: true })
+    })
+  }
   /** Stage 1 clear card → straight into 蜜樹丘 (coins carry over). */
   /** On to the next stage: the world map, then the bike leg to the stage that was picked. */
   private goNextStage() {
     if (this.registry.get('leavingToMenu')) return
     if (isSideTrip()) {
       const run = resumeMain(this.registry)
-      if (!run || !STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled())) { this.goMenu(); return }
+      if (!run) { this.goMenu(); return }
+      if (run.nextStage > 7) { this.returnToPublishedMap(); return }
+      if (!STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled())) { this.goMenu(); return }
       this.registry.set('leavingToMenu', true)
       this.registry.set('winScreenShown', false)
       this.cameras.main.fadeOut(300, 0, 0, 0)

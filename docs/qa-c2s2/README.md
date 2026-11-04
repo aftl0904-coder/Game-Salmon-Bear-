@@ -44,3 +44,16 @@
 - **1P 600 秒：通過本次前段穩定性測試**。新腳本以鍵盤在第7關前段來回操作，累計 600 秒第7關有效操作、wall 601 秒，結束仍在第7關、未通關；0 pageerror／console error。只計有觀測到的第7關運作時間，離關或勝利即停止，不計其他關。`soak-1p-current.json`、`soak-1p-current-final.png`；`soak-1p-checkpoint.json` 保留中途 461 秒快照。這不是全關、真人或真機測試。
 - **旗標短測整體失敗**：注入主線時，兩次觸發只產生一次離隊，結算將旗標與第7關完成以單一 run 寫入，重載後旗標仍為 true；但隨後嘗試注入支線場景時出現 `Cannot read properties of null (reading 'resolution')` pageerror 及 30 秒 timeout。測試 setup 與產品 bug 的成因未判定，不能掩蓋；支線場景、舊檔遷移及新局 reset **未驗證**。`injected-inspection-current.json`、`injected-inspection-side-start-failure.{json,txt}` 保留錯誤。正常 2P bot 有正常續關後通關，惟不代表所有失敗重試及重玩分支均已覆蓋。
 - 最後一輪 P2 為約 933／1483 ms，嚴格斷言失敗；P3 該輪約 817／1500 ms 雖通過單次斷言，較早 P3 約 817／1633 ms 失敗仍保留，故整體仍不穩。`injected-inspection-current.json`。第6關共用 Boss 模板獨立回歸、實體手機、真人通關仍未驗證；第10關 `markC2Cleared()` 仍未接。任何失敗維持 PR draft。
+
+## 首版公開及待續 checkpoint（2026-11-04）
+- Alan 的首版確認記於 `docs/bible/first-release-confirmations-20261104.md`。本次公開第6關入口，不再依賴測試 query；第5關片尾可按原順序承接。選關不因公開入口而解鎖未玩的大陸1關卡；第8–10關不開放。第7關主線結算後獨立「待續」卡，再到第6／7關地圖；本局仍保存 `nextStage=8`，供將來版本續接，非大陸2完整通關。支線不寫主線，原主線若等待第8關則返回停留地圖。第5關支線片尾也支援返回第7關／停留地圖。
+- `release-build.txt`：tsc + Vite build 通過（仍有既有 Vite config／chunk 警告）；`release-validate-data.txt`：10 項通過。三項第7關文案未獲上線批准，runtime 仍「待補」；沒有接第10關結局旗標。已接六張素材及其他佔位未改；#91 動畫未用。
+- 測試從無 `?c2=1` 參數的選單入關。`release-desktop-keyboard-stage6.json` 和 `release-mobile-touch-stage6.json`：新檔經正常鍵盤／模擬手機純 touch 進入第6關，非真人／實機。第7關測試使用預設第6關已過存檔，正常選單入關，之後直接呼叫擊敗事件，**不是打贏 Boss 或全關**。截圖及結果以各 `release-*-stage7*.json/png` 為準。
+- 桌面首輪 `release-initial-desktop-keyboard-stage7.json/png`：已顯示待續畫面（`*-failure.png`），但舊測試查詢沒有深入 Phaser 容器而 timeout，不能報通過；修正測試查詢後再測，保留首輪。`release-hmr-failure-*` 為開發伺服器測試時另一次 build/源碼熱更新令頁面重新載入、中斷的失敗，不當通過。
+- 鏈網仍按原嚴格上下限；本次多個測試並行、未隔離負載。原始 `release-inspect-console.txt` 的 P2 warning 1300.0 ms、active 1749.8 ms；P3 warning 1233.2 ms、active 1433.4 ms（由記錄的 `this.time.now` 事件相減）。全部屬**實測超出舊嚴格容差**，不得用設定值或放寬斷言說成通過；調度原因及低負載下表現未驗證。
+- 原支線注入問題：舊測試 reload 後固定只等 1.5 秒，直接 stop 所有 scenes 再強制啟動 play，會中斷正常 Boot／素材載入生命週期；新腳本改為等 Boot 完整、從正常選單鍵盤進支線，另有注入擊敗以觀察旗標。是否已完全排除產品根因，須看 `release-injected-inspection.json` 和 pageerror 紀錄，不能把一次正常進入等同完整真人回歸。
+- 依指示素材接入後**沒有重新跑 600 秒或 2P 全關**；第6關共用 Boss 完整回歸、所有失敗重試／重玩、真機及真人完整通關仍未驗證。此前紀錄保留、PR 維持 draft。
+- 桌面第7關重測 `release-desktop-keyboard-stage7.json` 通過：正常入關、注入 `trainerDefeated()`、同一主線快照記 `puffLeft=true,lastCleared=7,nextStage=8`、結算→明顯待續→地圖；沒有開放第8關及沒有寫完整結局旗標，0 pageerror／console error。不是正常打完 Boss。
+- `release-injected-inspection.json` 整體仍**失敗**：除 P2/P3 鏈網嚴格時間失敗外，重載後正常選單入支線沒有 pageerror 或 timeout，但重選角預設為 1P 倫寶（噗噗只隨琪寶寶生成），腳本錯誤斷言必須有 pet 而失敗。原結果保留；後續另用選 2P 的 `c2s2-release-side.mjs` 驗證，結果以 `release-side-2p.json` 為準，未生成則表示未完成。
+- 手機第7關 `release-mobile-touch-stage7.json` 重試通過：用模擬手機純 touch，預置第6關已過存檔，正常選單入第7關，再注入擊敗事件測主線結算／待續／返回地圖；0 pageerror／console error，非真機或 Boss 全關。首輪 `release-initial-mobile-touch-stage7.json` 因同一 Phaser 容器搜尋錯誤逾時，原截圖及失敗保留。
+- 支線 `release-side-2p.json` 通過局部驗證：預置主線 `nextStage=8,puffLeft=true`，完整 Boot 後正常選單鍵盤選 2P 入第7關支線，原隊伍噗噗存在；注入兩次擊敗觸發後只一次離隊，主線快照逐字不變、不寫完整結局旗標，結算返回停留地圖，0 pageerror／console error。此測試非自然 Boss 戰；不同失敗重試、所有舊檔及其他主線進度仍未完整覆蓋。舊 pageerror 在正常入口沒有再出現，但未有舊錯誤堆疊，不能斷言根因已徹底證實或產品完全無 race。

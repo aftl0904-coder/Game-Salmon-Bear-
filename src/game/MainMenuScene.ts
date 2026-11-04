@@ -9,12 +9,15 @@ import { markHd, STORY_RES } from './heroAnims'
 import { c2Enabled } from './c2Gate'
 import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
 
-/** Stages that exist so far (picker + progress). */
+/** Published stages only. C2-1 is a separate new-game entry, not permission to skip C1. */
 const LAST_STAGE = 5
-/** Highest stage the picker may land on. */
-function pickable(): number {
-  return c2Enabled() ? Math.min(7, Math.max(6, maxStage(), getRun()?.nextStage ?? 1)) : Math.min(maxStage(), LAST_STAGE)
+function pickableStages(): number[] {
+  const stages = Array.from({ length: Math.min(LAST_STAGE, maxStage()) }, (_, i) => i + 1)
+  if (c2Enabled()) stages.push(6)
+  if (c2Enabled() && (maxStage() >= 7 || (getRun()?.nextStage ?? 0) >= 7)) stages.push(7)
+  return stages
 }
+function pickable(): number { return Math.max(...pickableStages()) }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
@@ -76,7 +79,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
     const savedStage = getRun()?.nextStage
-    this.stageSel = savedStage && savedStage <= pickable() ? savedStage : Math.min(maxStage(), LAST_STAGE)
+    this.stageSel = savedStage && pickableStages().includes(savedStage) ? savedStage : savedStage && savedStage > 7 ? 7 : Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
     this.stageRedrawBox = null
     this.continentButtons = []
@@ -228,14 +231,15 @@ export class MainMenuScene extends Phaser.Scene {
   }
 
   private toggleStage(dir: 1 | -1) {
-    const n = pickable()
-    if (n < 2) return
-    this.stageSel = ((this.stageSel - 1 + dir + n) % n) + 1
+    const stages = pickableStages()
+    if (stages.length < 2) return
+    const index = stages.indexOf(this.stageSel)
+    this.stageSel = stages[(index + dir + stages.length) % stages.length]!
     SFX.blip(520)
     this.drawStage()
   }
 
-  /** C2 remains behind the existing browser-persistent ?c2=1 development gate. */
+  /** First-release continent entry is public. */
   private buildContinentPicker(width: number) {
     const available = c2Enabled() ? [1, 6] : [1]
     available.forEach((stage, i) => {
