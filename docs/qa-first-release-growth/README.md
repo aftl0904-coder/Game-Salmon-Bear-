@@ -2,10 +2,16 @@
 
 此 draft 已接入版本化本局存檔、主線發點及新局選源／配點 UI；**商店重配及五軸戰鬥效果仍未接**，不能視作完整驗收或合併。
 
+## 2026-11-04：支線、裝備及榜單補測
+
+- [桌面鍵盤](ui-20261104/extended/desktop.log)、[模擬手機純 touch](ui-20261104/extended/mobile.log) 均通過：再由正常封面／選單進第2關支線，確認支線符合榜單資格；**注入**支線購裝及清關後主線快照逐字不變。另**注入**主線買槍，經正常選單選帶舊裝備及不帶舊成長，新局保留槍、各5點且不具榜單資格；均非自然通關。退出碼見 [extended/exits.log](ui-20261104/extended/exits.log)。
+- [實際榜單寫入 retry](ui-20261104/score/retry/score.log)：**注入**遊戲場景、新局來源及結算觸發，在真實 `GameScene` 測兩個寫榜位置；帶非零舊成長兩處均零筆，不帶成長兩處各寫一筆。不是玩家自然完成 Boss 或完整榜單驗收。[首次失敗](ui-20261104/score/score.log) 等 `started` 超時，因仍停在開場故事（[截圖](ui-20261104/score/failure.png)）；測試補按畫面「跳過」後才重試通過，兩次退出碼均保留。
+- 測試伺服器 47951 已停止，無 listener，見 [server.log](ui-20261104/server.log)。地圖入口、自然關卡／Boss、商店重配及五軸戰鬥仍未實測或未接線；未真機、未真人。舊版選單警告與取消保留，新局成長 UI 不等於完成整個成長系統。
+
 ## 2026-11-04：新局來源及雙角色配點首輪
 
 - [桌面鍵盤 log](ui-20261104/desktop.log)／[手機純 touch log](ui-20261104/mobile.log) 均從正常封面 → 難度 → 選角操作，沒有注入場景。兩人各5及各自加點見 [桌面](ui-20261104/desktop-points-both.png)、[手機](ui-20261104/mobile-points-both.png)；選不帶、選舊10、選另一局5、取消，核對所有來源保留、不合併及新局 `eligible`。手機為 Chromium Pixel 7 landscape 模擬器，不是真機或真人。
-- 為建立舊10資料，透過真實模組**注入**第1–5關清關事件（3=S、5=A）、購槍及解鎖進度；不是自然打 Boss。榜單目前只核對 run 的資格布林，未實際走排行榜寫入；支線選關、地圖入口與新局舊裝備帶入需補實際回歸。
+- 為建立舊10資料，透過真實模組**注入**第1–5關清關事件（3=S、5=A）、購槍及解鎖進度；不是自然打 Boss。首輪只核對 run 的資格布林；支線及注入寫榜補測見上節，地圖入口仍待測。
 - 各以正常 UI 確認時注入 `localStorage.setItem` quota 失敗及損壞原始字串，驗證仍停留配點、原本快照逐字不變，恢復寫入後重試；見 [桌面失敗](ui-20261104/desktop-quota-failure.png)、[手機失敗](ui-20261104/mobile-quota-failure.png)、[桌面壞檔](ui-20261104/desktop-corrupt-blocked.png)、[手機壞檔](ui-20261104/mobile-corrupt-blocked.png)。舊版無明確配點呼叫仍阻擋非零重開。未證明跨分頁同時 compare/set 安全。
 - [build](ui-20261104/build.log)、[validate](ui-20261104/validate.log)、[純帳本模型](ui-20261104/ledger.log) 通過，退出碼 [exits](ui-20261104/exits.log)；Vite 有既有設定及 chunk 警告。後兩項為模型／資料檢查，不是玩家操作。自然通關、死亡／戰鬥效果、商店重配、真人及真機未測或未實作。
 

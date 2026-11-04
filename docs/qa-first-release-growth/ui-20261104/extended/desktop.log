@@ -1,0 +1,14 @@
+PASS desktop [
+  "normal menu -> fresh source cancel preserves absent run",
+  "normal start: both heroes allocated independently, fresh 5 each and ranking eligible",
+  "INJECTED fixture: 5 clear events (3=S,5=A), gun purchase, unlock6; not natural play",
+  "legacy restart without explicit selection remains blocked; original bytes unchanged",
+  "stage6 no equipment/no growth: new 5, old10 retained, eligible",
+  "cancel after editing both heroes preserves all source bytes",
+  "select original old10: exactly 10 not 15; nonzero growth excludes leaderboard",
+  "select second saved branch independently: 5, not merged with 10; carry excludes leaderboard",
+  "normal menu stage2 side trip is ranking eligible; INJECTED purchase and clear cannot change main-run bytes",
+  "INJECTED main purchase then normal menu carry equipment / no growth: gun retained, 5 fresh points and ranking ineligible",
+  "INJECTED quota error: confirmation blocked, exact bytes retained; retry through UI succeeds",
+  "INJECTED corrupt save: normal UI confirmation refused; original bytes retained"
+]

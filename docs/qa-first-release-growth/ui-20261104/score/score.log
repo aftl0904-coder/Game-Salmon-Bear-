@@ -1,0 +1,2 @@
+FAIL page.waitForFunction: Timeout 45000ms exceeded.
+    at /tmp/salmon-first-release-growth/scripts/qa/first-release-growth-score-writers.mjs:15:13

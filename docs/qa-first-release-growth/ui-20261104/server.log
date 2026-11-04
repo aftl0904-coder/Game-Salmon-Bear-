@@ -7,3 +7,4 @@ Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
   ➜  Local:   http://127.0.0.1:47951/
   ➜  press h + enter to show help
 2:20:25 AM [vite] (client) page reload src/game/GrowthStartDialog.ts
+PASS: 47951 no listener after owned server stopped
