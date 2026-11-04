@@ -3262,5 +3262,221 @@
     "rows": 1,
     "facing": "right",
     "prompt": "ART-17 N4. Magenta walk[4] facing RIGHT, same canvas/size/baseline as map-walk.png but only 倫寶 + 琪寶寶 (no 噗噗). 琪寶寶 carries a small blue handheld electric fan hanging on her back from a strap (ART-18 look). Ref map-walk.png."
+  },
+  {
+    "file": "art-src/anim/gallery/drone/fire.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/drone/lock.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/fleecy/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/fleecy/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/ginger/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/ginger/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/gnome/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/gnome/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/snowcat/cheer.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/friends/snowcat/walk.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/honeyzombie/stagger-turn.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/mama/serve.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/mama/wave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/minibee/alert.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/minibee/dive.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/product-zombie/strain.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/robotarm/aim.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/robotarm/fire.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/squirrel/look-around.png",
+    "frames": 3,
+    "cols": 3,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/warriorking/dash.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/warriorking/idle.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/gallery/warriorking/model-sheet.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "views",
+    "prompt": "Warrior King model sheet: front, side, back views (gallery)"
+  },
+  {
+    "file": "art-src/anim/gallery/warriorking/throw.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/stalls/coconut/gallery-wave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/stalls/sashimi/gallery-wave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/stalls/tart/gallery-wave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
+  },
+  {
+    "file": "art-src/anim/stalls/waffle/gallery-wave.png",
+    "frames": 4,
+    "cols": 4,
+    "rows": 1,
+    "facing": "right",
+    "prompt": "first-release gallery action, original design matching existing character reference"
   }
 ]
