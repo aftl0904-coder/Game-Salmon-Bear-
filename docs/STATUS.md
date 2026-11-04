@@ -1,5 +1,11 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## 2026-11-04 · 大陸2第1關獨立 checkpoint
+
+- 此分支由最新 main `077af8b` 開出；只完成第6關獨立人類保安臨時實作，**整項工作未完成，不可合併或部署**。洗地機 Boss、A–E 及 6→7 故事 runtime、P1–P3／公平性與全關驗證尚待完成；場內仍是舊人形總監及舊招式，絕不是新機器。詳見 [`bible/c2-stage1-implementation-checkpoint-20261104.md`](bible/c2-stage1-implementation-checkpoint-20261104.md)。
+- 不改 #88 共用 `SecurityDirector`；整合時第7關保安要共用人類外形但保留其玩法及數值。已批准大陸2開場由 #90 負責，本分支依賴它而不重寫；#91 素材 QA 尚未合格，暫用自行繪製的人類保安臨時圖。第7關三項文字及大陸1結局仍待 Alan 審核。
+- QA 結果及失敗、限制見 [`qa-c2-mall-scrubber/README.md`](qa-c2-mall-scrubber/README.md)；不得將注入場景、無敵狀態、模擬手機或舊截圖當成真機、真人或完整通關證據。
+
 ## 1. 現況
 
 - 本次更新基於 `main` `c6654ef`（合併 #83）。

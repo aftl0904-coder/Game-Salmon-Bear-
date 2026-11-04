@@ -55,6 +55,7 @@ import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hook
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
+import { MallGuard } from './enemies/MallGuard'
 import { Stage6World, type Stage6Data } from './stage6World'
 import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
@@ -5836,6 +5837,10 @@ export class GameScene extends Phaser.Scene {
       return
     }
     if (species === 'guard') {
+      if (this.mall) {
+        this.addS2Enemy(new MallGuard(this, x, this.s2Hooks())).setFlipX(true)
+        return
+      }
       const z = new GuardZombie(this, x, this.s2Hooks())
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
