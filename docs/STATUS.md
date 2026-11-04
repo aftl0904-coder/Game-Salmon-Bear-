@@ -13,6 +13,7 @@
 - 按 Alan 要求，方案 §4 補上第6關 A–E 及前往第7關的候選故事／動作／對白；全屬待確認草稿，未改已確認的開場原文。大陸2開場實作見 draft #90，並非已合併或上線。
 - 本次 baseline build、9 項 data validation、桌面雙人鍵盤及模擬手機 P1 touch 落台 smoke 通過；使用注入測試點，未測第6關新設計／第7關、真機、真人通關及手感。證據與限制見 `docs/qa-c2-planning/`。
 - Cursor ART-20 已推新 branch，由 Manus 代開 draft #91，head `7b198f7`；50 張 PNG 齊，但動畫跨格、部分 FX 排列不符 manifest，兩張第7關中景接縫不合格，暫不能整批整合。詳細回修清單及獨立桌面／模擬手機素材預覽見 `docs/qa-art20/`。#88 繼續用佔位並繼續 QA，不等修圖；#91 不自行 merge 或 close。
+- Alan 於 2026-11-04 明確批准 **Cursor 修改並推送 #91 原分支 `cursor/c2-original-batch`** 進行素材回修；仍由 Cursor 一人修改，Manus 只在完成後檢查。這不構成合併／關閉 #91 或修改其他 `cursor/` 分支的授權。
 - 預告片 #87 仍 draft，已排除大檔、字幕「待補」；Alan 指示暫停，不重剪。正式網站 Production 已部署最新已合併 main `077af8b`；第7關、開場及新美術草稿均未上線。
 
 ## 1. 現況
