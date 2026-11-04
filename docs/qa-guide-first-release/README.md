@@ -24,4 +24,4 @@ QA_MODE=mobile node docs/qa-guide-first-release/guide-navigation.mjs
 
 沒有真機、真人遊玩或整遊戲通關；測試是封面／攻略導航，沒有實戰第6關或第7關、Boss 招式、存檔遷移、排行或成長系統。第7關、洗地機、人類保安及三項文字仍依各自工作／Alan 決定；第10關完成旗標尚未接線，沒有聲稱大陸2結局可自然解鎖。
 
-最後一次導航測試通過之後，只補充第1關新局扭蛋及排行榜資格兩句文字；之後重新 build 及 validate:data 通過，但未重新執行 Playwright，截圖及導航日誌反映補充前的版本。補充不改導航、關卡段落或版面結構。
+早前導航測試通過後曾補充第1關新局扭蛋及排行榜資格兩句文字，並重新 build 及 validate:data。其後再用最終 production build **串行重跑**桌面鍵盤及模擬手機純 touch 導航，兩項均通過，沒有 pageerror、console error、404 或 request failure；見 `desktop-final.txt`、`mobile-final.txt`、`desktop.json`、`mobile.json` 及最新截圖。補充前結果保留在 `desktop-pre-final.json`、`mobile-pre-final.json`。
