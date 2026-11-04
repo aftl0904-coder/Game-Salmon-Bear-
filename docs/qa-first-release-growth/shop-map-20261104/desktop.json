@@ -1,0 +1,13 @@
+{
+  "mode": "desktop",
+  "scope": "INJECTED run, game/map scene and clear; actual UI input. No physical device, human or natural clear.",
+  "checks": [
+    "Injected win; actual clear-card opening and original buy/switch for both characters",
+    "Cancel edits on both heroes leaves exact snapshot untouched",
+    "Injected quota fails atomically, retry saves; no over-allocation, boy has 3 unspent, archived branch/purse/eligibility intact, HP {\"boy\":7,\"girl\":2,\"boyMax\":7,\"girlMax\":12}",
+    "Injected side context: UI and direct API refuse permanent respec; main bytes unchanged"
+  ],
+  "errors": [],
+  "passed": false,
+  "error": "page.waitForFunction: Timeout 30000ms exceeded.\n    at /tmp/salmon-first-release-growth/scripts/qa/first-release-growth-shop-map.mjs:79:14"
+}

@@ -1,0 +1,4 @@
+PASS mobile [
+  "Injected map s1: warning/cancel preserves snapshot; actual old source selection and allocation; ranking and mode preserved",
+  "Injected map s6: warning/cancel preserves snapshot; actual no-carry source selection and allocation; ranking and mode preserved"
+]

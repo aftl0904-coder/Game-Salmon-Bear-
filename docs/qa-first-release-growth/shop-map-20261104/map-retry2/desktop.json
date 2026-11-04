@@ -1,0 +1,10 @@
+{
+  "mode": "desktop",
+  "scope": "INJECTED run, game/map scene and clear; actual UI input. No physical device, human or natural clear.",
+  "checks": [
+    "Injected map s1: warning/cancel preserves snapshot; actual old source selection and allocation; ranking and mode preserved",
+    "Injected map s6: warning/cancel preserves snapshot; actual no-carry source selection and allocation; ranking and mode preserved"
+  ],
+  "errors": [],
+  "passed": true
+}
