@@ -10,7 +10,8 @@ import { c2Cleared } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
-import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
+import { getRun, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip, type NewGrowthSetup } from './run'
+import { GrowthStartDialog } from './GrowthStartDialog'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -59,6 +60,7 @@ export class MapScene extends Phaser.Scene {
   private verseGo: (() => void) | null = null
   /** Set while the plain title card is up (a stage no map knows); running it leaves for the stage. */
   private cardGo: (() => void) | null = null
+  private growthDialog: GrowthStartDialog | null = null
   private startDialog: { root: Phaser.GameObjects.Container; index: number; labels: Phaser.GameObjects.Text[]; actions: Array<() => void> } | null = null
 
   constructor() {
@@ -91,6 +93,7 @@ export class MapScene extends Phaser.Scene {
     this.verseGo = null
     this.cardGo = null
     this.startDialog = null
+    this.growthDialog = null
     this.icons = {}
     this.pickTween = null
     const cm = mapForStage(data.to)
@@ -178,11 +181,13 @@ export class MapScene extends Phaser.Scene {
     this.versePanel.setVisible(false)
 
     const kb = this.input.keyboard
-    const confirm = (e: KeyboardEvent) => { if (!e.repeat) this.startDialog ? this.confirmStartDialog() : this.picking ? this.confirmPick() : this.skip() }
-    const left = () => this.startDialog ? this.moveStartDialog(-1) : this.picking && this.movePick(-1)
-    const right = () => this.startDialog ? this.moveStartDialog(1) : this.picking && this.movePick(1)
-    const up = () => { if (this.startDialog) this.moveStartDialog(-1) }
-    const down = () => { if (this.startDialog) this.moveStartDialog(1) }
+    const confirm = (e: KeyboardEvent) => { if (!e.repeat) this.growthDialog ? this.growthDialog.activate() : this.startDialog ? this.confirmStartDialog() : this.picking ? this.confirmPick() : this.skip() }
+    const left = () => this.growthDialog ? this.growthDialog.horizontal(-1) : this.startDialog ? this.moveStartDialog(-1) : this.picking && this.movePick(-1)
+    const right = () => this.growthDialog ? this.growthDialog.horizontal(1) : this.startDialog ? this.moveStartDialog(1) : this.picking && this.movePick(1)
+    const up = () => { if (this.growthDialog) this.growthDialog.move(-1); else if (this.startDialog) this.moveStartDialog(-1) }
+    const down = () => { if (this.growthDialog) this.growthDialog.move(1); else if (this.startDialog) this.moveStartDialog(1) }
+    const escape = () => this.growthDialog?.escape()
+    kb?.on('keydown-ESC', escape)
     kb?.on('keydown-ENTER', confirm)
     kb?.on('keydown-SPACE', confirm)
     kb?.on('keydown-F', confirm)
@@ -197,10 +202,11 @@ export class MapScene extends Phaser.Scene {
     const pointerConfirm = () => {
       // Taps on an interactive badge already call confirmPick via its own handler;
       // this generic pointerdown is for "tap anywhere to confirm/skip" elsewhere.
-      if (!this.picking && !this.startDialog) this.skip()
+      if (!this.picking && !this.startDialog && !this.growthDialog) this.skip()
     }
     this.input.on('pointerdown', pointerConfirm)
     this.events.once('shutdown', () => {
+      kb?.off('keydown-ESC', escape)
       kb?.off('keydown-ENTER', confirm)
       kb?.off('keydown-SPACE', confirm)
       kb?.off('keydown-F', confirm)
@@ -329,6 +335,14 @@ export class MapScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.growthDialog) {
+      if (TouchInput.justPressed('up')) this.growthDialog.move(-1)
+      if (TouchInput.justPressed('down')) this.growthDialog.move(1)
+      if (TouchInput.justPressed('left')) this.growthDialog.horizontal(-1)
+      if (TouchInput.justPressed('right')) this.growthDialog.horizontal(1)
+      if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) this.growthDialog.activate()
+      return
+    }
     if (this.startDialog) {
       if (TouchInput.justPressed('left') || TouchInput.justPressed('up')) this.moveStartDialog(-1)
       if (TouchInput.justPressed('right') || TouchInput.justPressed('down')) this.moveStartDialog(1)
@@ -399,11 +413,11 @@ export class MapScene extends Phaser.Scene {
 
   /** Lock in the highlighted stage and start the trip there. */
   private confirmPick() {
-    if (!this.picking || this.startDialog) return
+    if (!this.picking || this.startDialog || this.growthDialog) return
     const chosen = this.pickIndex
     if (getRun()?.nextStage !== chosen && (chosen === 1 || chosen === 6)) {
       if (needsStartChoice()) this.showStartDialog(chosen)
-      else this.beginNewRun(chosen, false)
+      else this.openGrowthSetup(chosen, false)
       return
     }
     if (getRun()?.nextStage === chosen) resumeMain(this.registry)
@@ -433,10 +447,10 @@ export class MapScene extends Phaser.Scene {
     const cover = this.add.rectangle(320, 180, 640, 360, 0x000000, 0.8).setInteractive()
     cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
     root.add([cover, this.add.rectangle(320, 180, 360, 190, 0x241810).setStrokeStyle(2, 0xc8902a)])
-    root.add(this.add.text(320, 104, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
+    root.add(this.add.text(320, 104, '開新局：先揀裝備，再揀成長來源', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
     if (warning) root.add(this.add.text(320, 120, warning, { fontFamily: FONT_UI, fontSize: '11px', color: '#ffba99' }).setOrigin(0.5))
-    const actions = [() => this.beginNewRun(stage, true), () => this.beginNewRun(stage, false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
-    const labels = ['⚪ 開新局：帶', '⚪ 開新局：唔帶', '取消'].map((text, i) => {
+    const actions = [() => this.openGrowthSetup(stage, true), () => this.openGrowthSetup(stage, false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
+    const labels = ['⚪ 開新局：帶舊裝備', '⚪ 開新局：唔帶舊裝備', '取消'].map((text, i) => {
       const y = 145 + i * 31
       const bg = this.add.rectangle(320, y, 300, 26, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
       const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
@@ -448,14 +462,24 @@ export class MapScene extends Phaser.Scene {
     this.drawStartDialog()
   }
 
-  private beginNewRun(stage: 1 | 6, carry: boolean) {
+  private openGrowthSetup(stage: 1 | 6, carry: boolean) {
+    this.startDialog?.root.destroy(); this.startDialog = null
+    this.growthDialog = new GrowthStartDialog(this, (setup) => {
+      const ok = this.beginNewRun(stage, carry, setup)
+      if (ok) this.growthDialog = null
+      return ok
+    }, () => { this.growthDialog?.destroy(); this.growthDialog = null })
+  }
+
+  private beginNewRun(stage: 1 | 6, carry: boolean, setup: NewGrowthSetup): boolean {
     this.startDialog?.root.destroy()
     this.startDialog = null
     const mode = (this.registry.get('playMode') as '1p' | '2p') ?? '1p'
     const solo = (this.registry.get('soloCast') as 'boy' | 'girl') ?? 'boy'
-    if (!startNewRun(stage, carry, mode, solo, this.registry)) return
-    if (stage === 1) { this.scene.start('gacha'); return }
+    if (!startNewRun(stage, carry, mode, solo, this.registry, setup)) return false
+    if (stage === 1) { this.scene.start('gacha'); return true }
     this.finishPick(stage)
+    return true
   }
 
   private drawStartDialog() {
