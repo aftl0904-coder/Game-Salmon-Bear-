@@ -110,7 +110,20 @@ export class MallScrubber extends Enemy {
 
   private setAct(act: Act) { this.act = act; this.elapsed = 0 }
   private clearWarning() { this.warnGraphic.clear(); this.marker.setVisible(false) }
-  private restoreBody() { (this.body as Phaser.Physics.Arcade.Body).setSize(BODY_HALF * 2, 61).setOffset(16, 19) }
+  // Phaser reset() places the body at the sprite top-left, without the offset.
+  // Resync immediately and reset the frame snapshots too, so postUpdate does not
+  // apply the offset as an extra movement before the next physics step.
+  private syncBody() {
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.reset(this.x, this.y)
+    body.updateFromGameObject()
+    body.prev.copy(body.position)
+    body.prevFrame.copy(body.position)
+  }
+  private restoreBody() {
+    ;(this.body as Phaser.Physics.Arcade.Body).setSize(BODY_HALF * 2, 61).setOffset(16, 19)
+    this.syncBody()
+  }
   private recover() {
     this.setVelocity(0, 0); this.restoreBody(); this.clearWarning(); this.hitThis = false
     this.setFsm('PATROL'); this.setAct('recover')
@@ -173,20 +186,23 @@ export class MallScrubber extends Enemy {
       const distance = this.repositionX - this.x
       const dx = Math.sign(distance) * Math.min(Math.abs(distance), 45 * step / 1000)
       this.setX(this.x + dx)
-      ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
+      this.syncBody()
       if (Math.abs(this.repositionX - this.x) < 0.1) this.setAct('scan')
     } else if (this.act === 'warn') {
       if (!heroes.length) this.recover()
       else if (this.elapsed >= P[this.qphase].warn) {
         this.clearWarning(); this.hitThis = false; this.hitHeroes = new WeakSet(); this.setFsm('ATTACK')
-        if (this.move === 'brush') (this.body as Phaser.Physics.Arcade.Body).setSize(BRUSH_HALF * 2, 61).setOffset(2, 19)
+        if (this.move === 'brush') {
+          ;(this.body as Phaser.Physics.Arcade.Body).setSize(BRUSH_HALF * 2, 61).setOffset(2, 19)
+          this.syncBody()
+        }
         this.setAct(this.move)
       }
     } else if (this.act === 'charge') {
       const delta = this.dir * P[this.qphase].charge * step / 1000
       const nx = this.dir < 0 ? Math.max(this.endX, this.x + delta) : Math.min(this.endX, this.x + delta)
       this.setX(nx)
-      ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
+      this.syncBody()
       if (Math.abs(this.x - this.endX) < 0.1) this.recover()
     } else if (this.act === 'brush') {
       if (this.elapsed >= BRUSH_MS) this.recover()
