@@ -1,0 +1,3 @@
+PASS main 077af8b14b34b3e26d776e36705772fdd691639b: only two ending-3 options added; entire original story otherwise identical
+PASS C11 existing Alan placeholder and all seven C11_PERFECT dialogue placeholders + card remain intact
+PASS C2 card JSON, replay scene and all ten image blobs unchanged

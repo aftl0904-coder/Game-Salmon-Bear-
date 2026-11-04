@@ -189,14 +189,16 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       if (dead) return res()
       scene.time.delayedCall(ms, () => res())
     })
-  // TimerEvents accumulate capped frame deltas and can run much longer than wall
-  // time at a low frame rate. Check the scene clock on rendered updates instead.
+  // TimerEvents accumulate capped frame deltas. Start on the monotonic clock
+  // after fade-in completes and its frame has been submitted for rendering;
+  // scene.time.now is the frame's earlier rAF timestamp, not the actual time now.
+  // The first update at or after the deadline resumes the original sequence.
   const holdStill = (ms: number) =>
     new Promise<void>((res) => {
       if (dead) return res()
-      const until = scene.time.now + ms
+      const until = performance.now() + ms
       holdUpdate = () => {
-        if (!dead && scene.time.now < until) return
+        if (!dead && performance.now() < until) return
         if (holdUpdate) scene.events.off('update', holdUpdate)
         holdUpdate = null
         res()

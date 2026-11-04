@@ -1,0 +1,24 @@
+
+CASE {"name":"mobile-normal-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"touch only after setup"}
+TIMING {"sceneHoldMs":5283.099999999991,"opaqueRenderIntervalMs":5268,"holdRegistration":{"wall":60767.89999999851,"scene":60698.8,"frame":488},"holdRemoval":{"wall":65784.20000000298,"scene":65781.9,"frame":521},"previousUpdate":{"wall":65629,"scene":65615.2,"frame":520},"fadeTweenRegistration":{"wall":65816.10000000149,"scene":65781.9,"frame":522},"firstOpaqueRender":{"wall":60767.60000000149,"scene":60698.8,"frame":487,"key":"story-ending-3","alpha":1,"rootAlpha":1,"dialog":false},"firstFadeRender":{"wall":66035.60000000149,"scene":65981.9,"frame":523,"key":"story-ending-3","alpha":0.5714285714285714,"rootAlpha":1,"dialog":false},"updateFramesAfterDeadlineToFade":2,"deadlineCrossingUpdateGapMs":155.20000000298023,"registrationAfterOpaqueRenderMs":0.29999999701976776,"callbackToFadeRegistrationMs":31.899999998509884,"fadeRegistrationToRenderMs":219.5,"observedFps":6.83371298405467,"frameGapMedianMs":150.80000000447035,"frameGapP95Ms":268.20000000298023,"frameGapMaxMs":291.69999999552965,"fadeInObservedMs":528.8000000044703,"fadeOutSampleMs":324.79999999701977,"samples":37}
+CONTINUATION original end card → stage-5 clear card → credits
+LINES {"id":"C11","count":7,"unchanged":true,"priorStillRetainsDialog":true}
+RESULT {"name":"mobile-normal-natural","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"mobile-perfect-natural","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":11,"input":"touch only after setup"}
+TIMING {"sceneHoldMs":5333.0999999999985,"opaqueRenderIntervalMs":5346.5999999940395,"holdRegistration":{"wall":58249.39999999851,"scene":58200.9,"frame":557},"holdRemoval":{"wall":63267.5,"scene":63250.6,"frame":588},"previousUpdate":{"wall":63103.89999999851,"scene":63084,"frame":587},"fadeTweenRegistration":{"wall":63309.60000000149,"scene":63250.6,"frame":589},"firstOpaqueRender":{"wall":58249.10000000149,"scene":58200.9,"frame":556,"key":"story-ending-3","alpha":1,"rootAlpha":1,"dialog":false},"firstFadeRender":{"wall":63595.69999999553,"scene":63534,"frame":590,"key":"story-ending-3","alpha":0.64,"rootAlpha":1,"dialog":false},"updateFramesAfterDeadlineToFade":2,"deadlineCrossingUpdateGapMs":163.60000000149012,"registrationAfterOpaqueRenderMs":0.29999999701976776,"callbackToFadeRegistrationMs":42.100000001490116,"fadeRegistrationToRenderMs":286.09999999403954,"observedFps":6.359181535936465,"frameGapMedianMs":159.29999999701977,"frameGapP95Ms":209.10000000149012,"frameGapMaxMs":256.29999999701977,"fadeInObservedMs":582,"fadeOutSampleMs":282.6000000014901,"samples":35}
+CONTINUATION original end card → stage-5 clear card → credits
+LINES {"id":"C11_PERFECT","count":7,"unchanged":true,"priorStillRetainsDialog":true}
+RESULT {"name":"mobile-perfect-natural","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"mobile-normal-skip","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":10,"input":"touch only after setup"}
+SKIP {"input":"touch 跳過 ▶▶","clearCardAfterMs":368,"duringOpaqueHold":true}
+CONTINUATION skip → clear card remains past original deadline → credits
+LINES {"id":"C11","count":7,"unchanged":true,"priorStillRetainsDialog":false}
+RESULT {"name":"mobile-normal-skip","result":"PASS","physicalDevice":false,"completePlaythrough":false}
+
+CASE {"name":"mobile-perfect-skip","setup":"direct stage 5 + playOutro; injected runFriends; not complete playthrough","friendCount":11,"input":"touch only after setup"}
+SKIP {"input":"touch 跳過 ▶▶","clearCardAfterMs":542,"duringOpaqueHold":true}
+CONTINUATION skip → clear card remains past original deadline → credits
+LINES {"id":"C11_PERFECT","count":7,"unchanged":true,"priorStillRetainsDialog":false}
+RESULT {"name":"mobile-perfect-skip","result":"PASS","physicalDevice":false,"completePlaythrough":false}

@@ -1,0 +1,262 @@
+{
+  "photo": [
+    {
+      "wall": 47035.10000000149,
+      "scene": 47008.2,
+      "frame": 523,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47139.60000000149,
+      "scene": 47108.2,
+      "frame": 524,
+      "key": "story-ending-3",
+      "alpha": 0.23777777777777778,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47239.10000000149,
+      "scene": 47208.2,
+      "frame": 525,
+      "key": "story-ending-3",
+      "alpha": 0.4444444444444444,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47331.10000000149,
+      "scene": 47291.5,
+      "frame": 526,
+      "key": "story-ending-3",
+      "alpha": 0.68,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47449.70000000298,
+      "scene": 47408.2,
+      "frame": 527,
+      "key": "story-ending-3",
+      "alpha": 0.9133333333333333,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47557.30000000447,
+      "scene": 47524.9,
+      "frame": 528,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47681.30000000447,
+      "scene": 47658.1,
+      "frame": 529,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47807.60000000149,
+      "scene": 47791.5,
+      "frame": 530,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 47917.70000000298,
+      "scene": 47908.1,
+      "frame": 531,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48041.39999999851,
+      "scene": 48024.8,
+      "frame": 532,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48173.89999999851,
+      "scene": 48141.5,
+      "frame": 533,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48259.39999999851,
+      "scene": 48241.5,
+      "frame": 534,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48282.5,
+      "scene": 48258.1,
+      "frame": 535,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48392.5,
+      "scene": 48358.1,
+      "frame": 536,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48598.5,
+      "scene": 48574.8,
+      "frame": 537,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48715,
+      "scene": 48691.5,
+      "frame": 538,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48852.5,
+      "scene": 48824.8,
+      "frame": 539,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 48972.80000000447,
+      "scene": 48941.5,
+      "frame": 540,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 49094,
+      "scene": 49074.7,
+      "frame": 541,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    }
+  ],
+  "lines": [
+    "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+    "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+    "飲埋呢罐，噗噗。",
+    "噗噗噗噗噗！！",
+    "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+    "不如而家就喺呢度，大家一齊野餐？",
+    "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］"
+  ],
+  "errors": [],
+  "updates": [
+    {
+      "wall": 47668.39999999851,
+      "scene": 47658.1,
+      "frame": 529
+    },
+    {
+      "wall": 47792.89999999851,
+      "scene": 47791.5,
+      "frame": 530
+    },
+    {
+      "wall": 47909.10000000149,
+      "scene": 47908.1,
+      "frame": 531
+    },
+    {
+      "wall": 48031.89999999851,
+      "scene": 48024.8,
+      "frame": 532
+    },
+    {
+      "wall": 48147.30000000447,
+      "scene": 48141.5,
+      "frame": 533
+    },
+    {
+      "wall": 48248.80000000447,
+      "scene": 48241.5,
+      "frame": 534
+    },
+    {
+      "wall": 48262.20000000298,
+      "scene": 48258.1,
+      "frame": 535
+    },
+    {
+      "wall": 48374.30000000447,
+      "scene": 48358.1,
+      "frame": 536
+    },
+    {
+      "wall": 48589.10000000149,
+      "scene": 48574.8,
+      "frame": 537
+    },
+    {
+      "wall": 48698.30000000447,
+      "scene": 48691.5,
+      "frame": 538
+    },
+    {
+      "wall": 48831.39999999851,
+      "scene": 48824.8,
+      "frame": 539
+    },
+    {
+      "wall": 48954.5,
+      "scene": 48941.5,
+      "frame": 540
+    },
+    {
+      "wall": 49076.39999999851,
+      "scene": 49074.7,
+      "frame": 541
+    }
+  ],
+  "holdStart": {
+    "wall": 47557.80000000447,
+    "scene": 47524.9,
+    "frame": 529
+  },
+  "holdEnd": {
+    "wall": 49101.60000000149,
+    "scene": 49074.7,
+    "frame": 542
+  }
+}
