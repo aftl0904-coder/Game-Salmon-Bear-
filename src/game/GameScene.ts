@@ -53,7 +53,7 @@ import { Stage5World, type Stage5Data } from './stage5World'
 import { MirrorOwl, OwlDecoy, OwlCrate, LobsterGuard, StallKeeper, MarketStall, MirrorShade, type OwlHooks } from './enemies/Stage3Enemies'
 import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hooks } from './enemies/Stage2Enemies'
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
-import { TriBoss, type TriHooks } from './enemies/Stage5Enemies'
+import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { Stage6World, type Stage6Data } from './stage6World'
 import { stageLabel, stageTitle } from './stageNames'
@@ -6077,16 +6077,67 @@ export class GameScene extends Phaser.Scene {
         z.onSplatter = (sx) => this.honeySplat(sx)
         this.addS2Enemy(z)
       },
-      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs),
+      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs, false, true),
       dozerRun: (x0, x1, dir) => this.dozerRun(x0, x1, dir),
       replayQueen: (x) => this.s2Hooks().spawnEgg?.(x),
-      replayOwl: (gapX) => this.owlHooks().feathers(gapX),
+      replayOwl: () => this.triFeathers(),
       bossEvent: (kind) => this.onQueenEvent(kind),
     }
   }
 
+  /** Stage 5's projection, deliberately separate from MirrorOwl's own curtain.
+   * Arena 3100–3800 has a pit at 3160–3200: keep the small island safe and
+   * put three further gaps on the uninterrupted floor, including beyond the boss.
+   * The exact same x is used for each warning and its vertical projectile. */
+  private triFeathers() {
+    if (this.ended || !this.bossFight) return
+    const b = ST.boss!
+    const boss = this.queen
+    const phase = boss instanceof TriBoss ? boss.qphase : 0
+    const gaps = [b.arenaX0 + 185, b.arenaX0 + 390, b.arenaX0 + 630]
+    const warnings: Phaser.GameObjects.GameObject[] = []
+    SFX.siren()
+    // Gold marks safe standing areas; the island marker fits between arena edge and pit.
+    for (const [x, width] of [[b.arenaX0 + 35, 36], ...gaps.map((x) => [x, 90])]) {
+      const safe = this.add.ellipse(x!, LANE_FLOOR_Y + 2, width!, 10, 0xffe99a, 0.35)
+        .setStrokeStyle(2, 0xfff4bc, 0.95).setDepth(DEPTH.SHADOW + 5)
+      warnings.push(safe)
+    }
+    floatText(this, this.cameras.main.scrollX + GAME_W / 2, LANE_FLOOR_Y - 115,
+      '羽毛！去亮位！', '#fff0a0', { size: 14, dur: 1600 })
+    const xs: number[] = []
+    // Leave the pit and the entry island unmarked; no phantom safe floor across the pit.
+    for (let x = b.arenaX0 + 110; x < b.arenaX1 - 10; x += 26) {
+      if (gaps.some((gap) => Math.abs(x - gap) < 55)) continue
+      xs.push(x)
+      const shadow = this.add.ellipse(x, LANE_FLOOR_Y + 2, 16, 10, 0x461720, 0.85)
+        .setStrokeStyle(2, 0xff9070, 1).setDepth(DEPTH.SHADOW + 6)
+      shadow.setData('triFeatherShadowX', x)
+      warnings.push(shadow)
+      this.tweens.add({ targets: shadow, alpha: { from: 0.45, to: 1 }, duration: 160, yoyo: true, repeat: -1 })
+    }
+    this.time.delayedCall(TRI_FEATHER_WARNING_MS, () => {
+      if (this.ended || !this.bossFight || this.queen !== boss || !(boss instanceof TriBoss) || !boss.active || boss.fsm === 'DEAD' || boss.qphase !== phase) return
+      const key = this.textures.exists('s3-feather') ? 's3-feather' : 'coin'
+      for (const x of xs) {
+        const f = this.enemyShots.create(x, 40, key) as Phaser.Physics.Arcade.Sprite
+        f.setDepth(DEPTH.FX - 2).setAngle(160)
+        const body = f.body as Phaser.Physics.Arcade.Body
+        body.allowGravity = false
+        body.setSize(8, 14)
+        f.setVelocity(0, 150)
+        f.setData('dmg', 1)
+        f.setData('triFeatherX', x)
+        this.entities.add(f, 'projectile')
+        this.tweens.add({ targets: f, angle: { from: 150, to: 210 }, duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+        this.time.delayedCall(TRI_FEATHER_FALL_MS, () => f.active && f.destroy())
+      }
+    })
+    this.time.delayedCall(TRI_FEATHER_TOTAL_MS, () => warnings.forEach((w) => w.destroy()))
+  }
+
   /** 油甘魚攤主's kitchen knife: alternates low (jump) / high (crouch), spins. */
-  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900, boss = false) {
+  private throwKnife(x: number, feet: number, dir: 1 | -1, high: boolean, speed = 180, lifeMs = 1900, boss = false, triVisual = false) {
     if (this.ended) return
     const key = this.textures.exists('s3-knife') ? 's3-knife' : this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
     const shot = this.enemyShots.create(x, feet - (high ? 19 : 7), key) as Phaser.Physics.Arcade.Sprite
@@ -6099,6 +6150,19 @@ export class GameScene extends Phaser.Scene {
     shot.setData('lane', 0)
     shot.setData('dmg', 1)
     if (boss) shot.setData('boss', true)
+    if (triVisual) {
+      // Only TriBoss gets the larger knife image. Scaling the physics sprite would also
+      // scale its Arcade body, so keep that sprite unscaled and render a separate image.
+      shot.setVisible(false)
+      const visual = this.add.image(shot.x, shot.y, key).setDepth(shot.depth).setScale(1.6)
+      shot.setData('triBoltVisual', visual)
+      const follow = () => visual.setPosition(shot.x, shot.y).setAngle(shot.angle)
+      this.events.on('postupdate', follow)
+      shot.once('destroy', () => {
+        this.events.off('postupdate', follow)
+        visual.destroy()
+      })
+    }
     this.tweens.add({ targets: shot, angle: dir * 360, duration: 360, repeat: -1 })
     floatText(this, x, feet - 64, high ? '高！蹲' : '低！跳', '#ffe08a', { size: 11, dur: 600 })
     this.entities.add(shot, 'projectile')

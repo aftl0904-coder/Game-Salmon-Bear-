@@ -1,0 +1,12 @@
+FAIL desktop-boy-worst AssertionError [ERR_ASSERTION]: desktop-boy-worst: lost HP
++ actual - expected
+
+  [
++   1
+-   0
+  ]
+
+    at file:///tmp/salmon-c1-boss-fairness/scripts/qa/c1-boss-fairness.mjs:108:19
+PASS desktop-girl-worst {"damage":[0],"endX":[3481],"warningMs":2450,"shadowCount":10,"errors":[]}
+FAIL mobile-boy-worst page.waitForFunction: Timeout 5000ms exceeded.
+    at /tmp/salmon-c1-boss-fairness/scripts/qa/c1-boss-fairness.mjs:91:18
