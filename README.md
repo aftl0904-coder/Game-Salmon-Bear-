@@ -60,6 +60,15 @@ npm run play
 npm run dev -- --host 0.0.0.0 --port 4637
 ```
 
+## 特典（遊戲以外）
+
+| | 位置 |
+|---|---|
+| **遊戲** | [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app) |
+| **攻略** | `/guide/`（封面「攻略」掣；`public/guide/index.html`） |
+| **預告／trailer** | `art-src/trailer/c2/`（Ken／Leon／第 2 大陸氣氛圖；未接遊戲流程） |
+| **盒帶貼紙** | `/sticker/` · 原稿 `art-src/print/`（日版 SFC 105 × 37.5 mm） |
+
 ## 發佈
 
 **Production：** [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app)
