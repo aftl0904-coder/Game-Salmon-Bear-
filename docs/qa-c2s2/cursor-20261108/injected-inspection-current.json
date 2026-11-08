@@ -1,0 +1,155 @@
+{
+  "description": "INJECTED inspection: positions, phase and HP are set programmatically; screenshots and checks do not establish a full playthrough",
+  "checks": [
+    {
+      "name": "2P static scenery positions, counts and no bodies",
+      "count": 28,
+      "unchanged": true
+    },
+    {
+      "name": "D reaction once in this scene (injected positions)",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 20415.4
+        }
+      ]
+    },
+    {
+      "name": "Boss P1 and HP",
+      "boss": {
+        "hp": 55,
+        "max": 55,
+        "phase": 1,
+        "act": "intro",
+        "species": "trainer"
+      }
+    },
+    {
+      "name": "P1 summon cap observation",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 20415.4
+        },
+        {
+          "kind": "summon",
+          "at": 29165
+        },
+        {
+          "kind": "summon",
+          "at": 31865
+        }
+      ],
+      "live": 2
+    },
+    {
+      "name": "P2 net timing (isolated injected invocation)",
+      "passed": true,
+      "warnToActive": 816.5999999999985,
+      "activeToEnd": 1533.300000000003,
+      "bossClockReturn": 2300,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 36931.4
+        },
+        {
+          "kind": "chain-active",
+          "at": 37748
+        },
+        {
+          "kind": "chain-end",
+          "at": 39281.3
+        }
+      ]
+    },
+    {
+      "name": "P2 net inside damaged and safe standing position unaffected (injected positions)",
+      "before": {
+        "boy": 6,
+        "girl": 6
+      },
+      "after": {
+        "boy": 5,
+        "girl": 6
+      },
+      "positions": {
+        "target": 5000,
+        "safe": 4800
+      }
+    },
+    {
+      "name": "P3 threshold via injected HP",
+      "boss": {
+        "hp": 16,
+        "max": 55,
+        "phase": 3
+      }
+    },
+    {
+      "name": "P3 net timing (isolated injected invocation)",
+      "passed": true,
+      "warnToActive": 816.5999999999985,
+      "activeToEnd": 1533.2000000000044,
+      "bossClockReturn": 2990,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 41264.6
+        },
+        {
+          "kind": "chain-active",
+          "at": 42081.2
+        },
+        {
+          "kind": "chain-end",
+          "at": 43614.4
+        }
+      ]
+    },
+    {
+      "name": "departure once; one atomic run write at injected clear",
+      "pre": {
+        "puffLeft": false,
+        "lastCleared": 6
+      },
+      "post": {
+        "puffLeft": true,
+        "lastCleared": 7,
+        "nextStage": 8
+      },
+      "writes": 1,
+      "departures": 1,
+      "pet": false
+    },
+    {
+      "name": "reload keeps puffLeft",
+      "persisted": true
+    },
+    {
+      "name": "side scene plays departure once with baseline pet; main run unchanged (injected defeat)",
+      "petBefore": true,
+      "petAfter": false,
+      "events": [
+        {
+          "kind": "departure",
+          "at": 8642.3
+        }
+      ],
+      "unchanged": true
+    },
+    {
+      "name": "fresh run resets flag",
+      "reset": false
+    },
+    {
+      "name": "legacy run without field defaults false without rewriting on read",
+      "puffLeft": false,
+      "unchanged": true
+    }
+  ],
+  "failures": [],
+  "errors": [],
+  "passed": true
+}

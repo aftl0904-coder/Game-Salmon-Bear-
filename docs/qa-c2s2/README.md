@@ -1,5 +1,18 @@
 # 第7關 QA 交接（2026-11-04，draft）
 
+## Cursor 接手 checkpoint（2026-11-08 HKT）
+
+延續本 branch，**無重做**。新 remote branch `cursor/c2-stage7-from-88-2610`。詳見 `cursor-20261108.md`。
+
+- `tsc`／`build`／`validate:data` 今次 exit 0。
+- 注入走查 `c2s2-inspect.mjs` 今次 `passed:true`（A–E 截圖、Boss P1–P3、鏈網 816.6／1533 ms、離隊旗標）。**注入，不是自然通關。**
+- 舊 600 秒、2P bot、逐影格／hidden 失敗 **未重跑**，不能當已解。
+- 文案保持 Alan 批准稿，無改回「待補」。`#91` 角色／Boss／FX 仍佔位。
+- 無 merge main。請 Alan／Manus 開 PR。
+
+---
+
+
 ## #91 回修後 B／C 中景接線 checkpoint（2026-11-04；未經瀏覽器驗收）
 
 - **局部接入，不是完成／可合併驗收。** 原圖只取 #91 精確 head `4dab1f198e2342201d54acdccf6bd0d518be92f6` 的 `corridor-mid.png`（1119×720）和 `training-mid.png`（635×720），來源快照兩檔的 Git blob 與該 commit 一致。另一組的原圖掛鉤及三次平鋪目視複驗結果記於 `/tmp/salmon-c2-stage6-planning/docs/qa-art20/recheck-4dab1f1/README.md`，屬原圖局部驗收，不是本次遊戲驗收。未複製其他原圖或改 Cursor branch。
