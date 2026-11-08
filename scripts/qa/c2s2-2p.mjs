@@ -29,7 +29,9 @@ try {
   if(s.win) break
   if(s.active.includes('play')&&s.stage===7&&s.started&&!s.ended&&!s.intro){
    if(!held){await page.keyboard.down('d');await page.keyboard.down('ArrowRight');held=true}
-   await page.keyboard.press('f');await page.keyboard.press(',');if(loops%3===0){await page.keyboard.press('g');await page.keyboard.press('.')}
+   await page.keyboard.press('f');await page.keyboard.press(',')
+   const nearPit=(s.x1>2280&&s.x1<2395)||(s.x1>2740&&s.x1<2865)
+   if(nearPit||loops%3===0){await page.keyboard.press('g');await page.keyboard.press('.')}
    if(loops%24===0){await page.keyboard.press('t');await page.keyboard.press(';')}
   }else{
    if(held){await page.keyboard.up('d');await page.keyboard.up('ArrowRight');held=false}

@@ -18,5 +18,5 @@ for(const [key,value] of Object.entries({hp:55,phase2At:0.66,phase3Below:0.3,pha
 check(level.boss?.kind==='trainer'&&level.boss.arenaX1-level.boss.arenaX0>t.chainWidth+32,'boss arena and safe space')
 check((level.staticDecor||[]).length>0&&(level.staticDecor||[]).every(o=>['cage','chain','net'].includes(o.kind)&&o.x>=0&&o.x<level.worldW),'static decor types and positions')
 const card=bosses.bosses?.trainer
-check(card?.name==='馴獸師'&&card?.title==='森友展銷中心・馴獸師'&&card?.why==='小心鎖鏈同網，等有空檔先還擊！'&&JSON.stringify(card?.lines)===JSON.stringify(['光鮮展館嘅後面，排住一排又一排籠。','馴獸師守住呢度，唔想有人行近。','佢一聲令下，產品化蜜僵湧出嚟。']),'trainer card matches approved wording')
+check(card?.name==='待補'&&card?.title==='待補'&&card?.why==='待補'&&JSON.stringify(card?.lines)===JSON.stringify(['待補','待補','待補']),'trainer card is 待補 until Alan verbatim approval is proven')
 if(errors.length){console.error('stage7.json / trainer: FAIL\n - '+errors.join('\n - '));process.exitCode=1}else console.log('stage7.json / trainer: OK (data only; runtime QA separate)')

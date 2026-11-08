@@ -1,0 +1,38 @@
+{
+  "description": "Attempt real document.hidden during an injected trainer chain. Does not override hidden or dispatch fake visibilitychange.",
+  "at": "2026-11-08T06:42:48.184Z",
+  "cases": [
+    {
+      "case": "second-tab-bringToFront",
+      "hidden": false,
+      "events": [],
+      "chain": [
+        {
+          "kind": "chain-warn",
+          "at": 17181.6
+        }
+      ],
+      "hp": 6,
+      "observedHidden": false
+    },
+    {
+      "case": "cdp-setWebLifecycleState-hidden",
+      "error": "Error: cdpSession.send: Protocol error (Page.setWebLifecycleState): Unidentified lifecycle state"
+    },
+    {
+      "case": "cdp-lifecycle",
+      "cdpOk": false,
+      "hidden": false,
+      "events": [],
+      "chain": [
+        {
+          "kind": "chain-warn",
+          "at": 21148.1
+        }
+      ],
+      "hp": 6,
+      "observedHidden": false
+    }
+  ],
+  "passed": false
+}

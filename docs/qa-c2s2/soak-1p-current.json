@@ -1,6 +1,6 @@
 {
   "description": "1P automated keyboard operation in stage 7 from seeded stage-6 checkpoint; no teleport, HP editing, forced victory, or manual play. Patrols initial section only; not a full playthrough.",
-  "start": "2026-11-04T00:08:14.802Z",
+  "start": "2026-11-08T06:43:32.157Z",
   "samples": [
     {
       "wallSec": 0,
@@ -18,7 +18,7 @@
       "x": 220,
       "hp": 5,
       "win": false,
-      "now": 31208.6
+      "now": 17281.4
     },
     {
       "wallSec": 10,
@@ -33,10 +33,10 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 212,
-      "hp": 4,
+      "x": 308,
+      "hp": 5,
       "win": false,
-      "now": 41508.2
+      "now": 27464.4
     },
     {
       "wallSec": 21,
@@ -51,10 +51,10 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 183,
-      "hp": 4,
+      "x": 451,
+      "hp": 5,
       "win": false,
-      "now": 51907.8
+      "now": 37813.9
     },
     {
       "wallSec": 31,
@@ -69,10 +69,10 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 183,
-      "hp": 4,
+      "x": 552,
+      "hp": 5,
       "win": false,
-      "now": 62090.7
+      "now": 47830.2
     },
     {
       "wallSec": 41,
@@ -87,10 +87,10 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 233,
-      "hp": 4,
+      "x": 613,
+      "hp": 5,
       "win": false,
-      "now": 72057
+      "now": 58179.8
     },
     {
       "wallSec": 51,
@@ -105,13 +105,13 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 288,
-      "hp": 4,
+      "x": 640,
+      "hp": 5,
       "win": false,
-      "now": 82506.5
+      "now": 68212.7
     },
     {
-      "wallSec": 62,
+      "wallSec": 61,
       "activeSec": 61,
       "active": [
         "play",
@@ -123,14 +123,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 317,
-      "hp": 4,
+      "x": 580,
+      "hp": 5,
       "win": false,
-      "now": 92722.8
+      "now": 78212.4
     },
     {
-      "wallSec": 72,
-      "activeSec": 72,
+      "wallSec": 71,
+      "activeSec": 71,
       "active": [
         "play",
         "UIScene"
@@ -141,14 +141,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 327,
-      "hp": 4,
+      "x": 504,
+      "hp": 5,
       "win": false,
-      "now": 103072.4
+      "now": 88245.3
     },
     {
-      "wallSec": 82,
-      "activeSec": 82,
+      "wallSec": 81,
+      "activeSec": 81,
       "active": [
         "play",
         "UIScene"
@@ -159,14 +159,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 288,
-      "hp": 4,
+      "x": 483,
+      "hp": 5,
       "win": false,
-      "now": 113105.3
+      "now": 98344.9
     },
     {
-      "wallSec": 92,
-      "activeSec": 92,
+      "wallSec": 91,
+      "activeSec": 91,
       "active": [
         "play",
         "UIScene"
@@ -177,14 +177,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 310,
-      "hp": 4,
+      "x": 418,
+      "hp": 5,
       "win": false,
-      "now": 123421.6
+      "now": 108377.7
     },
     {
-      "wallSec": 103,
-      "activeSec": 103,
+      "wallSec": 101,
+      "activeSec": 101,
       "active": [
         "play",
         "UIScene"
@@ -196,13 +196,13 @@
       "intro": false,
       "continued": false,
       "x": 353,
-      "hp": 4,
+      "hp": 5,
       "win": false,
-      "now": 133821.2
+      "now": 118410.7
     },
     {
-      "wallSec": 113,
-      "activeSec": 113,
+      "wallSec": 111,
+      "activeSec": 111,
       "active": [
         "play",
         "UIScene"
@@ -213,14 +213,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 431,
-      "hp": 4,
+      "x": 273,
+      "hp": 5,
       "win": false,
-      "now": 143954.1
+      "now": 128593.6
     },
     {
-      "wallSec": 123,
-      "activeSec": 123,
+      "wallSec": 122,
+      "activeSec": 122,
       "active": [
         "play",
         "UIScene"
@@ -231,14 +231,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 408,
-      "hp": 4,
+      "x": 299,
+      "hp": 5,
       "win": false,
-      "now": 154037
+      "now": 138976.5
     },
     {
-      "wallSec": 133,
-      "activeSec": 133,
+      "wallSec": 132,
+      "activeSec": 132,
       "active": [
         "play",
         "UIScene"
@@ -249,14 +249,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 430,
-      "hp": 4,
+      "x": 412,
+      "hp": 5,
       "win": false,
-      "now": 164420
+      "now": 149159.5
     },
     {
-      "wallSec": 144,
-      "activeSec": 144,
+      "wallSec": 142,
+      "activeSec": 142,
       "active": [
         "play",
         "UIScene"
@@ -267,14 +267,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 477,
-      "hp": 4,
+      "x": 509,
+      "hp": 5,
       "win": false,
-      "now": 174769.6
+      "now": 159359.1
     },
     {
-      "wallSec": 154,
-      "activeSec": 154,
+      "wallSec": 152,
+      "activeSec": 152,
       "active": [
         "play",
         "UIScene"
@@ -285,14 +285,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 543,
-      "hp": 4,
+      "x": 630,
+      "hp": 5,
       "win": false,
-      "now": 184902.5
+      "now": 169358.7
     },
     {
-      "wallSec": 164,
-      "activeSec": 164,
+      "wallSec": 162,
+      "activeSec": 162,
       "active": [
         "play",
         "UIScene"
@@ -303,14 +303,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 639,
-      "hp": 4,
+      "x": 623,
+      "hp": 5,
       "win": false,
-      "now": 195268.7
+      "now": 179725
     },
     {
-      "wallSec": 174,
-      "activeSec": 174,
+      "wallSec": 172,
+      "activeSec": 172,
       "active": [
         "play",
         "UIScene"
@@ -321,14 +321,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 609,
-      "hp": 4,
+      "x": 550,
+      "hp": 5,
       "win": false,
-      "now": 205368.3
+      "now": 189757.9
     },
     {
-      "wallSec": 184,
-      "activeSec": 184,
+      "wallSec": 183,
+      "activeSec": 183,
       "active": [
         "play",
         "UIScene"
@@ -339,14 +339,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 641,
-      "hp": 4,
+      "x": 471,
+      "hp": 5,
       "win": false,
-      "now": 215617.9
+      "now": 199940.8
     },
     {
-      "wallSec": 195,
-      "activeSec": 195,
+      "wallSec": 193,
+      "activeSec": 193,
       "active": [
         "play",
         "UIScene"
@@ -357,14 +357,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 604,
-      "hp": 4,
+      "x": 461,
+      "hp": 5,
       "win": false,
-      "now": 226117.5
+      "now": 210040.4
     },
     {
-      "wallSec": 205,
-      "activeSec": 205,
+      "wallSec": 203,
+      "activeSec": 203,
       "active": [
         "play",
         "UIScene"
@@ -375,14 +375,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 608,
-      "hp": 4,
+      "x": 395,
+      "hp": 5,
       "win": false,
-      "now": 236333.7
+      "now": 220090
     },
     {
-      "wallSec": 216,
-      "activeSec": 216,
+      "wallSec": 213,
+      "activeSec": 213,
       "active": [
         "play",
         "UIScene"
@@ -393,14 +393,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 641,
-      "hp": 4,
+      "x": 333,
+      "hp": 5,
       "win": false,
-      "now": 246900
+      "now": 230139.6
     },
     {
-      "wallSec": 226,
-      "activeSec": 226,
+      "wallSec": 223,
+      "activeSec": 223,
       "active": [
         "play",
         "UIScene"
@@ -411,14 +411,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 556,
-      "hp": 4,
+      "x": 271,
+      "hp": 5,
       "win": false,
-      "now": 257066.2
+      "now": 240155.8
     },
     {
-      "wallSec": 236,
-      "activeSec": 236,
+      "wallSec": 233,
+      "activeSec": 233,
       "active": [
         "play",
         "UIScene"
@@ -429,14 +429,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 536,
-      "hp": 4,
+      "x": 270,
+      "hp": 5,
       "win": false,
-      "now": 267365.9
+      "now": 250288.8
     },
     {
-      "wallSec": 246,
-      "activeSec": 246,
+      "wallSec": 243,
+      "activeSec": 243,
       "active": [
         "play",
         "UIScene"
@@ -447,14 +447,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 428,
-      "hp": 4,
+      "x": 346,
+      "hp": 5,
       "win": false,
-      "now": 277715.5
+      "now": 260338.4
     },
     {
-      "wallSec": 257,
-      "activeSec": 256,
+      "wallSec": 253,
+      "activeSec": 253,
       "active": [
         "play",
         "UIScene"
@@ -465,14 +465,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 420,
-      "hp": 4,
+      "x": 425,
+      "hp": 5,
       "win": false,
-      "now": 287748.4
+      "now": 270604.7
     },
     {
-      "wallSec": 267,
-      "activeSec": 267,
+      "wallSec": 263,
+      "activeSec": 263,
       "active": [
         "play",
         "UIScene"
@@ -483,14 +483,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 432,
-      "hp": 4,
+      "x": 514,
+      "hp": 5,
       "win": false,
-      "now": 298164.6
+      "now": 280670.9
     },
     {
-      "wallSec": 277,
-      "activeSec": 277,
+      "wallSec": 274,
+      "activeSec": 274,
       "active": [
         "play",
         "UIScene"
@@ -501,14 +501,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 407,
-      "hp": 4,
+      "x": 592,
+      "hp": 5,
       "win": false,
-      "now": 308230.9
+      "now": 290837.1
     },
     {
-      "wallSec": 287,
-      "activeSec": 287,
+      "wallSec": 284,
+      "activeSec": 284,
       "active": [
         "play",
         "UIScene"
@@ -519,14 +519,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 450,
-      "hp": 4,
+      "x": 688,
+      "hp": 5,
       "win": false,
-      "now": 318297.2
+      "now": 301036.8
     },
     {
-      "wallSec": 297,
-      "activeSec": 297,
+      "wallSec": 294,
+      "activeSec": 294,
       "active": [
         "play",
         "UIScene"
@@ -537,14 +537,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 454,
-      "hp": 4,
+      "x": 630,
+      "hp": 5,
       "win": false,
-      "now": 328546.8
+      "now": 311319.7
     },
     {
-      "wallSec": 308,
-      "activeSec": 308,
+      "wallSec": 304,
+      "activeSec": 304,
       "active": [
         "play",
         "UIScene"
@@ -555,14 +555,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 355,
-      "hp": 4,
+      "x": 552,
+      "hp": 5,
       "win": false,
-      "now": 338929.6
+      "now": 321502.6
     },
     {
-      "wallSec": 318,
-      "activeSec": 318,
+      "wallSec": 314,
+      "activeSec": 314,
       "active": [
         "play",
         "UIScene"
@@ -573,14 +573,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 311,
-      "hp": 4,
+      "x": 485,
+      "hp": 5,
       "win": false,
-      "now": 349262.6
+      "now": 331685.5
     },
     {
-      "wallSec": 328,
-      "activeSec": 328,
+      "wallSec": 325,
+      "activeSec": 325,
       "active": [
         "play",
         "UIScene"
@@ -591,14 +591,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 216,
-      "hp": 4,
+      "x": 392,
+      "hp": 5,
       "win": false,
-      "now": 359362.1
+      "now": 341918.5
     },
     {
-      "wallSec": 338,
-      "activeSec": 338,
+      "wallSec": 335,
+      "activeSec": 335,
       "active": [
         "play",
         "UIScene"
@@ -609,14 +609,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 216,
-      "hp": 4,
+      "x": 301,
+      "hp": 5,
       "win": false,
-      "now": 369478.5
+      "now": 352134.7
     },
     {
-      "wallSec": 349,
-      "activeSec": 349,
+      "wallSec": 345,
+      "activeSec": 345,
       "active": [
         "play",
         "UIScene"
@@ -627,14 +627,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 235,
-      "hp": 4,
+      "x": 233,
+      "hp": 5,
       "win": false,
-      "now": 379994.7
+      "now": 362317.7
     },
     {
-      "wallSec": 359,
-      "activeSec": 359,
+      "wallSec": 355,
+      "activeSec": 355,
       "active": [
         "play",
         "UIScene"
@@ -645,14 +645,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 297,
-      "hp": 4,
+      "x": 286,
+      "hp": 5,
       "win": false,
-      "now": 390044.2
+      "now": 372617.2
     },
     {
-      "wallSec": 369,
-      "activeSec": 369,
+      "wallSec": 365,
+      "activeSec": 365,
       "active": [
         "play",
         "UIScene"
@@ -663,14 +663,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 321,
-      "hp": 4,
+      "x": 356,
+      "hp": 5,
       "win": false,
-      "now": 400027.2
+      "now": 382750.2
     },
     {
-      "wallSec": 379,
-      "activeSec": 379,
+      "wallSec": 376,
+      "activeSec": 376,
       "active": [
         "play",
         "UIScene"
@@ -681,14 +681,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 328,
-      "hp": 4,
+      "x": 440,
+      "hp": 5,
       "win": false,
-      "now": 410193.4
+      "now": 392849.8
     },
     {
-      "wallSec": 389,
-      "activeSec": 389,
+      "wallSec": 386,
+      "activeSec": 386,
       "active": [
         "play",
         "UIScene"
@@ -699,14 +699,284 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 406,
-      "hp": 4,
+      "x": 587,
+      "hp": 5,
       "win": false,
-      "now": 420576.3
+      "now": 403232.7
     },
     {
-      "wallSec": 400,
-      "activeSec": 400,
+      "wallSec": 396,
+      "activeSec": 396,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 658,
+      "hp": 5,
+      "win": false,
+      "now": 413548.9
+    },
+    {
+      "wallSec": 407,
+      "activeSec": 407,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 558,
+      "hp": 5,
+      "win": false,
+      "now": 423865.1
+    },
+    {
+      "wallSec": 417,
+      "activeSec": 417,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 438,
+      "hp": 5,
+      "win": false,
+      "now": 433898.1
+    },
+    {
+      "wallSec": 427,
+      "activeSec": 427,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 331,
+      "hp": 5,
+      "win": false,
+      "now": 444247.6
+    },
+    {
+      "wallSec": 437,
+      "activeSec": 437,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 226,
+      "hp": 5,
+      "win": false,
+      "now": 454564
+    },
+    {
+      "wallSec": 448,
+      "activeSec": 448,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 367,
+      "hp": 5,
+      "win": false,
+      "now": 464880.2
+    },
+    {
+      "wallSec": 458,
+      "activeSec": 458,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 444,
+      "hp": 5,
+      "win": false,
+      "now": 474946.4
+    },
+    {
+      "wallSec": 468,
+      "activeSec": 468,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 527,
+      "hp": 5,
+      "win": false,
+      "now": 485329.4
+    },
+    {
+      "wallSec": 478,
+      "activeSec": 478,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 633,
+      "hp": 5,
+      "win": false,
+      "now": 495379
+    },
+    {
+      "wallSec": 488,
+      "activeSec": 488,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 623,
+      "hp": 5,
+      "win": false,
+      "now": 505728.6
+    },
+    {
+      "wallSec": 499,
+      "activeSec": 499,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 520,
+      "hp": 5,
+      "win": false,
+      "now": 516078.2
+    },
+    {
+      "wallSec": 509,
+      "activeSec": 509,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 415,
+      "hp": 5,
+      "win": false,
+      "now": 526327.7
+    },
+    {
+      "wallSec": 520,
+      "activeSec": 520,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 309,
+      "hp": 5,
+      "win": false,
+      "now": 536777.3
+    },
+    {
+      "wallSec": 530,
+      "activeSec": 530,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 211,
+      "hp": 5,
+      "win": false,
+      "now": 547043.5
+    },
+    {
+      "wallSec": 540,
+      "activeSec": 540,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 349,
+      "hp": 5,
+      "win": false,
+      "now": 557409.8
+    },
+    {
+      "wallSec": 550,
+      "activeSec": 550,
       "active": [
         "play",
         "UIScene"
@@ -718,13 +988,13 @@
       "intro": false,
       "continued": false,
       "x": 490,
-      "hp": 4,
+      "hp": 5,
       "win": false,
-      "now": 430976
+      "now": 567709.5
     },
     {
-      "wallSec": 410,
-      "activeSec": 410,
+      "wallSec": 561,
+      "activeSec": 561,
       "active": [
         "play",
         "UIScene"
@@ -735,14 +1005,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 609,
-      "hp": 4,
+      "x": 640,
+      "hp": 5,
       "win": false,
-      "now": 441242.2
+      "now": 578009
     },
     {
-      "wallSec": 420,
-      "activeSec": 420,
+      "wallSec": 571,
+      "activeSec": 571,
       "active": [
         "play",
         "UIScene"
@@ -753,14 +1023,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 625,
-      "hp": 4,
+      "x": 656,
+      "hp": 5,
       "win": false,
-      "now": 451508.5
+      "now": 588358.5
     },
     {
-      "wallSec": 430,
-      "activeSec": 430,
+      "wallSec": 581,
+      "activeSec": 581,
       "active": [
         "play",
         "UIScene"
@@ -771,14 +1041,14 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 662,
-      "hp": 4,
+      "x": 551,
+      "hp": 5,
       "win": false,
-      "now": 461508.1
+      "now": 598658.2
     },
     {
-      "wallSec": 441,
-      "activeSec": 441,
+      "wallSec": 591,
+      "activeSec": 591,
       "active": [
         "play",
         "UIScene"
@@ -789,280 +1059,10 @@
       "ended": false,
       "intro": false,
       "continued": false,
-      "x": 536,
-      "hp": 4,
+      "x": 488,
+      "hp": 5,
       "win": false,
-      "now": 471824.3
-    },
-    {
-      "wallSec": 451,
-      "activeSec": 451,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 487,
-      "hp": 4,
-      "win": false,
-      "now": 481923.9
-    },
-    {
-      "wallSec": 461,
-      "activeSec": 461,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 434,
-      "hp": 4,
-      "win": false,
-      "now": 492073.5
-    },
-    {
-      "wallSec": 471,
-      "activeSec": 471,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 381,
-      "hp": 4,
-      "win": false,
-      "now": 502639.8
-    },
-    {
-      "wallSec": 481,
-      "activeSec": 481,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 442,
-      "hp": 4,
-      "win": false,
-      "now": 512706
-    },
-    {
-      "wallSec": 492,
-      "activeSec": 492,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 358,
-      "hp": 4,
-      "win": false,
-      "now": 522905.6
-    },
-    {
-      "wallSec": 502,
-      "activeSec": 502,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 416,
-      "hp": 4,
-      "win": false,
-      "now": 533205.2
-    },
-    {
-      "wallSec": 512,
-      "activeSec": 512,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 380,
-      "hp": 4,
-      "win": false,
-      "now": 543321.5
-    },
-    {
-      "wallSec": 522,
-      "activeSec": 522,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 384,
-      "hp": 4,
-      "win": false,
-      "now": 553704.4
-    },
-    {
-      "wallSec": 533,
-      "activeSec": 533,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 304,
-      "hp": 4,
-      "win": false,
-      "now": 564004
-    },
-    {
-      "wallSec": 543,
-      "activeSec": 543,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 219,
-      "hp": 4,
-      "win": false,
-      "now": 574470.3
-    },
-    {
-      "wallSec": 553,
-      "activeSec": 553,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 269,
-      "hp": 4,
-      "win": false,
-      "now": 584586.4
-    },
-    {
-      "wallSec": 564,
-      "activeSec": 564,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 354,
-      "hp": 4,
-      "win": false,
-      "now": 595136.1
-    },
-    {
-      "wallSec": 574,
-      "activeSec": 574,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 439,
-      "hp": 4,
-      "win": false,
-      "now": 605319
-    },
-    {
-      "wallSec": 584,
-      "activeSec": 584,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 501,
-      "hp": 4,
-      "win": false,
-      "now": 615535.3
-    },
-    {
-      "wallSec": 594,
-      "activeSec": 594,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "1p",
-      "started": true,
-      "ended": false,
-      "intro": false,
-      "continued": false,
-      "x": 482,
-      "hp": 4,
-      "win": false,
-      "now": 625651.5
+      "now": 608657.8
     }
   ],
   "errors": [],
@@ -1081,10 +1081,10 @@
     "ended": false,
     "intro": false,
     "continued": false,
-    "x": 221,
-    "hp": 4,
+    "x": 484,
+    "hp": 5,
     "win": false,
-    "now": 632217.9
+    "now": 617940.7
   },
-  "end": "2026-11-04T00:18:47.114Z"
+  "end": "2026-11-08T06:53:50.148Z"
 }

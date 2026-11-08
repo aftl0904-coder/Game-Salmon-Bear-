@@ -72,10 +72,10 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 1080,
-      "x2": 1249,
+      "x1": 1333,
+      "x2": 1492,
       "hp1": 6,
-      "hp2": 3,
+      "hp2": 6,
       "win": false,
       "run": {
         "version": 1,
@@ -131,8 +131,126 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 2008,
-      "x2": 2290,
+      "x1": 2338,
+      "x2": 2518,
+      "hp1": 5,
+      "hp2": 5,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 32,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 3350,
+      "x2": 3289,
+      "hp1": 5,
+      "hp2": 3,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 42,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4331,
+      "x2": 4513,
       "hp1": 6,
       "hp2": 3,
       "win": false,
@@ -179,126 +297,6 @@
       }
     },
     {
-      "elapsed": 31,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": false,
-      "continued": false,
-      "intro": false,
-      "x1": 2349,
-      "x2": 2348,
-      "hp1": 6,
-      "hp2": 6,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
-      "elapsed": 41,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": false,
-      "continued": false,
-      "intro": false,
-      "x1": 3158,
-      "x2": 2960,
-      "hp1": 6,
-      "hp2": 5,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
       "elapsed": 52,
       "active": [
         "play",
@@ -310,10 +308,11 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 4123,
-      "x2": 4171,
-      "hp1": 5,
-      "hp2": 5,
+      "x1": 4688,
+      "x2": 4688,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 1,
       "win": false,
       "run": {
         "version": 1,
@@ -359,7 +358,7 @@
       }
     },
     {
-      "elapsed": 62,
+      "elapsed": 63,
       "active": [
         "play",
         "UIScene"
@@ -370,10 +369,10 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 4966,
-      "x2": 5031,
-      "hp1": 6,
-      "hp2": 5,
+      "x1": 5235,
+      "x2": 5232,
+      "hp1": 2,
+      "hp2": 1,
       "phase": 1,
       "win": false,
       "run": {
@@ -431,11 +430,11 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 5143,
-      "x2": 5162,
-      "hp1": 4,
-      "hp2": 1,
-      "phase": 1,
+      "x1": 5235,
+      "x2": 5235,
+      "hp1": 2,
+      "hp2": 4,
+      "phase": 2,
       "win": false,
       "run": {
         "version": 1,
@@ -492,11 +491,11 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 4975,
-      "x2": 4919,
-      "hp1": 4,
-      "hp2": 5,
-      "phase": 1,
+      "x1": 4914,
+      "x2": 4912,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 2,
       "win": false,
       "run": {
         "version": 1,
@@ -553,11 +552,11 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 4749,
-      "x2": 4763,
-      "hp1": 6,
-      "hp2": 6,
-      "phase": 1,
+      "x1": 5232,
+      "x2": 5233,
+      "hp1": 2,
+      "hp2": 2,
+      "phase": 2,
       "win": false,
       "run": {
         "version": 1,
@@ -614,9 +613,9 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 5057,
-      "x2": 5137,
-      "hp1": 4,
+      "x1": 5154,
+      "x2": 5095,
+      "hp1": 2,
       "hp2": 2,
       "phase": 2,
       "win": false,
@@ -675,10 +674,10 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 4937,
-      "x2": 4974,
-      "hp1": 4,
-      "hp2": 4,
+      "x1": 4960,
+      "x2": 4956,
+      "hp1": 6,
+      "hp2": 6,
       "phase": 2,
       "win": false,
       "run": {
@@ -736,254 +735,10 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 5209,
+      "x1": 5232,
       "x2": 5232,
       "hp1": 0,
       "hp2": 0,
-      "phase": 2,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
-      "elapsed": 134,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": false,
-      "continued": false,
-      "intro": false,
-      "x1": 5232,
-      "x2": 5232,
-      "hp1": 5,
-      "hp2": 3,
-      "phase": 2,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
-      "elapsed": 145,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": true,
-      "continued": true,
-      "intro": false,
-      "x1": 5311,
-      "x2": 5232,
-      "hp1": 2,
-      "hp2": 0,
-      "phase": 2,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
-      "elapsed": 155,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": false,
-      "continued": false,
-      "intro": false,
-      "x1": 4843,
-      "x2": 4860,
-      "hp1": 6,
-      "hp2": 6,
-      "phase": 2,
-      "win": false,
-      "run": {
-        "version": 1,
-        "runId": "qa-2p",
-        "startStage": 6,
-        "lastCleared": 6,
-        "nextStage": 7,
-        "gear": {
-          "boy": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          },
-          "girl": {
-            "heart": 0,
-            "sword": 0,
-            "gun": 0,
-            "armour": 0,
-            "boots": 0,
-            "charm": 0
-          }
-        },
-        "growth": {},
-        "eligible": true,
-        "coins": 100,
-        "purse": {
-          "boy": 50,
-          "girl": 50
-        },
-        "hp": {
-          "boy": 5,
-          "girl": 5
-        },
-        "friends": [],
-        "charm": null,
-        "mode": "2p",
-        "solo": "boy",
-        "legacyModeUnknown": false,
-        "puffLeft": false
-      }
-    },
-    {
-      "elapsed": 165,
-      "active": [
-        "play",
-        "UIScene"
-      ],
-      "stage": 7,
-      "mode": "2p",
-      "started": true,
-      "ended": false,
-      "continued": false,
-      "intro": false,
-      "x1": 4905,
-      "x2": 4955,
-      "hp1": 4,
-      "hp2": 3,
       "phase": 3,
       "win": false,
       "run": {
@@ -1030,7 +785,7 @@
       }
     },
     {
-      "elapsed": 175,
+      "elapsed": 135,
       "active": [
         "play",
         "UIScene"
@@ -1041,9 +796,9 @@
       "ended": false,
       "continued": false,
       "intro": false,
-      "x1": 5190,
-      "x2": 5243,
-      "hp1": 4,
+      "x1": 5234,
+      "x2": 5234,
+      "hp1": 1,
       "hp2": 2,
       "phase": 3,
       "win": false,
@@ -1093,7 +848,7 @@
   ],
   "errors": [],
   "passed": true,
-  "start": "2026-11-04T00:06:23.411Z",
+  "start": "2026-11-08T06:53:57.665Z",
   "final": {
     "active": [
       "play"
@@ -1104,232 +859,236 @@
     "ended": true,
     "continued": false,
     "intro": false,
-    "x1": 5224,
-    "x2": 5243,
-    "hp1": 4,
+    "x1": 5232,
+    "x2": 5236,
+    "hp1": 1,
     "hp2": 2,
     "phase": 3,
     "win": true,
     "events": [
       {
         "kind": "reaction",
-        "at": 78613
+        "at": 57880.7
       },
       {
         "kind": "summon",
-        "at": 86496.1
+        "at": 65247.1
       },
       {
         "kind": "summon",
-        "at": 89346
+        "at": 67930.2
       },
       {
         "kind": "weak",
-        "at": 92645.8
+        "at": 70246.8
       },
       {
         "kind": "summon",
-        "at": 95429
+        "at": 72896.7
       },
       {
         "kind": "summon",
-        "at": 98512.3
+        "at": 75563.2
       },
       {
         "kind": "weak",
-        "at": 100512.2
-      },
-      {
-        "kind": "weak",
-        "at": 110911.7
+        "at": 77646.5
       },
       {
         "kind": "summon",
-        "at": 113711.7
-      },
-      {
-        "kind": "summon",
-        "at": 117094.9
+        "at": 80263.1
       },
       {
         "kind": "weak",
-        "at": 119178.1
+        "at": 85412.9
       },
       {
         "kind": "phase2",
-        "at": 119844.7
+        "at": 86896.2
       },
       {
         "kind": "chain-warn",
-        "at": 124427.9
+        "at": 90496
       },
       {
         "kind": "chain-active",
-        "at": 125177.8
+        "at": 91296
       },
       {
         "kind": "chain-end",
-        "at": 127094.4
+        "at": 92812.6
       },
       {
         "kind": "weak",
-        "at": 127261.1
+        "at": 92979.2
       },
       {
         "kind": "chain-warn",
-        "at": 132460.9
+        "at": 98745.7
       },
       {
         "kind": "chain-active",
-        "at": 133427.5
+        "at": 99545.6
       },
       {
         "kind": "chain-end",
-        "at": 134927.5
+        "at": 101062.2
       },
       {
         "kind": "weak",
-        "at": 136410.7
+        "at": 101228.9
       },
       {
         "kind": "chain-warn",
-        "at": 141627.1
+        "at": 106345.4
       },
       {
         "kind": "chain-active",
-        "at": 142510.5
+        "at": 107145.4
       },
       {
         "kind": "chain-end",
-        "at": 144027.1
+        "at": 108662
       },
       {
         "kind": "weak",
-        "at": 144027.1
+        "at": 108811.9
       },
       {
         "kind": "chain-warn",
-        "at": 151026.8
+        "at": 113878.4
       },
       {
         "kind": "chain-active",
-        "at": 151760.1
+        "at": 114678.3
       },
       {
         "kind": "chain-end",
-        "at": 153410
+        "at": 116211.7
       },
       {
         "kind": "weak",
-        "at": 153610
+        "at": 116561.7
       },
       {
         "kind": "chain-warn",
-        "at": 158876.4
+        "at": 121678.1
       },
       {
         "kind": "chain-active",
-        "at": 159759.8
+        "at": 122511.4
       },
       {
         "kind": "chain-end",
-        "at": 161343
+        "at": 124028
       },
       {
         "kind": "weak",
-        "at": 161459.7
+        "at": 124161.4
       },
       {
         "kind": "chain-warn",
-        "at": 166659.6
+        "at": 129744.5
       },
       {
         "kind": "chain-active",
-        "at": 167442.8
+        "at": 130561.1
       },
       {
         "kind": "chain-end",
-        "at": 169026.1
+        "at": 132077.6
       },
       {
         "kind": "weak",
-        "at": 170159.4
-      },
-      {
-        "kind": "chain-warn",
-        "at": 175642.5
-      },
-      {
-        "kind": "chain-active",
-        "at": 176475.8
-      },
-      {
-        "kind": "chain-end",
-        "at": 177992.4
-      },
-      {
-        "kind": "weak",
-        "at": 178625.7
+        "at": 132211
       },
       {
         "kind": "phase3",
-        "at": 180409
+        "at": 132594.3
       },
       {
         "kind": "chain-warn",
-        "at": 182642.2
+        "at": 134727.6
       },
       {
         "kind": "chain-active",
-        "at": 183458.9
+        "at": 135544.2
       },
       {
         "kind": "chain-end",
-        "at": 184975.4
+        "at": 137060.8
       },
       {
         "kind": "weak",
-        "at": 185392.1
+        "at": 137144.2
       },
       {
         "kind": "chain-warn",
-        "at": 188875.3
+        "at": 139994
       },
       {
         "kind": "chain-active",
-        "at": 189675.2
+        "at": 140810.7
       },
       {
         "kind": "chain-end",
-        "at": 191158.6
+        "at": 142327.3
       },
       {
         "kind": "weak",
-        "at": 191341.8
+        "at": 143110.6
       },
       {
         "kind": "chain-warn",
-        "at": 194875
+        "at": 145927.1
       },
       {
         "kind": "chain-active",
-        "at": 195791.7
+        "at": 146760.4
       },
       {
         "kind": "chain-end",
-        "at": 197274.9
+        "at": 148277
       },
       {
         "kind": "weak",
-        "at": 197374.9
+        "at": 148377
+      },
+      {
+        "kind": "chain-warn",
+        "at": 151210.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 152026.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 153526.8
+      },
+      {
+        "kind": "weak",
+        "at": 154126.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 156976.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 157793.3
       },
       {
         "kind": "defeat",
-        "at": 197724.9
+        "at": 158026.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 159293.2
       },
       {
         "kind": "departure",
-        "at": 199441.5
+        "at": 159826.5
       }
     ],
     "run": {
@@ -1358,13 +1117,13 @@
       },
       "growth": {},
       "eligible": true,
-      "coins": 88,
+      "coins": 94,
       "purse": {
-        "boy": 44,
-        "girl": 44
+        "boy": 47,
+        "girl": 47
       },
       "hp": {
-        "boy": 4,
+        "boy": 1,
         "girl": 2
       },
       "friends": [],
@@ -1376,7 +1135,7 @@
     },
     "writes": [
       {
-        "at": 54110.60000000149,
+        "at": 68128,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1421,7 +1180,7 @@
         }
       },
       {
-        "at": 88995.60000000149,
+        "at": 81323.60000000149,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1466,7 +1225,7 @@
         }
       },
       {
-        "at": 102057.39999999851,
+        "at": 96148.69999999925,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1511,7 +1270,7 @@
         }
       },
       {
-        "at": 108530.20000000298,
+        "at": 114690.69999999925,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1556,7 +1315,7 @@
         }
       },
       {
-        "at": 115517.5,
+        "at": 114691.5,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1601,7 +1360,7 @@
         }
       },
       {
-        "at": 121618,
+        "at": 127394.19999999925,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1646,7 +1405,7 @@
         }
       },
       {
-        "at": 133444.8999999985,
+        "at": 140827,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1691,7 +1450,7 @@
         }
       },
       {
-        "at": 148439.5,
+        "at": 140827.90000000224,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1736,7 +1495,7 @@
         }
       },
       {
-        "at": 148768.6000000015,
+        "at": 152034.1000000015,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1781,187 +1540,7 @@
         }
       },
       {
-        "at": 167788.1000000015,
-        "value": {
-          "version": 1,
-          "runId": "qa-2p",
-          "startStage": 6,
-          "lastCleared": 6,
-          "nextStage": 7,
-          "gear": {
-            "boy": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            },
-            "girl": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            }
-          },
-          "growth": {},
-          "eligible": true,
-          "coins": 100,
-          "purse": {
-            "boy": 50,
-            "girl": 50
-          },
-          "hp": {
-            "boy": 5,
-            "girl": 5
-          },
-          "friends": [],
-          "charm": null,
-          "mode": "2p",
-          "solo": "boy",
-          "legacyModeUnknown": false,
-          "puffLeft": false
-        }
-      },
-      {
-        "at": 176515,
-        "value": {
-          "version": 1,
-          "runId": "qa-2p",
-          "startStage": 6,
-          "lastCleared": 6,
-          "nextStage": 7,
-          "gear": {
-            "boy": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            },
-            "girl": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            }
-          },
-          "growth": {},
-          "eligible": true,
-          "coins": 100,
-          "purse": {
-            "boy": 50,
-            "girl": 50
-          },
-          "hp": {
-            "boy": 5,
-            "girl": 5
-          },
-          "friends": [],
-          "charm": null,
-          "mode": "2p",
-          "solo": "boy",
-          "legacyModeUnknown": false,
-          "puffLeft": false
-        }
-      },
-      {
-        "at": 184439.1000000015,
-        "value": {
-          "version": 1,
-          "runId": "qa-2p",
-          "startStage": 6,
-          "lastCleared": 6,
-          "nextStage": 7,
-          "gear": {
-            "boy": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            },
-            "girl": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            }
-          },
-          "growth": {},
-          "eligible": true,
-          "coins": 100,
-          "purse": {
-            "boy": 50,
-            "girl": 50
-          },
-          "hp": {
-            "boy": 5,
-            "girl": 5
-          },
-          "friends": [],
-          "charm": null,
-          "mode": "2p",
-          "solo": "boy",
-          "legacyModeUnknown": false,
-          "puffLeft": false
-        }
-      },
-      {
-        "at": 192331.1000000015,
-        "value": {
-          "version": 1,
-          "runId": "qa-2p",
-          "startStage": 6,
-          "lastCleared": 6,
-          "nextStage": 7,
-          "gear": {
-            "boy": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            },
-            "girl": {
-              "heart": 0,
-              "sword": 0,
-              "gun": 0,
-              "armour": 0,
-              "boots": 0,
-              "charm": 0
-            }
-          },
-          "growth": {},
-          "eligible": true,
-          "coins": 100,
-          "purse": {
-            "boy": 50,
-            "girl": 50
-          },
-          "hp": {
-            "boy": 5,
-            "girl": 5
-          },
-          "friends": [],
-          "charm": null,
-          "mode": "2p",
-          "solo": "boy",
-          "legacyModeUnknown": false,
-          "puffLeft": false
-        }
-      },
-      {
-        "at": 201828.5,
+        "at": 162281.80000000075,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -1988,13 +1567,13 @@
           },
           "growth": {},
           "eligible": true,
-          "coins": 88,
+          "coins": 94,
           "purse": {
-            "boy": 44,
-            "girl": 44
+            "boy": 47,
+            "girl": 47
           },
           "hp": {
-            "boy": 4,
+            "boy": 1,
             "girl": 2
           },
           "friends": [],
@@ -2006,7 +1585,7 @@
         }
       },
       {
-        "at": 201884.20000000298,
+        "at": 162295.80000000075,
         "value": {
           "version": 1,
           "runId": "qa-2p",
@@ -2033,13 +1612,13 @@
           },
           "growth": {},
           "eligible": true,
-          "coins": 88,
+          "coins": 94,
           "purse": {
-            "boy": 44,
-            "girl": 44
+            "boy": 47,
+            "girl": 47
           },
           "hp": {
-            "boy": 4,
+            "boy": 1,
             "girl": 2
           },
           "friends": [],
@@ -2052,6 +1631,6 @@
       }
     ]
   },
-  "durationSec": 178,
-  "end": "2026-11-04T00:09:46.038Z"
+  "durationSec": 145,
+  "end": "2026-11-08T06:56:40.114Z"
 }

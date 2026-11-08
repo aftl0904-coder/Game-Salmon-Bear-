@@ -3206,7 +3206,7 @@ export class GameScene extends Phaser.Scene {
     if (this.cageSaid || !this.started || this.leadX() < (ST.reactionX ?? 4390)) return
     this.cageSaid = true
     this.stage7Events.push({ kind: 'reaction', at: this.time.now })
-    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗……噗噗？', '#ffd6e8', { size: 12, dur: 2200 })
+    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '待補', '#ffd6e8', { size: 12, dur: 2200 })
     if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
   }
   /** Clear event is in-memory until saveClear commits it with the rest of the run. */
@@ -3215,7 +3215,7 @@ export class GameScene extends Phaser.Scene {
     if (isSideTrip() || !puffAway()) {
       this.puffDeparturePending = true
       this.stage7Events.push({ kind: 'departure', at: this.time.now })
-      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗暫時離隊。', '#ffd6e8', { size: 12, dur: 1800 })
+      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '待補', '#ffd6e8', { size: 12, dur: 1800 })
       if (this.pet) { this.tweens.killTweensOf(this.pet); this.pet.destroy(); this.pet = null }
       this.petShadow?.setVisible(false)
       this.petJetting = false

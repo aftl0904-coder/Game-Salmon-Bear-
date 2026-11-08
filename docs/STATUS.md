@@ -14,7 +14,7 @@
 - 本輪逐幀、位置注入、pause／背景模擬嘗試、可用設備模式、負載及失敗詳見 `docs/qa-c2s2/README.md`。既有對白保留；不降設計時長、不停傷害、不放寬斷言，尚未證明一影格界限或實機可見性。`frame-build.txt`、`frame-validate-data.txt` 記錄重新 build／10 項資料驗證。未重跑 600 秒，#88 不 merge／close／部署。
 
 ## 最新 #88 checkpoint（2026-11-04）
-- Alan 已確認第7關及大陸1兩組對白；#88 **只接第7關** D 噗噗反應、馴獸師卡名稱／稱號／三行／提示及 Boss 後離隊提示，逐字見 `docs/bible/first-release-dialogue-drafts.md`。D 只反應、Boss 後離隊，主支線與旗標邏輯不變；大陸1結局不在本 PR。
+- 2026-11-08：無法證明 Alan 逐字批准第7關三項文案（只證明 2026-11-04「15 is B」＝授權擬稿）。Runtime 已改返「待補」。D 只反應、Boss 後離隊，主支線與旗標邏輯不變。
 - 鏈網嚴格時間仍阻塞。已用逐影格 trace 證明 Phaser Timer 的平滑／限幅 delta 與事件 RAF timestamp 及 wall clock 不同；手機單次 1500 ms timer 實際 wall 約 1451.5 ms，受控主執行緒 stall 又令預警或活動延長。舊極端樣本無逐影格資料，不能確認每次歷史異常同源；未改時間、未放寬斷言，暫不冒險改遊戲計時。負載、frame resolution、P2/P3、安全位、失敗原檔及下一步詳見 `docs/qa-c2s2/README.md`。
 - 文案接入後 build 及 10 項資料驗證通過；桌面／模擬手機正常選單入口，後注入 D 反應、Boss 卡／擊敗、待續與地圖局部通過，2P 支線注入擊敗不改主線亦通過。非真機或真人／自然 Boss 全關；外層 shell 狀態捕獲失敗、各 JSON 結果分別保存。沒有重跑 600 秒。PR 保持 draft，不 merge／close／部署。
 

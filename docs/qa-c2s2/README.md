@@ -2,13 +2,11 @@
 
 ## Cursor 接手 checkpoint（2026-11-08 HKT）
 
-延續本 branch，**無重做**。新 remote branch `cursor/c2-stage7-from-88-2610`。詳見 `cursor-20261108.md`。
+延續本 branch，**無重做**。新 remote branch `cursor/c2-stage7-from-88-2610`（draft PR **#99**）。詳見 `cursor-20261108.md`、`copy-provenance.md`。
 
-- `tsc`／`build`／`validate:data` 今次 exit 0。
-- 注入走查 `c2s2-inspect.mjs` 今次 `passed:true`（A–E 截圖、Boss P1–P3、鏈網 816.6／1533 ms、離隊旗標）。**注入，不是自然通關。**
-- 舊 600 秒、2P bot、逐影格／hidden 失敗 **未重跑**，不能當已解。
-- 文案保持 Alan 批准稿，無改回「待補」。`#91` 角色／Boss／FX 仍佔位。
-- 無 merge main。請 Alan／Manus 開 PR。
+- 文案：無法證明 Alan 逐字批准（只證明 2026-11-04「15 is B」＝授權擬稿）。Runtime D／Boss 卡／離隊已改返「待補」。
+- 補驗收詳見 `accept-20261108.md`：自然通關 1P／2P **PASS**；600 秒 **PASS**；static walk **PASS**；hidden-chain **FAIL**（觀察唔到 `document.hidden`）。
+- 無 merge main。Alan 講「merge PR #N」先 merge。
 
 ---
 
