@@ -1,0 +1,7 @@
+page.evaluate: TypeError: Cannot read properties of undefined (reading 'scene')
+    at eval (eval at evaluate (:234:30), <anonymous>:1:35)
+    at UtilityScript.evaluate (<anonymous>:236:17)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+    at evaluate (/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:11:31)
+    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:37:22
+{"passed":false,"checks":["2P static scenery positions, counts and no bodies","D reaction once in this scene (injected positions)","Boss P1 and HP"],"errors":[]}

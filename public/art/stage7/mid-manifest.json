@@ -1,0 +1,41 @@
+{
+  "source_pr": 91,
+  "source_head": "4dab1f198e2342201d54acdccf6bd0d518be92f6",
+  "pillow": "13.0.0",
+  "files": [
+    {
+      "source": "corridor-mid.png",
+      "source_size": [
+        1119,
+        720
+      ],
+      "source_sha256": "935d607dbd51e1139877242a1706c9a9725d62cf9b9650a3992d6257ae065e14",
+      "output": "corridor-mid.png",
+      "output_size": [
+        560,
+        360
+      ],
+      "output_sha256": "c7102f4d4c5391a7c8ec07621506dc109849771f1ad37e93290874c2a8f1acd1",
+      "visible_colors": 64,
+      "alpha": "opaque",
+      "method": "height 720->360, width rounded half up; nearest resize, RGB median-cut <=64, no dithering"
+    },
+    {
+      "source": "training-mid.png",
+      "source_size": [
+        635,
+        720
+      ],
+      "source_sha256": "43d0917ec6dc30e7d2f7c46ec779a86d79515cbac5857a6f4b9bc66f49690c01",
+      "output": "training-mid.png",
+      "output_size": [
+        318,
+        360
+      ],
+      "output_sha256": "2ae188c1f193492a17bca3e07d9ef1b12b992d85645d7f87192fb1866485f74e",
+      "visible_colors": 64,
+      "alpha": "opaque",
+      "method": "height 720->360, width rounded half up; nearest resize, RGB median-cut <=64, no dithering"
+    }
+  ]
+}

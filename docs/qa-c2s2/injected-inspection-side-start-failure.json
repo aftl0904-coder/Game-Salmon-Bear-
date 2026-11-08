@@ -1,0 +1,139 @@
+{
+  "description": "INJECTED inspection: positions, phase and HP are set programmatically; screenshots and checks do not establish a full playthrough",
+  "checks": [
+    {
+      "name": "2P static scenery positions, counts and no bodies",
+      "count": 20,
+      "unchanged": true
+    },
+    {
+      "name": "D reaction once in this scene (injected positions)",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 40826.3
+        }
+      ]
+    },
+    {
+      "name": "Boss P1 and HP",
+      "boss": {
+        "hp": 55,
+        "max": 55,
+        "phase": 1,
+        "act": "intro",
+        "species": "trainer"
+      }
+    },
+    {
+      "name": "P1 summon cap observation",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 40826.3
+        },
+        {
+          "kind": "summon",
+          "at": 51242.6
+        },
+        {
+          "kind": "summon",
+          "at": 53975.8
+        }
+      ],
+      "live": 2
+    },
+    {
+      "name": "P2 net timing (isolated injected invocation)",
+      "passed": false,
+      "warnToActive": 933.2999999999956,
+      "activeToEnd": 1483.300000000003,
+      "bossClockReturn": 2300,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 60558.8
+        },
+        {
+          "kind": "chain-active",
+          "at": 61492.1
+        },
+        {
+          "kind": "chain-end",
+          "at": 62975.4
+        }
+      ]
+    },
+    {
+      "name": "P2 net inside damaged and safe standing position unaffected (injected positions)",
+      "before": {
+        "boy": 6,
+        "girl": 6
+      },
+      "after": {
+        "boy": 5,
+        "girl": 6
+      },
+      "positions": {
+        "target": 5000,
+        "safe": 4800
+      }
+    },
+    {
+      "name": "P3 threshold via injected HP",
+      "boss": {
+        "hp": 16,
+        "max": 55,
+        "phase": 3
+      }
+    },
+    {
+      "name": "P3 net timing (isolated injected invocation)",
+      "passed": true,
+      "warnToActive": 816.6999999999971,
+      "activeToEnd": 1500,
+      "bossClockReturn": 2990,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 66075.2
+        },
+        {
+          "kind": "chain-active",
+          "at": 66891.9
+        },
+        {
+          "kind": "chain-end",
+          "at": 68391.9
+        }
+      ]
+    },
+    {
+      "name": "departure once; one atomic run write at injected clear",
+      "pre": {
+        "puffLeft": false,
+        "lastCleared": 6
+      },
+      "post": {
+        "puffLeft": true,
+        "lastCleared": 7,
+        "nextStage": 8
+      },
+      "writes": 1,
+      "departures": 1,
+      "pet": false
+    },
+    {
+      "name": "reload keeps puffLeft",
+      "persisted": true
+    }
+  ],
+  "failures": [
+    "P2 isolated net timing outside 790–900 / 1490–1600 ms"
+  ],
+  "errors": [
+    "pageerror: Cannot read properties of null (reading 'resolution')"
+  ],
+  "passed": false,
+  "failure": "page.waitForFunction: Timeout 30000ms exceeded.\n    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-inspect.mjs:63:13"
+}

@@ -1,0 +1,1 @@
+{"out":"docs/qa-c2s2/state-checkpoint-model.json","modelAssertions":[["warning-not-before-800ms","pass"],["warning-pause-does-not-count","pass"],["active-resume-requires-new-render","pass"],["active-end-before-physics-at-1500","pass"],["short-low-fps-no-early-warning","pass"],["counterexample-postrender-is-not-present","pass"]],"promotableToRuntime":false}

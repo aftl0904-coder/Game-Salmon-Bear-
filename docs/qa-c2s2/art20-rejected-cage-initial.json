@@ -1,0 +1,776 @@
+{
+  "kind": "desktop-2p",
+  "description": "Seeded stage-6-complete save and normal menu entry; subsequent A–E positions injected and enemies isolated. Short automated check, not a full playthrough or physical device.",
+  "checks": [
+    {
+      "name": "normal stage-7 entry via menu with seeded save; no position injection",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "mode": "2p",
+        "started": true,
+        "intro": false,
+        "x1": 220,
+        "x2": 380,
+        "vy": 0,
+        "attackCd": 0
+      }
+    },
+    {
+      "name": "normal entry both players move by keyboard",
+      "dx1": 77,
+      "dx2": 94
+    },
+    {
+      "name": "seven actual PNG responses and Phaser textures",
+      "textures": {
+        "entrance-far": {
+          "width": 640,
+          "height": 360
+        },
+        "backstage-far": {
+          "width": 640,
+          "height": 360
+        },
+        "arena-far": {
+          "width": 640,
+          "height": 360
+        },
+        "cage-animal": {
+          "width": 84,
+          "height": 96
+        },
+        "net-static": {
+          "width": 104,
+          "height": 68
+        },
+        "number-plate-blank": {
+          "width": 20,
+          "height": 13
+        },
+        "sign-blank": {
+          "width": 158,
+          "height": 89
+        }
+      }
+    },
+    {
+      "name": "A backdrop (injected position, threats isolated)",
+      "cx": 350,
+      "visible": {
+        "A": true,
+        "D": false,
+        "E": false
+      },
+      "playerX": 350
+    },
+    {
+      "name": "B backdrop (injected position, threats isolated)",
+      "cx": 1300,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 1300
+    },
+    {
+      "name": "C backdrop (injected position, threats isolated)",
+      "cx": 2500,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 2500
+    },
+    {
+      "name": "D backdrop (injected position, threats isolated)",
+      "cx": 3800,
+      "visible": {
+        "A": false,
+        "D": true,
+        "E": false
+      },
+      "playerX": 3800
+    },
+    {
+      "name": "E backdrop (injected position, threats isolated)",
+      "cx": 4960,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": true
+      },
+      "playerX": 4800
+    },
+    {
+      "name": "all fixed objects coordinates/count/type/depth/no body unchanged after injected-position player movement",
+      "dx1": 3400,
+      "dx2": 3418,
+      "count": 28,
+      "before": [
+        {
+          "name": "stage7-static-sign-plate",
+          "type": "Image",
+          "x": 450,
+          "y": -1,
+          "body": false,
+          "texture": "s7-sign-blank",
+          "depth": 128,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "",
+          "type": "Text",
+          "x": 450,
+          "y": 55,
+          "body": false,
+          "texture": "21d2b352-0078-42f1-b417-b4c28c884376",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-0-cage",
+          "type": "Image",
+          "x": 300,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-1-cage",
+          "type": "Image",
+          "x": 690,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-2-cage",
+          "type": "Image",
+          "x": 960,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-3-cage",
+          "type": "Image",
+          "x": 1320,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-4-cage",
+          "type": "Image",
+          "x": 1710,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-5-chain",
+          "type": "Graphics",
+          "x": 2150,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-6-net",
+          "type": "Image",
+          "x": 2580,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-7-chain",
+          "type": "Graphics",
+          "x": 3000,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-8-cage",
+          "type": "Image",
+          "x": 3300,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-9-net",
+          "type": "Image",
+          "x": 3670,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-10-cage",
+          "type": "Image",
+          "x": 4050,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-11-chain",
+          "type": "Graphics",
+          "x": 4410,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-0",
+          "type": "Image",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-1",
+          "type": "Image",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-2",
+          "type": "Image",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-3",
+          "type": "Image",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-4",
+          "type": "Image",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-8",
+          "type": "Image",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-10",
+          "type": "Image",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-0",
+          "type": "Text",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "5eb43734-9d05-42e0-9cba-16d74a7f87af",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-1",
+          "type": "Text",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "6b2b6a7d-7256-4fd9-8168-ead4ac18cfcb",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-2",
+          "type": "Text",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "6f32498e-b81d-4f0a-b1f1-9dcc59cf344c",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-3",
+          "type": "Text",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "5beae85e-0e89-443c-af8e-bf3c809ce277",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-4",
+          "type": "Text",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "e4f1e916-3956-4115-b43d-cb849564b870",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-8",
+          "type": "Text",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "38cd6277-5565-4f84-bfdf-a4c778d72605",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-10",
+          "type": "Text",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "5354374e-3d96-417b-b2b5-8e16ea82c4a3",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ],
+      "after": [
+        {
+          "name": "stage7-static-sign-plate",
+          "type": "Image",
+          "x": 450,
+          "y": -1,
+          "body": false,
+          "texture": "s7-sign-blank",
+          "depth": 128,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "",
+          "type": "Text",
+          "x": 450,
+          "y": 55,
+          "body": false,
+          "texture": "21d2b352-0078-42f1-b417-b4c28c884376",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-0-cage",
+          "type": "Image",
+          "x": 300,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-1-cage",
+          "type": "Image",
+          "x": 690,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-2-cage",
+          "type": "Image",
+          "x": 960,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-3-cage",
+          "type": "Image",
+          "x": 1320,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-4-cage",
+          "type": "Image",
+          "x": 1710,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-5-chain",
+          "type": "Graphics",
+          "x": 2150,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-6-net",
+          "type": "Image",
+          "x": 2580,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-7-chain",
+          "type": "Graphics",
+          "x": 3000,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-8-cage",
+          "type": "Image",
+          "x": 3300,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-9-net",
+          "type": "Image",
+          "x": 3670,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-10-cage",
+          "type": "Image",
+          "x": 4050,
+          "y": 285,
+          "body": false,
+          "texture": "s7-cage-animal",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-11-chain",
+          "type": "Graphics",
+          "x": 4410,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-0",
+          "type": "Image",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-1",
+          "type": "Image",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-2",
+          "type": "Image",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-3",
+          "type": "Image",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-4",
+          "type": "Image",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-8",
+          "type": "Image",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-10",
+          "type": "Image",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-0",
+          "type": "Text",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "5eb43734-9d05-42e0-9cba-16d74a7f87af",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-1",
+          "type": "Text",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "6b2b6a7d-7256-4fd9-8168-ead4ac18cfcb",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-2",
+          "type": "Text",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "6f32498e-b81d-4f0a-b1f1-9dcc59cf344c",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-3",
+          "type": "Text",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "5beae85e-0e89-443c-af8e-bf3c809ce277",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-4",
+          "type": "Text",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "e4f1e916-3956-4115-b43d-cb849564b870",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-8",
+          "type": "Text",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "38cd6277-5565-4f84-bfdf-a4c778d72605",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-10",
+          "type": "Text",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "5354374e-3d96-417b-b2b5-8e16ea82c4a3",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ]
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/backstage-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/entrance-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/arena-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/cage-animal.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/net-static.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/number-plate-blank.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/sign-blank.png",
+      "status": 200,
+      "type": "image/png"
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
