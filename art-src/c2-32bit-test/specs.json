@@ -1,0 +1,19 @@
+{
+  "purpose": "C2 32-bit style trial only; not wired into runtime; Continent 1 unchanged",
+  "guardIdle": {
+    "file": "guard-idle-32bit.png",
+    "size": [768, 352],
+    "frames": 3,
+    "cols": 3,
+    "cell": [256, 352],
+    "background": "#FF00FF",
+    "matches": "art-src/anim/enemies/c2-human-guard/idle.png from PR #91"
+  },
+  "expoHall": {
+    "file": "expo-hall-32bit.png",
+    "size": [1280, 720],
+    "gameSizeCopy": "expo-hall-32bit-640.png",
+    "gameSize": [640, 360],
+    "noText": true
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "at": "2026-11-08T06:43:24.186Z",
+  "root": "/tmp/c2-32bit-gs",
+  "results": [
+    {
+      "file": "full/arena-far-1280.png",
+      "bytes": 1313763,
+      "fetchMs": 12.199999999254942,
+      "decodeMs": 20.099999997764826,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "full/arena-far-640.png",
+      "bytes": 380265,
+      "fetchMs": 4,
+      "decodeMs": 4.199999999254942,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "full/backstage-far-1280.png",
+      "bytes": 1273245,
+      "fetchMs": 5,
+      "decodeMs": 15.5,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "full/backstage-far-640.png",
+      "bytes": 390853,
+      "fetchMs": 3.699999999254942,
+      "decodeMs": 3.800000000745058,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "full/entrance-far-1280.png",
+      "bytes": 1698985,
+      "fetchMs": 5.699999999254942,
+      "decodeMs": 16.5,
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "file": "full/entrance-far-640.png",
+      "bytes": 485968,
+      "fetchMs": 3.5,
+      "decodeMs": 4.100000001490116,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "full/guard-attack.png",
+      "bytes": 111733,
+      "fetchMs": 1.699999999254942,
+      "decodeMs": 2.800000000745058,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "full/guard-defeat.png",
+      "bytes": 168290,
+      "fetchMs": 1.9000000022351742,
+      "decodeMs": 2.899999998509884,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "full/guard-detect.png",
+      "bytes": 119172,
+      "fetchMs": 2.399999998509884,
+      "decodeMs": 1.8999999985098839,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "full/guard-hit.png",
+      "bytes": 89072,
+      "fetchMs": 2.5,
+      "decodeMs": 1.5,
+      "width": 512,
+      "height": 352
+    },
+    {
+      "file": "full/guard-idle.png",
+      "bytes": 91349,
+      "fetchMs": 1.3999999985098839,
+      "decodeMs": 2.100000001490116,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "full/guard-model-sheet.png",
+      "bytes": 140499,
+      "fetchMs": 1.6000000014901161,
+      "decodeMs": 3,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "full/guard-recover.png",
+      "bytes": 114077,
+      "fetchMs": 1.6000000014901161,
+      "decodeMs": 2.099999997764826,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "full/guard-walk.png",
+      "bytes": 97773,
+      "fetchMs": 1.3999999985098839,
+      "decodeMs": 2,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "full/guard-warning.png",
+      "bytes": 114154,
+      "fetchMs": 1.699999999254942,
+      "decodeMs": 2.5,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "q128/arena-far-640.png",
+      "bytes": 309585,
+      "fetchMs": 2.400000002235174,
+      "decodeMs": 3.699999999254942,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "q128/backstage-far-640.png",
+      "bytes": 354777,
+      "fetchMs": 2.400000002235174,
+      "decodeMs": 4.299999997019768,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "q128/entrance-far-640.png",
+      "bytes": 350175,
+      "fetchMs": 2.300000000745058,
+      "decodeMs": 3.5,
+      "width": 640,
+      "height": 360
+    },
+    {
+      "file": "q128/guard-attack.png",
+      "bytes": 98944,
+      "fetchMs": 1.5999999977648258,
+      "decodeMs": 2.400000002235174,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-defeat.png",
+      "bytes": 150251,
+      "fetchMs": 1.6000000014901161,
+      "decodeMs": 2.600000001490116,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-detect.png",
+      "bytes": 105812,
+      "fetchMs": 1.6000000014901161,
+      "decodeMs": 2.399999998509884,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-hit.png",
+      "bytes": 79277,
+      "fetchMs": 1.5,
+      "decodeMs": 1.6000000014901161,
+      "width": 512,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-idle.png",
+      "bytes": 80309,
+      "fetchMs": 2,
+      "decodeMs": 2.100000001490116,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-model-sheet.png",
+      "bytes": 121063,
+      "fetchMs": 1.5,
+      "decodeMs": 3,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-recover.png",
+      "bytes": 101840,
+      "fetchMs": 1.3999999985098839,
+      "decodeMs": 2.5,
+      "width": 768,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-walk.png",
+      "bytes": 86966,
+      "fetchMs": 1.300000000745058,
+      "decodeMs": 2.099999997764826,
+      "width": 1024,
+      "height": 352
+    },
+    {
+      "file": "q128/guard-warning.png",
+      "bytes": 102473,
+      "fetchMs": 1.300000000745058,
+      "decodeMs": 2.099999997764826,
+      "width": 768,
+      "height": 352
+    }
+  ]
+}
