@@ -1,0 +1,5 @@
+
+> sake-kuma@0.0.0 build
+> tsc && vite build
+
+src/game/enemies/MallScrubber.ts(122,10): error TS2339: Property 'autoFrame' does not exist on type 'Body'.

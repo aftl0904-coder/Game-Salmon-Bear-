@@ -1,0 +1,8 @@
+{
+  "mode": "mobile",
+  "setup": "stage and arena/hero positions injected; P2/P3 hp and one hit injected; dodge and attack via keyboard or native simulated touch; not a full playthrough",
+  "errors": [],
+  "rounds": [],
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: no HP loss during this dodge\n\n4 !== 6\n\n    at round (file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:60:12)\n    at async file:///tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:63:3"
+}

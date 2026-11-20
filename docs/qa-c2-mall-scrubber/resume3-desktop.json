@@ -1,0 +1,8 @@
+{
+  "mode": "desktop",
+  "setup": "stage and arena/hero positions injected; P2/P3 hp and one hit injected; dodge and attack via keyboard or native simulated touch; not a full playthrough",
+  "errors": [],
+  "rounds": [],
+  "passed": false,
+  "error": "page.waitForFunction: Timeout 30000ms exceeded.\n    at /tmp/salmon-c2-mall-scrubber-manus/scripts/qa/c2-scrubber-checkpoint.mjs:35:14"
+}
