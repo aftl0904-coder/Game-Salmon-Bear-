@@ -1,0 +1,166 @@
+{
+  "photo": [
+    {
+      "wall": 52431.39999999851,
+      "scene": 52406.9,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 52513,
+      "scene": 52506.8,
+      "key": "story-ending-3",
+      "alpha": 0.19555555555555557,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 52615,
+      "scene": 52606.8,
+      "key": "story-ending-3",
+      "alpha": 0.4222222222222222,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 52756.19999999553,
+      "scene": 52723.5,
+      "key": "story-ending-3",
+      "alpha": 0.7355555555555555,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 52854.19999999553,
+      "scene": 52840.2,
+      "key": "story-ending-3",
+      "alpha": 0.9533333333333334,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53106.19999999553,
+      "scene": 53090.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53205.10000000149,
+      "scene": 53190.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53243.69999999553,
+      "scene": 53240.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53423.69999999553,
+      "scene": 53406.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53448.19999999553,
+      "scene": 53440.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53562.69999999553,
+      "scene": 53540.2,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53671.10000000149,
+      "scene": 53656.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53871.29999999702,
+      "scene": 53856.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 53883.79999999702,
+      "scene": 53873.5,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 54034.5,
+      "scene": 54006.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 54242.79999999702,
+      "scene": 54240.1,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 54565.39999999851,
+      "scene": 54556.7,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 54715.89999999851,
+      "scene": 54706.8,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 54730.69999999553,
+      "scene": 54723.4,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    }
+  ],
+  "lines": [
+    "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。",
+    "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+    "飲埋呢罐，噗噗。",
+    "噗噗噗噗噗！！",
+    "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。",
+    "不如而家就喺呢度，大家一齊野餐？",
+    "［呢句到時由 Alan 自己寫——記得嚥返入嚡先完整㗎！］"
+  ],
+  "errors": []
+}
