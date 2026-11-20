@@ -24,6 +24,11 @@ import { bossHitDamage } from '../engine/bossDamage'
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
+// Stage-5 projection only. Keep its entire warning/fall clear of the next attack.
+export const TRI_FEATHER_WARNING_MS = 2400
+export const TRI_FEATHER_FALL_MS = 1800
+export const TRI_FEATHER_TOTAL_MS = TRI_FEATHER_WARNING_MS + TRI_FEATHER_FALL_MS
+
 export type TriHooks = {
   floorY: () => number
   /** Fake-honey rain across the arena — a handful of falling hazards from the ceiling. */
@@ -31,7 +36,7 @@ export type TriHooks = {
   spawnZombie: (x: number) => void
   /** "大屏幕投影" — replays 蜜冠女王蜂 / 月橋鏡鴞's own real attacks via their existing hooks. */
   replayQueen: (x: number) => void
-  replayOwl: (gapX: number) => void
+  replayOwl: () => void
   /** Flat light bolt along the floor (high = crouch under, low = jump over). */
   bolt: (x: number, feet: number, dir: 1 | -1, high: boolean, speed: number, lifeMs: number) => void
   /** Damaging dozer run along the arena track (telegraphed first). */
@@ -131,15 +136,6 @@ export class TriBoss extends AnimEnemy {
     this.stormFired = 0
   }
 
-  /** Safe lane for feather rain: never at the boss's feet, never on top of the target. */
-  private safeGap(targetX: number) {
-    const mid = (this.arenaX0 + this.arenaX1) / 2
-    const cands = [this.arenaX0 + 90, mid - 80, mid + 80, this.arenaX1 - 260].filter((c) => Math.abs(c - this.x) > 120)
-    const far = cands.filter((c) => Math.abs(c - targetX) >= 140)
-    const pool = far.length ? far : cands
-    return pool[Math.floor(Math.random() * pool.length)] ?? mid
-  }
-
   protected override die(_dir: number) {
     this.hp = 0
     this.act = 'intro'
@@ -200,8 +196,8 @@ export class TriBoss extends AnimEnemy {
         break
       case 'proj2':
         this.anim('point')
-        if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl(this.safeGap(tgt.x))
-        if (this.t > 1600) this.go('dozer')
+        if (this.t > 200 && this.t - dt <= 200) this.th.replayOwl()
+        if (this.t > 200 + TRI_FEATHER_TOTAL_MS + 100) this.go('dozer')
         break
       case 'dozer':
         this.anim('point')
@@ -238,14 +234,14 @@ export class TriBoss extends AnimEnemy {
         this.anim('rain')
         if (this.stormFired === 0 && this.t > 100) {
           this.stormFired = 1
-          this.th.rain(this.arenaX0, this.arenaX1)
-          this.th.replayOwl(this.safeGap(tgt.x))
+          this.th.replayOwl()
         }
-        if (this.stormFired === 1 && this.t > 900) {
+        if (this.stormFired === 1 && this.t > 100 + TRI_FEATHER_TOTAL_MS) {
           this.stormFired = 2
+          this.th.rain(this.arenaX0, this.arenaX1)
           this.th.replayQueen(tgt.x)
         }
-        if (this.t > 2000) this.openCrack()
+        if (this.t > 100 + TRI_FEATHER_TOTAL_MS + 1200) this.openCrack()
         break
       case 'crack':
         this.anim('hurt')

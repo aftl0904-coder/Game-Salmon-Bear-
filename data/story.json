@@ -1,6 +1,24 @@
 {
   "note": "In-engine cutscenes (src/game/cutscene.ts). Coordinates: 640×360 screen px, actors' feet on y=240. Every line ≤ 20 字. Speakers: narr / lunbo / kibobo / pupu / mama.",
   "scenes": {
+    "C2_INTRO": {
+      "title": "大陸2第一關前・野餐後",
+      "steps": [
+        { "music": "story" },
+        { "still": "ending-3" },
+        { "say": "narr", "text": "森林重新平靜，大家終於一齊野餐。" },
+        { "say": "kibobo", "text": "噗噗，今次可以慢慢食喇。" },
+        { "say": "pupu", "text": "噗噗！" },
+        { "say": "lunbo", "text": "食飽之後，一齊去行商場？" },
+        { "say": "kibobo", "text": "好呀，叫埋啲朋友！" },
+        { "still": "c2-mall-door" },
+        { "say": "narr", "text": "大家來到商場門前。" },
+        { "say": "lunbo", "text": "呢個商場……同之前講嗰間好似。" },
+        { "say": "kibobo", "text": "咦？入面好似有啲古怪。" },
+        { "say": "pupu", "text": "噗……？" },
+        { "say": "lunbo", "text": "我哋入去睇清楚。" }
+      ]
+    },
     "C1": {
       "title": "第 1 關前・野餐日",
       "steps": [
