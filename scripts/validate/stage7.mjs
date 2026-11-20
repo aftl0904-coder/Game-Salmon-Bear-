@@ -18,5 +18,11 @@ for(const [key,value] of Object.entries({hp:55,phase2At:0.66,phase3Below:0.3,pha
 check(level.boss?.kind==='trainer'&&level.boss.arenaX1-level.boss.arenaX0>t.chainWidth+32,'boss arena and safe space')
 check((level.staticDecor||[]).length>0&&(level.staticDecor||[]).every(o=>['cage','chain','net'].includes(o.kind)&&o.x>=0&&o.x<level.worldW),'static decor types and positions')
 const card=bosses.bosses?.trainer
-check(card?.name==='待補'&&card?.title==='待補'&&card?.why==='待補'&&JSON.stringify(card?.lines)===JSON.stringify(['待補','待補','待補']),'trainer card is 待補 until Alan verbatim approval is proven')
+const approved={
+  name:'馴獸師',
+  title:'展銷中心嘅訓練官・被鞭所控',
+  lines:['佢本來係照顧動物嘅飼養員。','三角組織俾咗佢一條鞭，話「聽話先有得賣」。','揮得耐咗，佢已經聽唔到動物喊。'],
+  why:'呢度啲產品化蜜僵同鎖鏈，全部係佢訓練出嚟。',
+}
+check(card?.name===approved.name&&card?.title===approved.title&&card?.why===approved.why&&JSON.stringify(card?.lines)===JSON.stringify(approved.lines),'trainer card matches Claude/Alan authorized verbatim copy')
 if(errors.length){console.error('stage7.json / trainer: FAIL\n - '+errors.join('\n - '));process.exitCode=1}else console.log('stage7.json / trainer: OK (data only; runtime QA separate)')
