@@ -1,0 +1,108 @@
+{
+  "setup": "Injected stage 5, boss, phase and initial positions; camera centred as if following the injected duo. No HP, invulnerability, damage or physics manipulation. After setup use real CDP touch and P2 keyboard. Browser emulation; not human, real device or full run.",
+  "cases": [],
+  "errors": [
+    {
+      "id": "mobile-boy",
+      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts",
+      "stack": "page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts\n    at /tmp/gsb93/scripts/qa/c1-boss-mobile-focused.mjs:44:18",
+      "pageErrors": [],
+      "state": {
+        "trace": [],
+        "events": [],
+        "arrivals": [
+          null
+        ],
+        "hits": [],
+        "warn": null,
+        "firstShots": null,
+        "incoming": {},
+        "landings": {},
+        "requested": [
+          false
+        ],
+        "active": [
+          false
+        ]
+      }
+    },
+    {
+      "id": "mobile-girl",
+      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts",
+      "stack": "page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts\n    at /tmp/gsb93/scripts/qa/c1-boss-mobile-focused.mjs:44:18",
+      "pageErrors": [],
+      "state": {
+        "trace": [],
+        "events": [],
+        "arrivals": [
+          null
+        ],
+        "hits": [],
+        "warn": null,
+        "firstShots": null,
+        "incoming": {},
+        "landings": {},
+        "requested": [
+          false
+        ],
+        "active": [
+          false
+        ]
+      }
+    },
+    {
+      "id": "mobile-2p",
+      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts",
+      "stack": "page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts\n    at /tmp/gsb93/scripts/qa/c1-boss-mobile-focused.mjs:44:18",
+      "pageErrors": [],
+      "state": {
+        "trace": [],
+        "events": [],
+        "arrivals": [
+          null,
+          null
+        ],
+        "hits": [],
+        "warn": null,
+        "firstShots": null,
+        "incoming": {},
+        "landings": {},
+        "requested": [
+          false,
+          false
+        ],
+        "active": [
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "mobile-2p-hit-control",
+      "message": "Error: page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts",
+      "stack": "page.evaluate: TypeError: Failed to fetch dynamically imported module: http://127.0.0.1:47327/src/game/enemies/Stage5Enemies.ts\n    at /tmp/gsb93/scripts/qa/c1-boss-mobile-focused.mjs:44:18",
+      "pageErrors": [],
+      "state": {
+        "trace": [],
+        "events": [],
+        "arrivals": [
+          null,
+          null
+        ],
+        "hits": [],
+        "warn": null,
+        "firstShots": null,
+        "incoming": {},
+        "landings": {},
+        "requested": [
+          false,
+          false
+        ],
+        "active": [
+          false,
+          false
+        ]
+      }
+    }
+  ]
+}

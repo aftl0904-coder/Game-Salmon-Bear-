@@ -1,0 +1,20 @@
+CASE mobile-boy-worst {"damage":[1],"endX":[3202],"warningMs":2483,"hits":[{"kind":"projectile","t":22356,"hx":3202,"hp":6,"x":3210,"y":237.5,"feather":3210}],"errors":[]}
+FAIL mobile-boy-worst AssertionError [ERR_ASSERTION]: mobile-boy-worst: lost HP
++ actual - expected
+
+  [
++   1
+-   0
+  ]
+
+    at file:///tmp/salmon-c1-boss-fairness/scripts/qa/c1-boss-fairness.mjs:95:19
+CASE mobile-girl-worst {"damage":[1],"endX":[3389],"warningMs":2417,"hits":[{"kind":"projectile","t":22801.5,"hx":3368,"hp":6,"x":3366,"y":247.5,"feather":3366}],"errors":[]}
+FAIL mobile-girl-worst AssertionError [ERR_ASSERTION]: mobile-girl-worst: lost HP
++ actual - expected
+
+  [
++   1
+-   0
+  ]
+
+    at file:///tmp/salmon-c1-boss-fairness/scripts/qa/c1-boss-fairness.mjs:95:19
