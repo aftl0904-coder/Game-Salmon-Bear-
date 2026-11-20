@@ -1,0 +1,36 @@
+{
+  "mode": "mobile",
+  "input": "simulated Pixel 7 landscape touch",
+  "checks": [
+    "normal cover → guide; current/WIP/待補 markers and first-stage boss; original start link",
+    "physically scrolled to both new sections and final 待續"
+  ],
+  "pageerrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "http404": [],
+  "requestFailed": [],
+  "scroll": [
+    {
+      "selector": "#c2-stage1",
+      "before": 0,
+      "after": 11695,
+      "attempts": 52
+    },
+    {
+      "selector": "#c2-stage2",
+      "before": 11704,
+      "after": 11894,
+      "attempts": 1
+    },
+    {
+      "selector": "#to-be-continued",
+      "before": 11894,
+      "after": 13280,
+      "attempts": 6
+    }
+  ],
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'Failed to load resource: the server responded with a status of 404 (Not Found)'\n+ ]\n- []\n\n    at file:///tmp/salmon-first-release-guide/docs/qa-guide-first-release/guide-navigation.mjs:91:10"
+}
