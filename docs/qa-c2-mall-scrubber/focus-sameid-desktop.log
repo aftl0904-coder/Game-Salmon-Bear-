@@ -3,22 +3,22 @@
   "passed": true,
   "events": [],
   "rounds": 3,
-  "frames": 373,
+  "frames": 807,
   "counterattack": {
     "before": {
-      "now": 33748,
+      "now": 22511,
       "act": "recover",
       "phase": 1,
-      "elapsed": 0,
+      "elapsed": 22,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4948,
+        "x": 4945,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4942,
+          "x": 4939,
           "y": 259,
           "w": 12,
           "h": 24,
@@ -58,31 +58,31 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 279.2914285714286
+          "y": 279.3428571428571
         }
       ]
     },
     "after": {
-      "now": 34815,
+      "now": 23495,
       "act": "recover",
       "phase": 1,
-      "elapsed": 900,
+      "elapsed": 915,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4963,
+        "x": 4966,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4957,
+          "x": 4960,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4982,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -115,14 +115,14 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 282.30857142857144
+          "y": 282.97714285714284
         }
       ]
     }
   },
   "wall": {
     "warn": {
-      "now": 44798,
+      "now": 33094,
       "act": "warn",
       "phase": 3,
       "elapsed": 0,
@@ -141,7 +141,7 @@
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4982,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -174,31 +174,31 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 280.67999999999984
+          "y": 284.7257142857142
         }
       ]
     },
     "escaped": {
-      "now": 46164,
+      "now": 34211,
       "act": "warn",
       "phase": 3,
-      "elapsed": 1387,
+      "elapsed": 1128,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4783,
+        "x": 4784,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4777,
+          "x": 4778,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4982,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -231,26 +231,26 @@
       "sushi": []
     },
     "active": {
-      "now": 46531,
+      "now": 34861,
       "act": "charge",
       "phase": 3,
       "elapsed": 0,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4794,
+        "x": 4790,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4788,
+          "x": 4784,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4982,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -283,26 +283,26 @@
       "sushi": []
     },
     "recover": {
-      "now": 46831,
+      "now": 35094,
       "act": "recover",
       "phase": 3,
       "elapsed": 0,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4794,
+        "x": 4790,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4788,
+          "x": 4784,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4982,
           "y": 185,
           "w": 48,
           "h": 96,

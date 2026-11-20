@@ -3,22 +3,22 @@
   "passed": true,
   "events": [],
   "rounds": 3,
-  "frames": 405,
+  "frames": 839,
   "counterattack": {
     "before": {
-      "now": 27834,
+      "now": 21948,
       "act": "recover",
       "phase": 1,
-      "elapsed": 50,
+      "elapsed": 45,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4902,
+        "x": 4925,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4896,
+          "x": 4919,
           "y": 259,
           "w": 12,
           "h": 24,
@@ -58,31 +58,31 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 281.68285714285713
+          "y": 279.10285714285715
         }
       ]
     },
     "after": {
-      "now": 30400,
-      "act": "scan",
+      "now": 23614,
+      "act": "recover",
       "phase": 1,
-      "elapsed": 600,
+      "elapsed": 1625,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4963,
+        "x": 4964,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4957,
+          "x": 4958,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4980,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -115,14 +115,14 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 279.60857142857145
+          "y": 281.1771428571429
         }
       ]
     }
   },
   "wall": {
     "warn": {
-      "now": 40433,
+      "now": 33214,
       "act": "warn",
       "phase": 3,
       "elapsed": 0,
@@ -141,7 +141,7 @@
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4980,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -174,31 +174,31 @@
       "sushi": [
         {
           "x": 4680,
-          "y": 281.5457142857142
+          "y": 279.46285714285716
         }
       ]
     },
     "escaped": {
-      "now": 42216,
+      "now": 34497,
       "act": "warn",
       "phase": 3,
-      "elapsed": 1675,
+      "elapsed": 1280,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4784,
+        "x": 4781,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4778,
+          "x": 4775,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4980,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -231,26 +231,26 @@
       "sushi": []
     },
     "active": {
-      "now": 42483,
+      "now": 34981,
       "act": "charge",
       "phase": 3,
-      "elapsed": 198,
+      "elapsed": 0,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4814,
+        "x": 4808,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4808,
+          "x": 4802,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4980,
           "y": 185,
           "w": 48,
           "h": 96,
@@ -260,11 +260,11 @@
         "speed": 105
       },
       "boss": {
-        "x": 4693,
+        "x": 4725,
         "y": 285,
         "hp": 10,
         "body": {
-          "x": 4649,
+          "x": 4681,
           "y": 224,
           "w": 88,
           "h": 61,
@@ -283,26 +283,26 @@
       "sushi": []
     },
     "recover": {
-      "now": 42583,
+      "now": 35214,
       "act": "recover",
       "phase": 3,
       "elapsed": 0,
       "move": "charge",
       "warningId": 1,
       "hero": {
-        "x": 4814,
+        "x": 4808,
         "y": 285,
         "hp": 6,
         "alive": true,
         "body": {
-          "x": 4808,
+          "x": 4802,
           "y": 259,
           "w": 12,
           "h": 24,
           "enabled": true
         },
         "attack": {
-          "x": 4979,
+          "x": 4980,
           "y": 185,
           "w": 48,
           "h": 96,

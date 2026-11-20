@@ -2,6 +2,12 @@
 
 **歷史 checkpoint 以下為 `6ba07f4` 當時結果。** 本次已接入獨立洗地機初版及已批准 A–E／6→7 文字，但整項仍未完成、不可合併／部署；Boss 安全／操作驗收未通過，不可把以下人類保安紀錄當成洗地機通關證據。
 
+## 2026-11-21 Cursor 重測：focus-sameid（desktop／mobile 皆 exit 0）
+
+- 見 `cursor-20261121-focus-sameid.md`。注入 1P 倫寶局部測；**唔等於整關／2P／自然進場通過**。
+- `focus-sameid-exits.txt`：desktop exit=0、mobile exit=0。JSON／log／wall-recover 截圖已更新。伺服器 47431 測完已關。
+- 整項仍 checkpoint，不可合併／部署，直至 Alan 驗收或講 merge。
+
 ## 2026-11-04 最新重測：P1–P3 使用同一 warningId
 
 - 修正**測試腳本**，三階段均以同一 warningId 配對警告、攻擊與恢復，先採樣再截圖，避免截圖延誤將下一招當成第一招；沒有更改遊戲程式，也沒有放寬受傷／反擊斷言。
