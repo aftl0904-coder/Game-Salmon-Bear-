@@ -1,38 +1,48 @@
 {
-  "description": "Attempt real document.hidden during an injected trainer chain. Does not override hidden or dispatch fake visibilitychange.",
-  "at": "2026-11-08T06:42:48.184Z",
+  "description": "Chain fairness under background: real document.hidden probe + Phaser loop.pause proxy (same as Game.onHidden). Does not synthesize visibilitychange or override document.hidden.",
+  "at": "2026-11-20T16:03:55.399Z",
   "cases": [
     {
-      "case": "second-tab-bringToFront",
+      "case": "real-document-hidden-probe",
       "hidden": false,
       "events": [],
-      "chain": [
-        {
-          "kind": "chain-warn",
-          "at": 17181.6
-        }
+      "chainKinds": [
+        "chain-warn"
       ],
-      "hp": 6,
-      "observedHidden": false
+      "observedHidden": false,
+      "note": "Environment often cannot produce document.hidden; failure here is not a product fail."
     },
     {
-      "case": "cdp-setWebLifecycleState-hidden",
-      "error": "Error: cdpSession.send: Protocol error (Page.setWebLifecycleState): Unidentified lifecycle state"
-    },
-    {
-      "case": "cdp-lifecycle",
-      "cdpOk": false,
-      "hidden": false,
-      "events": [],
-      "chain": [
-        {
-          "kind": "chain-warn",
-          "at": 21148.1
-        }
+      "case": "phaser-loop-pause-proxy-for-onHidden",
+      "passed": false,
+      "wallPauseMs": 70.10000000000582,
+      "wallHiddenMs": 2053.899999999994,
+      "sceneDeltaDuringPause": 2049.9000000000015,
+      "hpAtPause": 6,
+      "hpDuring": 6,
+      "hpFinal": 6,
+      "kindsAtPause": [
+        "chain-warn"
       ],
-      "hp": 6,
-      "observedHidden": false
+      "kindsDuring": [
+        "chain-warn",
+        "reaction"
+      ],
+      "warnToActive": null,
+      "activeToEnd": null,
+      "kindsFinal": [
+        "chain-warn",
+        "reaction",
+        "summon"
+      ],
+      "loopPausedDuring": false,
+      "note": "game.loop.pause() is what Phaser.Game.onHidden calls when document.hidden becomes true."
     }
   ],
-  "passed": false
+  "passed": false,
+  "failures": [
+    "loop-pause proxy timing/HP freeze failed"
+  ],
+  "realHiddenObserved": false,
+  "manualStillNeeded": true
 }

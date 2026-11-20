@@ -5,7 +5,8 @@
 延續本 branch，**無重做**。新 remote branch `cursor/c2-stage7-from-88-2610`（draft PR **#99**）。詳見 `cursor-20261108.md`、`copy-provenance.md`。
 
 - 文案：無法證明 Alan 逐字批准（只證明 2026-11-04「15 is B」＝授權擬稿）。Runtime D／Boss 卡／離隊已改返「待補」。
-- 補驗收詳見 `accept-20261108.md`：自然通關 1P／2P **PASS**；600 秒 **PASS**；static walk **PASS**；hidden-chain **FAIL**（觀察唔到 `document.hidden`）。
+- 補驗收詳見 `accept-20261108.md`：自然通關 1P／2P **PASS**；600 秒 **PASS**；static walk **PASS**；hidden-chain **需人手測試**（CI 觀察唔到 `document.hidden`；見 `hidden-chain-manual.md`）。
+- 2026-11-21：Manus token 等候期間 Cursor 接手部分 Manus 隊列（見 `docs/qa-c2s2/manus-share-20261121.md`）。
 - 無 merge main。Alan 講「merge PR #N」先 merge。
 
 ---
