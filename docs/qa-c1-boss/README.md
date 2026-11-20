@@ -1,5 +1,10 @@
 # 大陸1第5關 Boss QA（2026-11-04）
 
+## 2026-11-21 Cursor 重測（rebase → main）
+
+- 見 `cursor-20261121-rebase-and-focused.md`。focused 四個案再跑全 PASS（Vite DEV）。仍 draft；舊手機失敗歷史保留。無 merge。
+
+
 ## 環境及限制
 
 基於 main `077af8b14b34b3e26d776e36705772fdd691639b`，Chromium／Playwright；關卡、Boss、phase、角色起點以程式注入，之後使用遊戲物理、正常傷害判定及鍵盤／模擬手機 touch。這不是正常入口完整通關，也不是真人或真機測試。`build.log`：`tsc`＋Vite build 及 9 項 `validate:data` 通過（有 Vite 現存 chunk／設定警告）。
