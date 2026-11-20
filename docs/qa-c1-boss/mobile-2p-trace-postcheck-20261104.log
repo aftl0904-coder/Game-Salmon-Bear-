@@ -1,0 +1,7 @@
+PASS mobile-boy P1: 19 samples stopped through approach, until end
+PASS mobile-girl P1: 19 samples stopped through approach, until end
+PASS mobile-2p P1: 19 samples stopped through approach, until end
+PASS mobile-2p P2: 19 samples stopped through approach, until end
+PASS mobile-2p-hit-control P1: 12 samples stopped through approach, until real hit
+PASS mobile-2p-hit-control P2: 19 samples stopped through approach, until end
+PASS independent persisted trace check
