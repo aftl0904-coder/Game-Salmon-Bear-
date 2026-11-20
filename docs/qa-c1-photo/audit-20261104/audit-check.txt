@@ -1,0 +1,2 @@
+PASS: all four case RESULT=PASS; no FAIL entries; screenshots and frame JSON present.
+NOTE: original shell wrapper's exit capture produced an empty value (bash numeric-exit error); this check verifies case logs/artifacts, not the lost Node exit status.

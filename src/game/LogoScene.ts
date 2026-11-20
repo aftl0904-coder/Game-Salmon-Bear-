@@ -227,14 +227,20 @@ export class LogoScene extends Phaser.Scene {
     let selected = 0
     let leaving = false
     const readyAt = this.time.now + 500
-    const buttons = ['開始遊戲', '攻略'].map((label, i) => {
-      const x = width / 2 + (i === 0 ? -78 : 78)
-      const bg = this.add.rectangle(x, height - 30, 140, 30, 0x241810, 0.94)
+    const items = [
+      { label: '開始遊戲', href: null as string | null },
+      { label: '攻略', href: '/guide/' },
+      { label: '貼紙', href: '/sticker/' },
+    ]
+    const gap = 124
+    const buttons = items.map((item, i) => {
+      const x = width / 2 + (i - 1) * gap
+      const bg = this.add.rectangle(x, height - 30, 112, 30, 0x241810, 0.94)
         .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
-      const text = this.add.text(x, height - 30, label, {
-        fontFamily: FONT_UI, fontSize: '14px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
+      const text = this.add.text(x, height - 30, item.label, {
+        fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,
       }).setOrigin(0.5)
-      return { bg, text }
+      return { bg, text, href: item.href }
     })
     const draw = () => buttons.forEach(({ bg, text }, i) => {
       bg.setFillStyle(i === selected ? 0x5a341b : 0x241810, 0.94)
@@ -250,8 +256,9 @@ export class LogoScene extends Phaser.Scene {
       if (leaving || this.time.now < readyAt) return
       leaving = true
       unlockAudio()
-      if (selected === 1) {
-        window.location.assign('/guide/')
+      const href = buttons[selected]?.href
+      if (href) {
+        window.location.assign(href)
         return
       }
       this.cameras.main.fadeOut(320, 0, 0, 0)

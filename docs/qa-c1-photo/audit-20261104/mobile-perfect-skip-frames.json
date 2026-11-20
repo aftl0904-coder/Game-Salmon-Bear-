@@ -1,0 +1,230 @@
+{
+  "photo": [
+    {
+      "wall": 55435.69999999553,
+      "scene": 55399.8,
+      "frame": 522,
+      "key": "story-ending-3",
+      "alpha": 0,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 55574.19999999553,
+      "scene": 55549.8,
+      "frame": 523,
+      "key": "story-ending-3",
+      "alpha": 0.34444444444444444,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 55771.69999999553,
+      "scene": 55733.1,
+      "frame": 524,
+      "key": "story-ending-3",
+      "alpha": 0.7888888888888889,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56002.79999999702,
+      "scene": 55983.1,
+      "frame": 525,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56129.69999999553,
+      "scene": 56099.8,
+      "frame": 526,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56298.69999999553,
+      "scene": 56266.4,
+      "frame": 527,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56494.59999999404,
+      "scene": 56449.7,
+      "frame": 528,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56651.59999999404,
+      "scene": 56599.7,
+      "frame": 529,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56815.5,
+      "scene": 56766.4,
+      "frame": 530,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 56842.29999999702,
+      "scene": 56799.7,
+      "frame": 531,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 57018.79999999702,
+      "scene": 56983.1,
+      "frame": 532,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 57341.39999999851,
+      "scene": 57299.8,
+      "frame": 533,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 57514.19999999553,
+      "scene": 57466.4,
+      "frame": 534,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 57626.69999999553,
+      "scene": 57599.7,
+      "frame": 535,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 57880.39999999851,
+      "scene": 57799.8,
+      "frame": 536,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    },
+    {
+      "wall": 58064.89999999851,
+      "scene": 57966.3,
+      "frame": 537,
+      "key": "story-ending-3",
+      "alpha": 1,
+      "rootAlpha": 1,
+      "dialog": false
+    }
+  ],
+  "lines": [
+    "［完美結局對白 #1 — 待 Alan 填寫］",
+    "［完美結局對白 #2 — 待 Alan 填寫］",
+    "［完美結局對白 #3 — 待 Alan 填寫］",
+    "［完美結局對白 #4 — 待 Alan 填寫］",
+    "［完美結局對白 #5 — 待 Alan 填寫］",
+    "［完美結局對白 #6 — 待 Alan 填寫］",
+    "［完美結局對白 #7 — 待 Alan 填寫］"
+  ],
+  "errors": [],
+  "updates": [
+    {
+      "wall": 56107.89999999851,
+      "scene": 56099.8,
+      "frame": 526
+    },
+    {
+      "wall": 56267.09999999404,
+      "scene": 56266.4,
+      "frame": 527
+    },
+    {
+      "wall": 56476.59999999404,
+      "scene": 56449.7,
+      "frame": 528
+    },
+    {
+      "wall": 56617.5,
+      "scene": 56599.7,
+      "frame": 529
+    },
+    {
+      "wall": 56786.5,
+      "scene": 56766.4,
+      "frame": 530
+    },
+    {
+      "wall": 56820.09999999404,
+      "scene": 56799.7,
+      "frame": 531
+    },
+    {
+      "wall": 56992.59999999404,
+      "scene": 56983.1,
+      "frame": 532
+    },
+    {
+      "wall": 57301.5,
+      "scene": 57299.8,
+      "frame": 533
+    },
+    {
+      "wall": 57477.89999999851,
+      "scene": 57466.4,
+      "frame": 534
+    },
+    {
+      "wall": 57608.19999999553,
+      "scene": 57599.7,
+      "frame": 535
+    },
+    {
+      "wall": 57846.5,
+      "scene": 57799.8,
+      "frame": 536
+    },
+    {
+      "wall": 57984.59999999404,
+      "scene": 57966.3,
+      "frame": 537
+    }
+  ],
+  "holdStart": {
+    "wall": 56005.19999999553,
+    "scene": 55983.1,
+    "frame": 526
+  },
+  "holdEnd": {
+    "wall": 58065.79999999702,
+    "scene": 57966.3,
+    "frame": 538
+  }
+}
