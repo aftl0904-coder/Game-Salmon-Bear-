@@ -1,0 +1,1913 @@
+{
+  "label": "desktop-retry2",
+  "description": "Injected phase/position, isolated natural threats, real Arcade collision/damage; simulated mobile, not a real phone or playthrough. Synthetic 350ms main-thread stall is diagnostic, not a representative phone benchmark.",
+  "environment": {
+    "time": "2026-11-04T01:50:30.547Z",
+    "loadavg": [
+      16.82,
+      13.65,
+      11.5
+    ],
+    "cpus": 6,
+    "node": "v22.23.4"
+  },
+  "runs": [
+    {
+      "device": "desktop-2p-keyboard",
+      "cases": [
+        {
+          "phase": 2,
+          "stall": false,
+          "trace": {
+            "frames": [
+              {
+                "scene": 35188.9,
+                "performance": 35205.10000000149,
+                "delta": 83.32000000000043,
+                "raw": 83.20000000000437,
+                "frame": 307,
+                "timers": []
+              },
+              {
+                "scene": 35272.3,
+                "performance": 35290.19999999553,
+                "delta": 83.3300000000003,
+                "raw": 83.40000000000146,
+                "frame": 308,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 83.3300000000003
+                  }
+                ]
+              },
+              {
+                "scene": 35372.3,
+                "performance": 35386.39999999851,
+                "delta": 84.99000000000015,
+                "raw": 100,
+                "frame": 309,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 168.32000000000045
+                  }
+                ]
+              },
+              {
+                "scene": 35472.3,
+                "performance": 35482.79999999702,
+                "delta": 88.3300000000003,
+                "raw": 100,
+                "frame": 310,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 256.6500000000008
+                  }
+                ]
+              },
+              {
+                "scene": 35572.3,
+                "performance": 35591.19999999553,
+                "delta": 90,
+                "raw": 100,
+                "frame": 311,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 346.6500000000008
+                  }
+                ]
+              },
+              {
+                "scene": 35655.6,
+                "performance": 35678.79999999702,
+                "delta": 91.6699999999997,
+                "raw": 83.29999999999563,
+                "frame": 312,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 438.3200000000005
+                  }
+                ]
+              },
+              {
+                "scene": 35755.6,
+                "performance": 35764.60000000149,
+                "delta": 88.32999999999956,
+                "raw": 100,
+                "frame": 313,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 526.6500000000001
+                  }
+                ]
+              },
+              {
+                "scene": 35872.3,
+                "performance": 35886.10000000149,
+                "delta": 93.3300000000003,
+                "raw": 116.70000000000437,
+                "frame": 314,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 619.9800000000004
+                  }
+                ]
+              },
+              {
+                "scene": 35972.2,
+                "performance": 35983.5,
+                "delta": 94.98999999999941,
+                "raw": 99.89999999999418,
+                "frame": 315,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 714.9699999999998
+                  }
+                ]
+              },
+              {
+                "scene": 36038.9,
+                "performance": 36110.39999999851,
+                "delta": 93.32000000000043,
+                "raw": 66.70000000000437,
+                "frame": 316,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 0
+                  }
+                ]
+              },
+              {
+                "scene": 36205.5,
+                "performance": 36225,
+                "delta": 101.65999999999985,
+                "raw": 166.59999999999854,
+                "frame": 317,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 101.65999999999985
+                  }
+                ]
+              },
+              {
+                "scene": 36305.6,
+                "performance": 36330.19999999553,
+                "delta": 103.32999999999956,
+                "raw": 100.09999999999854,
+                "frame": 318,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 204.9899999999994
+                  }
+                ]
+              },
+              {
+                "scene": 36422.2,
+                "performance": 36442.19999999553,
+                "delta": 104.98999999999941,
+                "raw": 116.59999999999854,
+                "frame": 319,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 309.9799999999988
+                  }
+                ]
+              },
+              {
+                "scene": 36555.6,
+                "performance": 36599.29999999702,
+                "delta": 108.32999999999956,
+                "raw": 133.40000000000146,
+                "frame": 320,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 418.30999999999835
+                  }
+                ]
+              },
+              {
+                "scene": 36655.5,
+                "performance": 36674.19999999553,
+                "delta": 108.31999999999971,
+                "raw": 99.90000000000146,
+                "frame": 321,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 526.6299999999981
+                  }
+                ]
+              },
+              {
+                "scene": 36738.9,
+                "performance": 36756.19999999553,
+                "delta": 108.3300000000003,
+                "raw": 83.40000000000146,
+                "frame": 322,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 634.9599999999983
+                  }
+                ]
+              },
+              {
+                "scene": 36822.2,
+                "performance": 36842.5,
+                "delta": 106.65999999999985,
+                "raw": 83.29999999999563,
+                "frame": 323,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 741.6199999999982
+                  }
+                ]
+              },
+              {
+                "scene": 36905.6,
+                "performance": 36921.29999999702,
+                "delta": 103.32999999999956,
+                "raw": 83.40000000000146,
+                "frame": 324,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 844.9499999999978
+                  }
+                ]
+              },
+              {
+                "scene": 36988.8,
+                "performance": 37006.89999999851,
+                "delta": 101.66000000000058,
+                "raw": 83.20000000000437,
+                "frame": 325,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 946.6099999999983
+                  }
+                ]
+              },
+              {
+                "scene": 37122.2,
+                "performance": 37142,
+                "delta": 108.32999999999956,
+                "raw": 133.39999999999418,
+                "frame": 326,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1054.9399999999978
+                  }
+                ]
+              },
+              {
+                "scene": 37238.8,
+                "performance": 37258.5,
+                "delta": 103.3300000000003,
+                "raw": 116.60000000000582,
+                "frame": 327,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1158.2699999999982
+                  }
+                ]
+              },
+              {
+                "scene": 37355.6,
+                "performance": 37404.29999999702,
+                "delta": 105,
+                "raw": 116.79999999999563,
+                "frame": 328,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1263.2699999999982
+                  }
+                ]
+              },
+              {
+                "scene": 37522.2,
+                "performance": 37530.5,
+                "delta": 110,
+                "raw": 166.59999999999854,
+                "frame": 329,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1373.2699999999982
+                  }
+                ]
+              },
+              {
+                "scene": 37588.8,
+                "performance": 37614.39999999851,
+                "delta": 103.32000000000043,
+                "raw": 66.60000000000582,
+                "frame": 330,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1476.5899999999986
+                  }
+                ]
+              },
+              {
+                "scene": 37705.6,
+                "performance": 37721.79999999702,
+                "delta": 105.00999999999985,
+                "raw": 116.79999999999563,
+                "frame": 331,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1500
+                  }
+                ]
+              }
+            ],
+            "events": [
+              {
+                "kind": "chain-warn",
+                "scene": 35188.9,
+                "performance": 35205.39999999851,
+                "frame": 307
+              },
+              {
+                "kind": "chain-active",
+                "scene": 36038.9,
+                "performance": 36089.19999999553,
+                "frame": 316
+              },
+              {
+                "kind": "chain-end",
+                "scene": 37705.6,
+                "performance": 37720.60000000149,
+                "frame": 331
+              }
+            ],
+            "timers": [
+              {
+                "delay": 800,
+                "created": {
+                  "scene": 35188.9,
+                  "performance": 35205.5,
+                  "frame": 307
+                },
+                "fired": {
+                  "scene": 36038.9,
+                  "performance": 36088.69999999553,
+                  "frame": 316,
+                  "elapsed": 800
+                }
+              },
+              {
+                "delay": 1500,
+                "created": {
+                  "scene": 36038.9,
+                  "performance": 36089.19999999553,
+                  "frame": 316
+                },
+                "fired": {
+                  "scene": 37705.6,
+                  "performance": 37720.29999999702,
+                  "frame": 331,
+                  "elapsed": 1500
+                }
+              }
+            ],
+            "stall": [],
+            "startHp": {
+              "boy": 6,
+              "girl": 6
+            },
+            "settings": {
+              "smoothStep": true,
+              "minFps": 5,
+              "targetFps": 60,
+              "clockTimeScale": 1,
+              "phase": 2
+            },
+            "returned": 2300,
+            "endHp": {
+              "boy": 5,
+              "girl": 6
+            },
+            "endPosition": {
+              "boy": 4950,
+              "girl": 4800
+            }
+          },
+          "sceneMs": [
+            850,
+            1666.699999999997
+          ],
+          "wallMs": [
+            883.7999999970198,
+            1631.4000000059605
+          ],
+          "oldStrictPass": false,
+          "hitPass": true,
+          "safePass": true
+        },
+        {
+          "phase": 2,
+          "stall": "warning",
+          "trace": {
+            "frames": [
+              {
+                "scene": 38272.2,
+                "performance": 38302.60000000149,
+                "delta": 115,
+                "raw": 116.69999999999709,
+                "frame": 336,
+                "timers": []
+              },
+              {
+                "scene": 38388.9,
+                "performance": 38399.10000000149,
+                "delta": 115.00999999999985,
+                "raw": 116.70000000000437,
+                "frame": 337,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 115.00999999999985
+                  }
+                ]
+              },
+              {
+                "scene": 38505.5,
+                "performance": 38523.19999999553,
+                "delta": 114.99000000000015,
+                "raw": 116.59999999999854,
+                "frame": 338,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 230
+                  }
+                ]
+              },
+              {
+                "scene": 38605.5,
+                "performance": 38975.60000000149,
+                "delta": 108.3300000000003,
+                "raw": 100,
+                "frame": 339,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 338.33000000000027
+                  }
+                ]
+              },
+              {
+                "scene": 39038.8,
+                "performance": 39073.5,
+                "delta": 108.3300000000003,
+                "raw": 433.3000000000029,
+                "frame": 340,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 446.66000000000054
+                  }
+                ]
+              },
+              {
+                "scene": 39155.5,
+                "performance": 39163.89999999851,
+                "delta": 108.32000000000043,
+                "raw": 116.69999999999709,
+                "frame": 341,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 554.9800000000009
+                  }
+                ]
+              },
+              {
+                "scene": 39255.5,
+                "performance": 39266.10000000149,
+                "delta": 110,
+                "raw": 100,
+                "frame": 342,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 664.9800000000009
+                  }
+                ]
+              },
+              {
+                "scene": 39355.5,
+                "performance": 39377.39999999851,
+                "delta": 106.66000000000058,
+                "raw": 100,
+                "frame": 343,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 771.6400000000015
+                  }
+                ]
+              },
+              {
+                "scene": 39455.4,
+                "performance": 39474.5,
+                "delta": 104.99000000000015,
+                "raw": 99.90000000000146,
+                "frame": 344,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 0
+                  }
+                ]
+              },
+              {
+                "scene": 39555.4,
+                "performance": 39567.19999999553,
+                "delta": 103.32000000000043,
+                "raw": 100,
+                "frame": 345,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 103.32000000000043
+                  }
+                ]
+              },
+              {
+                "scene": 39655.4,
+                "performance": 39662.89999999851,
+                "delta": 101.65000000000073,
+                "raw": 100,
+                "frame": 346,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 204.97000000000116
+                  }
+                ]
+              },
+              {
+                "scene": 39738.8,
+                "performance": 39747.89999999851,
+                "delta": 98.32000000000043,
+                "raw": 83.40000000000146,
+                "frame": 347,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 303.2900000000016
+                  }
+                ]
+              },
+              {
+                "scene": 39838.8,
+                "performance": 39860.10000000149,
+                "delta": 96.66000000000058,
+                "raw": 100,
+                "frame": 348,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 399.9500000000022
+                  }
+                ]
+              },
+              {
+                "scene": 39938.8,
+                "performance": 39957.60000000149,
+                "delta": 96.66000000000058,
+                "raw": 100,
+                "frame": 349,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 496.6100000000028
+                  }
+                ]
+              },
+              {
+                "scene": 40005.5,
+                "performance": 40021.29999999702,
+                "delta": 96.6699999999997,
+                "raw": 66.69999999999709,
+                "frame": 350,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 593.2800000000025
+                  }
+                ]
+              },
+              {
+                "scene": 40088.8,
+                "performance": 40103.79999999702,
+                "delta": 93.3300000000003,
+                "raw": 83.30000000000291,
+                "frame": 351,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 686.6100000000027
+                  }
+                ]
+              },
+              {
+                "scene": 40172.1,
+                "performance": 40192.29999999702,
+                "delta": 91.65999999999985,
+                "raw": 83.29999999999563,
+                "frame": 352,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 778.2700000000026
+                  }
+                ]
+              },
+              {
+                "scene": 40255.4,
+                "performance": 40277.69999999553,
+                "delta": 89.99000000000015,
+                "raw": 83.30000000000291,
+                "frame": 353,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 868.2600000000027
+                  }
+                ]
+              },
+              {
+                "scene": 40372.1,
+                "performance": 40384.60000000149,
+                "delta": 91.6699999999997,
+                "raw": 116.69999999999709,
+                "frame": 354,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 959.9300000000025
+                  }
+                ]
+              },
+              {
+                "scene": 40438.8,
+                "performance": 40473.19999999553,
+                "delta": 88.34000000000015,
+                "raw": 66.70000000000437,
+                "frame": 355,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1048.2700000000027
+                  }
+                ]
+              },
+              {
+                "scene": 40538.7,
+                "performance": 40558.60000000149,
+                "delta": 88.32999999999956,
+                "raw": 99.89999999999418,
+                "frame": 356,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1136.6000000000022
+                  }
+                ]
+              },
+              {
+                "scene": 40655.4,
+                "performance": 40694,
+                "delta": 91.65999999999985,
+                "raw": 116.70000000000437,
+                "frame": 357,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1228.260000000002
+                  }
+                ]
+              },
+              {
+                "scene": 40822.1,
+                "performance": 40896.39999999851,
+                "delta": 98.32999999999956,
+                "raw": 166.6999999999971,
+                "frame": 358,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1326.5900000000015
+                  }
+                ]
+              },
+              {
+                "scene": 40988.7,
+                "performance": 41008.29999999702,
+                "delta": 104.98999999999941,
+                "raw": 166.59999999999854,
+                "frame": 359,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1431.5800000000008
+                  }
+                ]
+              },
+              {
+                "scene": 41088.7,
+                "performance": 41099.69999999553,
+                "delta": 108.31999999999971,
+                "raw": 100,
+                "frame": 360,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1500
+                  }
+                ]
+              }
+            ],
+            "events": [
+              {
+                "kind": "chain-warn",
+                "scene": 38272.2,
+                "performance": 38302.89999999851,
+                "frame": 336
+              },
+              {
+                "kind": "chain-active",
+                "scene": 39455.4,
+                "performance": 39468.60000000149,
+                "frame": 344
+              },
+              {
+                "kind": "chain-end",
+                "scene": 41088.7,
+                "performance": 41098.60000000149,
+                "frame": 360
+              }
+            ],
+            "timers": [
+              {
+                "delay": 800,
+                "created": {
+                  "scene": 38272.2,
+                  "performance": 38302.89999999851,
+                  "frame": 336
+                },
+                "fired": {
+                  "scene": 39455.4,
+                  "performance": 39468.29999999702,
+                  "frame": 344,
+                  "elapsed": 800
+                }
+              },
+              {
+                "delay": 1500,
+                "created": {
+                  "scene": 39455.4,
+                  "performance": 39468.60000000149,
+                  "frame": 344
+                },
+                "fired": {
+                  "scene": 41088.7,
+                  "performance": 41098.5,
+                  "frame": 360,
+                  "elapsed": 1500
+                }
+              }
+            ],
+            "stall": [
+              {
+                "start": 38623.69999999553,
+                "end": 38973.69999999553
+              }
+            ],
+            "startHp": {
+              "boy": 6,
+              "girl": 6
+            },
+            "settings": {
+              "smoothStep": true,
+              "minFps": 5,
+              "targetFps": 60,
+              "clockTimeScale": 1,
+              "phase": 2
+            },
+            "returned": 2300,
+            "endHp": {
+              "boy": 5,
+              "girl": 6
+            },
+            "endPosition": {
+              "boy": 4952,
+              "girl": 4800
+            }
+          },
+          "sceneMs": [
+            1183.2000000000044,
+            1633.2999999999956
+          ],
+          "wallMs": [
+            1165.7000000029802,
+            1630
+          ],
+          "oldStrictPass": false,
+          "hitPass": true,
+          "safePass": true
+        },
+        {
+          "phase": 3,
+          "stall": false,
+          "trace": {
+            "frames": [
+              {
+                "scene": 41605.4,
+                "performance": 41625.29999999702,
+                "delta": 116.65999999999985,
+                "raw": 116.70000000000437,
+                "frame": 365,
+                "timers": []
+              },
+              {
+                "scene": 41722,
+                "performance": 41737.39999999851,
+                "delta": 118.3300000000003,
+                "raw": 116.59999999999854,
+                "frame": 366,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 118.3300000000003
+                  }
+                ]
+              },
+              {
+                "scene": 41822.1,
+                "performance": 41841.10000000149,
+                "delta": 116.6699999999997,
+                "raw": 100.09999999999854,
+                "frame": 367,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 235
+                  }
+                ]
+              },
+              {
+                "scene": 41905.3,
+                "performance": 41923.60000000149,
+                "delta": 108.32000000000043,
+                "raw": 83.20000000000437,
+                "frame": 368,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 343.32000000000045
+                  }
+                ]
+              },
+              {
+                "scene": 42005.4,
+                "performance": 42020.89999999851,
+                "delta": 101.67000000000044,
+                "raw": 100.09999999999854,
+                "frame": 369,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 444.9900000000009
+                  }
+                ]
+              },
+              {
+                "scene": 42088.7,
+                "performance": 42103.19999999553,
+                "delta": 100,
+                "raw": 83.29999999999563,
+                "frame": 370,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 544.9900000000009
+                  }
+                ]
+              },
+              {
+                "scene": 42188.7,
+                "performance": 42212.10000000149,
+                "delta": 101.65999999999985,
+                "raw": 100,
+                "frame": 371,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 646.6500000000008
+                  }
+                ]
+              },
+              {
+                "scene": 42305.4,
+                "performance": 42332.19999999553,
+                "delta": 100,
+                "raw": 116.70000000000437,
+                "frame": 372,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 746.6500000000008
+                  }
+                ]
+              },
+              {
+                "scene": 42422,
+                "performance": 42451.10000000149,
+                "delta": 103.3300000000003,
+                "raw": 116.59999999999854,
+                "frame": 373,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 0
+                  }
+                ]
+              },
+              {
+                "scene": 42505.3,
+                "performance": 42529.79999999702,
+                "delta": 101.66000000000058,
+                "raw": 83.30000000000291,
+                "frame": 374,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 101.66000000000058
+                  }
+                ]
+              },
+              {
+                "scene": 42622,
+                "performance": 42634.19999999553,
+                "delta": 101.65999999999985,
+                "raw": 116.69999999999709,
+                "frame": 375,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 203.32000000000045
+                  }
+                ]
+              },
+              {
+                "scene": 42722,
+                "performance": 42758.60000000149,
+                "delta": 100,
+                "raw": 100,
+                "frame": 376,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 303.32000000000045
+                  }
+                ]
+              },
+              {
+                "scene": 42855.3,
+                "performance": 42876.89999999851,
+                "delta": 103.32000000000043,
+                "raw": 133.3000000000029,
+                "frame": 377,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 406.6400000000009
+                  }
+                ]
+              },
+              {
+                "scene": 42988.6,
+                "performance": 43019.79999999702,
+                "delta": 108.32999999999956,
+                "raw": 133.29999999999563,
+                "frame": 378,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 514.9700000000005
+                  }
+                ]
+              },
+              {
+                "scene": 43105.3,
+                "performance": 43124.5,
+                "delta": 109.99000000000015,
+                "raw": 116.70000000000437,
+                "frame": 379,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 624.9600000000006
+                  }
+                ]
+              },
+              {
+                "scene": 43205.3,
+                "performance": 43241.19999999553,
+                "delta": 111.66000000000058,
+                "raw": 100,
+                "frame": 380,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 736.6200000000011
+                  }
+                ]
+              },
+              {
+                "scene": 43321.9,
+                "performance": 43349.29999999702,
+                "delta": 113.32000000000043,
+                "raw": 116.59999999999854,
+                "frame": 381,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 849.9400000000015
+                  }
+                ]
+              },
+              {
+                "scene": 43422,
+                "performance": 43438.29999999702,
+                "delta": 111.65999999999985,
+                "raw": 100.09999999999854,
+                "frame": 382,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 961.6000000000014
+                  }
+                ]
+              },
+              {
+                "scene": 43505.3,
+                "performance": 43520.19999999553,
+                "delta": 108.3300000000003,
+                "raw": 83.30000000000291,
+                "frame": 383,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1069.9300000000017
+                  }
+                ]
+              },
+              {
+                "scene": 43605.3,
+                "performance": 43620.79999999702,
+                "delta": 110,
+                "raw": 100,
+                "frame": 384,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1179.9300000000017
+                  }
+                ]
+              },
+              {
+                "scene": 43705.3,
+                "performance": 43736.60000000149,
+                "delta": 108.3300000000003,
+                "raw": 100,
+                "frame": 385,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1288.260000000002
+                  }
+                ]
+              },
+              {
+                "scene": 43855.3,
+                "performance": 43868.89999999851,
+                "delta": 113.3300000000003,
+                "raw": 150,
+                "frame": 386,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1401.5900000000024
+                  }
+                ]
+              },
+              {
+                "scene": 43955.3,
+                "performance": 43967.5,
+                "delta": 110,
+                "raw": 100,
+                "frame": 387,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1500
+                  }
+                ]
+              }
+            ],
+            "events": [
+              {
+                "kind": "chain-warn",
+                "scene": 41605.4,
+                "performance": 41625.39999999851,
+                "frame": 365
+              },
+              {
+                "kind": "chain-active",
+                "scene": 42422,
+                "performance": 42446.29999999702,
+                "frame": 373
+              },
+              {
+                "kind": "chain-end",
+                "scene": 43955.3,
+                "performance": 43964.89999999851,
+                "frame": 387
+              }
+            ],
+            "timers": [
+              {
+                "delay": 800,
+                "created": {
+                  "scene": 41605.4,
+                  "performance": 41625.39999999851,
+                  "frame": 365
+                },
+                "fired": {
+                  "scene": 42422,
+                  "performance": 42440.69999999553,
+                  "frame": 373,
+                  "elapsed": 800
+                }
+              },
+              {
+                "delay": 1500,
+                "created": {
+                  "scene": 42422,
+                  "performance": 42446.29999999702,
+                  "frame": 373
+                },
+                "fired": {
+                  "scene": 43955.3,
+                  "performance": 43964.79999999702,
+                  "frame": 387,
+                  "elapsed": 1500
+                }
+              }
+            ],
+            "stall": [],
+            "startHp": {
+              "boy": 6,
+              "girl": 6
+            },
+            "settings": {
+              "smoothStep": true,
+              "minFps": 5,
+              "targetFps": 60,
+              "clockTimeScale": 1,
+              "phase": 3
+            },
+            "returned": 2990,
+            "endHp": {
+              "boy": 5,
+              "girl": 6
+            },
+            "endPosition": {
+              "boy": 4950,
+              "girl": 4800
+            }
+          },
+          "sceneMs": [
+            816.5999999999985,
+            1533.300000000003
+          ],
+          "wallMs": [
+            820.8999999985099,
+            1518.6000000014901
+          ],
+          "oldStrictPass": true,
+          "hitPass": true,
+          "safePass": true
+        },
+        {
+          "phase": 3,
+          "stall": "active",
+          "trace": {
+            "frames": [
+              {
+                "scene": 44471.9,
+                "performance": 44490.10000000149,
+                "delta": 104.99000000000015,
+                "raw": 100,
+                "frame": 392,
+                "timers": []
+              },
+              {
+                "scene": 44571.9,
+                "performance": 44589,
+                "delta": 106.65999999999985,
+                "raw": 100,
+                "frame": 393,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 106.65999999999985
+                  }
+                ]
+              },
+              {
+                "scene": 44655.2,
+                "performance": 44664.60000000149,
+                "delta": 104.98999999999941,
+                "raw": 83.29999999999563,
+                "frame": 394,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 211.64999999999927
+                  }
+                ]
+              },
+              {
+                "scene": 44755.3,
+                "performance": 44774.89999999851,
+                "delta": 105,
+                "raw": 100.10000000000582,
+                "frame": 395,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 316.6499999999993
+                  }
+                ]
+              },
+              {
+                "scene": 44921.9,
+                "performance": 44927.29999999702,
+                "delta": 106.65999999999985,
+                "raw": 166.59999999999854,
+                "frame": 396,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 423.30999999999915
+                  }
+                ]
+              },
+              {
+                "scene": 45005.3,
+                "performance": 45043.19999999553,
+                "delta": 105,
+                "raw": 83.40000000000146,
+                "frame": 397,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 528.3099999999991
+                  }
+                ]
+              },
+              {
+                "scene": 45105.2,
+                "performance": 45130.89999999851,
+                "delta": 104.98999999999941,
+                "raw": 99.89999999999418,
+                "frame": 398,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 633.2999999999986
+                  }
+                ]
+              },
+              {
+                "scene": 45238.6,
+                "performance": 45247.60000000149,
+                "delta": 108.32999999999956,
+                "raw": 133.40000000000146,
+                "frame": 399,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 741.6299999999982
+                  }
+                ]
+              },
+              {
+                "scene": 45305.2,
+                "performance": 45352.19999999553,
+                "delta": 104.98999999999941,
+                "raw": 66.59999999999854,
+                "frame": 400,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 0
+                  }
+                ]
+              },
+              {
+                "scene": 45405.2,
+                "performance": 45425.39999999851,
+                "delta": 103.32999999999956,
+                "raw": 100,
+                "frame": 401,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 103.32999999999956
+                  }
+                ]
+              },
+              {
+                "scene": 45488.5,
+                "performance": 45508,
+                "delta": 101.65999999999985,
+                "raw": 83.30000000000291,
+                "frame": 402,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 204.9899999999994
+                  }
+                ]
+              },
+              {
+                "scene": 45588.6,
+                "performance": 45948.79999999702,
+                "delta": 101.6699999999997,
+                "raw": 100.09999999999854,
+                "frame": 403,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 306.6599999999991
+                  }
+                ]
+              },
+              {
+                "scene": 46021.8,
+                "performance": 46051.29999999702,
+                "delta": 101.6699999999997,
+                "raw": 433.20000000000437,
+                "frame": 404,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 408.3299999999988
+                  }
+                ]
+              },
+              {
+                "scene": 46121.9,
+                "performance": 46144,
+                "delta": 101.66999999999898,
+                "raw": 100.09999999999854,
+                "frame": 405,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 509.9999999999978
+                  }
+                ]
+              },
+              {
+                "scene": 46221.9,
+                "performance": 46231,
+                "delta": 95.00999999999912,
+                "raw": 100,
+                "frame": 406,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 605.0099999999969
+                  }
+                ]
+              },
+              {
+                "scene": 46288.6,
+                "performance": 46321.39999999851,
+                "delta": 93.3399999999987,
+                "raw": 66.69999999999709,
+                "frame": 407,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 698.3499999999956
+                  }
+                ]
+              },
+              {
+                "scene": 46371.9,
+                "performance": 46406,
+                "delta": 91.67999999999957,
+                "raw": 83.30000000000291,
+                "frame": 408,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 790.0299999999952
+                  }
+                ]
+              },
+              {
+                "scene": 46488.5,
+                "performance": 46510.29999999702,
+                "delta": 89.99999999999928,
+                "raw": 116.59999999999854,
+                "frame": 409,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 880.0299999999945
+                  }
+                ]
+              },
+              {
+                "scene": 46571.8,
+                "performance": 46590.60000000149,
+                "delta": 91.6699999999997,
+                "raw": 83.30000000000291,
+                "frame": 410,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 971.6999999999942
+                  }
+                ]
+              },
+              {
+                "scene": 46655.2,
+                "performance": 46673.69999999553,
+                "delta": 90.00999999999912,
+                "raw": 83.39999999999418,
+                "frame": 411,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1061.7099999999934
+                  }
+                ]
+              },
+              {
+                "scene": 46771.8,
+                "performance": 46784.60000000149,
+                "delta": 93.33999999999942,
+                "raw": 116.60000000000582,
+                "frame": 412,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1155.049999999993
+                  }
+                ]
+              },
+              {
+                "scene": 46888.5,
+                "performance": 46922.19999999553,
+                "delta": 94.99999999999928,
+                "raw": 116.69999999999709,
+                "frame": 413,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1250.0499999999922
+                  }
+                ]
+              },
+              {
+                "scene": 47005.1,
+                "performance": 47023.10000000149,
+                "delta": 98.32999999999956,
+                "raw": 116.59999999999854,
+                "frame": 414,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1348.3799999999917
+                  }
+                ]
+              },
+              {
+                "scene": 47088.5,
+                "performance": 47104.69999999553,
+                "delta": 96.65999999999985,
+                "raw": 83.40000000000146,
+                "frame": 415,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1445.0399999999916
+                  }
+                ]
+              },
+              {
+                "scene": 47171.8,
+                "performance": 47175.29999999702,
+                "delta": 94.99000000000015,
+                "raw": 83.30000000000291,
+                "frame": 416,
+                "timers": [
+                  {
+                    "delay": 800,
+                    "elapsed": 800
+                  },
+                  {
+                    "delay": 1500,
+                    "elapsed": 1500
+                  }
+                ]
+              }
+            ],
+            "events": [
+              {
+                "kind": "chain-warn",
+                "scene": 44471.9,
+                "performance": 44490.19999999553,
+                "frame": 392
+              },
+              {
+                "kind": "chain-active",
+                "scene": 45305.2,
+                "performance": 45324.29999999702,
+                "frame": 400
+              },
+              {
+                "kind": "chain-end",
+                "scene": 47171.8,
+                "performance": 47174.29999999702,
+                "frame": 416
+              }
+            ],
+            "timers": [
+              {
+                "delay": 800,
+                "created": {
+                  "scene": 44471.9,
+                  "performance": 44490.19999999553,
+                  "frame": 392
+                },
+                "fired": {
+                  "scene": 45305.2,
+                  "performance": 45323.89999999851,
+                  "frame": 400,
+                  "elapsed": 800
+                }
+              },
+              {
+                "delay": 1500,
+                "created": {
+                  "scene": 45305.2,
+                  "performance": 45324.29999999702,
+                  "frame": 400
+                },
+                "fired": {
+                  "scene": 47171.8,
+                  "performance": 47174.19999999553,
+                  "frame": 416,
+                  "elapsed": 1500
+                }
+              }
+            ],
+            "stall": [
+              {
+                "start": 45597.10000000149,
+                "end": 45947.10000000149
+              }
+            ],
+            "startHp": {
+              "boy": 6,
+              "girl": 6
+            },
+            "settings": {
+              "smoothStep": true,
+              "minFps": 5,
+              "targetFps": 60,
+              "clockTimeScale": 1,
+              "phase": 3
+            },
+            "returned": 2990,
+            "endHp": {
+              "boy": 5,
+              "girl": 6
+            },
+            "endPosition": {
+              "boy": 4939,
+              "girl": 4800
+            }
+          },
+          "sceneMs": [
+            833.2999999999956,
+            1866.6000000000058
+          ],
+          "wallMs": [
+            834.1000000014901,
+            1850
+          ],
+          "oldStrictPass": false,
+          "hitPass": true,
+          "safePass": true
+        }
+      ],
+      "errors": [],
+      "entry": {
+        "stage": 7,
+        "mode": "2p",
+        "started": true
+      }
+    }
+  ],
+  "errors": [],
+  "passed": false
+}

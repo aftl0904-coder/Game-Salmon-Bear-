@@ -1,0 +1,65 @@
+{
+  "name": "dialogue-release-desktop-keyboard-stage6",
+  "description": "Automated ordinary entry without c2 query; stage 7 uses a seeded stage-6-cleared save. End test invokes trainerDefeated directly; no real Boss fight or full playthrough. Simulated mobile is not a physical device.",
+  "checks": [
+    {
+      "name": "public C2 menu visible with no query",
+      "menu": {
+        "stage": 1,
+        "buttons": [
+          1,
+          6
+        ]
+      }
+    },
+    {
+      "name": "ordinary menu/map entry; no teleport",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 6,
+        "started": true,
+        "intro": false,
+        "win": false,
+        "events": [],
+        "run": {
+          "version": 1,
+          "runId": "dd026a96-12bf-42b1-9aec-9636a603cef4",
+          "startStage": 6,
+          "lastCleared": 0,
+          "nextStage": 6,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "puffLeft": false
+        },
+        "ending": null
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

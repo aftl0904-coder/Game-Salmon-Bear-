@@ -1,0 +1,870 @@
+{
+  "kind": "desktop-2p",
+  "description": "Seeded stage-6-complete save and normal menu entry; subsequent A–E positions injected and enemies isolated. Short automated check, not a full playthrough or physical device.",
+  "checks": [
+    {
+      "name": "normal stage-7 entry via menu with seeded save; no position injection",
+      "state": {
+        "active": [
+          "play",
+          "UIScene"
+        ],
+        "stage": 7,
+        "mode": "2p",
+        "started": true,
+        "intro": false,
+        "x1": 220,
+        "x2": 380,
+        "vy": 0,
+        "attackCd": 0
+      }
+    },
+    {
+      "name": "normal entry both players move by keyboard",
+      "dx1": 92,
+      "dx2": 100
+    },
+    {
+      "name": "six actual PNG responses and Phaser textures",
+      "textures": {
+        "entrance-far": {
+          "width": 640,
+          "height": 360
+        },
+        "backstage-far": {
+          "width": 640,
+          "height": 360
+        },
+        "arena-far": {
+          "width": 640,
+          "height": 360
+        },
+        "net-static": {
+          "width": 104,
+          "height": 68
+        },
+        "number-plate-blank": {
+          "width": 20,
+          "height": 13
+        },
+        "sign-blank": {
+          "width": 158,
+          "height": 89
+        }
+      }
+    },
+    {
+      "name": "A backdrop (injected position, threats isolated)",
+      "cx": 350,
+      "visible": {
+        "A": true,
+        "D": false,
+        "E": false
+      },
+      "playerX": 350
+    },
+    {
+      "name": "B backdrop (injected position, threats isolated)",
+      "cx": 1300,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 1300
+    },
+    {
+      "name": "C backdrop (injected position, threats isolated)",
+      "cx": 2500,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": false
+      },
+      "playerX": 2500
+    },
+    {
+      "name": "D backdrop (injected position, threats isolated)",
+      "cx": 3800,
+      "visible": {
+        "A": false,
+        "D": true,
+        "E": false
+      },
+      "playerX": 3800
+    },
+    {
+      "name": "E backdrop (injected position, threats isolated)",
+      "cx": 4960,
+      "visible": {
+        "A": false,
+        "D": false,
+        "E": true
+      },
+      "playerX": 4800
+    },
+    {
+      "name": "all fixed objects coordinates/count/type/depth/no body unchanged after injected-position player movement",
+      "dx1": 3430,
+      "dx2": 3439,
+      "count": 28,
+      "before": [
+        {
+          "name": "stage7-static-sign-plate",
+          "type": "Image",
+          "x": 450,
+          "y": -1,
+          "body": false,
+          "texture": "s7-sign-blank",
+          "depth": 128,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "",
+          "type": "Text",
+          "x": 450,
+          "y": 55,
+          "body": false,
+          "texture": "b0b16e3e-82e6-4862-854d-03a70312fa27",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-0-cage",
+          "type": "Graphics",
+          "x": 300,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-1-cage",
+          "type": "Graphics",
+          "x": 690,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-2-cage",
+          "type": "Graphics",
+          "x": 960,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-3-cage",
+          "type": "Graphics",
+          "x": 1320,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-4-cage",
+          "type": "Graphics",
+          "x": 1710,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-5-chain",
+          "type": "Graphics",
+          "x": 2150,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-6-net",
+          "type": "Image",
+          "x": 2580,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-7-chain",
+          "type": "Graphics",
+          "x": 3000,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-8-cage",
+          "type": "Graphics",
+          "x": 3300,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-9-net",
+          "type": "Image",
+          "x": 3670,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-10-cage",
+          "type": "Graphics",
+          "x": 4050,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-11-chain",
+          "type": "Graphics",
+          "x": 4410,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-0",
+          "type": "Image",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-1",
+          "type": "Image",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-2",
+          "type": "Image",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-3",
+          "type": "Image",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-4",
+          "type": "Image",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-8",
+          "type": "Image",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-10",
+          "type": "Image",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-0",
+          "type": "Text",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "d7ac45bf-c4cc-426b-bbb9-19f11ba2e243",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-1",
+          "type": "Text",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "c8bfc987-7fe0-44fd-9585-6869a660dada",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-2",
+          "type": "Text",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "2f5e480c-4ac3-4acd-a2e7-4fe785c57535",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-3",
+          "type": "Text",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "cd9db7f0-ab83-4fc2-aa9e-9a61e4f89dc2",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-4",
+          "type": "Text",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "09770937-2434-463f-b949-e685203a09bf",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-8",
+          "type": "Text",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "7a7459a7-f82a-4e3b-8add-0b63c2e9aa28",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-10",
+          "type": "Text",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "64dcc6ce-ec03-483c-93d1-229a588c0ea7",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ],
+      "after": [
+        {
+          "name": "stage7-static-sign-plate",
+          "type": "Image",
+          "x": 450,
+          "y": -1,
+          "body": false,
+          "texture": "s7-sign-blank",
+          "depth": 128,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "",
+          "type": "Text",
+          "x": 450,
+          "y": 55,
+          "body": false,
+          "texture": "b0b16e3e-82e6-4862-854d-03a70312fa27",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-0-cage",
+          "type": "Graphics",
+          "x": 300,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-1-cage",
+          "type": "Graphics",
+          "x": 690,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-2-cage",
+          "type": "Graphics",
+          "x": 960,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-3-cage",
+          "type": "Graphics",
+          "x": 1320,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-4-cage",
+          "type": "Graphics",
+          "x": 1710,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-5-chain",
+          "type": "Graphics",
+          "x": 2150,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-6-net",
+          "type": "Image",
+          "x": 2580,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-7-chain",
+          "type": "Graphics",
+          "x": 3000,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-8-cage",
+          "type": "Graphics",
+          "x": 3300,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-9-net",
+          "type": "Image",
+          "x": 3670,
+          "y": 219,
+          "body": false,
+          "texture": "s7-net-static",
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-10-cage",
+          "type": "Graphics",
+          "x": 4050,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-11-chain",
+          "type": "Graphics",
+          "x": 4410,
+          "y": 285,
+          "body": false,
+          "texture": null,
+          "depth": 129,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-0",
+          "type": "Image",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-1",
+          "type": "Image",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-2",
+          "type": "Image",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-3",
+          "type": "Image",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-4",
+          "type": "Image",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-8",
+          "type": "Image",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-plate-10",
+          "type": "Image",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "s7-number-plate-blank",
+          "depth": 129.5,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-0",
+          "type": "Text",
+          "x": 300,
+          "y": 181,
+          "body": false,
+          "texture": "d7ac45bf-c4cc-426b-bbb9-19f11ba2e243",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-1",
+          "type": "Text",
+          "x": 690,
+          "y": 181,
+          "body": false,
+          "texture": "c8bfc987-7fe0-44fd-9585-6869a660dada",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-2",
+          "type": "Text",
+          "x": 960,
+          "y": 181,
+          "body": false,
+          "texture": "2f5e480c-4ac3-4acd-a2e7-4fe785c57535",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-3",
+          "type": "Text",
+          "x": 1320,
+          "y": 181,
+          "body": false,
+          "texture": "cd9db7f0-ab83-4fc2-aa9e-9a61e4f89dc2",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-4",
+          "type": "Text",
+          "x": 1710,
+          "y": 181,
+          "body": false,
+          "texture": "09770937-2434-463f-b949-e685203a09bf",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-8",
+          "type": "Text",
+          "x": 3300,
+          "y": 181,
+          "body": false,
+          "texture": "7a7459a7-f82a-4e3b-8add-0b63c2e9aa28",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        },
+        {
+          "name": "stage7-static-label-10",
+          "type": "Text",
+          "x": 4050,
+          "y": 181,
+          "body": false,
+          "texture": "64dcc6ce-ec03-483c-93d1-229a588c0ea7",
+          "depth": 130,
+          "scaleX": 1,
+          "scaleY": 1
+        }
+      ]
+    }
+  ],
+  "network": [
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/entrance-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/backstage-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/arena-far.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/net-static.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/number-plate-blank.png",
+      "status": 200,
+      "type": "image/png"
+    },
+    {
+      "url": "http://127.0.0.1:47417/art/stage7/sign-blank.png",
+      "status": 200,
+      "type": "image/png"
+    }
+  ],
+  "errors": [
+    "requestfailed: http://127.0.0.1:47417/data/anim/pupu.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/engine/index.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stage4World.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/data/objectCatalog.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/mechpig.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/index.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stage5World.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/stallkeeper.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/friends.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemyAi.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage4Enemies.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/TouchControls.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/kibobo.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage1.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/score.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/mudmane.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage4.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/version.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/minibee.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/config/gameData.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/ending-c2.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/verses.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/uiArt.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/growthHook.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/fish.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/fx.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/ui/verseWrap.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/difficulty.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/taximonster.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/assertIntegerScale.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/hatsoldier.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stageNames.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/lobster.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/worldMapData.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/engine/depth.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/shop.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/EventBus.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/combo.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/mirrorowl.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stage3World.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/gear.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/gearFx.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage6Enemies.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage3.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/mirrorshade.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/charms.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage1Boss.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/engine/terrainVisual.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/lighting.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/engine/constants.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/egg.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/triboss.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemyPlaceholders.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage6.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stage2World.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/beesoldier.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/cutscene.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage2Enemies.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/artOverrides.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage5.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/muteButton.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/lunbo.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/honeyzombie.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/Player.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage3Enemies.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/clockpunch.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/queen.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage2.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/customSkins.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/stalls.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/characters.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/fx.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/shadow.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/squirrel.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/run.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/levelMap.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/hudSnes.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/levels/stage7.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/data/anim/map-bike.json?import net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage5Enemies.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/enemies/ProductZombie.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/progress.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/bossCard.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/minigames.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/clearMenus.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/src/game/stage6World.ts net::ERR_ABORTED",
+    "requestfailed: http://127.0.0.1:47417/node_modules/.vite/deps/phaser.js?v=0573326f net::ERR_ABORTED"
+  ],
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:\n+ actual - expected\n\n+ [\n+   'requestfailed: http://127.0.0.1:47417/data/anim/pupu.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/engine/index.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stage4World.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/data/objectCatalog.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/mechpig.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/index.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stage5World.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/stallkeeper.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/friends.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemyAi.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage4Enemies.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/TouchControls.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/kibobo.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage1.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/score.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/mudmane.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage4.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/version.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/minibee.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/config/gameData.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/ending-c2.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/verses.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/uiArt.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/growthHook.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/fish.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/fx.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/ui/verseWrap.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/difficulty.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/taximonster.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/assertIntegerScale.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/hatsoldier.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stageNames.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/lobster.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/worldMapData.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/engine/depth.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/shop.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/EventBus.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/combo.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/mirrorowl.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stage3World.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/gear.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/gearFx.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage6Enemies.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage3.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/mirrorshade.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/charms.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage1Boss.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/engine/terrainVisual.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/lighting.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/engine/constants.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/egg.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/triboss.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemyPlaceholders.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage6.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stage2World.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/beesoldier.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/cutscene.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage2Enemies.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/artOverrides.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage5.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/muteButton.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/lunbo.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/honeyzombie.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/Player.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage3Enemies.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/clockpunch.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/queen.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage2.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/customSkins.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/stalls.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/characters.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/fx.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/shadow.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/squirrel.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/run.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/levelMap.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/hudSnes.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/levels/stage7.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/data/anim/map-bike.json?import net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/Stage5Enemies.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/enemies/ProductZombie.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/progress.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/bossCard.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/minigames.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/clearMenus.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/src/game/stage6World.ts net::ERR_ABORTED',\n+   'requestfailed: http://127.0.0.1:47417/node_modules/.vite/deps/phaser.js?v=0573326f net::ERR_ABORTED'\n+ ]\n- []\n\n    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:75:75",
+  "failureState": {
+    "active": [
+      "play",
+      "UIScene"
+    ],
+    "stage": 7,
+    "mode": "2p",
+    "started": true,
+    "intro": false,
+    "x1": 4730,
+    "x2": 4739,
+    "vy": 0,
+    "attackCd": 0
+  }
+}

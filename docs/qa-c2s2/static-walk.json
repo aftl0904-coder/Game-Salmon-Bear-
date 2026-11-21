@@ -1,0 +1,12 @@
+{
+  "description": "2P walk from spawn with keyboard; compare stage7-static display objects. No teleport.",
+  "checks": [
+    {
+      "name": "2P walk: static count/xy/type unchanged, no bodies, not cloned",
+      "count": 28,
+      "walkedTo": 849
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -1,0 +1,1 @@
+{"name":"release-desktop-keyboard-stage7","passed":true,"checks":["public C2 menu visible with no query","ordinary menu/map entry; no teleport","injected defeat → departure once and clear snapshot","distinct visible 待續 after tally (injected defeat)","return to holding map; stage 8 unavailable, checkpoint preserved"],"errors":[]}

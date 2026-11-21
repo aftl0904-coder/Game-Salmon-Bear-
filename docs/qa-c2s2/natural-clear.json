@@ -1,0 +1,4657 @@
+{
+  "description": "1P natural keyboard attempt of stage 7 from seeded stage-6 clear; no teleport/HP/forced win. Automated, not human.",
+  "start": "2026-11-08T06:56:48.118Z",
+  "samples": [
+    {
+      "elapsed": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 220,
+      "y": 285,
+      "hp": 5,
+      "win": false,
+      "events": [],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 10,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 1251,
+      "y": 285,
+      "hp": 5,
+      "win": false,
+      "events": [],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 21,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 2336,
+      "y": 253,
+      "hp": 6,
+      "win": false,
+      "events": [],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 31,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 3374,
+      "y": 285,
+      "hp": 6,
+      "win": false,
+      "events": [],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 41,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4393,
+      "y": 285,
+      "hp": 6,
+      "win": false,
+      "events": [],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 51,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5043,
+      "y": 285,
+      "hp": 2,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 62,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5269,
+      "y": 252,
+      "hp": 3,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 72,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5105,
+      "y": 196,
+      "hp": 4,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 82,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5270,
+      "y": 285,
+      "hp": 1,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 92,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4984,
+      "y": 190,
+      "hp": 1,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 102,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5115,
+      "y": 206,
+      "hp": 5,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 112,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4825,
+      "y": 251,
+      "hp": 6,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 123,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4654,
+      "y": 262,
+      "hp": 6,
+      "phase": 1,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 133,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4769,
+      "y": 253,
+      "hp": 6,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 143,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5269,
+      "y": 285,
+      "hp": 2,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 153,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5245,
+      "y": 285,
+      "hp": 2,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 164,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4993,
+      "y": 250,
+      "hp": 6,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 174,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5269,
+      "y": 250,
+      "hp": 4,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 184,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5266,
+      "y": 250,
+      "hp": 1,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 195,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4885,
+      "y": 285,
+      "hp": 6,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 205,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5270,
+      "y": 285,
+      "hp": 2,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 215,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5170,
+      "y": 170,
+      "hp": 1,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 225,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5268,
+      "y": 285,
+      "hp": 1,
+      "phase": 2,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 235,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5172,
+      "y": 249,
+      "hp": 4,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 246,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5058,
+      "y": 249,
+      "hp": 6,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 256,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4821,
+      "y": 285,
+      "hp": 6,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 266,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5270,
+      "y": 285,
+      "hp": 1,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 276,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5268,
+      "y": 248,
+      "hp": 4,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 287,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4654,
+      "y": 285,
+      "hp": 6,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 297,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4769,
+      "y": 285,
+      "hp": 6,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 307,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5266,
+      "y": 235,
+      "hp": 2,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 317,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5022,
+      "y": 285,
+      "hp": 5,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 327,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5266,
+      "y": 263,
+      "hp": 0,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 338,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "1p",
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4825,
+      "y": 285,
+      "hp": 6,
+      "phase": 3,
+      "win": false,
+      "events": [
+        "reaction",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "summon",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "summon",
+        "weak",
+        "weak",
+        "summon",
+        "weak",
+        "phase2",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "phase3",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak",
+        "chain-warn",
+        "chain-active",
+        "chain-end",
+        "weak"
+      ],
+      "run": {
+        "version": 1,
+        "runId": "qa-natural",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "1p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "final": {
+    "active": [
+      "play"
+    ],
+    "stage": 7,
+    "mode": "1p",
+    "started": true,
+    "ended": true,
+    "intro": false,
+    "continued": false,
+    "x": 5167,
+    "y": 285,
+    "hp": 6,
+    "phase": 3,
+    "win": true,
+    "events": [
+      {
+        "kind": "reaction",
+        "at": 56403.7
+      },
+      {
+        "kind": "summon",
+        "at": 63870.1
+      },
+      {
+        "kind": "summon",
+        "at": 66586.7
+      },
+      {
+        "kind": "weak",
+        "at": 68786.6
+      },
+      {
+        "kind": "summon",
+        "at": 71419.8
+      },
+      {
+        "kind": "weak",
+        "at": 76186.3
+      },
+      {
+        "kind": "weak",
+        "at": 83736
+      },
+      {
+        "kind": "summon",
+        "at": 86385.9
+      },
+      {
+        "kind": "summon",
+        "at": 89035.7
+      },
+      {
+        "kind": "weak",
+        "at": 91135.7
+      },
+      {
+        "kind": "summon",
+        "at": 93785.6
+      },
+      {
+        "kind": "summon",
+        "at": 96452.1
+      },
+      {
+        "kind": "weak",
+        "at": 98485.4
+      },
+      {
+        "kind": "weak",
+        "at": 106835.1
+      },
+      {
+        "kind": "summon",
+        "at": 110018.3
+      },
+      {
+        "kind": "weak",
+        "at": 115118.1
+      },
+      {
+        "kind": "summon",
+        "at": 117767.9
+      },
+      {
+        "kind": "weak",
+        "at": 122501.1
+      },
+      {
+        "kind": "weak",
+        "at": 132100.7
+      },
+      {
+        "kind": "summon",
+        "at": 138150.4
+      },
+      {
+        "kind": "weak",
+        "at": 140200.4
+      },
+      {
+        "kind": "phase2",
+        "at": 141417
+      },
+      {
+        "kind": "chain-warn",
+        "at": 145050.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 145850.2
+      },
+      {
+        "kind": "chain-end",
+        "at": 147383.5
+      },
+      {
+        "kind": "weak",
+        "at": 147900
+      },
+      {
+        "kind": "chain-warn",
+        "at": 153049.9
+      },
+      {
+        "kind": "chain-active",
+        "at": 153866.5
+      },
+      {
+        "kind": "chain-end",
+        "at": 155383.1
+      },
+      {
+        "kind": "weak",
+        "at": 155516.4
+      },
+      {
+        "kind": "chain-warn",
+        "at": 160666.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 161482.8
+      },
+      {
+        "kind": "chain-end",
+        "at": 163049.5
+      },
+      {
+        "kind": "weak",
+        "at": 163516.1
+      },
+      {
+        "kind": "chain-warn",
+        "at": 168649.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 169482.6
+      },
+      {
+        "kind": "chain-end",
+        "at": 170982.5
+      },
+      {
+        "kind": "weak",
+        "at": 171115.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 176765.6
+      },
+      {
+        "kind": "chain-active",
+        "at": 177582.2
+      },
+      {
+        "kind": "chain-end",
+        "at": 179098.8
+      },
+      {
+        "kind": "weak",
+        "at": 179232.1
+      },
+      {
+        "kind": "chain-warn",
+        "at": 184348.6
+      },
+      {
+        "kind": "chain-active",
+        "at": 185165.3
+      },
+      {
+        "kind": "chain-end",
+        "at": 186681.8
+      },
+      {
+        "kind": "weak",
+        "at": 186815.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 191965
+      },
+      {
+        "kind": "chain-active",
+        "at": 192731.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 194248.2
+      },
+      {
+        "kind": "weak",
+        "at": 194364.9
+      },
+      {
+        "kind": "chain-warn",
+        "at": 199464.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 200298
+      },
+      {
+        "kind": "chain-end",
+        "at": 201798
+      },
+      {
+        "kind": "weak",
+        "at": 202081.3
+      },
+      {
+        "kind": "chain-warn",
+        "at": 207547.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 208314.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 209847.6
+      },
+      {
+        "kind": "weak",
+        "at": 209964.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 215097.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 215914
+      },
+      {
+        "kind": "chain-end",
+        "at": 217447.3
+      },
+      {
+        "kind": "weak",
+        "at": 217564
+      },
+      {
+        "kind": "chain-warn",
+        "at": 222663.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 223480.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 225030.4
+      },
+      {
+        "kind": "weak",
+        "at": 225530.3
+      },
+      {
+        "kind": "chain-warn",
+        "at": 230696.8
+      },
+      {
+        "kind": "chain-active",
+        "at": 231513.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 233013.4
+      },
+      {
+        "kind": "weak",
+        "at": 233296.7
+      },
+      {
+        "kind": "chain-warn",
+        "at": 238463.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 239279.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 240796.3
+      },
+      {
+        "kind": "weak",
+        "at": 240913
+      },
+      {
+        "kind": "chain-warn",
+        "at": 246312.8
+      },
+      {
+        "kind": "chain-active",
+        "at": 247146.1
+      },
+      {
+        "kind": "chain-end",
+        "at": 248646
+      },
+      {
+        "kind": "weak",
+        "at": 248762.7
+      },
+      {
+        "kind": "phase3",
+        "at": 249562.7
+      },
+      {
+        "kind": "chain-warn",
+        "at": 251679.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 252495.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 254012.5
+      },
+      {
+        "kind": "weak",
+        "at": 254095.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 257062.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 257845.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 259345.6
+      },
+      {
+        "kind": "weak",
+        "at": 259445.6
+      },
+      {
+        "kind": "chain-warn",
+        "at": 262278.8
+      },
+      {
+        "kind": "chain-active",
+        "at": 263078.8
+      },
+      {
+        "kind": "chain-end",
+        "at": 264595.4
+      },
+      {
+        "kind": "weak",
+        "at": 264695.4
+      },
+      {
+        "kind": "chain-warn",
+        "at": 267511.9
+      },
+      {
+        "kind": "chain-active",
+        "at": 268328.6
+      },
+      {
+        "kind": "chain-end",
+        "at": 269861.8
+      },
+      {
+        "kind": "weak",
+        "at": 270095.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 273095.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 273911.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 275428.3
+      },
+      {
+        "kind": "weak",
+        "at": 275511.7
+      },
+      {
+        "kind": "chain-warn",
+        "at": 278361.5
+      },
+      {
+        "kind": "chain-active",
+        "at": 279194.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 280711.5
+      },
+      {
+        "kind": "weak",
+        "at": 280794.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 283878
+      },
+      {
+        "kind": "chain-active",
+        "at": 284661.3
+      },
+      {
+        "kind": "chain-end",
+        "at": 286177.9
+      },
+      {
+        "kind": "weak",
+        "at": 286277.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 289111.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 289911.1
+      },
+      {
+        "kind": "chain-end",
+        "at": 291427.6
+      },
+      {
+        "kind": "weak",
+        "at": 291527.7
+      },
+      {
+        "kind": "chain-warn",
+        "at": 294327.5
+      },
+      {
+        "kind": "chain-active",
+        "at": 295144.2
+      },
+      {
+        "kind": "chain-end",
+        "at": 296677.5
+      },
+      {
+        "kind": "weak",
+        "at": 296760.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 299577.3
+      },
+      {
+        "kind": "chain-active",
+        "at": 300410.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 301943.9
+      },
+      {
+        "kind": "weak",
+        "at": 302243.9
+      },
+      {
+        "kind": "chain-warn",
+        "at": 305260.5
+      },
+      {
+        "kind": "chain-active",
+        "at": 306093.8
+      },
+      {
+        "kind": "chain-end",
+        "at": 307593.7
+      },
+      {
+        "kind": "weak",
+        "at": 307677
+      },
+      {
+        "kind": "chain-warn",
+        "at": 310726.9
+      },
+      {
+        "kind": "chain-active",
+        "at": 311476.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 312993.5
+      },
+      {
+        "kind": "weak",
+        "at": 313110.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 315943.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 316760
+      },
+      {
+        "kind": "chain-end",
+        "at": 318293.3
+      },
+      {
+        "kind": "weak",
+        "at": 318376.6
+      },
+      {
+        "kind": "chain-warn",
+        "at": 321226.5
+      },
+      {
+        "kind": "chain-active",
+        "at": 322026.5
+      },
+      {
+        "kind": "chain-end",
+        "at": 323559.7
+      },
+      {
+        "kind": "weak",
+        "at": 323676.4
+      },
+      {
+        "kind": "chain-warn",
+        "at": 326493
+      },
+      {
+        "kind": "chain-active",
+        "at": 327292.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 328792.9
+      },
+      {
+        "kind": "weak",
+        "at": 329126.1
+      },
+      {
+        "kind": "chain-warn",
+        "at": 332109.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 332926
+      },
+      {
+        "kind": "chain-end",
+        "at": 334459.3
+      },
+      {
+        "kind": "weak",
+        "at": 334526
+      },
+      {
+        "kind": "chain-warn",
+        "at": 337359.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 338175.8
+      },
+      {
+        "kind": "chain-end",
+        "at": 339692.4
+      },
+      {
+        "kind": "weak",
+        "at": 339792.4
+      },
+      {
+        "kind": "chain-warn",
+        "at": 342625.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 343508.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 344958.9
+      },
+      {
+        "kind": "weak",
+        "at": 345358.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 348192.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 348992
+      },
+      {
+        "kind": "chain-end",
+        "at": 350508.7
+      },
+      {
+        "kind": "weak",
+        "at": 350625.4
+      },
+      {
+        "kind": "defeat",
+        "at": 353341.9
+      },
+      {
+        "kind": "departure",
+        "at": 355158.4
+      }
+    ],
+    "run": {
+      "version": 1,
+      "runId": "qa-natural",
+      "startStage": 6,
+      "lastCleared": 7,
+      "nextStage": 8,
+      "gear": {
+        "boy": {
+          "heart": 0,
+          "sword": 0,
+          "gun": 0,
+          "armour": 0,
+          "boots": 0,
+          "charm": 0
+        },
+        "girl": {
+          "heart": 0,
+          "sword": 0,
+          "gun": 0,
+          "armour": 0,
+          "boots": 0,
+          "charm": 0
+        }
+      },
+      "growth": {},
+      "eligible": true,
+      "coins": 79,
+      "purse": {
+        "boy": 39,
+        "girl": 40
+      },
+      "hp": {
+        "boy": 6
+      },
+      "friends": [],
+      "charm": null,
+      "mode": "1p",
+      "solo": "boy",
+      "legacyModeUnknown": false,
+      "puffLeft": true
+    }
+  },
+  "durationSec": 358,
+  "end": "2026-11-08T07:02:45.870Z"
+}

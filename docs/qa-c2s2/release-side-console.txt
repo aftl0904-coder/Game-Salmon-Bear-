@@ -1,0 +1,1 @@
+{"passed":true,"checks":["normal side entry after full Boot, original companion present","injected defeat, side departure once and main snapshot byte-identical","side returns to held mainline map without starting stage 8"],"errors":[]}

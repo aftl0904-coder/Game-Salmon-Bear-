@@ -1,0 +1,8 @@
+ISOLATED_NET_EVENTS {"e":[{"kind":"chain-warn","at":51440.6},{"kind":"chain-active","at":52307.1},{"kind":"chain-end","at":53907.1}],"startEvents":{"n":7,"ret":2300,"boyHp":6,"girlHp":6},"result":{"events":[{"kind":"reaction","at":32341.3},{"kind":"summon","at":42040.9},{"kind":"summon","at":44990.8},{"kind":"phase2","at":46157.5},{"kind":"chain-warn","at":47390.8},{"kind":"chain-active","at":48907.3},{"kind":"chain-end","at":50307.3},{"kind":"chain-warn","at":51440.6},{"kind":"chain-active","at":52307.1},{"kind":"chain-end","at":53907.1}],"boyHp":5,"girlHp":6}}
+P3_NET_EVENTS [{"kind":"chain-warn","at":56807},{"kind":"chain-active","at":57623.7},{"kind":"chain-end","at":59256.9}]
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(p3e[2].at-p3e[1].at>=1490&&p3e[2].at-p3e[1].at<=1600)
+
+    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-inspect.mjs:50:300
+{"passed":false,"checks":["2P static scenery positions, counts and no bodies","D reaction once in this scene (injected positions)","Boss P1 and HP","P1 summon cap observation","P2 net timing (isolated injected invocation)","P2 net inside damaged and safe standing position unaffected (injected positions)","P3 threshold via injected HP"],"errors":[]}

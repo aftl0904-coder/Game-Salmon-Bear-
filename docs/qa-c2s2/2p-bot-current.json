@@ -1,0 +1,1636 @@
+{
+  "description": "2P keyboard bot via ordinary menu with seeded stage-6 checkpoint; no teleport, HP edit or forced win; automated, not human",
+  "samples": [
+    {
+      "elapsed": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 220,
+      "x2": 380,
+      "hp1": 5,
+      "hp2": 5,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 11,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 1333,
+      "x2": 1492,
+      "hp1": 6,
+      "hp2": 6,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 21,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 2338,
+      "x2": 2518,
+      "hp1": 5,
+      "hp2": 5,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 32,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 3350,
+      "x2": 3289,
+      "hp1": 5,
+      "hp2": 3,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 42,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4331,
+      "x2": 4513,
+      "hp1": 6,
+      "hp2": 3,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 52,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4688,
+      "x2": 4688,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 1,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 63,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5235,
+      "x2": 5232,
+      "hp1": 2,
+      "hp2": 1,
+      "phase": 1,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 73,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5235,
+      "x2": 5235,
+      "hp1": 2,
+      "hp2": 4,
+      "phase": 2,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 83,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4914,
+      "x2": 4912,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 2,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 93,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5232,
+      "x2": 5233,
+      "hp1": 2,
+      "hp2": 2,
+      "phase": 2,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 104,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5154,
+      "x2": 5095,
+      "hp1": 2,
+      "hp2": 2,
+      "phase": 2,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 114,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 4960,
+      "x2": 4956,
+      "hp1": 6,
+      "hp2": 6,
+      "phase": 2,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 124,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5232,
+      "x2": 5232,
+      "hp1": 0,
+      "hp2": 0,
+      "phase": 3,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    },
+    {
+      "elapsed": 135,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "mode": "2p",
+      "started": true,
+      "ended": false,
+      "continued": false,
+      "intro": false,
+      "x1": 5234,
+      "x2": 5234,
+      "hp1": 1,
+      "hp2": 2,
+      "phase": 3,
+      "win": false,
+      "run": {
+        "version": 1,
+        "runId": "qa-2p",
+        "startStage": 6,
+        "lastCleared": 6,
+        "nextStage": 7,
+        "gear": {
+          "boy": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          },
+          "girl": {
+            "heart": 0,
+            "sword": 0,
+            "gun": 0,
+            "armour": 0,
+            "boots": 0,
+            "charm": 0
+          }
+        },
+        "growth": {},
+        "eligible": true,
+        "coins": 100,
+        "purse": {
+          "boy": 50,
+          "girl": 50
+        },
+        "hp": {
+          "boy": 5,
+          "girl": 5
+        },
+        "friends": [],
+        "charm": null,
+        "mode": "2p",
+        "solo": "boy",
+        "legacyModeUnknown": false,
+        "puffLeft": false
+      }
+    }
+  ],
+  "errors": [],
+  "passed": true,
+  "start": "2026-11-08T06:53:57.665Z",
+  "final": {
+    "active": [
+      "play"
+    ],
+    "stage": 7,
+    "mode": "2p",
+    "started": true,
+    "ended": true,
+    "continued": false,
+    "intro": false,
+    "x1": 5232,
+    "x2": 5236,
+    "hp1": 1,
+    "hp2": 2,
+    "phase": 3,
+    "win": true,
+    "events": [
+      {
+        "kind": "reaction",
+        "at": 57880.7
+      },
+      {
+        "kind": "summon",
+        "at": 65247.1
+      },
+      {
+        "kind": "summon",
+        "at": 67930.2
+      },
+      {
+        "kind": "weak",
+        "at": 70246.8
+      },
+      {
+        "kind": "summon",
+        "at": 72896.7
+      },
+      {
+        "kind": "summon",
+        "at": 75563.2
+      },
+      {
+        "kind": "weak",
+        "at": 77646.5
+      },
+      {
+        "kind": "summon",
+        "at": 80263.1
+      },
+      {
+        "kind": "weak",
+        "at": 85412.9
+      },
+      {
+        "kind": "phase2",
+        "at": 86896.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 90496
+      },
+      {
+        "kind": "chain-active",
+        "at": 91296
+      },
+      {
+        "kind": "chain-end",
+        "at": 92812.6
+      },
+      {
+        "kind": "weak",
+        "at": 92979.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 98745.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 99545.6
+      },
+      {
+        "kind": "chain-end",
+        "at": 101062.2
+      },
+      {
+        "kind": "weak",
+        "at": 101228.9
+      },
+      {
+        "kind": "chain-warn",
+        "at": 106345.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 107145.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 108662
+      },
+      {
+        "kind": "weak",
+        "at": 108811.9
+      },
+      {
+        "kind": "chain-warn",
+        "at": 113878.4
+      },
+      {
+        "kind": "chain-active",
+        "at": 114678.3
+      },
+      {
+        "kind": "chain-end",
+        "at": 116211.7
+      },
+      {
+        "kind": "weak",
+        "at": 116561.7
+      },
+      {
+        "kind": "chain-warn",
+        "at": 121678.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 122511.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 124028
+      },
+      {
+        "kind": "weak",
+        "at": 124161.4
+      },
+      {
+        "kind": "chain-warn",
+        "at": 129744.5
+      },
+      {
+        "kind": "chain-active",
+        "at": 130561.1
+      },
+      {
+        "kind": "chain-end",
+        "at": 132077.6
+      },
+      {
+        "kind": "weak",
+        "at": 132211
+      },
+      {
+        "kind": "phase3",
+        "at": 132594.3
+      },
+      {
+        "kind": "chain-warn",
+        "at": 134727.6
+      },
+      {
+        "kind": "chain-active",
+        "at": 135544.2
+      },
+      {
+        "kind": "chain-end",
+        "at": 137060.8
+      },
+      {
+        "kind": "weak",
+        "at": 137144.2
+      },
+      {
+        "kind": "chain-warn",
+        "at": 139994
+      },
+      {
+        "kind": "chain-active",
+        "at": 140810.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 142327.3
+      },
+      {
+        "kind": "weak",
+        "at": 143110.6
+      },
+      {
+        "kind": "chain-warn",
+        "at": 145927.1
+      },
+      {
+        "kind": "chain-active",
+        "at": 146760.4
+      },
+      {
+        "kind": "chain-end",
+        "at": 148277
+      },
+      {
+        "kind": "weak",
+        "at": 148377
+      },
+      {
+        "kind": "chain-warn",
+        "at": 151210.2
+      },
+      {
+        "kind": "chain-active",
+        "at": 152026.9
+      },
+      {
+        "kind": "chain-end",
+        "at": 153526.8
+      },
+      {
+        "kind": "weak",
+        "at": 154126.8
+      },
+      {
+        "kind": "chain-warn",
+        "at": 156976.7
+      },
+      {
+        "kind": "chain-active",
+        "at": 157793.3
+      },
+      {
+        "kind": "defeat",
+        "at": 158026.7
+      },
+      {
+        "kind": "chain-end",
+        "at": 159293.2
+      },
+      {
+        "kind": "departure",
+        "at": 159826.5
+      }
+    ],
+    "run": {
+      "version": 1,
+      "runId": "qa-2p",
+      "startStage": 6,
+      "lastCleared": 7,
+      "nextStage": 8,
+      "gear": {
+        "boy": {
+          "heart": 0,
+          "sword": 0,
+          "gun": 0,
+          "armour": 0,
+          "boots": 0,
+          "charm": 0
+        },
+        "girl": {
+          "heart": 0,
+          "sword": 0,
+          "gun": 0,
+          "armour": 0,
+          "boots": 0,
+          "charm": 0
+        }
+      },
+      "growth": {},
+      "eligible": true,
+      "coins": 94,
+      "purse": {
+        "boy": 47,
+        "girl": 47
+      },
+      "hp": {
+        "boy": 1,
+        "girl": 2
+      },
+      "friends": [],
+      "charm": null,
+      "mode": "2p",
+      "solo": "boy",
+      "legacyModeUnknown": false,
+      "puffLeft": true
+    },
+    "writes": [
+      {
+        "at": 68128,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 81323.60000000149,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 96148.69999999925,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 114690.69999999925,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 114691.5,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 127394.19999999925,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 140827,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 140827.90000000224,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 152034.1000000015,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 6,
+          "nextStage": 7,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 100,
+          "purse": {
+            "boy": 50,
+            "girl": 50
+          },
+          "hp": {
+            "boy": 5,
+            "girl": 5
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": false
+        }
+      },
+      {
+        "at": 162281.80000000075,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 7,
+          "nextStage": 8,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 94,
+          "purse": {
+            "boy": 47,
+            "girl": 47
+          },
+          "hp": {
+            "boy": 1,
+            "girl": 2
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": true
+        }
+      },
+      {
+        "at": 162295.80000000075,
+        "value": {
+          "version": 1,
+          "runId": "qa-2p",
+          "startStage": 6,
+          "lastCleared": 7,
+          "nextStage": 8,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "coins": 94,
+          "purse": {
+            "boy": 47,
+            "girl": 47
+          },
+          "hp": {
+            "boy": 1,
+            "girl": 2
+          },
+          "friends": [],
+          "charm": null,
+          "mode": "2p",
+          "solo": "boy",
+          "legacyModeUnknown": false,
+          "puffLeft": true
+        }
+      }
+    ]
+  },
+  "durationSec": 145,
+  "end": "2026-11-08T06:56:40.114Z"
+}

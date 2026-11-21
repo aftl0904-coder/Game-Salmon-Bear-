@@ -1,0 +1,7 @@
+NET_EVENTS [{"kind":"chain-warn","at":43451},{"kind":"chain-active","at":44067.7},{"kind":"chain-active","at":44267.7},{"kind":"chain-end","at":45634.3},{"kind":"chain-end","at":45817.7}]
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert.ok(a.at-w.at>=760&&a.at-w.at<=900)
+
+    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-inspect.mjs:36:188
+{"passed":false,"checks":["2P static scenery positions, counts and no bodies","D reaction once in this scene (injected positions)","Boss P1 and HP","P1 summon cap observation"],"errors":[]}

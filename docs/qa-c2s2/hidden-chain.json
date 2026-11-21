@@ -1,0 +1,48 @@
+{
+  "description": "Chain fairness under background: real document.hidden probe + Phaser loop.pause proxy (same as Game.onHidden). Does not synthesize visibilitychange or override document.hidden.",
+  "at": "2026-11-20T16:03:55.399Z",
+  "cases": [
+    {
+      "case": "real-document-hidden-probe",
+      "hidden": false,
+      "events": [],
+      "chainKinds": [
+        "chain-warn"
+      ],
+      "observedHidden": false,
+      "note": "Environment often cannot produce document.hidden; failure here is not a product fail."
+    },
+    {
+      "case": "phaser-loop-pause-proxy-for-onHidden",
+      "passed": false,
+      "wallPauseMs": 70.10000000000582,
+      "wallHiddenMs": 2053.899999999994,
+      "sceneDeltaDuringPause": 2049.9000000000015,
+      "hpAtPause": 6,
+      "hpDuring": 6,
+      "hpFinal": 6,
+      "kindsAtPause": [
+        "chain-warn"
+      ],
+      "kindsDuring": [
+        "chain-warn",
+        "reaction"
+      ],
+      "warnToActive": null,
+      "activeToEnd": null,
+      "kindsFinal": [
+        "chain-warn",
+        "reaction",
+        "summon"
+      ],
+      "loopPausedDuring": false,
+      "note": "game.loop.pause() is what Phaser.Game.onHidden calls when document.hidden becomes true."
+    }
+  ],
+  "passed": false,
+  "failures": [
+    "loop-pause proxy timing/HP freeze failed"
+  ],
+  "realHiddenObserved": false,
+  "manualStillNeeded": true
+}

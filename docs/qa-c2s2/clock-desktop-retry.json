@@ -1,0 +1,24 @@
+{
+  "label": "desktop-retry",
+  "description": "Injected phase/position, isolated natural threats, real Arcade collision/damage; simulated mobile, not a real phone or playthrough. Synthetic 350ms main-thread stall is diagnostic, not a representative phone benchmark.",
+  "environment": {
+    "time": "2026-11-04T01:49:49.913Z",
+    "loadavg": [
+      18.02,
+      13.42,
+      11.33
+    ],
+    "cpus": 6,
+    "node": "v22.23.4"
+  },
+  "runs": [
+    {
+      "device": "desktop-2p-keyboard",
+      "cases": [],
+      "errors": [],
+      "failure": "page.goto: net::ERR_CONNECTION_RESET at http://127.0.0.1:47419/\nCall log:\n\u001b[2m  - navigating to \"http://127.0.0.1:47419/\", waiting until \"load\"\u001b[22m\n\n    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-clock-diagnose.mjs:24:12"
+    }
+  ],
+  "errors": [],
+  "passed": false
+}

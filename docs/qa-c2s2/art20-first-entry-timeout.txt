@@ -1,0 +1,30 @@
+{"kind":"desktop-2p","passed":false,"checks":[],"failure":"page.waitForFunction: Timeout 30000ms exceeded.\n    at active (/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:25:30)\n    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:41:11","networkErrors":[],"errors":[]}
+{"kind":"mobile-1p","passed":false,"checks":[],"failure":"page.waitForFunction: Timeout 30000ms exceeded.\n    at active (/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:25:30)\n    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:33:13","networkErrors":[],"errors":[]}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+browserContext.close: Target page, context or browser has been closed
+Browser logs:
+
+<launching> /home/ubuntu/.cache/ms-playwright/chromium_headless_shell-1148/chrome-linux/headless_shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-extensions --disable-features=ImprovedCookieControls,LazyFrameLoading,GlobalMediaControls,DestroyProfileOnBrowserClose,MediaRouter,DialMediaRouteProvider,AcceptCHFrame,AutoExpandDetailsElement,CertificateTransparencyComponentUpdater,AvoidUnnecessaryBeforeUnloadCheckSync,Translate,HttpsUpgrades,PaintHolding,ThirdPartyStoragePartitioning,LensOverlay,PlzDedicatedWorker --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --force-color-profile=srgb --metrics-recording-only --no-first-run --enable-automation --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --use-gl=swiftshader --enable-unsafe-swiftshader --no-sandbox --user-data-dir=/tmp/playwright_chromiumdev_profile-6Mq8tA --remote-debugging-pipe --no-startup-window
+<launched> pid=95583
+[pid=95583][err] [1104/002703.251478:ERROR:gl_factory.cc(102)] Requested GL implementation (gl=none,angle=none) not found in allowed implementations: [(gl=egl-angle,angle=default)].
+[pid=95583][err] [1104/002703.252652:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[pid=95583][err] [1104/002703.253506:ERROR:viz_main_impl.cc(181)] Exiting GPU process due to errors during initialization
+[pid=95583][err] [1104/002703.343002:ERROR:gl_factory.cc(102)] Requested GL implementation (gl=none,angle=none) not found in allowed implementations: [(gl=egl-angle,angle=default)].
+[pid=95583][err] [1104/002703.344989:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[pid=95583][err] [1104/002703.346388:ERROR:viz_main_impl.cc(181)] Exiting GPU process due to errors during initialization
+[pid=95583][err] [1104/002703.372824:ERROR:gl_factory.cc(102)] Requested GL implementation (gl=none,angle=none) not found in allowed implementations: [(gl=egl-angle,angle=default)].
+[pid=95583][err] [1104/002703.373780:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[pid=95583][err] [1104/002703.386330:ERROR:viz_main_impl.cc(181)] Exiting GPU process due to errors during initialization
+[pid=95583][err] [1104/002703.396119:ERROR:gl_factory.cc(102)] Requested GL implementation (gl=none,angle=none) not found in allowed implementations: [(gl=egl-angle,angle=default)].
+[pid=95583][err] [1104/002703.397433:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[pid=95583][err] [1104/002703.397816:ERROR:viz_main_impl.cc(181)] Exiting GPU process due to errors during initialization
+[pid=95583][err] [1104/002703.740334:WARNING:sandbox_linux.cc(430)] InitializeSandbox() called with multiple threads in process gpu-process.
+[pid=95583][err] [1104/002703.741288:WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
+[pid=95583][err] [1104/002705.675146:WARNING:audio_manager_linux.cc(54)] Falling back to ALSA for audio output. PulseAudio is not available or could not be initialized.
+[pid=95583] <gracefully close start>
+    at /tmp/salmon-c2-stage2-impl/async file:/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-art20.mjs:79:24
+
+Node.js v22.23.4

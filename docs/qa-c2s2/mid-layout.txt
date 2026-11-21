@@ -1,0 +1,1 @@
+PASS: 10121 camera positions; A–E cover 640px without calculated gaps; B/C use 560/318px tile periods. Pure geometry only.

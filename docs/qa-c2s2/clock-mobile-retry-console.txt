@@ -1,0 +1,6 @@
+{"device":"mobile-1p-touch","phase":2,"stall":false,"sceneMs":[833.4000000000015,1516.5],"wallMs":[808.5,1520.2999999970198],"strict":true,"hit":true,"safe":null,"maxRaw":116.70000000000437}
+{"device":"mobile-1p-touch","phase":2,"stall":"warning","sceneMs":[1199.9000000000015,1700],"wallMs":[1189.2000000029802,1704.8999999985099],"strict":false,"hit":true,"safe":null,"maxRaw":433.1999999999971}
+{"device":"mobile-1p-touch","phase":3,"stall":false,"sceneMs":[883.3999999999942,1666.5],"wallMs":[879.3999999985099,1660.7000000029802],"strict":false,"hit":true,"safe":null,"maxRaw":150}
+{"device":"mobile-1p-touch","phase":3,"stall":"active","sceneMs":[816.7000000000044,2033.0999999999985],"wallMs":[824.5,2036.5999999940395],"strict":false,"hit":true,"safe":null,"maxRaw":450}
+{"device":"mobile-1p-touch","safeOnly":true,"result":{"start":{"hp":6,"n":15},"endHp":6,"x":4800,"events":[{"kind":"chain-warn","at":47900.7},{"kind":"chain-active","at":48817.2},{"kind":"chain-end","at":50467.2}]},"safePass":true}
+{"out":"docs/qa-c2s2/clock-mobile-retry.json","passed":false}

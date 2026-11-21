@@ -1,0 +1,50 @@
+{
+  "description": "INJECTED inspection: positions, phase and HP are set programmatically; screenshots and checks do not establish a full playthrough",
+  "checks": [
+    {
+      "name": "2P static scenery positions, counts and no bodies",
+      "count": 20,
+      "unchanged": true
+    },
+    {
+      "name": "D reaction once in this scene (injected positions)",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 37314.4
+        }
+      ]
+    },
+    {
+      "name": "Boss P1 and HP",
+      "boss": {
+        "hp": 55,
+        "max": 55,
+        "phase": 1,
+        "act": "intro",
+        "species": "trainer"
+      }
+    },
+    {
+      "name": "P1 summon cap observation",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 37314.4
+        },
+        {
+          "kind": "summon",
+          "at": 47647.3
+        },
+        {
+          "kind": "summon",
+          "at": 50363.9
+        }
+      ],
+      "live": 2
+    }
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert.ok(end.at-a.at>=1490&&end.at-a.at<=1600)\n\n    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-inspect.mjs:42:337"
+}

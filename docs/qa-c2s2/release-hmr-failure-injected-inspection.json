@@ -1,0 +1,33 @@
+{
+  "description": "INJECTED inspection: positions, phase and HP are set programmatically; screenshots and checks do not establish a full playthrough",
+  "checks": [
+    {
+      "name": "2P static scenery positions, counts and no bodies",
+      "count": 28,
+      "unchanged": true
+    },
+    {
+      "name": "D reaction once in this scene (injected positions)",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 28980.5
+        }
+      ]
+    },
+    {
+      "name": "Boss P1 and HP",
+      "boss": {
+        "hp": 55,
+        "max": 55,
+        "phase": 1,
+        "act": "intro",
+        "species": "trainer"
+      }
+    }
+  ],
+  "failures": [],
+  "errors": [],
+  "passed": false,
+  "failure": "page.evaluate: TypeError: Cannot read properties of undefined (reading 'scene')\n    at eval (eval at evaluate (:234:30), <anonymous>:1:35)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\n    at evaluate (/tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:11:31)\n    at /tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:37:22"
+}

@@ -1,0 +1,5 @@
+{"device":"desktop-2p-keyboard","phase":2,"stall":false,"sceneMs":[850,1666.699999999997],"wallMs":[883.7999999970198,1631.4000000059605],"strict":false,"hit":true,"safe":true,"maxRaw":166.59999999999854}
+{"device":"desktop-2p-keyboard","phase":2,"stall":"warning","sceneMs":[1183.2000000000044,1633.2999999999956],"wallMs":[1165.7000000029802,1630],"strict":false,"hit":true,"safe":true,"maxRaw":433.3000000000029}
+{"device":"desktop-2p-keyboard","phase":3,"stall":false,"sceneMs":[816.5999999999985,1533.300000000003],"wallMs":[820.8999999985099,1518.6000000014901],"strict":true,"hit":true,"safe":true,"maxRaw":150}
+{"device":"desktop-2p-keyboard","phase":3,"stall":"active","sceneMs":[833.2999999999956,1866.6000000000058],"wallMs":[834.1000000014901,1850],"strict":false,"hit":true,"safe":true,"maxRaw":433.20000000000437}
+{"out":"docs/qa-c2s2/clock-desktop-retry2.json","passed":false}

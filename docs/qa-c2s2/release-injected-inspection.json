@@ -1,0 +1,138 @@
+{
+  "description": "INJECTED inspection: positions, phase and HP are set programmatically; screenshots and checks do not establish a full playthrough",
+  "checks": [
+    {
+      "name": "2P static scenery positions, counts and no bodies",
+      "count": 28,
+      "unchanged": true
+    },
+    {
+      "name": "D reaction once in this scene (injected positions)",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 40163
+        }
+      ]
+    },
+    {
+      "name": "Boss P1 and HP",
+      "boss": {
+        "hp": 55,
+        "max": 55,
+        "phase": 1,
+        "act": "intro",
+        "species": "trainer"
+      }
+    },
+    {
+      "name": "P1 summon cap observation",
+      "events": [
+        {
+          "kind": "reaction",
+          "at": 40163
+        },
+        {
+          "kind": "summon",
+          "at": 51695.9
+        },
+        {
+          "kind": "summon",
+          "at": 54345.8
+        }
+      ],
+      "live": 2
+    },
+    {
+      "name": "P2 net timing (isolated injected invocation)",
+      "passed": false,
+      "warnToActive": 1300,
+      "activeToEnd": 1749.7999999999956,
+      "bossClockReturn": 2300,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 61728.8
+        },
+        {
+          "kind": "chain-active",
+          "at": 63028.8
+        },
+        {
+          "kind": "chain-end",
+          "at": 64778.6
+        }
+      ]
+    },
+    {
+      "name": "P2 net inside damaged and safe standing position unaffected (injected positions)",
+      "before": {
+        "boy": 6,
+        "girl": 6
+      },
+      "after": {
+        "boy": 5,
+        "girl": 6
+      },
+      "positions": {
+        "target": 5000,
+        "safe": 4800
+      }
+    },
+    {
+      "name": "P3 threshold via injected HP",
+      "boss": {
+        "hp": 16,
+        "max": 55,
+        "phase": 3
+      }
+    },
+    {
+      "name": "P3 net timing (isolated injected invocation)",
+      "passed": false,
+      "warnToActive": 1233.2000000000116,
+      "activeToEnd": 1433.3999999999942,
+      "bossClockReturn": 2990,
+      "events": [
+        {
+          "kind": "chain-warn",
+          "at": 68511.9
+        },
+        {
+          "kind": "chain-active",
+          "at": 69745.1
+        },
+        {
+          "kind": "chain-end",
+          "at": 71178.5
+        }
+      ]
+    },
+    {
+      "name": "departure once; one atomic run write at injected clear",
+      "pre": {
+        "puffLeft": false,
+        "lastCleared": 6
+      },
+      "post": {
+        "puffLeft": true,
+        "lastCleared": 7,
+        "nextStage": 8
+      },
+      "writes": 1,
+      "departures": 1,
+      "pet": false
+    },
+    {
+      "name": "reload keeps puffLeft after complete Boot",
+      "persisted": true
+    }
+  ],
+  "failures": [
+    "P2 isolated net timing outside 790–900 / 1490–1600 ms",
+    "P3 isolated net timing outside 790–900 / 1490–1600 ms"
+  ],
+  "errors": [],
+  "passed": false,
+  "failure": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\nfalse !== true\n\n    at file:///tmp/salmon-c2-stage2-impl/scripts/qa/c2s2-release-inspect.mjs:71:9"
+}

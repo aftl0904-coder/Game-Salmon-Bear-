@@ -1,0 +1,4 @@
+2026-11-04 dialogue post-change run, status note transcribed from terminal output:
+Final build exit 0; validate:data exit 0. Individual UI and side JSON results all say passed:true and their console streams are saved separately.
+The encompassing shell command exited 2, not 0: its attempt to capture ${PIPESTATUS[0]} yielded empty values for ui and side in this interactive execution environment, and the final comparison printed "bash: [: : integer expression expected". The empty wrapper variables are not evidence of test success; consult the individual JSON reports and console logs.
+Preview server on 127.0.0.1:47420 was stopped and checked separately.

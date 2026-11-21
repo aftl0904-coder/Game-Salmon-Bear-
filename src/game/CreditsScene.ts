@@ -174,7 +174,8 @@ export class CreditsScene extends Phaser.Scene {
     const destination = goC2 || side ? resumeMain(this.registry) : null
     this.cameras.main.fadeOut(500, 0, 0, 0)
     this.time.delayedCall(520, () => {
-      if (destination && destination.nextStage <= 6 && (destination.nextStage < 6 || c2Enabled())) this.scene.start('worldmap', { from: destination.nextStage, to: destination.nextStage, next: 'play', stageNo: destination.nextStage })
+      if (destination && destination.nextStage > 7) this.scene.start('worldmap', { from: 7, to: 7, next: 'play', pick: true })
+      else if (destination && destination.nextStage <= 7 && (destination.nextStage < 6 || c2Enabled())) this.scene.start('worldmap', { from: destination.nextStage, to: destination.nextStage, next: 'play', stageNo: destination.nextStage })
       else this.scene.start('menu')
     })
   }
