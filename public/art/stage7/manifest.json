@@ -12,7 +12,9 @@
         640,
         360
       ],
-      "method": "RGB median-cut 64, no dithering; no resize"
+      "method": "C2 32-bit q128 from art-src/c2-32bit-test/batch-gs/q128 (no 64-color derive)",
+      "output_sha256": "68c87a7c9b5ab01512313b88c91f5be15e223b527d87d2341a9a5ba0bf637cb2",
+      "visible_colors": 128
     },
     {
       "source": "backstage-far.png",
@@ -22,7 +24,9 @@
         640,
         360
       ],
-      "method": "RGB median-cut 64, no dithering; no resize"
+      "method": "C2 32-bit q128 from art-src/c2-32bit-test/batch-gs/q128 (no 64-color derive)",
+      "output_sha256": "5f554e19a4dd7c297c3a5d476334e193ff6a513f39154ffa89fddacf7dbd9e49",
+      "visible_colors": 128
     },
     {
       "source": "arena-far.png",
@@ -32,7 +36,9 @@
         640,
         360
       ],
-      "method": "RGB median-cut 64, no dithering; no resize"
+      "method": "C2 32-bit q128 from art-src/c2-32bit-test/batch-gs/q128 (no 64-color derive)",
+      "output_sha256": "e5b25a35255cca207f849d3241d001bff6dfbeb98eecbbc8e41f0c088501fe29",
+      "visible_colors": 128
     },
     {
       "source": "net-static.png",
@@ -100,5 +106,11 @@
       "alpha": "binary",
       "method": "magenta threshold, bounding box, nearest aspect fit, RGB median-cut 64/no dither, binary alpha"
     }
-  ]
+  ],
+  "c2_32bit_gs": {
+    "source": "art-src/c2-32bit-test/batch-gs/q128",
+    "far": "median-cut 128 no dither 640×360",
+    "guard": "packed to public/art/anim/c2guard.png + data/anim/c2guard.json",
+    "branch_note": "Cursor runtime wire of Alan-approved G+S; scrubber batch still deferred"
+  }
 }

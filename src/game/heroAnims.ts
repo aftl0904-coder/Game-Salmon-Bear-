@@ -19,6 +19,7 @@ import mudmaneMeta from '../../data/anim/mudmane.json'
 import honeyzombieMeta from '../../data/anim/honeyzombie.json'
 import taximonsterMeta from '../../data/anim/taximonster.json'
 import clockpunchMeta from '../../data/anim/clockpunch.json'
+import c2guardMeta from '../../data/anim/c2guard.json'
 
 /**
  * Frame-by-frame hero / companion animation from Cursor's action sheets
@@ -32,7 +33,7 @@ export type AnimSetId =
   | 'lunbo' | 'kibobo' | 'pupu' | 'fish' | 'hatsoldier' | 'mechpig'
   | 'beesoldier' | 'squirrel' | 'minibee' | 'egg' | 'queen'
   | 'lobster' | 'stallkeeper' | 'mirrorshade' | 'mirrorowl' | 'triboss' | 'mudmane'
-  | 'honeyzombie' | 'taximonster' | 'clockpunch'
+  | 'honeyzombie' | 'taximonster' | 'clockpunch' | 'c2guard'
 type Meta = {
   /** Cell size in sheet pixels (RES× the logical size for HD sets). */
   frameWidth: number
@@ -65,6 +66,7 @@ export const ANIM_SETS: Record<AnimSetId, Meta> = {
   honeyzombie: honeyzombieMeta as Meta,
   taximonster: taximonsterMeta as Meta,
   clockpunch: clockpunchMeta as Meta,
+  c2guard: c2guardMeta as Meta,
 }
 
 /** Enemy species (enemyAi) → animation set. */

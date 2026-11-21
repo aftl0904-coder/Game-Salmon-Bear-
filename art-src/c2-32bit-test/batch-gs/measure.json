@@ -1,0 +1,146 @@
+{
+  "sheets": [
+    {
+      "file": "guard-idle.png",
+      "size": [
+        768,
+        352
+      ],
+      "frames": 3,
+      "full_colors": 16606,
+      "q128_colors": 128,
+      "full_bytes": 91349,
+      "q128_bytes": 80309,
+      "note": "reused packed trial idle"
+    },
+    {
+      "file": "guard-walk.png",
+      "size": [
+        1024,
+        352
+      ],
+      "frames": 4,
+      "full_colors": 17408,
+      "q128_colors": 128,
+      "full_bytes": 97773,
+      "q128_bytes": 86966
+    },
+    {
+      "file": "guard-detect.png",
+      "size": [
+        768,
+        352
+      ],
+      "frames": 3,
+      "full_colors": 19707,
+      "q128_colors": 128,
+      "full_bytes": 119172,
+      "q128_bytes": 105812
+    },
+    {
+      "file": "guard-warning.png",
+      "size": [
+        768,
+        352
+      ],
+      "frames": 3,
+      "full_colors": 19877,
+      "q128_colors": 128,
+      "full_bytes": 114154,
+      "q128_bytes": 102473
+    },
+    {
+      "file": "guard-attack.png",
+      "size": [
+        768,
+        352
+      ],
+      "frames": 3,
+      "full_colors": 19056,
+      "q128_colors": 128,
+      "full_bytes": 111733,
+      "q128_bytes": 98944
+    },
+    {
+      "file": "guard-recover.png",
+      "size": [
+        768,
+        352
+      ],
+      "frames": 3,
+      "full_colors": 20226,
+      "q128_colors": 128,
+      "full_bytes": 114077,
+      "q128_bytes": 101840
+    },
+    {
+      "file": "guard-hit.png",
+      "size": [
+        512,
+        352
+      ],
+      "frames": 2,
+      "full_colors": 15505,
+      "q128_colors": 128,
+      "full_bytes": 89072,
+      "q128_bytes": 79277
+    },
+    {
+      "file": "guard-defeat.png",
+      "size": [
+        1024,
+        352
+      ],
+      "frames": 4,
+      "full_colors": 30209,
+      "q128_colors": 128,
+      "full_bytes": 168290,
+      "q128_bytes": 150251
+    },
+    {
+      "file": "guard-model-sheet.png",
+      "size": [
+        1024,
+        352
+      ],
+      "frames": 4,
+      "full_colors": 21888,
+      "q128_colors": 128,
+      "full_bytes": 140499,
+      "q128_bytes": 121063
+    }
+  ],
+  "fars": [
+    {
+      "file": "entrance-far",
+      "full_1280_bytes": 1698985,
+      "full_640_bytes": 485968,
+      "q128_640_bytes": 350175,
+      "full_640_colors": 148586,
+      "q128_640_colors": 128,
+      "current_640_bytes": 465373,
+      "current_640_colors": 122176,
+      "note": "reused trial expo hall"
+    },
+    {
+      "file": "backstage-far",
+      "full_1280_bytes": 1273245,
+      "full_640_bytes": 390853,
+      "q128_640_bytes": 354777,
+      "full_640_colors": 33410,
+      "q128_640_colors": 128,
+      "current_640_bytes": 358638,
+      "current_640_colors": 20921
+    },
+    {
+      "file": "arena-far",
+      "full_1280_bytes": 1313763,
+      "full_640_bytes": 380265,
+      "q128_640_bytes": 309585,
+      "full_640_colors": 41018,
+      "q128_640_colors": 128,
+      "current_640_bytes": 383246,
+      "current_640_colors": 40550
+    }
+  ]
+}

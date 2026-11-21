@@ -6,10 +6,12 @@ import { pickTarget, type HeroRef } from '../enemyAi'
 import { actorDepth } from '../engine/depth'
 import { bossHitDamage } from '../engine/bossDamage'
 import { isActorFrozen } from '../fx'
+import { animTex, hasAnimSet } from '../heroAnims'
 
 /**
  * 第二大陸・購物中心 cast.
- *  - GuardZombie: the stage-4 蜜僵 in a security cap (tint + a drawn cap that follows the sprite).
+ *  - GuardZombie: prefers C2 32-bit `c2guard` sheet (Alan-approved G batch) when loaded;
+ *    otherwise falls back to stage-4 蜜僵 + drawn security cap.
  *  - RobotArm: a transport arm bolted to the floor. It never moves; it telegraphs, then fires a
  *    low/high bolt (the 帽仔兵 barrel's jump-or-duck read) at the nearest hero in range.
  *  - SecurityDirector: the boss, built on 武者王's three-phase skeleton (Stage1Boss.ts). Art is the
@@ -23,22 +25,36 @@ const UNIFORM_TINT = 0xa8b8ec
 // ── 保安蜜僵 ─────────────────────────────────────────────────────────────
 
 export class GuardZombie extends HoneyZombie {
-  private cap: Phaser.GameObjects.Graphics
+  private cap: Phaser.GameObjects.Graphics | null = null
   private whip: Phaser.GameObjects.Graphics | null = null
+  private readonly useC2Guard: boolean
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, useWhip = false) {
     super(scene, x, hooks)
     this.species = 'guard'
     this.hp = this.maxHp = 3
-    this.setTint(UNIFORM_TINT)
+    this.useC2Guard = hasAnimSet(scene, 'c2guard')
+    if (this.useC2Guard) {
+      // Dedicated 32-bit guard sheet — no tint / procedural cap.
+      this.clearTint()
+      this.set = 'c2guard'
+      this.setTexture(animTex('c2guard'), 0)
+      this.setOrigin(0.5, 1)
+      this.bodyBox(36, 60)
+      // Force rebind walk anim onto the new set (AnimEnemy already played honeyzombie-walk).
+      ;(this as unknown as { animName: string }).animName = ''
+      this.anim('walk')
+    } else {
+      this.setTint(UNIFORM_TINT)
+      this.cap = scene.add.graphics().setDepth(this.depth + 1)
+      this.cap.fillStyle(0x1c2a44, 1).fillRect(-8, -4, 16, 5).fillRect(-5, -7, 10, 3)
+      this.cap.fillStyle(0x0e1626, 1).fillRect(-9, 0, 18, 2)
+      this.cap.fillStyle(0xd4af37, 1).fillRect(-2, -5, 4, 3)
+    }
     if (useWhip) this.whip = scene.add.graphics().setDepth(this.depth + 1)
-    this.cap = scene.add.graphics().setDepth(this.depth + 1)
-    this.cap.fillStyle(0x1c2a44, 1).fillRect(-8, -4, 16, 5).fillRect(-5, -7, 10, 3)
-    this.cap.fillStyle(0x0e1626, 1).fillRect(-9, 0, 18, 2)
-    this.cap.fillStyle(0xd4af37, 1).fillRect(-2, -5, 4, 3)
   }
 
   protected override defaultTint() {
-    return UNIFORM_TINT
+    return this.useC2Guard ? 0xffffff : UNIFORM_TINT
   }
 
   override tick(dt: number, ctx: Ctx) {

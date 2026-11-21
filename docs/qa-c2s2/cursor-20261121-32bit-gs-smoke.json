@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "far": true,
+      "guard": true,
+      "anims": [
+        {
+          "k": "c2guard-walk",
+          "ok": true
+        },
+        {
+          "k": "c2guard-reach",
+          "ok": true
+        },
+        {
+          "k": "c2guard-hit",
+          "ok": true
+        },
+        {
+          "k": "c2guard-die",
+          "ok": true
+        }
+      ],
+      "stage": 7,
+      "exhibit": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}
