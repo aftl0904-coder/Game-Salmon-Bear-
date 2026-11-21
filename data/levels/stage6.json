@@ -38,7 +38,7 @@
       "role": "boss",
       "x0": 4560,
       "x1": 5700,
-      "note": "商場保安總監（三階段）；擊倒後拎蜜罐收工。"
+      "note": "商場清潔機械人／洗地機（三階段）；擊倒後拎蜜罐收工。保安總監只作非戰鬥現身。"
     }
   ],
   "pits": [
@@ -401,7 +401,7 @@
   ],
   "secrets": [],
   "boss": {
-    "kind": "securitydirector",
+    "kind": "mall-scrubber",
     "triggerX": 4680,
     "arenaX0": 4640,
     "arenaX1": 5280

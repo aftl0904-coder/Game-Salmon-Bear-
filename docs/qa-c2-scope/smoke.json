@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "stage6BossKind": "mall-scrubber",
+    "scrubber": {
+      "species": "mall-scrubber",
+      "ctor": "MallScrubber",
+      "act": "intro",
+      "bossName": "商場清潔機械人",
+      "hasQueen": true
+    },
+    "directorSight": {
+      "directorSighted": true
+    },
+    "stage7": {
+      "stageNo": 7,
+      "exhibit": true,
+      "mall": true
+    },
+    "mapOpen": [
+      6,
+      7
+    ]
+  }
+}
