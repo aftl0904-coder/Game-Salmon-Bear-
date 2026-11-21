@@ -168,8 +168,8 @@
     }
   ],
   "checkpoints": [
-    800,
-    1960,
+    700,
+    1600,
     3100,
     4520
   ],
@@ -197,19 +197,22 @@
   ],
   "enemies": [
     {
-      "x": 520,
+      "x": 640,
       "species": "guard",
-      "unlockX": 300
-    },
-    {
-      "x": 660,
-      "species": "guard",
-      "unlockX": 420
+      "unlockX": 560,
+      "note": "A・保安（地滑教完先出）"
     },
     {
       "x": 780,
       "species": "guard",
-      "unlockX": 540
+      "unlockX": 700,
+      "note": "A・保安（地滑教完先出）"
+    },
+    {
+      "x": 900,
+      "species": "guard",
+      "unlockX": 820,
+      "note": "A・保安（地滑教完先出）"
     },
     {
       "x": 1000,
@@ -414,6 +417,12 @@
   "elevatorX": 1995,
   "slipZones": [
     {
+      "x0": 360,
+      "x1": 520,
+      "mul": 1.45,
+      "note": "A・教學地滑（頭30秒只教呢樣）"
+    },
+    {
       "x0": 1020,
       "x1": 1180,
       "mul": 1.55,
@@ -429,7 +438,7 @@
       "x0": 4680,
       "x1": 5200,
       "mul": 1.2,
-      "note": "E・Boss 濕地（輕微）"
+      "note": "E・Boss 濕地"
     }
   ],
   "floorJunk": [
@@ -458,5 +467,8 @@
       "w": 36,
       "note": "破筐"
     }
-  ]
+  ],
+  "junkUnlockX": 1200,
+  "teachSlipX0": 360,
+  "teachSlipX1": 520
 }

@@ -221,6 +221,9 @@ type Stage1 = {
   slipZones?: Stage6Data['slipZones']
   floorJunk?: Stage6Data['floorJunk']
   elevatorX?: number
+  junkUnlockX?: number
+  teachSlipX0?: number
+  teachSlipX1?: number
   trainer?: typeof stage7Raw.trainer
   reactionX?: number
   staticDecor?: typeof stage7Raw.staticDecor
@@ -3057,21 +3060,51 @@ export class GameScene extends Phaser.Scene {
     // B · shop corridor.
     const shops = ['s6-shop-b', 's6-shop-c', 's6-shop-a', 's6-shop-b', 's6-shop-c', 's6-shop-a']
     ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => prop(shops[i]!, x, DEPTH.PROP - 3))
-    // Code polish: awnings + window panes so shopfronts read as shops (GDD).
+    // Shopfronts: awning + signboard + glass + door + display goods (read as real shops).
     {
       const aw = this.add.graphics().setDepth(DEPTH.PROP - 2)
-      for (const x of [610, 760, 930, 1100, 1290, 1480, 1700, 1930]) {
-        aw.fillStyle(0xc45a4a, 1).fillTriangle(x - 48, f - 78, x + 48, f - 78, x, f - 98)
-        aw.fillStyle(0x88c8e8, 0.55).fillRect(x - 28, f - 64, 22, 28)
-        aw.fillStyle(0x88c8e8, 0.55).fillRect(x + 6, f - 64, 22, 28)
-        aw.lineStyle(1, 0xf0f6ff, 0.7).strokeRect(x - 28, f - 64, 22, 28).strokeRect(x + 6, f - 64, 22, 28)
-        aw.fillStyle(0x2a1a10, 1).fillRect(x - 10, f - 36, 20, 36)
-      }
-      // Atrium festive prop (centrepiece beside dome).
+      const signs = ['茶餐廳', '鞋店', '電器', '藥妝', '書店', '服飾', '手信', '咖啡']
+      const xs = [610, 760, 930, 1100, 1290, 1480, 1700, 1930]
+      xs.forEach((x, i) => {
+        // Facade board
+        aw.fillStyle(0xf2e6d0, 1).fillRect(x - 52, f - 100, 104, 100)
+        aw.lineStyle(2, 0x5a4030, 1).strokeRect(x - 52, f - 100, 104, 100)
+        // Stripe awning
+        const awn = [0xc45a4a, 0xf0f0f0]
+        for (let k = 0; k < 8; k++) {
+          aw.fillStyle(awn[k % 2]!, 1).fillRect(x - 50 + k * 12.5, f - 108, 12.5, 14)
+        }
+        aw.fillStyle(0x8a3030, 1).fillTriangle(x - 52, f - 108, x + 52, f - 108, x, f - 122)
+        // Signboard
+        aw.fillStyle(0x1a2a4a, 1).fillRect(x - 40, f - 96, 80, 16)
+        // Windows (4 panes)
+        aw.fillStyle(0xa8d8f0, 0.75).fillRect(x - 44, f - 74, 36, 32)
+        aw.fillStyle(0xa8d8f0, 0.75).fillRect(x + 8, f - 74, 36, 32)
+        aw.lineStyle(1, 0xf8fcff, 0.9)
+        aw.strokeRect(x - 44, f - 74, 36, 32).strokeRect(x + 8, f - 74, 36, 32)
+        aw.lineBetween(x - 26, f - 74, x - 26, f - 42).lineBetween(x - 44, f - 58, x - 8, f - 58)
+        aw.lineBetween(x + 26, f - 74, x + 26, f - 42).lineBetween(x + 8, f - 58, x + 44, f - 58)
+        // Door
+        aw.fillStyle(0x4a3020, 1).fillRect(x - 12, f - 40, 24, 40)
+        aw.fillStyle(0xd4af37, 1).fillCircle(x + 6, f - 20, 2)
+        // Display goods blobs in window
+        aw.fillStyle(0xff8060, 1).fillCircle(x - 32, f - 52, 4)
+        aw.fillStyle(0x60c080, 1).fillRect(x - 20, f - 56, 8, 10)
+        aw.fillStyle(0xffd060, 1).fillCircle(x + 22, f - 50, 5)
+        this.add
+          .text(x, f - 88, signs[i]!, {
+            fontFamily: FONT_UI,
+            fontSize: '10px',
+            color: '#ffe08a',
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.SIGN)
+      })
+      // Atrium festive prop (centrepiece beside dome) — visual only, not a new mechanic.
       aw.fillStyle(0xffe080, 0.85).fillCircle(400, f - 120, 18)
       aw.fillStyle(0xff6080, 0.9).fillCircle(400, f - 120, 8)
       this.add.text(400, f - 150, '中庭裝置', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff0c0', backgroundColor: '#403020', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
-      // Escalator silhouette before elevator.
+      // Escalator near B→C (after teach beat).
       aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
       aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
       this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
@@ -3934,7 +3967,8 @@ export class GameScene extends Phaser.Scene {
     this.checkpointMamas = []
     for (const x of this.checkpointXs) {
       const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
-      const isStall = x === this.checkpointXs[0]
+      // Mall: first CP is plain save (teach slip first); membership stall = 2nd CP.
+      const isStall = this.mall ? x === this.checkpointXs[1] : x === this.checkpointXs[0]
       const st = this.stall()
       if (isStall) {
         if (this.textures.exists('cs-cart')) {
@@ -3991,7 +4025,8 @@ export class GameScene extends Phaser.Scene {
           else this.tweens.add({ targets: mama, y: mama.y - 6, duration: 140, yoyo: true, repeat: 1, ease: 'Sine.out' })
         }
         // Only the first checkpoint is the stall; later ones just save and heal.
-        if (this.coffeeDone || x !== this.checkpointXs[0]) {
+        const stallX = this.mall ? this.checkpointXs[1] : this.checkpointXs[0]
+        if (this.coffeeDone || x !== stallX) {
           this.drinkCoffee()
           return
         }

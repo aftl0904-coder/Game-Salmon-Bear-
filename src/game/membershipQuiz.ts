@@ -220,8 +220,11 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     prompt.setText(q.prompt)
     status.setText('撳右邊紅掣搶答！')
     paintChoices(q)
-    buzzOpen = 3200
-    rivalBuzzAt = 900 + Math.floor(rng() * (q.difficulty === 'hard' ? 1600 : 1100))
+    buzzOpen = qi === 0 ? 4200 : 3600
+    // Human-first pacing: rival waits so a reading player can buzz (Alan player note).
+    const base = qi === 0 ? 2400 : q.difficulty === 'hard' ? 2000 : 1600
+    const spread = qi === 0 ? 900 : q.difficulty === 'hard' ? 1400 : 1200
+    rivalBuzzAt = base + Math.floor(rng() * spread)
     buzzBtn.setFillStyle(0xe01828, 1)
   }
 

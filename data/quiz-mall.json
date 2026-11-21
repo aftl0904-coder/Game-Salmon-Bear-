@@ -1119,6 +1119,136 @@
       ],
       "answerIndex": 0,
       "id": "Q085"
+    },
+    {
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "《僱傭條例》下，連續受僱滿一個月，一般每七日應有？",
+      "choices": [
+        "1 個休息日",
+        "3 個公眾假期先至有休",
+        "無規定休息",
+        "只得雙數月先有休"
+      ],
+      "answerIndex": 0,
+      "id": "lab-rest-day"
+    },
+    {
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "無訂明通知期時，按《僱傭條例》一般最短通知期係？",
+      "choices": [
+        "7 日",
+        "1 個月",
+        "即日無須通知",
+        "90 日"
+      ],
+      "answerIndex": 0,
+      "id": "lab-notice"
+    },
+    {
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "法定假日（stat holiday）同休息日，正確講法係？",
+      "choices": [
+        "兩者唔同，唔好混為同一日亂扣",
+        "一樣，可以任意對調無影響",
+        "只得公務員先有法定假",
+        "商場員工無法定假"
+      ],
+      "answerIndex": 0,
+      "id": "lab-stat-hol"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "新同事入職當日，人事常見要先做邊樣？",
+      "choices": [
+        "核對身份／填寫入職及強積金相關表格",
+        "即刻派去見客唔使手續",
+        "叫佢自己買電腦返工",
+        "先罰一個月薪金做按金"
+      ],
+      "answerIndex": 0,
+      "id": "hr-onboard"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "招聘廣告寫「只限某性別／年齡」而無合理例外，風險係？",
+      "choices": [
+        "可能觸及歧視相關條例",
+        "完全合法無風險",
+        "只係公關問題唔關法",
+        "商場租戶一律豁免"
+      ],
+      "answerIndex": 0,
+      "id": "hr-equal"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "員工個人資料（例如住址、銀行戶口）應點處理？",
+      "choices": [
+        "只限有需要職位接觸，妥善保管",
+        "張貼員工休息室牆公布",
+        "WhatsApp 大群隨意傳",
+        "離職即公開畀所有同事"
+      ],
+      "answerIndex": 0,
+      "id": "hr-privacy"
+    },
+    {
+      "category": "labour",
+      "difficulty": "hard",
+      "prompt": "遣散費／長期服務金相關資格，正確態度係？",
+      "choices": [
+        "視乎年資、終止原因等條件，要核對條例",
+        "做滿三日一定有",
+        "只有老闆心情好先有",
+        "外判一律無任何保障"
+      ],
+      "answerIndex": 0,
+      "id": "lab-severance"
+    },
+    {
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "僱主扣減工資，一般原則係？",
+      "choices": [
+        "只可喺法例允許嘅項目／限額內扣",
+        "任何理由都可隨便扣一半",
+        "遲到一秒扣全日薪合法",
+        "商場可以自訂無限扣款"
+      ],
+      "answerIndex": 0,
+      "id": "lab-wage-deduct"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "績效評估面談較穩陣做法係？",
+      "choices": [
+        "有具體例子、雙向溝通、書面記錄",
+        "當眾羞辱先有動力",
+        "只憑傳聞唔使事實",
+        "唔通知員工突然評完"
+      ],
+      "answerIndex": 0,
+      "id": "hr-appraisal"
+    },
+    {
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "僱員因工受傷，僱主常見責任包括？",
+      "choices": [
+        "按《僱員補償條例》等處理補償／通報",
+        "叫員工自己認衰唔使報",
+        "只賠午餐錢就完事",
+        "商場租約自動豁免全部責任"
+      ],
+      "answerIndex": 0,
+      "id": "lab-injury"
     }
   ]
 }

@@ -31,6 +31,10 @@ export type Stage6Data = {
   slipZones?: Array<{ x0: number; x1: number; mul?: number }>
   floorJunk?: Array<{ x: number; w?: number }>
   elevatorX?: number
+  /** Floor junk inactive until lead X passes this (teach slip first). */
+  junkUnlockX?: number
+  teachSlipX0?: number
+  teachSlipX1?: number
 }
 
 type DebrisPhase = 'idle' | 'warn' | 'fall' | 'land'
@@ -95,6 +99,10 @@ export class Stage6World {
   private fanBlades: Phaser.GameObjects.Graphics | null = null
   fanOn = false
   private fanSpin = 0
+  private junkUnlockX = 0
+  private teachSlipX0: number | null = null
+  private teachSlipX1: number | null = null
+  private slipTaught = false
 
   constructor(ctx: Stage6Ctx, d: Stage6Data) {
     this.ctx = ctx
@@ -109,6 +117,9 @@ export class Stage6World {
     for (const c of d.cages ?? []) this.drawCage(c.x)
     this.elevX = d.elevatorX ?? null
     if (this.elevX != null) this.buildElevator(this.elevX)
+    this.junkUnlockX = d.junkUnlockX ?? 0
+    this.teachSlipX0 = d.teachSlipX0 ?? null
+    this.teachSlipX1 = d.teachSlipX1 ?? null
     for (const z of d.slipZones ?? []) this.buildSlip(z.x0, z.x1, z.mul ?? 1.5)
     for (const j of d.floorJunk ?? []) this.buildJunk(j.x, j.w ?? 36)
     this.moodWash = s.add.rectangle(0, 0, GAME_W, GAME_H, 0x1a2030, 0).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.UI - 40)
@@ -403,7 +414,32 @@ export class Stage6World {
         e.body.setVelocityX(e.body.velocity.x * (1 + (mul - 1) * 0.05))
       }
     }
+    // Teach slip once in atrium — only new mechanic for the opening beat.
+    if (!this.slipTaught && this.teachSlipX0 != null && this.teachSlipX1 != null) {
+      for (const h of heroes) {
+        if (!h.active) continue
+        if (h.x >= this.teachSlipX0 && h.x <= this.teachSlipX1) {
+          this.slipTaught = true
+          const s = this.ctx.scene
+          const tip = s.add
+            .text(h.x, this.ctx.floorY - 110, '新機制：地滑！地面閃就會加速', {
+              fontFamily: FONT_UI,
+              fontSize: '14px',
+              color: '#1a1a10',
+              backgroundColor: '#ffe060',
+              padding: { x: 6, y: 4 },
+            })
+            .setOrigin(0.5)
+            .setDepth(DEPTH.UI + 20)
+          s.tweens.add({ targets: tip, y: tip.y - 12, alpha: 0, delay: 2200, duration: 500, onComplete: () => tip.destroy() })
+          break
+        }
+      }
+    }
+    const junkOn = heroes.some((h) => h.active && h.x >= this.junkUnlockX)
     for (const j of this.junk) {
+      j.root.setVisible(junkOn)
+      if (!junkOn) continue
       for (const h of heroes) {
         if (!h.active) continue
         const left = j.cd.get(h) ?? 0
