@@ -95,7 +95,7 @@ export class BootScene extends Phaser.Scene {
     // Pixel wallpaper (640×360 ≤64c)
     this.load.image('bg-wallpaper', '/art/bg-wallpaper-px.png')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
-    // Stage 7 only: derived from the reviewed #91 head (see art/stage7/manifest.json).
+    // Stage 7: far plates from C2 32-bit q128 (G+S); see art/stage7/manifest.json / art-src/c2-32bit-test/.
     // The later reviewed B/C sources and derivation are recorded in mid-manifest.json.
     for (const name of ['entrance-far', 'corridor-mid', 'training-mid', 'backstage-far', 'arena-far', 'net-static', 'number-plate-blank', 'sign-blank']) {
       this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)

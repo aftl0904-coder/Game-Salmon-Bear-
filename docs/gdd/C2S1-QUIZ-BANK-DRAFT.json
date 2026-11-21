@@ -1,0 +1,1124 @@
+{
+  "title": "商場會員中心・金魚眼（香港向）",
+  "perRound": 7,
+  "scoring": {
+    "normal": {
+      "correct": 8,
+      "wrong": -4
+    },
+    "hard": {
+      "correct": 20,
+      "wrong": -10
+    }
+  },
+  "timeoutPenalty": -2,
+  "placement": "C2 stages 1–2 membership center",
+  "notes": "HK tenancy / property management / mall / HR-labour + quick HK secondary-school math. Entertainment only.",
+  "questions": [
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "香港住宅租約最常見用咩單位計租金？",
+      "choices": [
+        "每月",
+        "每分鐘",
+        "每世紀",
+        "每滴水"
+      ],
+      "answerIndex": 0,
+      "id": "Q001"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客通常要預繳／存放、退租時先傾扣費嘅係？",
+      "choices": [
+        "按金",
+        "飛機票",
+        "遊戲幣",
+        "差餉三十年"
+      ],
+      "answerIndex": 0,
+      "id": "Q002"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「交吉」賣樓／交樓大致指單位？",
+      "choices": [
+        "空置可入住",
+        "一定連傢俬",
+        "一定連租客",
+        "一定連車位"
+      ],
+      "answerIndex": 0,
+      "id": "Q003"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "大廈公契（DMC）主要規管？",
+      "choices": [
+        "業主共用權責",
+        "巴士線",
+        "天氣",
+        "手機費"
+      ],
+      "answerIndex": 0,
+      "id": "Q004"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "業主立案法團大致代表？",
+      "choices": [
+        "大廈業主群體",
+        "街邊小販",
+        "外遊團友",
+        "遊戲 NPC"
+      ],
+      "answerIndex": 0,
+      "id": "Q005"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "管理費多數用嚟處理？",
+      "choices": [
+        "公用地方維修／管理",
+        "租客私人旅遊",
+        "買跑車",
+        "交遊戲稅"
+      ],
+      "answerIndex": 0,
+      "id": "Q006"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "未得業主同意就轉租，常見風險係？",
+      "choices": [
+        "可能違約",
+        "自動變業主",
+        "免租十年",
+        "管理費豁免"
+      ],
+      "answerIndex": 0,
+      "id": "Q007"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "香港商場舖租有時寫「營業額分成」，意思係？",
+      "choices": [
+        "租金可跟生意抽成",
+        "客人分身家",
+        "一定免租",
+        "送舖"
+      ],
+      "answerIndex": 0,
+      "id": "Q008"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "走火通道擺滿雜物，物管通常點？",
+      "choices": [
+        "禁止／清走（安全）",
+        "鼓勵擺多啲",
+        "當展覽",
+        "免費倉"
+      ],
+      "answerIndex": 0,
+      "id": "Q009"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "實用面積同建築面積通常？",
+      "choices": [
+        "實用細過建築",
+        "永遠一樣",
+        "實用一定大過建築",
+        "冇分別"
+      ],
+      "answerIndex": 0,
+      "id": "Q010"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "差餉／地租主要同邊樣有關？",
+      "choices": [
+        "物業應課差餉租值",
+        "早餐價",
+        "八達通餘額",
+        "行山距離"
+      ],
+      "answerIndex": 0,
+      "id": "Q011"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "停車場月租位通常唔等於？",
+      "choices": [
+        "擁有車位業權",
+        "可以泊車",
+        "要畀錢",
+        "有編號"
+      ],
+      "answerIndex": 0,
+      "id": "Q012"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅單位唔經批准改做食肆？",
+      "choices": [
+        "多數唔合規",
+        "隨時得",
+        "掛燈籠就得",
+        "夠大聲就得"
+      ],
+      "answerIndex": 0,
+      "id": "Q013"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "退租交鎖匙／門卡最好點？",
+      "choices": [
+        "點算交收有記錄",
+        "掟信箱唔講",
+        "賣畀陌生人",
+        "浸咖啡"
+      ],
+      "answerIndex": 0,
+      "id": "Q014"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租約未到期想提早走，通常先睇？",
+      "choices": [
+        "有冇解約條款／賠償",
+        "一定免費即走",
+        "一定送一年",
+        "自動買斷"
+      ],
+      "answerIndex": 0,
+      "id": "Q015"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「樓花」大致指？",
+      "choices": [
+        "未建成／預售物業",
+        "開花單位",
+        "一定凶宅",
+        "一定商場中庭"
+      ],
+      "answerIndex": 0,
+      "id": "Q016"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "物業管理公司日常工作包括？",
+      "choices": [
+        "保安、清潔、維修安排",
+        "替業主炒樓",
+        "開法院",
+        "印鈔票"
+      ],
+      "answerIndex": 0,
+      "id": "Q017"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "欠交管理費可能導致？",
+      "choices": [
+        "法團／管理處追討",
+        "自動升級業主",
+        "免費續租",
+        "送汽車"
+      ],
+      "answerIndex": 0,
+      "id": "Q018"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "商場「公共地方」例如？",
+      "choices": [
+        "中庭、走廊、扶手電梯",
+        "舖內私人貨倉全部",
+        "客人口袋",
+        "Boss 房"
+      ],
+      "answerIndex": 0,
+      "id": "Q019"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "業主同租客邊個負責冷氣維修，最好？",
+      "choices": [
+        "租約寫清楚",
+        "每次猜拳",
+        "永遠唔傾",
+        "問天氣"
+      ],
+      "answerIndex": 0,
+      "id": "Q020"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "交吉出售廣告通常暗示買家？",
+      "choices": [
+        "較易空置收樓",
+        "一定連租客",
+        "免差餉一世",
+        "送商場"
+      ],
+      "answerIndex": 0,
+      "id": "Q021"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "物管「小心地滑」告示常見於？",
+      "choices": [
+        "清潔後濕地／雨天入口",
+        "天台草地",
+        "停車場天花",
+        "升降機按鈕背面"
+      ],
+      "answerIndex": 0,
+      "id": "Q022"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "香港商場常見租戶組合包括？",
+      "choices": [
+        "食肆、零售、服務",
+        "只有工廠",
+        "只有農田",
+        "只有碼頭"
+      ],
+      "answerIndex": 0,
+      "id": "Q023"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「落成入伙」大致指？",
+      "choices": [
+        "樓宇可入住／交付",
+        "開始打樁",
+        "一定封盤",
+        "一定拆樓"
+      ],
+      "answerIndex": 0,
+      "id": "Q024"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客長期欠租，業主常見方向係？",
+      "choices": [
+        "跟程序追討／終止租約",
+        "即刻掟傢俬落街表演",
+        "改門牌逃避",
+        "刪遊戲進度"
+      ],
+      "answerIndex": 0,
+      "id": "Q025"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "香港強制性公積金簡稱？",
+      "choices": [
+        "強積金／MPF",
+        "強積金／GDP",
+        "強積金／ATM",
+        "強積金／BGM"
+      ],
+      "answerIndex": 0,
+      "id": "Q026"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "僱員同僱主強積金供款比例（一般入門認知）各約？",
+      "choices": [
+        "5%",
+        "50%",
+        "0.5%",
+        "25%"
+      ],
+      "answerIndex": 0,
+      "id": "Q027"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "勞工法例常見「有薪年假」屬於？",
+      "choices": [
+        "僱員法定權益範疇",
+        "一定無薪",
+        "只得老闆有",
+        "只得兼職有"
+      ],
+      "answerIndex": 0,
+      "id": "Q028"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "解僱／辭職通常要留意？",
+      "choices": [
+        "通知期或代通知金",
+        "一定即日免費走",
+        "一定送樓",
+        "一定罰金幣"
+      ],
+      "answerIndex": 0,
+      "id": "Q029"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "「最低工資」大致規管？",
+      "choices": [
+        "時薪下限",
+        "最高樓價",
+        "最高租金",
+        "遊戲難度"
+      ],
+      "answerIndex": 0,
+      "id": "Q030"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "產假／侍產假相關資訊，正確態度係？",
+      "choices": [
+        "跟現行條例同公司政策",
+        "同事口耳相傳就得",
+        "Facebook 帖文為準",
+        "唔使理"
+      ],
+      "answerIndex": 0,
+      "id": "Q031"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "病假證明通常由邊個發出先較穩陣？",
+      "choices": [
+        "註冊醫生",
+        "街坊",
+        "遊戲 Boss",
+        "停車場管理員"
+      ],
+      "answerIndex": 0,
+      "id": "Q032"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "人力資源日常工作常包括？",
+      "choices": [
+        "招聘、出勤、薪酬福利協調",
+        "替員工炒樓",
+        "開挖泥車",
+        "印金幣"
+      ],
+      "answerIndex": 0,
+      "id": "Q033"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "試用期結束後轉正，常見要辦？",
+      "choices": [
+        "更新合約／人事紀錄",
+        "一定辭職",
+        "一定減薪一半",
+        "刪八達通"
+      ],
+      "answerIndex": 0,
+      "id": "Q034"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "加班補償（OT）安排應以咩為準？",
+      "choices": [
+        "法例＋僱傭合約／公司政策",
+        "心情",
+        "天氣",
+        "隨機數"
+      ],
+      "answerIndex": 0,
+      "id": "Q035"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "「連續性合約」入門理解同邊樣有關？",
+      "choices": [
+        "連續受僱達一定日數／周數門檻",
+        "一定終身僱用",
+        "一定外判",
+        "一定兼職"
+      ],
+      "answerIndex": 0,
+      "id": "Q036"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "員工投訴性騷擾，公司應？",
+      "choices": [
+        "跟程序認真處理",
+        "當冇事笑過",
+        "公開嘲笑",
+        "罰投訴人金幣"
+      ],
+      "answerIndex": 0,
+      "id": "Q037"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "發糧常見渠道？",
+      "choices": [
+        "銀行轉帳／支票等約定方式",
+        "只得現金掟落街",
+        "只得遊戲幣",
+        "只得郵票"
+      ],
+      "answerIndex": 0,
+      "id": "Q038"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "僱主無故剋扣工資，風險係？",
+      "choices": [
+        "可能違法／可被追討",
+        "一定合法",
+        "一定有獎",
+        "自動加薪"
+      ],
+      "answerIndex": 0,
+      "id": "Q039"
+    },
+    {
+      "category": "hr",
+      "difficulty": "normal",
+      "prompt": "入職時常見要填？",
+      "choices": [
+        "個人資料、銀行、強積金表格",
+        "樓宇公契全文",
+        "遊戲攻略",
+        "差餉單"
+      ],
+      "answerIndex": 0,
+      "id": "Q040"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "香港大型商場常見垂直交通係？",
+      "choices": [
+        "扶手電梯／升降機",
+        "獨木舟",
+        "熱氣球",
+        "馬拉車"
+      ],
+      "answerIndex": 0,
+      "id": "Q041"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場「營業時間」告示通常貼喺？",
+      "choices": [
+        "入口／目錄板",
+        "天台水箱入面",
+        "地底電纜",
+        "升降機井底"
+      ],
+      "answerIndex": 0,
+      "id": "Q042"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場會員積分通常用嚟？",
+      "choices": [
+        "換禮／扣減消費",
+        "交差餉",
+        "交地租一世",
+        "買飛機"
+      ],
+      "answerIndex": 0,
+      "id": "Q043"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場失物通常交去？",
+      "choices": [
+        "顧客服務中心／保安",
+        "隨手丟街",
+        "扔落扶手電梯",
+        "餵魚"
+      ],
+      "answerIndex": 0,
+      "id": "Q044"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "雨天商場入口地墊主要為？",
+      "choices": [
+        "防滑／清潔",
+        "裝飾用假花",
+        "量體重",
+        "收差餉"
+      ],
+      "answerIndex": 0,
+      "id": "Q045"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場「緊急集合點」概念同邊樣有關？",
+      "choices": [
+        "逃生／疏散",
+        "排隊買奶茶",
+        "影相打卡必去",
+        "免費泊車保證"
+      ],
+      "answerIndex": 0,
+      "id": "Q046"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "舖位裝修改動結構牆，多數要？",
+      "choices": [
+        "批准同合規",
+        "自己鑽就得",
+        "貼紙就得",
+        "夠大聲就得"
+      ],
+      "answerIndex": 0,
+      "id": "Q047"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場宣傳「開幕優惠」常見目的？",
+      "choices": [
+        "吸引人流",
+        "趕走租客",
+        "關閉扶手電梯",
+        "取消管理費"
+      ],
+      "answerIndex": 0,
+      "id": "Q048"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "「Pop-up Store」大致係？",
+      "choices": [
+        "短期快閃舖",
+        "永久總部",
+        "地下密道",
+        "天台農莊"
+      ],
+      "answerIndex": 0,
+      "id": "Q049"
+    },
+    {
+      "category": "mall",
+      "difficulty": "normal",
+      "prompt": "商場保安巡邏主要為？",
+      "choices": [
+        "安全同秩序",
+        "強制購物",
+        "量體溫玩",
+        "改公契"
+      ],
+      "answerIndex": 0,
+      "id": "Q050"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "月租 $12,000，一季（3 個月）租金？",
+      "choices": [
+        "$36,000",
+        "$12,000",
+        "$24,000",
+        "$48,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q051"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "按金＝兩個月租，月租 $8,500，按金？",
+      "choices": [
+        "$17,000",
+        "$8,500",
+        "$25,500",
+        "$4,250"
+      ],
+      "answerIndex": 0,
+      "id": "Q052"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "管理費 $3.2／呎，500 呎，每月？",
+      "choices": [
+        "$1,600",
+        "$320",
+        "$5,000",
+        "$160"
+      ],
+      "answerIndex": 0,
+      "id": "Q053"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "租金 $10,000 加租 10%，新租金？",
+      "choices": [
+        "$11,000",
+        "$10,100",
+        "$9,000",
+        "$12,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q054"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "月薪 $20,000，強積金僱員 5% 約？",
+      "choices": [
+        "$1,000",
+        "$2,000",
+        "$500",
+        "$5,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q055"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "半年租金：月租 $9,000？",
+      "choices": [
+        "$54,000",
+        "$45,000",
+        "$108,000",
+        "$9,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q056"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "按金 $20,000 扣維修 $3,500，可退？",
+      "choices": [
+        "$16,500",
+        "$20,000",
+        "$3,500",
+        "$23,500"
+      ],
+      "answerIndex": 0,
+      "id": "Q057"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "三個舖各月租 $7,000，總月租？",
+      "choices": [
+        "$21,000",
+        "$14,000",
+        "$28,000",
+        "$7,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q058"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "原價 $16,000 八折租金？",
+      "choices": [
+        "$12,800",
+        "$16,000",
+        "$8,000",
+        "$14,400"
+      ],
+      "answerIndex": 0,
+      "id": "Q059"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "車位月租 $2,800，一年？",
+      "choices": [
+        "$33,600",
+        "$28,000",
+        "$2,800",
+        "$56,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q060"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "營業額 $80,000 抽成 8%？",
+      "choices": [
+        "$6,400",
+        "$8,000",
+        "$640",
+        "$80,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q061"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "420 呎 × 呎租 $45，月租約？",
+      "choices": [
+        "$18,900",
+        "$420",
+        "$45",
+        "$9,450"
+      ],
+      "answerIndex": 0,
+      "id": "Q062"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "欠租 1.5 個月，月租 $12,000？",
+      "choices": [
+        "$18,000",
+        "$12,000",
+        "$6,000",
+        "$24,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q063"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "四人合租 $20,000，一人平均？",
+      "choices": [
+        "$5,000",
+        "$20,000",
+        "$10,000",
+        "$4,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q064"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "時薪 $42，做 8 小時？",
+      "choices": [
+        "$336",
+        "$42",
+        "$400",
+        "$84"
+      ],
+      "answerIndex": 0,
+      "id": "Q065"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "折扣九五折：$9,000 實付？",
+      "choices": [
+        "$8,550",
+        "$9,000",
+        "$8,000",
+        "$9,500"
+      ],
+      "answerIndex": 0,
+      "id": "Q066"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "管理費 $1,200 加 5%？",
+      "choices": [
+        "$1,260",
+        "$1,250",
+        "$1,200",
+        "$1,600"
+      ],
+      "answerIndex": 0,
+      "id": "Q067"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "金幣答啱 +8，全啱三次？",
+      "choices": [
+        "24",
+        "8",
+        "16",
+        "32"
+      ],
+      "answerIndex": 0,
+      "id": "Q068"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "泊車首小時 $22，其後每小時 $15；泊 3 小時？",
+      "choices": [
+        "$52",
+        "$45",
+        "$22",
+        "$37"
+      ],
+      "answerIndex": 0,
+      "id": "Q069"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "欠管理費 $2,400 分 6 期，每期？",
+      "choices": [
+        "$400",
+        "$2,400",
+        "$600",
+        "$200"
+      ],
+      "answerIndex": 0,
+      "id": "Q070"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "月租加管理費：$9,500+$1,500？",
+      "choices": [
+        "$11,000",
+        "$8,000",
+        "$10,000",
+        "$12,500"
+      ],
+      "answerIndex": 0,
+      "id": "Q071"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "日薪 $800，做 5 日？",
+      "choices": [
+        "$4,000",
+        "$800",
+        "$3,200",
+        "$5,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q072"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "兩房分租各一半：$14,000 總租，一人？",
+      "choices": [
+        "$7,000",
+        "$14,000",
+        "$3,500",
+        "$28,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q073"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "水 $60 + 電 $140 + 網 $200？",
+      "choices": [
+        "$400",
+        "$260",
+        "$340",
+        "$200"
+      ],
+      "answerIndex": 0,
+      "id": "Q074"
+    },
+    {
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "訂金 $5,000 扣首月租 $12,000，仍要補？",
+      "choices": [
+        "$7,000",
+        "$5,000",
+        "$12,000",
+        "$17,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q075"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "租約寫加租不超過 10%。而家 $22,000，下期上限？",
+      "choices": [
+        "$24,200",
+        "$32,000",
+        "$22,100",
+        "$20,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q076"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "實用 650 呎、建築 900 呎，實用率約？",
+      "choices": [
+        "72%",
+        "90%",
+        "50%",
+        "100%"
+      ],
+      "answerIndex": 0,
+      "id": "Q077"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "月租 $16,800；按金 2 個月＋預繳 1 個月＋行政 $3,200。進駐前約？",
+      "choices": [
+        "$53,600",
+        "$16,800",
+        "$33,600",
+        "$36,800"
+      ],
+      "answerIndex": 0,
+      "id": "Q078"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "管理費 $2.8／呎 × 780 呎，再加 7.5%，新月費約？",
+      "choices": [
+        "$2,348",
+        "$2,184",
+        "$2,800",
+        "$1,560"
+      ],
+      "answerIndex": 0,
+      "id": "Q079"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "基本租 $8,000 同營業額 6%（月營業 $125,000）取高者，本月？",
+      "choices": [
+        "$8,000",
+        "$7,500",
+        "$12,500",
+        "$6,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q080"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "月薪 $18,000，僱主＋僱員強積金各 5%，合計月供？",
+      "choices": [
+        "$1,800",
+        "$900",
+        "$3,600",
+        "$180"
+      ],
+      "answerIndex": 0,
+      "id": "Q081"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "時薪 $50，一周 40 小時，四周薪金（未扣稅）？",
+      "choices": [
+        "$8,000",
+        "$2,000",
+        "$4,000",
+        "$10,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q082"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "呎租 $38＋管理 $4／呎，520 呎總月付？",
+      "choices": [
+        "$21,840",
+        "$19,760",
+        "$1,976",
+        "$38,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q083"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "免租 2 個月夾喺 24 個月約，應付月數 × $18,500？",
+      "choices": [
+        "$407,000",
+        "$444,000",
+        "$37,000",
+        "$222,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q084"
+    },
+    {
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "按金 $30,000；欠 0.5 月租（月租 $14,000）；清潔 $1,200；損耗 $2,800。可退？",
+      "choices": [
+        "$19,000",
+        "$30,000",
+        "$11,800",
+        "$18,000"
+      ],
+      "answerIndex": 0,
+      "id": "Q085"
+    }
+  ]
+}

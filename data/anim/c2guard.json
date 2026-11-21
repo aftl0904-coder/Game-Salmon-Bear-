@@ -1,0 +1,33 @@
+{
+ "frameWidth": 256,
+ "frameHeight": 352,
+ "res": 4,
+ "columns": 13,
+ "anims": {
+  "walk": {
+   "start": 0,
+   "count": 4,
+   "fps": 5,
+   "loop": true
+  },
+  "reach": {
+   "start": 4,
+   "count": 3,
+   "fps": 6,
+   "loop": false
+  },
+  "hit": {
+   "start": 7,
+   "count": 2,
+   "fps": 10,
+   "loop": false
+  },
+  "die": {
+   "start": 9,
+   "count": 4,
+   "fps": 7,
+   "loop": false
+  }
+ },
+ "note": "C2 32-bit guard (G batch q128). Magenta keyed. Used by GuardZombie on C2."
+}

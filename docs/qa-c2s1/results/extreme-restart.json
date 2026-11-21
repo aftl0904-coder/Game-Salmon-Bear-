@@ -1,0 +1,24 @@
+{
+  "extremeAlive": {
+    "ok": true,
+    "ended": false,
+    "x": 381
+  },
+  "restarts": [
+    {
+      "stage": 6,
+      "mall": true,
+      "started": true,
+      "x": 220
+    },
+    {
+      "stage": 6,
+      "mall": true,
+      "started": true,
+      "x": 220
+    }
+  ],
+  "errs": [],
+  "passExtreme": true,
+  "passRestart": true
+}

@@ -3,6 +3,8 @@ import type { Player } from './Player'
 import { DEPTH } from './engine/depth'
 import { SFX } from './audio'
 import { burst } from './fx'
+import { FONT_UI } from './ui/fonts'
+import { GAME_W, GAME_H } from './display'
 
 /**
  * 第二大陸・購物中心 mechanics that are new to stage 6 (the dark veil is Stage3World's own):
@@ -20,11 +22,19 @@ export type Stage6Ctx = {
   hurt: (h: Player, dir: number, label: string) => void
   /** A bolt dropped on a hero by the patrol drone. */
   dropShot: (x: number, y: number) => void
+  enemyBodies?: () => Array<{ x: number; body: Phaser.Physics.Arcade.Body | null; active: boolean }>
 }
 
 export type Stage6Data = {
   debris?: Array<{ x: number; periodMs: number; offsetMs?: number; warnMs?: number }>
   cages?: Array<{ x: number }>
+  slipZones?: Array<{ x0: number; x1: number; mul?: number }>
+  floorJunk?: Array<{ x: number; w?: number }>
+  elevatorX?: number
+  /** Floor junk inactive until lead X passes this (teach slip first). */
+  junkUnlockX?: number
+  teachSlipX0?: number
+  teachSlipX1?: number
 }
 
 type DebrisPhase = 'idle' | 'warn' | 'fall' | 'land'
@@ -40,7 +50,7 @@ type Debris = {
   hit: Set<Player>
 }
 
-export type Stage6Event = { kind: 'debris-warn' | 'debris-fall' | 'debris-land' | 'debris-hit' | 'sweep-warn' | 'sweep-run' | 'sweep-hit' | 'drone-lock' | 'drone-shot'; x: number; at: number }
+export type Stage6Event = { kind: 'debris-warn' | 'debris-fall' | 'debris-land' | 'debris-hit' | 'sweep-warn' | 'sweep-run' | 'sweep-hit' | 'drone-lock' | 'drone-shot' | 'slip-enter' | 'junk-hit' | 'elevator'; x: number; at: number }
 
 const FALL_MS = 260
 const LAND_HURT_MS = 320
@@ -78,6 +88,22 @@ export class Stage6World {
   }> = []
   /** Recent hazard events (kept short) — what the QA scripts read to check telegraph-before-damage. */
   readonly events: Stage6Event[] = []
+  private slips: Array<{ x0: number; x1: number; mul: number; flash: Phaser.GameObjects.Rectangle }> = []
+  private junk: Array<{ x: number; w: number; root: Phaser.GameObjects.Container; cd: Map<Player, number> }> = []
+  private elevX: number | null = null
+  private elevDone = false
+  mood = 0
+  private moodWash: Phaser.GameObjects.Rectangle | null = null
+  private vignette: Phaser.GameObjects.Rectangle | null = null
+  private fanGfx: Phaser.GameObjects.Container | null = null
+  private fanBlades: Phaser.GameObjects.Graphics | null = null
+  fanOn = false
+  private fanSpin = 0
+  private junkUnlockX = 0
+  private teachSlipX0: number | null = null
+  private teachSlipX1: number | null = null
+  private slipTaught = false
+  private junkTaught = false
 
   constructor(ctx: Stage6Ctx, d: Stage6Data) {
     this.ctx = ctx
@@ -90,7 +116,105 @@ export class Stage6World {
       this.debris.push({ x: c.x, periodMs: c.periodMs, warnMs, phase: 'idle', t: c.offsetMs ?? 0, col, base, chunk: null, hit: new Set() })
     }
     for (const c of d.cages ?? []) this.drawCage(c.x)
+    this.elevX = d.elevatorX ?? null
+    if (this.elevX != null) this.buildElevator(this.elevX)
+    this.junkUnlockX = d.junkUnlockX ?? 0
+    this.teachSlipX0 = d.teachSlipX0 ?? null
+    this.teachSlipX1 = d.teachSlipX1 ?? null
+    for (const z of d.slipZones ?? []) this.buildSlip(z.x0, z.x1, z.mul ?? 1.5)
+    for (const j of d.floorJunk ?? []) this.buildJunk(j.x, j.w ?? 36)
+    this.moodWash = s.add.rectangle(0, 0, GAME_W, GAME_H, 0x1a2030, 0).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.UI - 40)
+    this.vignette = s.add.rectangle(0, 0, GAME_W, GAME_H, 0x100008, 0).setOrigin(0).setScrollFactor(0).setDepth(DEPTH.UI - 39)
+    this.buildBossFan()
   }
+
+  private buildElevator(x: number) {
+    const s = this.ctx.scene
+    const f = this.ctx.floorY
+    const g = s.add.graphics().setDepth(DEPTH.PROP - 1)
+    g.fillStyle(0x2a3340, 1).fillRect(x - 40, f - 110, 80, 110)
+    g.fillStyle(0x1a222c, 1).fillRect(x - 34, f - 104, 30, 98).fillRect(x + 4, f - 104, 30, 98)
+    g.lineStyle(2, 0xc0d0e0, 1).strokeRect(x - 40, f - 110, 80, 110)
+    g.fillStyle(0xffd060, 1).fillRect(x - 12, f - 118, 24, 8)
+    s.add.text(x, f - 128, '電梯', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe8a0', backgroundColor: '#243040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+  }
+
+  private buildSlip(x0: number, x1: number, mul: number) {
+    const s = this.ctx.scene
+    const f = this.ctx.floorY
+    const mid = (x0 + x1) / 2
+    const flash = s.add.rectangle(mid, f - 4, x1 - x0, 10, 0x80e0ff, 0.18).setDepth(DEPTH.PROP - 5)
+    s.add.text(mid, f - 78, '⚠ 小心地滑', { fontFamily: FONT_UI, fontSize: '11px', color: '#1a1a10', backgroundColor: '#ffe060', padding: { x: 4, y: 2 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    this.slips.push({ x0, x1, mul, flash })
+  }
+
+  private buildJunk(x: number, w: number) {
+    const s = this.ctx.scene
+    const f = this.ctx.floorY
+    const root = s.add.container(x, f).setDepth(DEPTH.PROP + 2)
+    const g = s.add.graphics()
+    g.fillStyle(0x0a0a0c, 0.55).fillEllipse(0, -2, w + 10, 10)
+    g.fillStyle(0xd8d0c0, 1).fillTriangle(-w / 2, -4, w / 2, -4, 0, -28)
+    g.fillStyle(0xff4060, 1).fillTriangle(-6, -18, 6, -18, 0, -30)
+    g.lineStyle(2, 0xfff0a0, 1).strokeTriangle(-w / 2, -4, w / 2, -4, 0, -28)
+    root.add(g)
+    const tag = s.add.text(0, -40, '雜物', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe0a0', backgroundColor: '#802018', padding: { x: 2, y: 1 } }).setOrigin(0.5)
+    root.add(tag)
+    s.tweens.add({ targets: tag, alpha: { from: 0.65, to: 1 }, duration: 480, yoyo: true, repeat: -1 })
+    this.junk.push({ x, w, root, cd: new Map() })
+  }
+
+  private buildBossFan() {
+    const s = this.ctx.scene
+    const c = s.add.container(4960, this.ctx.floorY - 150).setDepth(DEPTH.PROP - 6)
+    const g = s.add.graphics()
+    g.fillStyle(0x3a4450, 1).fillCircle(0, 0, 48)
+    g.lineStyle(3, 0x90a0b0, 1).strokeCircle(0, 0, 48)
+    g.fillStyle(0x202830, 1).fillCircle(0, 0, 10)
+    c.add(g)
+    const blades = s.add.graphics()
+    c.add(blades)
+    c.add(s.add.text(0, 58, '風機', { fontFamily: FONT_UI, fontSize: '11px', color: '#c0d0e0' }).setOrigin(0.5))
+    this.fanGfx = c
+    this.fanBlades = blades
+  }
+
+  setFan(on: boolean) {
+    this.fanOn = on
+  }
+
+  updateMood(leadX: number) {
+    let m = 0
+    if (leadX < 855) m = 0
+    else if (leadX < 1995) m = 0.15 + ((leadX - 855) / 1140) * 0.2
+    else if (leadX < 3135) m = 0.4 + ((leadX - 1995) / 1140) * 0.25
+    else if (leadX < 4560) m = 0.7 + ((leadX - 3135) / 1425) * 0.2
+    else m = 0.95
+    this.mood = m
+    this.moodWash?.setFillStyle(m < 0.45 ? 0x1a2840 : m < 0.75 ? 0x181028 : 0x280810, m * 0.55)
+    this.vignette?.setFillStyle(0x080000, Math.max(0, (m - 0.35) * 0.5))
+  }
+
+  checkElevator(leadX: number): boolean {
+    if (this.elevDone || this.elevX == null) return false
+    if (leadX >= this.elevX - 20) {
+      this.elevDone = true
+      this.log('elevator', this.elevX)
+      return true
+    }
+    return false
+  }
+
+  slipMulAt(x: number): number {
+    for (const z of this.slips) if (x >= z.x0 && x <= z.x1) return z.mul
+    return 1
+  }
+
+  headwindMul(heroX: number, movingRight: boolean): number {
+    if (!this.fanOn || !movingRight || heroX < 4600) return 1
+    return 0.45
+  }
+
 
   private log(kind: Stage6Event['kind'], x: number) {
     this.events.push({ kind, x, at: this.ctx.scene.time.now })
@@ -146,6 +270,7 @@ export class Stage6World {
     const floor = this.ctx.floorY
     const g = this.g
     g.clear()
+    this.tickMallExtras(dt, heroes)
 
     for (const d of this.debris) {
       d.t -= dt
@@ -266,6 +391,111 @@ export class Stage6World {
     void now
   }
 
+
+  private tickMallExtras(dt: number, heroes: Player[]) {
+    for (const z of this.slips) {
+      let hot = false
+      for (const h of heroes) {
+        if (!h.active) continue
+        if (h.x >= z.x0 && h.x <= z.x1) {
+          hot = true
+          const body = h.body as Phaser.Physics.Arcade.Body | null
+          if (body && Math.abs(body.velocity.x) > 20) {
+            body.setVelocityX(Phaser.Math.Clamp(body.velocity.x * (1 + (z.mul - 1) * 0.045), -220, 220))
+          }
+        }
+      }
+      z.flash.setAlpha(hot ? 0.5 : 0.12 + 0.1 * Math.sin(this.ctx.scene.time.now / 180))
+      z.flash.setFillStyle(hot ? 0xa0f0ff : 0x80e0ff, hot ? 0.5 : 0.18)
+    }
+    for (const e of this.ctx.enemyBodies?.() ?? []) {
+      if (!e.active || !e.body) continue
+      const mul = this.slipMulAt(e.x)
+      if (mul > 1.01 && Math.abs(e.body.velocity.x) > 10) {
+        e.body.setVelocityX(e.body.velocity.x * (1 + (mul - 1) * 0.05))
+      }
+    }
+    // Teach slip once in atrium — only new mechanic for the opening beat.
+    if (!this.slipTaught && this.teachSlipX0 != null && this.teachSlipX1 != null) {
+      for (const h of heroes) {
+        if (!h.active) continue
+        if (h.x >= this.teachSlipX0 && h.x <= this.teachSlipX1) {
+          this.slipTaught = true
+          const s = this.ctx.scene
+          const tip = s.add
+            .text(h.x, this.ctx.floorY - 110, '新機制：地滑！地面閃就會加速', {
+              fontFamily: FONT_UI,
+              fontSize: '14px',
+              color: '#1a1a10',
+              backgroundColor: '#ffe060',
+              padding: { x: 6, y: 4 },
+            })
+            .setOrigin(0.5)
+            .setDepth(DEPTH.UI + 20)
+          s.tweens.add({ targets: tip, y: tip.y - 12, alpha: 0, delay: 2200, duration: 500, onComplete: () => tip.destroy() })
+          break
+        }
+      }
+    }
+    const junkOn = heroes.some((h) => h.active && h.x >= this.junkUnlockX)
+    if (junkOn && !this.junkTaught) {
+      this.junkTaught = true
+      const lead = heroes.find((h) => h.active) ?? heroes[0]
+      if (lead) {
+        const s = this.ctx.scene
+        const tip = s.add
+          .text(lead.x, this.ctx.floorY - 110, '新機制：地下雜物！要跳過，踩中會扣血', {
+            fontFamily: FONT_UI,
+            fontSize: '14px',
+            color: '#fff8e0',
+            backgroundColor: '#802018',
+            padding: { x: 6, y: 4 },
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.UI + 20)
+        s.tweens.add({ targets: tip, y: tip.y - 12, alpha: 0, delay: 2200, duration: 500, onComplete: () => tip.destroy() })
+      }
+    }
+    for (const j of this.junk) {
+      j.root.setVisible(junkOn)
+      if (!junkOn) continue
+      for (const h of heroes) {
+        if (!h.active) continue
+        const left = j.cd.get(h) ?? 0
+        if (left > 0) {
+          j.cd.set(h, left - dt)
+          continue
+        }
+        const airborne = !!(h as unknown as { laneJumping?: boolean }).laneJumping
+        if (airborne) continue
+        if (Math.abs(h.x - j.x) < j.w * 0.55) {
+          j.cd.set(h, 900)
+          this.ctx.hurt(h, h.x < j.x ? -1 : 1, '雜物 -1')
+          burst(this.ctx.scene, j.x, this.ctx.floorY - 20, 0xff8060, 6)
+          SFX.hurt()
+          this.log('junk-hit', j.x)
+        }
+      }
+    }
+    if (this.fanBlades) {
+      this.fanSpin += dt * (this.fanOn ? 0.02 : 0.004)
+      this.fanBlades.clear()
+      this.fanBlades.fillStyle(this.fanOn ? 0xb0c4d8 : 0x607080, this.fanOn ? 0.95 : 0.55)
+      for (let i = 0; i < 3; i++) {
+        const a = this.fanSpin + (i * Math.PI * 2) / 3
+        this.fanBlades.fillTriangle(
+          0,
+          0,
+          Math.cos(a) * 40,
+          Math.sin(a) * 40,
+          Math.cos(a + 0.35) * 18,
+          Math.sin(a + 0.35) * 18,
+        )
+      }
+    }
+    void this.fanGfx
+  }
+
   /** Boss down: drop any beam / drone still in flight. */
   clearHazards() {
     for (const w of this.sweeps) for (const p of w.pillars) p.destroy()
@@ -283,8 +513,63 @@ export class Stage6World {
     }
     for (const w of this.sweeps) for (const p of w.pillars) p.destroy()
     for (const d of this.drones) d.img.destroy()
+    for (const z of this.slips) z.flash.destroy()
+    for (const j of this.junk) j.root.destroy()
+    this.moodWash?.destroy()
+    this.vignette?.destroy()
+    this.fanGfx?.destroy()
     this.debris = []
     this.sweeps = []
     this.drones = []
   }
 }
+
+/** Short faux-3D elevator ride at B→C. */
+export function playElevatorRide(scene: Phaser.Scene): Promise<void> {
+  return new Promise((resolve) => {
+    const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 200)
+    const dim = scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x05070a, 0.92).setOrigin(0).setInteractive()
+    root.add(dim)
+    const g = scene.add.graphics()
+    root.add(g)
+    let tms = 0
+    let floor = 1
+    const label = scene.add
+      .text(GAME_W / 2, 48, '電梯直落…', { fontFamily: FONT_UI, fontSize: '16px', color: '#ffe08a' })
+      .setOrigin(0.5)
+    root.add(label)
+    root.add(
+      scene.add
+        .text(GAME_W / 2, GAME_H - 30, '撳一下 Skip', { fontFamily: FONT_UI, fontSize: '12px', color: '#8a9aaa' })
+        .setOrigin(0.5),
+    )
+    let done = false
+    const end = () => {
+      if (done) return
+      done = true
+      timer.remove(false)
+      root.destroy(true)
+      resolve()
+    }
+    const timer = scene.time.addEvent({
+      delay: 40,
+      loop: true,
+      callback: () => {
+        tms += 40
+        const sway = Math.sin(tms / 180) * 6
+        g.clear()
+        g.fillStyle(0x1c2430, 1).fillRect(160 + sway, 70, 320, 220)
+        g.fillStyle(0x10161e, 1).fillTriangle(160 + sway, 70, 480 + sway, 70, 320, 40)
+        g.fillStyle(0x2a3544, 1).fillRect(180 + sway, 100, 120, 160).fillRect(340 + sway, 100, 120, 160)
+        g.lineStyle(2, 0xc0d8f0, 0.8).strokeRect(160 + sway, 70, 320, 220)
+        if (tms % 600 < 40) floor = Math.min(2, floor + 1)
+        label.setText(floor >= 2 ? 'B2・陰層' : '直落中…')
+        if (tms >= 2800) end()
+      },
+    })
+    dim.on('pointerdown', end)
+    scene.input.keyboard?.once('keydown-ENTER', end)
+    scene.input.keyboard?.once('keydown-SPACE', end)
+  })
+}
+

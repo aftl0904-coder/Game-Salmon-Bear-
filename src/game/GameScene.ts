@@ -23,6 +23,8 @@ import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
+import { goldfishQuiz } from './membershipQuiz'
+import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
@@ -58,7 +60,8 @@ import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hook
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
-import { Stage6World, type Stage6Data } from './stage6World'
+import { MallScrubber } from './enemies/MallScrubber'
+import { Stage6World, playElevatorRide, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
 import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
@@ -196,7 +199,7 @@ type Stage1 = {
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'trainer'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'mall-scrubber' | 'trainer'; triggerX: number; arenaX0: number; arenaX1: number }
   /** Stage 3 (月影夜市) extras — see stage3World.ts. */
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
@@ -217,6 +220,12 @@ type Stage1 = {
   darkAlpha?: Stage3Data['darkAlpha']
   debris?: Stage6Data['debris']
   cages?: Stage6Data['cages']
+  slipZones?: Stage6Data['slipZones']
+  floorJunk?: Stage6Data['floorJunk']
+  elevatorX?: number
+  junkUnlockX?: number
+  teachSlipX0?: number
+  teachSlipX1?: number
   trainer?: typeof stage7Raw.trainer
   reactionX?: number
   staticDecor?: typeof stage7Raw.staticDecor
@@ -244,7 +253,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt' | 'goldfish'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -399,7 +408,7 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
-  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | null = null
+  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | null = null
   /** 月影夜市 (stage 3). */
   private market = false
   private s3world: Stage3World | null = null
@@ -414,6 +423,8 @@ export class GameScene extends Phaser.Scene {
   private stage7Events: Array<{ kind: string; at: number }> = []
   private s6world: Stage6World | null = null
   private cageSaid = false
+  /** Mall only: non-combat Security Director sighting (not the scrubber boss). */
+  private directorSighted = false
   private s5world: Stage5World | null = null
   private hotSpringsDone = new Set<number>()
   /** 龍蝦 power-up: attack ×1.5 until this time. */
@@ -430,6 +441,10 @@ export class GameScene extends Phaser.Scene {
   private friendsSaved: string[] = []
   /** The stir-the-coffee minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Optional 樓層掣迷你房 (ST-06); skippable — door at floorDoorX. */
+  private floorDoorX = 1432
+  private floorRoomDone = false
+  private floorPrompt: Phaser.GameObjects.Text | null = null
   /** Each hero keeps their own coins (docs/bible/minigames-shop.md §2). */
   private purse: Record<Who, number> = { boy: 0, girl: 0 }
   private bossBar: { fill: Phaser.GameObjects.Rectangle; root: Phaser.GameObjects.Container; w: number } | null = null
@@ -457,6 +472,7 @@ export class GameScene extends Phaser.Scene {
     this.s6world?.destroy()
     this.s6world = null
     this.cageSaid = false
+    this.directorSighted = false
     this.s3world?.destroy()
     this.s3world = null
     this.s4world?.destroy()
@@ -476,6 +492,9 @@ export class GameScene extends Phaser.Scene {
     this.bossFight = false
     this.friendsSaved = []
     this.coffeeDone = false
+    this.floorRoomDone = false
+    this.floorPrompt?.destroy()
+    this.floorPrompt = null
     this.bossBar = null
     this.clearCardAction = null
     this.clearModal = false
@@ -1045,6 +1064,7 @@ export class GameScene extends Phaser.Scene {
     if (this.market) this.tickStage3(dt)
     if (this.depot) this.tickStage4(dt)
     if (this.tower) this.tickStage5(dt)
+    this.collectNearbyCoins()
     if (this.mall) this.tickStage6(dt)
     this.checkFall()
     this.updateCheckpoint()
@@ -1617,7 +1637,8 @@ export class GameScene extends Phaser.Scene {
     // Muzzle at torso — scaled to hero display size.
     const hgt = Math.max(16, h.displayHeight || 32)
     const muzzleX = h.x + h.facing * hgt * 0.55
-    const muzzleY = h.y - hgt * 0.55
+    // Crouch shots sit lower so ducking actually covers a lower band (C2S1 GDD).
+    const muzzleY = h.y - (h.crouching ? hgt * 0.28 : hgt * 0.55)
     // 金鮭 levels: Lv1 one roe · Lv2 two (up/down) · Lv3 three-way fan, range ×1.4.
     const lv = this.weaponLv(h)
     const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
@@ -1934,6 +1955,7 @@ export class GameScene extends Phaser.Scene {
     if (this.time.now < ((h.getData('stompSafeUntil') as number | undefined) ?? 0)) return
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
+    if (e instanceof MallScrubber && !e.canHurtHero(h)) return
     if (!sameLane(h, pe)) return
     if (pe.species === 'elephant' && pe.fsm === 'ATTACK' && (pe.atkPhase === 'strike' || pe.atkPhase === 'charge')) {
       const reach = Math.max(56, pe.displayWidth) * 1.5
@@ -1943,6 +1965,7 @@ export class GameScene extends Phaser.Scene {
     }
     if (pe.fsm === 'ATTACK') pe.hitThis = true
     else pe.contactCd = 650
+    if (e instanceof MallScrubber) e.markHurtHero(h)
     const away = (Math.sign(h.x - e.x) || -1) as 1 | -1
     // 疾風桶：攻擊力偏弱（較細 knock）；仍扣 1 格，但衝擊感明顯較輕。
     const speciesKnock = pe.species === 'barrel' ? 0.4 : pe.species === 'elephant' ? 1.15 : 1
@@ -3046,11 +3069,53 @@ export class GameScene extends Phaser.Scene {
     }
     // A · the dome entrance is the centrepiece; two shopfronts frame the exit.
     prop('s6-dome', 330, DEPTH.PROP - 4)
-    prop('s6-shop-c', 610, DEPTH.PROP - 3)
-    prop('s6-shop-a', 760, DEPTH.PROP - 3)
+    // D: show real s6-shop sprites (do not paint opaque facades over them).
+    const placeShop = (key: string, x: number, tint?: number) => {
+      const img = prop(key, x, DEPTH.PROP - 3, tint)
+      if (img) img.setScale((img.scaleX || 1) * 1.15)
+      return img
+    }
+    placeShop('s6-shop-c', 610)
+    placeShop('s6-shop-a', 760)
     // B · shop corridor.
     const shops = ['s6-shop-b', 's6-shop-c', 's6-shop-a', 's6-shop-b', 's6-shop-c', 's6-shop-a']
-    ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => prop(shops[i]!, x, DEPTH.PROP - 3))
+    ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => placeShop(shops[i]!, x))
+    // Light readability overlays only: stripe awning tip + sign text (sprites carry the shop look).
+    {
+      const aw = this.add.graphics().setDepth(DEPTH.PROP - 1)
+      const signs = ['茶餐廳', '鞋店', '電器', '藥妝', '書店', '服飾', '手信', '咖啡']
+      const xs = [610, 760, 930, 1100, 1290, 1480, 1700, 1930]
+      xs.forEach((x, i) => {
+        const awn = [0xc45a4a, 0xf0f0f0]
+        for (let k = 0; k < 8; k++) {
+          aw.fillStyle(awn[k % 2]!, 0.95).fillRect(x - 48 + k * 12, f - 118, 12, 10)
+        }
+        aw.fillStyle(0x1a2a4a, 0.92).fillRect(x - 36, f - 108, 72, 14)
+        this.add
+          .text(x, f - 101, signs[i]!, {
+            fontFamily: FONT_UI,
+            fontSize: '10px',
+            color: '#ffe08a',
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.SIGN)
+      })
+      // Atrium festive prop (centrepiece beside dome) — visual only, not a new mechanic.
+      aw.fillStyle(0xffe080, 0.85).fillCircle(400, f - 120, 18)
+      aw.fillStyle(0xff6080, 0.9).fillCircle(400, f - 120, 8)
+      this.add.text(400, f - 150, '中庭裝置', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff0c0', backgroundColor: '#403020', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      // Escalator near B→C (after teach beat).
+      aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
+      aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
+      this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      // Floor-button room door (optional side content) — near B corridor mid.
+      aw.fillStyle(0x4a5568, 1).fillRect(1410, f - 78, 44, 78)
+      aw.fillStyle(0x2a3340, 1).fillRect(1416, f - 72, 32, 66)
+      aw.fillStyle(0xd4af37, 1).fillCircle(1440, f - 40, 2)
+      aw.fillStyle(0x1a5a9a, 1).fillRoundedRect(1418, f - 96, 28, 16, 2)
+      this.add.text(1432, f - 88, 'P', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe080' }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      this.add.text(1432, f - 110, '維修門↑', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    }
     // C · half-finished shopfronts behind scaffolding, with the ceiling cracks above each debris drop.
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)
     ;[2090, 2380, 2740, 3020].forEach((x, i) => {
@@ -3177,15 +3242,96 @@ export class GameScene extends Phaser.Scene {
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
+    const lead = this.leadX()
+    this.s6world?.updateMood(lead)
+    if (!this.exhibit) this.tickFloorDoor()
+    // Elevator faux-3D once at B→C.
+    if (!this.exhibit && this.s6world?.checkElevator(lead) && !this.storyIntro) {
+      this.physics.pause()
+      for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+      const gate = { destroy: () => undefined }
+      this.storyIntro = gate
+      void playElevatorRide(this).then(() => {
+        if (this.storyIntro === gate) this.storyIntro = null
+        this.physics.resume()
+        this.resetPauseKeys()
+        floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……', '#c0d0ff', { size: 14, dur: 1800 })
+      })
+    }
+    // Fan / headwind only for human SecurityDirector / trainer (scrubber has no fan).
+    const dir = this.queen
+    const fanActs = dir instanceof SecurityDirector && (dir.act === 'windup' || dir.act === 'stalk' || dir.act === 'intro')
+    this.s6world?.setFan(!!fanActs && this.bossOn)
+    if (this.s6world && this.bossOn && fanActs) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive) continue
+        const body = h.body as Phaser.Physics.Arcade.Body | null
+        if (!body) continue
+        const movingRight = body.velocity.x > 12
+        const mul = this.s6world.headwindMul(h.x, movingRight)
+        if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+      }
+    }
+    if (!this.exhibit) this.tickDirectorSighting()
     const cx = this.cameras.main.scrollX + GAME_W / 2
     const k = Phaser.Math.Clamp((cx - 3135 + 200) / 320, 0, 1)
     this.mallFar.mall?.setAlpha(1 - k)
     this.mallFar.fac?.setAlpha(k)
     if (this.exhibit) {
       this.tickExhibitReaction()
-    }
-    else this.tickCage()
+    } else this.tickCage()
     this.tickStage2(dt)
+  }
+
+  /** Optional 樓層掣房：企近維修門撳 ↑／W／Up 進入；可唔入。 */
+  private tickFloorDoor() {
+    if (this.floorRoomDone || this.storyIntro || this.ended || !this.started) {
+      this.floorPrompt?.setVisible(false)
+      return
+    }
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    const near = heroes.some((h) => Math.abs(h.x - this.floorDoorX) < 36)
+    if (!this.floorPrompt) {
+      this.floorPrompt = this.add
+        .text(this.floorDoorX, LANE_FLOOR_Y - 120, '↑ 入維修房', {
+          fontFamily: FONT_UI,
+          fontSize: '11px',
+          color: '#ffe08a',
+          backgroundColor: '#203040',
+          padding: { x: 4, y: 2 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+    }
+    this.floorPrompt.setVisible(near)
+    if (!near) return
+    const up =
+      (!!this.cursors?.up && Phaser.Input.Keyboard.JustDown(this.cursors.up)) || TouchInput.justPressed('up')
+    if (!up) return
+    this.openFloorButtonRoom()
+  }
+
+  private openFloorButtonRoom() {
+    if (this.floorRoomDone || this.storyIntro) return
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    const mini = floorButtonRoom(this)
+    this.storyIntro = mini
+    this.floorPrompt?.setVisible(false)
+    void mini.done.then((r) => {
+      if (this.storyIntro === mini) this.storyIntro = null
+      this.physics.resume()
+      this.resetPauseKeys()
+      if (r.exited) return
+      this.floorRoomDone = true
+      if (r.ok && r.coins > 0) {
+        this.addCoins(this.boy.role as Who, r.coins)
+        floatText(this, this.floorDoorX, LANE_FLOOR_Y - 100, `+${r.coins}幣`, '#ffe08a', { size: 14, dur: 1400 })
+      } else if (!r.ok) {
+        const h = this.boy
+        if (h?.alive) this.hazardHit(h, { knockX: 0, knockY: -200, label: '錯掣 -1' })
+      }
+    })
   }
 
   /** Walk close to the caged silhouette in the honey factory: 噗噗 reacts once. */
@@ -3200,6 +3346,30 @@ export class GameScene extends Phaser.Scene {
       if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
       break
     }
+  }
+
+  /**
+   * Non-combat: 商場保安總監 briefly appears in the factory approach (story beat only).
+   * Dialogue stays 「待補」 until Alan writes it. Never the stage-6 fight boss.
+   */
+  private tickDirectorSighting() {
+    if (this.directorSighted || !this.mall || this.exhibit || !this.started || this.bossFight || this.ended) return
+    if (this.leadX() < 4120) return
+    this.directorSighted = true
+    const x = 4280
+    const key = this.textures.exists('anim-triboss') ? 'anim-triboss' : this.textures.exists('triboss') ? 'triboss' : null
+    const spr = key
+      ? this.add.sprite(x, LANE_FLOOR_Y, key).setOrigin(0.5, 1).setTint(0x3a5a88).setAlpha(0.9).setDepth(DEPTH.WORLD_ENTITY + 40)
+      : this.add.rectangle(x, LANE_FLOOR_Y - 40, 36, 72, 0x3a5a88, 0.85).setOrigin(0.5, 1).setDepth(DEPTH.WORLD_ENTITY + 40)
+    floatText(this, x, LANE_FLOOR_Y - 110, '待補', '#c8d8ff', { size: 12, dur: 2400 })
+    this.tweens.add({
+      targets: spr,
+      alpha: 0,
+      x: x + 40,
+      delay: 1600,
+      duration: 900,
+      onComplete: () => spr.destroy(),
+    })
   }
 
   private tickExhibitReaction() {
@@ -3666,6 +3836,11 @@ export class GameScene extends Phaser.Scene {
           heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
           hurt: (h, dir, label) => this.hazardHit(h, { knockX: dir * 220, knockY: -380, label }),
           dropShot: (x, y) => this.droneBolt(x, y),
+          enemyBodies: () =>
+            this.enemies.getChildren().map((o) => {
+              const e = o as Phaser.Physics.Arcade.Sprite & { active: boolean }
+              return { x: e.x, body: e.body as Phaser.Physics.Arcade.Body | null, active: !!e.active }
+            }),
         },
         ST,
       )
@@ -3874,7 +4049,8 @@ export class GameScene extends Phaser.Scene {
     this.checkpointMamas = []
     for (const x of this.checkpointXs) {
       const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
-      const isStall = x === this.checkpointXs[0]
+      // Mall: first CP is plain save (teach slip first); membership stall = 2nd CP.
+      const isStall = this.mall ? x === this.checkpointXs[1] : x === this.checkpointXs[0]
       const st = this.stall()
       if (isStall) {
         if (this.textures.exists('cs-cart')) {
@@ -3931,7 +4107,8 @@ export class GameScene extends Phaser.Scene {
           else this.tweens.add({ targets: mama, y: mama.y - 6, duration: 140, yoyo: true, repeat: 1, ease: 'Sine.out' })
         }
         // Only the first checkpoint is the stall; later ones just save and heal.
-        if (this.coffeeDone || x !== this.checkpointXs[0]) {
+        const stallX = this.mall ? this.checkpointXs[1] : this.checkpointXs[0]
+        if (this.coffeeDone || x !== stallX) {
           this.drinkCoffee()
           return
         }
@@ -3954,7 +4131,23 @@ export class GameScene extends Phaser.Scene {
     let activeGate: { destroy: () => void } = gate
     this.storyIntro = gate
     const pages =
-      st.game === 'pour'
+      st.game === 'goldfish'
+        ? [
+            {
+              title: `${st.keeper}：金魚眼搶答`,
+              lines:
+                this.mode === '2p'
+                  ? ['右邊紅掣＝倫寶，左邊紅掣＝琪寶寶，', '搶到就快啲揀答案；答錯另一位可搶返。']
+                  : ['右邊大紅掣搶答，', '搶到就快啲揀答案。'],
+              tip: '冇人搶會 Skip；超時扣小小幣。',
+            },
+            {
+              title: '一共七題',
+              lines: ['最後一題最難、獎金最多。'],
+              tip: this.mode === '2p' ? '各人金幣入各自錢包。' : '假對手會同你搶。',
+            },
+          ]
+        : st.game === 'pour'
         ? [
             { title: `${st.keeper}：倒${st.food}`, lines: ['撳住倒漿落個模度，', '啱啱滿就放手。'], tip: '倒多咗會瀉，倒少咗唔夠分。' },
             { title: '一共三底', lines: ['每底都倒到啱啱滿，', '就全中。'], tip: '每底啱啱好都係金幣，用嚟買裝備。' },
@@ -3976,7 +4169,7 @@ export class GameScene extends Phaser.Scene {
               ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
-    const after = (coins: number, pts: number) => {
+    const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
       if (this.storyIntro === activeGate) this.storyIntro = null
       if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
@@ -3986,7 +4179,12 @@ export class GameScene extends Phaser.Scene {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
       }
-      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+      if (split) {
+        if (split.boy) this.addCoins('boy', split.boy)
+        if (split.girl) this.addCoins('girl', split.girl)
+      } else if (coins > 0) {
+        this.addCoins(this.boy.role as Who, coins)
+      }
     }
     if (choice === 'skip') {
       after(0, 0)
@@ -4008,6 +4206,12 @@ export class GameScene extends Phaser.Scene {
       const mini = tiltGame(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      return
+    }
+    if (st.game === 'goldfish') {
+      const mini = goldfishQuiz(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
       return
     }
     const mini = stirCoffee(this)
@@ -4125,9 +4329,20 @@ export class GameScene extends Phaser.Scene {
     if (spin) c.play('fxa-coin-spin')
     c.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
-    ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    const body = c.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    // Generous pickup — torso fringe counts; standing reach for mid-height coins.
+    body.setCircle(14, (c.width - 28) / 2, (c.height - 28) / 2)
     addGroundShadow(this, c, () => y, 0.45)
-    this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
+    // Subtle bob that keeps body synced (updateFromGameObject each frame via physics).
+    this.tweens.add({
+      targets: c,
+      y: y - 4,
+      yoyo: true,
+      repeat: -1,
+      duration: 520,
+      onUpdate: () => body.updateFromGameObject(),
+    })
   }
 
   private spawnCast() {
@@ -4977,13 +5192,33 @@ export class GameScene extends Phaser.Scene {
     if (item.getData('bossJar')) this.queenDefeated()
   }
 
+  /** Soft pickup: chest/fringe near coin counts even if foot hitbox misses. */
+  private collectNearbyCoins() {
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    for (const coin of this.coinPickups.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (!coin.active) continue
+      for (const h of heroes) {
+        const chestY = h.y - Math.max(12, h.displayHeight * 0.45)
+        const dx = h.x - coin.x
+        const dy = chestY - coin.y
+        if (dx * dx + dy * dy < 38 * 38) {
+          this.takeCoin(coin, h)
+          break
+        }
+      }
+    }
+  }
+
   private takeCoin(coin: Phaser.Physics.Arcade.Sprite, by?: Hero | null) {
     if (!coin.active) return
     coin.disableBody(true, true)
     this.addCoins(by?.role as Who | undefined, 1)
     SFX.coin()
-    burst(this, coin.x, coin.y, 0xffe08a, 8)
-    floatText(this, coin.x, coin.y - 16, '＋1幣', '#ffe08a')
+    burst(this, coin.x, coin.y, 0xffe08a, 14)
+    floatText(this, coin.x, coin.y - 18, '＋1幣', '#ffe08a', { size: 14, rise: 18, dur: 700 })
+    // Weighty squash pop.
+    const pop = this.add.image(coin.x, coin.y, coin.texture.key).setDepth(DEPTH.FX).setScale((coin.scaleX || 1) * 1.2)
+    this.tweens.add({ targets: pop, scale: 0.2, alpha: 0, duration: 220, onComplete: () => pop.destroy() })
   }
 
   /** Coins land in one hero's purse; the shared stock is what 投幣續關 spends. */
@@ -6582,7 +6817,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場保安總監' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場清潔機械人' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -6598,8 +6833,13 @@ export class GameScene extends Phaser.Scene {
       SFX.boss()
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
-        : this.mall
+        : this.exhibit
         ? new SecurityDirector(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.directorHooks())
+        : this.mall
+        ? new MallScrubber(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, {
+            floorY: () => LANE_FLOOR_Y,
+            bossEvent: (kind) => this.onQueenEvent(kind),
+          })
         : this.tower
         ? new TriBoss(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.triHooks())
         : this.depot
@@ -6612,7 +6852,7 @@ export class GameScene extends Phaser.Scene {
       q.setFlipX(true)
       this.queen = q
       this.buildBossBar()
-      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.stageNo === 1 ? '#ff7a4a' : this.mall ? '#8ac8ff' : this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
+      floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.stageNo === 1 ? '#ff7a4a' : this.mall ? '#9ad4e8' : this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })
       // Last-chance full heal: one 極上壽司船 near the arena entrance, before the boss.
       if (!this.bossSushiSpawned) {
         this.bossSushiSpawned = true
@@ -6662,7 +6902,7 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '無人機巡邏燈出動！企喺光入面會俾佢鎖定——郁開！' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
+        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '轉刷模式啟動！靠近會掃——睇預警區！' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
         '#ffe08a',
         { size: 16, dur: 2000 },
       )
@@ -6673,13 +6913,13 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '保安總監發狂！掃描＋無人機同時嚟——跳過光束！' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
+        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '清潔機械人加速！預警仲喺——郁開先打！' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
         '#ff9a3a',
         { size: 16, dur: 2000 },
       )
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '掃描器過熱！而家打！' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '過熱停機！而家打！' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
     } else if (kind === 'finale' && this.queen) {
       SFX.sparkle()
       this.cameras.main.flash(200, 255, 220, 160)
@@ -6688,7 +6928,7 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '制服帽跌咗！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '洗地機停機！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy
@@ -6707,7 +6947,7 @@ export class GameScene extends Phaser.Scene {
     const b = ST.boss!
     const x = (b.arenaX0 + b.arenaX1) / 2
     SFX.powerUp()
-    this.emitScore('保安總監倒下！拎埋嗰罐蜜！')
+    this.emitScore('清潔機械人停機！拎埋嗰罐蜜！')
     floatText(this, x, 90, '蜜罐跌咗出嚟！', '#ffe08a', { size: 18, dur: 2200 })
     this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
     const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as Phaser.Physics.Arcade.Sprite | undefined

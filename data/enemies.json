@@ -7,7 +7,7 @@
     "speed": 48,
     "ai": {
       "patrolTiles": 6,
-      "telegraphMs": 500,
+      "telegraphMs": 720,
       "dashSpeed": 180,
       "dashMs": 600,
       "stunMs": 1000

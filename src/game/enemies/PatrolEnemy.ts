@@ -364,7 +364,10 @@ export class PatrolEnemy extends Enemy {
       this.windup = Math.max(500, ms)
     } else if (this.species === 'fish') {
       // Charger: long, readable run-up so the hero can jump the dash.
-      this.windup = aiNum('fish', 'telegraphMs', 500)
+      this.windup = aiNum('fish', 'telegraphMs', 720)
+      // Exclamation telegraph above head.
+      const bang = this.scene.add.text(this.x, this.y - this.displayHeight - 8, '！', { fontSize: '18px', color: '#ff3030', stroke: '#fff0a0', strokeThickness: 4 }).setOrigin(0.5).setDepth(this.depth + 5)
+      this.scene.tweens.add({ targets: bang, y: bang.y - 10, alpha: 0, duration: Math.max(280, this.windup), onComplete: () => bang.destroy() })
     } else {
       this.windup = Math.min(420, Math.max(220, ms))
     }
@@ -659,8 +662,11 @@ export class PatrolEnemy extends Enemy {
       corpse.play(`${this.animSet}-die`)
       // `this` is destroyed ~280ms after die(), so drive the fade from the corpse's own scene.
       corpse.once(Phaser.Animations.Events.ANIMATION_COMPLETE, () => {
-        corpse.scene?.tweens.add({ targets: corpse, alpha: 0, delay: 350, duration: 300, onComplete: () => corpse.destroy() })
+        // Keep residual short — long corpse reads as a pickup (C2S1 GDD).
+        corpse.scene?.tweens.add({ targets: corpse, alpha: 0, delay: 40, duration: 180, onComplete: () => corpse.destroy() })
       })
+      // Also cap total lifetime in case anim stalls on last "bone/eye" frame.
+      corpse.scene?.time.delayedCall(420, () => { if (corpse.active) corpse.destroy() })
       super.die(dir)
       this.setVisible(false)
       return

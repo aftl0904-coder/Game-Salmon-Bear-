@@ -1,0 +1,1316 @@
+{
+ "stops": [
+  2200,
+  4700,
+  3300,
+  3900,
+  300,
+  1000,
+  2200,
+  2200,
+  3900,
+  3900,
+  4700,
+  1000,
+  300,
+  2200,
+  4700,
+  3300,
+  4700,
+  3900,
+  2200,
+  300,
+  4700,
+  1000,
+  1000,
+  1000,
+  1000,
+  3900,
+  1000,
+  2200,
+  1000,
+  4700,
+  3300,
+  3900,
+  2200,
+  1000,
+  1000,
+  1000,
+  4700,
+  300,
+  300,
+  3900,
+  4700,
+  3300,
+  4700,
+  4700,
+  3900,
+  3900,
+  1000,
+  4700,
+  3900,
+  3900,
+  3300,
+  2200
+ ],
+ "restarts": 0,
+ "samples": [
+  {
+   "ended": false,
+   "x": 245,
+   "now": 13430,
+   "actors": 1,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 174,
+   "now": 17530,
+   "actors": 1,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 167,
+   "now": 21497,
+   "actors": 1,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 2200,
+   "now": 26447,
+   "actors": 7,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 2200,
+   "now": 31080,
+   "actors": 7,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 2200,
+   "now": 35963,
+   "actors": 7,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 4700,
+   "now": 40896,
+   "actors": 7,
+   "shots": 0,
+   "q": false
+  },
+  {
+   "ended": false,
+   "x": 4697,
+   "now": 45129,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4833,
+   "now": 48812,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4663,
+   "now": 52662,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 56245,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4677,
+   "now": 59962,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4659,
+   "now": 63778,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4761,
+   "now": 67528,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4782,
+   "now": 71195,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 74778,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 78444,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4706,
+   "now": 82228,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4656,
+   "now": 86211,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4658,
+   "now": 89944,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4661,
+   "now": 93661,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4684,
+   "now": 97594,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4725,
+   "now": 101310,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4758,
+   "now": 105010,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4663,
+   "now": 108743,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4711,
+   "now": 112510,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4668,
+   "now": 116443,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 120226,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4704,
+   "now": 124093,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4711,
+   "now": 127909,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4708,
+   "now": 131776,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4673,
+   "now": 135676,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4656,
+   "now": 139342,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4722,
+   "now": 143342,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4766,
+   "now": 147175,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4721,
+   "now": 150892,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4665,
+   "now": 154625,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 158308,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 162158,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4665,
+   "now": 165741,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4665,
+   "now": 169507,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4686,
+   "now": 173357,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4653,
+   "now": 177107,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4683,
+   "now": 180890,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4675,
+   "now": 184757,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 188490,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4840,
+   "now": 192340,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4846,
+   "now": 196040,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4680,
+   "now": 200056,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4678,
+   "now": 203873,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4693,
+   "now": 207689,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4658,
+   "now": 211606,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4762,
+   "now": 215489,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4660,
+   "now": 219339,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4680,
+   "now": 223189,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4657,
+   "now": 226905,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4849,
+   "now": 230738,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4716,
+   "now": 234388,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4737,
+   "now": 238205,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4746,
+   "now": 241988,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4659,
+   "now": 245788,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": null,
+   "now": 249571,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4687,
+   "now": 253388,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4747,
+   "now": 257071,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4662,
+   "now": 261004,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4687,
+   "now": 264754,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 268604,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 272320,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": null,
+   "now": 276103,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4669,
+   "now": 280020,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 283786,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4894,
+   "now": 287519,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4696,
+   "now": 291319,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 295069,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4657,
+   "now": 298886,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4655,
+   "now": 302536,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4757,
+   "now": 306435,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4763,
+   "now": 310202,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4655,
+   "now": 314052,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4657,
+   "now": 317668,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4711,
+   "now": 321318,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 325035,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4692,
+   "now": 328685,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4666,
+   "now": 332401,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4662,
+   "now": 336134,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 340101,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 344001,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4721,
+   "now": 347917,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4696,
+   "now": 351650,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4709,
+   "now": 355483,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4832,
+   "now": 359200,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 363250,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 366850,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4679,
+   "now": 370816,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 374566,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 378332,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 382149,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 385732,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4753,
+   "now": 389515,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": null,
+   "now": 393349,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4689,
+   "now": 397298,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4670,
+   "now": 401265,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 404948,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4762,
+   "now": 408681,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4748,
+   "now": 412581,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4662,
+   "now": 416281,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4702,
+   "now": 420214,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4705,
+   "now": 423864,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 427481,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4748,
+   "now": 431064,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4750,
+   "now": 434730,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4669,
+   "now": 438630,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": true,
+   "x": null,
+   "now": 442380,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4657,
+   "now": 446196,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4764,
+   "now": 450163,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4769,
+   "now": 454013,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4750,
+   "now": 457896,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4664,
+   "now": 461496,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": null,
+   "now": 465196,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4758,
+   "now": 469012,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4701,
+   "now": 472879,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4715,
+   "now": 476579,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4699,
+   "now": 480312,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 484112,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4662,
+   "now": 487878,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4657,
+   "now": 491495,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 495544,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4682,
+   "now": 499261,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4747,
+   "now": 503044,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 506811,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4699,
+   "now": 510511,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4651,
+   "now": 514377,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 518094,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4652,
+   "now": 521943,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4673,
+   "now": 525810,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4674,
+   "now": 529510,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4689,
+   "now": 533043,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4651,
+   "now": 536610,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4683,
+   "now": 540493,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4735,
+   "now": 544126,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4756,
+   "now": 547776,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4678,
+   "now": 551476,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4676,
+   "now": 555092,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4676,
+   "now": 558909,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4715,
+   "now": 562742,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4682,
+   "now": 566425,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 569975,
+   "actors": 1,
+   "shots": 1,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4691,
+   "now": 573791,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4701,
+   "now": 577541,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 581374,
+   "actors": 1,
+   "shots": 2,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4682,
+   "now": 585274,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4718,
+   "now": 589124,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4654,
+   "now": 592874,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4709,
+   "now": 596607,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4765,
+   "now": 600407,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4711,
+   "now": 604190,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  },
+  {
+   "ended": false,
+   "x": 4748,
+   "now": 608007,
+   "actors": 1,
+   "shots": 0,
+   "q": true
+  }
+ ],
+ "errs": []
+}
