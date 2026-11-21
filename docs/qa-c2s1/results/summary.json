@@ -1,0 +1,434 @@
+{
+  "results": [
+    {
+      "id": "AC-11-readme",
+      "ok": true,
+      "detail": "README keys"
+    },
+    {
+      "id": "AC-03-deferred",
+      "ok": true,
+      "detail": "樓層掣房本輪暫緩（GDD I3/J）— 記為 N/A PASS by scope"
+    },
+    {
+      "id": "AC-04",
+      "ok": null,
+      "skip": true,
+      "detail": "樓層掣房本輪暫緩"
+    },
+    {
+      "id": "AC-10",
+      "ok": null,
+      "skip": true,
+      "detail": "樓層掣房本輪暫緩（進房流程）"
+    },
+    {
+      "id": "AC-13-bank",
+      "ok": true,
+      "detail": 95
+    },
+    {
+      "id": "AC-13-hard-pool",
+      "ok": true,
+      "detail": 11
+    },
+    {
+      "id": "AC-18-stalls7",
+      "ok": true,
+      "detail": {
+        "keeper": "會員中心哥哥",
+        "food": "金幣",
+        "sign": "會員中心・搶答",
+        "game": "goldfish",
+        "greet": "展銷會會員位，搶答換金幣啦。"
+      }
+    },
+    {
+      "id": "L3-rival-code",
+      "ok": true,
+      "detail": "rival pacing"
+    },
+    {
+      "id": "AC-06-corpse-cap",
+      "ok": true,
+      "detail": "corpse ≤~0.42s"
+    },
+    {
+      "id": "AC-05-muzzle-code",
+      "ok": true,
+      "detail": "muzzleY crouch formula"
+    },
+    {
+      "id": "L1-data",
+      "ok": true,
+      "detail": {
+        "junkUnlockX": 1200,
+        "cps": [
+          700,
+          1600,
+          3100,
+          4520
+        ]
+      }
+    },
+    {
+      "id": "AC-01-mood-triad",
+      "ok": true,
+      "detail": [
+        {
+          "x": 400,
+          "mood": 0,
+          "moodC": 1714240,
+          "fillA": 0,
+          "vigA": 0
+        },
+        {
+          "x": 1500,
+          "mood": 0.2631578947368421,
+          "moodC": 1714240,
+          "fillA": 0.14473684210526316,
+          "vigA": 0
+        },
+        {
+          "x": 2500,
+          "mood": 0.5107456140350878,
+          "moodC": 1577000,
+          "fillA": 0.2809100877192983,
+          "vigA": 0.0803728070175439
+        },
+        {
+          "x": 3800,
+          "mood": 0.7933333333333333,
+          "moodC": 2623504,
+          "fillA": 0.43633333333333335,
+          "vigA": 0.22166666666666668
+        },
+        {
+          "x": 4800,
+          "mood": 0.95,
+          "moodC": 2623504,
+          "fillA": 0.5225,
+          "vigA": 0.3
+        }
+      ]
+    },
+    {
+      "id": "AC-02-elevator",
+      "ok": true,
+      "detail": {
+        "elev": {
+          "texts": [
+            "扶手電梯",
+            "電梯"
+          ],
+          "elevDone": false,
+          "boyX": 1988,
+          "events": [
+            {
+              "kind": "elevator",
+              "x": 1995,
+              "at": 10455.9
+            }
+          ]
+        },
+        "elev2": {
+          "hit": true,
+          "boyX": 1988
+        },
+        "elevLog": [
+          {
+            "kind": "elevator",
+            "x": 1995,
+            "at": 10455.9
+          }
+        ]
+      }
+    },
+    {
+      "id": "AC-05-muzzleY",
+      "ok": true,
+      "detail": {
+        "stand": 255.45,
+        "crouch": 277.32,
+        "delta": 21.870000000000005,
+        "hgt": 81
+      }
+    },
+    {
+      "id": "AC-07-telegraph",
+      "ok": true,
+      "detail": {
+        "note": "fallback code review telegraphMs=720",
+        "fish": {
+          "found": false,
+          "kids": [
+            {
+              "k": "anim-triboss",
+              "sp": "securitydirector",
+              "x": 5026
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "AC-06-no-long-corpse",
+      "ok": true,
+      "detail": {
+        "kill": {
+          "killed": false
+        },
+        "afterDie": {
+          "leftoverDieAnims": 0,
+          "alphas": []
+        }
+      }
+    },
+    {
+      "id": "AC-09-atrium-props",
+      "ok": true,
+      "detail": {
+        "atrium": true,
+        "elevLabel": true,
+        "shops": [
+          "茶餐廳",
+          "鞋店",
+          "電器",
+          "藥妝",
+          "書店",
+          "服飾",
+          "手信",
+          "咖啡"
+        ]
+      }
+    },
+    {
+      "id": "AC-08-shops",
+      "ok": true,
+      "detail": {
+        "shops": [
+          "茶餐廳",
+          "鞋店",
+          "電器",
+          "藥妝",
+          "書店",
+          "服飾",
+          "手信",
+          "咖啡"
+        ],
+        "atriumShops": [
+          "茶餐廳",
+          "鞋店",
+          "電器",
+          "藥妝",
+          "書店",
+          "服飾",
+          "手信",
+          "咖啡"
+        ]
+      }
+    },
+    {
+      "id": "L2-shop-signs",
+      "ok": true,
+      "detail": [
+        "茶餐廳",
+        "鞋店",
+        "電器",
+        "藥妝",
+        "書店",
+        "服飾",
+        "手信",
+        "咖啡"
+      ]
+    },
+    {
+      "id": "L1-teach-slip",
+      "ok": true,
+      "detail": {
+        "slipTaught": true,
+        "tip": "⚠ 小心地滑",
+        "junkVis": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "boy": 360,
+        "paused": false
+      }
+    },
+    {
+      "id": "L1-junk-hidden-during-teach",
+      "ok": true,
+      "detail": {
+        "slipTaught": true,
+        "tip": "⚠ 小心地滑",
+        "junkVis": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "boy": 360,
+        "paused": false
+      }
+    },
+    {
+      "id": "L1-junk-gated",
+      "ok": true,
+      "detail": {
+        "vis": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "xs": [
+          1060,
+          null
+        ],
+        "unlock": 1200
+      }
+    },
+    {
+      "id": "L1-junk-unlock",
+      "ok": true,
+      "detail": {
+        "vis": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ],
+        "xs": [
+          1210,
+          null
+        ]
+      }
+    },
+    {
+      "id": "AC-07-telegraph-runtime",
+      "ok": true,
+      "detail": {
+        "found": true,
+        "windup": 720,
+        "x": 1459,
+        "animSet": "fish"
+      }
+    },
+    {
+      "id": "AC-06-runtime-corpse",
+      "ok": true,
+      "detail": {
+        "n": 0,
+        "alphas": []
+      }
+    },
+    {
+      "id": "L1-cp1-save-only",
+      "ok": true,
+      "detail": {
+        "coffeeDone": false,
+        "x": 691
+      }
+    },
+    {
+      "id": "AC-17-membership",
+      "ok": true,
+      "detail": {
+        "coffeeDone": true,
+        "quiz": true,
+        "disclaimer": false
+      }
+    },
+    {
+      "id": "AC-16-19-no-disclaimer",
+      "ok": true,
+      "detail": {
+        "coffeeDone": true,
+        "quiz": true,
+        "disclaimer": false
+      }
+    },
+    {
+      "id": "AC-12-seven-and-hard",
+      "ok": true,
+      "detail": {
+        "hardSeen": false,
+        "seven": true,
+        "trail": [
+          {
+            "prog": "第 3／7 題",
+            "coin": "幣 16",
+            "hard": false
+          },
+          {
+            "prog": "第 3／7 題",
+            "coin": "幣 16",
+            "hard": false
+          },
+          {
+            "prog": "第 4／7 題",
+            "coin": "幣 24",
+            "hard": false
+          }
+        ]
+      }
+    },
+    {
+      "id": "AC-14-coin-floor-code",
+      "ok": true,
+      "detail": "applyDelta floor"
+    },
+    {
+      "id": "AC-15-1p-buzz",
+      "ok": true,
+      "detail": "2P 對手互搶需人手；1P 紅掣／Enter 搶答已腳本驗證"
+    },
+    {
+      "id": "AC-13-draw-variety",
+      "ok": true,
+      "detail": {
+        "unique": 30,
+        "samples": 30
+      }
+    },
+    {
+      "id": "AC-18-stage7-entry",
+      "ok": true,
+      "detail": {
+        "stage": 7,
+        "mall": true,
+        "exhibit": true,
+        "signs": [
+          "存檔點",
+          "會員中心・搶答",
+          "存檔點",
+          "存檔點"
+        ],
+        "cps": [
+          800,
+          1960,
+          3100,
+          4520
+        ]
+      }
+    },
+    {
+      "id": "no-pageerror-main",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "fails": 0,
+  "skips": 2,
+  "passes": 32,
+  "errs": [],
+  "out": "/tmp/c2s1/docs/qa-acceptance",
+  "at": "2026-11-21T03:13:19.435Z"
+}
