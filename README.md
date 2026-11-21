@@ -88,3 +88,26 @@ Vercel 專案：`sake-kuma`（靜態 `dist`，見 `vercel.json`）
 - 新 scene 請用 `GAME_W/GAME_H` 做佈局，唔好用 `this.scale.width/height`（會係 1280×720）。
 - 仍然係 1x：charm／capsule（原圖得 64px，睇落係 chunky 像素 icon，決定保留）、程序畫嘅 UI 面板同破壞物（`uiArt.ts`／`isoArt.ts` 逐 pixel 畫，乘 RES 唔會多細節）、`hud2-heart`。
 - 光暗 overlay 用 `ctx.scale(RENDER_SCALE)` + `markHd`；HUD 頭像 icon 由 HD 肖像烘焙。
+
+
+## 第二大陸・購物中心（ST-06）強化
+
+### 點樣開
+```bash
+npm install
+npm run dev
+```
+瀏覽器開 Vite 位址（預設 port **4521**）。選關進入第 6 關商場。
+
+### 操作重點
+- **踎低射擊**：子彈高度比企射更低
+- **地滑**：見到「小心地滑」告示，踩入會閃同加速（敵人一樣）
+- **地下雜物**：尖角明顯，要跳過，踩中小扣血
+- **電梯**：B→C 交界有假 3D 過場（可 Skip）
+- **會員中心**：第一個存檔攤位改搶答（金魚眼）— 右邊大紅掣搶答；單人有假對手
+- **Boss 風機**：大佬儲力／盯梢時逆風，向前會慢
+
+### 已知限制
+- 樓層掣迷你房本輪暫緩
+- 舖頭用 code 加強現有圖（遮陽篷／櫥窗），未換全新 32-bit shop art
+- 金魚眼題庫簡化娛樂用

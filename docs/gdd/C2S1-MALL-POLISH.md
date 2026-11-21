@@ -1,3 +1,5 @@
+## STATUS: CONFIRMED by Alan 2026-11-21（電梯 B→C；樓層掣暫緩）
+
 # GDD · C2 第一關強化（ST-06 購物中心）v1
 
 > 狀態：**等 Alan 確認後先寫 code**  

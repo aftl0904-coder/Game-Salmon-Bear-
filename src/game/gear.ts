@@ -174,10 +174,15 @@ export function tierOf(who: Who, id: GearId): number {
 }
 
 /** Price of the next tier, or null when it is already maxed. */
-export function nextPrice(who: Who, id: GearId): number | null {
+export function priceMulForStage(stage: number): number {
+  // C2 mall stages: more coins in field, steeper shop (GDD).
+  return stage >= 6 ? 1.75 : 1
+}
+
+export function nextPrice(who: Who, id: GearId, stage = 1): number | null {
   const t = tierOf(who, id)
   if (t >= MAX_TIER) return null
-  return gearById(id).price[t]!
+  return Math.round(gearById(id).price[t]! * priceMulForStage(stage))
 }
 
 export function buy(who: Who, id: GearId): boolean {

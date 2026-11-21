@@ -166,7 +166,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
         return
       }
       const t = tierOf(who, g.id)
-      const p = nextPrice(who, g.id)
+      const p = nextPrice(who, g.id, hooks.stage)
       const capped = t >= limit && p !== null
       r.name.setText(g.name).setColor(on ? '#ffd040' : '#fff6e0')
       r.tier.setText(t > 0 ? g.tiers[t - 1]! : '未買')
@@ -196,7 +196,7 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     const g = rowsFor(who)[sel]
     if (!g) return
     const t = tierOf(who, g.id)
-    const p = nextPrice(who, g.id)
+    const p = nextPrice(who, g.id, hooks.stage)
     if (p === null) {
       SFX.blip(220)
       blurb.setText('已經最頂級。')

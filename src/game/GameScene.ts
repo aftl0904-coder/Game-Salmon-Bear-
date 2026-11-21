@@ -23,6 +23,7 @@ import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
+import { goldfishQuiz } from './membershipQuiz'
 import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
@@ -58,7 +59,7 @@ import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hook
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
-import { Stage6World, type Stage6Data } from './stage6World'
+import { Stage6World, playElevatorRide, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
 import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
@@ -217,6 +218,9 @@ type Stage1 = {
   darkAlpha?: Stage3Data['darkAlpha']
   debris?: Stage6Data['debris']
   cages?: Stage6Data['cages']
+  slipZones?: Stage6Data['slipZones']
+  floorJunk?: Stage6Data['floorJunk']
+  elevatorX?: number
   trainer?: typeof stage7Raw.trainer
   reactionX?: number
   staticDecor?: typeof stage7Raw.staticDecor
@@ -244,7 +248,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt' | 'goldfish'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -1045,6 +1049,7 @@ export class GameScene extends Phaser.Scene {
     if (this.market) this.tickStage3(dt)
     if (this.depot) this.tickStage4(dt)
     if (this.tower) this.tickStage5(dt)
+    this.collectNearbyCoins()
     if (this.mall) this.tickStage6(dt)
     this.checkFall()
     this.updateCheckpoint()
@@ -1617,7 +1622,8 @@ export class GameScene extends Phaser.Scene {
     // Muzzle at torso — scaled to hero display size.
     const hgt = Math.max(16, h.displayHeight || 32)
     const muzzleX = h.x + h.facing * hgt * 0.55
-    const muzzleY = h.y - hgt * 0.55
+    // Crouch shots sit lower so ducking actually covers a lower band (C2S1 GDD).
+    const muzzleY = h.y - (h.crouching ? hgt * 0.28 : hgt * 0.55)
     // 金鮭 levels: Lv1 one roe · Lv2 two (up/down) · Lv3 three-way fan, range ×1.4.
     const lv = this.weaponLv(h)
     const range = lv >= 3 ? Math.round(SALMON_SHOT_RANGE * 1.4) : SALMON_SHOT_RANGE
@@ -3051,6 +3057,25 @@ export class GameScene extends Phaser.Scene {
     // B · shop corridor.
     const shops = ['s6-shop-b', 's6-shop-c', 's6-shop-a', 's6-shop-b', 's6-shop-c', 's6-shop-a']
     ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => prop(shops[i]!, x, DEPTH.PROP - 3))
+    // Code polish: awnings + window panes so shopfronts read as shops (GDD).
+    {
+      const aw = this.add.graphics().setDepth(DEPTH.PROP - 2)
+      for (const x of [610, 760, 930, 1100, 1290, 1480, 1700, 1930]) {
+        aw.fillStyle(0xc45a4a, 1).fillTriangle(x - 48, f - 78, x + 48, f - 78, x, f - 98)
+        aw.fillStyle(0x88c8e8, 0.55).fillRect(x - 28, f - 64, 22, 28)
+        aw.fillStyle(0x88c8e8, 0.55).fillRect(x + 6, f - 64, 22, 28)
+        aw.lineStyle(1, 0xf0f6ff, 0.7).strokeRect(x - 28, f - 64, 22, 28).strokeRect(x + 6, f - 64, 22, 28)
+        aw.fillStyle(0x2a1a10, 1).fillRect(x - 10, f - 36, 20, 36)
+      }
+      // Atrium festive prop (centrepiece beside dome).
+      aw.fillStyle(0xffe080, 0.85).fillCircle(400, f - 120, 18)
+      aw.fillStyle(0xff6080, 0.9).fillCircle(400, f - 120, 8)
+      this.add.text(400, f - 150, '中庭裝置', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff0c0', backgroundColor: '#403020', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      // Escalator silhouette before elevator.
+      aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
+      aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
+      this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    }
     // C · half-finished shopfronts behind scaffolding, with the ceiling cracks above each debris drop.
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)
     ;[2090, 2380, 2740, 3020].forEach((x, i) => {
@@ -3177,6 +3202,36 @@ export class GameScene extends Phaser.Scene {
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
+    const lead = this.leadX()
+    this.s6world?.updateMood(lead)
+    // Elevator faux-3D once at B→C.
+    if (!this.exhibit && this.s6world?.checkElevator(lead) && !this.storyIntro) {
+      this.physics.pause()
+      for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+      const gate = { destroy: () => undefined }
+      this.storyIntro = gate
+      void playElevatorRide(this).then(() => {
+        if (this.storyIntro === gate) this.storyIntro = null
+        this.physics.resume()
+        this.resetPauseKeys()
+        floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……', '#c0d0ff', { size: 14, dur: 1800 })
+      })
+    }
+    // Boss fan while SecurityDirector winds up / stalks.
+    const dir = this.queen as { act?: string } | null
+    const fan = !!dir && (dir.act === 'windup' || dir.act === 'stalk' || dir.act === 'intro')
+    this.s6world?.setFan(fan && this.bossOn)
+    // Headwind slow when walking into the fan.
+    if (this.s6world && this.bossOn) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive) continue
+        const body = h.body as Phaser.Physics.Arcade.Body | null
+        if (!body) continue
+        const movingRight = body.velocity.x > 12
+        const mul = this.s6world.headwindMul(h.x, movingRight)
+        if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+      }
+    }
     const cx = this.cameras.main.scrollX + GAME_W / 2
     const k = Phaser.Math.Clamp((cx - 3135 + 200) / 320, 0, 1)
     this.mallFar.mall?.setAlpha(1 - k)
@@ -3666,6 +3721,11 @@ export class GameScene extends Phaser.Scene {
           heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
           hurt: (h, dir, label) => this.hazardHit(h, { knockX: dir * 220, knockY: -380, label }),
           dropShot: (x, y) => this.droneBolt(x, y),
+          enemyBodies: () =>
+            this.enemies.getChildren().map((o) => {
+              const e = o as Phaser.Physics.Arcade.Sprite & { active: boolean }
+              return { x: e.x, body: e.body as Phaser.Physics.Arcade.Body | null, active: !!e.active }
+            }),
         },
         ST,
       )
@@ -3954,7 +4014,12 @@ export class GameScene extends Phaser.Scene {
     let activeGate: { destroy: () => void } = gate
     this.storyIntro = gate
     const pages =
-      st.game === 'pour'
+      st.game === 'goldfish'
+        ? [
+            { title: `${st.keeper}：金魚眼搶答`, lines: ['右邊大紅掣搶答，', '搶到就快啲揀答案。'], tip: '冇人搶會 Skip；超時扣小小幣。' },
+            { title: '一共七題', lines: ['最後一題最難、獎金最多。'], tip: '假對手會同你搶。' },
+          ]
+        : st.game === 'pour'
         ? [
             { title: `${st.keeper}：倒${st.food}`, lines: ['撳住倒漿落個模度，', '啱啱滿就放手。'], tip: '倒多咗會瀉，倒少咗唔夠分。' },
             { title: '一共三底', lines: ['每底都倒到啱啱滿，', '就全中。'], tip: '每底啱啱好都係金幣，用嚟買裝備。' },
@@ -4008,6 +4073,12 @@ export class GameScene extends Phaser.Scene {
       const mini = tiltGame(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      return
+    }
+    if (st.game === 'goldfish') {
+      const mini = goldfishQuiz(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => after(r.coins, r.correct * 80))
       return
     }
     const mini = stirCoffee(this)
@@ -4125,9 +4196,20 @@ export class GameScene extends Phaser.Scene {
     if (spin) c.play('fxa-coin-spin')
     c.setScale(PROP_DISPLAY_SCALE).setDepth(DEPTH.PICKUP)
     enablePixelSprite(c)
-    ;(c.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    const body = c.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    // Generous pickup — torso fringe counts; standing reach for mid-height coins.
+    body.setCircle(14, (c.width - 28) / 2, (c.height - 28) / 2)
     addGroundShadow(this, c, () => y, 0.45)
-    this.tweens.add({ targets: c, y: y - 6, yoyo: true, repeat: -1, duration: 520 })
+    // Subtle bob that keeps body synced (updateFromGameObject each frame via physics).
+    this.tweens.add({
+      targets: c,
+      y: y - 4,
+      yoyo: true,
+      repeat: -1,
+      duration: 520,
+      onUpdate: () => body.updateFromGameObject(),
+    })
   }
 
   private spawnCast() {
@@ -4977,13 +5059,33 @@ export class GameScene extends Phaser.Scene {
     if (item.getData('bossJar')) this.queenDefeated()
   }
 
+  /** Soft pickup: chest/fringe near coin counts even if foot hitbox misses. */
+  private collectNearbyCoins() {
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    for (const coin of this.coinPickups.getChildren() as Phaser.Physics.Arcade.Sprite[]) {
+      if (!coin.active) continue
+      for (const h of heroes) {
+        const chestY = h.y - Math.max(12, h.displayHeight * 0.45)
+        const dx = h.x - coin.x
+        const dy = chestY - coin.y
+        if (dx * dx + dy * dy < 38 * 38) {
+          this.takeCoin(coin, h)
+          break
+        }
+      }
+    }
+  }
+
   private takeCoin(coin: Phaser.Physics.Arcade.Sprite, by?: Hero | null) {
     if (!coin.active) return
     coin.disableBody(true, true)
     this.addCoins(by?.role as Who | undefined, 1)
     SFX.coin()
-    burst(this, coin.x, coin.y, 0xffe08a, 8)
-    floatText(this, coin.x, coin.y - 16, '＋1幣', '#ffe08a')
+    burst(this, coin.x, coin.y, 0xffe08a, 14)
+    floatText(this, coin.x, coin.y - 18, '＋1幣', '#ffe08a', { size: 14, rise: 18, dur: 700 })
+    // Weighty squash pop.
+    const pop = this.add.image(coin.x, coin.y, coin.texture.key).setDepth(DEPTH.FX).setScale((coin.scaleX || 1) * 1.2)
+    this.tweens.add({ targets: pop, scale: 0.2, alpha: 0, duration: 220, onComplete: () => pop.destroy() })
   }
 
   /** Coins land in one hero's purse; the shared stock is what 投幣續關 spends. */

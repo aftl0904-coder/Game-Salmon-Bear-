@@ -57,8 +57,30 @@ export class GuardZombie extends HoneyZombie {
     return this.useC2Guard ? 0xffffff : UNIFORM_TINT
   }
 
+  private guardWind = 0
+  private guardFlash: Phaser.GameObjects.Text | null = null
   override tick(dt: number, ctx: Ctx) {
-    super.tick(dt, ctx)
+    // Light telegraph: brief stop + raised hand before closing in.
+    const target = pickTarget(this, ctx.boy, ctx.girl)
+    if (target?.active && this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT') {
+      const dist = Math.abs(target.x - this.x)
+      if (dist < 90 && dist > 28 && this.guardWind <= 0) {
+        this.guardWind = 320
+        this.guardFlash?.destroy()
+        this.guardFlash = this.scene.add.text(this.x, this.y - this.displayHeight - 6, '！', { fontSize: '16px', color: '#ffd060', stroke: '#201008', strokeThickness: 3 }).setOrigin(0.5).setDepth(this.depth + 5)
+      }
+    }
+    if (this.guardWind > 0) {
+      this.guardWind -= dt
+      this.setVelocity(0, 0)
+      if (this.guardFlash) this.guardFlash.setPosition(this.x, this.y - this.displayHeight - 6)
+      if (this.guardWind <= 0) {
+        this.guardFlash?.destroy()
+        this.guardFlash = null
+      }
+    } else {
+      super.tick(dt, ctx)
+    }
     this.syncCap()
     if (this.whip) {
       this.whip.clear().setDepth(this.depth + 1)
@@ -83,6 +105,8 @@ export class GuardZombie extends HoneyZombie {
     this.cap?.destroy()
     this.whip?.destroy()
     this.whip = null
+    this.guardFlash?.destroy()
+    this.guardFlash = null
     super.die(dir)
   }
 

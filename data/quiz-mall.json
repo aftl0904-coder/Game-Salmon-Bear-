@@ -1,0 +1,1057 @@
+{
+  "title": "商場會員中心・金魚眼",
+  "perRound": 7,
+  "scoring": {
+    "normal": {
+      "correct": 8,
+      "wrong": -4
+    },
+    "hard": {
+      "correct": 20,
+      "wrong": -10
+    }
+  },
+  "timeoutPenalty": -2,
+  "questions": [
+    {
+      "id": "Q001",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租樓最常見要預繳嘅係咩？",
+      "choices": [
+        "按金",
+        "印花稅全數",
+        "律師費全免券",
+        "差餉三十年"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q002",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「交吉」大致係指業主交樓時點？",
+      "choices": [
+        "單位空置可入住",
+        "一定要連傢俬",
+        "一定要連租客",
+        "一定要連車位"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q003",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅租約常用嚟計租金嘅單位係？",
+      "choices": [
+        "每月",
+        "每分鐘",
+        "每世紀",
+        "每滴水"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q004",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "管理費通常交俾邊個處理大廈共用地方？",
+      "choices": [
+        "物業管理公司／法團安排",
+        "隔籬檔口",
+        "街市檔主",
+        "的士司機"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q005",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "公契主要規管咩？",
+      "choices": [
+        "大廈業主共用權責",
+        "點樣煮即食麵",
+        "巴士路線",
+        "天氣預測"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q006",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "未得業主同意就「轉租」通常有咩風險？",
+      "choices": [
+        "可能違約",
+        "自動變業主",
+        "免費續約十年",
+        "管理費永遠豁免"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q007",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "業主想加租，最穩陣做法係？",
+      "choices": [
+        "按租約條款／到期再傾",
+        "半夜換鎖即加三倍",
+        "唔通知就扣按金",
+        "封咗大閘"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q008",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「空置物業」意思接近？",
+      "choices": [
+        "暫時冇人住／冇租出",
+        "一定係凶宅",
+        "一定係商場",
+        "一定係車位"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q009",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "差餉／地租通常同邊啲有關？",
+      "choices": [
+        "物業應課差餉租值",
+        "早餐價錢",
+        "遊戲金幣",
+        "行山距離"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q010",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "物業「實用面積」同「建築面積」？",
+      "choices": [
+        "通常實用細過建築",
+        "永遠一樣大",
+        "實用一定大過建築",
+        "冇分別"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q011",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "立案法團主要代表邊啲人？",
+      "choices": [
+        "大廈業主群體",
+        "外遊旅客",
+        "街邊小販",
+        "遊戲 Boss"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q012",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客交咗按金，退租時常見處理係？",
+      "choices": [
+        "扣維修／欠租後先退餘額",
+        "自動變買樓首期",
+        "一定即日雙倍退",
+        "一定全數充公"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q013",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "商場舖租約有時會寫「營業額分成」，意思係？",
+      "choices": [
+        "租金可跟生意抽成",
+        "客人要分身家",
+        "一定免租",
+        "免費送舖"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q014",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「交樓標準」如果寫清水房，大致係？",
+      "choices": [
+        "基本裝修未傢俬齊",
+        "五星酒店套房",
+        "一定連跑車",
+        "一定連員工"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q015",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "維修「公用地方」電梯，多數由邊啲資源出？",
+      "choices": [
+        "管理費／維修基金",
+        "單一租客私房錢必定",
+        "街坊即興籌夠先郁",
+        "遊戲 Skip 掣"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q016",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租約未到期，租客想提早解約？",
+      "choices": [
+        "睇有冇提早解約條款／賠償",
+        "一定免費即走",
+        "一定送多一年",
+        "自動買斷單位"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q017",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「業權」簡單講係？",
+      "choices": [
+        "對物業嘅擁有權利",
+        "借用商場手推車證",
+        "遊戲存檔",
+        "巴士八達通"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q018",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "停車場月租位通常唔等於？",
+      "choices": [
+        "擁有車位業權",
+        "夜間可以泊",
+        "要畀錢",
+        "有編號"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q019",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅可否任意改做食肆？",
+      "choices": [
+        "多數要合規／用途限制",
+        "隨時得、唔使問",
+        "只要掛燈籠就得",
+        "只要大聲就得"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q020",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "收樓點算「訂金」同「按金」時要小心？",
+      "choices": [
+        "條款寫明用途同可否退",
+        "兩個字永遠同義",
+        "一定係買樓首期",
+        "一定係管理費"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q021",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "大廈張貼「禁止阻塞走廊」通常因為？",
+      "choices": [
+        "走火通道同公契安全",
+        "想啲人行得慢啲",
+        "廣告位賣唔出",
+        "升降機慳電"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q022",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客長期欠租，業主常見合法方向係？",
+      "choices": [
+        "跟程序追討／終止租約",
+        "即刻掟傢俬落街當表演",
+        "改門牌逃避",
+        "刪遊戲進度"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q023",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「樓花」大致指？",
+      "choices": [
+        "未建成／預售物業",
+        "開咗花嘅單位",
+        "一定係凶宅",
+        "一定係商場中庭"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q024",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "物業保險通常保障邊類風險（簡化）？",
+      "choices": [
+        "火災等約定風險",
+        "一定包輸遊戲",
+        "一定包失戀",
+        "一定包塞車"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q025",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "商場「公共地方」例如？",
+      "choices": [
+        "中庭、走廊、扶手電梯",
+        "租客舖內私用貨倉全部",
+        "客人口袋",
+        "Boss 房私人保險庫"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q026",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "管理處禁止喺走廊擺長時間雜物，主要為？",
+      "choices": [
+        "安全同走火",
+        "妒忌你嘅紙箱",
+        "想加租",
+        "測試力氣"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q027",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租約應寫明嘅基本項目通常包括？",
+      "choices": [
+        "租金、年期、物業地址",
+        "最鍾意嘅顏色",
+        "寵物星座",
+        "Boss 弱點"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q028",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「交吉出售」廣告通常暗示買家可？",
+      "choices": [
+        "較易空置收樓自用／重租",
+        "一定連租客同傢俬",
+        "一定免差餉一世",
+        "一定送商場"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q029",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "服務式住宅／短租有時受規管，意思係？",
+      "choices": [
+        "唔係想點租就點租",
+        "完全無法規",
+        "只靠眨眼批准",
+        "只靠丟金幣"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q030",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "業主同租客傾「邊個負責冷氣維修」最好？",
+      "choices": [
+        "租約寫清楚",
+        "每次靠猜拳",
+        "永遠唔傾",
+        "問遊戲隨機數"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q031",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「公契」英文常見叫法接近？",
+      "choices": [
+        "DMC（公契）",
+        "BGM",
+        "NPC",
+        "HP"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q032",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "商場租戶裝修要改動結構牆？",
+      "choices": [
+        "多數要批准同合規",
+        "自己鑽就得",
+        "貼張紙就得",
+        "只要夠大聲"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q033",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "退租點交還鎖匙／門卡通常要？",
+      "choices": [
+        "點算交收並記錄",
+        "掟落信箱唔使講",
+        "賣畀陌生人",
+        "浸落咖啡"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q034",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「管理費欠交」可能導致？",
+      "choices": [
+        "法團／管理處追討程序",
+        "自動升級成業主",
+        "免費續租",
+        "送汽車"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q035",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "簡單講「業主」同「租客」分別係？",
+      "choices": [
+        "擁有 vs 租用",
+        "一樣完全無分別",
+        "租客一定大過業主",
+        "業主一定住商場"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q036",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "月租 $12,000，一季（3 個月）租金？",
+      "choices": [
+        "$36,000",
+        "$12,000",
+        "$24,000",
+        "$48,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q037",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "按金＝兩個月租，月租 $8,500，按金？",
+      "choices": [
+        "$17,000",
+        "$8,500",
+        "$25,500",
+        "$4,250"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q038",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "管理費 $3.2／呎，實用 500 呎，每月管理費？",
+      "choices": [
+        "$1,600",
+        "$320",
+        "$5,000",
+        "$160"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q039",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "租金 $10,000，加租 10%，新租金？",
+      "choices": [
+        "$11,000",
+        "$10,100",
+        "$9,000",
+        "$12,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q040",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "半年租金總額：月租 $9,000？",
+      "choices": [
+        "$54,000",
+        "$45,000",
+        "$108,000",
+        "$9,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q041",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "按金 $20,000，扣咗 $3,500 維修，退幾多？",
+      "choices": [
+        "$16,500",
+        "$20,000",
+        "$3,500",
+        "$23,500"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q042",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "三個舖各月租 $7,000，總月租？",
+      "choices": [
+        "$21,000",
+        "$14,000",
+        "$28,000",
+        "$7,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q043",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "$15,000 租金，預繳兩個月＋按金兩個月，一次過要備？",
+      "choices": [
+        "$60,000",
+        "$30,000",
+        "$45,000",
+        "$15,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q044",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "管理費由 $1,200 加 5%，新管理費？",
+      "choices": [
+        "$1,260",
+        "$1,250",
+        "$1,200",
+        "$1,600"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q045",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "車位月租 $2,800，一年？",
+      "choices": [
+        "$33,600",
+        "$28,000",
+        "$2,800",
+        "$56,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q046",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "營業額 $80,000，抽成 8% 當租金部份？",
+      "choices": [
+        "$6,400",
+        "$8,000",
+        "$640",
+        "$80,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q047",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "單位 420 呎，呎租 $45，月租約？",
+      "choices": [
+        "$18,900",
+        "$420",
+        "$45",
+        "$9,450"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q048",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "欠租 1.5 個月，月租 $12,000，欠幾多？",
+      "choices": [
+        "$18,000",
+        "$12,000",
+        "$6,000",
+        "$24,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q049",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "四期管理費，每期 $900，總數？",
+      "choices": [
+        "$3,600",
+        "$900",
+        "$4,500",
+        "$1,800"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q050",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "折扣後租金係原價八折：$16,000 原價？",
+      "choices": [
+        "$12,800",
+        "$16,000",
+        "$8,000",
+        "$14,400"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q051",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "兩房分租，各出一半：$14,000 總租，一人？",
+      "choices": [
+        "$7,000",
+        "$14,000",
+        "$3,500",
+        "$28,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q052",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "水費 $60、電費 $140、網費 $200，雜費合計？",
+      "choices": [
+        "$400",
+        "$260",
+        "$340",
+        "$200"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q053",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "訂金 $5,000 可扣除首月租金 $12,000，首月仍要補？",
+      "choices": [
+        "$7,000",
+        "$5,000",
+        "$12,000",
+        "$17,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q054",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "商場活動：買滿 $300 送幣 1；消費 $1,500 送幾多幣？",
+      "choices": [
+        "5",
+        "3",
+        "15",
+        "1"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q055",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "電梯維修基金每次 $50，8 戶，共收？",
+      "choices": [
+        "$400",
+        "$50",
+        "$8",
+        "$450"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q056",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "日租 $800，住 5 晚？",
+      "choices": [
+        "$4,000",
+        "$800",
+        "$3,200",
+        "$5,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q057",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "月租加管理費：$9,500 + $1,500？",
+      "choices": [
+        "$11,000",
+        "$8,000",
+        "$10,000",
+        "$12,500"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q058",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "三個月免租期，年約其餘 9 個月 × $20,000，年付租？",
+      "choices": [
+        "$180,000",
+        "$240,000",
+        "$20,000",
+        "$60,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q059",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "呎價 $12,000，單位 380 呎，總價？",
+      "choices": [
+        "$4,560,000",
+        "$380,000",
+        "$12,000",
+        "$456,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q060",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "回報：年租 $120,000 ÷ 樓價 $4,000,000 ≈？",
+      "choices": [
+        "3%",
+        "12%",
+        "30%",
+        "0.3%"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q061",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "兩個半月薪當按金：月薪 $18,000？",
+      "choices": [
+        "$45,000",
+        "$36,000",
+        "$18,000",
+        "$9,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q062",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "加租 $800，原租 $9,200，加幅約？",
+      "choices": [
+        "約 8.7%",
+        "約 80%",
+        "約 0.8%",
+        "約 18%"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q063",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "商場金幣：答啱 +8，答三次全啱？",
+      "choices": [
+        "24",
+        "8",
+        "16",
+        "32"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q064",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "欠管理費 $2,400，分 6 期，每期？",
+      "choices": [
+        "$400",
+        "$2,400",
+        "$600",
+        "$200"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q065",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "裝修好評：報價 $9,000，九五折實付？",
+      "choices": [
+        "$8,550",
+        "$9,000",
+        "$8,000",
+        "$9,500"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q066",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "泊車 3 小時，首小時 $20，其後每小時 $15，費用？",
+      "choices": [
+        "$50",
+        "$45",
+        "$20",
+        "$65"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q067",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "租務：兩份合約印花，每份 $250，合計？",
+      "choices": [
+        "$500",
+        "$250",
+        "$125",
+        "$750"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q068",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "儲物櫃月費 $120，两年？",
+      "choices": [
+        "$2,880",
+        "$1,440",
+        "$120",
+        "$240"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q069",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "三人合租 $21,000，一人平均？",
+      "choices": [
+        "$7,000",
+        "$21,000",
+        "$10,500",
+        "$3,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q070",
+      "category": "math",
+      "difficulty": "normal",
+      "prompt": "金幣 40，錯題扣 4，錯兩題剩？",
+      "choices": [
+        "32",
+        "36",
+        "40",
+        "28"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q071",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "租約寫「期滿可加租不超過 10%」。而家 $22,000，下期上限？",
+      "choices": [
+        "$24,200",
+        "$32,000",
+        "$22,100",
+        "$20,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q072",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "實用 650 呎、建築 900 呎。實用率最接近？",
+      "choices": [
+        "約 72%",
+        "約 90%",
+        "約 50%",
+        "約 100%"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q073",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "月租 $16,800，按金 2 個月，另預繳 1 個月，另律師行政 $3,200。進駐前現金大約？",
+      "choices": [
+        "$53,600",
+        "$16,800",
+        "$33,600",
+        "$36,800"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q074",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "管理費 $2.8／呎，單位 780 呎；下季加 7.5%。新每月管理費？",
+      "choices": [
+        "約 $2,347",
+        "約 $2,184",
+        "約 $2,800",
+        "約 $1,560"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q075",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "營業額抽成：月營業 $125,000，基本租 $8,000，抽成 6% 同基本租取高者。本月租金？",
+      "choices": [
+        "$8,000",
+        "$7,500",
+        "$12,500",
+        "$6,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q076",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "三年租約總租金：首年 $10,000／月，次年 +5%，第三年再 +5%（複合）。三年總額最接近？",
+      "choices": [
+        "約 $378,150",
+        "約 $360,000",
+        "約 $400,000",
+        "約 $315,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q077",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "退租扣費：按金 $30,000；欠租 0.5 月（月租 $14,000）；清潔 $1,200；牆損 $2,800。可退？",
+      "choices": [
+        "$19,000",
+        "$30,000",
+        "$11,800",
+        "$18,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q078",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "呎租報 $38，另加管理 $4／呎。總月付（以 520 呎計）？",
+      "choices": [
+        "$21,840",
+        "$19,760",
+        "$1,976",
+        "$38,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q079",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "兩個車位：A $2,500、B $3,200。年費九五折套餐。實付年費？",
+      "choices": [
+        "$64,980",
+        "$68,400",
+        "$5,700",
+        "$57,000"
+      ],
+      "answerIndex": 0
+    },
+    {
+      "id": "Q080",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "「免租期 2 個月」夾喺 24 個月租約，免租唔計入應付。應付月數 × $18,500＝？",
+      "choices": [
+        "$407,000",
+        "$444,000",
+        "$37,000",
+        "$222,000"
+      ],
+      "answerIndex": 0
+    }
+  ]
+}
