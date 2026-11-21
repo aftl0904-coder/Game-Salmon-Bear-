@@ -24,6 +24,7 @@ import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './ch
 import { buzz, HAPTIC } from './phone'
 import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
 import { goldfishQuiz } from './membershipQuiz'
+import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
@@ -437,6 +438,10 @@ export class GameScene extends Phaser.Scene {
   private friendsSaved: string[] = []
   /** The stir-the-coffee minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Optional 樓層掣迷你房 (ST-06); skippable — door at floorDoorX. */
+  private floorDoorX = 1432
+  private floorRoomDone = false
+  private floorPrompt: Phaser.GameObjects.Text | null = null
   /** Each hero keeps their own coins (docs/bible/minigames-shop.md §2). */
   private purse: Record<Who, number> = { boy: 0, girl: 0 }
   private bossBar: { fill: Phaser.GameObjects.Rectangle; root: Phaser.GameObjects.Container; w: number } | null = null
@@ -483,6 +488,9 @@ export class GameScene extends Phaser.Scene {
     this.bossFight = false
     this.friendsSaved = []
     this.coffeeDone = false
+    this.floorRoomDone = false
+    this.floorPrompt?.destroy()
+    this.floorPrompt = null
     this.bossBar = null
     this.clearCardAction = null
     this.clearModal = false
@@ -3055,44 +3063,30 @@ export class GameScene extends Phaser.Scene {
     }
     // A · the dome entrance is the centrepiece; two shopfronts frame the exit.
     prop('s6-dome', 330, DEPTH.PROP - 4)
-    prop('s6-shop-c', 610, DEPTH.PROP - 3)
-    prop('s6-shop-a', 760, DEPTH.PROP - 3)
+    // D: show real s6-shop sprites (do not paint opaque facades over them).
+    const placeShop = (key: string, x: number, tint?: number) => {
+      const img = prop(key, x, DEPTH.PROP - 3, tint)
+      if (img) img.setScale((img.scaleX || 1) * 1.15)
+      return img
+    }
+    placeShop('s6-shop-c', 610)
+    placeShop('s6-shop-a', 760)
     // B · shop corridor.
     const shops = ['s6-shop-b', 's6-shop-c', 's6-shop-a', 's6-shop-b', 's6-shop-c', 's6-shop-a']
-    ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => prop(shops[i]!, x, DEPTH.PROP - 3))
-    // Shopfronts: awning + signboard + glass + door + display goods (read as real shops).
+    ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => placeShop(shops[i]!, x))
+    // Light readability overlays only: stripe awning tip + sign text (sprites carry the shop look).
     {
-      const aw = this.add.graphics().setDepth(DEPTH.PROP - 2)
+      const aw = this.add.graphics().setDepth(DEPTH.PROP - 1)
       const signs = ['茶餐廳', '鞋店', '電器', '藥妝', '書店', '服飾', '手信', '咖啡']
       const xs = [610, 760, 930, 1100, 1290, 1480, 1700, 1930]
       xs.forEach((x, i) => {
-        // Facade board
-        aw.fillStyle(0xf2e6d0, 1).fillRect(x - 52, f - 100, 104, 100)
-        aw.lineStyle(2, 0x5a4030, 1).strokeRect(x - 52, f - 100, 104, 100)
-        // Stripe awning
         const awn = [0xc45a4a, 0xf0f0f0]
         for (let k = 0; k < 8; k++) {
-          aw.fillStyle(awn[k % 2]!, 1).fillRect(x - 50 + k * 12.5, f - 108, 12.5, 14)
+          aw.fillStyle(awn[k % 2]!, 0.95).fillRect(x - 48 + k * 12, f - 118, 12, 10)
         }
-        aw.fillStyle(0x8a3030, 1).fillTriangle(x - 52, f - 108, x + 52, f - 108, x, f - 122)
-        // Signboard
-        aw.fillStyle(0x1a2a4a, 1).fillRect(x - 40, f - 96, 80, 16)
-        // Windows (4 panes)
-        aw.fillStyle(0xa8d8f0, 0.75).fillRect(x - 44, f - 74, 36, 32)
-        aw.fillStyle(0xa8d8f0, 0.75).fillRect(x + 8, f - 74, 36, 32)
-        aw.lineStyle(1, 0xf8fcff, 0.9)
-        aw.strokeRect(x - 44, f - 74, 36, 32).strokeRect(x + 8, f - 74, 36, 32)
-        aw.lineBetween(x - 26, f - 74, x - 26, f - 42).lineBetween(x - 44, f - 58, x - 8, f - 58)
-        aw.lineBetween(x + 26, f - 74, x + 26, f - 42).lineBetween(x + 8, f - 58, x + 44, f - 58)
-        // Door
-        aw.fillStyle(0x4a3020, 1).fillRect(x - 12, f - 40, 24, 40)
-        aw.fillStyle(0xd4af37, 1).fillCircle(x + 6, f - 20, 2)
-        // Display goods blobs in window
-        aw.fillStyle(0xff8060, 1).fillCircle(x - 32, f - 52, 4)
-        aw.fillStyle(0x60c080, 1).fillRect(x - 20, f - 56, 8, 10)
-        aw.fillStyle(0xffd060, 1).fillCircle(x + 22, f - 50, 5)
+        aw.fillStyle(0x1a2a4a, 0.92).fillRect(x - 36, f - 108, 72, 14)
         this.add
-          .text(x, f - 88, signs[i]!, {
+          .text(x, f - 101, signs[i]!, {
             fontFamily: FONT_UI,
             fontSize: '10px',
             color: '#ffe08a',
@@ -3108,6 +3102,13 @@ export class GameScene extends Phaser.Scene {
       aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
       aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
       this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      // Floor-button room door (optional side content) — near B corridor mid.
+      aw.fillStyle(0x4a5568, 1).fillRect(1410, f - 78, 44, 78)
+      aw.fillStyle(0x2a3340, 1).fillRect(1416, f - 72, 32, 66)
+      aw.fillStyle(0xd4af37, 1).fillCircle(1440, f - 40, 2)
+      aw.fillStyle(0x1a5a9a, 1).fillRoundedRect(1418, f - 96, 28, 16, 2)
+      this.add.text(1432, f - 88, 'P', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe080' }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      this.add.text(1432, f - 110, '維修門↑', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
     }
     // C · half-finished shopfronts behind scaffolding, with the ceiling cracks above each debris drop.
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)
@@ -3237,6 +3238,7 @@ export class GameScene extends Phaser.Scene {
     this.s6world?.update(dt)
     const lead = this.leadX()
     this.s6world?.updateMood(lead)
+    if (!this.exhibit) this.tickFloorDoor()
     // Elevator faux-3D once at B→C.
     if (!this.exhibit && this.s6world?.checkElevator(lead) && !this.storyIntro) {
       this.physics.pause()
@@ -3271,9 +3273,59 @@ export class GameScene extends Phaser.Scene {
     this.mallFar.fac?.setAlpha(k)
     if (this.exhibit) {
       this.tickExhibitReaction()
-    }
-    else this.tickCage()
+    } else this.tickCage()
     this.tickStage2(dt)
+  }
+
+  /** Optional 樓層掣房：企近維修門撳 ↑／W／Up 進入；可唔入。 */
+  private tickFloorDoor() {
+    if (this.floorRoomDone || this.storyIntro || this.ended || !this.started) {
+      this.floorPrompt?.setVisible(false)
+      return
+    }
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive)
+    const near = heroes.some((h) => Math.abs(h.x - this.floorDoorX) < 36)
+    if (!this.floorPrompt) {
+      this.floorPrompt = this.add
+        .text(this.floorDoorX, LANE_FLOOR_Y - 120, '↑ 入維修房', {
+          fontFamily: FONT_UI,
+          fontSize: '11px',
+          color: '#ffe08a',
+          backgroundColor: '#203040',
+          padding: { x: 4, y: 2 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+    }
+    this.floorPrompt.setVisible(near)
+    if (!near) return
+    const up =
+      (!!this.cursors?.up && Phaser.Input.Keyboard.JustDown(this.cursors.up)) || TouchInput.justPressed('up')
+    if (!up) return
+    this.openFloorButtonRoom()
+  }
+
+  private openFloorButtonRoom() {
+    if (this.floorRoomDone || this.storyIntro) return
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    const mini = floorButtonRoom(this)
+    this.storyIntro = mini
+    this.floorPrompt?.setVisible(false)
+    void mini.done.then((r) => {
+      if (this.storyIntro === mini) this.storyIntro = null
+      this.physics.resume()
+      this.resetPauseKeys()
+      if (r.exited) return
+      this.floorRoomDone = true
+      if (r.ok && r.coins > 0) {
+        this.addCoins(this.boy.role as Who, r.coins)
+        floatText(this, this.floorDoorX, LANE_FLOOR_Y - 100, `+${r.coins}幣`, '#ffe08a', { size: 14, dur: 1400 })
+      } else if (!r.ok) {
+        const h = this.boy
+        if (h?.alive) this.hazardHit(h, { knockX: 0, knockY: -200, label: '錯掣 -1' })
+      }
+    })
   }
 
   /** Walk close to the caged silhouette in the honey factory: 噗噗 reacts once. */

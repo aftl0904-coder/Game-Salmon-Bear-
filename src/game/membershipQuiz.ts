@@ -257,10 +257,10 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     prompt.setText(q.prompt)
     status.setText(twoP ? '左右紅掣搶答！' : '撳右邊紅掣搶答！')
     paintChoices(q)
-    buzzOpen = qi === 0 ? 4500 : 3600
-    // 1P fake rival — human-first (no human playtest yet; leave generous window).
-    const base = qi === 0 ? 2800 : q.difficulty === 'hard' ? 2100 : 1700
-    const spread = qi === 0 ? 1000 : q.difficulty === 'hard' ? 1400 : 1200
+    buzzOpen = qi === 0 ? 4000 : 3400
+    // Balanced 1P rival: beatable if you read, still pressure (A pass without playtest).
+    const base = qi === 0 ? 2200 : q.difficulty === 'hard' ? 1900 : 1500
+    const spread = qi === 0 ? 800 : q.difficulty === 'hard' ? 1200 : 1000
     rivalBuzzAt = twoP ? 999999 : base + Math.floor(rng() * spread)
   }
 

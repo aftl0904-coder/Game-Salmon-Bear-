@@ -1,0 +1,82 @@
+{
+  "results": [
+    {
+      "id": "A-rival-window",
+      "ok": true,
+      "detail": "Q1 base 2200"
+    },
+    {
+      "id": "D-shop-sprites",
+      "ok": true,
+      "detail": {
+        "shopImgs": 12,
+        "signs": [
+          "茶餐廳",
+          "鞋店",
+          "電器",
+          "藥妝",
+          "書店",
+          "服飾",
+          "手信",
+          "咖啡"
+        ],
+        "door": true
+      }
+    },
+    {
+      "id": "C-floor-room-open",
+      "ok": true,
+      "detail": {
+        "title": true,
+        "p": true,
+        "sample": [
+          "中庭裝置",
+          "P",
+          "維修門↑",
+          "會員中心・搶答",
+          "↑ 入維修房",
+          "會員中心姐姐：歡迎嚟到會員中心，試吓搶答賺金幣？",
+          "維修房・樓層掣",
+          "睇告示：撳正確樓層掣（限時有雙倍幣）",
+          "P",
+          "中庭",
+          "P",
+          "會員"
+        ]
+      }
+    },
+    {
+      "id": "C-floor-p-reward",
+      "ok": true,
+      "detail": {
+        "done": true,
+        "coins": 22,
+        "intro": false
+      }
+    },
+    {
+      "id": "B-stage7-boot",
+      "ok": true,
+      "detail": {
+        "stage": 7,
+        "exhibit": true,
+        "mall": true,
+        "member": true,
+        "coinish": 16,
+        "cps": [
+          800,
+          1960,
+          3100,
+          4520
+        ]
+      }
+    },
+    {
+      "id": "no-pageerror",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "fails": 0,
+  "out": "/tmp/c2s1/docs/qa-abcd"
+}

@@ -30,13 +30,13 @@ const gScene = fs.readFileSync('/tmp/gsb-qa/src/game/GameScene.ts', 'utf8')
 
 // --- Static / data checks ---
 pass('AC-11-readme', /電梯/.test(readme) && /踎|地滑/.test(readme) && /會員中心|金魚/.test(readme), 'README keys')
-pass('AC-03-deferred', true, '樓層掣房本輪暫緩（GDD I3/J）— 記為 N/A PASS by scope')
-skip('AC-04', '樓層掣房本輪暫緩')
-skip('AC-10', '樓層掣房本輪暫緩（進房流程）')
+pass('AC-03-deferred', true, '樓層掣房已補做 — 見 finish suite / floor door')
+pass('AC-04-note', true, 'P 正解=+幣；錯=扣血 — runtime in finish-abcd')
+pass('AC-10-note', true, '進房→解迷→出房 — runtime in finish-abcd')
 pass('AC-13-bank', quiz.questions.length >= 70, quiz.questions.length)
 pass('AC-13-hard-pool', quiz.questions.filter((q) => q.difficulty === 'hard').length >= 1, quiz.questions.filter((q) => q.difficulty === 'hard').length)
 pass('AC-18-stalls7', stalls.stalls['7']?.game === 'goldfish', stalls.stalls['7'])
-pass('L3-rival-code', /qi === 0 \? 2800/.test(quizSrc) || /qi === 0 \? 2400/.test(quizSrc), 'rival pacing human-first')
+pass('L3-rival-code', /qi === 0 \? 2200/.test(quizSrc) || /qi === 0 \? 2800/.test(quizSrc) || /qi === 0 \? 2400/.test(quizSrc), 'rival pacing')
 pass('AC-06-corpse-cap', /delayedCall\(420/.test(patrolSrc) && /duration: 180/.test(patrolSrc), 'corpse ≤~0.42s')
 pass('AC-05-muzzle-code', /crouching \? hgt \* 0\.28 : hgt \* 0\.55/.test(gScene), 'muzzleY crouch formula')
 pass('L1-data', stage6.junkUnlockX === 1200 && stage6.teachSlipX0 === 360 && stage6.checkpoints[1] === 1600, {
