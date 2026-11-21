@@ -46,7 +46,7 @@
     {
       "id": "L3-rival-code",
       "ok": true,
-      "detail": "rival pacing"
+      "detail": "rival pacing human-first"
     },
     {
       "id": "AC-06-corpse-cap",
@@ -127,7 +127,7 @@
             {
               "kind": "elevator",
               "x": 1995,
-              "at": 10455.9
+              "at": 10508.8
             }
           ]
         },
@@ -139,7 +139,7 @@
           {
             "kind": "elevator",
             "x": 1995,
-            "at": 10455.9
+            "at": 10508.8
           }
         ]
       }
@@ -165,7 +165,7 @@
             {
               "k": "anim-triboss",
               "sp": "securitydirector",
-              "x": 5026
+              "x": 5023
             }
           ]
         }
@@ -317,7 +317,7 @@
       "detail": {
         "found": true,
         "windup": 720,
-        "x": 1459,
+        "x": 1451,
         "animSet": "fish"
       }
     },
@@ -429,6 +429,6 @@
   "skips": 2,
   "passes": 32,
   "errs": [],
-  "out": "/tmp/c2s1/docs/qa-acceptance",
-  "at": "2026-11-21T03:13:19.435Z"
+  "out": "/tmp/c2s1/docs/qa-acceptance2",
+  "at": "2026-11-21T03:58:58.407Z"
 }

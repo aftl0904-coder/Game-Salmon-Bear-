@@ -25,7 +25,16 @@ type Bank = {
 
 const BANK = quizRaw as unknown as Bank
 
-export type GoldfishResult = { coins: number; correct: number; wrong: number; skipped: number }
+export type GoldfishResult = {
+  coins: number
+  correct: number
+  wrong: number
+  skipped: number
+  /** 2P: per-purse deltas (already floored at 0 net for shared `coins`). */
+  purse?: { boy: number; girl: number }
+}
+
+type Who = 'boy' | 'girl'
 
 function shuffle<T>(arr: T[], rng: () => number): T[] {
   const a = arr.slice()
@@ -44,9 +53,33 @@ function pickRound(rng: () => number): Q[] {
   return [...six, last]
 }
 
+function makeBuzz(scene: Phaser.Scene, x: number, y: number, label: string) {
+  const halo = scene.add.circle(x, y, 42, 0xff4060, 0.25)
+  const btn = scene.add.circle(x, y, 34, 0xe01828, 1).setStrokeStyle(4, 0xffe080)
+  const tx = scene.add
+    .text(x, y, label, {
+      fontFamily: FONT_TITLE,
+      fontSize: '18px',
+      color: '#fff8e0',
+      stroke: '#400008',
+      strokeThickness: 4,
+    })
+    .setOrigin(0.5)
+  btn.setInteractive({ useHandCursor: true })
+  scene.tweens.add({
+    targets: halo,
+    scale: { from: 1, to: 1.18 },
+    alpha: { from: 0.35, to: 0.12 },
+    duration: 650,
+    yoyo: true,
+    repeat: -1,
+  })
+  return { halo, btn, tx, x, y }
+}
+
 /**
  * 會員中心・金魚眼搶答（C2 頭兩關攤檔）。
- * 右邊大紅掣搶答；單人對假對手；冇人搶 → skip；搶中限時作答，超時扣小小幣。
+ * 1P：右邊紅掣 + 假對手；2P：左右各一粒紅掣，答錯後另一位可搶。
  */
 export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   let killed = false
@@ -55,6 +88,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     resolve = r
   })
 
+  const twoP = scene.registry.get('playMode') === '2p'
   const rng = () => Math.random()
   const round = pickRound(rng)
   const scoring = BANK.scoring
@@ -65,6 +99,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   let wrong = 0
   let skipped = 0
   let qi = 0
+  const purse = { boy: 0, girl: 0 }
 
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 280)
   root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0a1218, 0.88).setOrigin(0).setInteractive())
@@ -99,7 +134,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     .text(GAME_W / 2, 188, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#8ad0ff' })
     .setOrigin(0.5)
   const coinHud = scene.add
-    .text(72, 58, '幣 0', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a' })
+    .text(72, 58, twoP ? '倫0 琪0' : '幣 0', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' })
     .setOrigin(0, 0.5)
 
   root.add([title, progress, prompt, status, coinHud])
@@ -120,33 +155,16 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     c.setVisible(false)
   }
 
-  // Big red buzz button (right side, exaggerated arcade).
-  const buzzX = GAME_W - 70
-  const buzzY = GAME_H / 2 + 10
-  const buzzHalo = scene.add.circle(buzzX, buzzY, 42, 0xff4060, 0.25)
-  const buzzBtn = scene.add.circle(buzzX, buzzY, 34, 0xe01828, 1).setStrokeStyle(4, 0xffe080)
-  const buzzLabel = scene.add
-    .text(buzzX, buzzY, '搶', {
-      fontFamily: FONT_TITLE,
-      fontSize: '22px',
-      color: '#fff8e0',
-      stroke: '#400008',
-      strokeThickness: 4,
-    })
-    .setOrigin(0.5)
-  root.add([buzzHalo, buzzBtn, buzzLabel])
-  buzzBtn.setInteractive({ useHandCursor: true })
-  scene.tweens.add({
-    targets: buzzHalo,
-    scale: { from: 1, to: 1.18 },
-    alpha: { from: 0.35, to: 0.12 },
-    duration: 650,
-    yoyo: true,
-    repeat: -1,
-  })
+  const p1Buzz = makeBuzz(scene, GAME_W - 70, GAME_H / 2 + 10, twoP ? 'P1' : '搶')
+  root.add([p1Buzz.halo, p1Buzz.btn, p1Buzz.tx])
+  let p2Buzz: ReturnType<typeof makeBuzz> | null = null
+  if (twoP) {
+    p2Buzz = makeBuzz(scene, 70, GAME_H / 2 + 10, 'P2')
+    root.add([p2Buzz.halo, p2Buzz.btn, p2Buzz.tx])
+  }
 
   const skipTxt = scene.add
-    .text(GAME_W / 2, GAME_H - 28, 'Start／Esc 可略過整局', {
+    .text(GAME_W / 2, GAME_H - 28, twoP ? 'Start／Esc 略過｜P1 右掣／Enter｜P2 左掣／Shift' : 'Start／Esc 可略過整局', {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#8a9aaa',
@@ -158,13 +176,15 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   let phase: Phase = 'buzz'
   let buzzOpen = 0
   let answerLeft = 0
-  let playerBuzzed = false
+  let answering: Who | 'rival' | null = null
+  /** In 2P rebound after a wrong answer — only the other seat may buzz. */
+  let onlyWho: Who | null = null
   let rivalBuzzAt = 0
   let lockedChoices = false
   let keys: Phaser.Input.Keyboard.Key[] = []
 
   const refreshCoin = () => {
-    coinHud.setText(`幣 ${coins}`)
+    coinHud.setText(twoP ? `倫${purse.boy} 琪${purse.girl}` : `幣 ${coins}`)
   }
 
   const setChoicesVisible = (on: boolean) => {
@@ -180,6 +200,14 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     }
   }
 
+  const resultNow = (): GoldfishResult => ({
+    coins,
+    correct,
+    wrong,
+    skipped,
+    purse: twoP ? { ...purse } : undefined,
+  })
+
   const finish = (r: GoldfishResult) => {
     if (killed) return
     killed = true
@@ -190,6 +218,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   const cleanup = () => {
     scene.input.keyboard?.off('keydown-ESC')
     scene.input.keyboard?.off('keydown-ENTER')
+    scene.input.keyboard?.off('keydown-SHIFT')
     for (const k of keys) k.destroy()
     root.destroy(true)
   }
@@ -199,102 +228,145 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     return ok ? table.correct : table.wrong
   }
 
-  const applyDelta = (n: number) => {
+  const applyDelta = (n: number, who?: Who) => {
     coins = Math.max(0, coins + n)
+    if (who) purse[who] = Math.max(0, purse[who] + n)
     refreshCoin()
+  }
+
+  const resetBuzzLooks = () => {
+    p1Buzz.btn.setFillStyle(0xe01828, 1)
+    p2Buzz?.btn.setFillStyle(0xe01828, 1)
   }
 
   const nextQuestion = () => {
     if (qi >= round.length) {
       phase = 'done'
       status.setText(`完！今局金幣 ${coins}`)
-      scene.time.delayedCall(900, () => finish({ coins, correct, wrong, skipped }))
+      scene.time.delayedCall(900, () => finish(resultNow()))
       return
     }
     const q = round[qi]!
     phase = 'buzz'
-    playerBuzzed = false
+    answering = null
+    onlyWho = null
     lockedChoices = false
     setChoicesVisible(false)
+    resetBuzzLooks()
     progress.setText(`第 ${qi + 1}／${round.length} 題${q.difficulty === 'hard' ? '（難題）' : ''}`)
     prompt.setText(q.prompt)
-    status.setText('撳右邊紅掣搶答！')
+    status.setText(twoP ? '左右紅掣搶答！' : '撳右邊紅掣搶答！')
     paintChoices(q)
-    buzzOpen = qi === 0 ? 4200 : 3600
-    // Human-first pacing: rival waits so a reading player can buzz (Alan player note).
-    const base = qi === 0 ? 2400 : q.difficulty === 'hard' ? 2000 : 1600
-    const spread = qi === 0 ? 900 : q.difficulty === 'hard' ? 1400 : 1200
-    rivalBuzzAt = base + Math.floor(rng() * spread)
-    buzzBtn.setFillStyle(0xe01828, 1)
+    buzzOpen = qi === 0 ? 4500 : 3600
+    // 1P fake rival — human-first (no human playtest yet; leave generous window).
+    const base = qi === 0 ? 2800 : q.difficulty === 'hard' ? 2100 : 1700
+    const spread = qi === 0 ? 1000 : q.difficulty === 'hard' ? 1400 : 1200
+    rivalBuzzAt = twoP ? 999999 : base + Math.floor(rng() * spread)
   }
 
-  const beginAnswer = (who: 'player' | 'rival') => {
+  const beginAnswer = (who: Who | 'rival') => {
     phase = 'answer'
-    answerLeft = who === 'player' ? 2800 : 1600
-    setChoicesVisible(who === 'player')
-    status.setText(who === 'player' ? '快答！揀 A–D' : '對手搶到…')
+    answering = who
+    answerLeft = who === 'rival' ? 1600 : 2800
+    setChoicesVisible(who !== 'rival')
+    status.setText(who === 'rival' ? '對手搶到…' : who === 'girl' ? '琪寶寶快答！A–D' : '倫寶快答！A–D')
     if (who === 'rival') {
-      // Rival auto-resolves after short think — 55% correct on normal, 35% on hard.
       const q = round[qi]!
       const chance = q.difficulty === 'hard' ? 0.35 : 0.55
       scene.time.delayedCall(700 + Math.floor(rng() * 600), () => {
-        if (killed || phase !== 'answer' || playerBuzzed) return
-        const ok = rng() < chance
-        resolveAnswer(ok, 'rival')
+        if (killed || phase !== 'answer' || answering !== 'rival') return
+        resolveAnswer(rng() < chance, 'rival')
       })
     }
   }
 
-  const resolveAnswer = (ok: boolean, who: 'player' | 'rival' | 'timeout') => {
+  const resolveAnswer = (ok: boolean, who: Who | 'rival' | 'timeout') => {
     if (phase === 'resolve' || phase === 'done') return
     phase = 'resolve'
     lockedChoices = true
     setChoicesVisible(false)
     const q = round[qi]!
+
     if (who === 'timeout') {
-      applyDelta(timeoutPenalty)
+      const seat = answering === 'boy' || answering === 'girl' ? answering : undefined
+      applyDelta(timeoutPenalty, seat)
       status.setText(`超時！${timeoutPenalty} 幣`)
       SFX.hurt()
-    } else if (who === 'player') {
-      const d = scoreFor(q, ok)
-      applyDelta(d)
-      if (ok) {
-        correct++
-        status.setText(`啱！+${d} 幣`)
-        SFX.coin()
-      } else {
-        wrong++
-        status.setText(`錯…${d} 幣`)
-        SFX.hurt()
-      }
-    } else {
-      // Rival scored atmosphere only.
+      qi++
+      scene.time.delayedCall(750, () => {
+        if (!killed) nextQuestion()
+      })
+      return
+    }
+
+    if (who === 'rival') {
       if (ok) status.setText('對手答啱咗！')
       else status.setText('對手都答錯…')
+      qi++
+      scene.time.delayedCall(750, () => {
+        if (!killed) nextQuestion()
+      })
+      return
     }
+
+    const d = scoreFor(q, ok)
+    applyDelta(d, who)
+    if (ok) {
+      correct++
+      status.setText(`啱！+${d} 幣`)
+      SFX.coin()
+      qi++
+      scene.time.delayedCall(750, () => {
+        if (!killed) nextQuestion()
+      })
+      return
+    }
+
+    wrong++
+    status.setText(`錯…${d} 幣`)
+    SFX.hurt()
+
+    // 2P: after a wrong answer the other seat may steal the rebound buzz once.
+    if (twoP && !onlyWho) {
+      const other: Who = who === 'boy' ? 'girl' : 'boy'
+      onlyWho = other
+      answering = null
+      phase = 'buzz'
+      lockedChoices = false
+      buzzOpen = 2200
+      resetBuzzLooks()
+      status.setText(`${other === 'girl' ? '琪寶寶' : '倫寶'}可以搶返！`)
+      return
+    }
+
     qi++
     scene.time.delayedCall(750, () => {
       if (!killed) nextQuestion()
     })
   }
 
-  const tryBuzz = () => {
-    if (killed || phase !== 'buzz' || playerBuzzed) return
-    playerBuzzed = true
+  const tryBuzz = (who: Who) => {
+    if (killed || phase !== 'buzz') return
+    if (onlyWho && onlyWho !== who) return
+    if (answering) return
+    answering = who
     SFX.swing()
-    buzzBtn.setFillStyle(0xff6080, 1)
-    beginAnswer('player')
+    if (who === 'boy') p1Buzz.btn.setFillStyle(0xff6080, 1)
+    else p2Buzz?.btn.setFillStyle(0xff6080, 1)
+    beginAnswer(who)
   }
 
-  buzzBtn.on('pointerdown', () => tryBuzz())
+  p1Buzz.btn.on('pointerdown', () => tryBuzz('boy'))
+  p2Buzz?.btn.on('pointerdown', () => tryBuzz('girl'))
 
   for (let i = 0; i < 4; i++) {
     const idx = i
     const bg = choiceBtns[i]!.list[0] as Phaser.GameObjects.Rectangle
     bg.on('pointerdown', () => {
-      if (killed || phase !== 'answer' || lockedChoices || !playerBuzzed) return
+      if (killed || phase !== 'answer' || lockedChoices) return
+      if (answering !== 'boy' && answering !== 'girl') return
       const q = round[qi]!
-      resolveAnswer(idx === q.answerIndex, 'player')
+      resolveAnswer(idx === q.answerIndex, answering)
     })
   }
 
@@ -311,18 +383,24 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       kb.addKey('FOUR'),
       kb.addKey('SPACE'),
       kb.addKey('J'),
+      kb.addKey('ENTER'),
+      kb.addKey('SHIFT'),
     ]
-    kb.on('keydown-ESC', () => finish({ coins, correct, wrong, skipped }))
+    kb.on('keydown-ESC', () => finish(resultNow()))
     kb.on('keydown-ENTER', () => {
-      if (phase === 'buzz') tryBuzz()
+      if (phase === 'buzz') tryBuzz('boy')
+    })
+    kb.on('keydown-SHIFT', () => {
+      if (phase === 'buzz' && twoP) tryBuzz('girl')
     })
   }
 
   const onKey = () => {
     if (killed) return
     if (phase === 'buzz') {
-      if (keys[8]?.isDown || keys[9]?.isDown || TouchInput.isDown('attack')) tryBuzz()
-    } else if (phase === 'answer' && playerBuzzed && !lockedChoices) {
+      if (keys[8]?.isDown || keys[9]?.isDown || keys[10]?.isDown || TouchInput.isDown('attack')) tryBuzz('boy')
+      if (twoP && keys[11]?.isDown) tryBuzz('girl')
+    } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl') && !lockedChoices) {
       const map = [
         keys[0]?.isDown || keys[4]?.isDown,
         keys[1]?.isDown || keys[5]?.isDown,
@@ -332,7 +410,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       for (let i = 0; i < 4; i++) {
         if (map[i]) {
           const q = round[qi]!
-          resolveAnswer(i === q.answerIndex, 'player')
+          resolveAnswer(i === q.answerIndex, answering)
           break
         }
       }
@@ -345,16 +423,31 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     callback: () => {
       if (killed) return
       onKey()
-      if (TouchInput.isDown('attack') && phase === 'buzz') tryBuzz()
+      if (TouchInput.isDown('attack') && phase === 'buzz') tryBuzz('boy')
       if (phase === 'buzz') {
         buzzOpen -= 50
-        rivalBuzzAt -= 50
-        status.setText(`搶答中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`)
-        if (!playerBuzzed && rivalBuzzAt <= 0) {
+        if (!twoP) rivalBuzzAt -= 50
+        status.setText(
+          onlyWho
+            ? `${onlyWho === 'girl' ? '琪' : '倫'}搶返中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`
+            : `搶答中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`,
+        )
+        if (!twoP && !answering && rivalBuzzAt <= 0) {
           beginAnswer('rival')
           return
         }
-        if (buzzOpen <= 0 && !playerBuzzed) {
+        if (buzzOpen <= 0 && !answering) {
+          if (onlyWho) {
+            // Rebound timed out — move on.
+            onlyWho = null
+            qi++
+            status.setText('冇人搶返 → 下一題')
+            phase = 'resolve'
+            scene.time.delayedCall(500, () => {
+              if (!killed) nextQuestion()
+            })
+            return
+          }
           skipped++
           status.setText('冇人搶 → Skip')
           phase = 'resolve'
@@ -363,7 +456,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
             if (!killed) nextQuestion()
           })
         }
-      } else if (phase === 'answer' && playerBuzzed) {
+      } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl')) {
         answerLeft -= 50
         status.setText(`作答 ${Math.max(0, Math.ceil(answerLeft / 1000))}s`)
         if (answerLeft <= 0) resolveAnswer(false, 'timeout')
@@ -385,7 +478,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       if (killed) return
       killed = true
       origDestroy()
-      resolve({ coins, correct, wrong, skipped })
+      resolve(resultNow())
     },
   }
 }

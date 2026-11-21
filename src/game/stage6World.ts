@@ -103,6 +103,7 @@ export class Stage6World {
   private teachSlipX0: number | null = null
   private teachSlipX1: number | null = null
   private slipTaught = false
+  private junkTaught = false
 
   constructor(ctx: Stage6Ctx, d: Stage6Data) {
     this.ctx = ctx
@@ -437,6 +438,24 @@ export class Stage6World {
       }
     }
     const junkOn = heroes.some((h) => h.active && h.x >= this.junkUnlockX)
+    if (junkOn && !this.junkTaught) {
+      this.junkTaught = true
+      const lead = heroes.find((h) => h.active) ?? heroes[0]
+      if (lead) {
+        const s = this.ctx.scene
+        const tip = s.add
+          .text(lead.x, this.ctx.floorY - 110, '新機制：地下雜物！要跳過，踩中會扣血', {
+            fontFamily: FONT_UI,
+            fontSize: '14px',
+            color: '#fff8e0',
+            backgroundColor: '#802018',
+            padding: { x: 6, y: 4 },
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.UI + 20)
+        s.tweens.add({ targets: tip, y: tip.y - 12, alpha: 0, delay: 2200, duration: 500, onComplete: () => tip.destroy() })
+      }
+    }
     for (const j of this.junk) {
       j.root.setVisible(junkOn)
       if (!junkOn) continue

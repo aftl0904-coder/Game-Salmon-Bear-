@@ -4051,8 +4051,19 @@ export class GameScene extends Phaser.Scene {
     const pages =
       st.game === 'goldfish'
         ? [
-            { title: `${st.keeper}：金魚眼搶答`, lines: ['右邊大紅掣搶答，', '搶到就快啲揀答案。'], tip: '冇人搶會 Skip；超時扣小小幣。' },
-            { title: '一共七題', lines: ['最後一題最難、獎金最多。'], tip: '假對手會同你搶。' },
+            {
+              title: `${st.keeper}：金魚眼搶答`,
+              lines:
+                this.mode === '2p'
+                  ? ['右邊紅掣＝倫寶，左邊紅掣＝琪寶寶，', '搶到就快啲揀答案；答錯另一位可搶返。']
+                  : ['右邊大紅掣搶答，', '搶到就快啲揀答案。'],
+              tip: '冇人搶會 Skip；超時扣小小幣。',
+            },
+            {
+              title: '一共七題',
+              lines: ['最後一題最難、獎金最多。'],
+              tip: this.mode === '2p' ? '各人金幣入各自錢包。' : '假對手會同你搶。',
+            },
           ]
         : st.game === 'pour'
         ? [
@@ -4076,7 +4087,7 @@ export class GameScene extends Phaser.Scene {
               ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
-    const after = (coins: number, pts: number) => {
+    const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
       if (this.storyIntro === activeGate) this.storyIntro = null
       if (this.ended || !this.scene.isActive()) return
       this.physics.resume()
@@ -4086,7 +4097,12 @@ export class GameScene extends Phaser.Scene {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
       }
-      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+      if (split) {
+        if (split.boy) this.addCoins('boy', split.boy)
+        if (split.girl) this.addCoins('girl', split.girl)
+      } else if (coins > 0) {
+        this.addCoins(this.boy.role as Who, coins)
+      }
     }
     if (choice === 'skip') {
       after(0, 0)
@@ -4113,7 +4129,7 @@ export class GameScene extends Phaser.Scene {
     if (st.game === 'goldfish') {
       const mini = goldfishQuiz(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.coins, r.correct * 80))
+      void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
       return
     }
     const mini = stirCoffee(this)

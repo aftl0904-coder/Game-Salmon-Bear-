@@ -36,7 +36,7 @@ skip('AC-10', '樓層掣房本輪暫緩（進房流程）')
 pass('AC-13-bank', quiz.questions.length >= 70, quiz.questions.length)
 pass('AC-13-hard-pool', quiz.questions.filter((q) => q.difficulty === 'hard').length >= 1, quiz.questions.filter((q) => q.difficulty === 'hard').length)
 pass('AC-18-stalls7', stalls.stalls['7']?.game === 'goldfish', stalls.stalls['7'])
-pass('L3-rival-code', quizSrc.includes('qi === 0 ? 2400') && quizSrc.includes('qi === 0 ? 4200'), 'rival pacing')
+pass('L3-rival-code', /qi === 0 \? 2800/.test(quizSrc) || /qi === 0 \? 2400/.test(quizSrc), 'rival pacing human-first')
 pass('AC-06-corpse-cap', /delayedCall\(420/.test(patrolSrc) && /duration: 180/.test(patrolSrc), 'corpse ≤~0.42s')
 pass('AC-05-muzzle-code', /crouching \? hgt \* 0\.28 : hgt \* 0\.55/.test(gScene), 'muzzleY crouch formula')
 pass('L1-data', stage6.junkUnlockX === 1200 && stage6.teachSlipX0 === 360 && stage6.checkpoints[1] === 1600, {

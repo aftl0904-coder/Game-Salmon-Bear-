@@ -1,0 +1,89 @@
+{
+  "results": [
+    {
+      "id": "junk-teach-toast",
+      "ok": true,
+      "detail": {
+        "taught": true,
+        "tip": "新機制：地下雜物！要跳過，踩中會扣血",
+        "vis": [
+          false,
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "boss-fan-headwind",
+      "ok": true,
+      "detail": {
+        "fanOn": true,
+        "mul": 0.45,
+        "vx": 72,
+        "before": -180
+      }
+    },
+    {
+      "id": "stage6-clear-path",
+      "ok": true,
+      "detail": {
+        "win": {
+          "ended": false,
+          "win": false,
+          "clearModal": false,
+          "bossLeft": 0
+        },
+        "win2": {
+          "ended": true,
+          "win": false,
+          "clearModal": false,
+          "overlay": false
+        }
+      }
+    },
+    {
+      "id": "2p-buzz-ui",
+      "ok": true,
+      "detail": {
+        "twoP": {
+          "mode": "2p",
+          "started": true
+        },
+        "afterWrong": {
+          "rebound": true,
+          "sample": [
+            "會員中心・搶答",
+            "會員中心・金魚眼搶答",
+            "琪搶返中… 2s",
+            "倫0 琪0"
+          ],
+          "hasP2": true
+        }
+      }
+    },
+    {
+      "id": "2p-rebound-after-wrong",
+      "ok": true,
+      "detail": {
+        "rebound": true,
+        "sample": [
+          "會員中心・搶答",
+          "會員中心・金魚眼搶答",
+          "琪搶返中… 2s",
+          "倫0 琪0"
+        ],
+        "hasP2": true
+      }
+    },
+    {
+      "id": "no-pageerror",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "fails": 0,
+  "errs": [],
+  "out": "/tmp/c2s1/docs/qa-finish"
+}
