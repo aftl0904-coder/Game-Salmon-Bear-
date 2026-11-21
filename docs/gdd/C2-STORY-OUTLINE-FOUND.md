@@ -1,7 +1,8 @@
 # 大陸2 故仔大綱・已搵到（對照）
 
 > Designer 筆記：Alan 話「本身諗住五關、有故仔大綱你搵下」。  
-> **唔係新發明**——以下係 repo 入面已有、可追溯嘅大綱。
+> **權威來源（2026-11-22）：** `docs/bible/c2-story-outline.md`（branch `claude/c2-story-outline`，摘自 Alan「鮭鮭熊 二大陸故事大綱」）。  
+> 第8–10 brief：`c2-stage3-brief.md`／`c2-stage4-brief.md`／`c2-stage5-brief.md`＋`c2-stages-8-10-story-spine.md`。
 
 ---
 
