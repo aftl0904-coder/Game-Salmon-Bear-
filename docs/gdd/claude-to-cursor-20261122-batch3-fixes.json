@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-22",
+    "source": "Alan 13:13 喺正式網（main 2fb325b 之後）試玩回報",
+    "pr": { "branch": "cursor/playtest-fixes-2610", "from": "最新 origin/main", "note": "一條 PR 包晒 F1–F3；開唔到 PR 報 branch 名，Claude 代開；唔准自己 merge" },
+    "rules": "照 steps 做，numbers 直接用；做唔到停低回報，唔好自己諗替代方案；唔准改題目內容、唔准寫對白"
+  },
+  "tickets": [
+    {
+      "id": "F1_QUIZ_ALL_A",
+      "priority": "P0",
+      "bug": "金魚眼搶答每題正確答案都係 A。原因（Claude 已查）：data/quiz-mall.json 全部 95 題 answerIndex 都係 0，而顯示時冇打亂選項。",
+      "fix_steps": [
+        "1. 唔好改 data/quiz-mall.json（題庫保持正確答案放第一個，方便以後加題）",
+        "2. 喺 src/game/membershipQuiz.ts 每題顯示前，用現有 rng 將 4 個選項打亂；記低打亂後正確答案嘅新位置，用嚟判對錯（取代直接用 q.answerIndex）",
+        "3. 對手（rival）答題邏輯照用新位置",
+        "4. 確保同一局入面，正確答案位置大致平均（每局 A/B/C/D 各自最多出現一半題數）"
+      ],
+      "text_size": {
+        "goal": "Alan 話啲字要大隻啲",
+        "numbers": {
+          "題目 prompt": "15px → 20px（wordWrap 寬 560）",
+          "選項": "13px → 18px；選項框高 24 → 32px，行距 28 → 38px（四個選項唔可以出畫面或者蓋住紅掣）",
+          "進度／狀態字": "12–13px → 16px",
+          "底部提示": "11px → 14px"
+        },
+        "layout": "字放大後如果擠：題目移高少少、紅掣位置唔郁；全部要喺 640×360 入面"
+      },
+      "acceptance": [
+        "Q1 Playwright 玩 6 題：正確答案位置唔係全部 A，A/B/C/D 都有出現",
+        "Q2 揀打亂後嘅正確選項 = 答啱；揀其他 = 答錯",
+        "Q3 字大咗、冇重疊、冇出界（手機 iPhone 13 截圖放 docs/qa-quiz-fix2/）",
+        "Q4 觸控、方向鍵＋攻擊掣揀答案仍然正常"
+      ]
+    },
+    {
+      "id": "F2_LOADING_HEADS_LAYOUT",
+      "priority": "P1",
+      "issue": "Loading 封面嘅 Q 版大頭全部疊埋一齊，應該散開；而且用咗舊圖，要用最新最清嗰啲",
+      "fix_steps": [
+        "1. 搵每個角色而家 repo 入面最新、解像度最高嘅圖（優先：最近 32-bit／HD 版本嘅 portrait 或 sprite；用 git log 睇邊個檔最新）。PR 描述要列：角色名 → 用咗邊個檔 → 尺寸",
+        "2. 裁頭時用高解像原圖縮細（smooth 縮放），唔好再用細圖 nearest 放大（會矇／起鋸齒）",
+        "3. 排版改為散開：倫寶、琪寶寶、噗噗三個大頭（88px）放畫面中間一行；其餘朋友（64px）沿住外圍排成一個橢圓形，平均分佈，互相唔重疊（最少相隔 8px），唔好蓋住 logo、蜂蜜罐同右下角版本字",
+        "4. 每個頭照舊輕輕上下彈（2–4px，相位唔同）"
+      ],
+      "acceptance": [
+        "L1 冇任何兩個頭重疊（Playwright 計 bounding box）",
+        "L2 每個頭都清晰，冇明顯鋸齒或者矇（截圖放 docs/qa-loading2/）",
+        "L3 PR 描述列出每個角色用咗邊個新檔"
+      ]
+    },
+    {
+      "id": "F3_MAP_VERSE_SIZE",
+      "priority": "P1",
+      "issue": "世界地圖嘅聖經金句字放大兩倍之後太大，遮住咗地圖",
+      "where": "src/game/WorldMapScene.ts 第246行金句 text（而家 26px）",
+      "numbers": { "金句 fontSize": "26px → 20px", "lineSpacing": "6 → 4", "wordWrap": "560 保持" },
+      "extra": "如果 20px 仍然遮住地圖關卡圖示：金句加半透明深色底（#00000088，padding 8px），位置移去畫面上半部；其他地圖字（關名、圖示字）唔好縮",
+      "acceptance": [
+        "V1 金句唔再遮住關卡圖示（大陸1、大陸2 地圖各截一張圖）",
+        "V2 金句仍然比原本（13px）大，手機睇得清"
+      ]
+    }
+  ],
+  "report_format": "【Cursor → Claude】playtest-fixes 完成\nbranch／commit：\nacceptance：逐項 PASS/FAIL\nLoading 用咗嘅圖：\n預覽："
+}
