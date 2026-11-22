@@ -1,0 +1,20 @@
+{
+  "title": "Retired quiz questions",
+  "notes": "Moved out of quiz-mall.json; do not delete.",
+  "questions": [
+    {
+      "category": "labour",
+      "difficulty": "hard",
+      "prompt": "遣散費／長期服務金相關資格，正確態度係？",
+      "choices": [
+        "視乎年資、終止原因等條件，要核對條例",
+        "做滿三日一定有",
+        "只有老闆心情好先有",
+        "外判一律無任何保障"
+      ],
+      "answerIndex": 0,
+      "id": "lab-severance",
+      "retiredReason": "最專業／一般市民較少接觸：遣散費／長期服務金資格細節"
+    }
+  ]
+}

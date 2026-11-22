@@ -99,27 +99,89 @@ function pickPreferUnseen(pool: Q[], n: number, seen: Set<string>, rng: () => nu
 }
 
 /**
- * 6 normal + 1 hard. Hard sits randomly in slots 4–7 (1-based) = indices 3–6.
- * Marks picked ids into quizSeen for cross-stage de-dupe (stage 6 & 7).
+ * Pick up to n from pool, preferring unseen; does not clear quizSeen mid-round.
+ * Falls back to already-seen items in the same pool before returning short.
+ */
+function pickFromPool(pool: Q[], n: number, seen: Set<string>, exclude: Set<string>, rng: () => number): Q[] {
+  const available = pool.filter((q) => !exclude.has(q.id))
+  if (!available.length || n <= 0) return []
+  const fresh = available.filter((q) => !seen.has(q.id))
+  const rest = available.filter((q) => seen.has(q.id))
+  const ordered = [...shuffle(fresh, rng), ...shuffle(rest, rng)]
+  return ordered.slice(0, Math.min(n, ordered.length))
+}
+
+const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'labour'] as const
+
+/**
+ * Q9 mix — 6 normal: developer 2、hanglung 1、law 1、hr|labour 1、math|mall 1;
+ * 1 hard: 50% developer-hard, else other hard. Hard slot indices 3–6.
+ * Fallback when a bucket is empty: developer → law → others.
  */
 function pickRound(rng: () => number): Q[] {
   const seenList = loadSeenIds()
   const seen = new Set(seenList)
   const normals = BANK.questions.filter((q) => q.difficulty !== 'hard')
   const hards = BANK.questions.filter((q) => q.difficulty === 'hard')
-  const six = pickPreferUnseen(normals, 6, seen, rng)
-  const hardPool = hards.filter((q) => !seen.has(q.id))
-  const hard =
-    (hardPool.length ? shuffle(hardPool, rng)[0] : shuffle(hards, rng)[0]) ?? six[0]!
+  const exclude = new Set<string>()
+  const six: Q[] = []
+
+  const fill = (cats: string[], n: number) => {
+    const primary = normals.filter((q) => cats.includes(q.category))
+    let got = pickFromPool(primary, n, seen, exclude, rng)
+    if (got.length < n) {
+      for (const cat of FALLBACK_CATS) {
+        if (got.length >= n) break
+        const extra = normals.filter((q) => q.category === cat)
+        const more = pickFromPool(extra, n - got.length, seen, new Set([...exclude, ...got.map((q) => q.id)]), rng)
+        got = got.concat(more)
+      }
+    }
+    for (const q of got.slice(0, n)) {
+      six.push(q)
+      exclude.add(q.id)
+    }
+  }
+
+  fill(['developer'], 2)
+  fill(['hanglung'], 1)
+  fill(['law'], 1)
+  fill(['hr', 'labour'], 1)
+  fill(['math', 'mall'], 1)
+
+  while (six.length < 6) {
+    const more = pickFromPool(normals, 1, seen, exclude, rng)
+    if (!more.length) break
+    six.push(more[0]!)
+    exclude.add(more[0]!.id)
+  }
+
+  const devHards = hards.filter((q) => q.category === 'developer' && !exclude.has(q.id))
+  const otherHards = hards.filter((q) => q.category !== 'developer' && !exclude.has(q.id))
+  const useDevHard = rng() < 0.5
+  let hardPool = useDevHard && devHards.length ? devHards : otherHards.length ? otherHards : hards.filter((q) => !exclude.has(q.id))
+  if (!hardPool.length) hardPool = hards
+  const hard = pickFromPool(hardPool, 1, seen, exclude, rng)[0] ?? shuffle(hardPool, rng)[0] ?? six[0]!
+
   const hardSlot = 3 + Math.floor(rng() * 4) // index 3..6
-  const round = six.slice()
+  const round = six.slice(0, 6)
   round.splice(hardSlot, 0, hard)
-  // keep length 7 if splice grew past (six was 6 → insert → 7)
   const out = round.slice(0, 7)
   const nextSeen = [...seenList, ...out.map((q) => q.id)]
-  saveSeenIds(nextSeen)
-  for (const q of out) seen.add(q.id)
+  // If bank nearly exhausted, allow reshuffle next time
+  const normalIds = new Set(normals.map((q) => q.id))
+  const unseenNormals = [...normalIds].filter((id) => !nextSeen.includes(id))
+  if (unseenNormals.length < 6) {
+    saveSeenIds(out.map((q) => q.id))
+  } else {
+    saveSeenIds(nextSeen)
+  }
   return out
+}
+
+/** QA / Playwright: run pickRound without Phaser. */
+export function pickRoundForQa(rng: () => number = Math.random): Q[] {
+  return pickRound(rng)
 }
 
 type ShuffledQ = Q & { displayChoices: string[]; correctIndex: number }
