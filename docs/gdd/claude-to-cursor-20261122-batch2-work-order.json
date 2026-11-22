@@ -14,18 +14,67 @@
       "每條 PR 完成前：npm run build 成功＋該票 Playwright 測試＋現有測試全部 PASS",
       "新美術全部原創；唔准有真實品牌名、logo、字樣；唔准用任何現成卡通角色（例如任天堂、叮噹）嘅外形",
       "PR 描述必須有：改咗邊啲檔、每項 acceptance PASS/FAIL、預覽網址、所有最終用咗嘅數值"
-    ]
+    ],
+    "update_1031": "Alan 10:31 改：攪咖啡由舉旗大賽取代（T10 取消，T11 改放第1關）；新增 T13 金魚眼搶答修正（PR-H）"
   },
-
   "pr_plan": [
-    { "pr": "PR-C", "branch": "cursor/c2-mall-polish-2610", "tickets": ["T3_ESCALATOR", "T4_DEATH_FADE", "T5_SHOP_ICONS", "T5b_MALL_PROPS"], "start": "等 #107 合併後" },
-    { "pr": "PR-D", "branch": "cursor/quick-size-fixes-2610", "tickets": ["T6_ROE_SIZE", "T7_MAP_TEXT_2X"], "start": "即刻" },
-    { "pr": "PR-E", "branch": "cursor/loading-screen-2610", "tickets": ["T8_LOADING_SCREEN"], "start": "即刻" },
-    { "pr": "PR-F", "branch": "cursor/boss-rhythm-2610", "tickets": ["T9_BOSS_RHYTHM"], "start": "等 #108 合併後（要用新洗地機做基礎）" },
-    { "pr": "PR-G", "branch": "cursor/minigames-2610", "tickets": ["T10_COFFEE_HARDER", "T11_FLAG_GAME", "T12_MEMORY_GAME"], "start": "即刻" },
-    { "note": "即刻可以並行：PR-D、PR-E、PR-G。佢哋改唔同檔，盡量唔好郁 GameScene.ts 其他地方，減少衝突。" }
+    {
+      "pr": "PR-C",
+      "branch": "cursor/c2-mall-polish-2610",
+      "tickets": [
+        "T3_ESCALATOR",
+        "T4_DEATH_FADE",
+        "T5_SHOP_ICONS",
+        "T5b_MALL_PROPS"
+      ],
+      "start": "等 #107 合併後"
+    },
+    {
+      "pr": "PR-D",
+      "branch": "cursor/quick-size-fixes-2610",
+      "tickets": [
+        "T6_ROE_SIZE",
+        "T7_MAP_TEXT_2X"
+      ],
+      "start": "即刻"
+    },
+    {
+      "pr": "PR-E",
+      "branch": "cursor/loading-screen-2610",
+      "tickets": [
+        "T8_LOADING_SCREEN"
+      ],
+      "start": "即刻"
+    },
+    {
+      "pr": "PR-F",
+      "branch": "cursor/boss-rhythm-2610",
+      "tickets": [
+        "T9_BOSS_RHYTHM"
+      ],
+      "start": "等 #108 合併後（要用新洗地機做基礎）"
+    },
+    {
+      "pr": "PR-G",
+      "branch": "cursor/minigames-2610",
+      "tickets": [
+        "T11_FLAG_GAME",
+        "T12_MEMORY_GAME"
+      ],
+      "start": "即刻"
+    },
+    {
+      "pr": "PR-H",
+      "branch": "cursor/quiz-fix-2610",
+      "tickets": [
+        "T13_QUIZ_FIX"
+      ],
+      "start": "即刻（只改 src/game/membershipQuiz.ts）"
+    },
+    {
+      "note": "即刻可以並行：PR-D、PR-E、PR-G。佢哋改唔同檔，盡量唔好郁 GameScene.ts 其他地方，減少衝突。"
+    }
   ],
-
   "tickets": [
     {
       "id": "T5b_MALL_PROPS",
@@ -44,7 +93,6 @@
         "P3 冇任何字樣或品牌"
       ]
     },
-
     {
       "id": "T6_ROE_SIZE",
       "pr": "PR-D",
@@ -66,7 +114,6 @@
         "R3 重裝（power>1）同輕裝（power<1）比例照舊"
       ]
     },
-
     {
       "id": "T7_MAP_TEXT_2X",
       "pr": "PR-D",
@@ -88,7 +135,6 @@
         "W3 手機直向／橫向都睇得清（Playwright 用 iPhone 13 尺寸截圖）"
       ]
     },
-
     {
       "id": "T8_LOADING_SCREEN",
       "pr": "PR-E",
@@ -113,7 +159,10 @@
         "interim": "如果冇時間畫新圖：由現有角色 sprite 裁出個頭，用 nearest 放大 2–3 倍做臨時版；喺 docs/bible/art-todo.md 加 ART-REQUEST（列出每個角色名）",
         "loading_order": "Loading 畫面本身用嘅圖（大頭、logo、蜂蜜罐）要放喺一個細 preload pack 最先載入，總大小 ≤ 300KB；其他遊戲資源之後先載入"
       },
-      "do_not": ["人為延長載入時間（最多額外 0.8 秒畀完成動畫）", "用真實品牌或者現成卡通角色"],
+      "do_not": [
+        "人為延長載入時間（最多額外 0.8 秒畀完成動畫）",
+        "用真實品牌或者現成卡通角色"
+      ],
       "acceptance": [
         "L1 第一次開網頁見到放射紋背景＋一堆 Q 版大頭＋蜂蜜罐進度條（截圖放 docs/qa-loading/）",
         "L2 主角兩個＋噗噗＋friends.md 所有朋友都喺畫面（PR 描述列名）",
@@ -123,7 +172,6 @@
         "L6 右下角顯示 v{日期 時間} · {commit}；預覽網址上顯示嘅 commit 同 PR 最新 commit 一致"
       ]
     },
-
     {
       "id": "T9_BOSS_RHYTHM",
       "pr": "PR-F",
@@ -175,9 +223,12 @@
         "K5 七個 Boss 全部套用，每個成場 2–4 分鐘（Cursor 自己玩，PR 描述列時間）",
         "K6 大陸1 第1–5關清關流程冇壞（現有測試全 PASS）"
       ],
-      "do_not": ["改玩家傷害或者玩家數值", "刪 Boss 原有招式", "改 Boss 對白"]
+      "do_not": [
+        "改玩家傷害或者玩家數值",
+        "刪 Boss 原有招式",
+        "改 Boss 對白"
+      ]
     },
-
     {
       "id": "T10_COFFEE_HARDER",
       "pr": "PR-G",
@@ -197,18 +248,22 @@
         "C2 一直亂快攪會瀉、會低分（Playwright 模擬）",
         "C3 穩定喺綠區攪 ≥ 70% 得「啱啱好！」",
         "C4 教學頁（showTutorial）更新說明：要穩定速度，唔好太快太慢"
-      ]
+      ],
+      "status": "CANCELLED（Alan 10:31：攪咖啡由舉旗大賽取代，唔使做）"
     },
-
     {
       "id": "T11_FLAG_GAME",
       "pr": "PR-G",
-      "goal": "新小遊戲「舉旗大賽」（紅藍旗反應遊戲），放喺第6關商場攤檔",
+      "goal": "新小遊戲「舉旗大賽」，取代第1關咖啡媽媽攤檔嘅攪咖啡",
       "rules": {
-        "host": "噗噗做主持，兩隻手揸住紅旗、藍旗（原創畫法）",
+        "host": "咖啡媽媽做主持，兩隻手揸住紅旗、藍旗（原創畫法）；噗噗喺旁邊做觀眾（第1關噗噗仲係灰色無力，唔好俾佢做主持）",
         "commands": [
-          "舉紅旗", "放低紅旗", "舉藍旗", "放低藍旗",
-          "唔好舉紅旗（陷阱：乜都唔好撳）", "唔好舉藍旗（陷阱）"
+          "舉紅旗",
+          "放低紅旗",
+          "舉藍旗",
+          "放低藍旗",
+          "唔好舉紅旗（陷阱：乜都唔好撳）",
+          "唔好舉藍旗（陷阱）"
         ],
         "state": "玩家有兩支旗，各自係『舉起』或『放低』；指令要求嘅狀態已經係咁 → 呢輪應該乜都唔撳",
         "controls_1p": "← 或 A：切換紅旗；→ 或 D：切換藍旗；觸控：畫面左半＝紅、右半＝藍",
@@ -219,15 +274,20 @@
         "display": "指令大字（32px）喺畫面中間，噗噗同步做動作（陷阱輪噗噗會扮舉旗呃你）",
         "result": "用現有 RoundResult { good, total }；獎勵同其他攤檔小遊戲一樣計"
       },
-      "placement": "第6關 C 段或者 D 段（Boss 前），加一個攤檔＋攤主；攤主外形原創、對白「（待補）」；如果第6關原本有攤檔位，用嗰個位",
+      "placement": {
+        "where": "src/game/GameScene.ts 約第4217行 const mini = stirCoffee(this) → 改 call 舉旗大賽",
+        "keep": "攤檔位置、咖啡媽媽、咖啡車外觀、獎勵計法照舊；完場仍然係飲咖啡收尾（文字「（待補）」）",
+        "remove": "唔再 call stirCoffee；stirCoffee function 留喺 minigames.ts 唔好刪（之後可能再用）",
+        "stage6": "唔使喺第6關加舉旗大賽（第6關已有金魚眼搶答）"
+      },
       "acceptance": [
         "F1 10 輪完整玩到，計分正確（Playwright 模擬全啱＝10、全錯＝0）",
         "F2 陷阱輪唔撳＝得分",
         "F3 第一次玩有教學頁（showTutorial）",
-        "F4 鍵盤、觸控都玩得"
+        "F4 鍵盤、觸控都玩得",
+        "F5 第1關攤檔開始嘅係舉旗大賽，唔再出攪咖啡；第1關清關流程冇壞（現有測試 PASS）"
       ]
     },
-
     {
       "id": "T12_MEMORY_GAME",
       "pr": "PR-G",
@@ -248,8 +308,54 @@
         "M3 第一次玩有教學頁",
         "M4 鍵盤、觸控都玩得"
       ]
+    },
+    {
+      "id": "T13_QUIZ_FIX",
+      "pr": "PR-H",
+      "goal": "第6、7關「會員中心・金魚眼搶答」：延長時間＋修好揀答案（手機觸控、手掣方向鍵＋攻擊掣）",
+      "where": "src/game/membershipQuiz.ts",
+      "alan_report": "搶答時間長 2 秒；答題時間太短 +4 秒；難題再加 3 秒並提示；而家揀唔到答案；手機要撳到紅掣；手掣要用方向鍵揀、攻擊掣確定",
+      "numbers": {
+        "buzz_window": "buzzOpen：第1題 4000→6000；其他題 3400→5400；2P 搶返（rebound）2200→4200",
+        "rival_1p": "1P 對手搶答時間 base 每項 +1000ms（第1題 2200→3200、難題 1900→2900、普通 1500→2500），spread 不變——否則對手太快搶，延長咗都冇用",
+        "answer_time": "玩家作答 answerLeft 2800→6800；難題 6800+3000=9800",
+        "hard_notice": "難題入作答時，畫面中間閃大字「難題！多 3 秒」1 秒（fontSize 24px、黃字深色描邊），status 顯示倒數",
+        "rival_answer": "對手作答 1600 不變"
+      },
+      "input_spec": {
+        "answer_cursor": "作答時四個選項有一個高亮框（預設第1個）；↑／↓ 移動高亮（鍵盤方向鍵、WASD 嘅 W/S、手掣十字掣、手機觸控方向鍵都得）；攻擊掣／Enter／Space／J／手機觸控攻擊掣＝確定",
+        "direct_keys": "保留 A–D、1–4 直接揀",
+        "touch_tap": "手機直接撳個選項＝即刻揀＋確定",
+        "buzz": "手機撳右邊紅掣搶答；觸控攻擊掣都可以搶答；鍵盤 Enter／Space／J；手掣攻擊掣",
+        "debounce": "搶答用嘅攻擊掣要放手之後先可以用嚟確定答案（edge trigger，至少 200ms），避免一撳搶答即誤選第1個答案",
+        "gamepad": "用現有 gamepadBridge.ts 嘅輸入，唔好另外寫一套"
+      },
+      "bug_suspects": [
+        "TouchControls（src/game/TouchControls.ts）嘅觸控層可能蓋住咗 canvas，令紅掣同選項收唔到 pointerdown；檢查 depth、DOM overlay 嘅 pointer-events、同 scene.input.topOnly",
+        "選項 bg 喺 container 入面 setInteractive，container 初時 setVisible(false)；確認顯示後 hit area 位置正確（container／camera scroll／縮放）",
+        "手掣冇 A–D 字母掣，所以而家手掣根本揀唔到——要靠 answer_cursor 解決"
+      ],
+      "steps": [
+        "1. Playwright（iPhone 13 模擬，用 tap）複現：撳紅掣、撳選項，記錄有冇反應，寫入 PR 描述",
+        "2. 搵出真正原因先改",
+        "3. 改 numbers",
+        "4. 做 answer_cursor 同 debounce",
+        "5. 改底部提示字：「搶答：紅掣／攻擊｜揀答案：↑↓＋攻擊，或直接撳」"
+      ],
+      "acceptance": [
+        "Q1 手機模擬：撳紅掣搶到、撳選項答到（Playwright tap）",
+        "Q2 鍵盤：Enter 搶答 → ↓↓ → Enter 選中第3個（Playwright）",
+        "Q3 手掣（或模擬 gamepad 輸入）：攻擊搶答 → 十字掣揀 → 攻擊確定",
+        "Q4 搶答嗰下唔會誤選答案（debounce）",
+        "Q5 普通題作答 6.8 秒、難題 9.8 秒＋「難題！多 3 秒」提示",
+        "Q6 1P 對手最快 2.5 秒先搶（普通題），2P 冇對手",
+        "Q7 第6、7關都正常"
+      ],
+      "do_not": [
+        "改題目內容或者題庫",
+        "改計分"
+      ]
     }
   ],
-
   "report_format": "完成每條 PR 回：\n【Cursor → Claude】PR-X 完成\nPR #／branch：\n改咗：\nacceptance：逐項 PASS/FAIL\n最終數值：\n預覽：\n卡住／疑問："
 }
