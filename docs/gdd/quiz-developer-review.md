@@ -1027,3 +1027,10 @@
 | hard | 20 |
 | hr＋labour | 24 |
 | **total** | **254** |
+
+## B5 題目主題調整（Alan 23:19）
+
+- 搬走：**40** 條（developer 17、law 23）→ `data/quiz-retired.json`
+- 新加 id：dev-60, dev-61, dev-62, dev-63, dev-64, dev-65, dev-66, dev-67, dev-68, dev-69, dev-70, dev-71, dev-72, dev-73, dev-74, dev-75, dev-76, dev-77, law-51, law-52, law-53, law-54, law-55, law-56, law-57, law-58, law-59, law-60, law-61, law-62, law-63, law-64, law-65, law-66, law-67, law-68, law-69, law-70, law-71, law-72, law-73
+- 題庫已清除字眼：按揭、供樓、睇樓、印花稅、示範單位、價單
+

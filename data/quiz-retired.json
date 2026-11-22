@@ -15,6 +15,598 @@
       "answerIndex": 0,
       "id": "lab-severance",
       "retiredReason": "最專業／一般市民較少接觸：遣散費／長期服務金資格細節"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "香港住宅租約最常見用咩單位計租金？",
+      "choices": [
+        "每月",
+        "每週",
+        "每日",
+        "每季度"
+      ],
+      "answerIndex": 0,
+      "id": "Q001",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客通常要預繳／存放、退租時先傾扣費嘅係？",
+      "choices": [
+        "按金",
+        "飛機票",
+        "遊戲幣",
+        "差餉三十年"
+      ],
+      "answerIndex": 0,
+      "id": "Q002",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「交吉」賣樓／交樓大致指單位？",
+      "choices": [
+        "空置可入住",
+        "一定連傢俬",
+        "一定連租客",
+        "一定連車位"
+      ],
+      "answerIndex": 0,
+      "id": "Q003",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租約未到期想提早走，通常先睇？",
+      "choices": [
+        "有冇解約條款／賠償",
+        "一定免費即走",
+        "一定送一年",
+        "自動買斷"
+      ],
+      "answerIndex": 0,
+      "id": "Q015",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「樓花」大致指？",
+      "choices": [
+        "未建成／預售物業",
+        "開花單位",
+        "一定凶宅",
+        "一定商場中庭"
+      ],
+      "answerIndex": 0,
+      "id": "Q016",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "業主同租客邊個負責冷氣維修，最好？",
+      "choices": [
+        "租約寫清楚",
+        "每次猜拳",
+        "永遠唔傾",
+        "問天氣"
+      ],
+      "answerIndex": 0,
+      "id": "Q020",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "交吉出售廣告通常暗示買家？",
+      "choices": [
+        "較易空置收樓",
+        "一定連租客",
+        "免差餉一世",
+        "送商場"
+      ],
+      "answerIndex": 0,
+      "id": "Q021",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客長期欠租，業主常見方向係？",
+      "choices": [
+        "跟程序追討／終止租約",
+        "即刻掟傢俬落街表演",
+        "改門牌逃避",
+        "刪遊戲進度"
+      ],
+      "answerIndex": 0,
+      "id": "Q025",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-01",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "香港一手未建成住宅單位（樓花）預售，通常要先取得邊種同意？",
+      "choices": [
+        "地政總署預售樓花同意書",
+        "屋宇署佔用許可證",
+        "規劃署規劃許可",
+        "差餉物業估價署估價報告"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-02",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "「地政總署預售樓花同意方案」主要屬邊種性質？",
+      "choices": [
+        "行政程序，可發出預售樓花同意書准許預售未建成單位",
+        "等同屋宇署入伙紙",
+        "等同土地註冊處業權證明",
+        "等同銀行正式按揭批核"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-03",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "地政總署發出預售樓花同意書前，發展商一般要證明啲咩？",
+      "choices": [
+        "項目已達指定階段、有足夠資金完成，並遵從其他規定",
+        "只需出示售樓處裝修合約",
+        "只需取得商場宣傳批准",
+        "只需完成示範單位佈置"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-26",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "一手住宅物業銷售監管局（SRPA）主要監管咩？",
+      "choices": [
+        "一手住宅物業銷售",
+        "二手住宅物業中介牌照",
+        "商業舖位短租招標",
+        "工廈整幢買賣"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/tc/",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-27",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "準買家買一手樓前，監管局宣傳提醒要先睇啲咩？",
+      "choices": [
+        "售樓說明書、價單同銷售安排",
+        "只睇示範單位同銷售員介紹",
+        "只睇成交紀錄冊已足夠",
+        "只睇按揭銀行宣傳單張"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-28",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "簽署臨時買賣合約後，一般要喺幾多個工作天內簽立正式買賣合約？",
+      "choices": [
+        "五個工作天",
+        "三個工作天",
+        "七個工作天",
+        "十四個工作天"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-29",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "若簽署臨時買賣合約後冇喺限期內簽正式合約，宣傳片提醒可能會點？",
+      "choices": [
+        "相等於樓價5%嘅訂金可能會被沒收",
+        "相等於樓價10%嘅訂金可能會被沒收",
+        "只需支付手續費即可取消",
+        "可以自動延期一個月"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-30",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "一手住宅物業銷售資訊網（電子平台）由邊方面提供查閱？",
+      "choices": [
+        "一手住宅物業銷售監管局相關電子平台（SRPE）",
+        "土地註冊處網上查冊主站",
+        "差餉物業估價署物業資訊網",
+        "屋宇署百樓圖網"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpe.gov.hk/opip/index.htm?lang=zh_TW",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-31",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "「樓花」喺香港物業語境通常指咩？",
+      "choices": [
+        "未建成／興建中嘅住宅單位",
+        "已獲滿意紙嘅現樓單位",
+        "二手市場放盤單位",
+        "居屋第二市場單位"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-34",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "發展商想預售未建成單位，除資金同進度外，同意書仲會點？",
+      "choices": [
+        "施加多項發展商必須遵從嘅條件以加強保障消費者",
+        "完全唔設額外條件",
+        "只要求公開示範單位相片",
+        "只要求委任物業代理"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-42",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "一手樓銷售文件入面嘅「價單」主要列明咩？",
+      "choices": [
+        "單位售價等銷售價格資料",
+        "物業管理費明細",
+        "建築成本分項",
+        "按揭利率表"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-43",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "一手樓「售樓說明書」屬於邊類準買家應先研究嘅文件？",
+      "choices": [
+        "法定／監管要求下嘅銷售資料文件之一",
+        "純屬推廣單張無須核對",
+        "只供銀行內部使用",
+        "只供物管公司存檔"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-44",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "「成交紀錄冊」一類銷售透明度工具，主要服務邊類物業銷售監管目的？",
+      "choices": [
+        "讓準買家掌握一手住宅銷售相關成交／銷售資訊",
+        "記錄二手街訪成交傳聞",
+        "記錄物管投訴個案",
+        "記錄建築工人出勤"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/tc/",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-45",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "示範單位（示位）對準買家嘅正確態度係？",
+      "choices": [
+        "應對照售樓說明書等文件了解實際單位資料，唔好只靠觀感",
+        "示範單位即保證實樓裝修完全相同",
+        "示範單位面積可用目測代替文件",
+        "示範單位可以取代價單同說明書"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-49",
+      "category": "developer",
+      "difficulty": "hard",
+      "prompt": "政府喺大部分新批土地契約中，對建成前出售單位通常有咩限制？",
+      "choices": [
+        "限制樓宇喺建成前出售單位（可經預售樓花同意方案處理）",
+        "一律禁止任何形式預售",
+        "建成前可自由出售無需任何同意",
+        "只需取得入伙紙即可預售"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-57",
+      "category": "developer",
+      "difficulty": "hard",
+      "prompt": "一手樓宣傳提醒：評估負擔能力時，對口頭承諾應點？",
+      "choices": [
+        "要謹慎，並要求書面確認",
+        "口頭承諾等同正式買賣合約",
+        "口頭承諾可取代價單",
+        "口頭承諾可取代售樓說明書"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/en/publicity-materials/tv-apis/check_before_you_buy.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "dev-59",
+      "category": "developer",
+      "difficulty": "hard",
+      "prompt": "「地政總署預售樓花同意方案」准許預售嘅對象係？",
+      "choices": [
+        "未建成單位",
+        "已獲滿意紙嘅現樓單位",
+        "二手放盤單位",
+        "居屋第二市場單位"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-27",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅租約入面「按金」一般用途係？",
+      "choices": [
+        "保障業主因租客欠租或損壞等可抵扣嘅款項",
+        "代替每月租金",
+        "政府差餉專用",
+        "物業管理公司獎金"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-28",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "買二手樓查冊，主要去邊度查土地登記資料？",
+      "choices": [
+        "土地註冊處",
+        "屋宇署地盤監察組",
+        "差餉物業估價署估價組",
+        "規劃署規劃許可組"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landreg.gov.hk/tc/home/index.htm",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-30",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "消費者喺香港購物遇貨不對辦，可向邊類機構求助（常見途徑）？",
+      "choices": [
+        "消費者委員會等消費者保障途徑",
+        "屋宇署佔用許可證組",
+        "地政總署預售樓花組",
+        "土地註冊處查冊櫃檯"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.consumer.org.hk/tc",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-32",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅租約提早解約，較穩陣做法係？",
+      "choices": [
+        "按租約條款／書面協議處理通知期同責任",
+        "口頭同業主講一声就算",
+        "直接唔交租至遷出",
+        "只喺社交媒體宣布"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-33",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "買樓時「臨時買賣合約」同「正式買賣合約」關係，正確態度係？",
+      "choices": [
+        "臨時約後通常要喺限期內簽正式約，並注意訂金後果",
+        "臨時約永遠唔使變正式約",
+        "正式約可以完全唔睇就簽",
+        "可以只用即時通訊對話代替"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/tc/",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-35",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「實用面積」同「建築面積」對買家嘅正確態度係？",
+      "choices": [
+        "應以售樓文件定義同數字為準，唔好混淆",
+        "兩者永遠完全相同",
+        "可以目測代替文件",
+        "只需睇示範單位感覺"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/tc/",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-36",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租客擅自更改單位間隔成多間分間房，可能涉及咩風險？",
+      "choices": [
+        "違反租約／公契甚至建築規管相關規定",
+        "一定合法只要交租",
+        "只影響網速",
+        "只影響郵箱編號"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-39",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "買樓請律師主要幫手做咩？",
+      "choices": [
+        "查冊、審約、辦理轉讓等法律程序",
+        "代替測量師畫則",
+        "代替承建商施工",
+        "代替物管公司清潔"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-40",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "「樓花」買賣要特別留意邊類文件？",
+      "choices": [
+        "售樓說明書、價單、銷售安排等",
+        "只留意示範單位燈光",
+        "只留意銷售員口頭折扣",
+        "只留意商場餐飲優惠"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.srpa.gov.hk/tc/",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-41",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "住宅租約期完結後繼續住，較穩陣係？",
+      "choices": [
+        "盡早書面續約或按原約條款處理",
+        "自動當作永久業權",
+        "可以完全唔理通知",
+        "只交一半租金就算續約"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-44",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "物業「按揭」本質上係？",
+      "choices": [
+        "以物業作抵押向貸款機構借貸",
+        "把物業送贈銀行",
+        "豁免所有差餉",
+        "取消地契"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-45",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "二手樓睇樓時發現僭建嫌疑，買家應？",
+      "choices": [
+        "查冊／查屋宇署紀錄並咨詢專業意見",
+        "當裝飾一部分唔使理",
+        "叫賣家口頭保證即可",
+        "加價收購即可消除風險"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-46",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "租約規定「不得飼養寵物」，租客想養寵物應？",
+      "choices": [
+        "先取得業主書面同意或按約處理",
+        "當約內條款自動失效",
+        "交多一個月租即可",
+        "物管口頭默認即可"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-49",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "買樓「印花稅」相關安排，正確態度係？",
+      "choices": [
+        "按當時稅務規定計算並咨詢專業人士",
+        "可以永遠唔使繳",
+        "由物管公司代繳即可",
+        "只喺二手樓先適用、一手永遠豁免"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "law-50",
+      "category": "law",
+      "difficulty": "normal",
+      "prompt": "土地註冊處查冊可以幫買家了解咩？",
+      "choices": [
+        "業權、按揭、凍結令等登記資料",
+        "單位室內溫度紀錄",
+        "物管清潔更表",
+        "示範單位銷售話術"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landreg.gov.hk/tc/home/index.htm",
+      "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
     }
   ]
 }
