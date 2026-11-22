@@ -36,7 +36,7 @@ export const QUIZ_TIMING = {
   rivalSpreadQ1: 800,
   rivalSpreadHard: 1200,
   rivalSpreadNormal: 1000,
-  answerPlayer: 6800,
+  answerPlayer: 5800,
   answerHardExtra: 3000,
   answerRival: 1600,
   confirmDebounceMs: 200,
