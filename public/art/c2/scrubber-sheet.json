@@ -1,0 +1,96 @@
+{
+  "frameWidth": 112,
+  "frameHeight": 80,
+  "frames": {
+    "idle_0": {
+      "x": 0,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 0
+    },
+    "idle_1": {
+      "x": 112,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 1
+    },
+    "warn_0": {
+      "x": 224,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 2
+    },
+    "warn_1": {
+      "x": 336,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 3
+    },
+    "charge_0": {
+      "x": 448,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 4
+    },
+    "charge_1": {
+      "x": 560,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 5
+    },
+    "recover_0": {
+      "x": 672,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 6
+    },
+    "recover_1": {
+      "x": 784,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 7
+    },
+    "spray": {
+      "x": 896,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 8
+    },
+    "defeated": {
+      "x": 1008,
+      "y": 0,
+      "w": 112,
+      "h": 80,
+      "index": 9
+    }
+  },
+  "poseIndex": {
+    "idle": 0,
+    "warn": 2,
+    "charge": 4,
+    "recover": 6,
+    "spray": 8,
+    "defeated": 9
+  },
+  "order": [
+    "idle_0",
+    "idle_1",
+    "warn_0",
+    "warn_1",
+    "charge_0",
+    "charge_1",
+    "recover_0",
+    "recover_1",
+    "spray",
+    "defeated"
+  ]
+}

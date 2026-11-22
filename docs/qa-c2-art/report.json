@@ -1,0 +1,58 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "textures": {
+      "c2-scrubber": true,
+      "c2-blower": true,
+      "c2-acid-puddle": true,
+      "c2-acid-drip": true,
+      "c2-prop-plant": true,
+      "c2-prop-lightbox": true,
+      "c2-prop-escalator": true
+    },
+    "body": {
+      "texture": "c2-scrubber",
+      "frame": 0,
+      "bodyW": 96,
+      "bodyH": 58,
+      "offsetX": 8,
+      "offsetY": 20,
+      "hasBody": true,
+      "blowerTex": "c2-blower",
+      "act": "intro",
+      "fsm": "PATROL"
+    },
+    "propsOnStage": {
+      "c2-prop-lightbox": 2,
+      "c2-prop-plant": 4,
+      "c2-prop-bench": 3,
+      "c2-prop-trash": 2,
+      "c2-prop-barrier": 3,
+      "c2-prop-escalator": 2,
+      "c2-prop-sign": 2,
+      "c2-prop-cart": 1
+    },
+    "noProceduralBossKeys": {
+      "mallScrubberIdle": false,
+      "mallFloorBlowerOff": false
+    }
+  },
+  "shots": [
+    "docs/qa-c2-art/segment-A.png",
+    "docs/qa-c2-art/segment-B.png",
+    "docs/qa-c2-art/segment-C.png",
+    "docs/qa-c2-art/segment-D.png",
+    "docs/qa-c2-art/segment-E.png",
+    "docs/qa-c2-art/boss-idle.png",
+    "docs/qa-c2-art/boss-warn.png",
+    "docs/qa-c2-art/boss-charge.png",
+    "docs/qa-c2-art/boss-recover.png",
+    "docs/qa-c2-art/boss-spray.png",
+    "docs/qa-c2-art/boss-defeated.png"
+  ],
+  "notes": [
+    "Green __MISSING boxes on stage 6 are pre-existing enemy/item textures (out of B7 scope), not scrubber/blower/acid/mall-prop Graphics.",
+    "B7 art: c2-scrubber / c2-blower / c2-acid-* / c2-prop-* PNG sheets."
+  ]
+}
