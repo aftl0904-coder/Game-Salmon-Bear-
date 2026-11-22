@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "before": {
+      "bossSpecies": "mall-scrubber",
+      "bossHp": 55,
+      "heroHp": 6,
+      "directorSighted": true,
+      "directorCombat": 0,
+      "mall": true
+    },
+    "after": {
+      "bossSpecies": "mall-scrubber",
+      "bossHp": 55,
+      "heroHp": 6,
+      "queenIsDirector": false
+    }
+  }
+}

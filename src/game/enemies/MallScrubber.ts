@@ -105,19 +105,40 @@ function scrubberTexture(scene: Phaser.Scene, pose: Pose) {
   return key
 }
 
+/** Floor blower — matches docs/gdd/refs/mall-floor-blower-ref.jpg (no brand marks). */
 function blowerTexture(scene: Phaser.Scene, state: 'off' | 'warn' | 'on' | 'stunned') {
   const key = `mall-floor-blower-${state}`
   if (scene.textures.exists(key)) return key
   const g = scene.make.graphics({ x: 0, y: 0 }, false)
-  // Blue snail shell ~48×40, nozzle facing left (blows left)
-  g.fillStyle(state === 'stunned' ? 0x3a5a70 : 0x1a6aaa).fillRoundedRect(14, 6, 30, 24, 10)
-  g.fillStyle(0x0a3a5a).fillCircle(32, 18, 10)
-  g.fillStyle(0x102030).fillCircle(32, 18, 5)
-  g.fillStyle(0x1a6aaa).fillTriangle(14, 14, 2, 20, 14, 26) // left nozzle
+  const blue = state === 'stunned' ? 0x3a5a70 : 0x1e78c8
+  const blueDark = state === 'stunned' ? 0x2a4050 : 0x0f4a8a
+  // Snail drum (side view), nozzle faces left (blows left toward arena)
+  g.fillStyle(blue).fillRoundedRect(16, 4, 28, 26, 8)
+  g.fillStyle(blueDark).fillRoundedRect(18, 6, 10, 22, 4)
+  // Black circular intake grille on drum face
+  g.fillStyle(0x101820).fillCircle(34, 16, 9)
+  g.lineStyle(1, 0x405060, 1)
+  for (let r = 3; r <= 8; r += 2) g.strokeCircle(34, 16, r)
+  // Flat wide rectangular outlet (left)
+  g.fillStyle(blue).fillRect(4, 20, 14, 10)
+  g.fillStyle(0x0a1820).fillRect(4, 22, 10, 6)
+  for (let i = 0; i < 4; i++) g.fillStyle(0x203040).fillRect(5 + i * 2, 22, 1, 6)
+  // Top carry handle + rear telescopic stub
+  g.fillStyle(0x0a1820).fillRect(26, 1, 10, 3)
+  g.fillStyle(0x101820).fillRect(42, 8, 3, 14)
+  // Status lamp near outlet
   const lamp = state === 'warn' ? 0xffe040 : state === 'on' ? 0x80ff80 : state === 'stunned' ? 0x405060 : 0x6080a0
-  g.fillStyle(lamp).fillCircle(8, 20, 3)
-  g.fillStyle(0x101820).fillCircle(22, 34, 5).fillCircle(36, 34, 5)
-  if (state === 'stunned') g.fillStyle(0x8899aa, 0.5).fillCircle(28, 2, 4)
+  g.fillStyle(lamp).fillCircle(10, 18, 2)
+  // Small rear wheels
+  g.fillStyle(0x101820).fillCircle(28, 34, 4).fillCircle(40, 34, 4)
+  g.fillStyle(0x606870).fillCircle(28, 34, 1).fillCircle(40, 34, 1)
+  // Front feet under nozzle
+  g.fillStyle(0x101820).fillRect(6, 30, 4, 3).fillRect(12, 30, 4, 3)
+  if (state === 'stunned') g.fillStyle(0x8899aa, 0.5).fillCircle(30, 0, 4)
+  if (state === 'on') {
+    g.lineStyle(1, 0xa8d8ff, 0.55)
+    for (let i = 0; i < 3; i++) g.lineBetween(4, 23 + i * 2, -6 - i * 4, 22 + i * 2)
+  }
   g.generateTexture(key, 48, 40)
   g.destroy()
   return key
