@@ -83,21 +83,6 @@ function saveSeenIds(ids: string[]) {
   }
 }
 
-/** Prefer unseen ids; when exhausted, clear and reshuffle. */
-function pickPreferUnseen(pool: Q[], n: number, seen: Set<string>, rng: () => number): Q[] {
-  let fresh = pool.filter((q) => !seen.has(q.id))
-  if (fresh.length < n) {
-    seen.clear()
-    try {
-      localStorage.removeItem(QUIZ_SEEN_KEY)
-    } catch {
-      /* */
-    }
-    fresh = pool.slice()
-  }
-  return shuffle(fresh, rng).slice(0, n)
-}
-
 /**
  * Pick up to n from pool, preferring unseen; does not clear quizSeen mid-round.
  * Falls back to already-seen items in the same pool before returning short.
