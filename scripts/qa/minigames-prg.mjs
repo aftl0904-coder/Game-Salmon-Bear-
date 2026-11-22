@@ -467,13 +467,20 @@ See \`summary.json\`. ok=${report.ok}
 `,
   )
   console.log('SUMMARY', JSON.stringify(report, null, 2))
-  if (!report.ok) process.exit(1)
+  await browser.close().catch(() => {})
+  if (vite) {
+    vite.kill('SIGTERM')
+    vite.kill('SIGKILL')
+  }
+  process.exit(report.ok ? 0 : 1)
 } catch (e) {
   report.errors.push(String(e?.stack || e))
   fs.writeFileSync(path.join(OUT, 'summary.json'), JSON.stringify(report, null, 2))
   console.error(e)
-  process.exit(1)
-} finally {
   await browser.close().catch(() => {})
-  if (vite) vite.kill('SIGTERM')
+  if (vite) {
+    vite.kill('SIGTERM')
+    vite.kill('SIGKILL')
+  }
+  process.exit(1)
 }
