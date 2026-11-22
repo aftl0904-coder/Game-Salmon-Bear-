@@ -1,0 +1,142 @@
+{
+  "ok": true,
+  "errors": [],
+  "cases": [
+    {
+      "mode": "1p",
+      "steps": [
+        {
+          "boot": {
+            "stageNo": 6,
+            "mall": true,
+            "started": true
+          }
+        },
+        {
+          "clearUi": {
+            "labels": [
+              {
+                "id": "shop",
+                "label": "小朋友檔口 ◎",
+                "on": true
+              },
+              {
+                "id": "sleep",
+                "label": "瞓覺 12幣",
+                "on": false
+              },
+              {
+                "id": "gamble",
+                "label": "賭檔",
+                "on": false
+              },
+              {
+                "id": "next",
+                "label": "大陸2・第二關 ▶",
+                "on": true
+              },
+              {
+                "id": "menu",
+                "label": "返主選單",
+                "on": true
+              }
+            ],
+            "nextOn": true,
+            "nextLabel": "大陸2・第二關 ▶"
+          }
+        },
+        {
+          "worldmap": true
+        },
+        {
+          "s7": {
+            "stageNo": 7,
+            "exhibit": true,
+            "nextStage": 7,
+            "lastCleared": 6,
+            "maxStage": 7
+          }
+        },
+        {
+          "persisted": {
+            "nextStage": 7,
+            "lastCleared": 6,
+            "maxStage": 7,
+            "openWouldInclude7": true,
+            "locked8": true
+          }
+        }
+      ],
+      "errs": [],
+      "ok": true
+    },
+    {
+      "mode": "2p",
+      "steps": [
+        {
+          "boot": {
+            "stageNo": 6,
+            "mall": true,
+            "started": true
+          }
+        },
+        {
+          "clearUi": {
+            "labels": [
+              {
+                "id": "shop",
+                "label": "小朋友檔口 ◎",
+                "on": true
+              },
+              {
+                "id": "sleep",
+                "label": "瞓覺 12幣",
+                "on": false
+              },
+              {
+                "id": "gamble",
+                "label": "賭檔",
+                "on": false
+              },
+              {
+                "id": "next",
+                "label": "大陸2・第二關 ▶",
+                "on": true
+              },
+              {
+                "id": "menu",
+                "label": "返主選單",
+                "on": true
+              }
+            ],
+            "nextOn": true,
+            "nextLabel": "大陸2・第二關 ▶"
+          }
+        },
+        {
+          "worldmap": true
+        },
+        {
+          "s7": {
+            "stageNo": 7,
+            "exhibit": true,
+            "nextStage": 7,
+            "lastCleared": 6,
+            "maxStage": 7
+          }
+        },
+        {
+          "persisted": {
+            "nextStage": 7,
+            "lastCleared": 6,
+            "maxStage": 7,
+            "openWouldInclude7": true,
+            "locked8": true
+          }
+        }
+      ],
+      "errs": [],
+      "ok": true
+    }
+  ]
+}

@@ -266,7 +266,13 @@ export class MainMenuScene extends Phaser.Scene {
 
   private chooseContinent(stage: number) {
     if (this.starting || this.startDialog || this.time.now < this.inputReadyAt || (stage === 6 && !c2Enabled())) return
-    this.stageSel = stage
+    // Continent 2: if the main run is already waiting on ST-07, land on 7 — not always 6.
+    if (stage === 6) {
+      const next = getRun()?.nextStage ?? 0
+      this.stageSel = next >= 7 && pickableStages().includes(7) ? 7 : 6
+    } else {
+      this.stageSel = stage
+    }
     SFX.blip(520)
     this.drawStage()
   }
