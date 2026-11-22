@@ -11,7 +11,7 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
-import { getRun, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
 import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled } from './c2Gate'
@@ -5697,7 +5697,11 @@ export class GameScene extends Phaser.Scene {
   private win() {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
-    if (!isSideTrip()) unlockStage(Math.min(this.stageNo + 1, 7))
+    if (!isSideTrip()) {
+      // C2 ST-06 clear must always unlock ST-07 even if the run was bootstrapped oddly.
+      if (this.stageNo >= 6) ensureMainRun(this.stageNo, this.registry)
+      unlockStage(Math.min(this.stageNo + 1, 7))
+    }
     this.saveCurrentClear()
     this.ended = true
     this.awaitingContinue = false
@@ -7018,11 +7022,22 @@ export class GameScene extends Phaser.Scene {
       })
       return
     }
-    const to = this.stageNo + 1
-    if (!STAGES[to]) return
+    // Capture before any registry mutation — instance stageNo stays put until recreate.
+    const fromStage = this.stageNo
+    const toStage = fromStage + 1
+    if (!STAGES[toStage]) {
+      floatText(this, GAME_W / 2, 100, `第${toStage}關資料未載入`, '#ff8080', { size: 14, dur: 2400 })
+      return
+    }
+    if (fromStage >= 6) ensureMainRun(fromStage, this.registry)
     this.saveCurrentClear()
+    // Hard-guarantee ST-06 clear unlocks ST-07 in both progress + run snapshot.
+    if (fromStage === 6) {
+      unlockStage(7)
+      guaranteeC2Stage7Unlock()
+    }
     this.registry.set('leavingToMenu', true)
-    this.registry.set('stageNo', to)
+    this.registry.set('stageNo', toStage)
     this.registry.set('carryCoins', this.coinStock)
     this.registry.set('carryPurse', { ...this.purse })
     const carryHp: Partial<Record<Who, number>> = {}
@@ -7034,14 +7049,25 @@ export class GameScene extends Phaser.Scene {
     } catch {
       /* world already torn down */
     }
-    this.cameras.main.fadeOut(300, 0, 0, 0)
-    this.time.delayedCall(320, () => {
-      this.registry.set('leavingToMenu', false)
-      this.stopUi()
-      const from = this.stageNo
-      // Alan: let the player pick which unlocked stage to go to here, instead of
-      // always auto-advancing into `to`.
-      this.scene.start('worldmap', { from, to, next: from >= 6 ? 'play' : 'bike', stageNo: to, pick: true })
+    try {
+      this.cameras.main?.fadeOut(300, 0, 0, 0)
+    } catch {
+      /* camera already torn down */
+    }
+    // Start the map immediately. A delayedCall alone can stall forever if the
+    // scene clock freezes after win()/physics.pause (seen in headless QA and
+    // would leave players on the clear card with registry already on the next stage).
+    this.registry.set('leavingToMenu', false)
+    this.stopUi()
+    // C2 mall → exhibit: the clear button already promised 「第二關」— auto-travel,
+    // no pick gate that can strand players. C1 keeps pick+bike as before.
+    const c2Advance = fromStage >= 6 && toStage <= 7
+    this.scene.start('worldmap', {
+      from: fromStage,
+      to: toStage,
+      next: fromStage >= 6 ? 'play' : 'bike',
+      stageNo: toStage,
+      pick: !c2Advance,
     })
   }
 

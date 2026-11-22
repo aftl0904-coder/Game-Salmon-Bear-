@@ -406,7 +406,10 @@ export class MapScene extends Phaser.Scene {
       else this.beginNewRun(chosen, false)
       return
     }
-    if (getRun()?.nextStage === chosen) resumeMain(this.registry)
+    const run = getRun()
+    // ST-07 is never a "new continent entry" — always continue/side from an existing C2 run.
+    if (chosen === 7 && run && run.nextStage >= 7) resumeMain(this.registry)
+    else if (run?.nextStage === chosen) resumeMain(this.registry)
     else startSideTrip(this.registry)
     this.finishPick(chosen)
   }
