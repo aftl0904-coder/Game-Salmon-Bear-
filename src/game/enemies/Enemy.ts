@@ -43,6 +43,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   /** 第五關「精英」reskin: 頭上紅色三角記號, +1hp, 死咗掉兩個金幣 (docs/bible/stages-3-5.md §5). */
   isElite = false
   private eliteMarker?: Phaser.GameObjects.Triangle
+  /**
+   * C2 (stages 6–7) trash mobs: skip die-sheet linger; disable collision immediately and
+   * tween alpha 1→0 / scale 1→0.8 over 500ms (Quad.out). Bosses never set this.
+   */
+  c2DeathFade = false
 
   constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: number) {
     super(scene, x, y, texture, frame)
@@ -124,6 +129,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   protected die(dir: number) {
+    if (this.c2DeathFade) {
+      this.runC2DeathFade()
+      return
+    }
     this.hp = 0
     // No death rotation — angled NEAREST quads smear mid-body.
     this.poseAngle = 0
@@ -143,6 +152,41 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.label = undefined
       this.disableBody(true, true)
       this.destroy()
+    })
+  }
+
+  /** T4_DEATH_FADE: collision off immediately → 500ms fade → destroy + coin. */
+  protected runC2DeathFade() {
+    this.hp = 0
+    this.poseAngle = 0
+    this.setAngle(0)
+    this.clearTint()
+    this.setVelocity(0, 0)
+    this.setFsm('DEAD')
+    this.eliteMarker?.destroy()
+    this.eliteMarker = undefined
+    const body = this.body as Phaser.Physics.Arcade.Body | null
+    if (body) body.enable = false
+    this.setVisible(true)
+    this.setActive(true)
+    const coinX = this.x
+    const coinY = this.y - 28
+    const wasElite = this.isElite
+    const base = this.baseScale || 1
+    this.setScale(base)
+    this.scene.tweens.add({
+      targets: this,
+      alpha: 0,
+      scale: base * 0.8,
+      duration: 500,
+      ease: 'Quad.out',
+      onComplete: () => {
+        this.hooks.spawnCoin?.(coinX, coinY)
+        if (wasElite) this.hooks.spawnCoin?.(coinX + 16, coinY - 10)
+        this.label?.destroy()
+        this.label = undefined
+        this.destroy()
+      },
     })
   }
 

@@ -651,6 +651,10 @@ export class PatrolEnemy extends Enemy {
       this.weapon.destroy()
       this.weapon = null
     }
+    if (this.c2DeathFade) {
+      super.die(dir)
+      return
+    }
     if (this.animSet && this.scene.anims.exists(`${this.animSet}-die`)) {
       // Death plays on a detached sprite (the enemy body is removed by Enemy.die).
       const corpse = this.scene.add

@@ -1,0 +1,17 @@
+clear-time {"elapsedSec":0,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":false,"x":220,"hp":6,"win":false,"enemies":0,"bestX":220}
+clear-time {"elapsedSec":21,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":false,"x":1282,"hp":4,"win":false,"enemies":1,"bestX":1268}
+clear-time {"elapsedSec":41,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":false,"x":2188,"hp":3,"win":false,"enemies":2,"bestX":2162}
+clear-time {"elapsedSec":61,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":false,"x":3098,"hp":5,"win":false,"enemies":3,"bestX":3118}
+clear-time {"elapsedSec":82,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":false,"x":4416,"hp":2,"win":false,"enemies":4,"bestX":4434}
+clear-time {"elapsedSec":102,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":true,"x":4680,"hp":3,"phase":1,"bossHp":48,"win":false,"enemies":2,"bestX":4761}
+clear-time {"elapsedSec":123,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":true,"x":4706,"hp":4,"phase":1,"bossHp":46,"win":false,"enemies":1,"bestX":4835}
+clear-time {"elapsedSec":143,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":true,"x":4888,"hp":3,"phase":2,"bossHp":34,"win":false,"enemies":1,"bestX":5050}
+clear-time {"elapsedSec":163,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":true,"x":4649,"hp":6,"phase":2,"bossHp":19,"win":false,"enemies":1,"bestX":5050}
+clear-time {"elapsedSec":183,"active":["play","UIScene"],"stage":7,"started":true,"ended":false,"intro":false,"continued":false,"bossFight":true,"x":4713,"hp":2,"phase":3,"bossHp":5,"win":false,"enemies":1,"bestX":5050}
+{
+  "clearedFull": true,
+  "elapsedSec": 194,
+  "bestX": 5050,
+  "reason": "full clear in 194s",
+  "errors": 0
+}

@@ -1,0 +1,20 @@
+{
+  "ok": true,
+  "errors": [],
+  "b1": {
+    "pass": true,
+    "note": "≥3 attacks/15s with telegraph; charge/acid −1 HP — see b1-scrubber-attacks.png"
+  },
+  "b2": {
+    "pass": true,
+    "note": "stages 6–7 checkpoints on solid; stall triggers — see b2-stage*.png"
+  },
+  "b3": {
+    "pass": true,
+    "note": "side-bump damages; top-stomp safe C1+C2 — see b3-air-contact-*.png"
+  },
+  "b6": {
+    "pass": true,
+    "note": "HSL L gap ≥50%; pit #1a1420 + stripes; light floors — see docs/qa-pit-contrast/"
+  }
+}

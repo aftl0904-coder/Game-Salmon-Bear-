@@ -5,6 +5,7 @@ import { pickTarget, type HeroRef } from '../enemyAi'
 import { isActorFrozen } from '../fx'
 import { actorDepth } from '../engine/depth'
 import { bossHitDamage } from '../engine/bossDamage'
+import { supportTopAt } from '../engine/terrain'
 
 /**
  * Stage 4 · 鹽霧工地 cast: 蜜僵 (uneven-pacing chaser, groups), 的士怪 (headlight-warn
@@ -62,7 +63,10 @@ export class HoneyZombie extends AnimEnemy {
       this.setDepth(actorDepth('enemy', this.lane, this.y))
       return
     }
-    this.y = this.s2.floorY()
+    // C2: stay on escalator/platforms. Continent-1 keeps flat floor snap (T4 D3).
+    this.y = this.c2DeathFade
+      ? (supportTopAt(this.x, this.y, 6, 16) ?? this.s2.floorY())
+      : this.s2.floorY()
     if (this.fsm === 'HURT') {
       this.think -= dt
       if (this.think <= 0) this.setFsm('CHASE')

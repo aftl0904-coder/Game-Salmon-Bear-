@@ -28,6 +28,10 @@ type Hooks = {
 /** Work-order numbers (T2) — do not retune without Claude. */
 const CHARGE_SPEED = 360
 const WARN_CHARGE_MS = 600
+/** When warn zone is not escapable in time, lengthen telegraph — never cancel the attack. */
+const WARN_CHARGE_UNSAFE_MS = 900
+/** Max charge travel from boss toward player (not arena edge). */
+const CHARGE_MAX_DIST = 260
 const RECOVER_MS = 1500
 const RECOVER_P3_MS = 1200
 const ACID_NOZZLE_MS = 400
@@ -43,6 +47,8 @@ const BLOWER_BLAST_MS = 2500
 const BLOWER_DISABLE_MS = 8000
 const BODY_HALF = 48
 const ARENA_PAD = 14
+/** After this many consecutive repositions, the next action must be an attack. */
+const REPOSITION_FORCE_ATTACK = 2
 
 type Acid = {
   x: number
@@ -111,6 +117,9 @@ export class MallScrubber extends Enemy {
   private hitHeroes = new WeakSet<object>()
   private lastMove: Move | null = null
   private repositionX = 0
+  /** Consecutive reposition acts; ≥ REPOSITION_FORCE_ATTACK forces the next attack through. */
+  private repositionStreak = 0
+  private warnChargeNeed = WARN_CHARGE_MS
   private acids: Acid[] = []
   private acidTargets: number[] = []
   blower!: Phaser.GameObjects.Image
@@ -287,20 +296,45 @@ export class MallScrubber extends Enemy {
   private beginCharge(heroes: Hero[], target: Hero) {
     this.dir = (Math.sign(target.x - this.x) || -1) as 1 | -1
     this.setFlipX(this.dir < 0)
-    this.endX = Phaser.Math.Clamp(
-      this.dir < 0 ? this.arenaX0 + ARENA_PAD : this.arenaX1 - ARENA_PAD,
-      this.arenaX0 + ARENA_PAD,
-      this.arenaX1 - ARENA_PAD,
-    )
+    const left = this.arenaX0 + ARENA_PAD
+    const right = this.arenaX1 - ARENA_PAD
+    // Cap travel at CHARGE_MAX_DIST toward the player — never span the whole arena.
+    this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
+    // Too short a lane (pinned at edge): try the other direction once.
+    if (Math.abs(this.endX - this.x) < 30) {
+      this.dir = (-this.dir) as 1 | -1
+      this.setFlipX(this.dir < 0)
+      this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
+    }
+    // Only reposition when charge travel is still unusable — never cancel for fair-escape.
+    // After REPOSITION_FORCE_ATTACK consecutive repositions, force the attack through.
+    if (Math.abs(this.endX - this.x) < 30) {
+      if (this.repositionStreak < REPOSITION_FORCE_ATTACK) {
+        this.repositionStreak++
+        this.repositionX = Phaser.Math.Clamp(
+          this.x - this.dir * 60,
+          this.arenaX0 + BODY_HALF,
+          this.arenaX1 - BODY_HALF,
+        )
+        this.setAct('reposition')
+        return
+      }
+      // Forced attack: pick the longer remaining arena span and charge that way.
+      const toLeft = this.x - left
+      const toRight = right - this.x
+      this.dir = (toRight >= toLeft ? 1 : -1) as 1 | -1
+      this.setFlipX(this.dir < 0)
+      this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
+    }
+    this.repositionStreak = 0
     this.warning = {
       x0: Math.min(this.x, this.endX) - BODY_HALF,
       x1: Math.max(this.x, this.endX) + BODY_HALF,
     }
-    if (Math.abs(this.endX - this.x) < 30 || !this.safeForAll(heroes, this.warning.x0, this.warning.x1, WARN_CHARGE_MS)) {
-      this.repositionX = Phaser.Math.Clamp(this.x - this.dir * 60, this.arenaX0 + BODY_HALF, this.arenaX1 - BODY_HALF)
-      this.setAct('reposition')
-      return
-    }
+    // safeForAll only lengthens the telegraph; the charge always fires.
+    this.warnChargeNeed = this.safeForAll(heroes, this.warning.x0, this.warning.x1, WARN_CHARGE_MS)
+      ? WARN_CHARGE_MS
+      : WARN_CHARGE_UNSAFE_MS
     this.lastMove = 'charge'
     this.setPose('warn')
     this.setAct('warn-charge')
@@ -319,6 +353,7 @@ export class MallScrubber extends Enemy {
       this.beginCharge(heroes, heroes[0]!)
       return
     }
+    this.repositionStreak = 0
     this.lastMove = 'acid'
     this.setPose('spray')
     this.setAct('warn-acid')
@@ -453,7 +488,7 @@ export class MallScrubber extends Enemy {
       if (Math.abs(this.repositionX - this.x) < 0.1) this.setAct('scan')
     } else if (this.act === 'warn-charge') {
       if (!heroes.length) this.recover()
-      else if (this.elapsed >= WARN_CHARGE_MS) {
+      else if (this.elapsed >= this.warnChargeNeed) {
         this.clearWarning()
         this.hitThis = false
         this.hitHeroes = new WeakSet()
