@@ -1,0 +1,599 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "continent1": [
+      {
+        "text": "⚪",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 139,
+          "right": 161,
+          "top": 240,
+          "bottom": 266,
+          "width": 22,
+          "height": 26
+        }
+      },
+      {
+        "text": "★",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 160,
+          "right": 181,
+          "top": 201,
+          "bottom": 224,
+          "width": 21,
+          "height": 23
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 221.5,
+          "right": 248.5,
+          "top": 136,
+          "bottom": 162,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 350,
+          "right": 370,
+          "top": 180,
+          "bottom": 204,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 346.5,
+          "right": 373.5,
+          "top": 211,
+          "bottom": 237,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 411,
+          "right": 431,
+          "top": 72,
+          "bottom": 96,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 407.5,
+          "right": 434.5,
+          "top": 103,
+          "bottom": 129,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 536,
+          "right": 556,
+          "top": 54,
+          "bottom": 78,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 532.5,
+          "right": 559.5,
+          "top": 85,
+          "bottom": 111,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "◀ 🚫 第二關・蜜樹丘 ▶",
+        "fontSize": "28px",
+        "fontPx": 28,
+        "visible": true,
+        "bounds": {
+          "left": 155.5,
+          "right": 484.5,
+          "top": 311.5,
+          "bottom": 344.5,
+          "width": 329,
+          "height": 33
+        }
+      },
+      {
+        "text": "←→ 揀　A／Enter 出發",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 424,
+          "right": 632,
+          "top": 8,
+          "bottom": 33,
+          "width": 208,
+          "height": 25
+        }
+      },
+      {
+        "text": "「我兒，你要吃蜜，因為是好的。吃蜂房下滴的蜜，\n便覺甘甜。」\n— 箴言 24:13",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 90,
+          "right": 550,
+          "top": 28,
+          "bottom": 106,
+          "width": 460,
+          "height": 78
+        }
+      }
+    ],
+    "continent2": [
+      {
+        "text": "⚪",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 176.5,
+          "right": 198.5,
+          "top": 210,
+          "bottom": 236,
+          "width": 22,
+          "height": 26
+        }
+      },
+      {
+        "text": "★",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 197.5,
+          "right": 218.5,
+          "top": 171,
+          "bottom": 194,
+          "width": 21,
+          "height": 23
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 261.5,
+          "right": 288.5,
+          "top": 297.5,
+          "bottom": 323.5,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 529,
+          "right": 549,
+          "top": 158.5,
+          "bottom": 182.5,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 525.5,
+          "right": 552.5,
+          "top": 189.5,
+          "bottom": 215.5,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 484,
+          "right": 504,
+          "top": 124,
+          "bottom": 148,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 480.5,
+          "right": 507.5,
+          "top": 155,
+          "bottom": 181,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 515,
+          "right": 535,
+          "top": 11,
+          "bottom": 35,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 511.5,
+          "right": 538.5,
+          "top": 42,
+          "bottom": 68,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "◀ 🚫 大陸2・第二關・森友展銷中心 ▶",
+        "fontSize": "28px",
+        "fontPx": 28,
+        "visible": true,
+        "bounds": {
+          "left": 64.5,
+          "right": 575.5,
+          "top": 311.5,
+          "bottom": 344.5,
+          "width": 511,
+          "height": 33
+        }
+      },
+      {
+        "text": "←→ 揀　A／Enter 出發",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 424,
+          "right": 632,
+          "top": 8,
+          "bottom": 33,
+          "width": 208,
+          "height": 25
+        }
+      },
+      {
+        "text": "「義人顧惜他牲畜的命，惡人的憐憫也是殘忍。」\n— 箴言 12:10",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 100,
+          "right": 540,
+          "top": 28,
+          "bottom": 79,
+          "width": 440,
+          "height": 51
+        }
+      }
+    ],
+    "newGame": [
+      {
+        "text": "⚪",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 176.5,
+          "right": 198.5,
+          "top": 210,
+          "bottom": 236,
+          "width": 22,
+          "height": 26
+        }
+      },
+      {
+        "text": "★",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 197.5,
+          "right": 218.5,
+          "top": 171,
+          "bottom": 194,
+          "width": 21,
+          "height": 23
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 261.5,
+          "right": 288.5,
+          "top": 297.5,
+          "bottom": 323.5,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 529,
+          "right": 549,
+          "top": 158.5,
+          "bottom": 182.5,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 525.5,
+          "right": 552.5,
+          "top": 189.5,
+          "bottom": 215.5,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 484,
+          "right": 504,
+          "top": 124,
+          "bottom": 148,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 480.5,
+          "right": 507.5,
+          "top": 155,
+          "bottom": 181,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "？",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 515,
+          "right": 535,
+          "top": 11,
+          "bottom": 35,
+          "width": 20,
+          "height": 24
+        }
+      },
+      {
+        "text": "🚫",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 511.5,
+          "right": 538.5,
+          "top": 42,
+          "bottom": 68,
+          "width": 27,
+          "height": 26
+        }
+      },
+      {
+        "text": "◀ 🚫 大陸2・第二關・森友展銷中心 ▶",
+        "fontSize": "28px",
+        "fontPx": 28,
+        "visible": true,
+        "bounds": {
+          "left": 64.5,
+          "right": 575.5,
+          "top": 311.5,
+          "bottom": 344.5,
+          "width": 511,
+          "height": 33
+        }
+      },
+      {
+        "text": "←→ 揀　A／Enter 出發",
+        "fontSize": "18px",
+        "fontPx": 18,
+        "visible": true,
+        "bounds": {
+          "left": 424,
+          "right": 632,
+          "top": 8,
+          "bottom": 33,
+          "width": 208,
+          "height": 25
+        }
+      },
+      {
+        "text": "「義人顧惜他牲畜的命，惡人的憐憫也是殘忍。」\n— 箴言 12:10",
+        "fontSize": "20px",
+        "fontPx": 20,
+        "visible": true,
+        "bounds": {
+          "left": 100,
+          "right": 540,
+          "top": 28,
+          "bottom": 79,
+          "width": 440,
+          "height": 51
+        }
+      },
+      {
+        "text": "開新局：帶唔帶之前嘅裝備同成長？",
+        "fontSize": "26px",
+        "fontPx": 26,
+        "visible": true,
+        "bounds": {
+          "left": 111.5,
+          "right": 528.5,
+          "top": 62.5,
+          "bottom": 93.5,
+          "width": 417,
+          "height": 31
+        }
+      },
+      {
+        "text": "⚪ 開新局：帶",
+        "fontSize": "26px",
+        "fontPx": 26,
+        "visible": true,
+        "bounds": {
+          "left": 235,
+          "right": 405,
+          "top": 132.5,
+          "bottom": 163.5,
+          "width": 170,
+          "height": 31
+        }
+      },
+      {
+        "text": "⚪ 開新局：唔帶",
+        "fontSize": "26px",
+        "fontPx": 26,
+        "visible": true,
+        "bounds": {
+          "left": 222,
+          "right": 418,
+          "top": 174.5,
+          "bottom": 205.5,
+          "width": 196,
+          "height": 31
+        }
+      },
+      {
+        "text": "取消",
+        "fontSize": "26px",
+        "fontPx": 26,
+        "visible": true,
+        "bounds": {
+          "left": 293.5,
+          "right": 346.5,
+          "top": 216.5,
+          "bottom": 247.5,
+          "width": 53,
+          "height": 31
+        }
+      }
+    ]
+  },
+  "acceptance": {
+    "W1": {
+      "pass": true,
+      "sizes": [
+        "20px",
+        "18px",
+        "28px",
+        "26px"
+      ],
+      "tiny": []
+    },
+    "W2": {
+      "pass": true,
+      "offscreen": [],
+      "screenshots": [
+        "continent1-map.png",
+        "continent2-map.png",
+        "bible-verse.png",
+        "new-game-choice.png",
+        "title-card-verse.png"
+      ]
+    },
+    "W3": {
+      "pass": true,
+      "screenshot": "iphone13-map.png"
+    }
+  }
+}

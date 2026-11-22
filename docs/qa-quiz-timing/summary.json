@@ -1,0 +1,194 @@
+{
+  "results": [
+    {
+      "id": "static-buzzOpen",
+      "ok": true,
+      "detail": "6000/5400/4200"
+    },
+    {
+      "id": "static-rival",
+      "ok": true,
+      "detail": "rival base +1000, spread unchanged"
+    },
+    {
+      "id": "static-answer",
+      "ok": true,
+      "detail": "6800 / 9800 / rival 1600"
+    },
+    {
+      "id": "static-hard-notice",
+      "ok": true,
+      "detail": "hard flash copy"
+    },
+    {
+      "id": "static-hint",
+      "ok": true,
+      "detail": "bottom hint"
+    },
+    {
+      "id": "static-no-bank-change",
+      "ok": true,
+      "detail": {
+        "n": 95,
+        "scoring": {
+          "normal": {
+            "correct": 8,
+            "wrong": -4
+          },
+          "hard": {
+            "correct": 20,
+            "wrong": -10
+          }
+        }
+      }
+    },
+    {
+      "id": "static-debounce",
+      "ok": true,
+      "detail": "200ms debounce"
+    },
+    {
+      "id": "Q5-timing-table",
+      "ok": true,
+      "detail": {
+        "buzzQ1": 6000,
+        "buzzOther": 5400,
+        "buzzRebound": 4200,
+        "rivalQ1": 3200,
+        "rivalHard": 2900,
+        "rivalNormal": 2500,
+        "rivalSpreadQ1": 800,
+        "rivalSpreadHard": 1200,
+        "rivalSpreadNormal": 1000,
+        "answerPlayer": 6800,
+        "answerHardExtra": 3000,
+        "answerRival": 1600,
+        "confirmDebounceMs": 200
+      }
+    },
+    {
+      "id": "Q2-keyboard-cursor",
+      "ok": true,
+      "detail": {
+        "afterBuzz": true,
+        "resolved": true
+      }
+    },
+    {
+      "id": "Q4-debounce",
+      "ok": true,
+      "detail": {
+        "inAnswer": true,
+        "notResolvedYet": true,
+        "stillAnswering": true,
+        "confirmedAfter": true
+      }
+    },
+    {
+      "id": "Q6-rival-1p-min",
+      "ok": true,
+      "detail": {
+        "buzzQ1": 6000,
+        "buzzOther": 5400,
+        "buzzRebound": 4200,
+        "rivalQ1": 3200,
+        "rivalHard": 2900,
+        "rivalNormal": 2500,
+        "rivalSpreadQ1": 800,
+        "rivalSpreadHard": 1200,
+        "rivalSpreadNormal": 1000,
+        "answerPlayer": 6800,
+        "answerHardExtra": 3000,
+        "answerRival": 1600,
+        "confirmDebounceMs": 200
+      }
+    },
+    {
+      "id": "Q6-2p-no-rival-ui",
+      "ok": true,
+      "detail": {
+        "mode": "2p",
+        "hasP2": true
+      }
+    },
+    {
+      "id": "Q5-hard-notice-and-9800",
+      "ok": true,
+      "detail": {
+        "hardSeen": true,
+        "hardProg": true,
+        "hardAnswerMs": 9400,
+        "hardBudget": true
+      }
+    },
+    {
+      "id": "Q3-gamepad-sim",
+      "ok": true,
+      "detail": {
+        "padBuzzed": true,
+        "padResolved": true
+      }
+    },
+    {
+      "id": "Q7-stage7-quiz",
+      "ok": true,
+      "detail": {
+        "sample": [
+          "會員中心・搶答",
+          "會員中心・金魚眼搶答",
+          "第 1／7 題",
+          "搶答中… 6s",
+          "搶",
+          "搶答：紅掣／攻擊｜揀答案：↑↓＋攻擊，或直接撳"
+        ]
+      }
+    },
+    {
+      "id": "Q1-mobile-tap",
+      "ok": true,
+      "detail": {
+        "mobileBuzz": true,
+        "mobileAnswer": true,
+        "buzz": {
+          "x": 612.5,
+          "y": 180.5
+        },
+        "opt": {
+          "x": 375,
+          "y": 209
+        },
+        "scale": 0.95
+      }
+    },
+    {
+      "id": "no-pageerror",
+      "ok": true,
+      "detail": []
+    }
+  ],
+  "fails": 0,
+  "errs": [
+    "pageerror: Cannot read properties of null (reading 'resolution')",
+    "mobile: Cannot read properties of null (reading 'resolution')"
+  ],
+  "softErrs": [],
+  "numbers": {
+    "buzzOpen": {
+      "q1": 6000,
+      "other": 5400,
+      "rebound": 4200
+    },
+    "rival1p": {
+      "q1": 3200,
+      "hard": 2900,
+      "normal": 2500
+    },
+    "answerLeft": {
+      "player": 6800,
+      "hard": 9800,
+      "rival": 1600
+    },
+    "debounceMs": 200
+  },
+  "out": "docs/qa-quiz-timing"
+}

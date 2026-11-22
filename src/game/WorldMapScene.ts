@@ -140,10 +140,10 @@ export class MapScene extends Phaser.Scene {
       const icon = this.add.image(x, y - 14, cm.tex.icons, i - cm.firstStage).setScale(0.62)
       this.icons[i] = icon
       if (!open) icon.setTint(0x555566).setAlpha(0.8)
-      if (!open) this.add.text(x, y - 14, '？', { fontFamily: FONT_UI, fontSize: '10px', color: '#e8e0ff' }).setOrigin(0.5)
-      this.add.text(x, y + 1, iconFor(i), { fontFamily: FONT_UI, fontSize: '10px', color: '#ffffff', stroke: '#1a0e06', strokeThickness: 2 }).setOrigin(0.5)
+      if (!open) this.add.text(x, y - 14, '？', { fontFamily: FONT_UI, fontSize: '20px', color: '#e8e0ff' }).setOrigin(0.5)
+      this.add.text(x, y + 18, iconFor(i), { fontFamily: FONT_UI, fontSize: '20px', color: '#ffffff', stroke: '#1a0e06', strokeThickness: 2 }).setOrigin(0.5)
       if (i < data.to || (i === data.to && data.from > data.to)) {
-        this.add.text(x + 8, y - 26, '★', { fontFamily: FONT_UI, fontSize: '9px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
+        this.add.text(x + 10, y - 34, '★', { fontFamily: FONT_UI, fontSize: '18px', color: '#ffd76a', stroke: '#1a0e06', strokeThickness: 2 })
       }
       if (offerPick && open) {
         icon.setInteractive({ useHandCursor: true })
@@ -159,20 +159,20 @@ export class MapScene extends Phaser.Scene {
     this.party = this.add.sprite(start.x * S, start.y * S + 4, 'map-walk', 0).setOrigin(0.5, 1)
     if (this.anims.exists('map-party-walk')) this.party.play('map-party-walk')
 
-    // Banner (live-updates with the current pick while picking).
-    const banner = this.add.container(320, 330).setScrollFactor(0)
+    // Banner (live-updates with the current pick while picking). Taller plate for 28px type.
+    const banner = this.add.container(320, 328).setScrollFactor(0)
     this.bannerBg = this.add.graphics()
-    this.bannerLabel = this.add.text(0, 0, '', { fontFamily: FONT_TITLE, fontSize: '14px', color: '#ffd76a' }).setOrigin(0.5)
+    this.bannerLabel = this.add.text(0, 0, '', { fontFamily: FONT_TITLE, fontSize: '28px', color: '#ffd76a' }).setOrigin(0.5)
     banner.add([this.bannerBg, this.bannerLabel])
     this.drawBannerBg()
     this.hint = this.add
-      .text(632, 8, '', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
+      .text(632, 8, '', { fontFamily: FONT_UI, fontSize: '18px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
       .setOrigin(1, 0)
       .setScrollFactor(0)
 
     this.verseBg = this.add.graphics()
     this.verseText = this.add
-      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff2d0', align: 'center', lineSpacing: 3 })
+      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '20px', color: '#fff2d0', align: 'center', lineSpacing: 3, wordWrap: { width: 560 } })
       .setOrigin(0.5)
     this.versePanel = this.add.container(320, 50, [this.verseBg, this.verseText]).setScrollFactor(0).setDepth(20)
     this.versePanel.setVisible(false)
@@ -243,17 +243,17 @@ export class MapScene extends Phaser.Scene {
     if (v) {
       const body = wrapVerse(v.text, 22)
       const verseText = this.add
-        .text(320, 132, `${body}\n— ${v.ref}`, { fontFamily: FONT_UI, fontSize: '13px', color: '#fff2d0', align: 'center', lineSpacing: 6 })
+        .text(320, 132, `${body}\n— ${v.ref}`, { fontFamily: FONT_UI, fontSize: '26px', color: '#fff2d0', align: 'center', lineSpacing: 6, wordWrap: { width: 560 } })
         .setOrigin(0.5)
         .setScrollFactor(0)
       if (verseText.width > 560) verseText.setScale(560 / verseText.width)
     }
     this.add
-      .text(320, 252, stageTitle(to), { fontFamily: FONT_TITLE, fontSize: '22px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+      .text(320, 252, stageTitle(to), { fontFamily: FONT_TITLE, fontSize: '32px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
       .setOrigin(0.5)
       .setScrollFactor(0)
     this.hint = this.add
-      .text(632, 8, 'Enter／A　繼續　（輕觸畫面亦可）', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
+      .text(632, 8, 'A／Enter 繼續', { fontFamily: FONT_UI, fontSize: '18px', color: '#e8d8b0', backgroundColor: '#00000088', padding: { x: 4, y: 2 } })
       .setOrigin(1, 0)
       .setScrollFactor(0)
 
@@ -296,13 +296,13 @@ export class MapScene extends Phaser.Scene {
       return
     }
     this.showVerse(to)
-    this.hint.setText('Enter／A　繼續')
+    this.hint.setText('A／Enter 繼續')
     let done = false
     const go = () => {
       if (done) return
       done = true
       this.verseGo = null
-      this.hint.setText('Enter／A　略過')
+      this.hint.setText('A／Enter 略過')
       this.beginTravel(to)
     }
     this.verseGo = go
@@ -318,13 +318,13 @@ export class MapScene extends Phaser.Scene {
     const body = wrapVerse(v.text, 24)
     this.verseText.setScale(1)
     this.verseText.setText(`${body}\n— ${v.ref}`)
-    if (this.verseText.width > 360) this.verseText.setScale(360 / this.verseText.width)
-    const w = Math.max(240, this.verseText.displayWidth + 28)
+    if (this.verseText.width > 560) this.verseText.setScale(560 / this.verseText.width)
+    const w = Math.max(240, Math.min(560, this.verseText.displayWidth + 28))
     const h = this.verseText.displayHeight + 16
     this.verseBg.clear()
     this.verseBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -h / 2 - 2, w + 4, h + 4)
     this.verseBg.fillStyle(0x1c120c, 0.94).fillRect(-w / 2, -h / 2, w, h)
-    this.versePanel.setY(10 + h / 2 + 10)
+    this.versePanel.setY(Math.min(120, 10 + h / 2 + 10))
     this.versePanel.setVisible(true)
   }
 
@@ -377,22 +377,22 @@ export class MapScene extends Phaser.Scene {
     return this.cm.places[stage] ?? this.cm.start ?? Object.values(this.cm.places)[0]!
   }
 
-  /** Banner plate: 244 wide as ever, wider only when a long continent-form name needs it. */
+  /** Banner plate: wider/taller for 28px title type; stays inside 640×360. */
   private drawBannerBg(textWidth = 0) {
-    const w = Math.max(244, Math.ceil(textWidth) + 28)
+    const w = Math.min(600, Math.max(244, Math.ceil(textWidth) + 28))
     this.bannerBg.clear()
-    this.bannerBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -15, w + 4, 30)
-    this.bannerBg.fillStyle(0x1c120c, 0.96).fillRect(-w / 2, -13, w, 26)
+    this.bannerBg.fillStyle(0xc8902a, 1).fillRect(-w / 2 - 2, -22, w + 4, 44)
+    this.bannerBg.fillStyle(0x1c120c, 0.96).fillRect(-w / 2, -20, w, 40)
   }
 
   private updateBanner() {
     const dest = this.placeOf(this.picking ? this.pickIndex : this.data_.to)
     if (this.picking) {
       this.bannerLabel.setText(`◀ ${iconFor(this.pickIndex)} ${dest.name} ▶`)
-      this.hint.setText('←→ 揀關卡　Enter／A 出發')
+      this.hint.setText('←→ 揀　A／Enter 出發')
     } else {
       this.bannerLabel.setText(this.data_.next === 'credits' ? `下一站：${dest.name}` : dest.name)
-      this.hint.setText('Enter／A　略過')
+      this.hint.setText('A／Enter 略過')
     }
     this.drawBannerBg(this.bannerLabel.width)
   }
@@ -406,7 +406,10 @@ export class MapScene extends Phaser.Scene {
       else this.beginNewRun(chosen, false)
       return
     }
-    if (getRun()?.nextStage === chosen) resumeMain(this.registry)
+    const run = getRun()
+    // ST-07 is never a "new continent entry" — always continue/side from an existing C2 run.
+    if (chosen === 7 && run && run.nextStage >= 7) resumeMain(this.registry)
+    else if (run?.nextStage === chosen) resumeMain(this.registry)
     else startSideTrip(this.registry)
     this.finishPick(chosen)
   }
@@ -432,14 +435,20 @@ export class MapScene extends Phaser.Scene {
     const root = this.add.container(0, 0).setScrollFactor(0).setDepth(1000)
     const cover = this.add.rectangle(320, 180, 640, 360, 0x000000, 0.8).setInteractive()
     cover.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => e?.stopPropagation?.())
-    root.add([cover, this.add.rectangle(320, 180, 360, 190, 0x241810).setStrokeStyle(2, 0xc8902a)])
-    root.add(this.add.text(320, 104, '開新局：帶唔帶之前嘅裝備同成長？', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5))
-    if (warning) root.add(this.add.text(320, 120, warning, { fontFamily: FONT_UI, fontSize: '11px', color: '#ffba99' }).setOrigin(0.5))
+    root.add([cover, this.add.rectangle(320, 180, 520, 260, 0x241810).setStrokeStyle(2, 0xc8902a)])
+    root.add(this.add.text(320, 78, '開新局：帶唔帶之前嘅裝備同成長？', {
+      fontFamily: FONT_UI, fontSize: '26px', color: '#ffe9a8', align: 'center', wordWrap: { width: 480 },
+    }).setOrigin(0.5))
+    if (warning) {
+      root.add(this.add.text(320, 112, warning, {
+        fontFamily: FONT_UI, fontSize: '22px', color: '#ffba99', align: 'center', wordWrap: { width: 480 },
+      }).setOrigin(0.5))
+    }
     const actions = [() => this.beginNewRun(stage, true), () => this.beginNewRun(stage, false), () => { this.startDialog?.root.destroy(); this.startDialog = null }]
     const labels = ['⚪ 開新局：帶', '⚪ 開新局：唔帶', '取消'].map((text, i) => {
-      const y = 145 + i * 31
-      const bg = this.add.rectangle(320, y, 300, 26, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
-      const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8' }).setOrigin(0.5)
+      const y = 148 + i * 42
+      const bg = this.add.rectangle(320, y, 360, 36, 0x4a2a14).setStrokeStyle(1, 0xc8902a).setInteractive({ useHandCursor: true })
+      const label = this.add.text(320, y, text, { fontFamily: FONT_UI, fontSize: '26px', color: '#ffe9a8' }).setOrigin(0.5)
       bg.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, e: Phaser.Types.Input.EventData) => { e?.stopPropagation?.(); actions[i]?.() })
       root.add([bg, label])
       return label

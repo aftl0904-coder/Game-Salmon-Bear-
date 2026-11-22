@@ -11,7 +11,7 @@ import {
 import { SFX, playSong, stopBgm, unlockAudio } from './audio'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
-import { getRun, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
+import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
 import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled } from './c2Gate'
@@ -22,7 +22,7 @@ import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMu
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
-import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
+import { flagRace, memoryGame, pourGame, showTutorial, tiltGame, timingGame } from './minigames'
 import { goldfishQuiz } from './membershipQuiz'
 import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
@@ -253,7 +253,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt' | 'goldfish'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -439,8 +439,11 @@ export class GameScene extends Phaser.Scene {
   private bossSushiSpawned = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
-  /** The stir-the-coffee minigame runs at the first cart of each stage only. */
+  /** The stir-the-coffee / flag-race minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Stage 7・記貨單 stall before boss (once). */
+  private memoryStallX = 4580
+  private memoryDone = false
   /** Optional 樓層掣迷你房 (ST-06); skippable — door at floorDoorX. */
   private floorDoorX = 1432
   private floorRoomDone = false
@@ -492,6 +495,7 @@ export class GameScene extends Phaser.Scene {
     this.bossFight = false
     this.friendsSaved = []
     this.coffeeDone = false
+    this.memoryDone = false
     this.floorRoomDone = false
     this.floorPrompt?.destroy()
     this.floorPrompt = null
@@ -1182,6 +1186,7 @@ export class GameScene extends Phaser.Scene {
   private updateCheckpoint() {
     // Fixed checkpoints from stage1.json (continue revives at checkpointX − 40).
     this.tickCheckpoints()
+    this.tickMemoryStall()
     this.checkpointX = this.lastCheckpointX + 40
   }
 
@@ -1664,14 +1669,25 @@ export class GameScene extends Phaser.Scene {
   private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1): Phaser.Physics.Arcade.Sprite {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
-    // Alan: ammo read a bit chunky — trimmed base scale 2 → 1.7 (Cursor/Alan feedback).
-    shot.setScale(1.7 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    // PR-D T6: base_scale 1.7 → 1.1 (visual ~65%); restore prior hitbox via setSize.
+    const powerMul = power < 1 ? 0.8 : power > 1 ? 1.4 : 1
+    const ROE_BASE_OLD = 1.7
+    const ROE_BASE = 1.1
+    const scale = ROE_BASE * PROJ_DISPLAY_SCALE * powerMul
+    shot.setScale(scale).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
     shot.setData('by', h.role)
     if (power < 1) shot.setTint(0x9ab0c8)
     else if (power > 1) shot.setTint(0xffa060)
     enableActorSprite(shot)
-    ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    // Before (scale 1.7): world hitbox = frame×1.7×powerMul (measured 18.7×18.7 @ power 1).
+    // Keep that world size after visual shrink. setSize takes unscaled source px;
+    // Arcade then multiplies by sprite scale → source×scale = frame×1.7×powerMul.
+    const targetWorldW = shot.frame.width * ROE_BASE_OLD * PROJ_DISPLAY_SCALE * powerMul
+    const targetWorldH = shot.frame.height * ROE_BASE_OLD * PROJ_DISPLAY_SCALE * powerMul
+    body.setSize(targetWorldW / Math.abs(scale), targetWorldH / Math.abs(scale))
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)
@@ -3258,18 +3274,51 @@ export class GameScene extends Phaser.Scene {
         floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……', '#c0d0ff', { size: 14, dur: 1800 })
       })
     }
-    // Fan / headwind only for human SecurityDirector / trainer (scrubber has no fan).
+    // Trainer/director fan OR scrubber P3 floor-blower (work-order M3).
     const dir = this.queen
     const fanActs = dir instanceof SecurityDirector && (dir.act === 'windup' || dir.act === 'stalk' || dir.act === 'intro')
-    this.s6world?.setFan(!!fanActs && this.bossOn)
-    if (this.s6world && this.bossOn && fanActs) {
+    const scrubber =
+      dir && (dir as { species?: string }).species === 'mall-scrubber'
+        ? (dir as MallScrubber)
+        : dir instanceof MallScrubber
+          ? dir
+          : null
+    const blower = !!scrubber && scrubber.isBlowerBlasting()
+    this.s6world?.setFan((!!fanActs || blower) && this.bossOn)
+    if (this.s6world && this.bossOn && (fanActs || blower)) {
       for (const h of [this.boy, this.girl]) {
         if (!h?.alive) continue
         const body = h.body as Phaser.Physics.Arcade.Body | null
         if (!body) continue
-        const movingRight = body.velocity.x > 12
-        const mul = this.s6world.headwindMul(h.x, movingRight)
-        if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+        if (blower && scrubber) {
+          // Into-wind (toward fan on the right) ×0.5
+          if (scrubber.intoWind(body.velocity.x)) body.setVelocityX(body.velocity.x * 0.5)
+        } else {
+          const movingRight = body.velocity.x > 12
+          const mul = this.s6world.headwindMul(h.x, movingRight)
+          if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+        }
+      }
+    }
+    // Acid puddles — 1 heart, same puddle locks hero 1000ms
+    if (scrubber && this.bossOn) {
+      for (const z of scrubber.acidZones()) {
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (h.x < z.x0 || h.x > z.x1) continue
+          const last = z.acid.hitAt.get(h) ?? 0
+          if (this.time.now - last < 1000) continue
+          z.acid.hitAt.set(h, this.time.now)
+          this.hazardHit(h, { knockX: h.facing * -160, knockY: -420, label: '強酸化學劑' })
+        }
+      }
+    }
+    if (scrubber && this.bossOn) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive || !h.attackHitbox?.active) continue
+        const ab = h.attackHitbox.body as Phaser.Physics.Arcade.Body | undefined
+        if (!ab) continue
+        if (ab.right > scrubber.blower.x - 30 && ab.left < scrubber.blower.x + 30) scrubber.hitBlower(h.x)
       }
     }
     if (!this.exhibit) this.tickDirectorSighting()
@@ -3769,6 +3818,7 @@ export class GameScene extends Phaser.Scene {
     }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
+    this.placeMemoryStall()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
 
     // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
@@ -4162,11 +4212,24 @@ export class GameScene extends Phaser.Scene {
                 { title: `${st.keeper}：傾斜電話`, lines: ['方向鍵／WASD 郁個波，', '揈佢入綠色窿。'], tip: '電話：揈郁電話本身嚟揈個波。' },
                 { title: '小心黑窿', lines: ['跌落黑窿就輸咗嗰次，', '時間到都係輸。'], tip: '一共四次，入窿有金幣。' },
               ]
-            : [
-                { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
-                { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
-                { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
-              ]
+            : st.game === 'flag'
+              ? [
+                  {
+                    title: `${st.keeper}：舉旗大賽`,
+                    lines: ['聽指令舉紅旗／藍旗，', '←／A＝紅　→／D＝藍（觸控左右半）。'],
+                    tip: '「唔好舉」＝陷阱，乜都唔好撳；已經啱就唔好郁。',
+                  },
+                  {
+                    title: '一共十輪',
+                    lines: ['愈後面時間愈短。', '啱 +1、錯／過時 −1。'],
+                    tip: '噗噗只係觀眾，唔好跟錯佢！',
+                  },
+                ]
+              : [
+                  { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+                  { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+                  { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+                ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
@@ -4175,6 +4238,9 @@ export class GameScene extends Phaser.Scene {
       this.physics.resume()
       this.resetPauseKeys()
       this.drinkCoffee()
+      if (st.game === 'flag') {
+        floatText(this, this.boy.x, this.boy.y - 96, '（待補）', '#ffe08a', { size: 13, dur: 2200 })
+      }
       if (pts > 0) {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
@@ -4214,9 +4280,87 @@ export class GameScene extends Phaser.Scene {
       void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
       return
     }
-    const mini = stirCoffee(this)
+    // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
+    const mini = flagRace(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.stirred >= 1 ? 3 : 0, r.stirred >= 1 ? 300 : 0))
+    void mini.done.then((r) => after(r.good * 2, r.good * 120))
+  }
+
+  /** Stage 7・Boss 前記貨單攤檔（會員中心金魚眼仍喺 CP2）。 */
+  private placeMemoryStall() {
+    if (this.stageNo !== 7) return
+    const x = this.memoryStallX
+    const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+    if (this.textures.exists('cs-cart')) {
+      const cart = this.add.image(x + 28, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setTint(0xc8e0ff)
+      enablePixelSprite(cart)
+    }
+    // Original vendor (Graphics) — no stock character likeness.
+    const vg = this.add.graphics().setDepth(DEPTH.PROP + 1)
+    const vx = x - 10
+    vg.fillStyle(0x2a1a10, 1).fillEllipse(vx, top + 2, 40, 12)
+    vg.fillStyle(0xf0c8a0, 1).fillCircle(vx, top - 52, 16)
+    vg.fillStyle(0x3a6a8a, 1).fillRoundedRect(vx - 16, top - 40, 32, 40, 6)
+    vg.fillStyle(0xe8d080, 1).fillRoundedRect(vx - 18, top - 64, 36, 12, 4)
+    this.add
+      .text(x + 28, top - 74, '記貨單・攤檔', {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#2a1a10',
+        backgroundColor: '#f7e7c0',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+  }
+
+  private tickMemoryStall() {
+    if (this.stageNo !== 7 || this.memoryDone || this.ended || !this.started || this.storyIntro || this.bossFight) return
+    if (this.leadX() < this.memoryStallX) return
+    this.memoryDone = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    floatText(this, this.memoryStallX, LANE_FLOOR_Y - 92, '攤主：（待補）', '#ffe08a', { size: 12, dur: 2200 })
+    void this.runMemoryStall()
+  }
+
+  private async runMemoryStall() {
+    const gate = { destroy: () => undefined }
+    let activeGate: { destroy: () => void } = gate
+    this.storyIntro = gate
+    const pages = [
+      {
+        title: '記貨單',
+        lines: ['十字四格會逐格亮起，', '記住次序再跟住撳返。'],
+        tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+      },
+      {
+        title: '一共四輪',
+        lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
+        tip: '記啱嘅輪數換金幣。',
+      },
+    ]
+    const choice = await showTutorial(this, 'stall-memory', pages)
+    if (this.ended || !this.scene.isActive()) return
+    const after = (coins: number, pts: number) => {
+      if (this.storyIntro === activeGate) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
+      this.physics.resume()
+      this.resetPauseKeys()
+      this.drinkCoffee()
+      if (pts > 0) {
+        this.killBonus += pts
+        this.addScorePop(this.boy.x, this.boy.y - 80, pts)
+      }
+      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+    }
+    if (choice === 'skip') {
+      after(0, 0)
+      return
+    }
+    const mini = memoryGame(this)
+    this.storyIntro = activeGate = mini
+    void mini.done.then((r) => after(r.good * 2, r.good * 120))
   }
 
   /**
@@ -5697,7 +5841,11 @@ export class GameScene extends Phaser.Scene {
   private win() {
     if (this.registry.get('winScreenShown')) return
     this.registry.set('winScreenShown', true)
-    if (!isSideTrip()) unlockStage(Math.min(this.stageNo + 1, 7))
+    if (!isSideTrip()) {
+      // C2 ST-06 clear must always unlock ST-07 even if the run was bootstrapped oddly.
+      if (this.stageNo >= 6) ensureMainRun(this.stageNo, this.registry)
+      unlockStage(Math.min(this.stageNo + 1, 7))
+    }
     this.saveCurrentClear()
     this.ended = true
     this.awaitingContinue = false
@@ -6817,7 +6965,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場清潔機械人' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '深層潔淨 X-9' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -6902,7 +7050,7 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '轉刷模式啟動！靠近會掃——睇預警區！' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
+        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '（待補）' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
         '#ffe08a',
         { size: 16, dur: 2000 },
       )
@@ -6913,13 +7061,13 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '清潔機械人加速！預警仲喺——郁開先打！' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
+        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '（待補）' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
         '#ff9a3a',
         { size: 16, dur: 2000 },
       )
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '過熱停機！而家打！' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '（待補）' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
     } else if (kind === 'finale' && this.queen) {
       SFX.sparkle()
       this.cameras.main.flash(200, 255, 220, 160)
@@ -6928,7 +7076,7 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '洗地機停機！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '（待補）' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy
@@ -6941,17 +7089,37 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Mall boss down: the honey jar drops in the arena; taking it ends the stage (same clear flow as the other stages). */
+  /** Mall boss down: chip already popped in MallScrubber.die → 噗噗 sniffs → honey jar. */
   private mallDefeated() {
     if (this.ended) return
     const b = ST.boss!
     const x = (b.arenaX0 + b.arenaX1) / 2
-    SFX.powerUp()
-    this.emitScore('清潔機械人停機！拎埋嗰罐蜜！')
-    floatText(this, x, 90, '蜜罐跌咗出嚟！', '#ffe08a', { size: 18, dur: 2200 })
-    this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
-    const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as Phaser.Physics.Arcade.Sprite | undefined
-    jar?.setData('bossJar', true)
+    const qx = this.queen?.x ?? x
+    // Pure motion, no dialogue: 噗噗 walks over and sniffs the stopped machine.
+    if (this.pet?.active) {
+      const pet = this.pet
+      this.tweens.add({
+        targets: pet,
+        x: qx - 36,
+        duration: 700,
+        ease: 'Sine.out',
+        onComplete: () => {
+          if (pet.anims?.exists?.('pupu-cute-pose')) pet.anims.play('pupu-cute-pose')
+          this.tweens.add({ targets: pet, y: pet.y - 4, duration: 180, yoyo: true, repeat: 2 })
+        },
+      })
+    }
+    this.time.delayedCall(1200, () => {
+      if (this.ended) return
+      SFX.powerUp()
+      this.emitScore('深層潔淨 X-9 停機！拎埋嗰罐蜜！')
+      floatText(this, x, 90, '（待補）', '#ffe08a', { size: 18, dur: 2200 })
+      this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
+      const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as
+        | Phaser.Physics.Arcade.Sprite
+        | undefined
+      jar?.setData('bossJar', true)
+    })
   }
 
   private queenDefeated() {
@@ -7018,11 +7186,22 @@ export class GameScene extends Phaser.Scene {
       })
       return
     }
-    const to = this.stageNo + 1
-    if (!STAGES[to]) return
+    // Capture before any registry mutation — instance stageNo stays put until recreate.
+    const fromStage = this.stageNo
+    const toStage = fromStage + 1
+    if (!STAGES[toStage]) {
+      floatText(this, GAME_W / 2, 100, `第${toStage}關資料未載入`, '#ff8080', { size: 14, dur: 2400 })
+      return
+    }
+    if (fromStage >= 6) ensureMainRun(fromStage, this.registry)
     this.saveCurrentClear()
+    // Hard-guarantee ST-06 clear unlocks ST-07 in both progress + run snapshot.
+    if (fromStage === 6) {
+      unlockStage(7)
+      guaranteeC2Stage7Unlock()
+    }
     this.registry.set('leavingToMenu', true)
-    this.registry.set('stageNo', to)
+    this.registry.set('stageNo', toStage)
     this.registry.set('carryCoins', this.coinStock)
     this.registry.set('carryPurse', { ...this.purse })
     const carryHp: Partial<Record<Who, number>> = {}
@@ -7034,14 +7213,25 @@ export class GameScene extends Phaser.Scene {
     } catch {
       /* world already torn down */
     }
-    this.cameras.main.fadeOut(300, 0, 0, 0)
-    this.time.delayedCall(320, () => {
-      this.registry.set('leavingToMenu', false)
-      this.stopUi()
-      const from = this.stageNo
-      // Alan: let the player pick which unlocked stage to go to here, instead of
-      // always auto-advancing into `to`.
-      this.scene.start('worldmap', { from, to, next: from >= 6 ? 'play' : 'bike', stageNo: to, pick: true })
+    try {
+      this.cameras.main?.fadeOut(300, 0, 0, 0)
+    } catch {
+      /* camera already torn down */
+    }
+    // Start the map immediately. A delayedCall alone can stall forever if the
+    // scene clock freezes after win()/physics.pause (seen in headless QA and
+    // would leave players on the clear card with registry already on the next stage).
+    this.registry.set('leavingToMenu', false)
+    this.stopUi()
+    // C2 mall → exhibit: the clear button already promised 「第二關」— auto-travel,
+    // no pick gate that can strand players. C1 keeps pick+bike as before.
+    const c2Advance = fromStage >= 6 && toStage <= 7
+    this.scene.start('worldmap', {
+      from: fromStage,
+      to: toStage,
+      next: fromStage >= 6 ? 'play' : 'bike',
+      stageNo: toStage,
+      pick: !c2Advance,
     })
   }
 
