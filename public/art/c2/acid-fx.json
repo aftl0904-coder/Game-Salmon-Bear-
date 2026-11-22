@@ -1,0 +1,41 @@
+{
+  "frames": {
+    "drip_0": {
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 12,
+      "index": 0
+    },
+    "drip_1": {
+      "x": 12,
+      "y": 0,
+      "w": 12,
+      "h": 12,
+      "index": 1
+    },
+    "puddle_0": {
+      "x": 24,
+      "y": 1,
+      "w": 64,
+      "h": 10,
+      "index": 2
+    },
+    "puddle_1": {
+      "x": 88,
+      "y": 1,
+      "w": 64,
+      "h": 10,
+      "index": 3
+    }
+  },
+  "dripSize": [
+    12,
+    12
+  ],
+  "puddleSize": [
+    64,
+    10
+  ],
+  "layout": "drip0|drip1|puddle0|puddle1"
+}

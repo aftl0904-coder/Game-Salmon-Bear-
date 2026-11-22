@@ -3199,10 +3199,26 @@ export class GameScene extends Phaser.Scene {
           .setDisplaySize(32, 32)
           .setDepth(DEPTH.SIGN)
       })
-      // T5b: atrium geometry → lightbox + plant (no text).
-      placeMallProp(this, 'lightbox', 400, f - 100, 48, DEPTH.PROP - 1)
-      placeMallProp(this, 'plant', 340, f, 44, DEPTH.PROP + 1)
-      placeMallProp(this, 'bench', 480, f, 32, DEPTH.PROP + 1)
+      // T5b: atrium / escalator décor — prefer C2 PNG art when BootScene loaded it.
+      const placeArtOrProp = (
+        kind: Parameters<typeof placeMallProp>[1],
+        c2key: string,
+        x: number,
+        y: number,
+        h: number,
+        depth: number,
+        originY: number = 1,
+      ) => {
+        if (this.textures.exists(c2key)) {
+          const img = this.add.image(x, y, c2key).setOrigin(0.5, originY).setDepth(depth)
+          enablePixelSprite(img)
+          return
+        }
+        placeMallProp(this, kind, x, y, h, depth)
+      }
+      placeArtOrProp('lightbox', 'c2-prop-lightbox', 400, f - 100, 48, DEPTH.PROP - 1, 0.5)
+      placeArtOrProp('plant', 'c2-prop-plant', 340, f, 44, DEPTH.PROP + 1)
+      placeArtOrProp('bench', 'c2-prop-bench', 480, f, 32, DEPTH.PROP + 1)
       // Escalator ramp art (collision is invisible slope solid) + entrance sign prop.
       aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
       aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
@@ -3213,12 +3229,12 @@ export class GameScene extends Phaser.Scene {
         const y0 = f - 8 - t * 58
         aw.fillStyle(0x90a8c0, 0.55).fillRect(x0, y0 - 2, 10, 3)
       }
-      placeMallProp(this, 'escalator-sign', 1848, f, 40, DEPTH.PROP + 2)
+      placeArtOrProp('escalator-sign', 'c2-prop-escalator', 1848, f, 40, DEPTH.PROP + 2)
       // Corridor décor props (T5b).
-      placeMallProp(this, 'cart', 1020, f, 36, DEPTH.PROP + 1)
-      placeMallProp(this, 'wayfind', 1200, f, 48, DEPTH.PROP + 1)
-      placeMallProp(this, 'rail', 1550, f, 28, DEPTH.PROP + 1)
-      placeMallProp(this, 'plant', 880, f, 36, DEPTH.PROP + 1)
+      placeArtOrProp('cart', 'c2-prop-cart', 1020, f, 36, DEPTH.PROP + 1)
+      placeArtOrProp('wayfind', 'c2-prop-sign', 1200, f, 48, DEPTH.PROP + 1)
+      placeArtOrProp('rail', 'c2-prop-barrier', 1550, f, 28, DEPTH.PROP + 1)
+      placeArtOrProp('plant', 'c2-prop-plant', 880, f, 36, DEPTH.PROP + 1)
       // Floor-button room door (optional side content) — near B corridor mid.
       aw.fillStyle(0x4a5568, 1).fillRect(1410, f - 78, 44, 78)
       aw.fillStyle(0x2a3340, 1).fillRect(1416, f - 72, 32, 66)
@@ -3226,6 +3242,39 @@ export class GameScene extends Phaser.Scene {
       aw.fillStyle(0x1a5a9a, 1).fillRoundedRect(1418, f - 96, 28, 16, 2)
       this.add.text(1432, f - 88, 'P', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe080' }).setOrigin(0.5).setDepth(DEPTH.SIGN)
       this.add.text(1432, f - 110, '維修門↑', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    }
+    // C2 mall clutter props (PR-K / B7) — extra PNG sprites along later segments.
+    {
+      const clutter: Array<{ key: string; x: number; label?: string }> = [
+        { key: 'c2-prop-plant', x: 280 },
+        { key: 'c2-prop-bench', x: 520 },
+        { key: 'c2-prop-trash', x: 680 },
+        { key: 'c2-prop-barrier', x: 1520 },
+        { key: 'c2-prop-escalator', x: 1920, label: '扶手電梯' },
+        { key: 'c2-prop-plant', x: 2150 },
+        { key: 'c2-prop-bench', x: 2680 },
+        { key: 'c2-prop-sign', x: 3400 },
+        { key: 'c2-prop-trash', x: 3800 },
+        { key: 'c2-prop-barrier', x: 4300 },
+        { key: 'c2-prop-lightbox', x: 4480 },
+      ]
+      for (const c of clutter) {
+        if (!this.textures.exists(c.key)) continue
+        const img = this.add.image(c.x, f + 2, c.key).setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+        enablePixelSprite(img)
+        if (c.label) {
+          this.add
+            .text(c.x, f - img.displayHeight - 14, c.label, {
+              fontFamily: FONT_UI,
+              fontSize: '10px',
+              color: '#fff0c0',
+              backgroundColor: '#403020',
+              padding: { x: 3, y: 1 },
+            })
+            .setOrigin(0.5)
+            .setDepth(DEPTH.SIGN)
+        }
+      }
     }
     // C · half-finished shopfronts; T5b: scaffolding geometry → 膠欄杆 props (same blocking read).
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)

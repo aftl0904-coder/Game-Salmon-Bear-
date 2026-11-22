@@ -54,100 +54,42 @@ type Acid = {
   x: number
   harmFrom: number
   until: number
-  g: Phaser.GameObjects.Graphics
+  g: Phaser.GameObjects.Image
   label: Phaser.GameObjects.Text
   hitAt: WeakMap<object, number>
 }
 
-function scrubberTexture(scene: Phaser.Scene, pose: Pose) {
-  const key = `mall-scrubber-${pose}`
-  if (scene.textures.exists(key)) return key
-  const g = scene.make.graphics({ x: 0, y: 0 }, false)
-  const silver = pose === 'recover' || pose === 'defeated' ? 0x6a7a88 : 0xa8b8c4
-  const navy = 0x1a3a5a
-  // Chassis ~96×80
-  g.fillStyle(navy).fillRoundedRect(8, 34, 88, 30, 8)
-  g.fillStyle(silver).fillRoundedRect(12, 16, 68, 34, 8)
-  g.fillStyle(0x0e1a28).fillRoundedRect(70, 20, 28, 28, 6)
-  // Camera eye (control) — yellow when controlled, dark when defeated
-  g.fillStyle(0x0a1018).fillCircle(84, 34, 10)
-  const eye =
-    pose === 'defeated' ? 0x223040 : pose === 'warn' || pose === 'charge' ? 0xff4040 : pose === 'recover' ? 0x405060 : 0xe8c040
-  g.fillStyle(eye).fillCircle(84, 34, 6)
-  if (pose !== 'defeated') g.fillStyle(0xfff8e0).fillCircle(86, 32, 2)
-  // Front brush (big circle)
-  g.fillStyle(0x152030).fillCircle(18, 52, 16)
-  g.fillStyle(pose === 'warn' || pose === 'charge' ? 0x90a0b0 : 0x708090).fillCircle(18, 52, 10)
-  for (let i = 0; i < 6; i++) {
-    const a = (i / 6) * Math.PI * 2 + (pose === 'charge' ? 0.4 : 0)
-    g.fillStyle(0x9aa8b4).fillRect(18 + Math.cos(a) * 12 - 1, 52 + Math.sin(a) * 12 - 1, 2, 6)
-  }
-  // Rear vents
-  g.fillStyle(pose === 'recover' ? 0xff8844 : 0x405060).fillRect(92, 26, 8, 20)
-  g.fillStyle(pose === 'recover' ? 0xffcc66 : 0x607080).fillRect(94, 28, 4, 16)
-  // Nozzle up when spraying
-  if (pose === 'spray' || pose === 'warn') {
-    g.fillStyle(0x2a4a6a).fillRect(48, pose === 'spray' ? 2 : 8, 8, 14)
-    g.fillStyle(0x60c040).fillCircle(52, pose === 'spray' ? 2 : 8, 3)
-  }
-  // Wheels
-  g.fillStyle(0x101820).fillCircle(28, 66, 8).fillCircle(72, 66, 8)
-  g.fillStyle(0x7890a0).fillCircle(28, 66, 3).fillCircle(72, 66, 3)
-  // Dust / lean for charge
-  if (pose === 'charge') {
-    g.fillStyle(0xc8b090, 0.5).fillCircle(100, 60, 4).fillCircle(108, 58, 3)
-  }
-  // Smoke for recover
-  if (pose === 'recover') {
-    g.fillStyle(0x8899aa, 0.45).fillCircle(40, 10, 5).fillCircle(52, 4, 4)
-  }
-  // Chip pop for defeated
-  if (pose === 'defeated') {
-    g.fillStyle(0xffe080).fillRect(78, 2, 10, 8)
-    g.fillStyle(0xff4040).fillCircle(83, 6, 2)
-  }
-  g.generateTexture(key, 112, 80)
-  g.destroy()
-  return key
+/** PNG sheet keys (BootScene). Frame indices match public/art/c2/*-sheet.json. */
+const SCRUBBER_SHEET = 'c2-scrubber'
+const BLOWER_SHEET = 'c2-blower'
+const ACID_PUDDLE = 'c2-acid-puddle'
+const ACID_DRIP = 'c2-acid-drip'
+const SCRUBBER_FRAME: Record<Pose, number> = {
+  idle: 0,
+  warn: 2,
+  charge: 4,
+  recover: 6,
+  spray: 8,
+  defeated: 9,
+}
+const BLOWER_FRAME: Record<'off' | 'warn' | 'on' | 'stunned', number> = {
+  off: 0,
+  warn: 1,
+  on: 2,
+  stunned: 4,
 }
 
-/** Floor blower — matches docs/gdd/refs/mall-floor-blower-ref.jpg (no brand marks). */
-function blowerTexture(scene: Phaser.Scene, state: 'off' | 'warn' | 'on' | 'stunned') {
-  const key = `mall-floor-blower-${state}`
-  if (scene.textures.exists(key)) return key
-  const g = scene.make.graphics({ x: 0, y: 0 }, false)
-  const blue = state === 'stunned' ? 0x3a5a70 : 0x1e78c8
-  const blueDark = state === 'stunned' ? 0x2a4050 : 0x0f4a8a
-  // Snail drum (side view), nozzle faces left (blows left toward arena)
-  g.fillStyle(blue).fillRoundedRect(16, 4, 28, 26, 8)
-  g.fillStyle(blueDark).fillRoundedRect(18, 6, 10, 22, 4)
-  // Black circular intake grille on drum face
-  g.fillStyle(0x101820).fillCircle(34, 16, 9)
-  g.lineStyle(1, 0x405060, 1)
-  for (let r = 3; r <= 8; r += 2) g.strokeCircle(34, 16, r)
-  // Flat wide rectangular outlet (left)
-  g.fillStyle(blue).fillRect(4, 20, 14, 10)
-  g.fillStyle(0x0a1820).fillRect(4, 22, 10, 6)
-  for (let i = 0; i < 4; i++) g.fillStyle(0x203040).fillRect(5 + i * 2, 22, 1, 6)
-  // Top carry handle + rear telescopic stub
-  g.fillStyle(0x0a1820).fillRect(26, 1, 10, 3)
-  g.fillStyle(0x101820).fillRect(42, 8, 3, 14)
-  // Status lamp near outlet
-  const lamp = state === 'warn' ? 0xffe040 : state === 'on' ? 0x80ff80 : state === 'stunned' ? 0x405060 : 0x6080a0
-  g.fillStyle(lamp).fillCircle(10, 18, 2)
-  // Small rear wheels
-  g.fillStyle(0x101820).fillCircle(28, 34, 4).fillCircle(40, 34, 4)
-  g.fillStyle(0x606870).fillCircle(28, 34, 1).fillCircle(40, 34, 1)
-  // Front feet under nozzle
-  g.fillStyle(0x101820).fillRect(6, 30, 4, 3).fillRect(12, 30, 4, 3)
-  if (state === 'stunned') g.fillStyle(0x8899aa, 0.5).fillCircle(30, 0, 4)
-  if (state === 'on') {
-    g.lineStyle(1, 0xa8d8ff, 0.55)
-    for (let i = 0; i < 3; i++) g.lineBetween(4, 23 + i * 2, -6 - i * 4, 22 + i * 2)
-  }
-  g.generateTexture(key, 48, 40)
-  g.destroy()
-  return key
+function applyScrubberPose(sprite: Phaser.GameObjects.Sprite, pose: Pose) {
+  if (!sprite.scene.textures.exists(SCRUBBER_SHEET)) return false
+  if (sprite.texture.key !== SCRUBBER_SHEET) sprite.setTexture(SCRUBBER_SHEET, SCRUBBER_FRAME[pose])
+  else sprite.setFrame(SCRUBBER_FRAME[pose])
+  return true
+}
+
+function applyBlowerState(img: Phaser.GameObjects.Image, state: 'off' | 'warn' | 'on' | 'stunned') {
+  if (!img.scene.textures.exists(BLOWER_SHEET)) return false
+  img.setTexture(BLOWER_SHEET, BLOWER_FRAME[state])
+  return true
 }
 
 /**
@@ -191,14 +133,16 @@ export class MallScrubber extends Enemy {
   private recoverNeed = RECOVER_MS
 
   constructor(scene: Phaser.Scene, x: number, x0: number, x1: number, hooks: Hooks) {
-    super(scene, x, hooks.floorY(), scrubberTexture(scene, 'idle'))
+    super(scene, x, hooks.floorY(), SCRUBBER_SHEET, SCRUBBER_FRAME.idle)
     this.hooks6 = hooks
     this.arenaX0 = x0
     this.arenaX1 = x1
     this.hp = this.maxHp = DIRECTOR_HP
     this.setOrigin(0.5, 1)
+    applyScrubberPose(this, 'idle')
     const body = this.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
+    // Keep legacy collision box (112×80 sheet, body 96×58 @ offset 8,20).
     body.setSize(BODY_HALF * 2, 58).setOffset(8, 20)
     this.warnGraphic = scene.add.graphics().setDepth(DEPTH.HAZARD + 2)
     this.marker = scene.add
@@ -207,9 +151,10 @@ export class MallScrubber extends Enemy {
       .setVisible(false)
     this.windGfx = scene.add.graphics().setDepth(DEPTH.HAZARD + 1)
     this.blower = scene.add
-      .image(x1 - 40, hooks.floorY(), blowerTexture(scene, 'off'))
+      .image(x1 - 40, hooks.floorY(), BLOWER_SHEET, BLOWER_FRAME.off)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.PROP + 2)
+    applyBlowerState(this.blower, 'off')
   }
 
   override canHurtPlayer() {
@@ -249,10 +194,10 @@ export class MallScrubber extends Enemy {
       this.blowerHits = 0
       this.blowerDisabledUntil = this.scene.time.now + BLOWER_DISABLE_MS
       this.blowerPhase = 'idle'
-      this.blower.setTexture(blowerTexture(this.scene, 'stunned'))
+      applyBlowerState(this.blower, 'stunned')
       this.windGfx.clear()
       this.scene.time.delayedCall(BLOWER_DISABLE_MS, () => {
-        if (this.active) this.blower.setTexture(blowerTexture(this.scene, 'off'))
+        if (this.active) applyBlowerState(this.blower, 'off')
       })
     }
   }
@@ -290,7 +235,7 @@ export class MallScrubber extends Enemy {
   private setPose(pose: Pose) {
     if (this.pose === pose) return
     this.pose = pose
-    this.setTexture(scrubberTexture(this.scene, pose))
+    applyScrubberPose(this, pose)
   }
   private setAct(act: Act) {
     this.act = act
@@ -430,9 +375,13 @@ export class MallScrubber extends Enemy {
     const floor = this.hooks6.floorY()
     const now = this.scene.time.now
     const harmFrom = now + ACID_NOZZLE_MS + ACID_WARN_MS
-    const g = this.scene.add.graphics().setDepth(DEPTH.HAZARD + 3)
-    g.fillStyle(0xff2030, 0.28).fillEllipse(x, floor - 4, 64, 18)
-    g.lineStyle(2, 0xff6070, 1).strokeEllipse(x, floor - 4, 64, 18)
+    const puddleKey = this.scene.textures.exists(ACID_PUDDLE) ? ACID_PUDDLE : ACID_DRIP
+    const g = this.scene.add
+      .image(x, floor - 2, puddleKey, 0)
+      .setOrigin(0.5, 1)
+      .setDepth(DEPTH.HAZARD + 3)
+      .setTint(0xff4060)
+      .setAlpha(0.85)
     const label = this.scene.add
       .text(x, floor - 36, '強酸化學劑', {
         fontFamily: FONT_UI,
@@ -446,9 +395,8 @@ export class MallScrubber extends Enemy {
     this.acids.push({ x, harmFrom, until: harmFrom + ACID_LIFE_MS, g, label, hitAt: new WeakMap() })
     this.scene.time.delayedCall(ACID_NOZZLE_MS + ACID_WARN_MS, () => {
       if (!this.active) return
-      g.clear()
-      g.fillStyle(0x70c030, 0.5).fillEllipse(x, floor - 4, 64, 16)
-      g.lineStyle(2, 0xa0e050, 1).strokeEllipse(x, floor - 4, 64, 16)
+      g.clearTint().setAlpha(1)
+      if (this.scene.textures.exists(ACID_PUDDLE)) g.setTexture(ACID_PUDDLE, 1)
       label.setAlpha(0.35)
     })
     this.scene.time.delayedCall(ACID_NOZZLE_MS + ACID_WARN_MS + ACID_LIFE_MS, () => {
@@ -480,11 +428,12 @@ export class MallScrubber extends Enemy {
     const cycle = this.blowerCycle % BLOWER_PERIOD_MS
     if (cycle < BLOWER_WARN_MS) {
       this.blowerPhase = 'warn'
-      this.blower.setTexture(blowerTexture(this.scene, 'warn'))
+      applyBlowerState(this.blower, 'warn')
       this.windGfx.clear()
     } else if (cycle < BLOWER_WARN_MS + BLOWER_BLAST_MS) {
       this.blowerPhase = 'blast'
-      this.blower.setTexture(blowerTexture(this.scene, 'on'))
+      const onFrame = BLOWER_FRAME.on + (Math.floor(this.blowerCycle / 120) % 2)
+      if (this.scene.textures.exists(BLOWER_SHEET)) this.blower.setTexture(BLOWER_SHEET, onFrame)
       this.windGfx.clear()
       this.windGfx.lineStyle(2, 0xa8d8ff, 0.45)
       for (let i = 0; i < 5; i++) {
@@ -494,7 +443,7 @@ export class MallScrubber extends Enemy {
       }
     } else {
       this.blowerPhase = 'idle'
-      this.blower.setTexture(blowerTexture(this.scene, 'off'))
+      applyBlowerState(this.blower, 'off')
       this.windGfx.clear()
     }
   }
@@ -520,9 +469,11 @@ export class MallScrubber extends Enemy {
     const heroes = [ctx.boy, ctx.girl].filter((h): h is Hero => !!h && h.active && h.alive !== false)
     if (this.act === 'intro') {
       this.setPose('idle')
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(Math.floor(this.elapsed / 280) % 2)
       if (this.elapsed >= 900) this.setAct('scan')
     } else if (this.act === 'scan') {
       this.setPose('idle')
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(Math.floor(this.elapsed / 280) % 2)
       if (heroes.length && this.elapsed >= 500) {
         const target = heroes.reduce((a, b) => (Math.abs(a.x - this.x) <= Math.abs(b.x - this.x) ? a : b))
         const move = this.pickMove()
@@ -562,7 +513,11 @@ export class MallScrubber extends Enemy {
         this.elapsed = 0
         // Lob visuals toward pre-warned landings
         for (const land of this.acidTargets) {
-          const arc = this.scene.add.circle(this.x, this.y - 70, 5, 0xa0e040, 0.9).setDepth(DEPTH.FX)
+          const dripKey = this.scene.textures.exists(ACID_DRIP) ? ACID_DRIP : ACID_PUDDLE
+          const arc = this.scene.add
+            .image(this.x, this.y - 70, dripKey, 0)
+            .setDepth(DEPTH.FX)
+            .setOrigin(0.5, 0.5)
           this.scene.tweens.add({
             targets: arc,
             x: land,

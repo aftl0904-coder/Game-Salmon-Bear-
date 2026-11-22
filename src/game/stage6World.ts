@@ -159,11 +159,22 @@ export class Stage6World {
     const s = this.ctx.scene
     const f = this.ctx.floorY
     const root = s.add.container(x, f).setDepth(DEPTH.PROP + 2)
-    const g = s.add.graphics()
-    // T5b: replace triangle spike with trash bin (same hurt footprint via w).
-    g.fillStyle(0x0a0a0c, 0.45).fillEllipse(0, -2, w + 10, 10)
-    drawMallProp(g, 'bin', Math.max(28, Math.min(48, w + 8)), false)
-    root.add(g)
+    // Prefer C2 PNG props (PR-K); fall back to T5b Graphics bin (same hurt footprint via w).
+    const propKeys = ['c2-prop-barrier', 'c2-prop-cart', 'c2-prop-trash'] as const
+    const pick = propKeys[Math.abs(Math.floor(x / 17)) % propKeys.length]!
+    if (s.textures.exists(pick)) {
+      root.add(s.add.image(0, 0, pick).setOrigin(0.5, 1))
+    } else if (s.textures.exists('c2-prop-barrier')) {
+      root.add(s.add.image(0, 0, 'c2-prop-barrier').setOrigin(0.5, 1))
+    } else {
+      const g = s.add.graphics()
+      g.fillStyle(0x0a0a0c, 0.45).fillEllipse(0, -2, w + 10, 10)
+      drawMallProp(g, 'bin', Math.max(28, Math.min(48, w + 8)), false)
+      root.add(g)
+    }
+    const tag = s.add.text(0, -40, '雜物', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe0a0', backgroundColor: '#802018', padding: { x: 2, y: 1 } }).setOrigin(0.5)
+    root.add(tag)
+    s.tweens.add({ targets: tag, alpha: { from: 0.65, to: 1 }, duration: 480, yoyo: true, repeat: -1 })
     this.junk.push({ x, w, root, cd: new Map() })
   }
 
