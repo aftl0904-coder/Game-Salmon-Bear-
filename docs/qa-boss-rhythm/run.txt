@@ -1,0 +1,39 @@
+PASS K1-K4 {
+  "meta": {
+    "hp": 180,
+    "maxHp": 180,
+    "phase": "GUARD",
+    "armed": true
+  },
+  "k1_guard": {
+    "before": 180,
+    "after": 180,
+    "killed": false,
+    "phase": "GUARD",
+    "blockAt": 3012.5
+  },
+  "k1_breather": {
+    "before": 180,
+    "after": 180,
+    "blockAt": 3095.8
+  },
+  "k2_opening": {
+    "before": 180,
+    "after": 177,
+    "phase": "OPENING",
+    "dmg": 3
+  },
+  "k3_contact": {
+    "can": false,
+    "before": 5,
+    "after": 5,
+    "vx": -120
+  },
+  "k4_openings": {
+    "openings": 4,
+    "dealt": 60,
+    "segment": 60,
+    "maxHp": 180,
+    "hp": 120
+  }
+}

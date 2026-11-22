@@ -1903,6 +1903,12 @@ export class GameScene extends Phaser.Scene {
     if (this.time.now < this.powerUntil) dmg = Math.ceil(dmg * 1.5)
     const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
+    // PR-F: GUARD/BREATHER/WARN/ATTACK ding — 0 dmg already applied inside receiveHit
+    if (e instanceof WarriorKing && e.rhythm && this.time.now - e.rhythm.lastBlockAt < 40) {
+      floatText(this, pe.x, pe.y - 48, '叮！', '#a8e8ff', { size: 14, dur: 500 })
+      burst(this, pe.x, pe.y - 28, 0xa8e8ff, 5)
+      return false
+    }
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
     SFX.hit()
     // Hit confirm: freeze all characters 0.2s; do NOT pause world (ammo free).

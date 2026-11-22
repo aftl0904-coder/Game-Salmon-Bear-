@@ -7,6 +7,7 @@ import type { Difficulty } from '../difficulty'
  * GUARD → WARN → ATTACK → OPENING → BREATHER → GUARD
  *
  * Damage only lands in OPENING. Player contact damage only in ATTACK.
+ * Wire onto each boss separately — do not copy this state machine.
  */
 export type RhythmPhase = 'GUARD' | 'WARN' | 'ATTACK' | 'OPENING' | 'BREATHER'
 
@@ -29,19 +30,34 @@ export type BossRhythmOpts = {
 
 export class BossRhythm {
   phase: RhythmPhase = 'GUARD'
+  /** Set when a non-OPENING hit was dinged (GameScene can show 叮！). */
+  lastBlockAt = 0
   private t = 0
   private scene: Phaser.Scene
   private host: Phaser.GameObjects.Sprite
   private getDifficulty: () => Difficulty
   private shield: Phaser.GameObjects.Graphics | null = null
-  private pant: Phaser.GameObjects.Text | null = null
+  private pant: Phaser.GameObjects.Container | null = null
+  private pantLabel: Phaser.GameObjects.Text | null = null
+  private sweat: Phaser.GameObjects.Graphics | null = null
   private forcedBreather = false
+  private armed = false
 
   constructor(opts: BossRhythmOpts) {
     this.scene = opts.scene
     this.host = opts.host
     this.getDifficulty = opts.getDifficulty ?? (() => 'normal')
+  }
+
+  /** Call after boss intro so GUARD does not eat the reveal. */
+  arm() {
+    if (this.armed) return
+    this.armed = true
     this.enter('GUARD')
+  }
+
+  get isArmed() {
+    return this.armed
   }
 
   openingDuration() {
@@ -49,14 +65,13 @@ export class BossRhythm {
   }
 
   canTakeDamage() {
-    return this.phase === 'OPENING'
+    return this.armed && this.phase === 'OPENING'
   }
 
   canHurtPlayer() {
-    return this.phase === 'ATTACK'
+    return this.armed && this.phase === 'ATTACK'
   }
 
-  /** WARN/ATTACK duration multiplier for windups. */
   warnMul() {
     return this.phase === 'WARN' ? RHYTHM.warnMul : 1
   }
@@ -71,11 +86,13 @@ export class BossRhythm {
 
   /** Hit during non-OPENING: ding + 0 damage. */
   blockHit() {
+    this.lastBlockAt = this.scene.time.now
     SFX.blip(980)
     this.flashShield()
   }
 
   forceBreather(ms = RHYTHM.phaseBreatherMs) {
+    if (!this.armed) this.armed = true
     this.forcedBreather = true
     this.enter('BREATHER', ms)
     try {
@@ -85,8 +102,9 @@ export class BossRhythm {
     }
   }
 
-  /** Advance internal timer; returns true when phase just changed. */
+  /** Advance internal timer; returns current phase. */
   tick(dt: number): RhythmPhase {
+    if (!this.armed) return this.phase
     this.t += dt
     this.layoutFx()
     if (this.phase === 'GUARD' && this.t >= RHYTHM.guardMs) {
@@ -112,9 +130,14 @@ export class BossRhythm {
     if (this.phase === 'ATTACK' || this.phase === 'WARN') this.enter('OPENING')
   }
 
-  /** Call when WARN telegraph finishes without a separate ATTACK window needed. */
   skipToOpening() {
     this.enter('OPENING')
+  }
+
+  /** Test / debug helpers: jump to a phase and refresh FX. */
+  setPhase(p: RhythmPhase) {
+    if (!this.armed) this.armed = true
+    this.enter(p)
   }
 
   destroy() {
@@ -122,6 +145,8 @@ export class BossRhythm {
     this.pant?.destroy()
     this.shield = null
     this.pant = null
+    this.pantLabel = null
+    this.sweat = null
   }
 
   private enter(p: RhythmPhase, _overrideMs?: number) {
@@ -141,8 +166,8 @@ export class BossRhythm {
   }
 
   private layoutFx() {
-    const showShield = this.phase === 'GUARD' || this.phase === 'BREATHER'
-    const showPant = this.phase === 'OPENING'
+    const showShield = this.armed && (this.phase === 'GUARD' || this.phase === 'BREATHER')
+    const showPant = this.armed && this.phase === 'OPENING'
     if (showShield) {
       if (!this.shield) {
         this.shield = this.scene.add.graphics().setDepth((this.host.depth || 0) + 2)
@@ -154,14 +179,16 @@ export class BossRhythm {
       this.shield.fillCircle(this.host.x, this.host.y - r * 0.55, r)
       this.shield.strokeCircle(this.host.x, this.host.y - r * 0.55, r)
       this.shield.setVisible(true)
+      this.shield.setDepth((this.host.depth || 0) + 2)
     } else if (this.shield) {
       this.shield.setVisible(false)
     }
 
     if (showPant) {
       if (!this.pant) {
-        this.pant = this.scene.add
-          .text(this.host.x, this.host.y - 70, '呼…', {
+        this.sweat = this.scene.add.graphics()
+        this.pantLabel = this.scene.add
+          .text(0, -18, '呼…', {
             fontFamily: 'sans-serif',
             fontSize: '12px',
             color: '#ffe8a0',
@@ -169,18 +196,35 @@ export class BossRhythm {
             strokeThickness: 3,
           })
           .setOrigin(0.5)
+        this.pant = this.scene.add
+          .container(this.host.x, this.host.y)
           .setDepth((this.host.depth || 0) + 3)
+        this.pant.add([this.sweat, this.pantLabel])
       }
-      this.pant.setPosition(this.host.x, this.host.y - (this.host.displayHeight || 64) - 8)
+      const headY = this.host.y - (this.host.displayHeight || 64) - 4
+      this.pant.setPosition(this.host.x, headY)
       this.pant.setVisible(true)
-      this.pant.setAlpha(0.7 + 0.3 * Math.sin(this.t / 120))
+      this.pant.setDepth((this.host.depth || 0) + 3)
+      this.pantLabel?.setAlpha(0.65 + 0.35 * Math.sin(this.t / 140))
+      // Sweat / puff dots rising
+      this.sweat?.clear()
+      for (let i = 0; i < 4; i++) {
+        const wobble = Math.sin(this.t / 160 + i * 1.7)
+        const rise = ((this.t / 18 + i * 11) % 28) - 4
+        const x = -10 + i * 7 + wobble * 3
+        const y = -rise
+        this.sweat!.fillStyle(0xe8f4ff, 0.55 + 0.25 * Math.sin(this.t / 100 + i))
+        this.sweat!.fillCircle(x, y, 2.2)
+        this.sweat!.fillStyle(0xc0c8d0, 0.25)
+        this.sweat!.fillCircle(x + 6, y - 6, 3.5)
+      }
     } else if (this.pant) {
       this.pant.setVisible(false)
     }
   }
 }
 
-/** Round existing HP × 0.7 for rhythm fights. */
+/** Round existing HP × 0.7 for rhythm fights (starting point before per-boss tuning). */
 export function rhythmHp(base: number) {
-  return Math.round(base * RHYTHM.hpMul)
+  return Math.max(1, Math.round(base * RHYTHM.hpMul))
 }
