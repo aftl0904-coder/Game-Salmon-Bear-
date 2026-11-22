@@ -22,7 +22,7 @@ import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMu
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
-import { pourGame, showTutorial, stirCoffee, tiltGame, timingGame } from './minigames'
+import { flagRace, memoryGame, pourGame, showTutorial, tiltGame, timingGame } from './minigames'
 import { goldfishQuiz } from './membershipQuiz'
 import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
@@ -253,7 +253,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'pour' | 'timing' | 'tilt' | 'goldfish'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -439,8 +439,11 @@ export class GameScene extends Phaser.Scene {
   private bossSushiSpawned = false
   /** Friends freed by hand this run (clear card + perfect ending). */
   private friendsSaved: string[] = []
-  /** The stir-the-coffee minigame runs at the first cart of each stage only. */
+  /** The stir-the-coffee / flag-race minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Stage 7・記貨單 stall before boss (once). */
+  private memoryStallX = 4580
+  private memoryDone = false
   /** Optional 樓層掣迷你房 (ST-06); skippable — door at floorDoorX. */
   private floorDoorX = 1432
   private floorRoomDone = false
@@ -492,6 +495,7 @@ export class GameScene extends Phaser.Scene {
     this.bossFight = false
     this.friendsSaved = []
     this.coffeeDone = false
+    this.memoryDone = false
     this.floorRoomDone = false
     this.floorPrompt?.destroy()
     this.floorPrompt = null
@@ -1182,6 +1186,7 @@ export class GameScene extends Phaser.Scene {
   private updateCheckpoint() {
     // Fixed checkpoints from stage1.json (continue revives at checkpointX − 40).
     this.tickCheckpoints()
+    this.tickMemoryStall()
     this.checkpointX = this.lastCheckpointX + 40
   }
 
@@ -3802,6 +3807,7 @@ export class GameScene extends Phaser.Scene {
     }
     for (const h of ST.honey) this.spawnHoneyJar(h.x, LANE_FLOOR_Y - h.h)
     this.placeCheckpoints()
+    this.placeMemoryStall()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
 
     // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
@@ -4195,11 +4201,24 @@ export class GameScene extends Phaser.Scene {
                 { title: `${st.keeper}：傾斜電話`, lines: ['方向鍵／WASD 郁個波，', '揈佢入綠色窿。'], tip: '電話：揈郁電話本身嚟揈個波。' },
                 { title: '小心黑窿', lines: ['跌落黑窿就輸咗嗰次，', '時間到都係輸。'], tip: '一共四次，入窿有金幣。' },
               ]
-            : [
-                { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
-                { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
-                { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
-              ]
+            : st.game === 'flag'
+              ? [
+                  {
+                    title: `${st.keeper}：舉旗大賽`,
+                    lines: ['聽指令舉紅旗／藍旗，', '←／A＝紅　→／D＝藍（觸控左右半）。'],
+                    tip: '「唔好舉」＝陷阱，乜都唔好撳；已經啱就唔好郁。',
+                  },
+                  {
+                    title: '一共十輪',
+                    lines: ['愈後面時間愈短。', '啱 +1、錯／過時 −1。'],
+                    tip: '噗噗只係觀眾，唔好跟錯佢！',
+                  },
+                ]
+              : [
+                  { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+                  { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+                  { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+                ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
@@ -4208,6 +4227,9 @@ export class GameScene extends Phaser.Scene {
       this.physics.resume()
       this.resetPauseKeys()
       this.drinkCoffee()
+      if (st.game === 'flag') {
+        floatText(this, this.boy.x, this.boy.y - 96, '（待補）', '#ffe08a', { size: 13, dur: 2200 })
+      }
       if (pts > 0) {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
@@ -4247,9 +4269,87 @@ export class GameScene extends Phaser.Scene {
       void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
       return
     }
-    const mini = stirCoffee(this)
+    // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
+    const mini = flagRace(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.stirred >= 1 ? 3 : 0, r.stirred >= 1 ? 300 : 0))
+    void mini.done.then((r) => after(r.good * 2, r.good * 120))
+  }
+
+  /** Stage 7・Boss 前記貨單攤檔（會員中心金魚眼仍喺 CP2）。 */
+  private placeMemoryStall() {
+    if (this.stageNo !== 7) return
+    const x = this.memoryStallX
+    const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+    if (this.textures.exists('cs-cart')) {
+      const cart = this.add.image(x + 28, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setTint(0xc8e0ff)
+      enablePixelSprite(cart)
+    }
+    // Original vendor (Graphics) — no stock character likeness.
+    const vg = this.add.graphics().setDepth(DEPTH.PROP + 1)
+    const vx = x - 10
+    vg.fillStyle(0x2a1a10, 1).fillEllipse(vx, top + 2, 40, 12)
+    vg.fillStyle(0xf0c8a0, 1).fillCircle(vx, top - 52, 16)
+    vg.fillStyle(0x3a6a8a, 1).fillRoundedRect(vx - 16, top - 40, 32, 40, 6)
+    vg.fillStyle(0xe8d080, 1).fillRoundedRect(vx - 18, top - 64, 36, 12, 4)
+    this.add
+      .text(x + 28, top - 74, '記貨單・攤檔', {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#2a1a10',
+        backgroundColor: '#f7e7c0',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+  }
+
+  private tickMemoryStall() {
+    if (this.stageNo !== 7 || this.memoryDone || this.ended || !this.started || this.storyIntro || this.bossFight) return
+    if (this.leadX() < this.memoryStallX) return
+    this.memoryDone = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    floatText(this, this.memoryStallX, LANE_FLOOR_Y - 92, '攤主：（待補）', '#ffe08a', { size: 12, dur: 2200 })
+    void this.runMemoryStall()
+  }
+
+  private async runMemoryStall() {
+    const gate = { destroy: () => undefined }
+    let activeGate: { destroy: () => void } = gate
+    this.storyIntro = gate
+    const pages = [
+      {
+        title: '記貨單',
+        lines: ['十字四格會逐格亮起，', '記住次序再跟住撳返。'],
+        tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+      },
+      {
+        title: '一共四輪',
+        lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
+        tip: '記啱嘅輪數換金幣。',
+      },
+    ]
+    const choice = await showTutorial(this, 'stall-memory', pages)
+    if (this.ended || !this.scene.isActive()) return
+    const after = (coins: number, pts: number) => {
+      if (this.storyIntro === activeGate) this.storyIntro = null
+      if (this.ended || !this.scene.isActive()) return
+      this.physics.resume()
+      this.resetPauseKeys()
+      this.drinkCoffee()
+      if (pts > 0) {
+        this.killBonus += pts
+        this.addScorePop(this.boy.x, this.boy.y - 80, pts)
+      }
+      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+    }
+    if (choice === 'skip') {
+      after(0, 0)
+      return
+    }
+    const mini = memoryGame(this)
+    this.storyIntro = activeGate = mini
+    void mini.done.then((r) => after(r.good * 2, r.good * 120))
   }
 
   /**

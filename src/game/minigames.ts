@@ -854,6 +854,579 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
   return { done, destroy }
 }
 
+// ── 舉旗大賽（第 1 關・咖啡媽媽）──────────────────────────────────────────
+
+export type FlagCmd = 'raise-red' | 'lower-red' | 'raise-blue' | 'lower-blue' | 'trap-red' | 'trap-blue'
+
+const FLAG_LABEL: Record<FlagCmd, string> = {
+  'raise-red': '舉紅旗',
+  'lower-red': '放低紅旗',
+  'raise-blue': '舉藍旗',
+  'lower-blue': '放低藍旗',
+  'trap-red': '唔好舉紅旗',
+  'trap-blue': '唔好舉藍旗',
+}
+
+const FLAG_CMDS: FlagCmd[] = ['raise-red', 'lower-red', 'raise-blue', 'lower-blue', 'trap-red', 'trap-blue']
+
+/** Window for round `r` (1-based): 1200ms − 50ms*(r−1), floor 750ms. */
+export function flagWindowMs(round: number): number {
+  return Math.max(750, 1200 - (Math.max(1, round) - 1) * 50)
+}
+
+/**
+ * 舉旗大賽 — 咖啡媽媽主持紅／藍旗；噗噗旁觀（灰色無力）。1P：←/A 紅、→/D 藍；
+ * 觸控左半紅右半藍。2P：暫無專用 mapping，同 1P 鍵。結果 RoundResult。
+ */
+export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & {
+  debug: () => {
+    round: number
+    score: number
+    cmd: FlagCmd | null
+    red: boolean
+    blue: boolean
+    trap: boolean
+    windowMs: number
+    phase: string
+    pressed: boolean
+  }
+  /** Test hook: force the next/current command. */
+  forceCmd: (cmd: FlagCmd) => void
+  /** Test hook: set player flag states. */
+  setFlags: (red: boolean, blue: boolean) => void
+  /** Test hook: toggle a flag (counts as a press). */
+  qaPress: (which: 'red' | 'blue') => void
+  /** Test hook: end the active window immediately. */
+  endWindow: () => void
+} {
+  const ui = frame(scene, '咖啡媽媽：舉旗大賽！')
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? '左半＝紅旗　右半＝藍旗' : '←／A＝紅旗　→／D＝藍旗　　（1P；2P 暫同鍵）')
+  const cx = GAME_W / 2
+  const cy = GAME_H / 2 + 8
+  const g = scene.add.graphics()
+  const cmdTxt = scene.add
+    .text(cx, 118, '', {
+      fontFamily: FONT_UI,
+      fontSize: '32px',
+      color: '#fff6e0',
+      stroke: '#2a1408',
+      strokeThickness: 6,
+      align: 'center',
+    })
+    .setOrigin(0.5)
+  const scoreTxt = scene.add
+    .text(cx, GAME_H - 96, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' })
+    .setOrigin(0.5)
+  ui.root.add([g, cmdTxt, scoreTxt])
+
+  let redUp = false
+  let blueUp = false
+  let round = 1
+  let score = 0
+  let cmd: FlagCmd | null = null
+  let forced: FlagCmd | null = null
+  let windowMs = flagWindowMs(1)
+  let windowStart = 0
+  let settle = 0
+  let phase: 'show' | 'play' | 'settle' | 'end' = 'show'
+  let pressed = false
+  let roundRed0 = false
+  let roundBlue0 = false
+  let pupuFake: 'red' | 'blue' | null = null
+  const res: RoundResult = { good: 0, total: rounds }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+  let finished = false
+
+  const drawHost = () => {
+    g.clear()
+    // Host body (咖啡媽媽 silhouette — original Graphics)
+    const hx = cx - 70
+    const hy = cy + 40
+    g.fillStyle(0x2a1a10, 1).fillEllipse(hx, hy + 36, 54, 18)
+    g.fillStyle(0xf4c8a0, 1).fillCircle(hx, hy - 48, 22)
+    g.fillStyle(0x8a3a28, 1).fillRoundedRect(hx - 20, hy - 28, 40, 52, 8)
+    g.fillStyle(0xfff0d0, 1).fillRoundedRect(hx - 26, hy - 72, 52, 18, 6) // hair bun band
+    g.fillStyle(0x5a2818, 1).fillCircle(hx - 14, hy - 78, 10)
+    g.fillStyle(0x5a2818, 1).fillCircle(hx + 14, hy - 78, 10)
+    // Arms + flags
+    const redY = redUp ? hy - 70 : hy - 10
+    const blueY = blueUp ? hy - 70 : hy - 10
+    g.lineStyle(4, 0x1a1210, 1)
+    g.lineBetween(hx - 18, hy - 10, hx - 48, redY)
+    g.lineBetween(hx + 18, hy - 10, hx + 48, blueY)
+    g.lineStyle(3, 0xc8a060, 1)
+    g.lineBetween(hx - 48, redY + 28, hx - 48, redY - 4)
+    g.lineBetween(hx + 48, blueY + 28, hx + 48, blueY - 4)
+    g.fillStyle(0xe01828, 1).fillTriangle(hx - 48, redY - 4, hx - 48, redY + 22, hx - 78, redY + 10)
+    g.fillStyle(0x2868e0, 1).fillTriangle(hx + 48, blueY - 4, hx + 48, blueY + 22, hx + 78, blueY + 10)
+    // 噗噗 spectator — grey / weak (not host)
+    const px = cx + 110
+    const py = cy + 50
+    g.fillStyle(0x6a6a70, 1).fillEllipse(px, py + 20, 40, 14)
+    g.fillStyle(0x9a9aa0, 1).fillCircle(px, py - 8, 20)
+    g.fillStyle(0x7a7a80, 1).fillCircle(px - 12, py - 22, 8)
+    g.fillStyle(0x7a7a80, 1).fillCircle(px + 12, py - 22, 8)
+    g.fillStyle(0x4a4a50, 1).fillCircle(px - 6, py - 10, 3)
+    g.fillStyle(0x4a4a50, 1).fillCircle(px + 6, py - 10, 3)
+    // Pupu mimics the host; on trap rounds he fakes a raise to trick you.
+    if (phase === 'play' || phase === 'show') {
+      if (pupuFake === 'red' || cmd === 'raise-red') {
+        g.lineStyle(2, 0x5a5a60, 1).lineBetween(px - 10, py, px - 28, py - 36)
+        g.fillStyle(0xb04040, 0.85).fillTriangle(px - 28, py - 36, px - 28, py - 18, px - 46, py - 28)
+      } else if (pupuFake === 'blue' || cmd === 'raise-blue') {
+        g.lineStyle(2, 0x5a5a60, 1).lineBetween(px + 10, py, px + 28, py - 36)
+        g.fillStyle(0x4060b0, 0.85).fillTriangle(px + 28, py - 36, px + 28, py - 18, px + 46, py - 28)
+      } else if (cmd === 'lower-red' || cmd === 'lower-blue') {
+        const side = cmd === 'lower-red' ? -1 : 1
+        g.lineStyle(2, 0x5a5a60, 1).lineBetween(px + side * 8, py, px + side * 22, py + 8)
+      }
+    }
+  }
+
+  const pickCmd = (): FlagCmd => {
+    if (forced) {
+      const c = forced
+      forced = null
+      return c
+    }
+    // Prefer commands that need a toggle; still allow "already correct" no-op rounds.
+    return FLAG_CMDS[Phaser.Math.Between(0, FLAG_CMDS.length - 1)]!
+  }
+
+  const expectedOk = (): boolean => {
+    if (!cmd) return false
+    if (cmd === 'trap-red' || cmd === 'trap-blue') return !pressed && redUp === roundRed0 && blueUp === roundBlue0
+    if (cmd === 'raise-red') return redUp === true && blueUp === roundBlue0
+    if (cmd === 'lower-red') return redUp === false && blueUp === roundBlue0
+    if (cmd === 'raise-blue') return blueUp === true && redUp === roundRed0
+    if (cmd === 'lower-blue') return blueUp === false && redUp === roundRed0
+    return false
+  }
+
+  const beginRound = () => {
+    cmd = pickCmd()
+    windowMs = flagWindowMs(round)
+    windowStart = scene.time.now
+    pressed = false
+    roundRed0 = redUp
+    roundBlue0 = blueUp
+    pupuFake = cmd === 'trap-red' ? 'red' : cmd === 'trap-blue' ? 'blue' : null
+    phase = 'play'
+    cmdTxt.setText(FLAG_LABEL[cmd])
+    cmdTxt.setColor(cmd.startsWith('trap') ? '#ff8a6a' : '#fff6e0')
+    scoreTxt.setText(`第 ${round} ／ ${rounds}　　分數 ${score}`)
+    ui.bar.width = 216 * ((round - 1) / rounds)
+    drawHost()
+  }
+
+  const land = () => {
+    if (phase !== 'play') return
+    const ok = expectedOk()
+    if (ok) {
+      score = Math.min(rounds, score + 1)
+      SFX.coin()
+      buzz(HAPTIC.power)
+      floatText(scene, cx, cy - 80, '+1', '#ffd040', { size: 18, dur: 600 })
+    } else {
+      score = Math.max(0, score - 1)
+      SFX.blip(220)
+      buzz(40)
+      floatText(scene, cx, cy - 80, pressed && cmd?.startsWith('trap') ? '中計！' : '唔啱', '#ff8a6a', { size: 16, dur: 600 })
+    }
+    res.good = score
+    phase = 'settle'
+    settle = 480
+    drawHost()
+  }
+
+  const toggleRed = () => {
+    if (phase !== 'play' || finished) return
+    pressed = true
+    redUp = !redUp
+    SFX.blip(redUp ? 640 : 360)
+    drawHost()
+  }
+  const toggleBlue = () => {
+    if (phase !== 'play' || finished) return
+    pressed = true
+    blueUp = !blueUp
+    SFX.blip(blueUp ? 520 : 300)
+    drawHost()
+  }
+
+  const onKey = (e: KeyboardEvent) => {
+    if (e.repeat) return
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') toggleRed()
+    else if (e.code === 'ArrowRight' || e.code === 'KeyD') toggleBlue()
+  }
+  const onTap = (p: Phaser.Input.Pointer) => {
+    if (p.x < GAME_W / 2) toggleRed()
+    else toggleBlue()
+  }
+  const tick = () => {
+    if (finished) return
+    if (phase === 'settle') {
+      settle -= scene.game.loop.delta
+      if (settle <= 0) {
+        round++
+        if (round > rounds) return finish()
+        beginRound()
+      }
+      return
+    }
+    if (phase === 'play') {
+      if (TouchInput.justPressed('left')) toggleRed()
+      if (TouchInput.justPressed('right')) toggleBlue()
+      const left = Math.max(0, windowMs - (scene.time.now - windowStart))
+      ui.bar.width = 216 * (left / windowMs)
+      if (left <= 0) land()
+    }
+  }
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    phase = 'end'
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onKey)
+    scene.input.off('pointerdown', onTap)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    phase = 'end'
+    res.good = score
+    ui.bar.width = 216
+    ui.title.setText(score >= rounds ? '全程啱晒！' : score > 0 ? `得分 ${score}` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(800, destroy)
+  }
+
+  scene.input.keyboard?.on('keydown', onKey)
+  scene.input.on('pointerdown', onTap)
+  scene.events.on('update', tick)
+  beginRound()
+
+  return {
+    done,
+    destroy,
+    debug: () => ({
+      round,
+      score,
+      cmd,
+      red: redUp,
+      blue: blueUp,
+      trap: !!cmd?.startsWith('trap'),
+      windowMs,
+      phase,
+      pressed,
+    }),
+    forceCmd: (c: FlagCmd) => {
+      forced = c
+      if (phase === 'play') beginRound()
+    },
+    setFlags: (r: boolean, b: boolean) => {
+      redUp = r
+      blueUp = b
+      drawHost()
+    },
+    qaPress: (which: 'red' | 'blue') => {
+      if (which === 'red') toggleRed()
+      else toggleBlue()
+    },
+    endWindow: () => land(),
+  }
+}
+
+// ── 記貨單（第 7 關・Boss 前攤檔）────────────────────────────────────────
+
+export type MemoryItem = 'honey' | 'apple' | 'fish' | 'flower'
+export const MEMORY_ITEMS: MemoryItem[] = ['honey', 'apple', 'fish', 'flower']
+export const MEMORY_DIRS: Record<MemoryItem, 'up' | 'down' | 'left' | 'right'> = {
+  honey: 'up',
+  apple: 'down',
+  fish: 'left',
+  flower: 'right',
+}
+const MEMORY_LENS = [3, 4, 5, 6] as const
+export const MEMORY_LIT_MS = 600
+export const MEMORY_GAP_MS = 200
+
+/** Build a sequence of `len` with no three identical items in a row. */
+export function memorySequence(len: number, rand: () => number = Math.random): MemoryItem[] {
+  const out: MemoryItem[] = []
+  for (let i = 0; i < len; i++) {
+    let pick = MEMORY_ITEMS[Math.floor(rand() * MEMORY_ITEMS.length)]!
+    let guard = 0
+    while (out.length >= 2 && out[out.length - 1] === pick && out[out.length - 2] === pick && guard < 20) {
+      pick = MEMORY_ITEMS[Math.floor(rand() * MEMORY_ITEMS.length)]!
+      guard++
+    }
+    out.push(pick)
+  }
+  return out
+}
+
+/**
+ * 記貨單 — 十字四格（蜜／蘋果／魚／花）亮序記憶。4 輪長度 3–6；錯即顯示答案 1s。
+ * 1P：方向鍵／WASD／觸控點格。2P：暫同 1P。
+ */
+export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
+  debug: () => {
+    round: number
+    seq: MemoryItem[]
+    input: MemoryItem[]
+    phase: string
+    lit: MemoryItem | null
+    good: number
+  }
+  forceSeq: (seq: MemoryItem[]) => void
+  tapItem: (item: MemoryItem) => void
+} {
+  const ui = frame(scene, '記貨單：記住亮起次序！')
+  const touch = isTouchDevice()
+  ui.hint.setText(touch ? '跟住次序撳四格' : '↑↓←→／WASD 跟次序撳')
+  const cx = GAME_W / 2
+  const cy = GAME_H / 2 + 16
+  const CELL = 52
+  const GAP = 18
+  const pos: Record<MemoryItem, { x: number; y: number }> = {
+    honey: { x: cx, y: cy - CELL - GAP },
+    apple: { x: cx, y: cy + CELL + GAP },
+    fish: { x: cx - CELL - GAP, y: cy },
+    flower: { x: cx + CELL + GAP, y: cy },
+  }
+  const g = scene.add.graphics()
+  const label = scene.add.text(cx, 108, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a' }).setOrigin(0.5)
+  const answerTxt = scene.add
+    .text(cx, cy + 110, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#8ad0ff', align: 'center' })
+    .setOrigin(0.5)
+  ui.root.add([g, label, answerTxt])
+
+  let round = 1
+  let seq: MemoryItem[] = []
+  let forced: MemoryItem[] | null = null
+  let input: MemoryItem[] = []
+  let lit: MemoryItem | null = null
+  let showI = 0
+  let showT = 0
+  let phase: 'show' | 'input' | 'fail' | 'ok' | 'end' = 'show'
+  let failMs = 0
+  const res: RoundResult = { good: 0, total: 4 }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+  let finished = false
+
+  const drawItem = (item: MemoryItem, x: number, y: number, bright: boolean) => {
+    const a = bright ? 1 : 0.45
+    g.fillStyle(0x1a1210, 1).fillRoundedRect(x - CELL / 2 - 2, y - CELL / 2 - 2, CELL + 4, CELL + 4, 8)
+    g.fillStyle(bright ? 0x3a2a18 : 0x2a1a10, a).fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 6)
+    if (item === 'honey') {
+      g.fillStyle(0xe8a020, a).fillRoundedRect(x - 12, y - 8, 24, 22, 4)
+      g.fillStyle(0xc87810, a).fillRect(x - 10, y - 14, 20, 8)
+      g.fillStyle(0xffe080, a * 0.7).fillCircle(x, y + 2, 6)
+    } else if (item === 'apple') {
+      g.fillStyle(0xe03828, a).fillCircle(x, y + 2, 14)
+      g.fillStyle(0x3a8a30, a).fillEllipse(x + 6, y - 12, 10, 6)
+      g.lineStyle(2, 0x5a3a18, a).lineBetween(x, y - 12, x, y - 4)
+    } else if (item === 'fish') {
+      g.fillStyle(0xf07888, a).fillEllipse(x, y + 2, 28, 14)
+      g.fillStyle(0xf07888, a).fillTriangle(x + 14, y + 2, x + 24, y - 8, x + 24, y + 12)
+      g.fillStyle(0x1a1210, a).fillCircle(x - 8, y, 2)
+    } else {
+      g.fillStyle(0xff80b0, a).fillCircle(x, y, 8)
+      g.fillStyle(0xff80b0, a).fillCircle(x - 10, y + 2, 7)
+      g.fillStyle(0xff80b0, a).fillCircle(x + 10, y + 2, 7)
+      g.fillStyle(0xff80b0, a).fillCircle(x - 5, y - 8, 7)
+      g.fillStyle(0xff80b0, a).fillCircle(x + 5, y - 8, 7)
+      g.fillStyle(0xffd060, a).fillCircle(x, y, 4)
+    }
+    if (bright) g.lineStyle(3, 0xffe08a, 1).strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 6)
+  }
+
+  const draw = () => {
+    g.clear()
+    // Cross arms
+    g.fillStyle(0x3a2a1a, 0.6).fillRect(cx - 10, cy - CELL - GAP - CELL / 2, 20, (CELL + GAP) * 2 + CELL)
+    g.fillStyle(0x3a2a1a, 0.6).fillRect(cx - CELL - GAP - CELL / 2, cy - 10, (CELL + GAP) * 2 + CELL, 20)
+    for (const item of MEMORY_ITEMS) {
+      const p = pos[item]!
+      drawItem(item, p.x, p.y, lit === item)
+    }
+    if (phase === 'fail') {
+      for (const item of seq) {
+        const p = pos[item]!
+        g.lineStyle(2, 0x8ad0ff, 0.9).strokeRoundedRect(p.x - CELL / 2 - 1, p.y - CELL / 2 - 1, CELL + 2, CELL + 2, 6)
+      }
+    }
+    label.setText(`第 ${round} ／ 4　　長度 ${seq.length || MEMORY_LENS[round - 1]}`)
+    ui.bar.width = (216 * (round - 1)) / 4
+  }
+
+  const beginRound = () => {
+    const len = MEMORY_LENS[round - 1]!
+    seq = forced ?? memorySequence(len)
+    forced = null
+    input = []
+    lit = null
+    showI = 0
+    showT = 0
+    phase = 'show'
+    answerTxt.setText('')
+    draw()
+  }
+
+  const onFail = () => {
+    phase = 'fail'
+    failMs = 1000
+    lit = null
+    answerTxt.setText(`答案：${seq.map((s) => ({ honey: '蜜', apple: '蘋果', fish: '魚', flower: '花' })[s]).join(' → ')}`)
+    SFX.blip(200)
+    buzz(40)
+    draw()
+  }
+
+  const onOk = () => {
+    res.good++
+    phase = 'ok'
+    failMs = 500
+    SFX.coin()
+    buzz(HAPTIC.power)
+    floatText(scene, cx, cy - 100, '記啱！', '#ffd040', { size: 16, dur: 600 })
+    draw()
+  }
+
+  const press = (item: MemoryItem) => {
+    if (finished || phase !== 'input') return
+    input.push(item)
+    lit = item
+    draw()
+    const i = input.length - 1
+    if (seq[i] !== item) {
+      onFail()
+      return
+    }
+    SFX.blip(480 + i * 40)
+    if (input.length >= seq.length) onOk()
+    else scene.time.delayedCall(120, () => {
+      if (phase === 'input') {
+        lit = null
+        draw()
+      }
+    })
+  }
+
+  const DIR_ITEM: Record<string, MemoryItem> = {
+    up: 'honey',
+    down: 'apple',
+    left: 'fish',
+    right: 'flower',
+  }
+  const KEYMAP: Record<string, MemoryItem> = {
+    ArrowUp: 'honey',
+    KeyW: 'honey',
+    ArrowDown: 'apple',
+    KeyS: 'apple',
+    ArrowLeft: 'fish',
+    KeyA: 'fish',
+    ArrowRight: 'flower',
+    KeyD: 'flower',
+  }
+  const onKey = (e: KeyboardEvent) => {
+    if (e.repeat) return
+    const it = KEYMAP[e.code]
+    if (it) press(it)
+  }
+  const onTap = (p: Phaser.Input.Pointer) => {
+    for (const item of MEMORY_ITEMS) {
+      const c = pos[item]!
+      if (Math.abs(p.x - c.x) <= CELL / 2 + 6 && Math.abs(p.y - c.y) <= CELL / 2 + 6) {
+        press(item)
+        return
+      }
+    }
+  }
+
+  const tick = (_t: number, dt: number) => {
+    if (finished) return
+    if (phase === 'fail' || phase === 'ok') {
+      failMs -= dt
+      if (failMs <= 0) {
+        round++
+        if (round > 4) return finish()
+        beginRound()
+      }
+      return
+    }
+    if (phase === 'show') {
+      showT += dt
+      if (showI < seq.length) {
+        const on = showT < MEMORY_LIT_MS
+        lit = on ? seq[showI]! : null
+        if (showT >= MEMORY_LIT_MS + MEMORY_GAP_MS) {
+          showI++
+          showT = 0
+          lit = null
+        }
+        draw()
+      } else {
+        phase = 'input'
+        lit = null
+        answerTxt.setText('輪到你！')
+        draw()
+      }
+      return
+    }
+    if (phase === 'input') {
+      for (const d of ['up', 'down', 'left', 'right'] as const) {
+        if (TouchInput.justPressed(d)) press(DIR_ITEM[d]!)
+      }
+    }
+  }
+
+  let gone = false
+  const destroy = () => {
+    if (gone) return
+    gone = true
+    finished = true
+    phase = 'end'
+    scene.events.off('update', tick)
+    scene.input.keyboard?.off('keydown', onKey)
+    scene.input.off('pointerdown', onTap)
+    ui.root.destroy(true)
+    resolve(res)
+  }
+  const finish = () => {
+    finished = true
+    phase = 'end'
+    ui.bar.width = 216
+    ui.title.setText(res.good >= 4 ? '全部記住！' : res.good > 0 ? `記啱 ${res.good} 輪` : '下次再試過')
+    SFX.sparkle()
+    scene.time.delayedCall(800, destroy)
+  }
+
+  scene.input.keyboard?.on('keydown', onKey)
+  scene.input.on('pointerdown', onTap)
+  scene.events.on('update', tick)
+  beginRound()
+
+  return {
+    done,
+    destroy,
+    debug: () => ({ round, seq: seq.slice(), input: input.slice(), phase, lit, good: res.good }),
+    forceSeq: (s: MemoryItem[]) => {
+      forced = s.slice()
+      if (phase === 'show' || phase === 'input') beginRound()
+    },
+    tapItem: (item: MemoryItem) => press(item),
+  }
+}
+
 // ── 夜市抓抓機：左右移動夾爪，揀準時機落爪 ───────────────────────────────
 
 export type ClawResult = { coins: number; caught: number; drops: number }

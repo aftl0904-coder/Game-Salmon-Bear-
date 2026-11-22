@@ -1,0 +1,215 @@
+{
+  "ok": true,
+  "checks": {
+    "F3": {
+      "pass": true,
+      "detail": {
+        "has": true,
+        "choice": "play",
+        "texts": [
+          "咖啡車・存檔",
+          "存檔點",
+          "存檔點",
+          "樹頂・蜂巢",
+          "按住跳掣跳得更高",
+          "咖啡媽媽：舉旗大賽",
+          "test",
+          "t",
+          "撳一下 ▶ 下一頁　　Start＝跳過唔玩",
+          "1／2",
+          "跳過 ▶▶"
+        ]
+      }
+    },
+    "F1-perfect": {
+      "pass": true,
+      "detail": {
+        "good": 10,
+        "total": 10
+      }
+    },
+    "F1-zero": {
+      "pass": true,
+      "detail": {
+        "good": 0,
+        "total": 10
+      }
+    },
+    "F2": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "score": 1,
+        "cmd": "trap-red",
+        "red": false,
+        "blue": false,
+        "trap": true,
+        "windowMs": 1200,
+        "phase": "settle",
+        "pressed": false
+      }
+    },
+    "F4-keyboard": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "score": 0,
+        "cmd": "raise-red",
+        "red": true,
+        "blue": false,
+        "trap": false,
+        "windowMs": 1200,
+        "phase": "play",
+        "pressed": true
+      }
+    },
+    "F4-touch": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "score": 0,
+        "cmd": "raise-blue",
+        "red": false,
+        "blue": true,
+        "trap": false,
+        "windowMs": 1200,
+        "phase": "play",
+        "pressed": true
+      }
+    },
+    "F5-data": {
+      "pass": true,
+      "detail": {
+        "keeper": "咖啡媽媽",
+        "food": "咖啡",
+        "sign": "咖啡車・存檔",
+        "game": "flag",
+        "greet": "行咗咁耐，飲杯咖啡先。"
+      }
+    },
+    "F5-wiring": {
+      "pass": true,
+      "detail": {
+        "hasFlagCall": true,
+        "noStirCall": true
+      }
+    },
+    "F5-runtime": {
+      "pass": true,
+      "detail": {
+        "coffeeDone": true,
+        "intro": true,
+        "flag": true,
+        "stir": false,
+        "texts": [
+          "咖啡媽媽：行咗咁耐，飲杯咖啡先。",
+          "咖啡媽媽：舉旗大賽",
+          "撳一下 ▶ 下一頁　　Start＝跳過唔玩",
+          "跳過 ▶▶"
+        ]
+      }
+    },
+    "M3": {
+      "pass": true,
+      "detail": {
+        "has": true,
+        "texts": [
+          "風機",
+          "森友展銷中心",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      }
+    },
+    "M1": {
+      "pass": true,
+      "detail": {
+        "good": 4,
+        "total": 4
+      }
+    },
+    "M1-fairness": {
+      "pass": true,
+      "detail": {
+        "bad": 0,
+        "windows": 1200,
+        "w10": 750,
+        "w20": 750
+      }
+    },
+    "F-window": {
+      "pass": true,
+      "detail": {
+        "bad": 0,
+        "windows": 1200,
+        "w10": 750,
+        "w20": 750
+      }
+    },
+    "M2": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "seq": [
+          "honey",
+          "apple",
+          "fish"
+        ],
+        "input": [
+          "flower"
+        ],
+        "phase": "fail",
+        "lit": null,
+        "good": 0,
+        "answerVisible": true
+      }
+    },
+    "M4-keyboard": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "seq": [
+          "honey",
+          "apple"
+        ],
+        "input": [
+          "honey"
+        ],
+        "phase": "input",
+        "lit": null,
+        "good": 0
+      }
+    },
+    "M4-touch": {
+      "pass": true,
+      "detail": {
+        "round": 1,
+        "seq": [
+          "honey",
+          "apple"
+        ],
+        "input": [
+          "honey",
+          "apple"
+        ],
+        "phase": "ok",
+        "lit": "apple",
+        "good": 1
+      }
+    },
+    "M-placement": {
+      "pass": true,
+      "detail": {
+        "memoryStallX": 4580,
+        "hasSign": true,
+        "goldfish": true
+      }
+    }
+  },
+  "errors": [],
+  "sha": ""
+}
