@@ -1,0 +1,228 @@
+{
+  "meta": {
+    "from": "Claude（boss／planner）",
+    "to": "Cursor（執行，Auto model）",
+    "date": "2026-11-22",
+    "replaces": "上一格【Claude → Cursor】C2S1 收貨工單次序（文字版）——以呢份 JSON 為準",
+    "source_report": "docs/gdd/cursor-to-claude-20261122-c2s1-playtest-order.json",
+    "how_to_use": "逐張票照做。每張票有 steps（照次序做）、numbers（直接用，唔好自己改數）、acceptance（全部 pass 先開 PR）、do_not（唔准做）。有任何 steps 做唔到或者同代碼唔夾，停低，回【Cursor → Claude】講清楚卡喺邊，唔好自己諗替代方案。",
+    "global_rules": [
+      "每條 PR 由最新 origin/main 開新 branch，名用下面 pr_plan 指定嘅名",
+      "開 draft PR；唔准自己 merge；等 Alan 講「merge PR #N」",
+      "唔准改 data/story.json、唔准寫新對白；需要對白嘅位置放「（待補）」",
+      "唔准開第8–10關；唔准改大陸1（第1–5關）嘅任何數值或者美術",
+      "每條 PR 完成前跑：npm run build（必須成功）＋ 該票指定嘅 Playwright 測試",
+      "每條 PR 描述必須有：改咗邊啲檔、每項 acceptance 嘅 PASS/FAIL、預覽網址",
+      "新美術全部原創；唔准有任何真實品牌名、logo、字樣"
+    ]
+  },
+
+  "pr_plan": [
+    { "pr": "PR-A", "branch": "cursor/c2-entry-fix-2610", "tickets": ["T1_C2S2_ENTRY"], "start": "即刻", "parallel_with": "PR-B" },
+    { "pr": "PR-B", "branch": "cursor/c2-scrubber-boss-2610", "tickets": ["T2_SCRUBBER_BOSS"], "start": "即刻", "parallel_with": "PR-A" },
+    { "pr": "PR-C", "branch": "cursor/c2-mall-polish-2610", "tickets": ["T3_ESCALATOR", "T4_DEATH_FADE", "T5_SHOP_ICONS"], "start": "PR-A 合併之後先開（要由包含 PR-A 嘅 main 開）" }
+  ],
+
+  "tickets": [
+    {
+      "id": "T1_C2S2_ENTRY",
+      "priority": "P0（阻擋）",
+      "goal": "打完第6關（大陸2第1關，商場）之後，一定入到第7關（森友展銷中心）",
+      "alan_report": "完咗1，但入不到大陸2・第二關（喺 salmonbearv3.vercel.app）",
+      "suspects_claude_found_on_main": [
+        "src/game/GameScene.ts win()：unlockStage(Math.min(this.stageNo + 1, 7)) —— 呢句正常，但要確認第6關 win 真係有行到",
+        "src/game/GameScene.ts goNextStage()（約第7004行）：非 side trip 時用 STAGES[to]；確認 STAGES[7] 存在同 import 咗 stage7.json",
+        "src/game/GameScene.ts goNextStage() 之後去 'worldmap' scene：檢查 src/game/WorldMapScene.ts 有冇將可去關數封頂喺 6（搜 openStages、Math.min、6）",
+        "src/game/run.ts 第152行 Math.min(6, …)：只影響舊存檔遷移，但確認佢唔會令 nextStage 卡喺 6",
+        "src/game/MainMenuScene.ts pickableStages()：第7關只喺 maxStage()>=7 或 run.nextStage>=7 先加入"
+      ],
+      "steps": [
+        "1. 用 Playwright 喺本地 build 複現：開新存檔 → 主選單揀大陸2 → 用測試捷徑（如有 debug 清關；冇就寫測試用 helper 直接觸發 win()）清第6關 → 撳「大陸2・第二關 ▶」",
+        "2. 記低實際去咗邊個 scene、stageNo 係幾多、localStorage 入面 run.nextStage 同 maxStage 係幾多，寫入 PR 描述",
+        "3. 沿住上面 suspects 逐個查，搵到真正原因先改；只改導致問題嗰幾行",
+        "4. 加 Playwright 測試 tests/c2-entry.spec.ts（或現有測試資料夾嘅同等位置），內容見 acceptance",
+        "5. 截圖放 docs/qa-c2-entry/"
+      ],
+      "acceptance": [
+        "A1 新存檔：清第6關 → 撳下一關 → 畫面入到第7關（stageNo===7），PASS/FAIL",
+        "A2 1P 同 2P 模式都 PASS",
+        "A3 清完第6關之後重新整理網頁 → 主選單／地圖揀得到第7關",
+        "A4 第8、9、10關仍然揀唔到、入唔到",
+        "A5 清第7關之後出「待續」畫面，唔死機、唔黑畫面",
+        "A6 第1–5關流程冇變（跑現有測試全部 PASS）"
+      ],
+      "do_not": ["開第8–10關", "改第7關內容或對白", "重寫存檔格式（version 保持 1）"]
+    },
+
+    {
+      "id": "T2_SCRUBBER_BOSS",
+      "priority": "P0",
+      "goal": "第6關 Boss 洗地機：修好扣血、做三段招式、換走醜 placeholder 美術",
+      "files": {
+        "main": "src/game/enemies/MallScrubber.ts",
+        "scene_hooks": "src/game/GameScene.ts（hurtHero 約第1952行、boss 生成約第6839行、fan/headwind 約第3261行）",
+        "ref_image": "docs/gdd/refs/mall-floor-blower-ref.jpg"
+      },
+      "story": {
+        "name": "深層潔淨 X-9（暫名，Alan 可改）",
+        "identity": "商場清潔機械人，唔係人。保安總監只喺遠處企住監控，唔參戰，唔可以俾玩家打",
+        "hook": "表面叫清潔，其實噴強酸，將生命當污漬咁清走",
+        "defeat": "打低之後頂部一粒控制晶片彈出閃一閃熄滅 → 機器停低冒煙 → 噗噗行埋去嗅一嗅（純動作，冇對白）→ 正常清關",
+        "dialogue": "全部對白位置放「（待補）」，唔好自己寫"
+      },
+
+      "part1_damage_fix": {
+        "why": "Alan 報：Boss 碰到都唔扣血",
+        "suspects": [
+          "MallScrubber.canHurtPlayer() 只喺 act==='charge' 或 'brush' 先 true；確認衝撞時 act 真係設成 'charge'",
+          "hitHeroes WeakSet 只喺第195行 ATTACK 開始先清；確認每次衝撞前都有清",
+          "GameScene hurtHero() 有 sameLane(h, pe) 檢查：Boss body allowGravity=false、y 用 floorY，確認同玩家 lane 判斷一致",
+          "確認 Boss 有加入同玩家做 overlap 嘅 enemy group（如果冇，hurtHero 永遠唔會被呼叫）"
+        ],
+        "test": "Playwright：將玩家放喺 Boss 衝撞路線上，衝撞後玩家 hp 減 1；放喺空檔期接觸，hp 不變"
+      },
+
+      "numbers": {
+        "boss_hp": "保持現有 DIRECTOR_HP，唔好改",
+        "phase_thresholds": "P1 = hp > 60%；P2 = 30%–60%；P3 = hp < 30%（改現有 0.66 → 0.6）",
+        "damage_to_player": "每次命中扣 1 格血，所有招式一樣",
+        "invuln_after_hit": "沿用現有 canTakeDamage 無敵時間",
+        "front_guard": "玩家由 Boss 正面（刷頭嗰邊）打：傷害 ×0.5（向下取整，最少 1）",
+        "weak_window": "recover 狀態：散熱口在背面，背面打傷害 ×2（沿用 bossHitDamage weak 邏輯）"
+      },
+
+      "moves": [
+        {
+          "id": "M1_SLIDE",
+          "phase_from": 1,
+          "sequence": [
+            "warn：地面畫 Boss 將會掃過嘅整段範圍（紅色半透明帶），持續 600ms；轉刷加速音效",
+            "charge：以 360 px/s 直線滑向玩家當時位置方向，去到場地邊（arenaX0+14 / arenaX1-14）即停",
+            "只有 charge 期間 canHurtPlayer() = true",
+            "recover：停低冒煙 1500ms（P3 時 1200ms），呢段係弱點期"
+          ],
+          "rule": "沿用現有 safeForAll()：如果警告時間內玩家逃唔切，就唔准出呢招"
+        },
+        {
+          "id": "M2_ACID",
+          "phase_from": 2,
+          "sequence": [
+            "warn：Boss 頂部噴嘴升起 400ms",
+            "spray：向上噴 3 粒酸液（綠黃色），落點 = 玩家位置、玩家位置 −90px、玩家位置 +90px（夾喺場地範圍內）",
+            "落點地面先出紅圈＋文字「強酸化學劑」800ms，之後酸液先落地",
+            "落地變酸漬：闊 64px，維持 3000ms，之後 300ms 淡出",
+            "玩家踩入酸漬扣 1 格血（同一灘酸對同一玩家 1000ms 內只扣一次）",
+            "recover：噴完停 1000ms"
+          ],
+          "limits": "場上同時最多 3 灘酸漬；超過就唔出呢招"
+        },
+        {
+          "id": "M3_FAN",
+          "phase_from": 3,
+          "prop": "Boss 後方地面一部鼓風機（場景機關，唔係敵人），位置 = arenaX1 - 40，向左吹",
+          "sequence": [
+            "每 6000ms 一個循環：前 600ms 出風口閃黃燈預警 → 之後吹風 2500ms → 停",
+            "吹風期間：玩家向風機方向行，速度 ×0.5；背風行速度不變",
+            "吹風期間酸液落點向左偏 40px（預警紅圈都要跟住偏）",
+            "畫風線粒子表示風向"
+          ],
+          "fan_hit": "玩家打中風機 3 下 → 風機停機 8000ms（冒煙、燈熄）→ 之後自動重啟；風機打唔爛、唔計分",
+          "note": "現有代碼第3261行寫明 scrubber 冇風機；要改為 scrubber 都用風機，但只喺 P3 先啟動"
+        }
+      ],
+      "move_selection": {
+        "P1": "只出 M1",
+        "P2": "M1、M2 輪流（唔好連續兩次同一招）",
+        "P3": "M1、M2 輪流＋風機開；每招之間嘅 recover 時間 ×0.8",
+        "phase_change": "轉段時 Boss 強制 recover 1500ms，畫面輕震，顯示「（待補）」字卡位"
+      },
+
+      "art": {
+        "boss": {
+          "look": "原創銀灰色機身＋深藍色邊；前面一個大圓形轉刷；頂部一粒圓形鏡頭眼（發黃光，代表被控制）；背後散熱格柵；底部細輪",
+          "size": "約 96×80 px（同現有 body size 夾）",
+          "frames": ["idle（轉刷慢轉，2 格）", "warn（轉刷快轉＋眼閃紅，2 格）", "charge（身向前傾＋塵，2 格）", "recover（冒煙＋眼暗，2 格）", "spray（噴嘴升起，1 格）", "defeated（晶片彈出、眼熄，1 格）"],
+          "style": "32-bit，跟大陸2現有色板"
+        },
+        "fan": {
+          "look": "跟 docs/gdd/refs/mall-floor-blower-ref.jpg：藍色蝸牛殼形外殼、前面扁平長方出風口、底部細輪；唔好有品牌字",
+          "size": "約 48×40 px",
+          "frames": ["off", "warn（黃燈閃）", "on（震動 2 格）", "stunned（冒煙）"]
+        },
+        "fx": ["滑行塵", "酸液弧線", "酸漬（地面平面）", "紅色預警圈", "風線粒子", "晶片彈出閃光"],
+        "if_no_artist": "Cursor 自己用 Phaser Graphics 畫乾淨簡單版本（圓角矩形＋圓形，顏色跟上面），並喺 docs/bible/art-todo.md 加一條 ART-REQUEST 等正式圖；唔好再用而家嗰個醜幾何塊"
+      },
+
+      "acceptance": [
+        "B1 M1 衝撞命中玩家 → 扣 1 格血（Playwright）",
+        "B2 recover 期間接觸 Boss → 唔扣血（Playwright）",
+        "B3 P2 出現酸液，落地前有紅圈＋「強酸化學劑」字樣；踩酸扣血（Playwright）",
+        "B4 P3 風機按 6 秒循環吹風；迎風速度減半；打 3 下停 8 秒（Playwright 或手動錄影）",
+        "B5 冇任何一招係冇預警就扣血",
+        "B6 保安總監唔可以被打、唔會扣玩家血",
+        "B7 1P 普通玩家約 2–4 分鐘打得完（Cursor 自己玩 3 次記錄時間）",
+        "B8 打低後晶片彈出 → 停機 → 噗噗嗅 → 正常清關卡",
+        "B9 冇 placeholder 幾何塊殘留"
+      ],
+      "do_not": ["加第4招", "改玩家角色數值", "寫對白", "改其他關 Boss"]
+    },
+
+    {
+      "id": "T3_ESCALATOR",
+      "priority": "P1",
+      "goal": "扶手電梯真係帶得郁角色",
+      "where": "src/game/GameScene.ts 約第3107行 Escalator near B→C",
+      "numbers": { "belt_speed": "60 px/s 沿電梯方向", "against_walk": "逆行時玩家實際速度 = 行速 − 60（最少 20 px/s）" },
+      "steps": [
+        "1. 電梯面做一個隱形 platform（有碰撞），斜度跟畫面一致",
+        "2. 角色、敵人、掉落物企喺上面時，每 frame 加 belt_speed 位移",
+        "3. 跳離電梯時唔好繼承電梯速度超過 1 frame，避免彈飛"
+      ],
+      "acceptance": [
+        "C1 企定喺電梯上 → 自動向上／下移動",
+        "C2 逆行行得到但慢",
+        "C3 喺電梯上跳、落電梯，唔卡位、唔穿牆",
+        "C4 2P 兩個角色同時企都正常"
+      ]
+    },
+
+    {
+      "id": "T4_DEATH_FADE",
+      "priority": "P1",
+      "goal": "雜兵（松鼠等）死亡唔好換圖卡 1 秒，改 0.5 秒漸出",
+      "numbers": { "duration_ms": 500, "alpha": "1 → 0", "scale": "1 → 0.8", "ease": "Quad.out" },
+      "steps": [
+        "1. 搵出大陸2雜兵死亡處理（setFsm('DEAD') 或 die 狀態），改成：即刻關碰撞 → tween 500ms → destroy",
+        "2. 只改大陸2（第6、7關）雜兵；Boss 死亡演出唔郁"
+      ],
+      "acceptance": [
+        "D1 雜兵死亡 0.5 秒內淡出消失",
+        "D2 死亡一刻起已經唔會扣玩家血、唔會擋路",
+        "D3 大陸1雜兵冇變"
+      ]
+    },
+
+    {
+      "id": "T5_SHOP_ICONS",
+      "priority": "P2",
+      "goal": "商場舖頭唔用直白店名，改用大 icon",
+      "mapping": {
+        "藥房": "大藥丸（紅白膠囊）",
+        "餐廳": "碗＋筷子",
+        "時裝": "T 恤",
+        "書店": "打開嘅書",
+        "玩具": "皮球",
+        "咖啡": "咖啡杯冒煙",
+        "其他未列": "回報 Claude，唔好自己作"
+      },
+      "numbers": { "icon_size": "約 32×32 px，放喺舖頭招牌正中" },
+      "acceptance": [
+        "E1 第6關所有舖頭招牌冇文字店名",
+        "E2 每個 icon 一眼睇得出係咩舖",
+        "E3 冇任何似真實品牌嘅 logo"
+      ]
+    }
+  ],
+
+  "report_format": "完成每條 PR 後回：\n【Cursor → Claude】PR-X 完成\nPR #：\nbranch：\n改咗：（檔案列表）\nacceptance：A1 PASS / A2 PASS …（逐項）\n預覽：（網址）\n卡住／疑問：（冇就寫「冇」）"
+}
