@@ -82,9 +82,9 @@
     },
     {
       "x": 1880,
-      "w": 90,
+      "w": 100,
       "h": 70,
-      "note": "B・更高層"
+      "note": "B・更高層／電梯底"
     },
     {
       "x": 2300,
@@ -115,6 +115,18 @@
       "w": 70,
       "h": 72,
       "note": "D・高層"
+    },
+    {
+      "x": 1970,
+      "w": 200,
+      "h": 70,
+      "note": "C4・上層通道"
+    },
+    {
+      "x": 2160,
+      "w": 80,
+      "h": 70,
+      "note": "C4・上層通往電梯"
     }
   ],
   "movingPlatforms": [],
@@ -197,85 +209,124 @@
   ],
   "enemies": [
     {
-      "x": 640,
-      "species": "guard",
-      "unlockX": 560,
-      "note": "A・保安（地滑教完先出）"
+      "x": 580,
+      "species": "s7charge",
+      "unlockX": 480,
+      "note": "A・衝鋒保安蜜僵"
     },
     {
-      "x": 780,
-      "species": "guard",
-      "unlockX": 700,
-      "note": "A・保安（地滑教完先出）"
+      "x": 700,
+      "species": "s7hop",
+      "unlockX": 600,
+      "note": "A・彈跳購物籃"
     },
     {
-      "x": 900,
-      "species": "guard",
-      "unlockX": 820,
-      "note": "A・保安（地滑教完先出）"
+      "x": 820,
+      "species": "s7shield",
+      "unlockX": 720,
+      "note": "A・持盾推車員"
     },
     {
-      "x": 1000,
-      "species": "fish",
-      "kind": "chaser",
-      "unlockX": 860
+      "x": 980,
+      "species": "s7can",
+      "unlockX": 900,
+      "note": "B・掟罐清潔工"
     },
     {
-      "x": 1280,
-      "species": "robotarm",
-      "unlockX": 920
+      "x": 1180,
+      "species": "s7charge",
+      "unlockX": 1080,
+      "note": "B・衝鋒保安蜜僵"
     },
     {
       "x": 1420,
-      "species": "fish",
-      "kind": "chaser",
-      "unlockX": 1250
+      "species": "s7hop",
+      "unlockX": 1300,
+      "note": "B・彈跳購物籃"
     },
     {
-      "x": 1720,
-      "species": "robotarm",
-      "unlockX": 1360
+      "x": 1680,
+      "species": "s7shield",
+      "unlockX": 1550,
+      "note": "B・持盾推車員"
     },
     {
-      "x": 1800,
-      "species": "fish",
-      "kind": "chaser",
-      "unlockX": 1580
+      "x": 1880,
+      "species": "s7can",
+      "unlockX": 1750,
+      "note": "B・掟罐清潔工"
     },
     {
-      "x": 2150,
-      "species": "guard",
-      "unlockX": 2000
+      "x": 2088,
+      "species": "s7hop",
+      "unlockX": 2000,
+      "note": "C4・上層彈跳購物籃"
     },
     {
-      "x": 2720,
-      "species": "guard",
-      "unlockX": 2500
+      "x": 2140,
+      "species": "s7charge",
+      "unlockX": 2020,
+      "note": "C・衝鋒保安蜜僵"
     },
     {
-      "x": 3420,
-      "species": "honeyzombie",
-      "unlockX": 3150
+      "x": 2420,
+      "species": "s7shield",
+      "unlockX": 2280,
+      "note": "C・持盾推車員"
+    },
+    {
+      "x": 2680,
+      "species": "s7can",
+      "unlockX": 2550,
+      "note": "C・掟罐清潔工"
+    },
+    {
+      "x": 2920,
+      "species": "s7hop",
+      "unlockX": 2780,
+      "note": "C・彈跳購物籃"
+    },
+    {
+      "x": 3280,
+      "species": "s7shield",
+      "unlockX": 3180,
+      "note": "D・持盾推車員"
     },
     {
       "x": 3560,
-      "species": "robotarm",
-      "unlockX": 3260
+      "species": "s7hop",
+      "unlockX": 3400,
+      "note": "D・彈跳購物籃"
     },
     {
       "x": 3820,
-      "species": "honeyzombie",
-      "unlockX": 3560
+      "species": "s7can",
+      "unlockX": 3680,
+      "note": "D・掟罐清潔工"
     },
     {
-      "x": 4180,
-      "species": "robotarm",
-      "unlockX": 3880
+      "x": 4120,
+      "species": "s7charge",
+      "unlockX": 3980,
+      "note": "D・衝鋒保安蜜僵"
     },
     {
-      "x": 4340,
-      "species": "honeyzombie",
-      "unlockX": 4020
+      "x": 4620,
+      "species": "s7can",
+      "unlockX": 4500,
+      "note": "E・掟罐清潔工"
+    },
+    {
+      "x": 4720,
+      "species": "s7hop",
+      "unlockX": 4580,
+      "note": "E・彈跳購物籃"
+    },
+    {
+      "x": 4820,
+      "species": "s7shield",
+      "unlockX": 4680,
+      "note": "E・持盾推車員"
     }
   ],
   "altarAmbush": [],
@@ -397,6 +448,11 @@
     {
       "x": 5050,
       "h": 40
+    },
+    {
+      "x": 2050,
+      "h": 78,
+      "note": "C4・上層幣"
     }
   ],
   "secrets": [],
@@ -414,7 +470,7 @@
   ],
   "darkAlpha": 0.62,
   "lanterns": [],
-  "elevatorX": 1995,
+  "elevatorX": 2140,
   "slipZones": [
     {
       "x0": 360,

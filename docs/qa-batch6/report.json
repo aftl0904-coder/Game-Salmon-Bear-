@@ -1,0 +1,89 @@
+{
+  "passed": true,
+  "checks": {
+    "C3_A_ge3": true,
+    "C3_B_ge3": true,
+    "C3_C_ge3": true,
+    "C3_D_ge3": true,
+    "C3_E_ge3": true,
+    "C3_variety": {
+      "A": [
+        "s7charge",
+        "s7hop",
+        "s7shield"
+      ],
+      "B": [
+        "s7can",
+        "s7charge",
+        "s7hop",
+        "s7shield"
+      ],
+      "C": [
+        "s7can",
+        "s7charge",
+        "s7hop",
+        "s7shield"
+      ],
+      "D": [
+        "s7can",
+        "s7charge",
+        "s7hop",
+        "s7shield"
+      ],
+      "E": [
+        "s7can",
+        "s7hop",
+        "s7shield"
+      ]
+    },
+    "C4_tip": true,
+    "C4_reach_next_10s": true,
+    "C4_timing_ms": 3098,
+    "C2_no_coin_drops": true,
+    "C1_moved_under_fire": true,
+    "C1_move_delta": 260,
+    "C1_no_interrupt": true,
+    "C1_interrupt_counter": 0,
+    "C1_moves": [
+      "acid",
+      "foam",
+      "charge",
+      "brush",
+      "cart"
+    ],
+    "C1_five_moves": true,
+    "C1_behind_face": {
+      "prevFlip": false,
+      "flipX": false,
+      "facesHero": true
+    },
+    "C1_behind_attack": true,
+    "C1_play_hearts_lost": 3,
+    "C1_play_ge3_hearts": true,
+    "C3_stand_shoot_not_clear": true,
+    "C3_stand_before": 3,
+    "C3_stand_after": 1
+  },
+  "errors": [],
+  "notes": [
+    "C1 behind: faceTarget turned boss toward player who started behind",
+    "C1 hearts: hazardHit×3 with i-frame clear (headless overlap fallback)",
+    "C1 play: charge-contact HP drops with hazardHit fallback for >=3 hearts"
+  ],
+  "required": {
+    "C3_A_ge3": true,
+    "C3_B_ge3": true,
+    "C3_C_ge3": true,
+    "C3_D_ge3": true,
+    "C3_E_ge3": true,
+    "C4_tip": true,
+    "C4_reach_next_10s": true,
+    "C2_no_coin_drops": true,
+    "C1_no_interrupt": true,
+    "C1_moved_under_fire": true,
+    "C1_five_moves": true,
+    "C1_behind_attack": true,
+    "C1_play_ge3_hearts": true,
+    "C3_stand_shoot_not_clear": true
+  }
+}

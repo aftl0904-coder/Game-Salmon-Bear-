@@ -456,6 +456,9 @@ export class GameScene extends Phaser.Scene {
   private floorDoorX = 1432
   private floorRoomDone = false
   private floorPrompt: Phaser.GameObjects.Text | null = null
+  /** C4: one-shot tip after riding the escalator onto the upper deck. */
+  private escalatorUpperTipShown = false
+  private escalatorArrow: Phaser.GameObjects.Text | null = null
   /** Each hero keeps their own coins (docs/bible/minigames-shop.md §2). */
   private purse: Record<Who, number> = { boy: 0, girl: 0 }
   private bossBar: { fill: Phaser.GameObjects.Rectangle; root: Phaser.GameObjects.Container; w: number } | null = null
@@ -507,6 +510,9 @@ export class GameScene extends Phaser.Scene {
     this.floorRoomDone = false
     this.floorPrompt?.destroy()
     this.floorPrompt = null
+    this.escalatorUpperTipShown = false
+    this.escalatorArrow?.destroy()
+    this.escalatorArrow = null
     this.bossBar = null
     this.clearCardAction = null
     this.clearModal = false
@@ -1526,6 +1532,11 @@ export class GameScene extends Phaser.Scene {
       const inSpan = h.x >= ESCALATOR.x0 - 6 && h.x <= ESCALATOR.x1 + 6
       if (!inSpan) continue
       const body = h.body as Phaser.Physics.Arcade.Body | null
+      // C4: crest exit — once at the top, release onto upper-deck platforms (do not clamp at x1).
+      if (h.x >= ESCALATOR.x1 - 4) {
+        if (body) body.allowGravity = true
+        continue
+      }
       // Jump-off: leave the belt ≤1 frame (no lasting belt vel); restore gravity.
       if (h.laneJumping && body && body.velocity.y < -20) {
         body.allowGravity = true
@@ -3231,17 +3242,37 @@ export class GameScene extends Phaser.Scene {
       placeArtOrProp('lightbox', 'c2-prop-lightbox', 400, f - 100, 48, DEPTH.PROP - 1, 0.5)
       placeArtOrProp('plant', 'c2-prop-plant', 340, f, 44, DEPTH.PROP + 1)
       placeArtOrProp('bench', 'c2-prop-bench', 480, f, 32, DEPTH.PROP + 1)
-      // Escalator ramp art (collision is invisible slope solid) + entrance sign prop.
-      aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
-      aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
-      // Moving belt stripes (readability only).
-      for (let i = 0; i < 5; i++) {
-        const t = i / 5
-        const x0 = 1865 + t * 110
-        const y0 = f - 8 - t * 58
-        aw.fillStyle(0x90a8c0, 0.55).fillRect(x0, y0 - 2, 10, 3)
-      }
+      // C5 escalator visual is built when Stage6World constructs (see buildEscalatorVisual).
       placeArtOrProp('escalator-sign', 'c2-prop-escalator', 1848, f, 40, DEPTH.PROP + 2)
+      // C4: pre-escalator wayfinding
+      this.add
+        .text(1840, f - 96, '↑ 上層繼續前進 →', {
+          fontFamily: FONT_UI,
+          fontSize: '14px',
+          color: '#fff8d0',
+          backgroundColor: '#203040',
+          padding: { x: 5, y: 3 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+      this.escalatorArrow = this.add
+        .text(1972, f - 96, '→', {
+          fontFamily: FONT_UI,
+          fontSize: '22px',
+          color: '#ffe060',
+          stroke: '#203040',
+          strokeThickness: 4,
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+      this.tweens.add({
+        targets: this.escalatorArrow,
+        alpha: { from: 0.35, to: 1 },
+        y: '-=6',
+        duration: 520,
+        yoyo: true,
+        repeat: -1,
+      })
       // Corridor décor props (T5b).
       placeArtOrProp('cart', 'c2-prop-cart', 1020, f, 36, DEPTH.PROP + 1)
       placeArtOrProp('wayfind', 'c2-prop-sign', 1200, f, 48, DEPTH.PROP + 1)
@@ -3434,18 +3465,65 @@ export class GameScene extends Phaser.Scene {
     }
     const lead = this.leadX()
     this.s6world?.updateMood(lead)
+    this.s6world?.tickEscalatorVisual(dt)
     if (!this.exhibit) this.tickFloorDoor()
-    // Elevator faux-3D once at B→C.
+    // C4: after cresting the escalator, flash arrow + tip (once).
+    if (!this.exhibit && !this.escalatorUpperTipShown && this.started && !this.storyIntro) {
+      const onUpper = [this.boy, this.girl].some(
+        (h) => h?.alive && h.x >= ESCALATOR.x1 - 8 && h.y <= LANE_FLOOR_Y - ESCALATOR.h1 + 18,
+      )
+      if (onUpper) {
+        this.escalatorUpperTipShown = true
+        const tipX = Math.max(lead, ESCALATOR.x1 + 20)
+        const tip = this.add
+          .text(tipX, LANE_FLOOR_Y - ESCALATOR.h1 - 48, '上層繼續前進 →', {
+            fontFamily: FONT_UI,
+            fontSize: '18px',
+            color: '#fff8d0',
+            backgroundColor: '#203048',
+            padding: { x: 6, y: 4 },
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.SIGN)
+        const arrow = this.add
+          .text(tipX + 70, LANE_FLOOR_Y - ESCALATOR.h1 - 48, '→', {
+            fontFamily: FONT_UI,
+            fontSize: '22px',
+            color: '#ffe060',
+            stroke: '#203040',
+            strokeThickness: 4,
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.SIGN)
+        this.tweens.add({
+          targets: arrow,
+          alpha: { from: 0.4, to: 1 },
+          x: '+=8',
+          duration: 420,
+          yoyo: true,
+          repeat: 6,
+        })
+        this.tweens.add({
+          targets: tip,
+          alpha: 0,
+          delay: 2000,
+          duration: 600,
+          onComplete: () => tip.destroy(),
+        })
+        this.time.delayedCall(4500, () => arrow.destroy())
+      }
+    }
+    // Elevator faux-3D once at B→C (after upper deck).
     if (!this.exhibit && this.s6world?.checkElevator(lead) && !this.storyIntro) {
       this.physics.pause()
       for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
       const gate = { destroy: () => undefined }
       this.storyIntro = gate
-      void playElevatorRide(this).then(() => {
+      void this.s6world.playLiftDoors().then(() => playElevatorRide(this)).then(() => {
         if (this.storyIntro === gate) this.storyIntro = null
         this.physics.resume()
         this.resetPauseKeys()
-        floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……', '#c0d0ff', { size: 14, dur: 1800 })
+        floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……繼續向右 →', '#c0d0ff', { size: 14, dur: 1800 })
       })
     }
     // Trainer/director fan OR scrubber P3 floor-blower (work-order M3).
@@ -3486,6 +3564,34 @@ export class GameScene extends Phaser.Scene {
           this.hazardHit(h, { knockX: h.facing * -160, knockY: -420, label: '強酸化學劑' })
         }
       }
+      // M3 foam slip — accel ×0.4 (no damage)
+      for (const z of scrubber.foamZones()) {
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (h.x < z.x0 || h.x > z.x1) continue
+          const body = h.body as Phaser.Physics.Arcade.Body | null
+          if (!body) continue
+          body.setVelocityX(body.velocity.x * z.mul)
+        }
+      }
+      // M4 brush whirl — contact damage both sides
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive) continue
+        if (scrubber.brushHurtsHero(h, h.x)) {
+          this.hazardHit(h, { knockX: (h.x >= scrubber.x ? 1 : -1) * 180, knockY: -360, label: '轉刷' })
+        }
+      }
+      // M5 cleaning cart
+      const cartZ = scrubber.cartHurtZone()
+      if (cartZ) {
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (h.x < cartZ.x0 || h.x > cartZ.x1) continue
+          // Jump over: feet well above floor
+          if (h.y < LANE_FLOOR_Y - 36) continue
+          this.hazardHit(h, { knockX: h.facing * -120, knockY: -300, label: '清潔車' })
+        }
+      }
     }
     if (scrubber && this.bossOn) {
       for (const h of [this.boy, this.girl]) {
@@ -3493,6 +3599,7 @@ export class GameScene extends Phaser.Scene {
         const ab = h.attackHitbox.body as Phaser.Physics.Arcade.Body | undefined
         if (!ab) continue
         if (ab.right > scrubber.blower.x - 30 && ab.left < scrubber.blower.x + 30) scrubber.hitBlower(h.x)
+        scrubber.hitCart(h.x)
       }
     }
     if (!this.exhibit) this.tickDirectorSighting()
@@ -4068,6 +4175,7 @@ export class GameScene extends Phaser.Scene {
         },
         ST,
       )
+      this.s6world.buildEscalatorVisual(LANE_FLOOR_Y)
       // After Arcade integrates velocity — belt position must win that frame.
       // Belt runs once from update() via applyEscalatorBelt — do NOT also bind POST_UPDATE
       // (double apply + body.reset was shifting feet Y ~11px and kicking heroes off the ramp).
@@ -7254,6 +7362,7 @@ export class GameScene extends Phaser.Scene {
   private startQueenFight() {
     const b = ST.boss!
     this.bossFight = true
+    this.bossOn = true
     this.s2Pending = []
     // Stragglers don't follow into the throne room: they scatter in a puff.
     for (const o of [...this.enemies.getChildren()]) {
@@ -7329,9 +7438,12 @@ export class GameScene extends Phaser.Scene {
       }
     }
     if (this.depot || this.mall || this.stageNo === 1) {
-      // No dedicated reveal cutscene for 泥鬃 / 武者王 — their 來歷卡 (bossCard) already told the story.
-      this.storyIntro = { destroy: () => undefined }
-      this.time.delayedCall(260, reveal)
+      // No dedicated reveal cutscene for 泥鬃 / 武者王 / scrubber — boss card already told the story.
+      // Do NOT park on storyIntro while waiting: update() returns early when storyIntro is set,
+      // which freezes enemy ticks if the delay ever races. Brief wait uses a non-blocking timer.
+      this.time.delayedCall(260, () => {
+        if (!this.ended) reveal()
+      })
       return
     }
     const handle = playCutscene(this, this.tower ? 'C10' : this.market ? 'B3' : 'B2', reveal)
