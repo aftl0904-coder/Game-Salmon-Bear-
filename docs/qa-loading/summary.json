@@ -1,0 +1,191 @@
+{
+  "base": "http://127.0.0.1:4531/",
+  "at": "2026-11-22T02:58:04.786Z",
+  "cases": [
+    {
+      "id": "L1-sunburst",
+      "pass": true,
+      "detail": "rayCount=12 angleΔ=3.80°/0.5s (target 6°/s)",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-loading.png"
+      ]
+    },
+    {
+      "id": "L2-qheads",
+      "pass": true,
+      "detail": "heads=14 friends=熊仔,英國熊,小熊仔,招積熊,北極熊,柴柴,薑餅,大pat熊,聖誕伯伯,虎仔,喵仔",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-loading.png"
+      ]
+    },
+    {
+      "id": "L3-logo-top",
+      "pass": true,
+      "detail": "loading screenshot captured with title chrome",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-loading.png"
+      ]
+    },
+    {
+      "id": "L4-honey-progress",
+      "pass": true,
+      "detail": "pct=71 phase=rest",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-loading.png"
+      ]
+    },
+    {
+      "id": "L5-finish-anim",
+      "pass": true,
+      "detail": "phase=done titleStamp=v2026-11-22 10:57（HK）· local errs=0",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-title.png"
+      ]
+    },
+    {
+      "id": "L6-build-stamp",
+      "pass": true,
+      "detail": "load=v2026-11-22 10:57（HK）· local title=v2026-11-22 10:57（HK）· local iphone=v2026-11-22 10:57（HK）· local font=12px",
+      "evidence": [
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-loading.png",
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/desktop-title.png",
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/iphone13-loading.png",
+        "/tmp/gsb-loading-screen-2610/docs/qa-loading/iphone13-title.png"
+      ]
+    }
+  ],
+  "pass": true,
+  "desktop": {
+    "loading": {
+      "phase": "rest",
+      "progress": 0.7097872340425532,
+      "pct": 71,
+      "headCount": 14,
+      "castNames": [
+        "倫寶",
+        "琪寶寶",
+        "噗噗"
+      ],
+      "friendNames": [
+        "熊仔",
+        "英國熊",
+        "小熊仔",
+        "招積熊",
+        "北極熊",
+        "柴柴",
+        "薑餅",
+        "大pat熊",
+        "聖誕伯伯",
+        "虎仔",
+        "喵仔"
+      ],
+      "rayCount": 12,
+      "stamp": "v2026-11-22 10:57（HK）· local",
+      "sunburstAngle": 5.6952,
+      "angleDelta": 3.7992000000000417
+    },
+    "final": {
+      "phase": "done",
+      "progress": 1,
+      "pct": 100,
+      "headCount": 14,
+      "castNames": [
+        "倫寶",
+        "琪寶寶",
+        "噗噗"
+      ],
+      "friendNames": [
+        "熊仔",
+        "英國熊",
+        "小熊仔",
+        "招積熊",
+        "北極熊",
+        "柴柴",
+        "薑餅",
+        "大pat熊",
+        "聖誕伯伯",
+        "虎仔",
+        "喵仔"
+      ],
+      "rayCount": 12,
+      "stamp": "v2026-11-22 10:57（HK）· local",
+      "sunburstAngle": 17.795399999999972
+    },
+    "titleStamp": {
+      "text": "v2026-11-22 10:57（HK）· local",
+      "fontSize": "12px",
+      "x": 634,
+      "y": 354,
+      "originX": 1,
+      "originY": 1
+    },
+    "errors": []
+  },
+  "iphone13": {
+    "loading": {
+      "phase": "rest",
+      "progress": 0.7097872340425532,
+      "pct": 71,
+      "headCount": 14,
+      "castNames": [
+        "倫寶",
+        "琪寶寶",
+        "噗噗"
+      ],
+      "friendNames": [
+        "熊仔",
+        "英國熊",
+        "小熊仔",
+        "招積熊",
+        "北極熊",
+        "柴柴",
+        "薑餅",
+        "大pat熊",
+        "聖誕伯伯",
+        "虎仔",
+        "喵仔"
+      ],
+      "rayCount": 12,
+      "stamp": "v2026-11-22 10:57（HK）· local",
+      "sunburstAngle": 5.424600000000055,
+      "angleDelta": 5.424600000000055
+    },
+    "final": {
+      "phase": "done",
+      "progress": 1,
+      "pct": 100,
+      "headCount": 14,
+      "castNames": [
+        "倫寶",
+        "琪寶寶",
+        "噗噗"
+      ],
+      "friendNames": [
+        "熊仔",
+        "英國熊",
+        "小熊仔",
+        "招積熊",
+        "北極熊",
+        "柴柴",
+        "薑餅",
+        "大pat熊",
+        "聖誕伯伯",
+        "虎仔",
+        "喵仔"
+      ],
+      "rayCount": 12,
+      "stamp": "v2026-11-22 10:57（HK）· local",
+      "sunburstAngle": 17.423999999999978
+    },
+    "titleStamp": {
+      "text": "v2026-11-22 10:57（HK）· local",
+      "fontSize": "12px",
+      "x": 634,
+      "y": 354,
+      "originX": 1,
+      "originY": 1
+    },
+    "errors": []
+  },
+  "bootPackKbNote": "See scripts/qa — boot pack files ≤300KB verified at implement time (~73KB)."
+}

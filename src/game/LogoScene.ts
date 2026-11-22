@@ -6,6 +6,7 @@ import { enableActorSprite } from './pixelSnap'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { animTex, hasAnimSet } from './heroAnims'
 import { c2Enabled } from './c2Gate'
+import { buildStampLabel } from './version'
 
 /** Splash lineup: Cursor's painted sprite when it's loaded, else the old placeholder. */
 function castTex(scene: Phaser.Scene, set: 'lunbo' | 'kibobo' | 'pupu', fallback: string) {
@@ -162,6 +163,16 @@ export class LogoScene extends Phaser.Scene {
       })
     }
 
+    this.add
+      .text(width - 6, height - 6, buildStampLabel(), {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
+        color: '#ffffff',
+        stroke: '#1a1008',
+        strokeThickness: 3,
+      })
+      .setOrigin(1, 1)
+      .setDepth(50)
     this.addTitleActions(width, height)
   }
 
@@ -216,9 +227,15 @@ export class LogoScene extends Phaser.Scene {
       })
     }
     this.add
-      .text(width - 8, height - 8, 'ALAN FONG', { fontFamily: FONT_UI, fontSize: '9px', color: '#e8d8b0' })
+      .text(width - 6, height - 6, buildStampLabel(), {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
+        color: '#ffffff',
+        stroke: '#1a1008',
+        strokeThickness: 3,
+      })
       .setOrigin(1, 1)
-      .setAlpha(0.7)
+      .setDepth(50)
     this.addTitleActions(width, height)
   }
 
