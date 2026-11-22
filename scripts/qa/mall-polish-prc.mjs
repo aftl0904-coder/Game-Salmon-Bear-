@@ -82,21 +82,30 @@ async function startStage(stageNo, mode = '1p') {
 async function placeOnEscalator(x = 1870) {
   return page.evaluate(({ x, floor }) => {
     const s = window.__SAKE_GAME__.scene.getScene('play')
-    // Keep update loop live: intro/stall gates block moveBoy + belt.
+    // Keep update loop live: intro/stall/elevator gates block moveBoy + belt.
     if (s.storyIntro) {
       try { s.storyIntro.destroy?.() } catch { /* */ }
       s.storyIntro = null
     }
     s.coffeeDone = true
+    s.lastCheckpointX = 5000
+    s.s6world?.markElevatorDone?.()
     s.physics.resume()
+    // Match Stage6World.rampY / ESCALATOR constants.
+    const t = Math.max(0, Math.min(1, (x - 1860) / 120))
+    const rampY = floor - 4 + (4 - 70) * t
     s.cameras.main.centerOn(x, 180)
     for (const h of [s.boy, s.girl].filter(Boolean)) {
-      h.setPosition(x, floor)
+      h.setPosition(x, rampY)
       h.setVelocity(0, 0)
       h.laneJumping = false
-      h.body?.reset(x, floor)
+      if (h.body) {
+        h.body.allowGravity = false
+        h.body.reset(x, rampY)
+        h.body.velocity.y = 0
+      }
     }
-    return { x: s.boy.x, y: s.boy.y, floor }
+    return { x: s.boy.x, y: s.boy.y, floor: rampY }
   }, { x, floor: FLOOR })
 }
 

@@ -61,7 +61,7 @@ import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
-import { Stage6World, playElevatorRide, type Stage6Data } from './stage6World'
+import { Stage6World, playElevatorRide, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
 import {
   ensureShopIcons,
@@ -83,7 +83,6 @@ import {
   stepUpTop,
   terrainPits,
   terrainSolids,
-  onSlopeAt,
   type Solid,
 } from './engine/terrain'
 import { groundVisualSpans } from './engine/terrainVisual'
@@ -1415,7 +1414,7 @@ export class GameScene extends Phaser.Scene {
   ) {
     // T3: walking against escalator belt → effective walk = walk − 60 (min 20).
     let spd = speed
-    if (this.s6world && !h.laneJumping && onSlopeAt(h.x, h.y, 8, 28) && left && !right) {
+    if (this.s6world && !h.laneJumping && this.s6world.onEscalator(h) && left && !right) {
       spd = Stage6World.againstWalkSpeed(speed)
     }
     h.moveSpeed = spd
@@ -1425,7 +1424,7 @@ export class GameScene extends Phaser.Scene {
     })
     this.s3world?.slip(h, dt)
     this.s5world?.push(h, dt)
-    // T3 belt: applied in postupdate (after Arcade step) so physics cannot wipe travel.
+    // T3 belt applied in applyEscalatorBelt (once per frame after move).
     if (h.justLandedFlag) {
       if (hasFx(this, 'land-dust')) playFx(this, 'land-dust', h.x, h.y + 1, { originY: 1, depth: h.depth - 0.1 })
       else this.juice.landDust(h.x, h.y)
@@ -1450,8 +1449,14 @@ export class GameScene extends Phaser.Scene {
   /** Snap actors onto the integer pixel grid after motion/FX. Ground ellipses self-update. */
   private snapPixelArt() {
     const enemies = (this.enemies?.getChildren() ?? []) as Creep[]
+    // Skip heroes riding the escalator — integer snap fights the ~1px/frame belt and freezes X.
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => {
+      if (!h) return false
+      if (this.s6world?.onEscalator(h, 40)) return false
+      return true
+    })
     snapWorldActors({
-      heroes: [this.boy, this.girl].filter(Boolean) as Hero[],
+      heroes,
       pet: this.pet ?? undefined,
       enemies,
       shadows: [],
@@ -1512,18 +1517,59 @@ export class GameScene extends Phaser.Scene {
     if (this.p2WeaponSwitchJust()) this.toggleWeaponMode(g)
   }
 
-  /** T3: belt nudge + hard body reset so Arcade cannot wipe travel that frame. */
+  /** T3: belt nudge after hero steer; keep heroes glued to ramp while in X-span. */
   private applyEscalatorBelt(_t: number, dt: number) {
     if (!this.s6world || this.ended || !this.started || this.storyIntro) return
     for (const h of [this.boy, this.girl]) {
-      if (!h?.alive || h.laneJumping) continue
-      if (!this.s6world.pushEscalator(h, dt, true)) continue
+      if (!h?.alive) continue
+      const inSpan = h.x >= ESCALATOR.x0 - 6 && h.x <= ESCALATOR.x1 + 6
+      if (!inSpan) continue
       const body = h.body as Phaser.Physics.Arcade.Body | null
+      // Jump-off: leave the belt ≤1 frame (no lasting belt vel); restore gravity.
+      if (h.laneJumping && body && body.velocity.y < -20) {
+        body.allowGravity = true
+        continue
+      }
+      const against =
+        h === this.boy
+          ? (this.keyA.isDown || this.padAxis(this.pad1, true) < -0.45 || TouchInput.isDown('left')) &&
+            !(this.keyD.isDown || this.padAxis(this.pad1, true) > 0.45 || TouchInput.isDown('right'))
+          : !!this.girl &&
+            h === this.girl &&
+            (!!this.cursors.left?.isDown || this.padAxis(this.pad2, true) < -0.45) &&
+            !(!!this.cursors.right?.isDown || this.padAxis(this.pad2, true) > 0.45)
+      // Walking against: steerHero already applies walk−60 (min 20). Skip belt add;
+      // manually integrate X because Arcade+prev sync freezes sprite.x on the ramp.
+      if (against && body && !h.laneJumping) {
+        const ramp = Stage6World.rampY(LANE_FLOOR_Y, h.x)
+        const nx = Phaser.Math.Clamp(h.x + (body.velocity.x * dt) / 1000, ESCALATOR.x0, ESCALATOR.x1)
+        const ny = Stage6World.rampY(LANE_FLOOR_Y, nx)
+        h.laneJumping = false
+        h.setPosition(nx, ny || ramp)
+        const vx = body.velocity.x
+        body.updateFromGameObject()
+        body.prev.copy(body.position)
+        body.prevFrame.copy(body.position)
+        body.velocity.x = vx
+        body.velocity.y = 0
+        body.allowGravity = false
+        continue
+      }
+      // Idle / walk-with: glue feet + belt position nudge (no lasting belt velocity).
+      const ramp = Stage6World.rampY(LANE_FLOOR_Y, h.x)
+      if (!h.laneJumping || (body && body.velocity.y >= -20)) {
+        h.laneJumping = false
+        h.setY(ramp)
+      }
+      this.s6world.pushEscalator(h, dt, true)
       if (!body) continue
       const vx = body.velocity.x
-      body.reset(h.x, h.y)
+      body.updateFromGameObject()
+      body.prev.copy(body.position)
+      body.prevFrame.copy(body.position)
       body.velocity.x = vx
       body.velocity.y = 0
+      body.allowGravity = false
     }
   }
 
@@ -3946,8 +3992,9 @@ export class GameScene extends Phaser.Scene {
         ST,
       )
       // After Arcade integrates velocity — belt position must win that frame.
+      // Belt runs once from update() via applyEscalatorBelt — do NOT also bind POST_UPDATE
+      // (double apply + body.reset was shifting feet Y ~11px and kicking heroes off the ramp).
       this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.applyEscalatorBelt, this)
-      this.events.on(Phaser.Scenes.Events.POST_UPDATE, this.applyEscalatorBelt, this)
     }
 
     if (this.tree || this.market || this.depot || this.tower || this.mall) {
@@ -3993,7 +4040,7 @@ export class GameScene extends Phaser.Scene {
     for (const pl of [...ST.platforms, ...(ST.shelves ?? [])]) {
       solids.push({ x0: pl.x, x1: pl.x + pl.w, top: floor - pl.h, oneWay: true, kind: 'platform' })
     }
-    // T3_ESCALATOR: invisible slope matching the B→C ramp art (mall only).
+    // T3_ESCALATOR: invisible slope matching the B→C ramp (mall only).
     // Keep flat ground under the ramp so jump-off still has a landing surface.
     if (this.mall && !this.exhibit) solids.push(Stage6World.escalatorSolid(floor))
     // Moving planks: the Solid object is shared with engine/terrain, so moving x0/x1 moves the floor.

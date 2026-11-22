@@ -6,7 +6,7 @@ import { burst } from './fx'
 import { FONT_UI } from './ui/fonts'
 import { GAME_W, GAME_H } from './display'
 import { drawMallProp } from './mallDecor'
-import { onSlopeAt, solidTopAt, type Solid } from './engine/terrain'
+import { type Solid } from './engine/terrain'
 
 /**
  * 第二大陸・購物中心 mechanics that are new to stage 6 (the dark veil is Stage3World's own):
@@ -167,10 +167,22 @@ export class Stage6World {
     this.junk.push({ x, w, root, cd: new Map() })
   }
 
+  /** Feet Y on the painted ramp hypotenuse at world x. */
+  static rampY(floorY: number, x: number): number {
+    const t = Math.max(0, Math.min(1, (x - ESCALATOR.x0) / (ESCALATOR.x1 - ESCALATOR.x0)))
+    return floorY - ESCALATOR.h0 + (ESCALATOR.h0 - ESCALATOR.h1) * t
+  }
+
+  onEscalator(actor: { x: number; y: number }, sinkTol = 28): boolean {
+    if (actor.x < ESCALATOR.x0 - 6 || actor.x > ESCALATOR.x1 + 6) return false
+    const top = Stage6World.rampY(this.ctx.floorY, actor.x)
+    // Allow a little float above the ramp (Arcade / snap drift) as well as below.
+    return actor.y >= top - 16 && actor.y <= top + sinkTol
+  }
+
   /**
-   * Belt push for a grounded actor on the escalator slope.
+   * Belt push for a grounded actor on the escalator.
    * Position nudge only (no lasting velocity) so a jump leaves the belt after ≤1 frame.
-   * Returns belt horizontal sign (+1 = up toward C) when on belt, else 0.
    */
   pushEscalator(
     actor: { x: number; y: number; setPosition?: (x: number, y: number) => void },
@@ -178,27 +190,20 @@ export class Stage6World {
     grounded = true,
   ): number {
     if (!grounded) return 0
-    // Prefer tagged slope; fall back to escalator X-span + near-surface (Arcade can drift Y).
-    let slope = onSlopeAt(actor.x, actor.y, 10, 40)
-    if (!slope && actor.x >= ESCALATOR.x0 - 4 && actor.x <= ESCALATOR.x1 + 4) {
-      const cand = Stage6World.escalatorSolid(this.ctx.floorY)
-      const top = solidTopAt(cand, actor.x)
-      if (top != null && actor.y >= top - 8 && actor.y <= top + 48) slope = cand
-    }
-    if (!slope) return 0
-    const run = slope.x1 - slope.x0
-    const rise = (slope.topEnd ?? slope.top) - slope.top
+    if (!this.onEscalator(actor, 28)) return 0
+    const run = ESCALATOR.x1 - ESCALATOR.x0
+    const rise = ESCALATOR.h0 - ESCALATOR.h1 // negative world-Y rise when going up
     const len = Math.hypot(run, rise) || 1
     const ux = run / len
-    const along = ESCALATOR_BELT_SPEED * (dt / 1000)
-    const nx = Phaser.Math.Clamp(actor.x + ux * along, slope.x0 + 1, slope.x1 - 1)
-    const ny = solidTopAt(slope, nx) ?? actor.y
+    const along = ESCALATOR_BELT_SPEED * Math.min(Math.max(dt, 0), 50) / 1000
+    const nx = Phaser.Math.Clamp(actor.x + ux * along, ESCALATOR.x0, ESCALATOR.x1)
+    const ny = Stage6World.rampY(this.ctx.floorY, nx)
     if (actor.setPosition) actor.setPosition(nx, ny)
     else {
       actor.x = nx
       actor.y = ny
     }
-    return Math.sign(ux) || 1
+    return 1
   }
 
   /** Against-belt walk cap: walk − 60, min 20 (T3 numbers). */
@@ -206,7 +211,7 @@ export class Stage6World {
     return Math.max(20, walkSpeed - ESCALATOR_BELT_SPEED)
   }
 
-  /** Build the invisible slope Solid matching the painted ramp. */
+  /** Invisible slope Solid matching the painted B→C ramp (T3 collision). */
   static escalatorSolid(floorY: number): Solid {
     return {
       x0: ESCALATOR.x0,
@@ -257,6 +262,11 @@ export class Stage6World {
       return true
     }
     return false
+  }
+
+  /** QA / cutscene helper — mark B→C elevator as already ridden. */
+  markElevatorDone() {
+    this.elevDone = true
   }
 
   slipMulAt(x: number): number {
