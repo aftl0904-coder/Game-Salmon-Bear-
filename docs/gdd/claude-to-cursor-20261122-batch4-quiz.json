@@ -6,7 +6,8 @@
     "source": "Alan 22:19 試玩 #115：『唔錯，問答題比例多啲發展商，多過 HR；作答時間減 1 秒』",
     "branch": "喺 cursor/playtest-fixes-2610 上面繼續加 commit（#115），唔好開新 branch，唔好 force-push",
     "rules": "照做，數值直接用；唔肯定嘅事實唔好出題；做唔到停低回報",
-    "update_2228": "加 Q10：題庫目標題數"
+    "update_2228": "加 Q10：題庫目標題數",
+    "update_2231": "Alan 22:31：每類題數再加一倍，另加 20 條恒隆地產題（只用官方網站資料）"
   },
   "current_bank_claude_checked": {
     "file": "data/quiz-mall.json",
@@ -37,7 +38,7 @@
       "id": "Q8_DEVELOPER_QUESTIONS",
       "goal": "加『發展商』類題目，令每局發展商／地產題多過 HR 題",
       "new_category": "developer",
-      "count": 30,
+      "count": 60,
       "topics": [
         "樓花、預售樓花同意書（地政總署）",
         "售樓說明書、價單、成交紀錄冊（一手住宅物業銷售條例）",
@@ -47,7 +48,7 @@
         "建築期常見詞：平台、會所、綠化、BD（屋宇署）圖則",
         "發展流程：買地 → 規劃 → 設計 → 審批 → 建築 → 銷售 → 入伙"
       ],
-      "difficulty_mix": "24 條 normal、6 條 hard",
+      "difficulty_mix": "48 條 normal、12 條 hard",
       "accuracy_rules": [
         "只出香港通用、有官方來源嘅事實（地政總署、屋宇署、一手住宅物業銷售監管局、規劃署網站）",
         "每條題加 source 欄位（網址或者條例名）；唔肯定就唔好出",
@@ -65,17 +66,17 @@
       "id": "Q10_BANK_SIZES",
       "alan_confirm": "Alan 22:28 確認題庫目標題數（另加 30 條 developer）",
       "target": {
-        "developer": "30（新，見 Q8）",
-        "law": "25（不變）",
-        "math": "25 → 20（抽走 5 條）",
-        "mall": "10 → 20（新加 10 條）",
-        "hard": "10（不變；Q8 嘅 6 條 developer hard 另計）",
-        "hr＋labour": "25 → 12（抽走 13 條）"
+        "developer": "60（新）",
+        "hanglung": "20（新，見 Q11）",
+        "law": "25 → 50（新加 25）",
+        "math": "25 → 40（新加 15）",
+        "mall": "10 → 40（新加 30）",
+        "hard": "10 → 20（新加 10；developer hard 另計）",
+        "hr＋labour": "25 → 24（抽走 1 條最專業嘅）"
       },
       "remove_rule": [
-        "抽走嘅題目唔好刪：搬去 data/quiz-retired.json（同格式），遊戲唔載入",
-        "優先抽走：太相似／重複、答案有爭議、太專業（只有 HR 從業員先識）嘅題目",
-        "hr＋labour 留低嘅 12 條要係一般人都聽過嘅常識（例如年假、最低工資概念、強積金）"
+        "抽走嘅題目搬去 data/quiz-retired.json，唔好刪",
+        "hr＋labour 只抽走 1 條最專業、一般人唔識嘅"
       ],
       "new_mall_10": {
         "topics": [
@@ -91,9 +92,33 @@
       },
       "review": "抽走同新加嘅清單都寫入 docs/gdd/quiz-developer-review.md（分三段：新 developer、新 mall、抽走清單＋原因）",
       "acceptance": [
-        "data/quiz-mall.json 各類題數：developer 30、law 25、math 20、mall 20、hard 10、hr＋labour 12",
-        "quiz-retired.json 有 18 條抽走嘅題",
+        "題數：developer 60、hanglung 20、law 50、math 40、mall 40、hard 20、hr＋labour 24（總共 254）",
+        "quiz-retired.json 有抽走嘅題",
         "遊戲載入冇報錯"
+      ],
+      "new_rules_all": [
+        "所有新題同 Q8 accuracy_rules 一樣：有 source、唔肯定唔出、唔出會變嘅數字",
+        "新 law 題只限香港一般市民常識級（租約、買賣樓、業主立案法團、消費者權益）",
+        "新 math 題：心算級（折扣、找續、單位價、按揭粗略計算唔使計利率）"
+      ]
+    },
+    {
+      "id": "Q11_HANGLUNG",
+      "goal": "新加 20 條關於恒隆地產（Hang Lung Properties）嘅題目",
+      "category": "hanglung",
+      "source_rule": [
+        "只可以用恒隆地產官方網站（hanglung.com）嘅資料，每條題 source 寫明官方網頁網址",
+        "如果你冇辦法上網讀官方網站：停低，回報 Claude，唔好憑記憶出題",
+        "唔好出會變嘅數字（股價、營業額、租金收入、員工人數、最新年度業績）",
+        "唔好出負面、爭議、或者涉及個人嘅題目；只出公司歷史、旗下物業名稱同所在城市、企業理念、可持續發展方向呢類穩定資料",
+        "唔好用恒隆 logo 或者圖片；題目只係文字"
+      ],
+      "difficulty_mix": "16 條 normal、4 條 hard",
+      "format": "同其他題：{ id: 'hl-01'…, category: 'hanglung', difficulty, prompt, choices[4], answerIndex: 0, source }",
+      "review": "20 條全部列入 docs/gdd/quiz-developer-review.md 獨立一段（題目、正確答案、source 網址），Claude 會逐條對官網核實",
+      "acceptance": [
+        "20 條 hanglung 題，每條 source 係 hanglung.com 網址",
+        "冇會變嘅數字"
       ]
     },
     {
@@ -101,7 +126,7 @@
       "goal": "每局 7 題嘅類別比例",
       "where": "pickRound()",
       "numbers": {
-        "per_round": "普通 6 題：developer 3 題、law 1 題、hr 或 labour 1 題、math 或 mall 1 題；難題 1 題：developer hard 優先（50%），其餘 hard 隨機",
+        "per_round": "普通 6 題：developer 2、hanglung 1、law 1、hr 或 labour 1、math 或 mall 1；難題 1 題：developer hard 50%，其餘 hard 隨機",
         "fallback": "某類題目唔夠（例如出晒）就由 developer → law → 其他補上"
       },
       "keep": [
@@ -110,7 +135,7 @@
         "答案位置打亂"
       ],
       "acceptance": [
-        "Playwright 開 20 局統計：developer 題目 ≥ 40%，hr＋labour ≤ 15%",
+        "Playwright 開 20 局統計：developer＋hanglung ≥ 40%，hr＋labour ≤ 15%",
         "冇重複、冇報錯"
       ]
     }
