@@ -1,0 +1,175 @@
+{
+  "step": "reproduce-on-main",
+  "modes": {
+    "1p": {
+      "mode": "1p",
+      "errors": [
+        "Cannot read properties of null (reading 'resolution')"
+      ],
+      "afterWin": {
+        "stageNo": 6,
+        "ended": true,
+        "maxStage": {},
+        "runKeys": [
+          "sake-kuma-progress-v1",
+          "sake-kuma-run-v1"
+        ],
+        "storageDump": {
+          "sake-kuma-progress-v1": "{\"maxStage\":7}",
+          "sake-kuma-run-v1": "{\"version\":1,\"runId\":\"da8f6bc3-0b01-4c7b-86dc-2a841249a891\",\"startStage\":1,\"lastCleared\":5,\"nextStage\":6,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"friends\":[],\"charm\":null,\"mode\":\"1p\",\"solo\":\"boy\",\"legacyModeUnknown\":true,\"puffLeft\":false}"
+        }
+      },
+      "clicked": {
+        "via": "goNextStage",
+        "id": "next",
+        "text": "大陸2・第二關 ▶"
+      },
+      "afterNext": {
+        "scenes": [
+          "studio",
+          "play"
+        ],
+        "playStage": 6,
+        "playStarted": true,
+        "mapOpen": [],
+        "pickIndex": 1,
+        "run": {
+          "version": 1,
+          "runId": "da8f6bc3-0b01-4c7b-86dc-2a841249a891",
+          "startStage": 1,
+          "lastCleared": 5,
+          "nextStage": 6,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "legacyModeUnknown": true,
+          "puffLeft": false
+        },
+        "progress": {
+          "maxStage": 7
+        },
+        "registryStage": 7
+      },
+      "final": {
+        "scenes": [
+          "studio",
+          "play"
+        ],
+        "stageNo": 6,
+        "exhibit": false,
+        "started": true,
+        "registryStage": 7,
+        "ls": {
+          "sake-kuma-progress-v1": "{\"maxStage\":7}",
+          "sake-kuma-run-v1": "{\"version\":1,\"runId\":\"da8f6bc3-0b01-4c7b-86dc-2a841249a891\",\"startStage\":1,\"lastCleared\":5,\"nextStage\":6,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"friends\":[],\"charm\":null,\"mode\":\"1p\",\"solo\":\"boy\",\"legacyModeUnknown\":true,\"puffLeft\":false}"
+        }
+      }
+    },
+    "2p": {
+      "mode": "2p",
+      "errors": [
+        "Cannot read properties of null (reading 'resolution')"
+      ],
+      "afterWin": {
+        "stageNo": 6,
+        "ended": true,
+        "maxStage": {},
+        "runKeys": [
+          "sake-kuma-progress-v1",
+          "sake-kuma-run-v1"
+        ],
+        "storageDump": {
+          "sake-kuma-progress-v1": "{\"maxStage\":7}",
+          "sake-kuma-run-v1": "{\"version\":1,\"runId\":\"00b69d5e-349f-4e18-9aca-59eb41d6581e\",\"startStage\":1,\"lastCleared\":5,\"nextStage\":6,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"friends\":[],\"charm\":null,\"mode\":\"1p\",\"solo\":\"boy\",\"legacyModeUnknown\":true,\"puffLeft\":false}"
+        }
+      },
+      "clicked": {
+        "via": "goNextStage",
+        "id": "next",
+        "text": "大陸2・第二關 ▶"
+      },
+      "afterNext": {
+        "scenes": [
+          "studio",
+          "play"
+        ],
+        "playStage": 6,
+        "playStarted": true,
+        "mapOpen": [],
+        "pickIndex": 1,
+        "run": {
+          "version": 1,
+          "runId": "00b69d5e-349f-4e18-9aca-59eb41d6581e",
+          "startStage": 1,
+          "lastCleared": 5,
+          "nextStage": 6,
+          "gear": {
+            "boy": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            },
+            "girl": {
+              "heart": 0,
+              "sword": 0,
+              "gun": 0,
+              "armour": 0,
+              "boots": 0,
+              "charm": 0
+            }
+          },
+          "growth": {},
+          "eligible": true,
+          "friends": [],
+          "charm": null,
+          "mode": "1p",
+          "solo": "boy",
+          "legacyModeUnknown": true,
+          "puffLeft": false
+        },
+        "progress": {
+          "maxStage": 7
+        },
+        "registryStage": 7
+      },
+      "final": {
+        "scenes": [
+          "studio",
+          "play"
+        ],
+        "stageNo": 6,
+        "exhibit": false,
+        "started": true,
+        "registryStage": 7,
+        "ls": {
+          "sake-kuma-progress-v1": "{\"maxStage\":7}",
+          "sake-kuma-run-v1": "{\"version\":1,\"runId\":\"00b69d5e-349f-4e18-9aca-59eb41d6581e\",\"startStage\":1,\"lastCleared\":5,\"nextStage\":6,\"gear\":{\"boy\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0},\"girl\":{\"heart\":0,\"sword\":0,\"gun\":0,\"armour\":0,\"boots\":0,\"charm\":0}},\"growth\":{},\"eligible\":true,\"friends\":[],\"charm\":null,\"mode\":\"1p\",\"solo\":\"boy\",\"legacyModeUnknown\":true,\"puffLeft\":false}"
+        }
+      }
+    }
+  }
+}

@@ -253,11 +253,55 @@ export function resumeMain(registry: Registry): Run | null {
   registry.set('runFriends', [...r.friends])
   return r
 }
+/**
+ * Ensure a main run exists before committing a clear (C2 ST-06→07 must not
+ * silently no-op when the player reached the stage without startNewRun).
+ */
+export function ensureMainRun(stage: number, registry: Registry) {
+  if (getRun() && context === 'main') return getRun()!
+  const mode = (registry.get?.('playMode') as Mode) || '1p'
+  const solo = (registry.get?.('soloCast') as Solo) || 'boy'
+  const start = stage >= 6 ? 6 : 1
+  startNewRun(start, false, mode, solo, registry)
+  const r = getRun()!
+  // Catch the run up to the stage being cleared so saveClear can advance.
+  if (stage > r.nextStage) {
+    r.lastCleared = Math.max(0, stage - 1)
+    r.nextStage = stage
+    save()
+  }
+  return r
+}
+
+/** After ST-06 clear: force unlock ST-07 in the main-run snapshot (and persist). */
+export function guaranteeC2Stage7Unlock() {
+  const r = getRun()
+  if (!r) return
+  context = 'main'
+  r.lastCleared = Math.max(r.lastCleared, 6)
+  r.nextStage = Math.max(r.nextStage, 7)
+  save()
+}
+
 /** A clear-card checkpoint may be updated again after shop/sleep/gamble. */
 export function saveClear(stage: number, state: Checkpoint) {
   const r = getRun()
-  if (!r || context !== 'main' || (stage !== r.nextStage && stage !== r.lastCleared)) return
-  if (stage === r.nextStage) { r.lastCleared = stage; r.nextStage = stage + 1 }
+  if (!r) return
+  if (context !== 'main') context = 'main'
+  // Accept clear of the current next stage, a re-save of the last clear, or a
+  // catch-up clear when nextStage lagged behind the stage just beaten.
+  const canAdvance = stage === r.nextStage || stage === r.lastCleared || stage === r.lastCleared + 1
+  if (!canAdvance && stage < r.nextStage) {
+    // Already past this stage — still refresh checkpoint gear/coins.
+  } else if (!canAdvance) {
+    return
+  }
+  if (stage >= r.nextStage) {
+    r.lastCleared = stage
+    r.nextStage = stage + 1
+  } else if (stage === r.lastCleared) {
+    /* re-save only */
+  }
   r.gear = activeGear()
   r.coins = Math.max(0, Math.floor(state.coins))
   r.purse = numbers(state.purse)
