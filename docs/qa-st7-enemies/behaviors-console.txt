@@ -1,0 +1,66 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "spawn four types",
+      "spawned": [
+        {
+          "sp": "s7charge",
+          "hp": 3,
+          "maxHp": 3,
+          "x": 420
+        },
+        {
+          "sp": "s7hop",
+          "hp": 2,
+          "maxHp": 2,
+          "x": 560
+        },
+        {
+          "sp": "s7shield",
+          "hp": 3,
+          "maxHp": 3,
+          "x": 720
+        },
+        {
+          "sp": "s7can",
+          "hp": 2,
+          "maxHp": 2,
+          "x": 900
+        }
+      ]
+    },
+    {
+      "name": "charge engages",
+      "charge": {
+        "phase": "warn",
+        "maxHp": 3
+      }
+    },
+    {
+      "name": "hop grounded immune",
+      "hop": {
+        "groundedImmune": true,
+        "hp": 2,
+        "maxHp": 2
+      }
+    },
+    {
+      "name": "shield front/back",
+      "shield": {
+        "front": true,
+        "back": false,
+        "maxHp": 3
+      }
+    },
+    {
+      "name": "can throw",
+      "can": {
+        "maxHp": 2,
+        "flyingOrRecent": 1,
+        "cd": 2383.3333333333344
+      }
+    }
+  ],
+  "errors": []
+}

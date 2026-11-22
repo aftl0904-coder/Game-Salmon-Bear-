@@ -60,9 +60,17 @@ import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hook
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
+import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
-import { Stage6World, playElevatorRide, type Stage6Data } from './stage6World'
+import { Stage6World, playElevatorRide, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
+import {
+  ensureShopIcons,
+  SHOP_ICON_BY_LABEL,
+  shopIconTex,
+  placeMallProp,
+  type ShopIconKind,
+} from './mallDecor'
 import { stageLabel, stageTitle } from './stageNames'
 import { WarriorKing, type KingHooks } from './enemies/Stage1Boss'
 import { Stage2World } from './stage2World'
@@ -717,6 +725,7 @@ export class GameScene extends Phaser.Scene {
     this.resetPhysicsDebug(false)
     if (typeof (this as any).stopUi === 'function') (this as any).stopUi()
     this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.snapPixelArt, this)
+    this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.applyEscalatorBelt, this)
     this.cameras?.main?.off(
       Phaser.Cameras.Scene2D.Events.FOLLOW_UPDATE,
       this.onCameraFollowUpdate,
@@ -1050,7 +1059,7 @@ export class GameScene extends Phaser.Scene {
       if (!isActorFrozen(this.girl, this.time.now)) this.moveGirl(dt)
       else this.girl.setVelocity(0, 0)
     }
-
+    this.applyEscalatorBelt(0, dt)
     this.updatePet()
     this.activateDeferredEnemies()
     this.tickEnemyStagger(dt)
@@ -1404,13 +1413,19 @@ export class GameScene extends Phaser.Scene {
     doAttack: () => void,
     crouchHeld = false,
   ) {
-    h.moveSpeed = speed
+    // T3: walking against escalator belt → effective walk = walk − 60 (min 20).
+    let spd = speed
+    if (this.s6world && !h.laneJumping && this.s6world.onEscalator(h) && left && !right) {
+      spd = Stage6World.againstWalkSpeed(speed)
+    }
+    h.moveSpeed = spd
     h.updatePlayer(dt, {
       left, right, jumpJust, jumpHeld, attackJust, crouchHeld,
       onJump: () => SFX.jump(), onAttack: doAttack, now: this.time.now,
     })
     this.s3world?.slip(h, dt)
     this.s5world?.push(h, dt)
+    // T3 belt applied in applyEscalatorBelt (once per frame after move).
     if (h.justLandedFlag) {
       if (hasFx(this, 'land-dust')) playFx(this, 'land-dust', h.x, h.y + 1, { originY: 1, depth: h.depth - 0.1 })
       else this.juice.landDust(h.x, h.y)
@@ -1435,8 +1450,14 @@ export class GameScene extends Phaser.Scene {
   /** Snap actors onto the integer pixel grid after motion/FX. Ground ellipses self-update. */
   private snapPixelArt() {
     const enemies = (this.enemies?.getChildren() ?? []) as Creep[]
+    // Skip heroes riding the escalator — integer snap fights the ~1px/frame belt and freezes X.
+    const heroes = [this.boy, this.girl].filter((h): h is Hero => {
+      if (!h) return false
+      if (this.s6world?.onEscalator(h, 40)) return false
+      return true
+    })
     snapWorldActors({
-      heroes: [this.boy, this.girl].filter(Boolean) as Hero[],
+      heroes,
       pet: this.pet ?? undefined,
       enemies,
       shadows: [],
@@ -1495,6 +1516,62 @@ export class GameScene extends Phaser.Scene {
     this.tickComboHold(g, this.p2AttackHeld(), dt)
     if (this.p2SpecialJust()) this.fireHoneySpecial(g)
     if (this.p2WeaponSwitchJust()) this.toggleWeaponMode(g)
+  }
+
+  /** T3: belt nudge after hero steer; keep heroes glued to ramp while in X-span. */
+  private applyEscalatorBelt(_t: number, dt: number) {
+    if (!this.s6world || this.ended || !this.started || this.storyIntro) return
+    for (const h of [this.boy, this.girl]) {
+      if (!h?.alive) continue
+      const inSpan = h.x >= ESCALATOR.x0 - 6 && h.x <= ESCALATOR.x1 + 6
+      if (!inSpan) continue
+      const body = h.body as Phaser.Physics.Arcade.Body | null
+      // Jump-off: leave the belt ≤1 frame (no lasting belt vel); restore gravity.
+      if (h.laneJumping && body && body.velocity.y < -20) {
+        body.allowGravity = true
+        continue
+      }
+      const against =
+        h === this.boy
+          ? (this.keyA.isDown || this.padAxis(this.pad1, true) < -0.45 || TouchInput.isDown('left')) &&
+            !(this.keyD.isDown || this.padAxis(this.pad1, true) > 0.45 || TouchInput.isDown('right'))
+          : !!this.girl &&
+            h === this.girl &&
+            (!!this.cursors.left?.isDown || this.padAxis(this.pad2, true) < -0.45) &&
+            !(!!this.cursors.right?.isDown || this.padAxis(this.pad2, true) > 0.45)
+      // Walking against: steerHero already applies walk−60 (min 20). Skip belt add;
+      // manually integrate X because Arcade+prev sync freezes sprite.x on the ramp.
+      if (against && body && !h.laneJumping) {
+        const ramp = Stage6World.rampY(LANE_FLOOR_Y, h.x)
+        const nx = Phaser.Math.Clamp(h.x + (body.velocity.x * dt) / 1000, ESCALATOR.x0, ESCALATOR.x1)
+        const ny = Stage6World.rampY(LANE_FLOOR_Y, nx)
+        h.laneJumping = false
+        h.setPosition(nx, ny || ramp)
+        const vx = body.velocity.x
+        body.updateFromGameObject()
+        body.prev.copy(body.position)
+        body.prevFrame.copy(body.position)
+        body.velocity.x = vx
+        body.velocity.y = 0
+        body.allowGravity = false
+        continue
+      }
+      // Idle / walk-with: glue feet + belt position nudge (no lasting belt velocity).
+      const ramp = Stage6World.rampY(LANE_FLOOR_Y, h.x)
+      if (!h.laneJumping || (body && body.velocity.y >= -20)) {
+        h.laneJumping = false
+        h.setY(ramp)
+      }
+      this.s6world.pushEscalator(h, dt, true)
+      if (!body) continue
+      const vx = body.velocity.x
+      body.updateFromGameObject()
+      body.prev.copy(body.position)
+      body.prevFrame.copy(body.position)
+      body.velocity.x = vx
+      body.velocity.y = 0
+      body.allowGravity = false
+    }
   }
 
   /**
@@ -1888,12 +1965,22 @@ export class GameScene extends Phaser.Scene {
         return false
       }
     }
-    // 龍蝦兵 claws / 油甘魚攤主 behind the counter.
-    const guarded = pe as unknown as { blocks?: (d: number) => boolean; hiding?: () => boolean }
+    // 龍蝦兵 claws / 盾牌飼養員 front / 油甘魚攤主 behind the counter / 跳跳籠 grounded.
+    const guarded = pe as unknown as {
+      blocks?: (d: number) => boolean
+      hiding?: () => boolean
+      airOnly?: () => boolean
+    }
     if (typeof guarded.blocks === 'function' && guarded.blocks(dir)) {
       floatText(this, pe.x, pe.y - 52, '叮！跳過頭打背脊', '#ffd0c0', { size: 12, dur: 600 })
       burst(this, pe.x - dir * 14, pe.y - 30, 0xffe0d0, 5)
-      SFX.hit()
+      playFx(this, 'armour-clank', pe.x - dir * 14, pe.y - 30, { flipX: dir > 0 })
+      SFX.ding()
+      return false
+    }
+    if (typeof guarded.airOnly === 'function' && guarded.airOnly()) {
+      floatText(this, pe.x, pe.y - 48, '落地唔食彈！跳起先打', '#c8e0ff', { size: 12, dur: 600 })
+      SFX.blip(720)
       return false
     }
     if (typeof guarded.hiding === 'function' && guarded.hiding()) {
@@ -1941,6 +2028,8 @@ export class GameScene extends Phaser.Scene {
    * consistent — not a substitute for an actual playtest pass.
    */
   private speciesAtkMul(pe: PatrolEnemy): number {
+    // B1 / work-order: 深層潔淨 X-9 charge contact is exactly −1 heart (acid puddle path already is).
+    if ((pe.species as string) === 'mall-scrubber') return 1
     if (pe.kind === 'boss') return 1.8
     // Stage-1 cast (PatrolEnemy) is differentiated via pe.species — fish/barrel/elephant.
     if (pe.species === 'barrel') return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
@@ -1971,10 +2060,24 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * B3: stomp-safe contact only while falling onto the enemy from above
+   * (vy > 0 and feet within 8px above enemy top). Side / below air bumps deal normal damage.
+   */
+  private isStompSafeContact(h: Hero, e: Creep | PatrolEnemy): boolean {
+    const hb = h.body as Phaser.Physics.Arcade.Body | null
+    const eb = (e as Phaser.Physics.Arcade.Sprite).body as Phaser.Physics.Arcade.Body | null
+    if (!hb || !eb) return false
+    if (hb.velocity.y <= 0) return false
+    const top = eb.top
+    return h.y <= top && top - h.y <= 8
+  }
+
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    if (this.time.now < ((h.getData('stompSafeUntil') as number | undefined) ?? 0)) return
+    // Former blanket stompSafeUntil air-invuln: only honor true top-stomp geometry (B3).
+    if (this.isStompSafeContact(h, e)) return
     // PR-F: non-ATTACK rhythm → soft push, 0 damage
     if (e instanceof WarriorKing && !e.canHurtPlayer()) {
       const away = (Math.sign(h.x - e.x) || 1) as 1 | -1
@@ -2334,10 +2437,10 @@ export class GameScene extends Phaser.Scene {
     const now = this.time.now
     for (const h of [this.boy, this.girl]) {
       if (!h || !h.alive) continue
-      const prevY = (h.getData('stompPrevY') as number | undefined) ?? h.y
       h.setData('stompPrevY', h.y)
       const hb = h.body as Phaser.Physics.Arcade.Body | null
-      if (!hb || !h.laneJumping || hb.velocity.y <= 40 || h.hurtLock > 0) continue
+      // B3: only a true top-stomp (falling, feet within 8px above enemy top) is safe / registers.
+      if (!hb || !h.laneJumping || hb.velocity.y <= 0 || h.hurtLock > 0) continue
       for (const o of this.enemies.getChildren()) {
         const e = o as PatrolEnemy
         if (!e.active || !e.body || e.fsm === 'DEAD' || (e as unknown as { flying?: boolean }).flying) continue
@@ -2345,7 +2448,7 @@ export class GameScene extends Phaser.Scene {
         const eb = e.body as Phaser.Physics.Arcade.Body
         if (h.x < eb.left - 6 || h.x > eb.right + 6) continue
         const top = eb.top
-        if (!(prevY <= top + 8 && h.y >= top - 2 && h.y <= top + 24)) continue
+        if (!(h.y <= top && top - h.y <= 8)) continue
         e.setData('stompedAt', now)
         const sup = now - h.lastJumpPressAt <= STOMP_SUPER_MS
         h.stompBounce(now, sup)
@@ -3007,22 +3110,22 @@ export class GameScene extends Phaser.Scene {
       c.fillStyle = g
       c.fillRect(0, 0, w, h)
     }
+    // B6: walkable mall floors stay bright marble tones (#d8cfc0 / #c9c2b6) + 2px lip #f4eee4.
+    // No black/dark walkable ground — pit lightness gap ≥ 50% vs #1a1420.
     make('s6-floor-marble', (c) => {
-      slabs(c, '#ebe6dc', '#e0d9cb', '#b8a888', 'rgba(60,44,20,0.55)')
+      slabs(c, '#d8cfc0', '#c9c2b6', '#b5aa9a', 'rgba(80,60,40,0.18)')
       for (let i = 0; i < 9; i++) {
-        c.fillStyle = 'rgba(150,130,100,0.22)'
+        c.fillStyle = 'rgba(150,130,100,0.18)'
         c.fillRect(Math.floor(rnd() * 60), Math.floor(rnd() * (h - 4)), 3 + Math.floor(rnd() * 8), 1)
       }
-      c.fillStyle = '#d4af37'
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#fff6d8'
-      c.fillRect(0, 2, w, 1)
     })
     make('s6-floor-cracked', (c) => {
-      slabs(c, '#d9d2c4', '#cfc7b6', '#a89a7a', 'rgba(50,40,24,0.6)')
-      c.fillStyle = '#d4af37'
+      slabs(c, '#d2c8b8', '#c4baa8', '#a89880', 'rgba(70,50,30,0.2)')
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#4a4036'
+      c.fillStyle = '#8a7a68'
       for (let i = 0; i < 5; i++) {
         let x = Math.floor(rnd() * 60)
         let y = 3 + Math.floor(rnd() * 20)
@@ -3034,47 +3137,23 @@ export class GameScene extends Phaser.Scene {
       }
     })
     make('s6-floor-concrete', (c) => {
-      slabs(c, '#8f8f89', '#85857f', '#5e5e5a', 'rgba(20,20,20,0.6)')
+      slabs(c, '#d4cdc2', '#c8c0b4', '#a8a090', 'rgba(60,50,40,0.2)')
       for (let i = 0; i < 24; i++) {
-        c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.16)'
+        c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.14)' : 'rgba(80,70,60,0.12)'
         c.fillRect(Math.floor(rnd() * 62), Math.floor(rnd() * (h - 2)), 1, 1)
       }
-      for (let x = -8; x < w + 8; x += 12) {
-        c.fillStyle = '#e8c020'
-        c.beginPath()
-        c.moveTo(x, 0)
-        c.lineTo(x + 6, 0)
-        c.lineTo(x + 2, 5)
-        c.lineTo(x - 4, 5)
-        c.fill()
-      }
-      c.fillStyle = '#1c1c1c'
-      c.fillRect(0, 5, w, 1)
+      c.fillStyle = '#f4eee4'
+      c.fillRect(0, 0, w, 2)
     })
     make('s6-floor-factory', (c) => {
-      slabs(c, '#3f322a', '#372b24', '#1c140f', 'rgba(8,4,2,0.7)')
+      slabs(c, '#d0c6b8', '#c2b8a8', '#a09080', 'rgba(70,50,30,0.22)')
       for (let i = 0; i < 7; i++) {
-        c.fillStyle = 'rgba(214,150,40,0.28)'
+        c.fillStyle = 'rgba(180,140,80,0.2)'
         c.fillRect(Math.floor(rnd() * 56), Math.floor(rnd() * (h - 6)), 4 + Math.floor(rnd() * 10), 2)
       }
-      c.fillStyle = '#6b4a1c'
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#a8742a'
-      c.fillRect(0, 2, w, 1)
     })
-  }
-
-  /** Construction scaffolding drawn as props: poles, planks, a hazard flag. */
-  private scaffold(g: Phaser.GameObjects.Graphics, x: number, hgt: number) {
-    const f = LANE_FLOOR_Y
-    g.fillStyle(0x6c6c74, 1)
-    g.fillRect(x, f - hgt, 3, hgt).fillRect(x + 56, f - hgt, 3, hgt)
-    g.fillStyle(0xa89060, 1)
-    for (let y = f - hgt + 6; y < f - 10; y += 34) g.fillRect(x - 4, y, 67, 4)
-    g.fillStyle(0xe8c020, 1)
-    for (let i = 0; i < 4; i++) g.fillRect(x + 6 + i * 12, f - hgt + 1, 6, 3)
-    g.lineStyle(2, 0x4a4a52, 1)
-    g.lineBetween(x + 3, f - 6, x + 56, f - hgt + 10)
   }
 
   private drawMallWorld() {
@@ -3108,9 +3187,11 @@ export class GameScene extends Phaser.Scene {
     // B · shop corridor.
     const shops = ['s6-shop-b', 's6-shop-c', 's6-shop-a', 's6-shop-b', 's6-shop-c', 's6-shop-a']
     ;[930, 1100, 1290, 1480, 1700, 1930].forEach((x, i) => placeShop(shops[i]!, x))
-    // Light readability overlays only: stripe awning tip + sign text (sprites carry the shop look).
+    // Stripe awnings + shop icons (T5 — no text store names). Unlisted types remapped to work-order list.
     {
+      ensureShopIcons(this)
       const aw = this.add.graphics().setDepth(DEPTH.PROP - 1)
+      // Original labels + Claude 2026-11-22 icon map (no text on signs).
       const signs = ['茶餐廳', '鞋店', '電器', '藥妝', '書店', '服飾', '手信', '咖啡']
       const xs = [610, 760, 930, 1100, 1290, 1480, 1700, 1930]
       xs.forEach((x, i) => {
@@ -3119,23 +3200,37 @@ export class GameScene extends Phaser.Scene {
           aw.fillStyle(awn[k % 2]!, 0.95).fillRect(x - 48 + k * 12, f - 118, 12, 10)
         }
         aw.fillStyle(0x1a2a4a, 0.92).fillRect(x - 36, f - 108, 72, 14)
+        const kind = SHOP_ICON_BY_LABEL[signs[i]!] as ShopIconKind | undefined
+        if (!kind) {
+          console.warn(`[T5] unlisted shop label "${signs[i]}" — ask Claude, do not invent`)
+          return
+        }
         this.add
-          .text(x, f - 101, signs[i]!, {
-            fontFamily: FONT_UI,
-            fontSize: '10px',
-            color: '#ffe08a',
-          })
+          .image(x, f - 101, shopIconTex(kind))
           .setOrigin(0.5)
+          .setDisplaySize(32, 32)
           .setDepth(DEPTH.SIGN)
       })
-      // Atrium festive prop (centrepiece beside dome) — visual only, not a new mechanic.
-      aw.fillStyle(0xffe080, 0.85).fillCircle(400, f - 120, 18)
-      aw.fillStyle(0xff6080, 0.9).fillCircle(400, f - 120, 8)
-      this.add.text(400, f - 150, '中庭裝置', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff0c0', backgroundColor: '#403020', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
-      // Escalator near B→C (after teach beat).
+      // T5b: atrium geometry → lightbox + plant (no text).
+      placeMallProp(this, 'lightbox', 400, f - 100, 48, DEPTH.PROP - 1)
+      placeMallProp(this, 'plant', 340, f, 44, DEPTH.PROP + 1)
+      placeMallProp(this, 'bench', 480, f, 32, DEPTH.PROP + 1)
+      // Escalator ramp art (collision is invisible slope solid) + entrance sign prop.
       aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
       aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
-      this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+      // Moving belt stripes (readability only).
+      for (let i = 0; i < 5; i++) {
+        const t = i / 5
+        const x0 = 1865 + t * 110
+        const y0 = f - 8 - t * 58
+        aw.fillStyle(0x90a8c0, 0.55).fillRect(x0, y0 - 2, 10, 3)
+      }
+      placeMallProp(this, 'escalator-sign', 1848, f, 40, DEPTH.PROP + 2)
+      // Corridor décor props (T5b).
+      placeMallProp(this, 'cart', 1020, f, 36, DEPTH.PROP + 1)
+      placeMallProp(this, 'wayfind', 1200, f, 48, DEPTH.PROP + 1)
+      placeMallProp(this, 'rail', 1550, f, 28, DEPTH.PROP + 1)
+      placeMallProp(this, 'plant', 880, f, 36, DEPTH.PROP + 1)
       // Floor-button room door (optional side content) — near B corridor mid.
       aw.fillStyle(0x4a5568, 1).fillRect(1410, f - 78, 44, 78)
       aw.fillStyle(0x2a3340, 1).fillRect(1416, f - 72, 32, 66)
@@ -3144,11 +3239,12 @@ export class GameScene extends Phaser.Scene {
       this.add.text(1432, f - 88, 'P', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe080' }).setOrigin(0.5).setDepth(DEPTH.SIGN)
       this.add.text(1432, f - 110, '維修門↑', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
     }
-    // C · half-finished shopfronts behind scaffolding, with the ceiling cracks above each debris drop.
+    // C · half-finished shopfronts; T5b: scaffolding geometry → 膠欄杆 props (same blocking read).
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)
     ;[2090, 2380, 2740, 3020].forEach((x, i) => {
       prop(shops[i % 3]!, x, DEPTH.PROP - 3, 0x7f8088)
-      this.scaffold(sg, x - 30, 96 + (i % 2) * 14)
+      placeMallProp(this, 'rail', x - 10, f, 36 + (i % 2) * 8, DEPTH.PROP + 1)
+      placeMallProp(this, 'bin', x + 40, f, 32, DEPTH.PROP + 1)
     })
     for (const d of ST.debris ?? []) {
       sg.fillStyle(0x0c0a10, 1).fillRect(d.x - 22, 28, 44, 6)
@@ -3270,6 +3366,23 @@ export class GameScene extends Phaser.Scene {
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
+    // T3: escalator belt for enemies + grounded coin drops (heroes belt in steerHero).
+    if (this.s6world && !this.exhibit) {
+      for (const o of this.enemies.getChildren()) {
+        const e = o as Phaser.Physics.Arcade.Sprite & { flying?: boolean; fsm?: string; active: boolean }
+        if (!e.active || e.flying || e.fsm === 'DEAD') continue
+        if (this.s6world.pushEscalator(e, dt, true)) {
+          ;(e.body as Phaser.Physics.Arcade.Body | null)?.reset(e.x, e.y)
+        }
+      }
+      for (const o of this.coinPickups.getChildren()) {
+        const c = o as Phaser.Physics.Arcade.Sprite
+        if (!c.active) continue
+        if (this.s6world.pushEscalator(c, dt, true)) {
+          ;(c.body as Phaser.Physics.Arcade.Body | null)?.updateFromGameObject()
+        }
+      }
+    }
     const lead = this.leadX()
     this.s6world?.updateMood(lead)
     if (!this.exhibit) this.tickFloorDoor()
@@ -3906,6 +4019,10 @@ export class GameScene extends Phaser.Scene {
         },
         ST,
       )
+      // After Arcade integrates velocity — belt position must win that frame.
+      // Belt runs once from update() via applyEscalatorBelt — do NOT also bind POST_UPDATE
+      // (double apply + body.reset was shifting feet Y ~11px and kicking heroes off the ramp).
+      this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.applyEscalatorBelt, this)
     }
 
     if (this.tree || this.market || this.depot || this.tower || this.mall) {
@@ -3951,6 +4068,9 @@ export class GameScene extends Phaser.Scene {
     for (const pl of [...ST.platforms, ...(ST.shelves ?? [])]) {
       solids.push({ x0: pl.x, x1: pl.x + pl.w, top: floor - pl.h, oneWay: true, kind: 'platform' })
     }
+    // T3_ESCALATOR: invisible slope matching the B→C ramp (mall only).
+    // Keep flat ground under the ramp so jump-off still has a landing surface.
+    if (this.mall && !this.exhibit) solids.push(Stage6World.escalatorSolid(floor))
     // Moving planks: the Solid object is shared with engine/terrain, so moving x0/x1 moves the floor.
     this.movers = []
     for (const mp of ST.movingPlatforms ?? []) {
@@ -3977,18 +4097,37 @@ export class GameScene extends Phaser.Scene {
       : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
       : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
       : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
-      : this.mall ? { hole: 0x090b11, edge: 0xa8b5bd, top: 0xcbd1cb }
+      : this.mall ? { hole: 0x1a1420, edge: 0xf2c230, top: 0xf4eee4 }
       : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
     for (const p of pits) {
       // Only vertical walls inside the pit: never paint a horizontal lip across its mouth.
       g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
-      g.fillStyle(colors.edge, 1).fillRect(p.x0, floor, 2, GAME_H - floor).fillRect(p.x1 - 2, floor, 2, GAME_H - floor)
+      // B6: mall pits get yellow/black hazard stripes (6px) + subtle upward dark-red glow.
+      if (this.mall) {
+        const pitH = GAME_H - floor
+        // Subtle upward dark-red glow from pit mouth (layered alpha fills).
+        const redGlow = this.add.graphics().setDepth(DEPTH.GROUND + 2.2)
+        for (let i = 0; i < 6; i++) {
+          redGlow.fillStyle(0x4a1020, 0.12 - i * 0.015)
+          redGlow.fillRect(p.x0, floor + i * 6, p.x1 - p.x0, 8)
+        }
+        const stripe = this.add.graphics().setDepth(DEPTH.GROUND + 3)
+        const band = 6
+        for (let y = 0; y < pitH; y += band) {
+          const even = Math.floor(y / band) % 2 === 0
+          stripe.fillStyle(even ? 0xf2c230 : 0x2a2a2a, 1).fillRect(p.x0, floor + y, band, band)
+          stripe.fillStyle(even ? 0x2a2a2a : 0xf2c230, 1).fillRect(p.x1 - band, floor + y, band, band)
+        }
+      } else {
+        g.fillStyle(colors.edge, 1).fillRect(p.x0, floor, 2, GAME_H - floor).fillRect(p.x1 - 2, floor, 2, GAME_H - floor)
+      }
     }
     // Paint above ground-surface tints, but below real steps, planks, props and darkness.
     const groundEdge = this.add.graphics().setDepth(DEPTH.GROUND + 4.5)
     groundEdge.fillStyle(colors.top, 1)
     for (const span of groundVisualSpans(0, WORLD_W, pits)) {
-      groundEdge.fillRect(span.x0, floor, span.x1 - span.x0, 2)
+      // B6: mall walkable lip is a 2px light edge (#f4eee4).
+      groundEdge.fillRect(span.x0, floor, span.x1 - span.x0, this.mall ? 2 : 2)
     }
     for (const st of ST.steps) {
       const top = floor - st.h
@@ -4105,8 +4244,47 @@ export class GameScene extends Phaser.Scene {
 
   /** Checkpoints are 咖啡媽媽's coffee cart: respawn point + one cup (+1 HP) the first time. */
   private checkpointMamas: Phaser.GameObjects.Image[] = []
+
+  /**
+   * B2: on stages 6–7, if a checkpoint sits over a pit (no solid under x), search ±400px
+   * and snap to the middle of the nearest solid ground segment (width ≥ 120). Continent 1 untouched.
+   */
+  private safeCheckpointX(x: number): number {
+    if (groundTopBelow(x, LANE_FLOOR_Y - 60, 8) !== null) return x
+    const SEARCH = 400
+    const MIN_W = 120
+    let bestMid = x
+    let bestDist = Number.POSITIVE_INFINITY
+    for (const s of terrainSolids()) {
+      if (s.oneWay) continue
+      const segW = s.x1 - s.x0
+      if (segW < MIN_W) continue
+      const i0 = Math.max(s.x0, x - SEARCH)
+      const i1 = Math.min(s.x1, x + SEARCH)
+      let mid: number
+      if (i1 - i0 >= MIN_W) {
+        mid = (i0 + i1) / 2
+      } else {
+        // Full segment is wide enough; only use it if its midpoint lies in the search window.
+        mid = (s.x0 + s.x1) / 2
+        if (Math.abs(mid - x) > SEARCH) continue
+      }
+      const dist = Math.abs(mid - x)
+      if (dist < bestDist) {
+        bestDist = dist
+        bestMid = mid
+      }
+    }
+    return bestMid
+  }
+
   private placeCheckpoints() {
-    this.checkpointXs = ST.checkpoints.slice().sort((a, b) => a - b)
+    let xs = ST.checkpoints.slice().sort((a, b) => a - b)
+    // Stages 6 & 7 only — never relocate continent-1 checkpoints.
+    if (this.stageNo === 6 || this.stageNo === 7) {
+      xs = xs.map((x) => this.safeCheckpointX(x))
+    }
+    this.checkpointXs = xs
     this.lastCheckpointX = 220
     this.checkpointMamas = []
     for (const x of this.checkpointXs) {
@@ -6153,7 +6331,7 @@ export class GameScene extends Phaser.Scene {
     // wave; two heroes get an extra copy of every 3rd, a little behind it.
     const solo = this.mode === '1p'
     const place = (en: Stage1['enemies'][number], dx = 0) => {
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm'].includes(en.species)) {
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can'].includes(en.species)) {
         this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
@@ -6348,9 +6526,9 @@ export class GameScene extends Phaser.Scene {
       if (lead < p.unlockX) return true
       let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.displayWidth + 24 + k * 38))
       k++
-      if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
-      if (p.species === 'honeyzombie') x = this.nearestBaseFloorX(x, -1, 1)
-      if (p.species === 'stallkeeper' || p.species === 'robotarm') x = p.x
+      if (p.species === 'squirrel' || p.species === 'lobster' || p.species === 's7shield') x = this.nearestBaseFloorX(x, -1)
+      if (p.species === 'honeyzombie' || p.species === 's7charge' || p.species === 's7hop') x = this.nearestBaseFloorX(x, -1, 1)
+      if (p.species === 'stallkeeper' || p.species === 'robotarm' || p.species === 's7can') x = p.x
       this.spawnS2(p.species, x, p.elite, p.product)
       return false
     })
@@ -6422,6 +6600,31 @@ export class GameScene extends Phaser.Scene {
     }
     if (species === 'robotarm') {
       this.addS2Enemy(new RobotArm(this, x, this.armHooks()))
+      return
+    }
+    if (species === 's7charge') {
+      const z = new ChargeHoneyZombie(this, x, this.s2Hooks())
+      z.onSplatter = (sx) => this.honeySplat(sx)
+      this.addS2Enemy(z).setFlipX(true)
+      return
+    }
+    if (species === 's7hop') {
+      const z = new HopCage(this, x, this.s2Hooks())
+      z.onSplatter = (sx) => this.honeySplat(sx)
+      this.addS2Enemy(z).setFlipX(true)
+      return
+    }
+    if (species === 's7shield') {
+      this.addS2Enemy(new ShieldKeeper(this, x, this.s2Hooks())).setFlipX(true)
+      return
+    }
+    if (species === 's7can') {
+      this.addS2Enemy(
+        new CanThrower(this, x, this.s2Hooks(), {
+          floorY: () => LANE_FLOOR_Y,
+          throwCan: (cx, cy, tx) => this.throwExhibitCan(cx, cy, tx),
+        }),
+      ).setFlipX(true)
       return
     }
     if (species === 'honeyzombie') {
@@ -6750,6 +6953,58 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** Stage 7 掟罐員: parabolic can that explodes on the ground (AoE). */
+  private throwExhibitCan(fromX: number, fromY: number, targetX: number) {
+    if (this.ended) return
+    const landX = Phaser.Math.Clamp(targetX, fromX - 280, fromX + 280)
+    const floor = LANE_FLOOR_Y
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const can = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    can.setDepth(DEPTH.FX - 1)
+    enableActorSprite(can)
+    const body = can.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(12, 12)
+    can.setData('lane', 0)
+    can.setData('dmg', 1)
+    can.setData('exhibitCan', true)
+    can.setTint(0xc07040)
+    this.markShot(can, 0xe09050)
+    this.tweens.add({ targets: can, angle: 540, duration: 700, ease: 'Linear' })
+    floatText(this, fromX, fromY - 28, '罐！', '#ffc070', { size: 11, dur: 500 })
+    this.entities.add(can, 'projectile')
+    const dur = 700
+    this.tweens.add({
+      targets: can,
+      x: landX,
+      duration: dur,
+      ease: 'Linear',
+      onUpdate: (tw) => {
+        if (!can.active) return
+        const p = tw.progress
+        can.y = fromY + (floor - 8 - fromY) * p - Math.sin(p * Math.PI) * 110
+        body.reset(can.x, can.y)
+      },
+      onComplete: () => {
+        if (!can.active) return
+        const hx = can.x
+        can.destroy()
+        burst(this, hx, floor - 10, 0xe09050, 14)
+        playFx(this, 'enemy-poof', hx, floor - 16)
+        SFX.potShatter()
+        floatText(this, hx, floor - 48, '砰！', '#ff9060', { size: 13, dur: 500 })
+        const blast = this.add.circle(hx, floor - 4, 36, 0xff8040, 0.35).setDepth(DEPTH.FX)
+        this.tweens.add({ targets: blast, alpha: 0, scale: 1.6, duration: 280, onComplete: () => blast.destroy() })
+        for (const h of [this.boy, this.girl]) {
+          if (!h || !h.alive) continue
+          if (Math.abs(h.x - hx) < 48 && Math.abs(h.y - floor) < 40) {
+            this.hazardHit(h, { knockX: (Math.sign(h.x - hx) || 1) * 220, knockY: -360, label: '罐爆 -1' })
+          }
+        }
+      },
+    })
+  }
+
   /** Stalls from stage3.json: breakable cover in front of each keeper. */
   private placeStalls() {
     this.stalls = []
@@ -6852,6 +7107,11 @@ export class GameScene extends Phaser.Scene {
     body.setVelocityY(0)
     this.entities.add(e as unknown as PatrolEnemy, 'enemy')
     addGroundShadow(this, e, (t) => (e.flying ? LANE_FLOOR_Y : this.groundYFor(t)), e.flying ? 0.4 : 0.65)
+    // T4_DEATH_FADE: C2 trash only (stages 6–7); bosses keep their own death.
+    {
+      const tagged = e as unknown as { boss?: boolean; c2DeathFade?: boolean }
+      if ((this.mall || this.exhibit) && !tagged.boss) tagged.c2DeathFade = true
+    }
     // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
     // after its constructor sets hp = maxHp = N, so this is the single injection
     // point (duck-typed: the generic signature doesn't guarantee hp/maxHp fields).
@@ -7281,6 +7541,7 @@ export class GameScene extends Phaser.Scene {
     })
     this.entities.add(e, 'enemy')
     addGroundShadow(this, e, (t) => this.groundYFor(t), 0.65)
+    if ((this.mall || this.exhibit) && !e.boss) e.c2DeathFade = true
     try {
       if (this.lights?.active) {
         const pipe = e as unknown as { setPipeline?: (n: string) => void }

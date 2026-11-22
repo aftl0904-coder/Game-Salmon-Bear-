@@ -172,7 +172,14 @@ export class MapScene extends Phaser.Scene {
 
     this.verseBg = this.add.graphics()
     this.verseText = this.add
-      .text(0, 0, '', { fontFamily: FONT_UI, fontSize: '20px', color: '#fff2d0', align: 'center', lineSpacing: 3, wordWrap: { width: 560 } })
+      .text(0, 0, '', {
+        fontFamily: FONT_UI,
+        fontSize: '20px',
+        color: '#fff2d0',
+        align: 'center',
+        lineSpacing: 4,
+        wordWrap: { width: 560 },
+      })
       .setOrigin(0.5)
     this.versePanel = this.add.container(320, 50, [this.verseBg, this.verseText]).setScrollFactor(0).setDepth(20)
     this.versePanel.setVisible(false)
@@ -243,7 +250,16 @@ export class MapScene extends Phaser.Scene {
     if (v) {
       const body = wrapVerse(v.text, 22)
       const verseText = this.add
-        .text(320, 132, `${body}\n— ${v.ref}`, { fontFamily: FONT_UI, fontSize: '26px', color: '#fff2d0', align: 'center', lineSpacing: 6, wordWrap: { width: 560 } })
+        .text(320, 100, `${body}\n— ${v.ref}`, {
+          fontFamily: FONT_UI,
+          fontSize: '20px',
+          color: '#fff2d0',
+          align: 'center',
+          lineSpacing: 4,
+          wordWrap: { width: 560 },
+          backgroundColor: '#00000088',
+          padding: { x: 8, y: 8 },
+        })
         .setOrigin(0.5)
         .setScrollFactor(0)
       if (verseText.width > 560) verseText.setScale(560 / verseText.width)

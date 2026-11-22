@@ -1,0 +1,826 @@
+{
+  "description": "Stage 7 enemy variety acceptance (B4_ST7_ENEMY_VARIETY)",
+  "url": "http://127.0.0.1:47652/?c2=1",
+  "start": "2026-11-22T15:35:11.011Z",
+  "acceptance": {
+    "A1_segment_types": {
+      "pass": true,
+      "perSeg": {
+        "A": {
+          "count": 3,
+          "kinds": [
+            "s7charge",
+            "s7hop",
+            "s7shield"
+          ],
+          "ok": true
+        },
+        "B": {
+          "count": 4,
+          "kinds": [
+            "s7can",
+            "s7charge",
+            "s7hop",
+            "s7shield"
+          ],
+          "ok": true
+        },
+        "C": {
+          "count": 3,
+          "kinds": [
+            "s7can",
+            "s7hop",
+            "s7shield"
+          ],
+          "ok": true
+        },
+        "D": {
+          "count": 5,
+          "kinds": [
+            "s7charge",
+            "s7can",
+            "s7hop",
+            "s7shield"
+          ],
+          "ok": true
+        },
+        "E": {
+          "count": 3,
+          "kinds": [
+            "s7hop",
+            "s7can",
+            "s7shield"
+          ],
+          "ok": true
+        }
+      },
+      "roster": {
+        "pending": [
+          {
+            "sp": "s7charge",
+            "x": 480
+          },
+          {
+            "sp": "s7hop",
+            "x": 640
+          },
+          {
+            "sp": "s7shield",
+            "x": 780
+          },
+          {
+            "sp": "s7can",
+            "x": 1030
+          },
+          {
+            "sp": "s7charge",
+            "x": 1240
+          },
+          {
+            "sp": "s7hop",
+            "x": 1530
+          },
+          {
+            "sp": "s7shield",
+            "x": 1820
+          },
+          {
+            "sp": "s7can",
+            "x": 2100
+          },
+          {
+            "sp": "s7hop",
+            "x": 2510
+          },
+          {
+            "sp": "s7shield",
+            "x": 2920
+          },
+          {
+            "sp": "s7charge",
+            "x": 3260
+          },
+          {
+            "sp": "s7can",
+            "x": 3480
+          },
+          {
+            "sp": "s7hop",
+            "x": 3720
+          },
+          {
+            "sp": "s7shield",
+            "x": 3980
+          },
+          {
+            "sp": "s7charge",
+            "x": 4280
+          },
+          {
+            "sp": "s7hop",
+            "x": 4575
+          },
+          {
+            "sp": "s7can",
+            "x": 4610
+          },
+          {
+            "sp": "s7shield",
+            "x": 4645
+          }
+        ],
+        "live": []
+      }
+    },
+    "A1b_no_consecutive": {
+      "pass": true,
+      "consec": []
+    },
+    "A1c_density": {
+      "pass": true,
+      "count": 18,
+      "max": 18
+    },
+    "A2_standstill_cannot_clear": {
+      "pass": true,
+      "before": [
+        {
+          "sp": "s7charge",
+          "x": 1536,
+          "hp": 3
+        },
+        {
+          "sp": "s7hop",
+          "x": 1602,
+          "hp": 2
+        },
+        {
+          "sp": "s7shield",
+          "x": 1640,
+          "hp": 3
+        },
+        {
+          "sp": "s7can",
+          "x": 1030,
+          "hp": 2
+        },
+        {
+          "sp": "s7charge",
+          "x": 1688,
+          "hp": 3
+        },
+        {
+          "sp": "s7hop",
+          "x": 1754,
+          "hp": 2
+        },
+        {
+          "sp": "s7shield",
+          "x": 1820,
+          "hp": 3
+        }
+      ],
+      "after": [
+        {
+          "sp": "s7charge",
+          "x": 954,
+          "hp": 3,
+          "phase": "warn"
+        },
+        {
+          "sp": "s7hop",
+          "x": 1602,
+          "hp": 2,
+          "phase": "idle"
+        },
+        {
+          "sp": "s7shield",
+          "x": 1348,
+          "hp": 3,
+          "phase": null
+        },
+        {
+          "sp": "s7hop",
+          "x": 1754,
+          "hp": 2,
+          "phase": "idle"
+        },
+        {
+          "sp": "s7shield",
+          "x": 1528,
+          "hp": 3,
+          "phase": null
+        }
+      ],
+      "pendingB": [],
+      "remaining": 5,
+      "survivors": [
+        {
+          "sp": "s7hop",
+          "x": 1602,
+          "hp": 2,
+          "phase": "idle"
+        },
+        {
+          "sp": "s7shield",
+          "x": 1348,
+          "hp": 3,
+          "phase": null
+        },
+        {
+          "sp": "s7hop",
+          "x": 1754,
+          "hp": 2,
+          "phase": "idle"
+        },
+        {
+          "sp": "s7shield",
+          "x": 1528,
+          "hp": 3,
+          "phase": null
+        }
+      ]
+    },
+    "A2b_behavior_smoke": {
+      "pass": true,
+      "behavior": {
+        "s7shield": {
+          "frontBlocks": true,
+          "backOpen": true,
+          "hp": 3
+        },
+        "s7hop": {
+          "airOnlyGrounded": true,
+          "hp": 2
+        },
+        "s7charge": {
+          "phase": "charge",
+          "hp": 3,
+          "maxHp": 3
+        },
+        "s7can": "missing"
+      }
+    },
+    "A3_playthrough": {
+      "pass": true,
+      "clearedFull": true,
+      "clearTimeSec": 225,
+      "bestMeasuredSec": 225,
+      "bestX": 5276,
+      "reason": "full clear within cap",
+      "targetBandMin": 4,
+      "targetBandMax": 6
+    }
+  },
+  "samples": [
+    {
+      "tag": "standstill-before",
+      "before": [
+        {
+          "sp": "s7charge",
+          "x": 1536,
+          "hp": 3
+        },
+        {
+          "sp": "s7hop",
+          "x": 1602,
+          "hp": 2
+        },
+        {
+          "sp": "s7shield",
+          "x": 1640,
+          "hp": 3
+        },
+        {
+          "sp": "s7can",
+          "x": 1030,
+          "hp": 2
+        },
+        {
+          "sp": "s7charge",
+          "x": 1688,
+          "hp": 3
+        },
+        {
+          "sp": "s7hop",
+          "x": 1754,
+          "hp": 2
+        },
+        {
+          "sp": "s7shield",
+          "x": 1820,
+          "hp": 3
+        }
+      ]
+    },
+    {
+      "elapsedSec": 0,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 220,
+      "hp": 6,
+      "win": false,
+      "enemies": 0,
+      "pending": [
+        {
+          "sp": "s7charge",
+          "x": 480,
+          "unlockX": 280
+        },
+        {
+          "sp": "s7hop",
+          "x": 640,
+          "unlockX": 450
+        },
+        {
+          "sp": "s7shield",
+          "x": 780,
+          "unlockX": 600
+        },
+        {
+          "sp": "s7can",
+          "x": 1030,
+          "unlockX": 880
+        },
+        {
+          "sp": "s7charge",
+          "x": 1240,
+          "unlockX": 1050
+        },
+        {
+          "sp": "s7hop",
+          "x": 1530,
+          "unlockX": 1360
+        },
+        {
+          "sp": "s7shield",
+          "x": 1820,
+          "unlockX": 1650
+        },
+        {
+          "sp": "s7can",
+          "x": 2100,
+          "unlockX": 2000
+        },
+        {
+          "sp": "s7hop",
+          "x": 2510,
+          "unlockX": 2280
+        },
+        {
+          "sp": "s7shield",
+          "x": 2920,
+          "unlockX": 2680
+        },
+        {
+          "sp": "s7charge",
+          "x": 3260,
+          "unlockX": 3150
+        },
+        {
+          "sp": "s7can",
+          "x": 3480,
+          "unlockX": 3280
+        },
+        {
+          "sp": "s7hop",
+          "x": 3720,
+          "unlockX": 3500
+        },
+        {
+          "sp": "s7shield",
+          "x": 3980,
+          "unlockX": 3780
+        },
+        {
+          "sp": "s7charge",
+          "x": 4280,
+          "unlockX": 4080
+        },
+        {
+          "sp": "s7hop",
+          "x": 4575,
+          "unlockX": 4520
+        },
+        {
+          "sp": "s7can",
+          "x": 4610,
+          "unlockX": 4560
+        },
+        {
+          "sp": "s7shield",
+          "x": 4645,
+          "unlockX": 4590
+        }
+      ]
+    },
+    {
+      "elapsedSec": 15,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 1616,
+      "hp": 3,
+      "win": false,
+      "enemies": 2,
+      "pending": [
+        {
+          "sp": "s7shield",
+          "x": 1820,
+          "unlockX": 1650
+        },
+        {
+          "sp": "s7can",
+          "x": 2100,
+          "unlockX": 2000
+        },
+        {
+          "sp": "s7hop",
+          "x": 2510,
+          "unlockX": 2280
+        },
+        {
+          "sp": "s7shield",
+          "x": 2920,
+          "unlockX": 2680
+        },
+        {
+          "sp": "s7charge",
+          "x": 3260,
+          "unlockX": 3150
+        },
+        {
+          "sp": "s7can",
+          "x": 3480,
+          "unlockX": 3280
+        },
+        {
+          "sp": "s7hop",
+          "x": 3720,
+          "unlockX": 3500
+        },
+        {
+          "sp": "s7shield",
+          "x": 3980,
+          "unlockX": 3780
+        },
+        {
+          "sp": "s7charge",
+          "x": 4280,
+          "unlockX": 4080
+        },
+        {
+          "sp": "s7hop",
+          "x": 4575,
+          "unlockX": 4520
+        },
+        {
+          "sp": "s7can",
+          "x": 4610,
+          "unlockX": 4560
+        },
+        {
+          "sp": "s7shield",
+          "x": 4645,
+          "unlockX": 4590
+        }
+      ]
+    },
+    {
+      "elapsedSec": 31,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 2936,
+      "hp": 5,
+      "win": false,
+      "enemies": 4,
+      "pending": [
+        {
+          "sp": "s7charge",
+          "x": 3260,
+          "unlockX": 3150
+        },
+        {
+          "sp": "s7can",
+          "x": 3480,
+          "unlockX": 3280
+        },
+        {
+          "sp": "s7hop",
+          "x": 3720,
+          "unlockX": 3500
+        },
+        {
+          "sp": "s7shield",
+          "x": 3980,
+          "unlockX": 3780
+        },
+        {
+          "sp": "s7charge",
+          "x": 4280,
+          "unlockX": 4080
+        },
+        {
+          "sp": "s7hop",
+          "x": 4575,
+          "unlockX": 4520
+        },
+        {
+          "sp": "s7can",
+          "x": 4610,
+          "unlockX": 4560
+        },
+        {
+          "sp": "s7shield",
+          "x": 4645,
+          "unlockX": 4590
+        }
+      ]
+    },
+    {
+      "elapsedSec": 46,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 3954,
+      "hp": 6,
+      "win": false,
+      "enemies": 5,
+      "pending": [
+        {
+          "sp": "s7charge",
+          "x": 4280,
+          "unlockX": 4080
+        },
+        {
+          "sp": "s7hop",
+          "x": 4575,
+          "unlockX": 4520
+        },
+        {
+          "sp": "s7can",
+          "x": 4610,
+          "unlockX": 4560
+        },
+        {
+          "sp": "s7shield",
+          "x": 4645,
+          "unlockX": 4590
+        }
+      ]
+    },
+    {
+      "elapsedSec": 61,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4719,
+      "hp": 6,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 76,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5030,
+      "hp": 1,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 91,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5266,
+      "hp": 3,
+      "win": false,
+      "enemies": 3,
+      "pending": []
+    },
+    {
+      "elapsedSec": 107,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5269,
+      "hp": 2,
+      "win": false,
+      "enemies": 2,
+      "pending": []
+    },
+    {
+      "elapsedSec": 122,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5002,
+      "hp": 1,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 137,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5273,
+      "hp": 1,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 152,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4654,
+      "hp": 6,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 167,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5045,
+      "hp": 3,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 183,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4687,
+      "hp": 6,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 198,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 4941,
+      "hp": 5,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    },
+    {
+      "elapsedSec": 214,
+      "active": [
+        "play",
+        "UIScene"
+      ],
+      "stage": 7,
+      "started": true,
+      "ended": false,
+      "intro": false,
+      "continued": false,
+      "x": 5083,
+      "hp": 3,
+      "win": false,
+      "enemies": 1,
+      "pending": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "docs/qa-st7-enemies/01-stage7-boot.png",
+    "docs/qa-st7-enemies/02-roster-ok.png",
+    "docs/qa-st7-enemies/03-standstill-shooting.png",
+    "docs/qa-st7-enemies/04-standstill-survivors.png",
+    "docs/qa-st7-enemies/play-0s.png",
+    "docs/qa-st7-enemies/play-15s.png",
+    "docs/qa-st7-enemies/play-31s.png",
+    "docs/qa-st7-enemies/play-46s.png",
+    "docs/qa-st7-enemies/play-61s.png",
+    "docs/qa-st7-enemies/play-76s.png",
+    "docs/qa-st7-enemies/play-91s.png",
+    "docs/qa-st7-enemies/play-107s.png",
+    "docs/qa-st7-enemies/play-122s.png",
+    "docs/qa-st7-enemies/play-137s.png",
+    "docs/qa-st7-enemies/play-152s.png",
+    "docs/qa-st7-enemies/play-167s.png",
+    "docs/qa-st7-enemies/play-183s.png",
+    "docs/qa-st7-enemies/play-198s.png",
+    "docs/qa-st7-enemies/play-214s.png",
+    "docs/qa-st7-enemies/05-playthrough-final.png"
+  ],
+  "passed": true,
+  "end": "2026-11-22T15:39:23.849Z",
+  "final": {
+    "active": [
+      "play"
+    ],
+    "stage": 7,
+    "started": true,
+    "ended": true,
+    "intro": false,
+    "continued": false,
+    "x": 5089,
+    "hp": 2,
+    "win": true,
+    "enemies": [],
+    "pending": []
+  }
+}
