@@ -1,0 +1,102 @@
+{
+  "meta": {
+    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-22",
+    "source": "Alan 23:19 正式網試玩",
+    "rules": "照 steps 做，numbers 直接用；做唔到停低回報；唔准自己 merge；開唔到 PR 報 branch 名",
+    "pr_plan": [
+      { "pr": "PR-I", "branch": "cursor/c2-bugs-2610", "tickets": ["B1_SCRUBBER_NEVER_ATTACKS", "B2_STALL_OVER_PIT", "B3_AIR_CONTACT_DAMAGE"], "start": "即刻（P0）" },
+      { "pr": "PR-J", "branch": "cursor/st7-enemy-variety-2610", "tickets": ["B4_ST7_ENEMY_VARIETY"], "start": "即刻並行" },
+      { "pr": "#115 續", "branch": "cursor/playtest-fixes-2610", "tickets": ["B5_QUIZ_TOPICS"], "start": "即刻並行，喺 #115 加 commit，唔好 force-push" }
+    ]
+  },
+  "tickets": [
+    {
+      "id": "B1_SCRUBBER_NEVER_ATTACKS",
+      "priority": "P0",
+      "alan": "潔淨機器人完全冇攻擊過我",
+      "claude_suspect": [
+        "src/game/enemies/MallScrubber.ts beginCharge()：endX 永遠設喺場地盡頭，警告帶覆蓋成個場地 → safeForAll() 幾乎永遠 false → 每次都轉做 reposition，永遠唔出招",
+        "檢查 beginAcid()／風機有冇同樣被 safe 檢查擋住"
+      ],
+      "fix": [
+        "衝撞距離改為有上限：由 Boss 位置衝向玩家方向最多 260px（唔好衝到場地盡頭）",
+        "safeForAll 只用嚟決定『預警時間要幾長』，唔好用嚟取消招式：如果玩家逃唔切，預警時間加長到 900ms，但一定要出招",
+        "連續 2 次 reposition 之後，下一次強制出招（衝撞或噴酸）"
+      ],
+      "acceptance": [
+        "Playwright：玩家企喺場地任何位置，Boss 15 秒內最少出招 3 次",
+        "衝撞命中扣 1 格血；噴酸踩中扣 1 格血",
+        "每招之前仍然有預警"
+      ]
+    },
+    {
+      "id": "B2_STALL_OVER_PIT",
+      "priority": "P0",
+      "alan": "會員中心（搶答攤檔）起咗喺個窿上面，企唔到，跌落去死",
+      "where": "src/game/GameScene.ts placeCheckpoints()（約第4097行）：groundTopBelow() 搵唔到地面時用 LANE_FLOOR_Y，攤檔就擺咗喺窿上面",
+      "fix": [
+        "攤檔／checkpoint 嘅 x 如果下面冇實地：向左右各搜 400px，搬去最近一段實地中間（實地闊度最少 120px）",
+        "第6、7關全部 checkpoint 都要檢查；大陸1 唔好郁",
+        "攤檔觸發範圍同玩家企位都要喺實地上"
+      ],
+      "acceptance": [
+        "Playwright：第6、7關每個 checkpoint／攤檔 x 位置下面都有地面（截圖）",
+        "玩家行到攤檔可以正常觸發搶答，唔會跌死"
+      ]
+    },
+    {
+      "id": "B3_AIR_CONTACT_DAMAGE",
+      "priority": "P1",
+      "alan": "我跳嘅時候應該都要扣體力",
+      "claude_interpretation": "而家跳起嗰陣撞到敵人唔扣血（似有空中無敵）。改為：只有由正上方踩落敵人先安全；跳起時由側面或者下面撞到敵人要扣血。（如果 Alan 意思係跳一下就扣體力，佢會再講）",
+      "fix": [
+        "搵出空中／跳躍期間略過傷害嘅判斷（stompSafeUntil 等），只保留『由上方踩中』嘅安全判定：玩家向下跌緊（vy > 0）、玩家腳底高過敵人頂部 8px 內",
+        "其他空中接觸照普通接觸扣 1 格血",
+        "大陸1、大陸2 一齊套用"
+      ],
+      "acceptance": [
+        "Playwright：跳起側撞敵人 → 扣血；由上踩落 → 唔扣血",
+        "現有清關測試全 PASS"
+      ]
+    },
+    {
+      "id": "B4_ST7_ENEMY_VARIETY",
+      "priority": "P1",
+      "alan": "第7關敵人超級單調，全部慢慢直行，係咁開槍已經殺晒",
+      "design": {
+        "rule": "第7關要有 4 種行為唔同嘅敵人，交替出現；唔可以兩隻同類連續排",
+        "types": [
+          { "name": "衝鋒蜜僵", "behavior": "見到玩家停 400ms 預警 → 以 2.5 倍速衝 200px → 停 800ms", "hp": "3 發" },
+          { "name": "跳跳籠", "behavior": "原地彈跳前進，每跳 140px，空中先打得中", "hp": "2 發" },
+          { "name": "盾牌飼養員", "behavior": "正面擋子彈（叮聲、0 傷害），要跳過佢背後打", "hp": "3 發（只計背後）" },
+          { "name": "掟罐員", "behavior": "企定，每 2.5 秒向玩家拋物線掟一個罐，罐落地爆開", "hp": "2 發" }
+        ],
+        "reuse": "盡量用大陸1 現有敵人行為改皮（PatrolEnemy／AnimEnemy 嘅 charge、hop、shield 邏輯），唔好由零寫",
+        "density": "數量唔好加多過而家 20%；難度靠行為，唔靠數量",
+        "art": "先用現有大陸2 色板改色；需要新圖就加 ART-REQUEST"
+      },
+      "acceptance": [
+        "第7關每段（A–E）最少出現 3 種行為",
+        "Playwright：站定喺原地連續開槍唔可以清晒一段（要郁、要跳）",
+        "Cursor 自己玩一次，記錄過關時間（目標 4–6 分鐘）"
+      ]
+    },
+    {
+      "id": "B5_QUIZ_TOPICS",
+      "priority": "P1",
+      "alan": "要物業管理同發展商、商場、商業大廈；唔要按揭、買樓、睇樓、供樓",
+      "fix": [
+        "檢查 developer、law 兩類全部題目：凡係講住宅買賣、按揭、睇樓、供樓、樓花購買、售樓說明書、價單、示範單位、印花稅、私人租約嘅題，全部搬去 quiz-retired.json",
+        "用新題補返同等數量，主題限於：物業管理（管理公司職責、物業管理業監管局發牌、管理費、保安清潔維修、大廈公契、業主立案法團）、發展商（買地、規劃、補地價、建築審批、入伙紙、滿意紙）、商場營運（租戶組合、推廣活動、客流）、商業大廈／寫字樓（甲級寫字樓、租戶、設施管理）",
+        "每條新題要有官方或者權威來源（物業管理業監管局 PMSA、地政總署、屋宇署、規劃署、差餉物業估價署）；錯選項要似真（同類部門／名詞）",
+        "題數目標唔變：developer 60、law 50"
+      ],
+      "acceptance": [
+        "搜尋題庫冇『按揭、供樓、睇樓、印花稅、示範單位、價單』字眼",
+        "每條新題有 source",
+        "清單更新 docs/gdd/quiz-developer-review.md（列搬走幾多、新加邊啲）"
+      ]
+    }
+  ],
+  "report_format": "每條 PR 完成回：\n【Cursor → Claude】PR-X 完成\nbranch／commit：\nacceptance：逐項 PASS/FAIL\n預覽："
+}
