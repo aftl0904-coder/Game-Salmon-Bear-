@@ -1,0 +1,181 @@
+{
+  "meta": {
+    "from": "Cursor",
+    "to": "Claude",
+    "role": "Claude = boss（排優先／下單 Cursor）；Cursor = 執行",
+    "date": "2026-11-22",
+    "player": "Alan",
+    "context": "Alan 喺正式網打完大陸2第1關（購物中心）後嘅真人收貨。正式網請用 https://salmonbearv3.vercel.app（sake-kuma.vercel.app 係舊版）。",
+    "branch_hint": "由最新 main 開新 cursor/*-2610 branch；唔好直接 merge，等 Alan 講 merge PR #N",
+    "dialogue_rule": "故事／Boss 對白未批就留「待補」；唔好代寫尾聲",
+    "ref_image": {
+      "path": "docs/gdd/refs/mall-floor-blower-ref.jpg",
+      "what": "商場用地毯風乾機／地面鼓風機（藍殼、輪、扁平出風口）——Alan 指定做 Boss 後方地面風扇參考"
+    }
+  },
+
+  "ask_claude": [
+    "按嚴重度同依賴排工單次序（建議幾條 PR／幾名 Cursor 並行）",
+    "每單寫清：目標、驗收 pass/fail、不可做範圍、是否要新美術 ART-REQUEST",
+    "洗地機 Boss：先定攻擊／防禦／故事鉤（同「清潔／強酸／風乾」一致），再叫 Cursor 實作；醜 placeholder 要換",
+    "「入唔到大陸2第2關」列為阻擋級，先查清再加玩法 polish"
+  ],
+
+  "priority_suggested_by_cursor": [
+    "P0_BUG_C2S2_ENTRY",
+    "P0_BOSS_SCRUBBER_COMBAT_AND_ART",
+    "P1_ESCALATOR_CONVEY",
+    "P1_ENEMY_DEATH_FADE",
+    "P2_SHOP_SYMBOL_ICONS"
+  ],
+
+  "tickets": [
+    {
+      "id": "P0_BUG_C2S2_ENTRY",
+      "title": "打完大陸2第1關入唔到第2關（森友展銷）",
+      "severity": "high",
+      "alan_report": "完咗1，但入不到大陸2・第二關",
+      "known_facts": [
+        "main 已有 stage7.json；清關掣文案有「大陸2・第二關 ▶」",
+        "unlockStage 封頂 7；世界地圖 openStages ≤7",
+        "選單「2 大陸2」開局只揀 ST-06；第7關靠通關解鎖／選關",
+        "若玩家開咗 sake-kuma.vercel.app 會係舊 build（無第2關）"
+      ],
+      "cursor_tasks_after_claude_orders": [
+        "複現：salmonbearv3 上 1P 打通 ST-06 → 撳下一關 → 是否入到 ST-07（附 log／截圖）",
+        "查 goNextStage／worldmap pick／run.nextStage／maxStage 存檔",
+        "修阻擋；補 Playwright：清 ST-06 後可進 ST-07",
+        "若只係網址錯：UI／README 再強調正式網（已有 docs PR branch cursor/fix-prod-url-2610）"
+      ],
+      "acceptance": [
+        "正式網打完 ST-06，撳「大陸2・第二關」可進入森友展銷中心",
+        "存檔重開後選關／地圖可選第7關",
+        "自動化證據存 docs/qa-*/"
+      ],
+      "out_of_scope": ["開第8–10關", "代寫第7關待補對白"]
+    },
+    {
+      "id": "P0_BOSS_SCRUBBER_COMBAT_AND_ART",
+      "title": "洗地機 Boss：美術＋攻擊／防禦／故事一體設計後落地",
+      "severity": "high",
+      "alan_report": {
+        "art": "Cleaning machine not yet draw, just an ugly placeholder",
+        "damage": "cant even hit me (no 扣血)",
+        "desired_attacks": [
+          "slide 滑向玩家",
+          "向上噴液體 → 落地落下，帶提示「強酸化學劑」（或同等警告）",
+          "後方地面放地毯風乾機／鼓風機（見 ref 圖），有時段性向前吹，令玩家上前變慢"
+        ],
+        "need_design": "attack + defend + art + 同商場故事相關"
+      },
+      "design_brief_for_claude": {
+        "identity": "商場清潔機械人（非人類）；同保安總監分開——總監可非戰鬥現身，唔好打佢",
+        "theme_hooks": [
+          "表面「清潔／衛生」vs 實際用強酸／化學劑——呼應假蜜／清場／把生命當可處理物",
+          "風乾機＝商場後勤真實道具，令頭風有物理來源（唔係隱形風）"
+        ],
+        "proposed_kit_for_claude_to_edit": {
+          "P1": "滑行衝撞：預警帶 → 滑向玩家有限位 → 只有衝撞幀可扣血 → 恢復空檔可打",
+          "P2": "強酸噴射：向上噴 → 短暫滯空 → 落下酸坑／酸滴；地上有明確提示區＋短字「強酸化學劑」（可待補正式對白）",
+          "P3": "加速混合；後方地面鼓風機週期吹風（限時），玩家迎風減速；風機可打／可關／或只係 hazard（由 Claude 定）",
+          "defend_read": "每招後 recover／過熱；弱點喺恢復期；唔好無預警連續傷"
+        },
+        "art": {
+          "boss": "原創銀灰＋深藍洗地機（鏡頭＋轉刷）；唔好再用醜 placeholder 幾何塊",
+          "fan_prop": "跟 ref：藍殼蝸牛殼形地面鼓風機、扁平出風口、輪；放 Boss 後方地面",
+          "fx": "滑行塵、噴液弧、落地酸漬、風線粒子"
+        }
+      },
+      "cursor_tasks_after_claude_orders": [
+        "換 Boss／風機美術（或接 ART-REQUEST）",
+        "重做 MallScrubber 狀態機：確保 canHurtPlayer／接觸傷害真係扣血",
+        "實作噴酸落彈＋提示；風機限時減速",
+        "Boss 卡文案未批用「待補」",
+        "Playwright：P1–P3 可避、有扣血、恢復期可打"
+      ],
+      "acceptance": [
+        "Boss 睇得出係清潔機，唔係醜方塊",
+        "至少一種攻擊可對英雄扣血（有 log）",
+        "滑行／噴酸／風機減速三種讀得明、有預警",
+        "風機外觀接近 ref（SNES 像素、無品牌字）"
+      ],
+      "out_of_scope": ["改馴獸師", "Ken 出場打架", "代寫長對白"]
+    },
+    {
+      "id": "P1_ESCALATOR_CONVEY",
+      "title": "扶手電梯要可帶動角色（而家只係背景）",
+      "severity": "medium",
+      "alan_report": "escalator cant move character, just a background now",
+      "known_facts": [
+        "ST-06 近 B→C 有手繪三角「扶手電梯」標籤，無 conveyor／帶動邏輯",
+        "另有 elevatorX 假 3D 過場（B→C），唔等於扶手電梯 gameplay"
+      ],
+      "cursor_tasks_after_claude_orders": [
+        "定區域：企上去自動沿斜面／水平帶動（可跳離）",
+        "1P／2P、觸控可測",
+        "美術可仍簡，但要有「喺郁」讀法（步驟線／粒子）"
+      ],
+      "acceptance": [
+        "角色企上扶手電梯區會被帶動，唔係純背景",
+        "可跳離；唔會卡死或推落坑（若鄰近有坑要測）"
+      ]
+    },
+    {
+      "id": "P1_ENEMY_DEATH_FADE",
+      "title": "敵人死亡改 0.5s 漸出，唔好卡住另一幀 1 秒",
+      "severity": "medium",
+      "alan_report": "松鼠同部分敵人死時 hold 另一張圖約 1 秒好怪；要 0.5 秒漸出（fade out）",
+      "known_facts": [
+        "Enemy.die：tint＋velocity 後 delayedCall ~280ms destroy；可能 AnimEnemy／松鼠有死亡幀卡住"
+      ],
+      "cursor_tasks_after_claude_orders": [
+        "統一死亡：停動畫 → 0.5s alpha 漸出 → destroy",
+        "涵蓋松鼠／蜜僵／商場保安等 ST-06 常見種",
+        "唔好再顯示怪異替代幀"
+      ],
+      "acceptance": [
+        "死亡視覺 ≤0.5s 淡出消失",
+        "無「換咗另一張圖企喺度一秒」"
+      ]
+    },
+    {
+      "id": "P2_SHOP_SYMBOL_ICONS",
+      "title": "舖頭唔使直白店名；改用象徵大 icon（例如藥妝＝大藥丸）",
+      "severity": "low",
+      "alan_report": "Shop dun need rly state 雜物/店名 on shore；more 象徵物 like a big pill icon above the store",
+      "known_facts": [
+        "而家程式 overlay 文字招牌：茶餐廳／鞋店／電器／藥妝…",
+        "已有 s6-shop-* sprite"
+      ],
+      "cursor_tasks_after_claude_orders": [
+        "移除或淡化直白店名字",
+        "舖頂放大象徵 icon（藥＝丸、咖啡＝杯等）；像素原創、無品牌",
+        "可選：雜物／尖角 note 唔顯示畀玩家"
+      ],
+      "acceptance": [
+        "玩家靠象徵認舖，唔靠一排店名字",
+        "藥妝類有明顯大丸／藥十字等象徵（唔一定用 emoji 💊，遊戲內像素）"
+      ]
+    }
+  ],
+
+  "story_note_for_boss_redesign": {
+    "one_liner": "商場用「清潔」包裝暴力：強酸清場、風機吹乾痕跡——玩家打停嘅唔係保安，而係清潔系統本身。",
+    "link_to_c2_outline": "docs/bible/c2-story-outline.md（ST-06 門面→工場；唔打 Ken）",
+    "open_for_claude": [
+      "強酸提示用系統字定短對白？",
+      "風機係可破壞道具定純 hazard？",
+      "保安總監非戰鬥現身要唔要同清潔機同一段出現？"
+    ]
+  },
+
+  "reply_format_please": {
+    "header": "【Claude → Cursor】C2S1 收貨工單次序",
+    "body": [
+      "ordered_ticket_ids: [...]",
+      "per_ticket: 做／唔做、驗收、要唔要 ART、可否並行",
+      "Boss 設計定稿（招式表＋風機規則＋待補文案位）",
+      "先開邊條 branch／PR"
+    ]
+  }
+}
