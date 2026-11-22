@@ -80,27 +80,97 @@ async function bootStage1() {
 }
 
 async function spawnKing() {
-  await page.evaluate(() => {
+  const boss = JSON.parse(fs.readFileSync('data/levels/stage1.json', 'utf8')).boss
+  await page.evaluate((b) => {
     const s = window.__SAKE_GAME__.scene.getScene('play')
-    Object.getPrototypeOf(s).queenReveal.call(s, {
-      kind: 'warriorking',
-      triggerX: 2000,
-      arenaX0: 1880,
-      arenaX1: 2480,
-    })
-  })
+    // Clear nearby mobs so the shot stays readable
+    for (const e of [...s.enemies.getChildren()]) {
+      if (e !== s.queen) {
+        try {
+          e.disableBody?.(true, true)
+          e.destroy()
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    if (s.boy) {
+      s.boy.x = b.arenaX0 + 80
+      s.boy.y = s.floorY?.() ?? s.boy.y
+      s.boy.hp = 6
+    }
+    Object.getPrototypeOf(s).queenReveal.call(s, b)
+  }, boss)
   await page.waitForFunction(
     () => window.__SAKE_GAME__?.scene?.getScene('play')?.queen?.species === 'warriorking',
     null,
     { timeout: 15000 },
   )
-  // Finish intro + arm rhythm
+  // Finish intro + arm rhythm; park camera on the fight; clear overlays
   await page.evaluate(() => {
-    const q = window.__SAKE_GAME__.scene.getScene('play').queen
+    const s = window.__SAKE_GAME__.scene.getScene('play')
+    const q = s.queen
     q.t = 2000
     q.rhythm.arm()
+    s.storyIntro?.destroy?.()
+    s.storyIntro = null
+    s.bossCard?.destroy?.()
+    s.bossCard = null
+    // Dismiss any full-screen instructional / card layers
+    for (const child of [...s.children.list]) {
+      const t = child?.text || child?.list?.[0]?.text
+      if (typeof t === 'string' && (t.includes('武者王') || t.includes('舉旗') || t.includes('咖啡'))) {
+        try {
+          child.destroy()
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    if (s.boy) {
+      s.boy.x = q.x - 100
+      s.boy.hp = 6
+      s.boy.graceUntil = s.time.now + 60000
+      s.cameras.main.centerOn(q.x, q.y - 40)
+    }
   })
+  for (let i = 0; i < 6; i++) {
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('Escape')
+    await page.waitForTimeout(80)
+  }
   await page.waitForTimeout(200)
+}
+
+async function shot(name, label) {
+  await page.evaluate((lbl) => {
+    const s = window.__SAKE_GAME__?.scene?.getScene('play')
+    const q = s?.queen
+    if (q && s.cameras?.main) s.cameras.main.centerOn(q.x, q.y - 40)
+    let el = document.getElementById('qa-rhythm-banner')
+    if (!el) {
+      el = document.createElement('div')
+      el.id = 'qa-rhythm-banner'
+      Object.assign(el.style, {
+        position: 'fixed',
+        left: '12px',
+        top: '12px',
+        zIndex: '99999',
+        padding: '8px 12px',
+        background: '#201008ee',
+        color: '#ffe8a0',
+        font: 'bold 18px sans-serif',
+        border: '2px solid #a8e8ff',
+        borderRadius: '6px',
+      })
+      document.body.appendChild(el)
+    }
+    const phase = q?.rhythm?.phase ?? '?'
+    const hp = q ? `${q.hp}/${q.maxHp}` : '?'
+    el.textContent = `${lbl || name} · ${phase} · HP ${hp}`
+  }, label || name)
+  await page.waitForTimeout(100)
+  await page.screenshot({ path: `${outDir}/${name}.png` })
 }
 
 try {
@@ -121,25 +191,41 @@ try {
   // ── K1 GUARD / BREATHER: 0 dmg + ding ──
   const k1 = await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
+    q.active = true
+    q.fsm = 'ATTACK'
     q.rhythm.setPhase('GUARD')
     const before = q.hp
+    const can = q.rhythm.canTakeDamage()
     const r = q.receiveHit(5, -1)
-    return { before, after: q.hp, killed: r.killed, phase: q.rhythm.phase, blockAt: q.rhythm.lastBlockAt }
+    return {
+      before,
+      after: q.hp,
+      killed: r.killed,
+      phase: q.rhythm.phase,
+      blockAt: q.rhythm.lastBlockAt,
+      canTake: can,
+      active: q.active,
+      species: q.species,
+    }
   })
   report.checks.k1_guard = k1
   assert.equal(k1.after, k1.before, 'K1 GUARD 0 dmg')
+  assert.equal(k1.canTake, false, 'K1 GUARD not damageable')
   assert.ok(k1.blockAt > 0, 'K1 ding stamped')
-  await page.screenshot({ path: `${outDir}/k1-guard-ding.png`, animations: 'disabled' })
+  await shot('k1-guard-ding', 'K1 GUARD ding')
 
   const k1b = await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
+    q.active = true
+    q.fsm = 'ATTACK'
     q.rhythm.setPhase('BREATHER')
     const before = q.hp
     q.receiveHit(5, -1)
-    return { before, after: q.hp, blockAt: q.rhythm.lastBlockAt }
+    return { before, after: q.hp, blockAt: q.rhythm.lastBlockAt, canTake: q.rhythm.canTakeDamage() }
   })
   report.checks.k1_breather = k1b
   assert.equal(k1b.after, k1b.before, 'K1 BREATHER 0 dmg')
+  assert.equal(k1b.canTake, false)
   report.acceptance.K1 = 'PASS'
 
   // ── K2 OPENING damages ──
@@ -153,7 +239,7 @@ try {
   })
   report.checks.k2_opening = k2
   assert.ok(k2.after < k2.before, 'K2 OPENING damages')
-  await page.screenshot({ path: `${outDir}/k2-opening-hit.png`, animations: 'disabled' })
+  await shot('k2-opening-hit', 'K2 OPENING hit')
   report.acceptance.K2 = 'PASS'
 
   // ── K3 non-ATTACK contact: 0 player HP ──
@@ -174,12 +260,14 @@ try {
   report.checks.k3_contact = k3
   assert.equal(k3.can, false)
   assert.equal(k3.after, k3.before, 'K3 no HP loss outside ATTACK')
-  await page.screenshot({ path: `${outDir}/k3-soft-push.png`, animations: 'disabled' })
+  await shot('k3-soft-push', 'K3 soft push')
   report.acceptance.K3 = 'PASS'
 
   // ── K4: ~3–4 OPENINGs per HP segment ──
   const k4 = await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
+    q.active = true
+    q.fsm = 'ATTACK'
     q.hp = q.maxHp
     q.qphase = 1
     q.lastHitAt = 0
@@ -194,16 +282,14 @@ try {
       for (let i = 0; i < 6 && dealt < segment; i++) {
         q.lastHitAt = 0
         const before = q.hp
-        // Stay in OPENING for the sim (phase change would force BREATHER)
         const ph = q.qphase
-        q.receiveHit(3, -1)
-        if (q.qphase !== ph) {
-          // Phase crossed — restore OPENING so remaining hits in this window still count
-          // (real fight: opening already ended via forceBreather; segment drain is what we measure)
-          dealt += before - q.hp
-          break
+        try {
+          q.receiveHit(3, -1)
+        } catch (err) {
+          return { error: String(err), openings, dealt, segment, maxHp: q.maxHp, hp: q.hp }
         }
         dealt += before - q.hp
+        if (q.qphase !== ph) break
       }
     }
     return { openings, dealt, segment, maxHp: q.maxHp, hp: q.hp }
@@ -223,27 +309,29 @@ try {
     q.rhythm.setPhase('GUARD')
     q.x = h.x + 120
   })
-  await page.waitForTimeout(1600)
-  await page.screenshot({ path: `${outDir}/cycle-guard.png`, animations: 'disabled' })
+  await page.waitForTimeout(400)
+  await shot('cycle-guard', 'CYCLE GUARD')
   await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
     q.rhythm.setPhase('WARN')
-    q.moveQueued = null
+    q.moveQueued = 'windup'
+    q.go?.('windup')
   })
-  await page.waitForTimeout(500)
-  await page.screenshot({ path: `${outDir}/cycle-warn.png`, animations: 'disabled' })
+  await page.waitForTimeout(350)
+  await shot('cycle-warn', 'CYCLE WARN')
   await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
     q.rhythm.setPhase('OPENING')
+    q.go?.('exposed')
   })
-  await page.waitForTimeout(800)
-  await page.screenshot({ path: `${outDir}/cycle-opening.png`, animations: 'disabled' })
+  await page.waitForTimeout(500)
+  await shot('cycle-opening', 'CYCLE OPENING')
   await page.evaluate(() => {
     const q = window.__SAKE_GAME__.scene.getScene('play').queen
     q.rhythm.forceBreather(2000)
   })
-  await page.waitForTimeout(600)
-  await page.screenshot({ path: `${outDir}/cycle-breather.png`, animations: 'disabled' })
+  await page.waitForTimeout(450)
+  await shot('cycle-breather', 'CYCLE BREATHER')
 
   report.errors = report.errors.filter(
     (e) =>

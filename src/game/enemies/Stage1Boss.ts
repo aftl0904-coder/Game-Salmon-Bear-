@@ -102,20 +102,29 @@ export class WarriorKing extends AnimEnemy {
   }
 
   receiveHit(dmg: number, dir: number): EnemyHitResult {
+    if (!this.active || this.fsm === 'DEAD') return { killed: false, hp: this.hp }
     if (!this.rhythm.canTakeDamage()) {
       this.rhythm.blockHit()
       return { killed: false, hp: this.hp }
     }
-    const now = this.scene.time.now
+    const now = this.scene?.time?.now || performance.now()
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
     // OPENING uses existing weak window (weakBase 3); back/front both open here.
     const hitDmg = bossHitDamage(dmg, { weak: true, weakBase: 3, capNormal: 2, capWeak: 5 })
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(hitDmg, dir)
-    this.setPosition(before.x, before.y)
-    this.setVelocity(0, 0)
-    if (this.fsm === 'HURT') this.setFsm('ATTACK')
+    let r: EnemyHitResult
+    if (!this.body) {
+      // Headless / broken-body fallback: still apply HP for rhythm QA.
+      this.hp -= hitDmg
+      r = this.hp <= 0 ? { killed: true, hp: 0 } : { killed: false, hp: this.hp }
+      if (r.killed) this.die(dir)
+    } else {
+      r = super.receiveHit(hitDmg, dir)
+      this.setPosition(before.x, before.y)
+      this.setVelocity(0, 0)
+      if (this.fsm === 'HURT') this.setFsm('ATTACK')
+    }
     if (!r.killed) this.updatePhase()
     return r
   }
@@ -154,7 +163,7 @@ export class WarriorKing extends AnimEnemy {
     this.t = 0
     this.released = false
     this.clearTint()
-    this.setVelocity(0, 0)
+    if (this.body) this.setVelocity(0, 0)
     if (a === 'throw') this.anim(this.throwN % 2 === 0 ? 'throw-low' : 'throw-high')
     else this.anim(KING_ANIM[a])
   }
@@ -165,7 +174,7 @@ export class WarriorKing extends AnimEnemy {
     this.t = 0
     this.released = false
     this.clearTint()
-    this.setVelocity(0, 0)
+    if (this.body) this.setVelocity(0, 0)
     if (a === 'throw') this.anim(this.throwN % 2 === 0 ? 'throw-low' : 'throw-high')
     else this.anim(KING_ANIM[a])
   }

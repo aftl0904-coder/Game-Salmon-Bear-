@@ -86,8 +86,12 @@ export class BossRhythm {
 
   /** Hit during non-OPENING: ding + 0 damage. */
   blockHit() {
-    this.lastBlockAt = this.scene.time.now
-    SFX.blip(980)
+    this.lastBlockAt = this.scene?.time?.now || Date.now()
+    try {
+      SFX.blip(980)
+    } catch {
+      /* audio may be unavailable in headless */
+    }
     this.flashShield()
   }
 

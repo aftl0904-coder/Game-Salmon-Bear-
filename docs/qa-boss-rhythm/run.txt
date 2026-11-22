@@ -10,12 +10,16 @@ PASS K1-K4 {
     "after": 180,
     "killed": false,
     "phase": "GUARD",
-    "blockAt": 3012.5
+    "blockAt": 3681.8,
+    "canTake": false,
+    "active": true,
+    "species": "warriorking"
   },
   "k1_breather": {
     "before": 180,
     "after": 180,
-    "blockAt": 3095.8
+    "blockAt": 4648.5,
+    "canTake": false
   },
   "k2_opening": {
     "before": 180,
