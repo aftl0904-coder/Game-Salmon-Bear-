@@ -1,0 +1,46 @@
+{
+  "catCount": {
+    "developer": 48,
+    "hanglung": 22,
+    "law": 20,
+    "hr": 16,
+    "mall": 9,
+    "hard": 10,
+    "math": 11,
+    "labour": 4
+  },
+  "total": 140,
+  "devHlPct": 0.5,
+  "hrLabPct": 0.14285714285714285,
+  "dupRounds": 0,
+  "sample": [
+    [
+      "developer",
+      "developer",
+      "hanglung",
+      "law",
+      "hr",
+      "mall",
+      "developer"
+    ],
+    [
+      "developer",
+      "developer",
+      "hanglung",
+      "law",
+      "hr",
+      "mall",
+      "hard"
+    ],
+    [
+      "developer",
+      "developer",
+      "hanglung",
+      "law",
+      "hr",
+      "hard",
+      "math"
+    ]
+  ],
+  "pass": true
+}

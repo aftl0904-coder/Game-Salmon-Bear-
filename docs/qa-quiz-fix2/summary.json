@@ -1,0 +1,400 @@
+{
+  "ok": true,
+  "errors": [],
+  "acceptance": {
+    "Q1": "PASS",
+    "Q2": "PASS",
+    "Q3": "PASS",
+    "Q4": "PASS",
+    "Q5": "PASS",
+    "Q6": "PASS",
+    "L0": "PASS",
+    "L1": "PASS",
+    "L2": "PASS",
+    "L3": "PASS",
+    "V1": "PASS",
+    "V2": "PASS"
+  },
+  "notes": [
+    {
+      "loadScan": {
+        "files": [
+          {
+            "id": "lunbo",
+            "name": "倫寶",
+            "file": "/art/portraits/lunbo.png",
+            "size": 134
+          },
+          {
+            "id": "kibobo",
+            "name": "琪寶寶",
+            "file": "/art/portraits/kibobo.png",
+            "size": 134
+          },
+          {
+            "id": "pupu",
+            "name": "噗噗",
+            "file": "/art/custom/pupu-portrait.png",
+            "size": 134
+          },
+          {
+            "id": "huihui",
+            "name": "熊仔",
+            "file": "/art/loading-heads/huihui.png",
+            "size": 92
+          },
+          {
+            "id": "guard",
+            "name": "英國熊",
+            "file": "/art/loading-heads/guard.png",
+            "size": 92
+          },
+          {
+            "id": "denim",
+            "name": "小熊仔",
+            "file": "/art/loading-heads/denim.png",
+            "size": 92
+          },
+          {
+            "id": "brownie",
+            "name": "招積熊",
+            "file": "/art/loading-heads/brownie.png",
+            "size": 92
+          },
+          {
+            "id": "snowcat",
+            "name": "北極熊",
+            "file": "/art/loading-heads/snowcat.png",
+            "size": 92
+          },
+          {
+            "id": "shiba",
+            "name": "柴柴",
+            "file": "/art/loading-heads/shiba.png",
+            "size": 92
+          },
+          {
+            "id": "ginger",
+            "name": "薑餅",
+            "file": "/art/loading-heads/ginger.png",
+            "size": 92
+          },
+          {
+            "id": "fleecy",
+            "name": "大pat熊",
+            "file": "/art/loading-heads/fleecy.png",
+            "size": 92
+          },
+          {
+            "id": "gnome",
+            "name": "聖誕伯伯",
+            "file": "/art/loading-heads/gnome.png",
+            "size": 92
+          },
+          {
+            "id": "tigercub",
+            "name": "虎仔",
+            "file": "/art/loading-heads/tigercub.png",
+            "size": 92
+          },
+          {
+            "id": "kuro",
+            "name": "喵仔",
+            "file": "/art/loading-heads/kuro.png",
+            "size": 92
+          }
+        ],
+        "cover": 0.6378993055555555,
+        "overlap": false,
+        "edges": {
+          "left": true,
+          "right": true,
+          "top": true,
+          "bottom": true
+        },
+        "n": 14
+      }
+    },
+    {
+      "rounds": [
+        {
+          "ok": true,
+          "ids": [
+            "Q005",
+            "Q029",
+            "Q010",
+            "Q077",
+            "Q034",
+            "Q003",
+            "Q024"
+          ],
+          "corrects": [
+            1,
+            0,
+            0,
+            1,
+            2,
+            0,
+            0
+          ],
+          "hardSlot": 3,
+          "letterCounts": [
+            4,
+            2,
+            1,
+            0
+          ],
+          "scoredCorrect": 1,
+          "scoredWrong": 0,
+          "wrongThenRight": null
+        },
+        {
+          "ok": true,
+          "ids": [
+            "Q061",
+            "Q056",
+            "Q031",
+            "Q002",
+            "lab-notice",
+            "lab-severance",
+            "Q014"
+          ],
+          "corrects": [
+            0,
+            3,
+            3,
+            0,
+            2,
+            1,
+            0
+          ],
+          "hardSlot": 5,
+          "letterCounts": [
+            3,
+            1,
+            1,
+            2
+          ],
+          "scoredCorrect": 1,
+          "scoredWrong": 0,
+          "wrongThenRight": null
+        },
+        {
+          "ok": true,
+          "ids": [
+            "Q037",
+            "Q050",
+            "Q070",
+            "Q083",
+            "Q040",
+            "Q012",
+            "Q066"
+          ],
+          "corrects": [
+            0,
+            1,
+            2,
+            0,
+            0,
+            0,
+            3
+          ],
+          "hardSlot": 3,
+          "letterCounts": [
+            4,
+            1,
+            1,
+            1
+          ],
+          "scoredCorrect": 1,
+          "scoredWrong": 0,
+          "wrongThenRight": null
+        }
+      ]
+    },
+    {
+      "wrongProbe": {
+        "ok": true,
+        "ids": [
+          "Q074",
+          "Q027",
+          "Q035",
+          "Q063",
+          "hr-privacy",
+          "Q059",
+          "Q080"
+        ],
+        "corrects": [
+          2,
+          1,
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        "hardSlot": 6,
+        "letterCounts": [
+          4,
+          1,
+          2,
+          0
+        ],
+        "scoredCorrect": 0,
+        "scoredWrong": 1,
+        "wrongThenRight": {
+          "wrong": 1,
+          "correct": 0
+        }
+      }
+    },
+    {
+      "hardSlots": [
+        3,
+        5,
+        3
+      ],
+      "hardOk": true
+    },
+    {
+      "v1": [
+        {
+          "text": "⚪",
+          "size": "20px",
+          "y": 253
+        },
+        {
+          "text": "★",
+          "size": "18px",
+          "y": 201
+        },
+        {
+          "text": "🚫",
+          "size": "20px",
+          "y": 149
+        },
+        {
+          "text": "？",
+          "size": "20px",
+          "y": 192
+        },
+        {
+          "text": "🚫",
+          "size": "20px",
+          "y": 224
+        },
+        {
+          "text": "？",
+          "size": "20px",
+          "y": 84
+        },
+        {
+          "text": "🚫",
+          "size": "20px",
+          "y": 116
+        },
+        {
+          "text": "？",
+          "size": "20px",
+          "y": 66
+        },
+        {
+          "text": "🚫",
+          "size": "20px",
+          "y": 98
+        },
+        {
+          "text": "A／Enter 繼續",
+          "size": "18px",
+          "y": 8
+        }
+      ]
+    }
+  ],
+  "loadingFiles": [
+    {
+      "id": "lunbo",
+      "name": "倫寶",
+      "file": "/art/portraits/lunbo.png",
+      "size": 134
+    },
+    {
+      "id": "kibobo",
+      "name": "琪寶寶",
+      "file": "/art/portraits/kibobo.png",
+      "size": 134
+    },
+    {
+      "id": "pupu",
+      "name": "噗噗",
+      "file": "/art/custom/pupu-portrait.png",
+      "size": 134
+    },
+    {
+      "id": "huihui",
+      "name": "熊仔",
+      "file": "/art/loading-heads/huihui.png",
+      "size": 92
+    },
+    {
+      "id": "guard",
+      "name": "英國熊",
+      "file": "/art/loading-heads/guard.png",
+      "size": 92
+    },
+    {
+      "id": "denim",
+      "name": "小熊仔",
+      "file": "/art/loading-heads/denim.png",
+      "size": 92
+    },
+    {
+      "id": "brownie",
+      "name": "招積熊",
+      "file": "/art/loading-heads/brownie.png",
+      "size": 92
+    },
+    {
+      "id": "snowcat",
+      "name": "北極熊",
+      "file": "/art/loading-heads/snowcat.png",
+      "size": 92
+    },
+    {
+      "id": "shiba",
+      "name": "柴柴",
+      "file": "/art/loading-heads/shiba.png",
+      "size": 92
+    },
+    {
+      "id": "ginger",
+      "name": "薑餅",
+      "file": "/art/loading-heads/ginger.png",
+      "size": 92
+    },
+    {
+      "id": "fleecy",
+      "name": "大pat熊",
+      "file": "/art/loading-heads/fleecy.png",
+      "size": 92
+    },
+    {
+      "id": "gnome",
+      "name": "聖誕伯伯",
+      "file": "/art/loading-heads/gnome.png",
+      "size": 92
+    },
+    {
+      "id": "tigercub",
+      "name": "虎仔",
+      "file": "/art/loading-heads/tigercub.png",
+      "size": 92
+    },
+    {
+      "id": "kuro",
+      "name": "喵仔",
+      "file": "/art/loading-heads/kuro.png",
+      "size": 92
+    }
+  ]
+}
