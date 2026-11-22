@@ -32,6 +32,14 @@
           "B5_QUIZ_TOPICS"
         ],
         "start": "即刻並行，喺 #115 加 commit，唔好 force-push"
+      },
+      {
+        "pr": "PR-K",
+        "branch": "cursor/c2-mall-art-2610",
+        "tickets": [
+          "B7_SCRUBBER_AND_PROPS_ART"
+        ],
+        "start": "即刻並行；檔案放 public/art/c2/，只改載入圖嘅位置，唔好郁 Boss 邏輯（PR-I 會改）"
       }
     ]
   },
@@ -156,6 +164,79 @@
         "搜尋題庫冇『按揭、供樓、睇樓、印花稅、示範單位、價單』字眼",
         "每條新題有 source",
         "清單更新 docs/gdd/quiz-developer-review.md（列搬走幾多、新加邊啲）"
+      ]
+    },
+    {
+      "id": "B7_SCRUBBER_AND_PROPS_ART",
+      "priority": "P0",
+      "alan": "潔淨機器人 Boss 同商場雜物完全未畫 art，要畫（Alan 23:29）",
+      "style": {
+        "look": "32-bit 像素畫，跟大陸2 現有角色同背景嘅色板同線條粗幼（參考 public/art 入面最新嘅大陸2 圖）",
+        "outline": "1px 深色外框，平塗加一層陰影＋一層高光",
+        "no": "唔准用 Phaser Graphics 幾何形狀頂替；唔准有任何品牌字樣"
+      },
+      "assets": [
+        {
+          "name": "scrubber boss 深層潔淨 X-9",
+          "size": "96×80 每格",
+          "frames": {
+            "idle": 2,
+            "warn": 2,
+            "charge": 2,
+            "recover": 2,
+            "spray": 1,
+            "defeated": 1
+          },
+          "look": "銀灰機身＋深藍邊；前面大圓轉刷（轉動用 2 格表達）；頂部圓形鏡頭眼（正常發黃光、warn 閃紅、recover 變暗）；背後散熱格柵（recover 冒煙）；底部細輪；spray 時頂部噴嘴升起；defeated 時頂部晶片彈出、眼熄",
+          "file": "public/art/c2/scrubber-sheet.png（加 JSON frame data 或者固定格寬）"
+        },
+        {
+          "name": "地面鼓風機",
+          "size": "48×40 每格",
+          "frames": {
+            "off": 1,
+            "warn": 1,
+            "on": 2,
+            "stunned": 1
+          },
+          "look": "跟 docs/gdd/refs/mall-floor-blower-ref.jpg：藍色蝸牛殼、前面扁長出風口、底部細輪；warn 黃燈、stunned 冒煙",
+          "file": "public/art/c2/blower-sheet.png"
+        },
+        {
+          "name": "酸液 FX",
+          "items": [
+            "噴出嘅酸液滴（12×12，2 格）",
+            "地上酸漬（64×10，2 格冒泡）"
+          ],
+          "color": "黃綠 #b8e04a＋深綠陰影",
+          "file": "public/art/c2/acid-fx.png"
+        },
+        {
+          "name": "商場雜物",
+          "size": "24–64px 高",
+          "items": [
+            "盆栽",
+            "長椅",
+            "垃圾桶",
+            "指示牌（只有箭咀，冇字）",
+            "購物手推車",
+            "膠欄杆",
+            "扶手電梯入口牌（圖示，冇字）",
+            "廣告燈箱（彩色色塊，冇字）"
+          ],
+          "file": "public/art/c2/mall-props.png（每件一格，附 JSON 位置表）"
+        }
+      ],
+      "steps": [
+        "1. 畫好所有 sprite sheet（PNG，透明底）",
+        "2. 喺載入嘅地方換成新圖：Boss、鼓風機、酸液、第6關所有雜物（取代 Graphics 版本）",
+        "3. 碰撞箱大小同而家一樣，唔好改玩法",
+        "4. docs/bible/art-todo.md 對應 ART-REQUEST 標 done"
+      ],
+      "acceptance": [
+        "第6關畫面再冇 Graphics 幾何塊（截圖 A–E 段＋Boss 戰，放 docs/qa-c2-art/）",
+        "Boss 每個狀態都睇得出分別（idle／warn／charge／recover／spray／defeated 截圖）",
+        "碰撞同改圖前一樣（現有測試 PASS）"
       ]
     }
   ],
