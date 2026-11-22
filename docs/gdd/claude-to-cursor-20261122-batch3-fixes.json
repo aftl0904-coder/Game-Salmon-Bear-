@@ -36,8 +36,19 @@
         "Q1 Playwright 玩 6 題：正確答案位置唔係全部 A，A/B/C/D 都有出現",
         "Q2 揀打亂後嘅正確選項 = 答啱；揀其他 = 答錯",
         "Q3 字大咗、冇重疊、冇出界（手機 iPhone 13 截圖放 docs/qa-quiz-fix2/）",
-        "Q4 觸控、方向鍵＋攻擊掣揀答案仍然正常"
-      ]
+        "Q4 觸控、方向鍵＋攻擊掣揀答案仍然正常",
+        "Q5 連續開 3 局：每局題目次序唔同，盡量唔重複（Playwright 記錄題目 id）",
+        "Q6 第6、7關同一存檔內冇重複題目"
+      ],
+      "alan_confirm": "Alan 13:14：問題次序要 random，答案亦要 random 分佈喺唔同 ABCD",
+      "question_order": {
+        "now": "pickRound() 已經用 Math.random 隨機揀 6 題普通＋1 題難題（難題固定最後）——Claude 已查",
+        "add": [
+          "記低最近玩過嘅題目 id（localStorage key 'quizSeen'，try/catch 包住），揀題時優先揀未出過嘅；全部出過就清空重來",
+          "第6關同第7關同一局入面唔可以出同一題",
+          "難題唔使固定最後：放喺第4至第7題之間隨機一個位置"
+        ]
+      }
     },
     {
       "id": "F2_LOADING_HEADS_LAYOUT",
