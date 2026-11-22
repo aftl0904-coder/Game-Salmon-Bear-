@@ -362,6 +362,36 @@ export class BootScene extends Phaser.Scene {
     for (const id of ['omamori', 'speed', 'power', 'stamina', 'luck'] as const) {
       this.load.image(`charm-${id}`, `/art/items/charm-${id}.png`)
     }
+    // C2 mall art (PR-K / B7) — scrubber boss, floor blower, acid FX, clutter props.
+    this.load.spritesheet('c2-scrubber', '/art/c2/scrubber-sheet.png', {
+      frameWidth: 112,
+      frameHeight: 80,
+    })
+    this.load.spritesheet('c2-blower', '/art/c2/blower-sheet.png', {
+      frameWidth: 48,
+      frameHeight: 40,
+    })
+    this.load.spritesheet('c2-acid-puddle', '/art/c2/acid-puddle-strip.png', {
+      frameWidth: 64,
+      frameHeight: 10,
+    })
+    this.load.spritesheet('c2-acid-drip', '/art/c2/acid-fx.png', {
+      frameWidth: 12,
+      frameHeight: 12,
+    })
+    for (const prop of [
+      'plant',
+      'bench',
+      'trash',
+      'sign',
+      'cart',
+      'barrier',
+      'escalator',
+      'lightbox',
+    ] as const) {
+      this.load.image(`c2-prop-${prop}`, `/art/c2/prop-${prop}.png`)
+    }
+    this.load.image('c2-mall-props', '/art/c2/mall-props.png')
     // Friend full sprites already in boot pack; cage + remaining only.
     this.load.image('friend-cage', '/art/friends/cage.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')

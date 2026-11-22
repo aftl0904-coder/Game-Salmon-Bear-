@@ -152,12 +152,15 @@ export class Stage6World {
     const s = this.ctx.scene
     const f = this.ctx.floorY
     const root = s.add.container(x, f).setDepth(DEPTH.PROP + 2)
-    const g = s.add.graphics()
-    g.fillStyle(0x0a0a0c, 0.55).fillEllipse(0, -2, w + 10, 10)
-    g.fillStyle(0xd8d0c0, 1).fillTriangle(-w / 2, -4, w / 2, -4, 0, -28)
-    g.fillStyle(0xff4060, 1).fillTriangle(-6, -18, 6, -18, 0, -30)
-    g.lineStyle(2, 0xfff0a0, 1).strokeTriangle(-w / 2, -4, w / 2, -4, 0, -28)
-    root.add(g)
+    // Prefer C2 mall prop sprites (barrier / cart / trash) — no Graphics cones.
+    const propKeys = ['c2-prop-barrier', 'c2-prop-cart', 'c2-prop-trash'] as const
+    const pick = propKeys[Math.abs(Math.floor(x / 17)) % propKeys.length]!
+    if (s.textures.exists(pick)) {
+      const img = s.add.image(0, 0, pick).setOrigin(0.5, 1)
+      root.add(img)
+    } else if (s.textures.exists('c2-prop-barrier')) {
+      root.add(s.add.image(0, 0, 'c2-prop-barrier').setOrigin(0.5, 1))
+    }
     const tag = s.add.text(0, -40, '雜物', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe0a0', backgroundColor: '#802018', padding: { x: 2, y: 1 } }).setOrigin(0.5)
     root.add(tag)
     s.tweens.add({ targets: tag, alpha: { from: 0.65, to: 1 }, duration: 480, yoyo: true, repeat: -1 })

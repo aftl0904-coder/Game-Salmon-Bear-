@@ -1,0 +1,71 @@
+{
+  "frameHeight": 64,
+  "frames": {
+    "plant": {
+      "x": 0,
+      "y": 24,
+      "w": 28,
+      "h": 40,
+      "anchor": "bottom"
+    },
+    "bench": {
+      "x": 30,
+      "y": 40,
+      "w": 48,
+      "h": 24,
+      "anchor": "bottom"
+    },
+    "trash": {
+      "x": 80,
+      "y": 32,
+      "w": 20,
+      "h": 32,
+      "anchor": "bottom"
+    },
+    "sign": {
+      "x": 102,
+      "y": 24,
+      "w": 28,
+      "h": 40,
+      "anchor": "bottom"
+    },
+    "cart": {
+      "x": 132,
+      "y": 32,
+      "w": 40,
+      "h": 32,
+      "anchor": "bottom"
+    },
+    "barrier": {
+      "x": 174,
+      "y": 36,
+      "w": 36,
+      "h": 28,
+      "anchor": "bottom"
+    },
+    "escalator": {
+      "x": 212,
+      "y": 24,
+      "w": 48,
+      "h": 40,
+      "anchor": "bottom"
+    },
+    "lightbox": {
+      "x": 262,
+      "y": 16,
+      "w": 40,
+      "h": 48,
+      "anchor": "bottom"
+    }
+  },
+  "order": [
+    "plant",
+    "bench",
+    "trash",
+    "sign",
+    "cart",
+    "barrier",
+    "escalator",
+    "lightbox"
+  ]
+}

@@ -67,9 +67,13 @@
 
 | 項目 | 規格 | 狀態 |
 |------|------|------|
-| Boss 深層潔淨 X-9 | 銀灰＋深藍洗地機；鏡頭眼（黃）＋前大轉刷＋背後散熱口；約 96×80；frames: idle×2 / warn×2 / charge×2 / recover×2 / spray×1 / defeated×1；32-bit 大陸2 色板 | todo（而家用 Phaser Graphics 乾淨版） |
-| 鼓風機 prop | 藍蝸牛殼、扁出風口、輪；約 48×40；frames: off / warn / on×2 / stunned；**唔好有品牌字**；ref：`docs/gdd/refs/mall-floor-blower-ref.jpg`（若缺圖請 Alan 補） | todo |
-| FX | 滑行塵、酸液弧、酸漬、紅預警圈、風線、晶片閃光 | todo |
+| Boss 深層潔淨 X-9 | 銀灰＋深藍洗地機；鏡頭眼（黃）＋前大轉刷＋背後散熱口；112×80 pad（內容 96×80）；frames: idle×2 / warn×2 / charge×2 / recover×2 / spray×1 / defeated×1 | **done**（程式像素畫 PNG → `public/art/c2/scrubber-sheet.png`；Boot key `c2-scrubber`）|
+| 鼓風機 prop | 藍蝸牛殼、扁出風口、輪；48×40；frames: off / warn / on×2 / stunned；無品牌字 | **done**（`public/art/c2/blower-sheet.png` → `c2-blower`）|
+| 酸液 FX | 滴 12×12×2＋漬 64×10×2 | **done**（`acid-fx.png` / `acid-puddle-strip.png`）|
+| 商場雜物 | 盆栽／長椅／垃圾桶／指示牌／手推車／膠欄杆／扶手電梯牌／廣告燈箱 | **done**（`mall-props.png` + `prop-*.png`）|
+| FX 餘項 | 滑行塵、紅預警帶、風線、晶片閃光 | **todo**（仍用輕量 Graphics／tween 作 gameplay telegraph；非 Boss／雜物幾何塊）|
+
+> 誠實註：以上 PNG 係 node/python 正式像素畫布（1px 外框＋明暗），唔係人手手繪 sheet。若要美術重畫，保留同檔名／格表即可替換。
 
 ## 本輪（1–3）交付
 

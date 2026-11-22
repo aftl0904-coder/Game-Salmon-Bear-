@@ -3116,14 +3116,6 @@ export class GameScene extends Phaser.Scene {
           .setOrigin(0.5)
           .setDepth(DEPTH.SIGN)
       })
-      // Atrium festive prop (centrepiece beside dome) — visual only, not a new mechanic.
-      aw.fillStyle(0xffe080, 0.85).fillCircle(400, f - 120, 18)
-      aw.fillStyle(0xff6080, 0.9).fillCircle(400, f - 120, 8)
-      this.add.text(400, f - 150, '中庭裝置', { fontFamily: FONT_UI, fontSize: '10px', color: '#fff0c0', backgroundColor: '#403020', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
-      // Escalator near B→C (after teach beat).
-      aw.fillStyle(0x4a5560, 1).fillTriangle(1860, f - 4, 1980, f - 4, 1980, f - 70)
-      aw.lineStyle(2, 0xc0d0e0, 1).lineBetween(1865, f - 8, 1975, f - 66)
-      this.add.text(1920, f - 84, '扶手電梯', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
       // Floor-button room door (optional side content) — near B corridor mid.
       aw.fillStyle(0x4a5568, 1).fillRect(1410, f - 78, 44, 78)
       aw.fillStyle(0x2a3340, 1).fillRect(1416, f - 72, 32, 66)
@@ -3131,6 +3123,42 @@ export class GameScene extends Phaser.Scene {
       aw.fillStyle(0x1a5a9a, 1).fillRoundedRect(1418, f - 96, 28, 16, 2)
       this.add.text(1432, f - 88, 'P', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe080' }).setOrigin(0.5).setDepth(DEPTH.SIGN)
       this.add.text(1432, f - 110, '維修門↑', { fontFamily: FONT_UI, fontSize: '10px', color: '#d0e0f0', backgroundColor: '#203040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    }
+    // C2 mall clutter props (PR-K / B7) — PNG sprites, not Graphics blocks.
+    {
+      const clutter: Array<{ key: string; x: number; label?: string }> = [
+        { key: 'c2-prop-lightbox', x: 400, label: '中庭裝置' },
+        { key: 'c2-prop-plant', x: 280 },
+        { key: 'c2-prop-bench', x: 520 },
+        { key: 'c2-prop-trash', x: 680 },
+        { key: 'c2-prop-sign', x: 880 },
+        { key: 'c2-prop-cart', x: 1200 },
+        { key: 'c2-prop-barrier', x: 1520 },
+        { key: 'c2-prop-escalator', x: 1920, label: '扶手電梯' },
+        { key: 'c2-prop-plant', x: 2150 },
+        { key: 'c2-prop-bench', x: 2680 },
+        { key: 'c2-prop-sign', x: 3400 },
+        { key: 'c2-prop-trash', x: 3800 },
+        { key: 'c2-prop-barrier', x: 4300 },
+        { key: 'c2-prop-lightbox', x: 4480 },
+      ]
+      for (const c of clutter) {
+        if (!this.textures.exists(c.key)) continue
+        const img = this.add.image(c.x, f + 2, c.key).setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+        enablePixelSprite(img)
+        if (c.label) {
+          this.add
+            .text(c.x, f - img.displayHeight - 14, c.label, {
+              fontFamily: FONT_UI,
+              fontSize: '10px',
+              color: '#fff0c0',
+              backgroundColor: '#403020',
+              padding: { x: 3, y: 1 },
+            })
+            .setOrigin(0.5)
+            .setDepth(DEPTH.SIGN)
+        }
+      }
     }
     // C · half-finished shopfronts behind scaffolding, with the ceiling cracks above each debris drop.
     const sg = this.add.graphics().setDepth(DEPTH.PROP - 2)
