@@ -3258,18 +3258,51 @@ export class GameScene extends Phaser.Scene {
         floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……', '#c0d0ff', { size: 14, dur: 1800 })
       })
     }
-    // Fan / headwind only for human SecurityDirector / trainer (scrubber has no fan).
+    // Trainer/director fan OR scrubber P3 floor-blower (work-order M3).
     const dir = this.queen
     const fanActs = dir instanceof SecurityDirector && (dir.act === 'windup' || dir.act === 'stalk' || dir.act === 'intro')
-    this.s6world?.setFan(!!fanActs && this.bossOn)
-    if (this.s6world && this.bossOn && fanActs) {
+    const scrubber =
+      dir && (dir as { species?: string }).species === 'mall-scrubber'
+        ? (dir as MallScrubber)
+        : dir instanceof MallScrubber
+          ? dir
+          : null
+    const blower = !!scrubber && scrubber.isBlowerBlasting()
+    this.s6world?.setFan((!!fanActs || blower) && this.bossOn)
+    if (this.s6world && this.bossOn && (fanActs || blower)) {
       for (const h of [this.boy, this.girl]) {
         if (!h?.alive) continue
         const body = h.body as Phaser.Physics.Arcade.Body | null
         if (!body) continue
-        const movingRight = body.velocity.x > 12
-        const mul = this.s6world.headwindMul(h.x, movingRight)
-        if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+        if (blower && scrubber) {
+          // Into-wind (toward fan on the right) ×0.5
+          if (scrubber.intoWind(body.velocity.x)) body.setVelocityX(body.velocity.x * 0.5)
+        } else {
+          const movingRight = body.velocity.x > 12
+          const mul = this.s6world.headwindMul(h.x, movingRight)
+          if (mul < 0.99) body.setVelocityX(body.velocity.x * mul)
+        }
+      }
+    }
+    // Acid puddles — 1 heart, same puddle locks hero 1000ms
+    if (scrubber && this.bossOn) {
+      for (const z of scrubber.acidZones()) {
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (h.x < z.x0 || h.x > z.x1) continue
+          const last = z.acid.hitAt.get(h) ?? 0
+          if (this.time.now - last < 1000) continue
+          z.acid.hitAt.set(h, this.time.now)
+          this.hazardHit(h, { knockX: h.facing * -160, knockY: -420, label: '強酸化學劑' })
+        }
+      }
+    }
+    if (scrubber && this.bossOn) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive || !h.attackHitbox?.active) continue
+        const ab = h.attackHitbox.body as Phaser.Physics.Arcade.Body | undefined
+        if (!ab) continue
+        if (ab.right > scrubber.blower.x - 30 && ab.left < scrubber.blower.x + 30) scrubber.hitBlower(h.x)
       }
     }
     if (!this.exhibit) this.tickDirectorSighting()
@@ -6817,7 +6850,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '商場清潔機械人' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '深層潔淨 X-9' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -6902,7 +6935,7 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '轉刷模式啟動！靠近會掃——睇預警區！' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
+        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '（待補）' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
         '#ffe08a',
         { size: 16, dur: 2000 },
       )
@@ -6913,13 +6946,13 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '清潔機械人加速！預警仲喺——郁開先打！' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
+        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '（待補）' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
         '#ff9a3a',
         { size: 16, dur: 2000 },
       )
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '過熱停機！而家打！' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '（待補）' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
     } else if (kind === 'finale' && this.queen) {
       SFX.sparkle()
       this.cameras.main.flash(200, 255, 220, 160)
@@ -6928,7 +6961,7 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '洗地機停機！' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '（待補）' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy
@@ -6941,17 +6974,37 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Mall boss down: the honey jar drops in the arena; taking it ends the stage (same clear flow as the other stages). */
+  /** Mall boss down: chip already popped in MallScrubber.die → 噗噗 sniffs → honey jar. */
   private mallDefeated() {
     if (this.ended) return
     const b = ST.boss!
     const x = (b.arenaX0 + b.arenaX1) / 2
-    SFX.powerUp()
-    this.emitScore('清潔機械人停機！拎埋嗰罐蜜！')
-    floatText(this, x, 90, '蜜罐跌咗出嚟！', '#ffe08a', { size: 18, dur: 2200 })
-    this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
-    const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as Phaser.Physics.Arcade.Sprite | undefined
-    jar?.setData('bossJar', true)
+    const qx = this.queen?.x ?? x
+    // Pure motion, no dialogue: 噗噗 walks over and sniffs the stopped machine.
+    if (this.pet?.active) {
+      const pet = this.pet
+      this.tweens.add({
+        targets: pet,
+        x: qx - 36,
+        duration: 700,
+        ease: 'Sine.out',
+        onComplete: () => {
+          if (pet.anims?.exists?.('pupu-cute-pose')) pet.anims.play('pupu-cute-pose')
+          this.tweens.add({ targets: pet, y: pet.y - 4, duration: 180, yoyo: true, repeat: 2 })
+        },
+      })
+    }
+    this.time.delayedCall(1200, () => {
+      if (this.ended) return
+      SFX.powerUp()
+      this.emitScore('深層潔淨 X-9 停機！拎埋嗰罐蜜！')
+      floatText(this, x, 90, '（待補）', '#ffe08a', { size: 18, dur: 2200 })
+      this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
+      const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as
+        | Phaser.Physics.Arcade.Sprite
+        | undefined
+      jar?.setData('bossJar', true)
+    })
   }
 
   private queenDefeated() {

@@ -39,6 +39,14 @@
 | HUD 白方塊頭像框 | `hud.ts` `make.graphics` | 另任務 |
 | Debug gfx | `engine/debug.ts` | 保留 |
 
+## ART-REQUEST（2026-11-22 · T2 深層潔淨 X-9）
+
+| 項目 | 規格 | 狀態 |
+|------|------|------|
+| Boss 深層潔淨 X-9 | 銀灰＋深藍洗地機；鏡頭眼（黃）＋前大轉刷＋背後散熱口；約 96×80；frames: idle×2 / warn×2 / charge×2 / recover×2 / spray×1 / defeated×1；32-bit 大陸2 色板 | todo（而家用 Phaser Graphics 乾淨版） |
+| 鼓風機 prop | 藍蝸牛殼、扁出風口、輪；約 48×40；frames: off / warn / on×2 / stunned；**唔好有品牌字**；ref：`docs/gdd/refs/mall-floor-blower-ref.jpg`（若缺圖請 Alan 補） | todo |
+| FX | 滑行塵、酸液弧、酸漬、紅預警圈、風線、晶片閃光 | todo |
+
 ## 本輪（1–3）交付
 
 1. 本清單  
