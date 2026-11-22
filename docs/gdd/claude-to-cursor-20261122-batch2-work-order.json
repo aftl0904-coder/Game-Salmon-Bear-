@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "from": "Claude（boss／planner）",
+    "to": "Cursor（執行，Auto model）",
+    "date": "2026-11-22",
+    "status": "Alan 已確認方向（2026-11-22 10:23 對話）",
+    "relation": "第一份工單 docs/gdd/claude-to-cursor-20261122-c2s1-work-order.json 照舊有效（PR-A #107、PR-B #108、PR-C）。呢份係第二批，加 PR-D、PR-E、PR-F、PR-G，另外 PR-C 加一張票 T5b。",
+    "how_to_use": "逐張票照做。steps 照次序；numbers 直接用，唔好自己改；acceptance 全部 PASS 先開 PR；do_not 唔准做。做唔到或者同代碼唔夾 → 停低回【Cursor → Claude】講卡喺邊，唔好自己諗替代方案。",
+    "global_rules": [
+      "每條 PR 由最新 origin/main 開新 branch，用 pr_plan 指定嘅名",
+      "開唔到 PR 就回報 branch 名，Claude 代開；唔准自己 merge",
+      "唔准寫對白；對白位放「（待補）」",
+      "唔准開第8–10關",
+      "每條 PR 完成前：npm run build 成功＋該票 Playwright 測試＋現有測試全部 PASS",
+      "新美術全部原創；唔准有真實品牌名、logo、字樣；唔准用任何現成卡通角色（例如任天堂、叮噹）嘅外形",
+      "PR 描述必須有：改咗邊啲檔、每項 acceptance PASS/FAIL、預覽網址、所有最終用咗嘅數值"
+    ]
+  },
+
+  "pr_plan": [
+    { "pr": "PR-C", "branch": "cursor/c2-mall-polish-2610", "tickets": ["T3_ESCALATOR", "T4_DEATH_FADE", "T5_SHOP_ICONS", "T5b_MALL_PROPS"], "start": "等 #107 合併後" },
+    { "pr": "PR-D", "branch": "cursor/quick-size-fixes-2610", "tickets": ["T6_ROE_SIZE", "T7_MAP_TEXT_2X"], "start": "即刻" },
+    { "pr": "PR-E", "branch": "cursor/loading-screen-2610", "tickets": ["T8_LOADING_SCREEN"], "start": "即刻" },
+    { "pr": "PR-F", "branch": "cursor/boss-rhythm-2610", "tickets": ["T9_BOSS_RHYTHM"], "start": "等 #108 合併後（要用新洗地機做基礎）" },
+    { "pr": "PR-G", "branch": "cursor/minigames-2610", "tickets": ["T10_COFFEE_HARDER", "T11_FLAG_GAME", "T12_MEMORY_GAME"], "start": "即刻" },
+    { "note": "即刻可以並行：PR-D、PR-E、PR-G。佢哋改唔同檔，盡量唔好郁 GameScene.ts 其他地方，減少衝突。" }
+  ],
+
+  "tickets": [
+    {
+      "id": "T5b_MALL_PROPS",
+      "pr": "PR-C",
+      "goal": "第6關（商場）所有三角形／幾何 placeholder 雜物換成畫好嘅簡單道具",
+      "where": "src/game/stage6World.ts（同 GameScene.ts 入面第6關佈景部分）",
+      "steps": [
+        "1. 搵出第6關所有用 Graphics 畫三角形／純色幾何塊做嘅雜物，列表寫入 PR 描述（位置 x、而家係咩形狀）",
+        "2. 每件按位置換成以下其中一樣：盆栽、長椅、垃圾桶、指示牌、購物手推車、膠欄杆、自動扶手電梯入口牌、廣告燈箱（無字）",
+        "3. 用 Phaser Graphics 或者 32-bit 小圖畫，色調跟大陸2商場色板；每件高度 24–64px",
+        "4. 碰撞同原本一樣（原本可以企上去嘅照樣可以，原本冇碰撞嘅照樣冇）"
+      ],
+      "acceptance": [
+        "P1 第6關畫面再冇三角形／幾何 placeholder",
+        "P2 玩法冇變：同一位置跳躍、企台、碰撞同之前一樣（Playwright 行一次第6關 A–E 段唔卡）",
+        "P3 冇任何字樣或品牌"
+      ]
+    },
+
+    {
+      "id": "T6_ROE_SIZE",
+      "pr": "PR-D",
+      "goal": "主角三文魚槍射出嚟嘅三文魚子細粒返",
+      "where": "src/game/GameScene.ts spawnRoe()（約第1664行）：shot.setScale(1.7 * PROJ_DISPLAY_SCALE * …)",
+      "numbers": {
+        "base_scale": "1.7 → 1.1（其餘倍數 0.8／1.4 照舊）",
+        "hitbox": "命中範圍保持同改之前一樣大：縮細圖之後用 body.setSize／setCircle 補返，唔好令子彈難打中"
+      },
+      "steps": [
+        "1. 先量改之前 body 嘅實際大小（px），寫入 PR 描述",
+        "2. 改 base_scale",
+        "3. 補返 body 大小到同第1步一樣",
+        "4. 唔好改 PROJ_DISPLAY_SCALE（會影響其他嘢）"
+      ],
+      "acceptance": [
+        "R1 子彈視覺大小約為之前 65%（截圖前後對比放 docs/qa-roe-size/）",
+        "R2 命中範圍同之前一樣（Playwright：同一距離射同一隻敵人，改前改後都命中）",
+        "R3 重裝（power>1）同輕裝（power<1）比例照舊"
+      ]
+    },
+
+    {
+      "id": "T7_MAP_TEXT_2X",
+      "pr": "PR-D",
+      "goal": "世界地圖（WorldMapScene，大陸1、大陸2 共用）啲字大至少兩倍",
+      "where": "src/game/WorldMapScene.ts 所有 this.add.text 嘅 fontSize",
+      "numbers": {
+        "rule": "fontSize ×2：9px→18px、10px→20px、11px→22px、13px→26px、14px→28px",
+        "title_exception": "22px 嘅關名大標題 → 32px（×2 會太大）",
+        "canvas": "畫面 640×360，所有字必須完整喺畫面內"
+      },
+      "steps": [
+        "1. 逐個 text 改 fontSize",
+        "2. 字變大之後如果重疊或者出界：先加 wordWrap（寬度 ≤ 560px），再調 y 位置；地圖上關卡圖示旁邊嘅細字可以移到圖示下面",
+        "3. 頂角提示（例如「Enter／A 繼續」）如果太長，縮短為「A／Enter 繼續」"
+      ],
+      "acceptance": [
+        "W1 所有地圖文字最少係原本兩倍（標題例外 32px）",
+        "W2 冇字重疊、冇字出界（截圖：大陸1 地圖、大陸2 地圖、聖經金句頁、開新局選擇頁，放 docs/qa-map-text/）",
+        "W3 手機直向／橫向都睇得清（Playwright 用 iPhone 13 尺寸截圖）"
+      ]
+    },
+
+    {
+      "id": "T8_LOADING_SCREEN",
+      "pr": "PR-E",
+      "goal": "第一次入遊戲嘅 Loading 畫面：由淺藍色背景改為色彩繽紛、日本卡通風，主角＋噗噗＋所有朋友嘅 Q 版大頭疊埋一齊",
+      "where": "src/game/BootScene.ts（第83行附近 this.load.on('progress')）",
+      "design": {
+        "background": "放射紋（sunburst）12 條，顏色輪流 #ffd76a、#ff9ec4、#8fd3ff、#b9f27c，中心喺畫面中間偏上，慢慢轉（每秒 6 度）",
+        "heads": "倫寶、琪寶寶、噗噗（放最大最前）＋ docs/bible/friends.md 列出嘅所有朋友；每個 Q 版大頭約 56–72px（主角三個 88px）；疊埋一齊成一堆，喺畫面中間；每個頭用 sine 上下彈 2–4px，每個相位唔同",
+        "title": "遊戲 logo（用現有標題圖）喺頂部",
+        "progress_bar": "底部一個蜂蜜罐，由下而上裝滿蜂蜜表示進度；旁邊細字「載入中… 63%」（fontSize 18px）",
+        "finish": "載入完成後全部大頭一齊跳一下（0.3 秒），然後淡出去標題畫面",
+        "build_stamp": {
+          "alan_ask": "Loading 畫面右下角顯示呢個版本嘅日期同 merge 時間",
+          "text_format": "v{YYYY-MM-DD HH:mm}（香港時間）· {commit 前 7 位}，例如「v2026-11-22 14:05 · 5d964bf」",
+          "how": "build 時用 Vite define 注入兩個常數：__BUILD_TIME__（build 當刻嘅時間，轉 Asia/Hong_Kong）同 __BUILD_SHA__（process.env.VERCEL_GIT_COMMIT_SHA 前 7 位；冇就顯示 local）。main 每次 merge 都會觸發 Vercel build，所以 build 時間＝merge 後部署時間",
+          "style": "fontSize 12px，白字＋深色描邊，右下角留 6px 邊距，唔好遮住蜂蜜罐",
+          "also": "標題畫面右下角都顯示同一行，方便 Alan 確認手機開緊邊個版本"
+        }
+      },
+      "art": {
+        "requirement": "Q 版大頭：頭佔全身 100%（淨係個頭），大眼、圓臉、粗黑邊線、平塗加一層陰影，32-bit 風格",
+        "interim": "如果冇時間畫新圖：由現有角色 sprite 裁出個頭，用 nearest 放大 2–3 倍做臨時版；喺 docs/bible/art-todo.md 加 ART-REQUEST（列出每個角色名）",
+        "loading_order": "Loading 畫面本身用嘅圖（大頭、logo、蜂蜜罐）要放喺一個細 preload pack 最先載入，總大小 ≤ 300KB；其他遊戲資源之後先載入"
+      },
+      "do_not": ["人為延長載入時間（最多額外 0.8 秒畀完成動畫）", "用真實品牌或者現成卡通角色"],
+      "acceptance": [
+        "L1 第一次開網頁見到放射紋背景＋一堆 Q 版大頭＋蜂蜜罐進度條（截圖放 docs/qa-loading/）",
+        "L2 主角兩個＋噗噗＋friends.md 所有朋友都喺畫面（PR 描述列名）",
+        "L3 進度條跟真實載入進度郁",
+        "L4 手機（iPhone 13 尺寸）同電腦都正常顯示，唔出界",
+        "L5 第二次入（有快取）都唔會卡住，完成即淡出",
+        "L6 右下角顯示 v{日期 時間} · {commit}；預覽網址上顯示嘅 commit 同 PR 最新 commit 一致"
+      ]
+    },
+
+    {
+      "id": "T9_BOSS_RHYTHM",
+      "pr": "PR-F",
+      "goal": "所有 Boss 改為「睇節奏、搵空隙」：唔再雙方互相亂打鬥多血",
+      "alan_words": "大佬停喺度出招時任我打、快嚟快去鬥多血唔好玩。要大佬血少啲，出招前有方法令我唔可以即時打佢，大家有時間抖吓，節奏慢啲，要捉摸節奏先搵到空隙打先好玩。",
+      "scope": {
+        "bosses": [
+          "WarriorKing（src/game/enemies/Stage1Boss.ts）",
+          "QueenBee（Stage2Enemies.ts）",
+          "MirrorOwl（Stage3Enemies.ts）",
+          "MudMane（Stage4Enemies.ts）",
+          "TriBoss（Stage5Enemies.ts）",
+          "MallScrubber（MallScrubber.ts，用 #108 合併後嘅版本）",
+          "Trainer（Stage6Enemies.ts SecurityDirector class 嘅 trainer 模式）"
+        ],
+        "excluded": "第6關非戰鬥保安總監（照舊唔可以打）"
+      },
+      "design": {
+        "cycle": [
+          "GUARD 1500ms：Boss 開護盾（半透明圓罩＋閃光邊），玩家打中會「叮」一聲彈開，0 傷害；Boss 唔會攻擊",
+          "WARN：原本預警時間 ×1.3",
+          "ATTACK：原本招式，移動／子彈速度 ×0.8",
+          "OPENING 2500ms：Boss 喘氣（頭頂出汗滴／冒煙），呢段先可以打；背面打 ×2 傷害（沿用現有 weak 邏輯）",
+          "BREATHER 2000ms：Boss 行開去離最近玩家最遠嗰邊，護盾再開，唔攻擊、唔受傷；玩家都可以休息",
+          "之後返去 GUARD，下一個循環"
+        ],
+        "contact": "只有 ATTACK 期間 Boss 身體或招式先會扣玩家血；其他時間撞到 Boss 只會被輕輕推開，唔扣血",
+        "phase_change": "轉段時強制入 BREATHER 2500ms，畫面輕震",
+        "minions": "Boss 叫出嚟嘅雜兵唔受呢個循環影響，但 OPENING 期間唔准叫新雜兵",
+        "special": "MirrorOwl 分身：分身跟本體同一個循環；只有本體 OPENING 時打本體先有效。TriBoss 揭面具演出唔郁"
+      },
+      "numbers": {
+        "hp_start": "每個 Boss 現有 HP ×0.7（四捨五入）",
+        "tuning_target": "1P、冇裝備、普通難度：每一段血大約要 3–4 次 OPENING 先打完；如果 ×0.7 唔夾，調 HP 去達到目標，唔好改玩家傷害",
+        "fight_length": "成場 Boss 戰 2–4 分鐘",
+        "difficulty": "如果有難度設定（difficulty.ts），簡單模式 OPENING 3000ms，困難模式 2000ms；其餘數值同普通"
+      },
+      "implementation_hint": "喺 Enemy.ts 加一個共用 BossRhythm helper（狀態：GUARD/WARN/ATTACK/OPENING/BREATHER），每個 Boss class 喺原本出招前後 call 佢；receiveHit() 喺非 OPENING 時 return 0 傷害＋叮聲；canHurtPlayer() 只喺 ATTACK 時 true。唔好逐個 Boss 抄一份。",
+      "steps": [
+        "1. 先做 helper＋套落 WarriorKing（第1關），Playwright 驗收 K1–K4，截一段錄影",
+        "2. 回報一次【Cursor → Claude】PR-F 中期（只交第1關），等 Alan 試手感再繼續；Alan 未覆就停",
+        "3. Alan OK 之後先套落其餘 6 個 Boss"
+      ],
+      "acceptance": [
+        "K1 GUARD／BREATHER 期間打 Boss：0 傷害＋叮聲（Playwright）",
+        "K2 OPENING 期間打 Boss：有傷害（Playwright）",
+        "K3 非 ATTACK 期間撞 Boss：玩家唔扣血（Playwright）",
+        "K4 每段血需要 3–4 次 OPENING（Playwright 模擬每次 OPENING 打滿，數次數）",
+        "K5 七個 Boss 全部套用，每個成場 2–4 分鐘（Cursor 自己玩，PR 描述列時間）",
+        "K6 大陸1 第1–5關清關流程冇壞（現有測試全 PASS）"
+      ],
+      "do_not": ["改玩家傷害或者玩家數值", "刪 Boss 原有招式", "改 Boss 對白"]
+    },
+
+    {
+      "id": "T10_COFFEE_HARDER",
+      "pr": "PR-G",
+      "goal": "攪咖啡（第1關咖啡媽媽）難少少",
+      "where": "src/game/minigames.ts stirCoffee()（約第226行）",
+      "numbers": {
+        "time": "STIR_MS 8000 → 6000",
+        "speed_band": "每 500ms 計一次攪拌角速度；綠區 = 每秒 1.5–3.0 圈",
+        "too_fast": "> 3.0 圈／秒：杯邊出咖啡濺出 FX，『瀉』條加；瀉條滿 = 扣分",
+        "too_slow": "< 1.5 圈／秒：杯面變灰（凍咗）",
+        "score": "綠區時間佔 6 秒嘅百分比；≥ 70% =「啱啱好！」，40–69% =「OK 啦」，< 40% =「未攪勻」",
+        "ui": "杯旁邊加一條速度計（慢｜綠區｜快），指針即時郁"
+      },
+      "result_compat": "CoffeeResult 仍然有 stirred 欄位；stirred = 綠區百分比 / 0.7（上限 1），令舊獎勵邏輯照用",
+      "acceptance": [
+        "C1 6 秒限時",
+        "C2 一直亂快攪會瀉、會低分（Playwright 模擬）",
+        "C3 穩定喺綠區攪 ≥ 70% 得「啱啱好！」",
+        "C4 教學頁（showTutorial）更新說明：要穩定速度，唔好太快太慢"
+      ]
+    },
+
+    {
+      "id": "T11_FLAG_GAME",
+      "pr": "PR-G",
+      "goal": "新小遊戲「舉旗大賽」（紅藍旗反應遊戲），放喺第6關商場攤檔",
+      "rules": {
+        "host": "噗噗做主持，兩隻手揸住紅旗、藍旗（原創畫法）",
+        "commands": [
+          "舉紅旗", "放低紅旗", "舉藍旗", "放低藍旗",
+          "唔好舉紅旗（陷阱：乜都唔好撳）", "唔好舉藍旗（陷阱）"
+        ],
+        "state": "玩家有兩支旗，各自係『舉起』或『放低』；指令要求嘅狀態已經係咁 → 呢輪應該乜都唔撳",
+        "controls_1p": "← 或 A：切換紅旗；→ 或 D：切換藍旗；觸控：畫面左半＝紅、右半＝藍",
+        "controls_2p": "跟現有 2P 小遊戲嘅按鍵分配；如果冇現成 2P 小遊戲輸入，先做 1P 版，PR 描述講明",
+        "rounds": 10,
+        "window_ms": "第1輪 1200ms，每輪減 50ms，最低 750ms",
+        "score": "啱 +1；錯或者過時未做 −1（最低 0）；陷阱輪撳咗 −1",
+        "display": "指令大字（32px）喺畫面中間，噗噗同步做動作（陷阱輪噗噗會扮舉旗呃你）",
+        "result": "用現有 RoundResult { good, total }；獎勵同其他攤檔小遊戲一樣計"
+      },
+      "placement": "第6關 C 段或者 D 段（Boss 前），加一個攤檔＋攤主；攤主外形原創、對白「（待補）」；如果第6關原本有攤檔位，用嗰個位",
+      "acceptance": [
+        "F1 10 輪完整玩到，計分正確（Playwright 模擬全啱＝10、全錯＝0）",
+        "F2 陷阱輪唔撳＝得分",
+        "F3 第一次玩有教學頁（showTutorial）",
+        "F4 鍵盤、觸控都玩得"
+      ]
+    },
+
+    {
+      "id": "T12_MEMORY_GAME",
+      "pr": "PR-G",
+      "goal": "新小遊戲「記貨單」（記憶遊戲），放喺第7關森友展銷中心攤檔",
+      "rules": {
+        "setup": "畫面中間一個十字，上下左右四格各放一樣貨品圖（蜂蜜罐、蘋果、魚、花）",
+        "show": "貨品逐個亮起（每個亮 600ms、間隔 200ms），玩家記住次序",
+        "input": "玩家用 ↑↓←→（或 WASD／觸控點格）照次序撳返",
+        "rounds": "4 輪：長度 3、4、5、6",
+        "fail": "撳錯即該輪失敗（顯示正確次序 1 秒），進入下一輪",
+        "score": "完成嘅輪數 → RoundResult { good: 啱咗幾輪, total: 4 }",
+        "fairness": "同一次序唔可以連續三個一樣"
+      },
+      "placement": "第7關 Boss 前一段，加攤檔＋攤主（原創，對白「（待補）」）",
+      "acceptance": [
+        "M1 4 輪長度正確（Playwright 讀內部序列再撳＝全啱）",
+        "M2 撳錯即失敗並顯示答案",
+        "M3 第一次玩有教學頁",
+        "M4 鍵盤、觸控都玩得"
+      ]
+    }
+  ],
+
+  "report_format": "完成每條 PR 回：\n【Cursor → Claude】PR-X 完成\nPR #／branch：\n改咗：\nacceptance：逐項 PASS/FAIL\n最終數值：\n預覽：\n卡住／疑問："
+}
