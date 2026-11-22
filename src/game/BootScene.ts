@@ -34,70 +34,313 @@ import {
   TARGET_H_ENEMY_M,
   TARGET_H_ITEM,
 } from './engine/constants'
+import { buildStampLabel } from './version'
+import {
+  LOADING_BOOT_IMAGES,
+  allLoadingHeadSpecs,
+  bakeQHead,
+} from './loadingHeads'
 
 const HD_PROP_RES = 2
 
+const RAY_COLORS = [0xffd76a, 0xff9ec4, 0x8fd3ff, 0xb9f27c] as const
+const FINISH_ANIM_MAX_MS = 800
+const HEAD_JUMP_MS = 300
+const HEAD_FADE_MS = 400
+/** Boot-pack weight in the honey bar (rest of assets fill the remainder). */
+const BOOT_WEIGHT = 0.12
 
-/** Boot — asset preload + stage config into registry, then logo splash. */
+type HeadBob = {
+  img: Phaser.GameObjects.Image
+  baseY: number
+  amp: number
+  phase: number
+  speed: number
+}
+
+/** Boot — fancy loading (sunburst + Q-heads + honey jar), then bake + studio. */
 export class BootScene extends Phaser.Scene {
+  private sunburst!: Phaser.GameObjects.Container
+  private honeyFill!: Phaser.GameObjects.Rectangle
+  private honeyMaskGfx!: Phaser.GameObjects.Graphics
+  private jarH = 56
+  private jarW = 40
+  private progressText!: Phaser.GameObjects.Text
+  private heads: HeadBob[] = []
+  private headsRoot: Phaser.GameObjects.Container | null = null
+  private loadProgress = 0
+  private phase: 'boot' | 'rest' | 'finish' | 'done' = 'boot'
+  private finishing = false
+  private stampLabel = ''
+
   constructor() {
     super('boot')
   }
 
   preload() {
+    this.cameras.main.setBackgroundColor('#1a1020')
+    this.buildLoadingChrome()
+    this.queueBootPack()
+    this.load.on('progress', (p: number) => {
+      if (this.phase !== 'boot') return
+      this.setProgress(BOOT_WEIGHT * p)
+    })
+  }
+
+  create() {
+    this.phase = 'rest'
+    this.buildHeadPile()
+    this.publishLoadingHook()
+    this.queueRestAssets()
+    this.load.on('progress', (p: number) => {
+      if (this.phase !== 'rest') return
+      this.setProgress(BOOT_WEIGHT + (1 - BOOT_WEIGHT) * p)
+    })
+    this.load.once(Phaser.Loader.Events.COMPLETE, () => this.onAssetsReady())
+    this.load.start()
+  }
+
+  update(t: number, _dt: number) {
+    // Absolute clock → steady 6°/sec even when frame dt jitters under load.
+    if (this.sunburst) this.sunburst.angle = (t / 1000) * 6
+    const now = t / 1000
+    for (const h of this.heads) {
+      h.img.y = h.baseY + Math.sin(now * h.speed + h.phase) * h.amp
+    }
+    this.publishLoadingHook()
+  }
+
+  // ── Loading UI ──────────────────────────────────────────────────────────
+
+  private buildLoadingChrome() {
     const width = GAME_W
     const height = GAME_H
-    this.cameras.main.setBackgroundColor('#3a2818')
+    const cx = width / 2
+    const cy = Math.round(height * 0.38)
 
-    const g = this.add.graphics()
-    g.fillGradientStyle(0x4a88b0, 0x4a88b0, 0x3a2818, 0x2a1810, 1)
-    g.fillRect(0, 0, width, height)
-    g.fillStyle(0xe8b86a, 0.16)
-    g.fillCircle(width * 0.85, 60, 140)
-    g.fillStyle(0xe07a4f, 0.1)
-    g.fillCircle(width * 0.12, height - 50, 90)
+    this.sunburst = this.add.container(cx, cy)
+    const rays = this.add.graphics()
+    const R = Math.hypot(width, height)
+    const wedge = (Math.PI * 2) / 12
+    for (let i = 0; i < 12; i++) {
+      const a0 = i * wedge - Math.PI / 2
+      const a1 = a0 + wedge
+      rays.fillStyle(RAY_COLORS[i % RAY_COLORS.length], 1)
+      rays.beginPath()
+      rays.moveTo(0, 0)
+      rays.lineTo(Math.cos(a0) * R, Math.sin(a0) * R)
+      rays.lineTo(Math.cos(a1) * R, Math.sin(a1) * R)
+      rays.closePath()
+      rays.fillPath()
+    }
+    this.sunburst.add(rays)
+    // Soft centre wash so heads read clearly.
+    const wash = this.add.graphics()
+    wash.fillStyle(0xfff6d8, 0.35)
+    wash.fillCircle(0, 0, 90)
+    this.sunburst.add(wash)
+    this.sunburst.setDepth(0)
 
     this.add
-      .text(width / 2, height / 2 - 28, '鮭鮭熊', {
+      .text(cx, 28, '鮭鮭熊', {
         fontFamily: FONT_TITLE,
-        fontSize: '24px',
+        fontSize: '28px',
         color: '#ffe08a',
         stroke: '#3a2010',
+        strokeThickness: 5,
+      })
+      .setOrigin(0.5)
+      .setDepth(20)
+
+    this.add
+      .text(cx, 52, '百畝樹林野餐　｜　奪回蜂蜜與朋友', {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#fff6e0',
+        stroke: '#2a1810',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth(20)
+
+    this.buildHoneyJar(cx, height - 52)
+    this.progressText = this.add
+      .text(cx, height - 18, '載入中… 0%', {
+        fontFamily: FONT_UI,
+        fontSize: '18px',
+        color: '#fff8e8',
+        stroke: '#2a1810',
         strokeThickness: 4,
       })
       .setOrigin(0.5)
+      .setDepth(30)
 
-    const barBg = this.add.rectangle(width / 2, height / 2 + 16, 200, 12, 0x6a4228)
-    barBg.setStrokeStyle(2, 0xe0b86a)
-    const bar = this.add
-      .rectangle(width / 2 - 96, height / 2 + 16, 4, 8, 0xe07a4f)
-      .setOrigin(0, 0.5)
+    this.stampLabel = buildStampLabel()
     this.add
-      .text(width / 2, height / 2 + 40, '讀取中…　請稍候', {
+      .text(width - 6, height - 6, this.stampLabel, {
         fontFamily: FONT_UI,
         fontSize: '12px',
-        color: '#f3e6c8',
+        color: '#ffffff',
+        stroke: '#1a1008',
+        strokeThickness: 3,
       })
-      .setOrigin(0.5)
+      .setOrigin(1, 1)
+      .setDepth(40)
+  }
 
-    this.load.on('progress', (p: number) => {
-      bar.width = Math.max(4, 192 * p)
+  private buildHoneyJar(cx: number, cy: number) {
+    this.jarW = 56
+    this.jarH = 70
+    const jarX = cx
+    const jarY = cy
+    const pad = 5
+    const innerW = this.jarW - pad * 2
+    const innerH = this.jarH - pad * 2 - 4
+    const fillBottom = jarY + this.jarH / 2 - pad
+
+    // Glass jar back (empty).
+    const body = this.add.graphics().setDepth(25)
+    body.fillStyle(0xfff6d0, 0.22)
+    body.fillRoundedRect(jarX - this.jarW / 2, jarY - this.jarH / 2, this.jarW, this.jarH, 10)
+    body.lineStyle(3, 0xe0b86a, 1)
+    body.strokeRoundedRect(jarX - this.jarW / 2, jarY - this.jarH / 2, this.jarW, this.jarH, 10)
+    // Lid
+    body.fillStyle(0xc48a28, 1)
+    body.fillRoundedRect(jarX - this.jarW / 2 - 5, jarY - this.jarH / 2 - 10, this.jarW + 10, 14, 4)
+    body.lineStyle(2, 0x5a3810, 1)
+    body.strokeRoundedRect(jarX - this.jarW / 2 - 5, jarY - this.jarH / 2 - 10, this.jarW + 10, 14, 4)
+
+    // Honey fill grows upward from the jar floor.
+    this.honeyFill = this.add
+      .rectangle(jarX, fillBottom, innerW, 2, 0xf0a820)
+      .setOrigin(0.5, 1)
+      .setDepth(26)
+    // Highlight stripe on honey surface (redrawn via height only; stripe is a child feel via second rect).
+    const honeyTop = this.add
+      .rectangle(jarX, fillBottom - 1, innerW, 3, 0xffe08a)
+      .setOrigin(0.5, 1)
+      .setDepth(27)
+    ;(this as unknown as { honeyTop: Phaser.GameObjects.Rectangle }).honeyTop = honeyTop
+
+    this.honeyMaskGfx = this.add.graphics().setVisible(false)
+    this.honeyMaskGfx.fillStyle(0xffffff, 1)
+    this.honeyMaskGfx.fillRoundedRect(
+      jarX - this.jarW / 2 + pad,
+      jarY - this.jarH / 2 + pad + 4,
+      innerW,
+      innerH,
+      8,
+    )
+    const mask = this.honeyMaskGfx.createGeometryMask()
+    this.honeyFill.setMask(mask)
+    honeyTop.setMask(mask)
+
+    this.events.once('heads-ready', () => {
+      if (!this.textures.exists('load-jar')) return
+      this.add
+        .image(jarX + this.jarW / 2 + 20, jarY, 'load-jar')
+        .setDisplaySize(24, 28)
+        .setDepth(28)
+    })
+  }
+
+  private setProgress(p: number) {
+    this.loadProgress = Phaser.Math.Clamp(p, 0, 1)
+    const pct = Math.round(this.loadProgress * 100)
+    this.progressText?.setText(`載入中… ${pct}%`)
+    if (this.honeyFill) {
+      const pad = 5
+      const innerH = this.jarH - pad * 2 - 4
+      const h = Math.max(2, innerH * this.loadProgress)
+      this.honeyFill.height = h
+      const honeyTop = (this as unknown as { honeyTop?: Phaser.GameObjects.Rectangle }).honeyTop
+      if (honeyTop) honeyTop.y = this.honeyFill.y - h + 3
+    }
+    this.publishLoadingHook()
+  }
+
+  private buildHeadPile() {
+    const specs = allLoadingHeadSpecs()
+    for (const s of specs) bakeQHead(this, s.src, s.out, s.size)
+
+    const width = GAME_W
+    const height = GAME_H
+    const cx = width / 2
+    const cy = Math.round(height * 0.42)
+    this.headsRoot = this.add.container(0, 0).setDepth(10)
+    this.heads = []
+
+    // Friends ring behind (pile).
+    const friends = specs.filter((s) => !['lunbo', 'kibobo', 'pupu'].includes(s.id))
+    const n = friends.length
+    friends.forEach((s, i) => {
+      if (!this.textures.exists(s.out)) return
+      const ang = (i / n) * Math.PI * 2 - Math.PI / 2
+      const rx = 110 + (i % 3) * 8
+      const ry = 48 + (i % 2) * 10
+      const x = cx + Math.cos(ang) * rx * 0.55
+      const y = cy + Math.sin(ang) * ry * 0.9 + 10
+      const img = this.add.image(x, y, s.out).setOrigin(0.5, 1).setDepth(10 + i)
+      img.setDisplaySize(s.size, s.size)
+      this.headsRoot!.add(img)
+      this.heads.push({
+        img,
+        baseY: y,
+        amp: 2 + (i % 3),
+        phase: i * 0.7,
+        speed: 2.2 + (i % 4) * 0.35,
+      })
     })
 
-    // Single-frame hero/enemy art (not spritesheets). Wrong frameWidth/Height
-    // would waist-cut 琪寶寶 — keep as full-image textures.
-    this.load.image('art-salmon', '/art/salmon-boy.png')
-    this.load.image('art-girl', '/art/bear-girl.png')
-    this.load.image('art-bear', '/art/kind-bear.png')
-    this.load.image('art-enemy', '/art/fish-enemy.png')
+    // Cast front & largest.
+    const castPos = [
+      { id: 'lunbo', x: cx - 52, y: cy + 36 },
+      { id: 'pupu', x: cx, y: cy + 44 },
+      { id: 'kibobo', x: cx + 52, y: cy + 36 },
+    ]
+    castPos.forEach((p, i) => {
+      const s = specs.find((x) => x.id === p.id)
+      if (!s || !this.textures.exists(s.out)) return
+      const img = this.add.image(p.x, p.y, s.out).setOrigin(0.5, 1).setDepth(40 + i)
+      img.setDisplaySize(88, 88)
+      this.headsRoot!.add(img)
+      this.heads.push({
+        img,
+        baseY: p.y,
+        amp: 3 + i,
+        phase: i * 1.1,
+        speed: 2.6 + i * 0.2,
+      })
+    })
+
+    this.events.emit('heads-ready')
+  }
+
+  // ── Asset packs ─────────────────────────────────────────────────────────
+
+  private queueBootPack() {
+    for (const { key, url } of LOADING_BOOT_IMAGES) {
+      this.load.image(key, url)
+    }
+  }
+
+  private queueRestAssets() {
     // Cel coin (salmon emblem) — overrides procedural paint after registers.
     this.load.image('coin-cel', '/art/coin.png')
     // Pixel wallpaper (640×360 ≤64c)
     this.load.image('bg-wallpaper', '/art/bg-wallpaper-px.png')
     this.load.image('bg-sky-wallpaper', '/art/bg-sky-wallpaper.jpg')
     // Stage 7: far plates from C2 32-bit q128 (G+S); see art/stage7/manifest.json / art-src/c2-32bit-test/.
-    // The later reviewed B/C sources and derivation are recorded in mid-manifest.json.
-    for (const name of ['entrance-far', 'corridor-mid', 'training-mid', 'backstage-far', 'arena-far', 'net-static', 'number-plate-blank', 'sign-blank']) {
+    for (const name of [
+      'entrance-far',
+      'corridor-mid',
+      'training-mid',
+      'backstage-far',
+      'arena-far',
+      'net-static',
+      'number-plate-blank',
+      'sign-blank',
+    ]) {
       this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)
     }
     for (const meta of Object.values(ENEMY_SHEET_MAP)) {
@@ -106,26 +349,22 @@ export class BootScene extends Phaser.Scene {
     for (let v = 0; v < 4; v++) {
       this.load.image(`tile-ground-${v}`, `/art/tiles/ground-${v}.png`)
     }
-    // Hand-pixelled terrain (scripts/art/gen_terrain.py): grass lip + wide dirt, foreground bushes.
     this.load.image('tile-ground-top', '/art/tiles/ground-top.png')
     this.load.image('bg-bush-strip', '/art/tiles/bush-strip.png')
-    // Painted lighting + shadow (scripts/art/slice_light.py); every use falls back if missing.
     for (const f of ['shadow-soft', 'glow-round', 'vignette'] as const) {
       this.load.image(`fx-${f}`, `/art/fx/${f}.png`)
     }
-    // 扭蛋機 (ART-REQUEST-10): gacha prop + capsule spritesheet + charm icons.
     this.load.image('gacha-machine', '/art/props/gacha-machine.png')
-    this.load.spritesheet('gacha-capsules', '/art/props/gacha-capsules.png', { frameWidth: 64, frameHeight: 64 })
+    this.load.spritesheet('gacha-capsules', '/art/props/gacha-capsules.png', {
+      frameWidth: 64,
+      frameHeight: 64,
+    })
     for (const id of ['omamori', 'speed', 'power', 'stamina', 'luck'] as const) {
       this.load.image(`charm-${id}`, `/art/items/charm-${id}.png`)
     }
-    // 朋友仔 (ART batch-06 + ART-REQUEST-12, slice_friends.py): real art for every friend
-    // with a vetted, non-infringing design — see slice_friends.py's top comment for the
-    // ids still excluded (berry/forest/bearcub, unused by the roster) and why.
-    for (const id of ['huihui', 'guard', 'denim', 'brownie', 'shiba', 'kuro', 'tigercub', 'snowcat', 'ginger', 'fleecy', 'gnome']) {
-      this.load.image(`friend-${id}`, `/art/friends/${id}.png`)
-    }
+    // Friend full sprites already in boot pack; cage + remaining only.
     this.load.image('friend-cage', '/art/friends/cage.png')
+    this.load.image('art-enemy', '/art/fish-enemy.png')
     preloadArtOverrides(this)
     preloadHeroAnims(this)
     preloadFxAnims(this)
@@ -133,7 +372,12 @@ export class BootScene extends Phaser.Scene {
     preloadCustomConfig(this)
   }
 
-  create() {
+  private onAssetsReady() {
+    if (this.finishing) return
+    this.finishing = true
+    this.phase = 'finish'
+    this.setProgress(1)
+
     registerTiles(this)
     registerWorldArt(this)
     registerHoneyArt(this)
@@ -142,10 +386,16 @@ export class BootScene extends Phaser.Scene {
     const swapped = applyEnemyPlaceholderTextures(this)
     this.registry.set('enemyPlaceholders', swapped)
     this.registry.set('artOverrides', applyArtOverrides(this))
-    // Frame-by-frame cast (Cursor action sheets) — also swaps the old stills to the new designs.
     createHeroAnims(this)
     for (const key of this.textures.getTextureKeys()) {
-      if (key.startsWith('friend-') || key === 'gacha-machine' || key.startsWith('tile-ground-') || key === 'bg-bush-strip') markHd(this.textures.get(key), HD_PROP_RES)
+      if (
+        key.startsWith('friend-') ||
+        key === 'gacha-machine' ||
+        key.startsWith('tile-ground-') ||
+        key === 'bg-bush-strip'
+      ) {
+        markHd(this.textures.get(key), HD_PROP_RES)
+      }
     }
     createFxAnims(this)
     this.applyCelCoinTexture()
@@ -164,8 +414,52 @@ export class BootScene extends Phaser.Scene {
       coinsStart: 5,
     })
 
-    // Owner-supplied art slots (public/art/custom) load last and override the built-in frames.
-    loadCustomSkins(this, () => this.scene.start('studio'))
+    // Finish anim only — no artificial load padding. Cap at +0.8s.
+    const jumpMs = HEAD_JUMP_MS
+    const fadeMs = Math.min(HEAD_FADE_MS, FINISH_ANIM_MAX_MS - jumpMs)
+    for (const h of this.heads) {
+      this.tweens.add({
+        targets: h.img,
+        y: h.baseY - 18,
+        duration: jumpMs * 0.45,
+        yoyo: true,
+        ease: 'Quad.out',
+      })
+    }
+    this.time.delayedCall(jumpMs, () => {
+      const fadeTargets = [
+        this.sunburst,
+        this.headsRoot,
+        this.honeyFill,
+        this.progressText,
+      ].filter(Boolean) as Phaser.GameObjects.GameObject[]
+      this.tweens.add({
+        targets: fadeTargets,
+        alpha: 0,
+        duration: fadeMs,
+        onComplete: () => {
+          this.phase = 'done'
+          this.publishLoadingHook()
+          loadCustomSkins(this, () => this.scene.start('studio'))
+        },
+      })
+    })
+  }
+
+  private publishLoadingHook() {
+    ;(window as unknown as { __SAKE_LOADING__: unknown }).__SAKE_LOADING__ = {
+      phase: this.phase,
+      progress: this.loadProgress,
+      pct: Math.round(this.loadProgress * 100),
+      headCount: this.heads.length,
+      castNames: ['倫寶', '琪寶寶', '噗噗'],
+      friendNames: allLoadingHeadSpecs()
+        .filter((s) => !['lunbo', 'kibobo', 'pupu'].includes(s.id))
+        .map((s) => s.name),
+      rayCount: 12,
+      stamp: this.stampLabel || buildStampLabel(),
+      sunburstAngle: this.sunburst?.angle ?? 0,
+    }
   }
 
   /** Prefer cel PNG coin over procedural koban paint (heroes + coin share style). */
@@ -191,9 +485,6 @@ export class BootScene extends Phaser.Scene {
    * NEAREST bake ×1 + 1px ink — no soft AA (bible stage 3).
    */
   private bakeCastTextures() {
-    // Cel hero PNGs already include casual outfits + 琪寶寶背風扇 —
-    // do NOT stampCasualClothes / stampFanOntoGirl (would muddy the rebuild).
-
     const fitH: Record<string, number> = {
       'art-enemy-barrel': TARGET_H_ENEMY_M,
       'art-enemy-elephant': TARGET_H_ENEMY_L,
@@ -269,15 +560,11 @@ export class BootScene extends Phaser.Scene {
 
     for (const key of actors) setActorNearestFilter(this, key)
 
-    // HUD faces / coin at exact px — game uses scale 1 (no setDisplaySize).
     bakeFixedSizeTexture(this, 'art-salmon', 'hud-face-boy', 16)
     bakeFixedSizeTexture(this, 'art-girl', 'hud-face-girl', 16)
     bakeFixedSizeTexture(this, 'coin', 'hud-coin', 12)
   }
 
-  /**
-   * Far scenery — same 1px outline ink as play objects (aligned borders).
-   */
   private thickenPropOutlines() {
     for (const key of [
       'prop-tree3d',
@@ -304,7 +591,6 @@ export class BootScene extends Phaser.Scene {
     }
   }
 
-  /** Harden + seal L/R edges so TileSprite repeats leave no vertical seam. */
   private hardenSeamTiles() {
     for (const key of [
       'water-deep',
@@ -325,10 +611,6 @@ export class BootScene extends Phaser.Scene {
     }
   }
 
-  /**
-   * Object DB audit — warn if catalog textures/frames are missing after bake.
-   * Registry keeps a snapshot for debug / future tooling.
-   */
   private auditObjectCatalog() {
     const missing: string[] = []
     for (const key of allCatalogTextureKeys()) {

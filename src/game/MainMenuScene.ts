@@ -21,7 +21,7 @@ function pickable(): number { return Math.max(...pickableStages()) }
 import { mountTouchControls } from './TouchControls'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
-import { versionLabel } from './version'
+import { buildStampLabel } from './version'
 
 type Mode = '1p' | '2p'
 type SoloCast = 'boy' | 'girl'
@@ -103,13 +103,14 @@ export class MainMenuScene extends Phaser.Scene {
     mountTouchControls(this)
     mountMuteButton(this, 14, 8)
     this.add
-      .text(width - 4, height - 4, versionLabel(), {
+      .text(width - 6, height - 6, buildStampLabel(), {
         fontFamily: FONT_UI,
-        fontSize: '7px',
-        color: '#9a8a70',
+        fontSize: '12px',
+        color: '#ffffff',
+        stroke: '#1a1008',
+        strokeThickness: 3,
       })
       .setOrigin(1, 1)
-      .setAlpha(0.75)
     this.refresh(true)
   }
 
