@@ -1990,6 +1990,12 @@ export class GameScene extends Phaser.Scene {
     if (this.time.now < this.powerUntil) dmg = Math.ceil(dmg * 1.5)
     const heavy = dmg >= 2 || pe.kind === 'boss'
     const result = pe.receiveHit(dmg, dir)
+    // PR-F: GUARD/BREATHER/WARN/ATTACK ding — 0 dmg already applied inside receiveHit
+    if (e instanceof WarriorKing && e.rhythm && this.time.now - e.rhythm.lastBlockAt < 40) {
+      floatText(this, pe.x, pe.y - 48, '叮！', '#a8e8ff', { size: 14, dur: 500 })
+      burst(this, pe.x, pe.y - 28, 0xa8e8ff, 5)
+      return false
+    }
     floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
     SFX.hit()
     // Hit confirm: freeze all characters 0.2s; do NOT pause world (ammo free).
@@ -2070,8 +2076,14 @@ export class GameScene extends Phaser.Scene {
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    // Former blanket stompSafeUntil air-invuln: only honor true top-stomp geometry.
+    // Former blanket stompSafeUntil air-invuln: only honor true top-stomp geometry (B3).
     if (this.isStompSafeContact(h, e)) return
+    // PR-F: non-ATTACK rhythm → soft push, 0 damage
+    if (e instanceof WarriorKing && !e.canHurtPlayer()) {
+      const away = (Math.sign(h.x - e.x) || 1) as 1 | -1
+      h.setVelocityX(away * 120)
+      return
+    }
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (e instanceof MallScrubber && !e.canHurtHero(h)) return
