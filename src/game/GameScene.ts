@@ -1664,14 +1664,25 @@ export class GameScene extends Phaser.Scene {
   private spawnRoe(h: Hero, x: number, y: number, vy: number, range: number, power = 1): Phaser.Physics.Arcade.Sprite {
     const shot = this.shots.create(x, y, 'fx-salmon-shot') as Phaser.Physics.Arcade.Sprite
     // Heavy-mode roe (power > 1) reads bigger too, not just harder-hitting.
-    // Alan: ammo read a bit chunky — trimmed base scale 2 → 1.7 (Cursor/Alan feedback).
-    shot.setScale(1.7 * PROJ_DISPLAY_SCALE * (power < 1 ? 0.8 : power > 1 ? 1.4 : 1)).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
+    // PR-D T6: base_scale 1.7 → 1.1 (visual ~65%); restore prior hitbox via setSize.
+    const powerMul = power < 1 ? 0.8 : power > 1 ? 1.4 : 1
+    const ROE_BASE_OLD = 1.7
+    const ROE_BASE = 1.1
+    const scale = ROE_BASE * PROJ_DISPLAY_SCALE * powerMul
+    shot.setScale(scale).setDepth(actorDepth('shot', h.lane, h.y)).setFlipX(h.facing < 0)
     shot.setData('power', power)
     shot.setData('by', h.role)
     if (power < 1) shot.setTint(0x9ab0c8)
     else if (power > 1) shot.setTint(0xffa060)
     enableActorSprite(shot)
-    ;(shot.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    // Before: world hitbox = frame×1.7×powerMul (measured 18.7×18.7 @ power 1).
+    // After visual shrink, set source size so world size stays: source×scale = frame×1.7×powerMul.
+    const frameW = shot.width
+    const frameH = shot.height
+    const srcMul = ROE_BASE_OLD / ROE_BASE
+    body.setSize(frameW * srcMul, frameH * srcMul)
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)

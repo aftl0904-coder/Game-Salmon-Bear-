@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "continent1Fonts": [
+      "20px",
+      "18px",
+      "28px"
+    ],
+    "tinyFonts": []
+  }
+}
