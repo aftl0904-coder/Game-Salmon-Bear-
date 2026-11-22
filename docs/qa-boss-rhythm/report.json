@@ -12,7 +12,7 @@
       "after": 180,
       "killed": false,
       "phase": "GUARD",
-      "blockAt": 3681.8,
+      "blockAt": 4937.8,
       "canTake": false,
       "active": true,
       "species": "warriorking"
@@ -20,7 +20,7 @@
     "k1_breather": {
       "before": 180,
       "after": 180,
-      "blockAt": 4648.5,
+      "blockAt": 4937.8,
       "canTake": false
     },
     "k2_opening": {
