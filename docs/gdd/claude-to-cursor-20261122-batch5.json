@@ -1,12 +1,38 @@
 {
   "meta": {
-    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-22",
+    "from": "Claude",
+    "to": "Cursor（Auto）",
+    "date": "2026-11-22",
     "source": "Alan 23:19 正式網試玩",
     "rules": "照 steps 做，numbers 直接用；做唔到停低回報；唔准自己 merge；開唔到 PR 報 branch 名",
     "pr_plan": [
-      { "pr": "PR-I", "branch": "cursor/c2-bugs-2610", "tickets": ["B1_SCRUBBER_NEVER_ATTACKS", "B2_STALL_OVER_PIT", "B3_AIR_CONTACT_DAMAGE"], "start": "即刻（P0）" },
-      { "pr": "PR-J", "branch": "cursor/st7-enemy-variety-2610", "tickets": ["B4_ST7_ENEMY_VARIETY"], "start": "即刻並行" },
-      { "pr": "#115 續", "branch": "cursor/playtest-fixes-2610", "tickets": ["B5_QUIZ_TOPICS"], "start": "即刻並行，喺 #115 加 commit，唔好 force-push" }
+      {
+        "pr": "PR-I",
+        "branch": "cursor/c2-bugs-2610",
+        "tickets": [
+          "B1_SCRUBBER_NEVER_ATTACKS",
+          "B2_STALL_OVER_PIT",
+          "B3_AIR_CONTACT_DAMAGE",
+          "B6_PIT_VS_GROUND"
+        ],
+        "start": "即刻（P0）"
+      },
+      {
+        "pr": "PR-J",
+        "branch": "cursor/st7-enemy-variety-2610",
+        "tickets": [
+          "B4_ST7_ENEMY_VARIETY"
+        ],
+        "start": "即刻並行"
+      },
+      {
+        "pr": "#115 續",
+        "branch": "cursor/playtest-fixes-2610",
+        "tickets": [
+          "B5_QUIZ_TOPICS"
+        ],
+        "start": "即刻並行，喺 #115 加 commit，唔好 force-push"
+      }
     ]
   },
   "tickets": [
@@ -60,16 +86,51 @@
       ]
     },
     {
+      "id": "B6_PIT_VS_GROUND",
+      "priority": "P0",
+      "alan": "窿同地太似，地唔應該用黑色同深色（Alan 23:25）",
+      "scope": "大陸2 第6、7關（32-bit 商場／展銷中心）",
+      "ref": "先讀 docs/bible/pit-visibility.md（大陸1 嘅做法），跟返同一套原則",
+      "fix": [
+        "地面（可以企嘅地方）改用明亮、有質感嘅顏色：商場＝淺米色／淺灰雲石地磚（例如 #d8cfc0、#c9c2b6），面頭加一條 2px 光邊（#f4eee4）",
+        "窿保持深色（#1a1420 或更深），窿邊加黃黑警示斜紋 6px（#f2c230／#2a2a2a），窿底加少少向上嘅暗紅光，令人一眼知道係危險",
+        "地面同窿嘅亮度差最少 50%（用 HSL 亮度計），寫入 PR 描述",
+        "平台邊緣（可以跳上去嘅）同主地面用同一套淺色",
+        "唔好改窿嘅位置同大小，只改顏色同邊緣"
+      ],
+      "acceptance": [
+        "第6、7關每段（A–E）截圖，窿一眼睇得出（放 docs/qa-pit-contrast/）",
+        "冇任何可以企嘅地面係黑色或深色",
+        "手機（iPhone 13 尺寸）截圖都清楚"
+      ]
+    },
+    {
       "id": "B4_ST7_ENEMY_VARIETY",
       "priority": "P1",
       "alan": "第7關敵人超級單調，全部慢慢直行，係咁開槍已經殺晒",
       "design": {
         "rule": "第7關要有 4 種行為唔同嘅敵人，交替出現；唔可以兩隻同類連續排",
         "types": [
-          { "name": "衝鋒蜜僵", "behavior": "見到玩家停 400ms 預警 → 以 2.5 倍速衝 200px → 停 800ms", "hp": "3 發" },
-          { "name": "跳跳籠", "behavior": "原地彈跳前進，每跳 140px，空中先打得中", "hp": "2 發" },
-          { "name": "盾牌飼養員", "behavior": "正面擋子彈（叮聲、0 傷害），要跳過佢背後打", "hp": "3 發（只計背後）" },
-          { "name": "掟罐員", "behavior": "企定，每 2.5 秒向玩家拋物線掟一個罐，罐落地爆開", "hp": "2 發" }
+          {
+            "name": "衝鋒蜜僵",
+            "behavior": "見到玩家停 400ms 預警 → 以 2.5 倍速衝 200px → 停 800ms",
+            "hp": "3 發"
+          },
+          {
+            "name": "跳跳籠",
+            "behavior": "原地彈跳前進，每跳 140px，空中先打得中",
+            "hp": "2 發"
+          },
+          {
+            "name": "盾牌飼養員",
+            "behavior": "正面擋子彈（叮聲、0 傷害），要跳過佢背後打",
+            "hp": "3 發（只計背後）"
+          },
+          {
+            "name": "掟罐員",
+            "behavior": "企定，每 2.5 秒向玩家拋物線掟一個罐，罐落地爆開",
+            "hp": "2 發"
+          }
         ],
         "reuse": "盡量用大陸1 現有敵人行為改皮（PatrolEnemy／AnimEnemy 嘅 charge、hop、shield 邏輯），唔好由零寫",
         "density": "數量唔好加多過而家 20%；難度靠行為，唔靠數量",
