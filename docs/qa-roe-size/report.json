@@ -1,0 +1,81 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "tex": {
+      "ok": true,
+      "w": 11
+    },
+    "measure": {
+      "p1": {
+        "scale": 1.1,
+        "displayW": 12.100000000000001,
+        "displayH": 12.100000000000001,
+        "frameW": 11,
+        "bodyW": 18.7,
+        "sourceW": 16.999999999999996,
+        "worldW": 18.700000000000017,
+        "worldH": 18.69999999999999,
+        "texKey": "fx-salmon-shot"
+      },
+      "light": {
+        "scale": 0.8800000000000001,
+        "displayW": 9.680000000000001,
+        "displayH": 9.680000000000001,
+        "frameW": 11,
+        "bodyW": 14.960000000000003,
+        "sourceW": 17,
+        "worldW": 14.95999999999998,
+        "worldH": 14.960000000000008,
+        "texKey": "fx-salmon-shot"
+      },
+      "heavy": {
+        "scale": 1.54,
+        "displayW": 16.94,
+        "displayH": 16.94,
+        "frameW": 11,
+        "bodyW": 26.179999999999996,
+        "sourceW": 16.999999999999996,
+        "worldW": 26.17999999999998,
+        "worldH": 26.17999999999998,
+        "texKey": "fx-salmon-shot"
+      },
+      "expectedBefore": {
+        "p1": 18.7,
+        "light": 14.96,
+        "heavy": 26.179999999999996,
+        "displayP1": 18.7
+      }
+    }
+  },
+  "acceptance": {
+    "R1": {
+      "pass": true,
+      "ratio": 0.6470588235294119,
+      "beforeDisplay": 18.7,
+      "afterDisplay": 12.100000000000001
+    },
+    "R2": {
+      "pass": true,
+      "before": {
+        "p1": 18.7,
+        "light": 14.96,
+        "heavy": 26.179999999999996,
+        "displayP1": 18.7
+      },
+      "after": {
+        "p1": 18.700000000000017,
+        "light": 14.95999999999998,
+        "heavy": 26.17999999999998
+      }
+    },
+    "R3": {
+      "pass": true,
+      "scales": {
+        "p1": 1.1,
+        "light": 0.8800000000000001,
+        "heavy": 1.54
+      }
+    }
+  }
+}
