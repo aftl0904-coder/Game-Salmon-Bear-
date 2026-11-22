@@ -1969,6 +1969,12 @@ export class GameScene extends Phaser.Scene {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
     if (this.time.now < ((h.getData('stompSafeUntil') as number | undefined) ?? 0)) return
+    // PR-F: non-ATTACK rhythm → soft push, 0 damage
+    if (e instanceof WarriorKing && !e.canHurtPlayer()) {
+      const away = (Math.sign(h.x - e.x) || 1) as 1 | -1
+      h.setVelocityX(away * 120)
+      return
+    }
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (e instanceof MallScrubber && !e.canHurtHero(h)) return

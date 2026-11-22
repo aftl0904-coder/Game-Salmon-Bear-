@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "checks": {
+    "meta": {
+      "hp": 180,
+      "maxHp": 180,
+      "phase": "GUARD"
+    },
+    "k1_guard": {
+      "before": 180,
+      "after": 180,
+      "killed": false,
+      "phase": "GUARD"
+    },
+    "k1_breather": {
+      "before": 180,
+      "after": 180
+    },
+    "k2_opening": {
+      "before": 180,
+      "after": 178,
+      "phase": "OPENING"
+    },
+    "k3_contact": {
+      "can": false,
+      "before": 5,
+      "after": 5
+    },
+    "k4_openings": {
+      "openings": 4,
+      "dealt": 60,
+      "segment": 60,
+      "maxHp": 180,
+      "hp": 120
+    }
+  },
+  "errors": []
+}
