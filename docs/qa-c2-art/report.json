@@ -1,8 +1,6 @@
 {
   "ok": true,
-  "errors": [
-    "Cannot read properties of null (reading 'drawImage')"
-  ],
+  "errors": [],
   "checks": {
     "textures": {
       "c2-scrubber": true,
@@ -15,7 +13,7 @@
     },
     "body": {
       "texture": "c2-scrubber",
-      "frame": 1,
+      "frame": 0,
       "bodyW": 96,
       "bodyH": 58,
       "offsetX": 8,
@@ -27,13 +25,13 @@
     },
     "propsOnStage": {
       "c2-prop-lightbox": 2,
-      "c2-prop-plant": 2,
-      "c2-prop-bench": 2,
+      "c2-prop-plant": 4,
+      "c2-prop-bench": 3,
       "c2-prop-trash": 2,
+      "c2-prop-barrier": 3,
+      "c2-prop-escalator": 2,
       "c2-prop-sign": 2,
-      "c2-prop-cart": 1,
-      "c2-prop-barrier": 2,
-      "c2-prop-escalator": 1
+      "c2-prop-cart": 1
     },
     "noProceduralBossKeys": {
       "mallScrubberIdle": false,
