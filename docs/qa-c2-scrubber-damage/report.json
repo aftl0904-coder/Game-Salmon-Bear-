@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "meta": {
+      "name": "深層潔淨 X-9",
+      "canHurtIdle": false,
+      "idleTex": true,
+      "blower": true,
+      "blowerX": 5240,
+      "arenaX1": 5280
+    },
+    "charge": {
+      "before": 5,
+      "after": 3,
+      "can": true,
+      "marked": true
+    },
+    "recoverSafe": {
+      "before": 5,
+      "after": 5,
+      "can": false
+    },
+    "acid": {
+      "zonesWarn": 0,
+      "zonesLive": 1,
+      "hpWarn": 5,
+      "after": 4,
+      "before": 5
+    },
+    "blower": {
+      "p3": 3,
+      "warn": "warn",
+      "blast": "blast",
+      "into": true,
+      "disabled": true
+    }
+  }
+}
