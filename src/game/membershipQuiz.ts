@@ -36,7 +36,7 @@ export const QUIZ_TIMING = {
   rivalSpreadQ1: 800,
   rivalSpreadHard: 1200,
   rivalSpreadNormal: 1000,
-  answerPlayer: 6800,
+  answerPlayer: 5800,
   answerHardExtra: 3000,
   answerRival: 1600,
   confirmDebounceMs: 200,
@@ -62,12 +62,143 @@ function shuffle<T>(arr: T[], rng: () => number): T[] {
   return a
 }
 
+const QUIZ_SEEN_KEY = 'quizSeen'
+
+function loadSeenIds(): string[] {
+  try {
+    const raw = localStorage.getItem(QUIZ_SEEN_KEY)
+    if (!raw) return []
+    const parsed = JSON.parse(raw) as unknown
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function saveSeenIds(ids: string[]) {
+  try {
+    localStorage.setItem(QUIZ_SEEN_KEY, JSON.stringify(ids.slice(-200)))
+  } catch {
+    /* private mode / quota */
+  }
+}
+
+/**
+ * Pick up to n from pool, preferring unseen; does not clear quizSeen mid-round.
+ * Falls back to already-seen items in the same pool before returning short.
+ */
+function pickFromPool(pool: Q[], n: number, seen: Set<string>, exclude: Set<string>, rng: () => number): Q[] {
+  const available = pool.filter((q) => !exclude.has(q.id))
+  if (!available.length || n <= 0) return []
+  const fresh = available.filter((q) => !seen.has(q.id))
+  const rest = available.filter((q) => seen.has(q.id))
+  const ordered = [...shuffle(fresh, rng), ...shuffle(rest, rng)]
+  return ordered.slice(0, Math.min(n, ordered.length))
+}
+
+const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'labour'] as const
+
+/**
+ * Q9 mix — 6 normal: developer 2、hanglung 1、law 1、hr|labour 1、math|mall 1;
+ * 1 hard: 50% developer-hard, else other hard. Hard slot indices 3–6.
+ * Fallback when a bucket is empty: developer → law → others.
+ */
 function pickRound(rng: () => number): Q[] {
+  const seenList = loadSeenIds()
+  const seen = new Set(seenList)
   const normals = BANK.questions.filter((q) => q.difficulty !== 'hard')
   const hards = BANK.questions.filter((q) => q.difficulty === 'hard')
-  const six = shuffle(normals, rng).slice(0, 6)
-  const last = shuffle(hards, rng)[0] ?? six[0]!
-  return [...six, last]
+  const exclude = new Set<string>()
+  const six: Q[] = []
+
+  const fill = (cats: string[], n: number) => {
+    const primary = normals.filter((q) => cats.includes(q.category))
+    let got = pickFromPool(primary, n, seen, exclude, rng)
+    if (got.length < n) {
+      for (const cat of FALLBACK_CATS) {
+        if (got.length >= n) break
+        const extra = normals.filter((q) => q.category === cat)
+        const more = pickFromPool(extra, n - got.length, seen, new Set([...exclude, ...got.map((q) => q.id)]), rng)
+        got = got.concat(more)
+      }
+    }
+    for (const q of got.slice(0, n)) {
+      six.push(q)
+      exclude.add(q.id)
+    }
+  }
+
+  fill(['developer'], 2)
+  fill(['hanglung'], 1)
+  fill(['law'], 1)
+  fill(['hr', 'labour'], 1)
+  fill(['math', 'mall'], 1)
+
+  while (six.length < 6) {
+    const more = pickFromPool(normals, 1, seen, exclude, rng)
+    if (!more.length) break
+    six.push(more[0]!)
+    exclude.add(more[0]!.id)
+  }
+
+  const devHards = hards.filter((q) => q.category === 'developer' && !exclude.has(q.id))
+  const otherHards = hards.filter((q) => q.category !== 'developer' && !exclude.has(q.id))
+  const useDevHard = rng() < 0.5
+  let hardPool = useDevHard && devHards.length ? devHards : otherHards.length ? otherHards : hards.filter((q) => !exclude.has(q.id))
+  if (!hardPool.length) hardPool = hards
+  const hard = pickFromPool(hardPool, 1, seen, exclude, rng)[0] ?? shuffle(hardPool, rng)[0] ?? six[0]!
+
+  const hardSlot = 3 + Math.floor(rng() * 4) // index 3..6
+  const round = six.slice(0, 6)
+  round.splice(hardSlot, 0, hard)
+  const out = round.slice(0, 7)
+  const nextSeen = [...seenList, ...out.map((q) => q.id)]
+  // If bank nearly exhausted, allow reshuffle next time
+  const normalIds = new Set(normals.map((q) => q.id))
+  const unseenNormals = [...normalIds].filter((id) => !nextSeen.includes(id))
+  if (unseenNormals.length < 6) {
+    saveSeenIds(out.map((q) => q.id))
+  } else {
+    saveSeenIds(nextSeen)
+  }
+  return out
+}
+
+/** QA / Playwright: run pickRound without Phaser. */
+export function pickRoundForQa(rng: () => number = Math.random): Q[] {
+  return pickRound(rng)
+}
+
+type ShuffledQ = Q & { displayChoices: string[]; correctIndex: number }
+
+/** Shuffle ABCD; rebalance so no letter holds > half the round's answers. */
+function shuffleRoundChoices(round: Q[], rng: () => number): ShuffledQ[] {
+  const maxPerLetter = Math.ceil(round.length / 2)
+  const counts = [0, 0, 0, 0]
+  const out: ShuffledQ[] = []
+  for (const q of round) {
+    let best: ShuffledQ | null = null
+    for (let attempt = 0; attempt < 24; attempt++) {
+      const order = shuffle([0, 1, 2, 3], rng)
+      const displayChoices = order.map((i) => q.choices[i] ?? '')
+      const correctIndex = order.indexOf(q.answerIndex)
+      if (correctIndex < 0) continue
+      if (counts[correctIndex]! >= maxPerLetter && attempt < 20) continue
+      best = { ...q, displayChoices, correctIndex }
+      break
+    }
+    if (!best) {
+      const order = shuffle([0, 1, 2, 3], rng)
+      best = {
+        ...q,
+        displayChoices: order.map((i) => q.choices[i] ?? ''),
+        correctIndex: Math.max(0, order.indexOf(q.answerIndex)),
+      }
+    }
+    counts[best.correctIndex]!++
+    out.push(best)
+  }
+  return out
 }
 
 function makeBuzz(scene: Phaser.Scene, x: number, y: number, label: string) {
@@ -107,7 +238,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
 
   const twoP = scene.registry.get('playMode') === '2p'
   const rng = () => Math.random()
-  const round = pickRound(rng)
+  const round = shuffleRoundChoices(pickRound(rng), rng)
   const scoring = BANK.scoring
   const timeoutPenalty = BANK.timeoutPenalty ?? -2
 
@@ -122,12 +253,12 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0a1218, 0.88).setOrigin(0).setInteractive())
 
   const panel = scene.add.graphics()
-  panel.fillStyle(0xc8902a, 1).fillRoundedRect(28, 36, GAME_W - 56, GAME_H - 72, 10)
-  panel.fillStyle(0x142028, 1).fillRoundedRect(32, 40, GAME_W - 64, GAME_H - 80, 8)
+  panel.fillStyle(0xc8902a, 1).fillRoundedRect(28, 28, GAME_W - 56, GAME_H - 56, 10)
+  panel.fillStyle(0x142028, 1).fillRoundedRect(32, 32, GAME_W - 64, GAME_H - 64, 8)
   root.add(panel)
 
   const title = scene.add
-    .text(GAME_W / 2, 58, '會員中心・金魚眼搶答', {
+    .text(GAME_W / 2, 48, '會員中心・金魚眼搶答', {
       fontFamily: FONT_TITLE,
       fontSize: '18px',
       color: '#ffd76a',
@@ -136,36 +267,38 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     })
     .setOrigin(0.5)
   const progress = scene.add
-    .text(GAME_W / 2, 82, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#9ec8e0' })
+    .text(GAME_W / 2, 68, '', { fontFamily: FONT_UI, fontSize: '16px', color: '#9ec8e0' })
     .setOrigin(0.5)
   const prompt = scene.add
-    .text(GAME_W / 2, 118, '', {
+    .text(GAME_W / 2, 86, '', {
       fontFamily: FONT_UI,
-      fontSize: '15px',
+      fontSize: '20px',
       color: '#fff6e0',
       align: 'center',
-      wordWrap: { width: GAME_W - 120 },
+      wordWrap: { width: 560 },
     })
     .setOrigin(0.5, 0)
   const status = scene.add
-    .text(GAME_W / 2, 188, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#8ad0ff' })
+    .text(GAME_W / 2, 168, '', { fontFamily: FONT_UI, fontSize: '16px', color: '#8ad0ff' })
     .setOrigin(0.5)
   const coinHud = scene.add
-    .text(72, 58, twoP ? '倫0 琪0' : '幣 0', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' })
+    .text(72, 48, twoP ? '倫0 琪0' : '幣 0', { fontFamily: FONT_UI, fontSize: '16px', color: '#ffe08a' })
     .setOrigin(0, 0.5)
 
   root.add([title, progress, prompt, status, coinHud])
 
-  const choiceY0 = 220
-  const choiceGap = 28
-  const choiceW = GAME_W - 140
+  // Leave side gutters for red buzz buttons (unchanged positions).
+  const choiceY0 = 196
+  const choiceGap = 38
+  const choiceH = 32
+  const choiceW = GAME_W - 200
   const choiceBtns: Phaser.GameObjects.Container[] = []
   const choiceLabels: Phaser.GameObjects.Text[] = []
   for (let i = 0; i < 4; i++) {
     const y = choiceY0 + i * choiceGap
-    const bg = scene.add.rectangle(GAME_W / 2, y, choiceW, 24, 0x243848, 1).setStrokeStyle(2, 0x6a90a8)
+    const bg = scene.add.rectangle(GAME_W / 2, y, choiceW, choiceH, 0x243848, 1).setStrokeStyle(2, 0x6a90a8)
     const tx = scene.add
-      .text(GAME_W / 2, y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#f0f6ff' })
+      .text(GAME_W / 2, y, '', { fontFamily: FONT_UI, fontSize: '18px', color: '#f0f6ff' })
       .setOrigin(0.5)
     const c = scene.add.container(0, 0, [bg, tx])
     bg.setInteractive({ useHandCursor: true })
@@ -184,9 +317,9 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   }
 
   const skipTxt = scene.add
-    .text(GAME_W / 2, GAME_H - 28, '搶答：紅掣／攻擊｜揀答案：↑↓＋攻擊，或直接撳', {
+    .text(GAME_W / 2, GAME_H - 22, '搶答：紅掣／攻擊｜揀答案：↑↓＋攻擊，或直接撳', {
       fontFamily: FONT_UI,
-      fontSize: '11px',
+      fontSize: '14px',
       color: '#8a9aaa',
     })
     .setOrigin(0.5)
@@ -239,10 +372,10 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     }
   }
 
-  const paintChoices = (q: Q) => {
+  const paintChoices = (q: ShuffledQ) => {
     const letters = ['A', 'B', 'C', 'D']
     for (let i = 0; i < 4; i++) {
-      choiceLabels[i]!.setText(`${letters[i]}  ${q.choices[i] ?? ''}`)
+      choiceLabels[i]!.setText(`${letters[i]}  ${q.displayChoices[i] ?? ''}`)
     }
     cursor = 0
     paintCursor()
@@ -497,7 +630,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     cursor = idx
     paintCursor()
     const q = round[qi]!
-    resolveAnswer(idx === q.answerIndex, answering)
+    resolveAnswer(idx === q.correctIndex, answering)
   }
 
   const confirmCursor = () => {
@@ -552,7 +685,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       if (x < left || x > right) return
       for (let i = 0; i < 4; i++) {
         const cy = choiceY0 + i * choiceGap
-        if (Math.abs(y - cy) <= 16) {
+        if (Math.abs(y - cy) <= choiceH / 2 + 2) {
           pickChoice(i, { force: true })
           return
         }
@@ -739,7 +872,21 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       confirmNeedsRelease,
       confirmReadyAt,
       answering,
+      questionIds: round.map((q) => q.id),
+      correctIndexes: round.map((q) => q.correctIndex),
+      currentCorrectIndex: round[qi]?.correctIndex ?? null,
+      hardSlot: round.findIndex((q) => q.difficulty === 'hard'),
+      correct,
+      wrong,
     }),
+    /** QA: buzz as boy then answer by display index. */
+    qaBuzzAndAnswer: (displayIndex: number) => {
+      tryBuzz('boy')
+      pickChoice(displayIndex, { force: true })
+    },
   }
-  return api as Mini<GoldfishResult> & { debug: () => Record<string, unknown> }
+  return api as Mini<GoldfishResult> & {
+    debug: () => Record<string, unknown>
+    qaBuzzAndAnswer: (displayIndex: number) => void
+  }
 }

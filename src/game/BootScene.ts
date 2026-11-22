@@ -39,6 +39,7 @@ import {
   LOADING_BOOT_IMAGES,
   allLoadingHeadSpecs,
   bakeQHead,
+  layoutLoadingPoster,
 } from './loadingHeads'
 
 const HD_PROP_RES = 2
@@ -261,57 +262,40 @@ export class BootScene extends Phaser.Scene {
 
   private buildHeadPile() {
     const specs = allLoadingHeadSpecs()
-    for (const s of specs) bakeQHead(this, s.src, s.out, s.size)
+    for (const s of specs) bakeQHead(this, s.src, s.out, s.size, s.crop)
 
-    const width = GAME_W
-    const height = GAME_H
-    const cx = width / 2
-    const cy = Math.round(height * 0.42)
     this.headsRoot = this.add.container(0, 0).setDepth(10)
     this.heads = []
 
-    // Friends ring behind (pile).
-    const friends = specs.filter((s) => !['lunbo', 'kibobo', 'pupu'].includes(s.id))
-    const n = friends.length
-    friends.forEach((s, i) => {
-      if (!this.textures.exists(s.out)) return
-      const ang = (i / n) * Math.PI * 2 - Math.PI / 2
-      const rx = 110 + (i % 3) * 8
-      const ry = 48 + (i % 2) * 10
-      const x = cx + Math.cos(ang) * rx * 0.55
-      const y = cy + Math.sin(ang) * ry * 0.9 + 10
-      const img = this.add.image(x, y, s.out).setOrigin(0.5, 1).setDepth(10 + i)
-      img.setDisplaySize(s.size, s.size)
+    // F2: poster fill — cast large centre-bottom, friends around edges, no overlap.
+    const layout = layoutLoadingPoster(specs)
+    layout.forEach((p, i) => {
+      const s = specs.find((x) => x.id === p.id)
+      if (!s || !this.textures.exists(s.out)) return
+      const isCast = p.id === 'lunbo' || p.id === 'kibobo' || p.id === 'pupu'
+      const img = this.add
+        .image(p.x, p.y, s.out)
+        .setOrigin(0.5, 0.5)
+        .setDepth(isCast ? 40 + i : 10 + i)
+        .setAngle(p.angle)
+      img.setDisplaySize(p.size, p.size)
       this.headsRoot!.add(img)
       this.heads.push({
         img,
-        baseY: y,
+        baseY: p.y,
         amp: 2 + (i % 3),
         phase: i * 0.7,
         speed: 2.2 + (i % 4) * 0.35,
       })
     })
 
-    // Cast front & largest.
-    const castPos = [
-      { id: 'lunbo', x: cx - 52, y: cy + 36 },
-      { id: 'pupu', x: cx, y: cy + 44 },
-      { id: 'kibobo', x: cx + 52, y: cy + 36 },
-    ]
-    castPos.forEach((p, i) => {
-      const s = specs.find((x) => x.id === p.id)
-      if (!s || !this.textures.exists(s.out)) return
-      const img = this.add.image(p.x, p.y, s.out).setOrigin(0.5, 1).setDepth(40 + i)
-      img.setDisplaySize(88, 88)
-      this.headsRoot!.add(img)
-      this.heads.push({
-        img,
-        baseY: p.y,
-        amp: 3 + i,
-        phase: i * 1.1,
-        speed: 2.6 + i * 0.2,
-      })
-    })
+    // QA hook — character → file → size
+    ;(window as unknown as { __SAKE_LOADING_HEADS__?: unknown }).__SAKE_LOADING_HEADS__ = specs.map((s) => ({
+      id: s.id,
+      name: s.name,
+      file: s.url,
+      size: s.size,
+    }))
 
     this.events.emit('heads-ready')
   }
