@@ -5,6 +5,8 @@ import { SFX } from './audio'
 import { burst } from './fx'
 import { FONT_UI } from './ui/fonts'
 import { GAME_W, GAME_H } from './display'
+import { drawMallProp } from './mallDecor'
+import { onSlopeAt, solidTopAt, type Solid } from './engine/terrain'
 
 /**
  * 第二大陸・購物中心 mechanics that are new to stage 6 (the dark veil is Stage3World's own):
@@ -59,6 +61,11 @@ const BEAM_HALF_W = 14
 const BEAM_HEIGHT = 22
 const DRONE_Y_OFF = 84
 const CONE_HALF_W = 38
+
+/** T3_ESCALATOR — belt along B→C ramp (px/s). */
+export const ESCALATOR_BELT_SPEED = 60
+/** Visual / collision ramp matching GameScene escalator triangle. */
+export const ESCALATOR = { x0: 1860, x1: 1980, h0: 4, h1: 70 } as const
 
 export class Stage6World {
   private ctx: Stage6Ctx
@@ -153,15 +160,62 @@ export class Stage6World {
     const f = this.ctx.floorY
     const root = s.add.container(x, f).setDepth(DEPTH.PROP + 2)
     const g = s.add.graphics()
-    g.fillStyle(0x0a0a0c, 0.55).fillEllipse(0, -2, w + 10, 10)
-    g.fillStyle(0xd8d0c0, 1).fillTriangle(-w / 2, -4, w / 2, -4, 0, -28)
-    g.fillStyle(0xff4060, 1).fillTriangle(-6, -18, 6, -18, 0, -30)
-    g.lineStyle(2, 0xfff0a0, 1).strokeTriangle(-w / 2, -4, w / 2, -4, 0, -28)
+    // T5b: replace triangle spike with trash bin (same hurt footprint via w).
+    g.fillStyle(0x0a0a0c, 0.45).fillEllipse(0, -2, w + 10, 10)
+    drawMallProp(g, 'bin', Math.max(28, Math.min(48, w + 8)), false)
     root.add(g)
-    const tag = s.add.text(0, -40, '雜物', { fontFamily: FONT_UI, fontSize: '10px', color: '#ffe0a0', backgroundColor: '#802018', padding: { x: 2, y: 1 } }).setOrigin(0.5)
-    root.add(tag)
-    s.tweens.add({ targets: tag, alpha: { from: 0.65, to: 1 }, duration: 480, yoyo: true, repeat: -1 })
     this.junk.push({ x, w, root, cd: new Map() })
+  }
+
+  /**
+   * Belt push for a grounded actor on the escalator slope.
+   * Position nudge only (no lasting velocity) so a jump leaves the belt after ≤1 frame.
+   * Returns belt horizontal sign (+1 = up toward C) when on belt, else 0.
+   */
+  pushEscalator(
+    actor: { x: number; y: number; setPosition?: (x: number, y: number) => void },
+    dt: number,
+    grounded = true,
+  ): number {
+    if (!grounded) return 0
+    // Prefer tagged slope; fall back to escalator X-span + near-surface (Arcade can drift Y).
+    let slope = onSlopeAt(actor.x, actor.y, 10, 40)
+    if (!slope && actor.x >= ESCALATOR.x0 - 4 && actor.x <= ESCALATOR.x1 + 4) {
+      const cand = Stage6World.escalatorSolid(this.ctx.floorY)
+      const top = solidTopAt(cand, actor.x)
+      if (top != null && actor.y >= top - 8 && actor.y <= top + 48) slope = cand
+    }
+    if (!slope) return 0
+    const run = slope.x1 - slope.x0
+    const rise = (slope.topEnd ?? slope.top) - slope.top
+    const len = Math.hypot(run, rise) || 1
+    const ux = run / len
+    const along = ESCALATOR_BELT_SPEED * (dt / 1000)
+    const nx = Phaser.Math.Clamp(actor.x + ux * along, slope.x0 + 1, slope.x1 - 1)
+    const ny = solidTopAt(slope, nx) ?? actor.y
+    if (actor.setPosition) actor.setPosition(nx, ny)
+    else {
+      actor.x = nx
+      actor.y = ny
+    }
+    return Math.sign(ux) || 1
+  }
+
+  /** Against-belt walk cap: walk − 60, min 20 (T3 numbers). */
+  static againstWalkSpeed(walkSpeed: number): number {
+    return Math.max(20, walkSpeed - ESCALATOR_BELT_SPEED)
+  }
+
+  /** Build the invisible slope Solid matching the painted ramp. */
+  static escalatorSolid(floorY: number): Solid {
+    return {
+      x0: ESCALATOR.x0,
+      x1: ESCALATOR.x1,
+      top: floorY - ESCALATOR.h0,
+      topEnd: floorY - ESCALATOR.h1,
+      oneWay: true,
+      kind: 'slope',
+    }
   }
 
   private buildBossFan() {

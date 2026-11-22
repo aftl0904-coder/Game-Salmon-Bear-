@@ -10,10 +10,20 @@
 export type Solid = {
   x0: number
   x1: number
+  /** Feet Y at x0 (and across the span when topEnd is unset). */
   top: number
+  /** When set, surface height lerps from `top` at x0 to `topEnd` at x1 (escalator / ramp). */
+  topEnd?: number
   /** One-way planks: land from above only, walk through from the sides. */
   oneWay: boolean
-  kind: 'ground' | 'step' | 'platform'
+  kind: 'ground' | 'step' | 'platform' | 'slope'
+}
+
+/** Interpolated surface Y for a solid at world x. */
+export function solidTopAt(s: Solid, x: number): number {
+  if (s.topEnd === undefined || s.x1 <= s.x0) return s.top
+  const t = Math.max(0, Math.min(1, (x - s.x0) / (s.x1 - s.x0)))
+  return s.top + (s.topEnd - s.top) * t
 }
 
 let solids: Solid[] = []
@@ -66,8 +76,11 @@ export function supportTopAt(x: number, feetY: number, halfW = 4, sinkTol = 3): 
   let best: number | null = null
   for (const s of solids) {
     if (!covers(s, x, halfW)) continue
-    if (feetY >= s.top - 3 && feetY <= s.top + sinkTol) {
-      if (best === null || s.top < best) best = s.top
+    const top = solidTopAt(s, x)
+    // Slopes (escalator): allow a taller step-on window so feet on the base floor mount the ramp.
+    const tol = s.kind === 'slope' ? Math.max(sinkTol, 24) : sinkTol
+    if (feetY >= top - 3 && feetY <= top + tol) {
+      if (best === null || top < best) best = top
     }
   }
   return best
@@ -79,8 +92,9 @@ export function landingTopAt(x: number, prevFeetY: number, feetY: number, halfW 
   let best: number | null = null
   for (const s of solids) {
     if (!covers(s, x, halfW)) continue
-    if (prevFeetY <= s.top + 1 && feetY >= s.top - 0.5) {
-      if (best === null || s.top < best) best = s.top
+    const top = solidTopAt(s, x)
+    if (prevFeetY <= top + 1 && feetY >= top - 0.5) {
+      if (best === null || top < best) best = top
     }
   }
   return best
@@ -92,7 +106,8 @@ export function groundTopBelow(x: number, feetY: number, halfW = 4): number | nu
   let best: number | null = null
   for (const s of solids) {
     if (!covers(s, x, halfW)) continue
-    if (s.top >= feetY - 3 && (best === null || s.top < best)) best = s.top
+    const top = solidTopAt(s, x)
+    if (top >= feetY - 3 && (best === null || top < best)) best = top
   }
   return best
 }
@@ -106,7 +121,8 @@ export function wallClampX(x: number, feetY: number, dir: number, halfW: number,
   for (const s of solids) {
     if (s.oneWay) continue
     if (ignoreSteps && s.kind === 'step') continue
-    if (s.top >= feetY - 3) continue // not taller than the feet → walkable / below
+    const top = solidTopAt(s, x)
+    if (top >= feetY - 3) continue // not taller than the feet → walkable / below
     if (dir > 0 && x + halfW > s.x0 && x - halfW < s.x0) return s.x0 - halfW
     if (dir < 0 && x - halfW < s.x1 && x + halfW > s.x1) return s.x1 + halfW
   }
@@ -134,10 +150,23 @@ export function stepUpTop(x: number, feetY: number, dir: number, halfW: number, 
   if (!enabled || !dir) return null
   for (const s of solids) {
     if (s.oneWay || s.kind !== 'step') continue
-    const rise = feetY - s.top
+    const top = solidTopAt(s, x)
+    const rise = feetY - top
     if (rise <= 3 || rise > maxRise) continue
-    if (dir > 0 && x + halfW > s.x0 && x - halfW < s.x0) return s.top
-    if (dir < 0 && x - halfW < s.x1 && x + halfW > s.x1) return s.top
+    if (dir > 0 && x + halfW > s.x0 && x - halfW < s.x0) return top
+    if (dir < 0 && x - halfW < s.x1 && x + halfW > s.x1) return top
+  }
+  return null
+}
+
+/** True when feet rest on a slope/escalator solid tagged kind === 'slope'. */
+export function onSlopeAt(x: number, feetY: number, halfW = 4, sinkTol = 24): Solid | null {
+  if (!enabled) return null
+  for (const s of solids) {
+    if (s.kind !== 'slope') continue
+    if (!covers(s, x, halfW)) continue
+    const top = solidTopAt(s, x)
+    if (feetY >= top - 3 && feetY <= top + sinkTol) return s
   }
   return null
 }
