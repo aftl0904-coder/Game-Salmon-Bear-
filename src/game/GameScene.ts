@@ -1677,12 +1677,12 @@ export class GameScene extends Phaser.Scene {
     enableActorSprite(shot)
     const body = shot.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
-    // Before: world hitbox = frame×1.7×powerMul (measured 18.7×18.7 @ power 1).
-    // After visual shrink, set source size so world size stays: source×scale = frame×1.7×powerMul.
-    const frameW = shot.width
-    const frameH = shot.height
-    const srcMul = ROE_BASE_OLD / ROE_BASE
-    body.setSize(frameW * srcMul, frameH * srcMul)
+    // Before (scale 1.7): world hitbox = frame×1.7×powerMul (measured 18.7×18.7 @ power 1).
+    // Keep that world size after visual shrink. setSize takes unscaled source px;
+    // Arcade then multiplies by sprite scale → source×scale = frame×1.7×powerMul.
+    const targetWorldW = shot.frame.width * ROE_BASE_OLD * PROJ_DISPLAY_SCALE * powerMul
+    const targetWorldH = shot.frame.height * ROE_BASE_OLD * PROJ_DISPLAY_SCALE * powerMul
+    body.setSize(targetWorldW / Math.abs(scale), targetWorldH / Math.abs(scale))
     shot.setVelocity(h.facing * SALMON_SHOT_SPEED, vy)
     shot.setData('lane', h.lane)
     shot.setData('fromY', h.y)
