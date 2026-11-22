@@ -1,21 +1,37 @@
 {
   "meta": {
-    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-22",
+    "from": "Claude",
+    "to": "Cursor（Auto）",
+    "date": "2026-11-22",
     "source": "Alan 22:19 試玩 #115：『唔錯，問答題比例多啲發展商，多過 HR；作答時間減 1 秒』",
     "branch": "喺 cursor/playtest-fixes-2610 上面繼續加 commit（#115），唔好開新 branch，唔好 force-push",
-    "rules": "照做，數值直接用；唔肯定嘅事實唔好出題；做唔到停低回報"
+    "rules": "照做，數值直接用；唔肯定嘅事實唔好出題；做唔到停低回報",
+    "update_2228": "加 Q10：題庫目標題數"
   },
   "current_bank_claude_checked": {
     "file": "data/quiz-mall.json",
-    "counts": { "law": 25, "math": 25, "hr": 19, "mall": 10, "hard": 10, "labour": 6 },
+    "counts": {
+      "law": 25,
+      "math": 25,
+      "hr": 19,
+      "mall": 10,
+      "hard": 10,
+      "labour": 6
+    },
     "note": "冇『發展商』類別；law 類大部分係住宅租約／買樓詞彙"
   },
   "tickets": [
     {
       "id": "Q7_TIME_MINUS_1S",
       "where": "src/game/membershipQuiz.ts QUIZ_TIMING",
-      "numbers": { "answerPlayer": "6800 → 5800", "answerHardExtra": "3000 不變（難題＝8800）", "搶答時間": "不變" },
-      "acceptance": ["普通題作答 5.8 秒、難題 8.8 秒（Playwright 讀倒數）"]
+      "numbers": {
+        "answerPlayer": "6800 → 5800",
+        "answerHardExtra": "3000 不變（難題＝8800）",
+        "搶答時間": "不變"
+      },
+      "acceptance": [
+        "普通題作答 5.8 秒、難題 8.8 秒（Playwright 讀倒數）"
+      ]
     },
     {
       "id": "Q8_DEVELOPER_QUESTIONS",
@@ -40,7 +56,45 @@
       ],
       "format": "同現有題目一樣：{ id: 'dev-01'…, category: 'developer', difficulty, prompt, choices[4], answerIndex: 0, source }（answerIndex 照舊放 0，顯示時已經會打亂）",
       "review": "完成後將 30 條題目列表（題目＋正確答案＋source）寫入 docs/gdd/quiz-developer-review.md，等 Claude 抽查",
-      "acceptance": ["30 條 developer 題，每條有 source", "JSON 格式通過現有載入，遊戲冇報錯"]
+      "acceptance": [
+        "30 條 developer 題，每條有 source",
+        "JSON 格式通過現有載入，遊戲冇報錯"
+      ]
+    },
+    {
+      "id": "Q10_BANK_SIZES",
+      "alan_confirm": "Alan 22:28 確認題庫目標題數（另加 30 條 developer）",
+      "target": {
+        "developer": "30（新，見 Q8）",
+        "law": "25（不變）",
+        "math": "25 → 20（抽走 5 條）",
+        "mall": "10 → 20（新加 10 條）",
+        "hard": "10（不變；Q8 嘅 6 條 developer hard 另計）",
+        "hr＋labour": "25 → 12（抽走 13 條）"
+      },
+      "remove_rule": [
+        "抽走嘅題目唔好刪：搬去 data/quiz-retired.json（同格式），遊戲唔載入",
+        "優先抽走：太相似／重複、答案有爭議、太專業（只有 HR 從業員先識）嘅題目",
+        "hr＋labour 留低嘅 12 條要係一般人都聽過嘅常識（例如年假、最低工資概念、強積金）"
+      ],
+      "new_mall_10": {
+        "topics": [
+          "商場常見設施同標誌（升降機、扶手電梯、育嬰室、失物認領）",
+          "購物禮儀同常識（排隊、退換貨一般做法、會員積分）",
+          "香港商場文化（冷氣、節日裝飾、美食廣場）"
+        ],
+        "rules": [
+          "唔好出真實商場或品牌名",
+          "唔好出會變嘅資料",
+          "每條加 source 或者寫明係常識題"
+        ]
+      },
+      "review": "抽走同新加嘅清單都寫入 docs/gdd/quiz-developer-review.md（分三段：新 developer、新 mall、抽走清單＋原因）",
+      "acceptance": [
+        "data/quiz-mall.json 各類題數：developer 30、law 25、math 20、mall 20、hard 10、hr＋labour 12",
+        "quiz-retired.json 有 18 條抽走嘅題",
+        "遊戲載入冇報錯"
+      ]
     },
     {
       "id": "Q9_ROUND_MIX",
@@ -50,7 +104,11 @@
         "per_round": "普通 6 題：developer 3 題、law 1 題、hr 或 labour 1 題、math 或 mall 1 題；難題 1 題：developer hard 優先（50%），其餘 hard 隨機",
         "fallback": "某類題目唔夠（例如出晒）就由 developer → law → 其他補上"
       },
-      "keep": ["避免重複（quizSeen）", "難題位置第4–7題隨機", "答案位置打亂"],
+      "keep": [
+        "避免重複（quizSeen）",
+        "難題位置第4–7題隨機",
+        "答案位置打亂"
+      ],
       "acceptance": [
         "Playwright 開 20 局統計：developer 題目 ≥ 40%，hr＋labour ≤ 15%",
         "冇重複、冇報錯"
