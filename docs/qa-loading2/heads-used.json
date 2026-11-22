@@ -1,0 +1,86 @@
+[
+  {
+    "id": "lunbo",
+    "name": "倫寶",
+    "file": "/art/portraits/lunbo.png",
+    "size": 134
+  },
+  {
+    "id": "kibobo",
+    "name": "琪寶寶",
+    "file": "/art/portraits/kibobo.png",
+    "size": 134
+  },
+  {
+    "id": "pupu",
+    "name": "噗噗",
+    "file": "/art/custom/pupu-portrait.png",
+    "size": 134
+  },
+  {
+    "id": "huihui",
+    "name": "熊仔",
+    "file": "/art/loading-heads/huihui.png",
+    "size": 92
+  },
+  {
+    "id": "guard",
+    "name": "英國熊",
+    "file": "/art/loading-heads/guard.png",
+    "size": 92
+  },
+  {
+    "id": "denim",
+    "name": "小熊仔",
+    "file": "/art/loading-heads/denim.png",
+    "size": 92
+  },
+  {
+    "id": "brownie",
+    "name": "招積熊",
+    "file": "/art/loading-heads/brownie.png",
+    "size": 92
+  },
+  {
+    "id": "snowcat",
+    "name": "北極熊",
+    "file": "/art/loading-heads/snowcat.png",
+    "size": 92
+  },
+  {
+    "id": "shiba",
+    "name": "柴柴",
+    "file": "/art/loading-heads/shiba.png",
+    "size": 92
+  },
+  {
+    "id": "ginger",
+    "name": "薑餅",
+    "file": "/art/loading-heads/ginger.png",
+    "size": 92
+  },
+  {
+    "id": "fleecy",
+    "name": "大pat熊",
+    "file": "/art/loading-heads/fleecy.png",
+    "size": 92
+  },
+  {
+    "id": "gnome",
+    "name": "聖誕伯伯",
+    "file": "/art/loading-heads/gnome.png",
+    "size": 92
+  },
+  {
+    "id": "tigercub",
+    "name": "虎仔",
+    "file": "/art/loading-heads/tigercub.png",
+    "size": 92
+  },
+  {
+    "id": "kuro",
+    "name": "喵仔",
+    "file": "/art/loading-heads/kuro.png",
+    "size": 92
+  }
+]
