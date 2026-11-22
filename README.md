@@ -64,19 +64,21 @@ npm run dev -- --host 0.0.0.0 --port 4637
 
 | | 位置 |
 |---|---|
-| **遊戲** | [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app) |
+| **遊戲（正式）** | [https://salmonbearv3.vercel.app](https://salmonbearv3.vercel.app) |
 | **攻略** | `/guide/`（封面「攻略」掣；`public/guide/index.html`） |
 | **預告／trailer** | `art-src/trailer/c2/`（Ken／Leon／第 2 大陸氣氛圖；未接遊戲流程） |
 | **盒帶貼紙** | `/sticker/` · 原稿 `art-src/print/`（日版 SFC 105 × 37.5 mm） |
 
+> 舊網址 `https://sake-kuma.vercel.app` **唔再跟 main**，會見到舊版（無大陸2第2關／無洗地機）。請用上面正式網。
+
 ## 發佈
 
-**Production：** [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app)
+**Production：** [https://salmonbearv3.vercel.app](https://salmonbearv3.vercel.app)（Vercel 專案 `salmonbear_v3`）
 
 GitHub 目標：`aftl0904-coder/Game-Salmon-Bear-`  
-Vercel 專案：`sake-kuma`（靜態 `dist`，見 `vercel.json`）
+靜態輸出：`dist`（見 `vercel.json`）
 
-對 Agent 講 **publish** 即會一次完成：push GitHub、開／更新 PR、Vercel 部署。
+大陸2：選單「2 大陸2」由**購物中心（第1關／ST-06）**開局；通關後掣「大陸2・第二關」先入**森友展銷中心（第2關／ST-07）**。第8–10 關鎖住。
 
 
 ## 2x 畫面解像度（HD）
