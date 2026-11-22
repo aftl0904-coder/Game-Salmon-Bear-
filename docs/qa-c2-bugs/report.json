@@ -1,0 +1,234 @@
+{
+  "ok": true,
+  "errors": [],
+  "b1": {
+    "attackCount": 4,
+    "attacks": [
+      {
+        "act": "charge",
+        "at": 1216.6999999999998,
+        "hadWarn": true,
+        "warnMs": 900,
+        "chargeDist": 260,
+        "endX": 4700,
+        "x": 4960
+      },
+      {
+        "act": "charge",
+        "at": 5083.2,
+        "hadWarn": true,
+        "warnMs": 900,
+        "chargeDist": 46,
+        "endX": 4654,
+        "x": 4700
+      },
+      {
+        "act": "charge",
+        "at": 8216.4,
+        "hadWarn": true,
+        "warnMs": 900,
+        "chargeDist": 260,
+        "endX": 4914,
+        "x": 4654
+      },
+      {
+        "act": "charge",
+        "at": 11966.3,
+        "hadWarn": true,
+        "warnMs": 900,
+        "chargeDist": 260,
+        "endX": 4654,
+        "x": 4914
+      }
+    ],
+    "mul": 1,
+    "charge": {
+      "before": 5,
+      "after": 4
+    },
+    "acid": {
+      "before": 5,
+      "after": 4
+    },
+    "pass": true
+  },
+  "b2": {
+    "stages": {
+      "6": {
+        "grounded": {
+          "stageNo": 6,
+          "stallX": 1812,
+          "checkpointXs": [
+            700,
+            1812,
+            3100,
+            4520
+          ],
+          "points": [
+            {
+              "x": 700,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            },
+            {
+              "x": 1812,
+              "support": 285,
+              "overPit": false,
+              "stall": true
+            },
+            {
+              "x": 3100,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            },
+            {
+              "x": 4520,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            }
+          ]
+        },
+        "stallTrial": {
+          "stallX": 1812,
+          "support": 285,
+          "lastCheckpointX": 1812,
+          "coffeeDone": true,
+          "hp": 6,
+          "y": 285,
+          "triggered": true
+        }
+      },
+      "7": {
+        "grounded": {
+          "stageNo": 7,
+          "stallX": 1960,
+          "checkpointXs": [
+            800,
+            1960,
+            3100,
+            4520
+          ],
+          "points": [
+            {
+              "x": 800,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            },
+            {
+              "x": 1960,
+              "support": 285,
+              "overPit": false,
+              "stall": true
+            },
+            {
+              "x": 3100,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            },
+            {
+              "x": 4520,
+              "support": 285,
+              "overPit": false,
+              "stall": false
+            }
+          ]
+        },
+        "stallTrial": {
+          "stallX": 1960,
+          "support": 285,
+          "lastCheckpointX": 1960,
+          "coffeeDone": true,
+          "hp": 6,
+          "y": 285,
+          "triggered": true
+        }
+      }
+    },
+    "pass": true
+  },
+  "b3": {
+    "side": {
+      "before": 6,
+      "after": 5,
+      "damaged": true
+    },
+    "stomp": {
+      "before": 6,
+      "after": 6,
+      "enemyBefore": 60,
+      "enemyAfter": 58,
+      "undamaged": true,
+      "enemyHurt": true
+    },
+    "c2": {
+      "before": 6,
+      "after": 5,
+      "damaged": true
+    },
+    "pass": true
+  },
+  "b6": {
+    "contrasts": [
+      {
+        "c": "#d8cfc0",
+        "L": 0.8,
+        "delta": 0.6980392156862746
+      },
+      {
+        "c": "#c9c2b6",
+        "L": 0.7509803921568627,
+        "delta": 0.6490196078431373
+      },
+      {
+        "c": "#d4cdc2",
+        "L": 0.7960784313725491,
+        "delta": 0.6941176470588236
+      },
+      {
+        "c": "#d0c6b8",
+        "L": 0.7686274509803921,
+        "delta": 0.6666666666666666
+      },
+      {
+        "c": "#d2c8b8",
+        "L": 0.7725490196078431,
+        "delta": 0.6705882352941176
+      },
+      {
+        "c": "#f4eee4",
+        "L": 0.9254901960784314,
+        "delta": 0.823529411764706
+      }
+    ],
+    "stages": {
+      "6": {
+        "segments": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ]
+      },
+      "7": {
+        "segments": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E"
+        ]
+      }
+    },
+    "pass": true,
+    "iphone": {
+      "6": "docs/qa-pit-contrast/s6-iphone13.png",
+      "7": "docs/qa-pit-contrast/s7-iphone13.png"
+    }
+  }
+}
