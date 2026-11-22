@@ -11,8 +11,19 @@ check(segments.length===5&&segments.map(s=>s.id).join('')==='ABCDE','five ordere
 for(let i=0;i<segments.length;i++)check(segments[i].x0===(i?segments[i-1].x1:0)&&segments[i].x1>segments[i].x0,`segment ${i} must be continuous`)
 check(segments.at(-1)?.x1===level.worldW,'segments cover world')
 check(JSON.stringify(level.pits)===JSON.stringify([{x:2320,w:56},{x:2780,w:64}]),'two approved C pits')
-const enemies=level.enemies||[],expected={A:{guard:2},B:{guard:2,honeyzombie:2},C:{guard:2,robotarm:1},D:{guard:3,honeyzombie:3},E:{}}
-for(const segment of segments){const actual={};for(const e of enemies.filter(e=>e.x>=segment.x0&&e.x<segment.x1)){actual[e.species]=(actual[e.species]||0)+1;if(e.species==='honeyzombie')check(e.product===true,'honey zombies use product skin');check(Number.isFinite(e.unlockX)&&e.unlockX<=e.x,'enemy unlock before position')}check(JSON.stringify(Object.entries(actual).sort())===JSON.stringify(Object.entries(expected[segment.id]||{}).sort()),`${segment.id}: enemy roster`)}
+const TYPES=new Set(['s7charge','s7hop','s7shield','s7can'])
+const enemies=level.enemies||[]
+check(enemies.length<=18,'density ≤ prior 15 + 20% (≤18)')
+check(enemies.every(e=>TYPES.has(e.species)),'only Stage-7 behavior species')
+// No two consecutive same type along spawn order (x ascending).
+const ordered=[...enemies].sort((a,b)=>a.x-b.x)
+for(let i=1;i<ordered.length;i++)check(ordered[i].species!==ordered[i-1].species,`no consecutive same type at x=${ordered[i].x}`)
+for(const segment of segments){
+  const inSeg=enemies.filter(e=>e.x>=segment.x0&&e.x<segment.x1)
+  const kinds=new Set(inSeg.map(e=>e.species))
+  check(kinds.size>=3,`${segment.id}: ≥3 behavior types (got ${[...kinds].join(',')||'none'})`)
+  for(const e of inSeg)check(Number.isFinite(e.unlockX)&&e.unlockX<=e.x,'enemy unlock before position')
+}
 const t=level.trainer||{}
 for(const [key,value] of Object.entries({hp:55,phase2At:0.66,phase3Below:0.3,phase3Rate:1.3,summonPerCycle:1,summonMaxAlive:2,chainWarnMs:800,chainLifeMs:1500,chainWidth:108}))check(t[key]===value,`trainer ${key} must be ${value}`)
 check(level.boss?.kind==='trainer'&&level.boss.arenaX1-level.boss.arenaX0>t.chainWidth+32,'boss arena and safe space')

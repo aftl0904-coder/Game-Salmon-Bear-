@@ -101,84 +101,94 @@
   ],
   "enemies": [
     {
-      "x": 520,
-      "species": "guard",
-      "unlockX": 300
+      "x": 480,
+      "species": "s7charge",
+      "unlockX": 280
     },
     {
-      "x": 760,
-      "species": "guard",
-      "unlockX": 540
+      "x": 640,
+      "species": "s7hop",
+      "unlockX": 450
+    },
+    {
+      "x": 780,
+      "species": "s7shield",
+      "unlockX": 600
     },
     {
       "x": 1030,
-      "species": "guard",
+      "species": "s7can",
       "unlockX": 880
     },
     {
       "x": 1240,
-      "species": "honeyzombie",
-      "unlockX": 1050,
-      "product": true
+      "species": "s7charge",
+      "unlockX": 1050
     },
     {
       "x": 1530,
-      "species": "guard",
+      "species": "s7hop",
       "unlockX": 1360
     },
     {
       "x": 1820,
-      "species": "honeyzombie",
-      "unlockX": 1650,
-      "product": true
+      "species": "s7shield",
+      "unlockX": 1650
     },
     {
       "x": 2100,
-      "species": "guard",
+      "species": "s7can",
       "unlockX": 2000
     },
     {
       "x": 2510,
-      "species": "robotarm",
+      "species": "s7hop",
       "unlockX": 2280
     },
     {
       "x": 2920,
-      "species": "guard",
+      "species": "s7shield",
       "unlockX": 2680
     },
     {
       "x": 3260,
-      "species": "guard",
+      "species": "s7charge",
       "unlockX": 3150
     },
     {
-      "x": 3450,
-      "species": "honeyzombie",
-      "unlockX": 3260,
-      "product": true
+      "x": 3480,
+      "species": "s7can",
+      "unlockX": 3280
     },
     {
-      "x": 3670,
-      "species": "guard",
-      "unlockX": 3470
+      "x": 3720,
+      "species": "s7hop",
+      "unlockX": 3500
     },
     {
-      "x": 3880,
-      "species": "honeyzombie",
-      "unlockX": 3700,
-      "product": true
+      "x": 3980,
+      "species": "s7shield",
+      "unlockX": 3780
     },
     {
-      "x": 4090,
-      "species": "guard",
-      "unlockX": 3910
+      "x": 4280,
+      "species": "s7charge",
+      "unlockX": 4080
     },
     {
-      "x": 4320,
-      "species": "honeyzombie",
-      "unlockX": 4110,
-      "product": true
+      "x": 4575,
+      "species": "s7hop",
+      "unlockX": 4520
+    },
+    {
+      "x": 4610,
+      "species": "s7can",
+      "unlockX": 4560
+    },
+    {
+      "x": 4645,
+      "species": "s7shield",
+      "unlockX": 4590
     }
   ],
   "altarAmbush": [],
