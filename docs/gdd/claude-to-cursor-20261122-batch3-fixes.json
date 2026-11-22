@@ -1,8 +1,14 @@
 {
   "meta": {
-    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-22",
+    "from": "Claude",
+    "to": "Cursor（Auto）",
+    "date": "2026-11-22",
     "source": "Alan 13:13 喺正式網（main 2fb325b 之後）試玩回報",
-    "pr": { "branch": "cursor/playtest-fixes-2610", "from": "最新 origin/main", "note": "一條 PR 包晒 F1–F3；開唔到 PR 報 branch 名，Claude 代開；唔准自己 merge" },
+    "pr": {
+      "branch": "cursor/playtest-fixes-2610",
+      "from": "最新 origin/main",
+      "note": "一條 PR 包晒 F1–F3；開唔到 PR 報 branch 名，Claude 代開；唔准自己 merge"
+    },
     "rules": "照 steps 做，numbers 直接用；做唔到停低回報，唔好自己諗替代方案；唔准改題目內容、唔准寫對白"
   },
   "tickets": [
@@ -40,21 +46,27 @@
       "fix_steps": [
         "1. 搵每個角色而家 repo 入面最新、解像度最高嘅圖（優先：最近 32-bit／HD 版本嘅 portrait 或 sprite；用 git log 睇邊個檔最新）。PR 描述要列：角色名 → 用咗邊個檔 → 尺寸",
         "2. 裁頭時用高解像原圖縮細（smooth 縮放），唔好再用細圖 nearest 放大（會矇／起鋸齒）",
-        "3. 排版改為散開：倫寶、琪寶寶、噗噗三個大頭（88px）放畫面中間一行；其餘朋友（64px）沿住外圍排成一個橢圓形，平均分佈，互相唔重疊（最少相隔 8px），唔好蓋住 logo、蜂蜜罐同右下角版本字",
+        "3. 排版：大頭要鋪滿成個 640×360 畫面（似海報），唔係縮細擺中間。倫寶、琪寶寶、噗噗三個最大（約 120px）放中間偏下；其餘朋友（約 88px）平均散佈喺畫面其餘所有位置（上下左右四邊都要有），互相唔重疊（相隔 4–10px），每個頭可以輕微轉 ±8 度增加活潑感。logo 放頂部正中，後面加圓角半透明底；蜂蜜罐同右下角版本字照舊，大頭要避開佢哋",
         "4. 每個頭照舊輕輕上下彈（2–4px，相位唔同）"
       ],
       "acceptance": [
+        "L0 大頭覆蓋畫面面積 ≥ 60%（Playwright 計所有 bounding box 面積總和 ÷ 640×360），四邊都有角色",
         "L1 冇任何兩個頭重疊（Playwright 計 bounding box）",
         "L2 每個頭都清晰，冇明顯鋸齒或者矇（截圖放 docs/qa-loading2/）",
         "L3 PR 描述列出每個角色用咗邊個新檔"
-      ]
+      ],
+      "alan_confirm": "Alan 13:14 再確認：角色要充滿成個版面，好似海報咁吸引；散開、唔好搭住"
     },
     {
       "id": "F3_MAP_VERSE_SIZE",
       "priority": "P1",
       "issue": "世界地圖嘅聖經金句字放大兩倍之後太大，遮住咗地圖",
       "where": "src/game/WorldMapScene.ts 第246行金句 text（而家 26px）",
-      "numbers": { "金句 fontSize": "26px → 20px", "lineSpacing": "6 → 4", "wordWrap": "560 保持" },
+      "numbers": {
+        "金句 fontSize": "26px → 20px",
+        "lineSpacing": "6 → 4",
+        "wordWrap": "560 保持"
+      },
       "extra": "如果 20px 仍然遮住地圖關卡圖示：金句加半透明深色底（#00000088，padding 8px），位置移去畫面上半部；其他地圖字（關名、圖示字）唔好縮",
       "acceptance": [
         "V1 金句唔再遮住關卡圖示（大陸1、大陸2 地圖各截一張圖）",
