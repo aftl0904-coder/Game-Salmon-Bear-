@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "errors": [],
+  "acceptance": {
+    "C1": "PASS",
+    "C2": "PASS",
+    "C3": "PASS",
+    "C4": "PASS",
+    "D1": "PASS",
+    "D2": "PASS",
+    "D3": "PASS",
+    "E1": "PASS",
+    "E2": "PASS",
+    "E3": "PASS",
+    "T5b": "PASS"
+  },
+  "notes": [
+    {
+      "shopScan": {
+        "texts": [],
+        "icons": [
+          "s6-icon-pharmacy",
+          "s6-icon-restaurant",
+          "s6-icon-fashion",
+          "s6-icon-bookstore",
+          "s6-icon-coffee",
+          "s6-icon-shoes",
+          "s6-icon-electronics",
+          "s6-icon-souvenir"
+        ]
+      }
+    },
+    {
+      "dFade": {
+        "ok": true,
+        "bodyOn": false,
+        "canHurt": false,
+        "samples": [
+          {
+            "t": 90.40000000223517,
+            "alpha": 0.839056
+          },
+          {
+            "t": 180.5,
+            "alpha": 0.6084
+          },
+          {
+            "t": 270.6000000014901,
+            "alpha": 0.350464
+          },
+          {
+            "t": 360.70000000298023,
+            "alpha": 0.16974400000000012
+          },
+          {
+            "t": 450.9000000022352,
+            "alpha": 0.05289999999999995
+          },
+          {
+            "t": 541.1000000014901,
+            "alpha": 0.0023039999999999727
+          }
+        ],
+        "gone": true,
+        "fadeFlag": true
+      }
+    },
+    {
+      "d3": {
+        "total": 12,
+        "flagged": 0,
+        "stageNo": 1
+      }
+    }
+  ]
+}

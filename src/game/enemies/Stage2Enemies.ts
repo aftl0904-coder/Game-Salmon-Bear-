@@ -78,6 +78,10 @@ export class AnimEnemy extends Enemy {
   }
 
   protected override die(dir: number) {
+    if (this.c2DeathFade) {
+      super.die(dir)
+      return
+    }
     const key = `${this.set}-die`
     if (this.corpseOnDeath && this.scene?.anims.exists(key)) {
       const corpse = this.scene.add
