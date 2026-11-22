@@ -25,6 +25,23 @@ type Bank = {
 
 const BANK = quizRaw as unknown as Bank
 
+/** T13_QUIZ_FIX / PR-H timing table (ms). */
+export const QUIZ_TIMING = {
+  buzzQ1: 6000,
+  buzzOther: 5400,
+  buzzRebound: 4200,
+  rivalQ1: 3200,
+  rivalHard: 2900,
+  rivalNormal: 2500,
+  rivalSpreadQ1: 800,
+  rivalSpreadHard: 1200,
+  rivalSpreadNormal: 1000,
+  answerPlayer: 6800,
+  answerHardExtra: 3000,
+  answerRival: 1600,
+  confirmDebounceMs: 200,
+} as const
+
 export type GoldfishResult = {
   coins: number
   correct: number
@@ -139,11 +156,14 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
 
   root.add([title, progress, prompt, status, coinHud])
 
+  const choiceY0 = 220
+  const choiceGap = 28
+  const choiceW = GAME_W - 140
   const choiceBtns: Phaser.GameObjects.Container[] = []
   const choiceLabels: Phaser.GameObjects.Text[] = []
   for (let i = 0; i < 4; i++) {
-    const y = 220 + i * 28
-    const bg = scene.add.rectangle(GAME_W / 2, y, GAME_W - 140, 24, 0x243848, 1).setStrokeStyle(2, 0x6a90a8)
+    const y = choiceY0 + i * choiceGap
+    const bg = scene.add.rectangle(GAME_W / 2, y, choiceW, 24, 0x243848, 1).setStrokeStyle(2, 0x6a90a8)
     const tx = scene.add
       .text(GAME_W / 2, y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#f0f6ff' })
       .setOrigin(0.5)
@@ -164,7 +184,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   }
 
   const skipTxt = scene.add
-    .text(GAME_W / 2, GAME_H - 28, twoP ? 'Start／Esc 略過｜P1 右掣／Enter｜P2 左掣／Shift' : 'Start／Esc 可略過整局', {
+    .text(GAME_W / 2, GAME_H - 28, '搶答：紅掣／攻擊｜揀答案：↑↓＋攻擊，或直接撳', {
       fontFamily: FONT_UI,
       fontSize: '11px',
       color: '#8a9aaa',
@@ -181,7 +201,22 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   let onlyWho: Who | null = null
   let rivalBuzzAt = 0
   let lockedChoices = false
+  let cursor = 0
+  let hardFlash: Phaser.GameObjects.Text | null = null
+  /** After attack/Enter/Space/J buzz: must release, then wait ≥200ms before confirm. */
+  let confirmNeedsRelease = false
+  let confirmReadyAt = 0
+  /** Block all answer confirms briefly after buzz (sticky keys / same-press). */
+  let answerInputIgnoreUntil = 0
+  let prevUp = false
+  let prevDown = false
+  let prevConfirm = false
   let keys: Phaser.Input.Keyboard.Key[] = []
+  /** Wall-clock schedule: scene.time can freeze under storyIntro/minigame gates. */
+  let pendingNextAt = 0
+  let pendingRivalAt = 0
+  let pendingRivalOk = false
+  let hardFlashUntil = 0
 
   const refreshCoin = () => {
     coinHud.setText(twoP ? `倫${purse.boy} 琪${purse.girl}` : `幣 ${coins}`)
@@ -191,13 +226,26 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     for (const c of choiceBtns) c.setVisible(on)
   }
 
+  const paintCursor = () => {
+    for (let i = 0; i < 4; i++) {
+      const bg = choiceBtns[i]!.list[0] as Phaser.GameObjects.Rectangle
+      if (i === cursor) {
+        bg.setFillStyle(0x3a5a70, 1)
+        bg.setStrokeStyle(3, 0xffe080)
+      } else {
+        bg.setFillStyle(0x243848, 1)
+        bg.setStrokeStyle(2, 0x6a90a8)
+      }
+    }
+  }
+
   const paintChoices = (q: Q) => {
     const letters = ['A', 'B', 'C', 'D']
     for (let i = 0; i < 4; i++) {
       choiceLabels[i]!.setText(`${letters[i]}  ${q.choices[i] ?? ''}`)
-      const bg = choiceBtns[i]!.list[0] as Phaser.GameObjects.Rectangle
-      bg.setFillStyle(0x243848, 1)
     }
+    cursor = 0
+    paintCursor()
   }
 
   const resultNow = (): GoldfishResult => ({
@@ -216,11 +264,24 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   }
 
   const cleanup = () => {
-    scene.input.keyboard?.off('keydown-ESC')
-    scene.input.keyboard?.off('keydown-ENTER')
-    scene.input.keyboard?.off('keydown-SHIFT')
-    for (const k of keys) k.destroy()
-    root.destroy(true)
+    scene.input.keyboard?.off('keydown', onKeyDown)
+    scene.input.keyboard?.off('keyup', onKeyUp)
+    scene.input.off('pointerdown', onScenePointer)
+    for (const k of keys) {
+      try { k.destroy() } catch { /* ignore */ }
+    }
+    hardFlash?.destroy()
+    hardFlash = null
+    try {
+      root.setVisible(false)
+      root.setActive(false)
+      // Defer destroy so the current WebGL render pass cannot hit a null texture.
+      setTimeout(() => {
+        try { root.destroy(true) } catch { /* ignore */ }
+      }, 0)
+    } catch {
+      try { root.destroy(true) } catch { /* ignore */ }
+    }
   }
 
   const scoreFor = (q: Q, ok: boolean) => {
@@ -239,11 +300,78 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     p2Buzz?.btn.setFillStyle(0xe01828, 1)
   }
 
+  const wallNow = () => (typeof performance !== 'undefined' ? performance.now() : Date.now())
+
+  const confirmHeld = () =>
+    !!(keys[8]?.isDown || keys[9]?.isDown || keys[10]?.isDown || TouchInput.isDown('attack'))
+
+  const armConfirmGate = () => {
+    if (confirmHeld()) {
+      confirmNeedsRelease = true
+      confirmReadyAt = Number.POSITIVE_INFINITY
+    } else {
+      confirmNeedsRelease = false
+      confirmReadyAt = wallNow() + QUIZ_TIMING.confirmDebounceMs
+    }
+  }
+
+  const tickConfirmGate = () => {
+    if (!confirmNeedsRelease) return
+    if (!confirmHeld()) {
+      confirmNeedsRelease = false
+      confirmReadyAt = wallNow() + QUIZ_TIMING.confirmDebounceMs
+    }
+  }
+
+  const releaseConfirmGate = () => {
+    if (!confirmNeedsRelease) return
+    confirmNeedsRelease = false
+    confirmReadyAt = wallNow() + QUIZ_TIMING.confirmDebounceMs
+  }
+
+  const canConfirmNow = () => !confirmNeedsRelease && wallNow() >= confirmReadyAt
+
+  const clearHardFlash = () => {
+    hardFlash?.destroy()
+    hardFlash = null
+  }
+
+  const showHardNotice = () => {
+    clearHardFlash()
+    hardFlash = scene.add
+      .text(GAME_W / 2, GAME_H / 2 - 20, '難題！多 3 秒', {
+        fontFamily: FONT_TITLE,
+        fontSize: '24px',
+        color: '#ffe040',
+        stroke: '#1a1008',
+        strokeThickness: 6,
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.UI + 290)
+    root.add(hardFlash)
+    hardFlashUntil = wallNow() + 1000
+  }
+
+  const scheduleNext = (ms = 750) => {
+    pendingNextAt = wallNow() + ms
+  }
+
   const nextQuestion = () => {
     if (qi >= round.length) {
       phase = 'done'
       status.setText(`完！今局金幣 ${coins}`)
-      scene.time.delayedCall(900, () => finish(resultNow()))
+      pendingNextAt = 0
+      const doneAt = wallNow() + 900
+      const endTimer = setInterval(() => {
+        if (killed) {
+          clearInterval(endTimer)
+          return
+        }
+        if (wallNow() >= doneAt) {
+          clearInterval(endTimer)
+          finish(resultNow())
+        }
+      }, 50)
       return
     }
     const q = round[qi]!
@@ -251,32 +379,44 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     answering = null
     onlyWho = null
     lockedChoices = false
+    cursor = 0
+    clearHardFlash()
     setChoicesVisible(false)
     resetBuzzLooks()
     progress.setText(`第 ${qi + 1}／${round.length} 題${q.difficulty === 'hard' ? '（難題）' : ''}`)
     prompt.setText(q.prompt)
     status.setText(twoP ? '左右紅掣搶答！' : '撳右邊紅掣搶答！')
     paintChoices(q)
-    buzzOpen = qi === 0 ? 4000 : 3400
-    // Balanced 1P rival: beatable if you read, still pressure (A pass without playtest).
-    const base = qi === 0 ? 2200 : q.difficulty === 'hard' ? 1900 : 1500
-    const spread = qi === 0 ? 800 : q.difficulty === 'hard' ? 1200 : 1000
+    buzzOpen = qi === 0 ? QUIZ_TIMING.buzzQ1 : QUIZ_TIMING.buzzOther
+    const base = qi === 0 ? QUIZ_TIMING.rivalQ1 : q.difficulty === 'hard' ? QUIZ_TIMING.rivalHard : QUIZ_TIMING.rivalNormal
+    const spread = qi === 0 ? QUIZ_TIMING.rivalSpreadQ1 : q.difficulty === 'hard' ? QUIZ_TIMING.rivalSpreadHard : QUIZ_TIMING.rivalSpreadNormal
     rivalBuzzAt = twoP ? 999999 : base + Math.floor(rng() * spread)
   }
 
   const beginAnswer = (who: Who | 'rival') => {
     phase = 'answer'
     answering = who
-    answerLeft = who === 'rival' ? 1600 : 2800
-    setChoicesVisible(who !== 'rival')
-    status.setText(who === 'rival' ? '對手搶到…' : who === 'girl' ? '琪寶寶快答！A–D' : '倫寶快答！A–D')
+    const q = round[qi]!
+    const hard = q.difficulty === 'hard'
     if (who === 'rival') {
-      const q = round[qi]!
-      const chance = q.difficulty === 'hard' ? 0.35 : 0.55
-      scene.time.delayedCall(700 + Math.floor(rng() * 600), () => {
-        if (killed || phase !== 'answer' || answering !== 'rival') return
-        resolveAnswer(rng() < chance, 'rival')
-      })
+      answerLeft = QUIZ_TIMING.answerRival
+    } else {
+      answerLeft = QUIZ_TIMING.answerPlayer + (hard ? QUIZ_TIMING.answerHardExtra : 0)
+      armConfirmGate()
+      answerInputIgnoreUntil = wallNow() + QUIZ_TIMING.confirmDebounceMs
+      prevConfirm = true
+      prevUp = true
+      prevDown = true
+      cursor = 0
+      paintCursor()
+      if (hard) showHardNotice()
+    }
+    setChoicesVisible(who !== 'rival')
+    status.setText(who === 'rival' ? '對手搶到…' : who === 'girl' ? '琪寶寶快答！↑↓＋攻擊' : '倫寶快答！↑↓＋攻擊')
+    if (who === 'rival') {
+      const chance = hard ? 0.35 : 0.55
+      pendingRivalOk = rng() < chance
+      pendingRivalAt = wallNow() + 700 + Math.floor(rng() * 600)
     }
   }
 
@@ -285,6 +425,8 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     phase = 'resolve'
     lockedChoices = true
     setChoicesVisible(false)
+    clearHardFlash()
+    pendingRivalAt = 0
     const q = round[qi]!
 
     if (who === 'timeout') {
@@ -293,9 +435,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       status.setText(`超時！${timeoutPenalty} 幣`)
       SFX.hurt()
       qi++
-      scene.time.delayedCall(750, () => {
-        if (!killed) nextQuestion()
-      })
+      scheduleNext(750)
       return
     }
 
@@ -303,9 +443,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       if (ok) status.setText('對手答啱咗！')
       else status.setText('對手都答錯…')
       qi++
-      scene.time.delayedCall(750, () => {
-        if (!killed) nextQuestion()
-      })
+      scheduleNext(750)
       return
     }
 
@@ -316,9 +454,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       status.setText(`啱！+${d} 幣`)
       SFX.coin()
       qi++
-      scene.time.delayedCall(750, () => {
-        if (!killed) nextQuestion()
-      })
+      scheduleNext(750)
       return
     }
 
@@ -326,23 +462,20 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     status.setText(`錯…${d} 幣`)
     SFX.hurt()
 
-    // 2P: after a wrong answer the other seat may steal the rebound buzz once.
     if (twoP && !onlyWho) {
       const other: Who = who === 'boy' ? 'girl' : 'boy'
       onlyWho = other
       answering = null
       phase = 'buzz'
       lockedChoices = false
-      buzzOpen = 2200
+      buzzOpen = QUIZ_TIMING.buzzRebound
       resetBuzzLooks()
       status.setText(`${other === 'girl' ? '琪寶寶' : '倫寶'}可以搶返！`)
       return
     }
 
     qi++
-    scene.time.delayedCall(750, () => {
-      if (!killed) nextQuestion()
-    })
+    scheduleNext(750)
   }
 
   const tryBuzz = (who: Who) => {
@@ -356,6 +489,25 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     beginAnswer(who)
   }
 
+  const pickChoice = (idx: number, opts?: { force?: boolean }) => {
+    if (killed || phase !== 'answer' || lockedChoices) return
+    if (answering !== 'boy' && answering !== 'girl') return
+    if (!opts?.force && wallNow() < answerInputIgnoreUntil) return
+    if (idx < 0 || idx > 3) return
+    cursor = idx
+    paintCursor()
+    const q = round[qi]!
+    resolveAnswer(idx === q.answerIndex, answering)
+  }
+
+  const confirmCursor = () => {
+    if (killed || phase !== 'answer' || lockedChoices) return
+    if (answering !== 'boy' && answering !== 'girl') return
+    if (wallNow() < answerInputIgnoreUntil) return
+    if (!canConfirmNow()) return
+    pickChoice(cursor, { force: true })
+  }
+
   p1Buzz.btn.on('pointerdown', () => tryBuzz('boy'))
   p2Buzz?.btn.on('pointerdown', () => tryBuzz('girl'))
 
@@ -363,11 +515,96 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     const idx = i
     const bg = choiceBtns[i]!.list[0] as Phaser.GameObjects.Rectangle
     bg.on('pointerdown', () => {
-      if (killed || phase !== 'answer' || lockedChoices) return
-      if (answering !== 'boy' && answering !== 'girl') return
-      const q = round[qi]!
-      resolveAnswer(idx === q.answerIndex, answering)
+      pickChoice(idx, { force: true })
     })
+  }
+
+  /** Camera-space point for scrollFactor-0 quiz UI. */
+  const pointerUI = (pointer: Phaser.Input.Pointer) => {
+    const cam = scene.cameras.main
+    const z = cam?.zoom || 1
+    return { x: pointer.x / z, y: pointer.y / z }
+  }
+
+  const onScenePointer = (pointer: Phaser.Input.Pointer) => {
+    if (killed) return
+    const { x, y } = pointerUI(pointer)
+    if (phase === 'buzz') {
+      const dx1 = x - p1Buzz.x
+      const dy1 = y - p1Buzz.y
+      if (dx1 * dx1 + dy1 * dy1 <= 48 * 48) {
+        tryBuzz('boy')
+        return
+      }
+      if (p2Buzz) {
+        const dx2 = x - p2Buzz.x
+        const dy2 = y - p2Buzz.y
+        if (dx2 * dx2 + dy2 * dy2 <= 48 * 48) {
+          tryBuzz('girl')
+          return
+        }
+      }
+      return
+    }
+    if (phase === 'answer' && (answering === 'boy' || answering === 'girl') && !lockedChoices) {
+      const left = GAME_W / 2 - choiceW / 2
+      const right = GAME_W / 2 + choiceW / 2
+      if (x < left || x > right) return
+      for (let i = 0; i < 4; i++) {
+        const cy = choiceY0 + i * choiceGap
+        if (Math.abs(y - cy) <= 16) {
+          pickChoice(i, { force: true })
+          return
+        }
+      }
+    }
+  }
+  scene.input.on('pointerdown', onScenePointer)
+
+  const moveCursor = (dir: -1 | 1) => {
+    if (phase !== 'answer' || lockedChoices) return
+    if (answering !== 'boy' && answering !== 'girl') return
+    cursor = (cursor + dir + 4) % 4
+    paintCursor()
+    SFX.blip(880)
+  }
+
+  const DIRECT: Record<string, number> = {
+    KeyA: 0,
+    KeyB: 1,
+    KeyC: 2,
+    KeyD: 3,
+    Digit1: 0,
+    Digit2: 1,
+    Digit3: 2,
+    Digit4: 3,
+  }
+
+  const onKeyDown = (ev: KeyboardEvent) => {
+    if (killed || ev.repeat) return
+    const code = ev.code
+    if (code === 'Escape') {
+      finish(resultNow())
+      return
+    }
+    if (phase === 'buzz') {
+      if (code === 'Enter' || code === 'Space' || code === 'KeyJ') tryBuzz('boy')
+      else if (twoP && (code === 'ShiftLeft' || code === 'ShiftRight')) tryBuzz('girl')
+      return
+    }
+    if (phase === 'answer' && (answering === 'boy' || answering === 'girl') && !lockedChoices) {
+      tickConfirmGate()
+      if (code === 'ArrowUp' || code === 'KeyW') moveCursor(-1)
+      else if (code === 'ArrowDown' || code === 'KeyS') moveCursor(1)
+      else if (code in DIRECT) pickChoice(DIRECT[code]!)
+      else if (code === 'Enter' || code === 'Space' || code === 'KeyJ') confirmCursor()
+    }
+  }
+
+  const onKeyUp = (ev: KeyboardEvent) => {
+    if (killed) return
+    if (ev.code !== 'Enter' && ev.code !== 'Space' && ev.code !== 'KeyJ') return
+    releaseConfirmGate()
   }
 
   const kb = scene.input.keyboard
@@ -385,94 +622,105 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       kb.addKey('J'),
       kb.addKey('ENTER'),
       kb.addKey('SHIFT'),
+      kb.addKey('UP'),
+      kb.addKey('DOWN'),
+      kb.addKey('W'),
+      kb.addKey('S'),
     ]
-    kb.on('keydown-ESC', () => finish(resultNow()))
-    kb.on('keydown-ENTER', () => {
-      if (phase === 'buzz') tryBuzz('boy')
-    })
-    kb.on('keydown-SHIFT', () => {
-      if (phase === 'buzz' && twoP) tryBuzz('girl')
-    })
-  }
-
-  const onKey = () => {
-    if (killed) return
-    if (phase === 'buzz') {
-      if (keys[8]?.isDown || keys[9]?.isDown || keys[10]?.isDown || TouchInput.isDown('attack')) tryBuzz('boy')
-      if (twoP && keys[11]?.isDown) tryBuzz('girl')
-    } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl') && !lockedChoices) {
-      const map = [
-        keys[0]?.isDown || keys[4]?.isDown,
-        keys[1]?.isDown || keys[5]?.isDown,
-        keys[2]?.isDown || keys[6]?.isDown,
-        keys[3]?.isDown || keys[7]?.isDown,
-      ]
-      for (let i = 0; i < 4; i++) {
-        if (map[i]) {
-          const q = round[qi]!
-          resolveAnswer(i === q.answerIndex, answering)
-          break
-        }
-      }
+    kb.on('keydown', onKeyDown)
+    kb.on('keyup', onKeyUp)
+    // Phaser key objects also emit up — covers cases where KeyboardEvent keyup is missed.
+    for (const idx of [8, 9, 10] as const) {
+      keys[idx]?.on('up', () => releaseConfirmGate())
     }
   }
 
-  const timer = scene.time.addEvent({
-    delay: 50,
-    loop: true,
-    callback: () => {
-      if (killed) return
-      onKey()
-      if (TouchInput.isDown('attack') && phase === 'buzz') tryBuzz('boy')
-      if (phase === 'buzz') {
-        buzzOpen -= 50
-        if (!twoP) rivalBuzzAt -= 50
-        status.setText(
-          onlyWho
-            ? `${onlyWho === 'girl' ? '琪' : '倫'}搶返中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`
-            : `搶答中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`,
-        )
-        if (!twoP && !answering && rivalBuzzAt <= 0) {
-          beginAnswer('rival')
+  /** Poll TouchInput / gamepad edges (keyboard uses keydown). */
+  const onPad = () => {
+    if (killed) return
+    tickConfirmGate()
+
+    const upNow = TouchInput.isDown('up')
+    const downNow = TouchInput.isDown('down')
+    const attackNow = TouchInput.isDown('attack')
+    const attackEdge = TouchInput.justPressed('attack') || (attackNow && !prevConfirm)
+
+    if (phase === 'buzz') {
+      if (attackEdge) tryBuzz('boy')
+    } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl') && !lockedChoices) {
+      if ((upNow && !prevUp) || TouchInput.justPressed('up')) moveCursor(-1)
+      if ((downNow && !prevDown) || TouchInput.justPressed('down')) moveCursor(1)
+      if (attackEdge && canConfirmNow()) confirmCursor()
+    }
+
+    prevUp = upNow
+    prevDown = downNow
+    prevConfirm = attackNow || confirmHeld()
+  }
+
+  // Wall-clock interval — GameScene may freeze scene.time while storyIntro/minigames run.
+  const timer = setInterval(() => {
+    if (killed) return
+    if (hardFlashUntil && wallNow() >= hardFlashUntil) {
+      hardFlashUntil = 0
+      clearHardFlash()
+    }
+    if (pendingNextAt && wallNow() >= pendingNextAt) {
+      pendingNextAt = 0
+      if (!killed) nextQuestion()
+      return
+    }
+    if (pendingRivalAt && wallNow() >= pendingRivalAt) {
+      pendingRivalAt = 0
+      if (!killed && phase === 'answer' && answering === 'rival') {
+        resolveAnswer(pendingRivalOk, 'rival')
+      }
+      return
+    }
+    onPad()
+    if (phase === 'buzz') {
+      buzzOpen -= 50
+      if (!twoP) rivalBuzzAt -= 50
+      status.setText(
+        onlyWho
+          ? `${onlyWho === 'girl' ? '琪' : '倫'}搶返中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`
+          : `搶答中… ${Math.max(0, Math.ceil(buzzOpen / 1000))}s`,
+      )
+      if (!twoP && !answering && rivalBuzzAt <= 0) {
+        beginAnswer('rival')
+        return
+      }
+      if (buzzOpen <= 0 && !answering) {
+        if (onlyWho) {
+          onlyWho = null
+          qi++
+          status.setText('冇人搶返 → 下一題')
+          phase = 'resolve'
+          scheduleNext(500)
           return
         }
-        if (buzzOpen <= 0 && !answering) {
-          if (onlyWho) {
-            // Rebound timed out — move on.
-            onlyWho = null
-            qi++
-            status.setText('冇人搶返 → 下一題')
-            phase = 'resolve'
-            scene.time.delayedCall(500, () => {
-              if (!killed) nextQuestion()
-            })
-            return
-          }
-          skipped++
-          status.setText('冇人搶 → Skip')
-          phase = 'resolve'
-          qi++
-          scene.time.delayedCall(500, () => {
-            if (!killed) nextQuestion()
-          })
-        }
-      } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl')) {
-        answerLeft -= 50
-        status.setText(`作答 ${Math.max(0, Math.ceil(answerLeft / 1000))}s`)
-        if (answerLeft <= 0) resolveAnswer(false, 'timeout')
+        skipped++
+        status.setText('冇人搶 → Skip')
+        phase = 'resolve'
+        qi++
+        scheduleNext(500)
       }
-    },
-  })
+    } else if (phase === 'answer' && (answering === 'boy' || answering === 'girl')) {
+      answerLeft -= 50
+      status.setText(`作答 ${Math.max(0, Math.ceil(answerLeft / 1000))}s`)
+      if (answerLeft <= 0) resolveAnswer(false, 'timeout')
+    }
+  }, 50)
 
   const origDestroy = () => {
-    timer.remove(false)
+    clearInterval(timer)
     cleanup()
   }
 
   nextQuestion()
   refreshCoin()
 
-  return {
+  const api = {
     done,
     destroy: () => {
       if (killed) return
@@ -480,5 +728,18 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       origDestroy()
       resolve(resultNow())
     },
+    /** QA-only snapshot (Playwright). */
+    debug: () => ({
+      phase,
+      qi,
+      answerLeft,
+      buzzOpen,
+      difficulty: round[qi]?.difficulty ?? null,
+      cursor,
+      confirmNeedsRelease,
+      confirmReadyAt,
+      answering,
+    }),
   }
+  return api as Mini<GoldfishResult> & { debug: () => Record<string, unknown> }
 }
