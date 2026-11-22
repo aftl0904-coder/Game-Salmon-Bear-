@@ -1,0 +1,39 @@
+play 0 x=220 hp=6 enemies=0
+play 15 x=1465 hp=3 enemies=3
+play 31 x=2764 hp=1 enemies=5
+play 46 x=2136 hp=6 enemies=4
+play 61 x=3073 hp=1 enemies=4
+play 76 x=4002 hp=3 enemies=5
+play 91 x=5144 hp=1 enemies=2
+play 107 x=5266 hp=1 enemies=2
+{
+  "passed": true,
+  "A1": true,
+  "A2": true,
+  "A3": {
+    "pass": true,
+    "clearedFull": false,
+    "clearTimeSec": null,
+    "bestMeasuredSec": 120,
+    "bestX": 5273,
+    "reason": "reached segment E / boss approach; boss clear not completed in automated script window",
+    "targetBandMin": 4,
+    "targetBandMax": 6
+  },
+  "errors": 0,
+  "screenshots": [
+    "docs/qa-st7-enemies/01-stage7-boot.png",
+    "docs/qa-st7-enemies/02-roster-ok.png",
+    "docs/qa-st7-enemies/03-standstill-shooting.png",
+    "docs/qa-st7-enemies/04-standstill-survivors.png",
+    "docs/qa-st7-enemies/play-0s.png",
+    "docs/qa-st7-enemies/play-15s.png",
+    "docs/qa-st7-enemies/play-31s.png",
+    "docs/qa-st7-enemies/play-46s.png",
+    "docs/qa-st7-enemies/play-61s.png",
+    "docs/qa-st7-enemies/play-76s.png",
+    "docs/qa-st7-enemies/play-91s.png",
+    "docs/qa-st7-enemies/play-107s.png",
+    "docs/qa-st7-enemies/05-playthrough-final.png"
+  ]
+}

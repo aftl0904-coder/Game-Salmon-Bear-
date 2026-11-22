@@ -60,6 +60,7 @@ import { BeeSoldier, HoneySquirrel, MiniBee, HoneyEgg, QueenBee, type Stage2Hook
 import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './enemies/Stage4Enemies'
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
+import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, playElevatorRide, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -1888,12 +1889,22 @@ export class GameScene extends Phaser.Scene {
         return false
       }
     }
-    // 龍蝦兵 claws / 油甘魚攤主 behind the counter.
-    const guarded = pe as unknown as { blocks?: (d: number) => boolean; hiding?: () => boolean }
+    // 龍蝦兵 claws / 盾牌飼養員 front / 油甘魚攤主 behind the counter / 跳跳籠 grounded.
+    const guarded = pe as unknown as {
+      blocks?: (d: number) => boolean
+      hiding?: () => boolean
+      airOnly?: () => boolean
+    }
     if (typeof guarded.blocks === 'function' && guarded.blocks(dir)) {
       floatText(this, pe.x, pe.y - 52, '叮！跳過頭打背脊', '#ffd0c0', { size: 12, dur: 600 })
       burst(this, pe.x - dir * 14, pe.y - 30, 0xffe0d0, 5)
-      SFX.hit()
+      playFx(this, 'armour-clank', pe.x - dir * 14, pe.y - 30, { flipX: dir > 0 })
+      SFX.ding()
+      return false
+    }
+    if (typeof guarded.airOnly === 'function' && guarded.airOnly()) {
+      floatText(this, pe.x, pe.y - 48, '落地唔食彈！跳起先打', '#c8e0ff', { size: 12, dur: 600 })
+      SFX.blip(720)
       return false
     }
     if (typeof guarded.hiding === 'function' && guarded.hiding()) {
@@ -6141,7 +6152,7 @@ export class GameScene extends Phaser.Scene {
     // wave; two heroes get an extra copy of every 3rd, a little behind it.
     const solo = this.mode === '1p'
     const place = (en: Stage1['enemies'][number], dx = 0) => {
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm'].includes(en.species)) {
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can'].includes(en.species)) {
         this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
@@ -6336,9 +6347,9 @@ export class GameScene extends Phaser.Scene {
       if (lead < p.unlockX) return true
       let x = Math.min(WORLD_W - 24, Math.max(p.x, cam.scrollX + cam.displayWidth + 24 + k * 38))
       k++
-      if (p.species === 'squirrel' || p.species === 'lobster') x = this.nearestBaseFloorX(x, -1)
-      if (p.species === 'honeyzombie') x = this.nearestBaseFloorX(x, -1, 1)
-      if (p.species === 'stallkeeper' || p.species === 'robotarm') x = p.x
+      if (p.species === 'squirrel' || p.species === 'lobster' || p.species === 's7shield') x = this.nearestBaseFloorX(x, -1)
+      if (p.species === 'honeyzombie' || p.species === 's7charge' || p.species === 's7hop') x = this.nearestBaseFloorX(x, -1, 1)
+      if (p.species === 'stallkeeper' || p.species === 'robotarm' || p.species === 's7can') x = p.x
       this.spawnS2(p.species, x, p.elite, p.product)
       return false
     })
@@ -6410,6 +6421,31 @@ export class GameScene extends Phaser.Scene {
     }
     if (species === 'robotarm') {
       this.addS2Enemy(new RobotArm(this, x, this.armHooks()))
+      return
+    }
+    if (species === 's7charge') {
+      const z = new ChargeHoneyZombie(this, x, this.s2Hooks())
+      z.onSplatter = (sx) => this.honeySplat(sx)
+      this.addS2Enemy(z).setFlipX(true)
+      return
+    }
+    if (species === 's7hop') {
+      const z = new HopCage(this, x, this.s2Hooks())
+      z.onSplatter = (sx) => this.honeySplat(sx)
+      this.addS2Enemy(z).setFlipX(true)
+      return
+    }
+    if (species === 's7shield') {
+      this.addS2Enemy(new ShieldKeeper(this, x, this.s2Hooks())).setFlipX(true)
+      return
+    }
+    if (species === 's7can') {
+      this.addS2Enemy(
+        new CanThrower(this, x, this.s2Hooks(), {
+          floorY: () => LANE_FLOOR_Y,
+          throwCan: (cx, cy, tx) => this.throwExhibitCan(cx, cy, tx),
+        }),
+      ).setFlipX(true)
       return
     }
     if (species === 'honeyzombie') {
@@ -6735,6 +6771,58 @@ export class GameScene extends Phaser.Scene {
     this.entities.add(shot, 'projectile')
     this.time.delayedCall(lifeMs, () => {
       if (shot.active) shot.destroy()
+    })
+  }
+
+  /** Stage 7 掟罐員: parabolic can that explodes on the ground (AoE). */
+  private throwExhibitCan(fromX: number, fromY: number, targetX: number) {
+    if (this.ended) return
+    const landX = Phaser.Math.Clamp(targetX, fromX - 280, fromX + 280)
+    const floor = LANE_FLOOR_Y
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const can = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    can.setDepth(DEPTH.FX - 1)
+    enableActorSprite(can)
+    const body = can.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(12, 12)
+    can.setData('lane', 0)
+    can.setData('dmg', 1)
+    can.setData('exhibitCan', true)
+    can.setTint(0xc07040)
+    this.markShot(can, 0xe09050)
+    this.tweens.add({ targets: can, angle: 540, duration: 700, ease: 'Linear' })
+    floatText(this, fromX, fromY - 28, '罐！', '#ffc070', { size: 11, dur: 500 })
+    this.entities.add(can, 'projectile')
+    const dur = 700
+    this.tweens.add({
+      targets: can,
+      x: landX,
+      duration: dur,
+      ease: 'Linear',
+      onUpdate: (tw) => {
+        if (!can.active) return
+        const p = tw.progress
+        can.y = fromY + (floor - 8 - fromY) * p - Math.sin(p * Math.PI) * 110
+        body.reset(can.x, can.y)
+      },
+      onComplete: () => {
+        if (!can.active) return
+        const hx = can.x
+        can.destroy()
+        burst(this, hx, floor - 10, 0xe09050, 14)
+        playFx(this, 'enemy-poof', hx, floor - 16)
+        SFX.potShatter()
+        floatText(this, hx, floor - 48, '砰！', '#ff9060', { size: 13, dur: 500 })
+        const blast = this.add.circle(hx, floor - 4, 36, 0xff8040, 0.35).setDepth(DEPTH.FX)
+        this.tweens.add({ targets: blast, alpha: 0, scale: 1.6, duration: 280, onComplete: () => blast.destroy() })
+        for (const h of [this.boy, this.girl]) {
+          if (!h || !h.alive) continue
+          if (Math.abs(h.x - hx) < 48 && Math.abs(h.y - floor) < 40) {
+            this.hazardHit(h, { knockX: (Math.sign(h.x - hx) || 1) * 220, knockY: -360, label: '罐爆 -1' })
+          }
+        }
+      },
     })
   }
 

@@ -177,6 +177,12 @@ export const SFX = {
     tone(190, 0.07, 'square', 0.12, 120)
     tone(70, 0.14, 'sine', 0.2, 40)
   },
+  /** Shield / armour ding — bright metallic clang (Stage 7 盾牌飼養員 front block). */
+  ding: () => {
+    tone(1480, 0.05, 'square', 0.07, 900)
+    tone(2200, 0.08, 'sine', 0.06, 1600, 0.02)
+    noise(0.03, 0.08, 0, 2800)
+  },
   hurt: () => {
     buzz(HAPTIC.hurt)
     voiceUh('hurt')
