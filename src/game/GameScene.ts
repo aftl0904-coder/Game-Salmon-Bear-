@@ -2011,6 +2011,8 @@ export class GameScene extends Phaser.Scene {
    * consistent — not a substitute for an actual playtest pass.
    */
   private speciesAtkMul(pe: PatrolEnemy): number {
+    // B1 / work-order: 深層潔淨 X-9 charge contact is exactly −1 heart (acid puddle path already is).
+    if ((pe.species as string) === 'mall-scrubber') return 1
     if (pe.kind === 'boss') return 1.8
     // Stage-1 cast (PatrolEnemy) is differentiated via pe.species — fish/barrel/elephant.
     if (pe.species === 'barrel') return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
@@ -2041,10 +2043,24 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * B3: stomp-safe contact only while falling onto the enemy from above
+   * (vy > 0 and feet within 8px above enemy top). Side / below air bumps deal normal damage.
+   */
+  private isStompSafeContact(h: Hero, e: Creep | PatrolEnemy): boolean {
+    const hb = h.body as Phaser.Physics.Arcade.Body | null
+    const eb = (e as Phaser.Physics.Arcade.Sprite).body as Phaser.Physics.Arcade.Body | null
+    if (!hb || !eb) return false
+    if (hb.velocity.y <= 0) return false
+    const top = eb.top
+    return h.y <= top && top - h.y <= 8
+  }
+
   private hurtHero(h: Hero, e: Creep | PatrolEnemy) {
     if (this.ended || !this.started) return
     if (!canTakeDamage(h, this.time.now)) return
-    if (this.time.now < ((h.getData('stompSafeUntil') as number | undefined) ?? 0)) return
+    // Former blanket stompSafeUntil air-invuln: only honor true top-stomp geometry.
+    if (this.isStompSafeContact(h, e)) return
     if (!enemyCanHurt(e as Creep)) return
     const pe = e as PatrolEnemy
     if (e instanceof MallScrubber && !e.canHurtHero(h)) return
@@ -2398,10 +2414,10 @@ export class GameScene extends Phaser.Scene {
     const now = this.time.now
     for (const h of [this.boy, this.girl]) {
       if (!h || !h.alive) continue
-      const prevY = (h.getData('stompPrevY') as number | undefined) ?? h.y
       h.setData('stompPrevY', h.y)
       const hb = h.body as Phaser.Physics.Arcade.Body | null
-      if (!hb || !h.laneJumping || hb.velocity.y <= 40 || h.hurtLock > 0) continue
+      // B3: only a true top-stomp (falling, feet within 8px above enemy top) is safe / registers.
+      if (!hb || !h.laneJumping || hb.velocity.y <= 0 || h.hurtLock > 0) continue
       for (const o of this.enemies.getChildren()) {
         const e = o as PatrolEnemy
         if (!e.active || !e.body || e.fsm === 'DEAD' || (e as unknown as { flying?: boolean }).flying) continue
@@ -2409,7 +2425,7 @@ export class GameScene extends Phaser.Scene {
         const eb = e.body as Phaser.Physics.Arcade.Body
         if (h.x < eb.left - 6 || h.x > eb.right + 6) continue
         const top = eb.top
-        if (!(prevY <= top + 8 && h.y >= top - 2 && h.y <= top + 24)) continue
+        if (!(h.y <= top && top - h.y <= 8)) continue
         e.setData('stompedAt', now)
         const sup = now - h.lastJumpPressAt <= STOMP_SUPER_MS
         h.stompBounce(now, sup)
@@ -3071,22 +3087,22 @@ export class GameScene extends Phaser.Scene {
       c.fillStyle = g
       c.fillRect(0, 0, w, h)
     }
+    // B6: walkable mall floors stay bright marble tones (#d8cfc0 / #c9c2b6) + 2px lip #f4eee4.
+    // No black/dark walkable ground — pit lightness gap ≥ 50% vs #1a1420.
     make('s6-floor-marble', (c) => {
-      slabs(c, '#ebe6dc', '#e0d9cb', '#b8a888', 'rgba(60,44,20,0.55)')
+      slabs(c, '#d8cfc0', '#c9c2b6', '#b5aa9a', 'rgba(80,60,40,0.18)')
       for (let i = 0; i < 9; i++) {
-        c.fillStyle = 'rgba(150,130,100,0.22)'
+        c.fillStyle = 'rgba(150,130,100,0.18)'
         c.fillRect(Math.floor(rnd() * 60), Math.floor(rnd() * (h - 4)), 3 + Math.floor(rnd() * 8), 1)
       }
-      c.fillStyle = '#d4af37'
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#fff6d8'
-      c.fillRect(0, 2, w, 1)
     })
     make('s6-floor-cracked', (c) => {
-      slabs(c, '#d9d2c4', '#cfc7b6', '#a89a7a', 'rgba(50,40,24,0.6)')
-      c.fillStyle = '#d4af37'
+      slabs(c, '#d2c8b8', '#c4baa8', '#a89880', 'rgba(70,50,30,0.2)')
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#4a4036'
+      c.fillStyle = '#8a7a68'
       for (let i = 0; i < 5; i++) {
         let x = Math.floor(rnd() * 60)
         let y = 3 + Math.floor(rnd() * 20)
@@ -3098,33 +3114,22 @@ export class GameScene extends Phaser.Scene {
       }
     })
     make('s6-floor-concrete', (c) => {
-      slabs(c, '#8f8f89', '#85857f', '#5e5e5a', 'rgba(20,20,20,0.6)')
+      slabs(c, '#d4cdc2', '#c8c0b4', '#a8a090', 'rgba(60,50,40,0.2)')
       for (let i = 0; i < 24; i++) {
-        c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.16)'
+        c.fillStyle = rnd() > 0.5 ? 'rgba(255,255,255,0.14)' : 'rgba(80,70,60,0.12)'
         c.fillRect(Math.floor(rnd() * 62), Math.floor(rnd() * (h - 2)), 1, 1)
       }
-      for (let x = -8; x < w + 8; x += 12) {
-        c.fillStyle = '#e8c020'
-        c.beginPath()
-        c.moveTo(x, 0)
-        c.lineTo(x + 6, 0)
-        c.lineTo(x + 2, 5)
-        c.lineTo(x - 4, 5)
-        c.fill()
-      }
-      c.fillStyle = '#1c1c1c'
-      c.fillRect(0, 5, w, 1)
+      c.fillStyle = '#f4eee4'
+      c.fillRect(0, 0, w, 2)
     })
     make('s6-floor-factory', (c) => {
-      slabs(c, '#3f322a', '#372b24', '#1c140f', 'rgba(8,4,2,0.7)')
+      slabs(c, '#d0c6b8', '#c2b8a8', '#a09080', 'rgba(70,50,30,0.22)')
       for (let i = 0; i < 7; i++) {
-        c.fillStyle = 'rgba(214,150,40,0.28)'
+        c.fillStyle = 'rgba(180,140,80,0.2)'
         c.fillRect(Math.floor(rnd() * 56), Math.floor(rnd() * (h - 6)), 4 + Math.floor(rnd() * 10), 2)
       }
-      c.fillStyle = '#6b4a1c'
+      c.fillStyle = '#f4eee4'
       c.fillRect(0, 0, w, 2)
-      c.fillStyle = '#a8742a'
-      c.fillRect(0, 2, w, 1)
     })
   }
 
@@ -4069,18 +4074,37 @@ export class GameScene extends Phaser.Scene {
       : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
       : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
       : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
-      : this.mall ? { hole: 0x090b11, edge: 0xa8b5bd, top: 0xcbd1cb }
+      : this.mall ? { hole: 0x1a1420, edge: 0xf2c230, top: 0xf4eee4 }
       : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
     for (const p of pits) {
       // Only vertical walls inside the pit: never paint a horizontal lip across its mouth.
       g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
-      g.fillStyle(colors.edge, 1).fillRect(p.x0, floor, 2, GAME_H - floor).fillRect(p.x1 - 2, floor, 2, GAME_H - floor)
+      // B6: mall pits get yellow/black hazard stripes (6px) + subtle upward dark-red glow.
+      if (this.mall) {
+        const pitH = GAME_H - floor
+        // Subtle upward dark-red glow from pit mouth (layered alpha fills).
+        const redGlow = this.add.graphics().setDepth(DEPTH.GROUND + 2.2)
+        for (let i = 0; i < 6; i++) {
+          redGlow.fillStyle(0x4a1020, 0.12 - i * 0.015)
+          redGlow.fillRect(p.x0, floor + i * 6, p.x1 - p.x0, 8)
+        }
+        const stripe = this.add.graphics().setDepth(DEPTH.GROUND + 3)
+        const band = 6
+        for (let y = 0; y < pitH; y += band) {
+          const even = Math.floor(y / band) % 2 === 0
+          stripe.fillStyle(even ? 0xf2c230 : 0x2a2a2a, 1).fillRect(p.x0, floor + y, band, band)
+          stripe.fillStyle(even ? 0x2a2a2a : 0xf2c230, 1).fillRect(p.x1 - band, floor + y, band, band)
+        }
+      } else {
+        g.fillStyle(colors.edge, 1).fillRect(p.x0, floor, 2, GAME_H - floor).fillRect(p.x1 - 2, floor, 2, GAME_H - floor)
+      }
     }
     // Paint above ground-surface tints, but below real steps, planks, props and darkness.
     const groundEdge = this.add.graphics().setDepth(DEPTH.GROUND + 4.5)
     groundEdge.fillStyle(colors.top, 1)
     for (const span of groundVisualSpans(0, WORLD_W, pits)) {
-      groundEdge.fillRect(span.x0, floor, span.x1 - span.x0, 2)
+      // B6: mall walkable lip is a 2px light edge (#f4eee4).
+      groundEdge.fillRect(span.x0, floor, span.x1 - span.x0, this.mall ? 2 : 2)
     }
     for (const st of ST.steps) {
       const top = floor - st.h
@@ -4197,8 +4221,47 @@ export class GameScene extends Phaser.Scene {
 
   /** Checkpoints are 咖啡媽媽's coffee cart: respawn point + one cup (+1 HP) the first time. */
   private checkpointMamas: Phaser.GameObjects.Image[] = []
+
+  /**
+   * B2: on stages 6–7, if a checkpoint sits over a pit (no solid under x), search ±400px
+   * and snap to the middle of the nearest solid ground segment (width ≥ 120). Continent 1 untouched.
+   */
+  private safeCheckpointX(x: number): number {
+    if (groundTopBelow(x, LANE_FLOOR_Y - 60, 8) !== null) return x
+    const SEARCH = 400
+    const MIN_W = 120
+    let bestMid = x
+    let bestDist = Number.POSITIVE_INFINITY
+    for (const s of terrainSolids()) {
+      if (s.oneWay) continue
+      const segW = s.x1 - s.x0
+      if (segW < MIN_W) continue
+      const i0 = Math.max(s.x0, x - SEARCH)
+      const i1 = Math.min(s.x1, x + SEARCH)
+      let mid: number
+      if (i1 - i0 >= MIN_W) {
+        mid = (i0 + i1) / 2
+      } else {
+        // Full segment is wide enough; only use it if its midpoint lies in the search window.
+        mid = (s.x0 + s.x1) / 2
+        if (Math.abs(mid - x) > SEARCH) continue
+      }
+      const dist = Math.abs(mid - x)
+      if (dist < bestDist) {
+        bestDist = dist
+        bestMid = mid
+      }
+    }
+    return bestMid
+  }
+
   private placeCheckpoints() {
-    this.checkpointXs = ST.checkpoints.slice().sort((a, b) => a - b)
+    let xs = ST.checkpoints.slice().sort((a, b) => a - b)
+    // Stages 6 & 7 only — never relocate continent-1 checkpoints.
+    if (this.stageNo === 6 || this.stageNo === 7) {
+      xs = xs.map((x) => this.safeCheckpointX(x))
+    }
+    this.checkpointXs = xs
     this.lastCheckpointX = 220
     this.checkpointMamas = []
     for (const x of this.checkpointXs) {
