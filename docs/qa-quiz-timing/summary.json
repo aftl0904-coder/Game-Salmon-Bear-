@@ -115,9 +115,9 @@
       "id": "Q5-hard-notice-and-9800",
       "ok": true,
       "detail": {
-        "hardSeen": false,
+        "hardSeen": true,
         "hardProg": true,
-        "hardAnswerMs": 6800,
+        "hardAnswerMs": 9400,
         "hardBudget": true
       }
     },
@@ -156,7 +156,8 @@
         "opt": {
           "x": 375,
           "y": 209
-        }
+        },
+        "scale": 0.95
       }
     },
     {

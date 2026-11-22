@@ -258,9 +258,8 @@ const errs = []
       if (texts.some((t) => t.includes('難題！多 3 秒'))) hardSeen = true
       if (texts.some((t) => /（難題）/.test(t))) hardProg = true
       const d = await dbg(page)
-      if (d?.difficulty === 'hard' && typeof d.answerLeft === 'number') {
+      if (d?.phase === 'answer' && d?.difficulty === 'hard' && typeof d.answerLeft === 'number') {
         hardAnswerMs = d.answerLeft
-        if (d.answerLeft >= 9500) hardSeen = hardSeen || texts.some((t) => t.includes('難題'))
       }
       await page.waitForTimeout(50)
     }
@@ -349,38 +348,51 @@ const errs = []
   const { P } = await canvasMap(page)
   await page.screenshot({ path: path.join(OUT, '08-mobile-buzz.png') })
 
-  const buzz = P(570, 190)
-  await page.touchscreen.tap(buzz.x, buzz.y)
-  await page.waitForTimeout(400)
+  // Prefer Phaser-reported canvas coords for the red buzz + first choice.
+  const targets = await page.evaluate(() => {
+    const canvas = document.querySelector('canvas')
+    const rc = canvas.getBoundingClientRect()
+    const scale = Math.min(rc.width / 640, rc.height / 360)
+    const ox = rc.x + (rc.width - 640 * scale) / 2
+    const oy = rc.y + (rc.height - 360 * scale) / 2
+    return {
+      buzz: { x: ox + 570 * scale, y: oy + 190 * scale },
+      opt: { x: ox + 320 * scale, y: oy + 220 * scale },
+      scale,
+    }
+  })
+  const buzz = targets.buzz
+  const cdp = await page.context().newCDPSession(page)
+  const tap = async (x, y) => {
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y, id: 0 }] })
+    await page.waitForTimeout(60)
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+  }
+  await tap(buzz.x, buzz.y)
+  await page.waitForTimeout(450)
   let texts = await collectTexts(page)
-  let mobileBuzz = texts.some((t) => /快答|作答/.test(t))
+  let mobileBuzz = texts.some((t) => /快答|作答/.test(t)) || (await dbg(page))?.phase === 'answer'
   if (!mobileBuzz) {
-    // Fallback: scene pointer in camera space
-    await page.evaluate(() => {
-      const s = window.__SAKE_GAME__.scene.getScene('play')
-      s.input.emit('pointerdown', { x: 570, y: 190, worldX: 570, worldY: 190 })
-    })
-    await page.waitForTimeout(300)
+    // Second try: slightly larger press via touchscreen API
+    await page.touchscreen.tap(buzz.x, buzz.y)
+    await page.waitForTimeout(400)
     texts = await collectTexts(page)
-    mobileBuzz = texts.some((t) => /快答|作答/.test(t))
+    mobileBuzz = texts.some((t) => /快答|作答/.test(t)) || (await dbg(page))?.phase === 'answer'
   }
 
-  const opt = P(320, 220)
-  await page.touchscreen.tap(opt.x, opt.y)
+  const opt = targets.opt
+  await tap(opt.x, opt.y)
   await page.waitForTimeout(500)
   texts = await collectTexts(page)
   let mobileAnswer = texts.some((t) => /啱|錯|超時/.test(t))
   if (!mobileAnswer) {
-    await page.evaluate(() => {
-      const s = window.__SAKE_GAME__.scene.getScene('play')
-      s.input.emit('pointerdown', { x: 320, y: 220, worldX: 320, worldY: 220 })
-    })
-    await page.waitForTimeout(400)
+    await page.touchscreen.tap(opt.x, opt.y)
+    await page.waitForTimeout(500)
     texts = await collectTexts(page)
     mobileAnswer = texts.some((t) => /啱|錯|超時/.test(t))
   }
   await page.screenshot({ path: path.join(OUT, '09-mobile-answer.png') })
-  pass('Q1-mobile-tap', mobileBuzz && mobileAnswer, { mobileBuzz, mobileAnswer, buzz, opt })
+  pass('Q1-mobile-tap', mobileBuzz && mobileAnswer, { mobileBuzz, mobileAnswer, buzz, opt, scale: targets.scale })
 
   await ctx.close()
 }
