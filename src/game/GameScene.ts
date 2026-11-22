@@ -1936,7 +1936,7 @@ export class GameScene extends Phaser.Scene {
    */
   private speciesAtkMul(pe: PatrolEnemy): number {
     // B1 / work-order: 深層潔淨 X-9 charge contact is exactly −1 heart (acid puddle path already is).
-    if (pe.species === 'mall-scrubber') return 1
+    if ((pe.species as string) === 'mall-scrubber') return 1
     if (pe.kind === 'boss') return 1.8
     // Stage-1 cast (PatrolEnemy) is differentiated via pe.species — fish/barrel/elephant.
     if (pe.species === 'barrel') return 0.6 // 疾風桶：快但脆，衝擊感較輕（原有 comment 已講明）
