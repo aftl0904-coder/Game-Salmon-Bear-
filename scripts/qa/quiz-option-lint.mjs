@@ -1,0 +1,138 @@
+/**
+ * Quiz option lint (playtest8 follow-up).
+ *
+ * Checks every question in data/quiz-mall.json:
+ *  (a) Banned substrings must not appear in any choice
+ *  (b) If the correct answer is a plain number / $n / n/n / n%, every choice must contain a digit
+ *  (c) max(choice length) / min(choice length) <= 3
+ *
+ * Usage:
+ *   node scripts/qa/quiz-option-lint.mjs              # lint current file → exit 0/1
+ *   node scripts/qa/quiz-option-lint.mjs --file PATH  # lint another JSON
+ *
+ * Acceptance fixture:
+ *   OLD (1ac1b9e broken options) must FAIL
+ *   NEW (current) must PASS
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { execSync } from 'node:child_process'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const ROOT = path.resolve(__dirname, '../..')
+
+const BAN =
+  /忽略|當成|干擾項|差一步|漏咗|亂加|亂對調|任意|隨意|完全省略|公開員工評語/
+
+const args = process.argv.slice(2)
+let file = path.join(ROOT, 'data/quiz-mall.json')
+const fi = args.indexOf('--file')
+if (fi >= 0 && args[fi + 1]) file = path.resolve(args[fi + 1])
+
+function isPlainNumericAnswer(s) {
+  const t = String(s).trim()
+  return (
+    /^[\d.]+$/.test(t) ||
+    /^\$\d+$/.test(t) ||
+    /^\d+\/\d+$/.test(t) ||
+    /^\d+%$/.test(t) ||
+    /^\d+°$/.test(t)
+  )
+}
+
+export function lintQuizBank(data) {
+  const questions = data.questions || []
+  const errors = []
+  for (const q of questions) {
+    const id = q.id || '?'
+    const choices = q.choices || []
+    if (choices.length !== 4) {
+      errors.push({ id, rule: 'count', detail: `expected 4 choices, got ${choices.length}` })
+      continue
+    }
+    const ans = choices[q.answerIndex]
+    if (ans == null) {
+      errors.push({ id, rule: 'answerIndex', detail: `invalid answerIndex ${q.answerIndex}` })
+      continue
+    }
+    for (const c of choices) {
+      if (BAN.test(c)) {
+        errors.push({ id, rule: 'ban', detail: c })
+      }
+    }
+    if (isPlainNumericAnswer(ans)) {
+      for (const c of choices) {
+        if (!/\d/.test(c)) {
+          errors.push({ id, rule: 'numeric', detail: `correct is numeric "${ans}" but choice lacks digit: ${c}` })
+        }
+      }
+    }
+    const lens = choices.map((c) => [...c].length) // code-point length
+    const mn = Math.min(...lens)
+    const mx = Math.max(...lens)
+    if (mn === 0 || mx > 3 * mn) {
+      errors.push({
+        id,
+        rule: 'length',
+        detail: `lengths ${lens.join(',')} (max/min > 3)`,
+      })
+    }
+  }
+  return { ok: errors.length === 0, total: questions.length, errors }
+}
+
+function loadJson(p) {
+  return JSON.parse(fs.readFileSync(p, 'utf8'))
+}
+
+const runSelfTest = args.includes('--self-test')
+
+if (runSelfTest) {
+  // OLD broken commit must FAIL; current must PASS
+  const tmp = path.join(ROOT, 'docs/qa-playtest8')
+  fs.mkdirSync(tmp, { recursive: true })
+  const oldPath = path.join(tmp, 'quiz-mall-1ac1b9e.json')
+  try {
+    const raw = execSync('git show 1ac1b9e:data/quiz-mall.json', { cwd: ROOT, encoding: 'utf8', maxBuffer: 20e6 })
+    fs.writeFileSync(oldPath, raw)
+  } catch (e) {
+    console.error('self-test: cannot load 1ac1b9e quiz-mall.json', e.message)
+    process.exit(2)
+  }
+  const oldResult = lintQuizBank(loadJson(oldPath))
+  const newResult = lintQuizBank(loadJson(path.join(ROOT, 'data/quiz-mall.json')))
+  const summary = {
+    old: { ok: oldResult.ok, errors: oldResult.errors.length, sample: oldResult.errors.slice(0, 5) },
+    neu: { ok: newResult.ok, errors: newResult.errors.length, total: newResult.total },
+  }
+  fs.writeFileSync(path.join(tmp, 'quiz-option-lint.json'), JSON.stringify(summary, null, 2) + '\n')
+  console.log(JSON.stringify(summary, null, 2))
+  if (oldResult.ok) {
+    console.error('SELF-TEST FAIL: old 1ac1b9e unexpectedly PASSED')
+    process.exit(1)
+  }
+  if (!newResult.ok) {
+    console.error('SELF-TEST FAIL: current unexpectedly FAILED')
+    console.error(newResult.errors.slice(0, 20))
+    process.exit(1)
+  }
+  console.log('SELF-TEST PASS: old FAIL + new PASS')
+  process.exit(0)
+}
+
+const result = lintQuizBank(loadJson(file))
+console.log(
+  JSON.stringify(
+    {
+      file,
+      ok: result.ok,
+      total: result.total,
+      errorCount: result.errors.length,
+      errors: result.errors.slice(0, 40),
+    },
+    null,
+    2,
+  ),
+)
+process.exit(result.ok ? 0 : 1)

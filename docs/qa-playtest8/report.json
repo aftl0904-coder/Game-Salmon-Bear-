@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "checks": {
+    "E4_apex": 92.57,
+    "E4_jump_higher": true,
+    "E4_c1_smoke": true,
+    "E1_back_hit": true,
+    "E1_turn_delay": true,
+    "E2_hopper_hit": true,
+    "E2_shadow_warn": true,
+    "E3_acid_gaps": true,
+    "E8_grounded": true,
+    "E8_behind_dist": true,
+    "E8_follow": true,
+    "E8_into_wind": true,
+    "E5_elevator_removed": true,
+    "E6_no_memory": true,
+    "E7_bank_300": true,
+    "E7_iq_40": true,
+    "E7_iq_per_round": true
+  },
+  "errors": [],
+  "notes": [
+    "E4 jump: {\"v\":360,\"g\":700,\"apex\":92.57,\"oldApex\":69.98,\"ratio\":1.323,\"jsonV\":360,\"fullH\":93}",
+    "E4 c1 smoke: [{\"st\":1,\"ok\":true},{\"st\":2,\"ok\":true},{\"st\":3,\"ok\":true},{\"st\":4,\"ok\":true},{\"st\":5,\"ok\":true}]",
+    "E1: {\"e1\":{\"ok\":true,\"x\":1120,\"flip\":true,\"hp\":3},\"hit\":{\"blocked\":false,\"hp0\":3,\"hp1\":2,\"flip\":true,\"face\":-1,\"dir\":-1},\"delayOk\":{\"mid\":true,\"flippedOrTurning\":true}}",
+    "E2: {\"e2setup\":{\"has\":true,\"hp0\":6,\"hx\":882},\"hitOnce\":true,\"sawShadow\":true}",
+    "E3: {\"ok\":true,\"gaps\":[160,160,160,160,160,160,160,160,160,160],\"min\":160,\"half\":24}",
+    "E8: {\"blowerShots\":[{\"bossX\":5130,\"blowerX\":5180,\"blowerY\":285,\"floor\":285,\"grounded\":true,\"dist\":50,\"flip\":true},{\"bossX\":5130,\"blowerX\":5080,\"blowerY\":285,\"floor\":285,\"grounded\":true,\"dist\":50,\"flip\":false}],\"follow\":{\"ok\":true,\"samples\":[50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50,50],\"inRange\":30},\"wind\":{\"ok\":true,\"into\":true,\"mul\":0.5}}",
+    "E5: elevator was same-floor cutscene only (no teleport/new area). Deleted; escalator kept.",
+    "E6 stalls.json stages: [\"note\",\"stalls\"]",
+    "E7 bank=300 iqRounds=20/20",
+    "Minigames/stage: ST1 flag; ST6 goldfish; ST7 goldfish only (memory removed); see stalls.json"
+  ],
+  "required": {
+    "E1_back_hit": true,
+    "E2_hopper_hit": true,
+    "E2_shadow_warn": true,
+    "E3_acid_gaps": true,
+    "E8_grounded": true,
+    "E8_behind_dist": true,
+    "E8_follow": true,
+    "E8_into_wind": true,
+    "E4_jump_higher": true,
+    "E4_c1_smoke": true,
+    "E5_elevator_removed": true,
+    "E6_no_memory": true,
+    "E7_bank_300": true,
+    "E7_iq_40": true,
+    "E7_iq_per_round": true
+  }
+}

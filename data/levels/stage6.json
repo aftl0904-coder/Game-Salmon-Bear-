@@ -470,7 +470,7 @@
   ],
   "darkAlpha": 0.62,
   "lanterns": [],
-  "elevatorX": 2140,
+  "elevatorX": null,
   "slipZones": [
     {
       "x0": 360,
@@ -526,5 +526,6 @@
   ],
   "junkUnlockX": 1200,
   "teachSlipX0": 360,
-  "teachSlipX1": 520
+  "teachSlipX1": 520,
+  "elevatorRemovedNote": "E5 playtest8: elevator was same-floor cutscene only (no teleport). Deleted; escalator kept."
 }

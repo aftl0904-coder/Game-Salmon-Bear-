@@ -32,7 +32,7 @@ export type Stage6Data = {
   cages?: Array<{ x: number }>
   slipZones?: Array<{ x0: number; x1: number; mul?: number }>
   floorJunk?: Array<{ x: number; w?: number }>
-  elevatorX?: number
+  elevatorX?: number | null
   /** Floor junk inactive until lead X passes this (teach slip first). */
   junkUnlockX?: number
   teachSlipX0?: number

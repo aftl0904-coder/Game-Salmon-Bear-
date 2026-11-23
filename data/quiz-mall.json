@@ -13,7 +13,7 @@
   },
   "timeoutPenalty": -2,
   "placement": "C2 stages 1–2 membership center",
-  "notes": "HK tenancy / property management / mall / HR-labour + quick HK secondary-school math. Entertainment only.",
+  "notes": "HK tenancy / property management / mall / HR-labour + quick HK secondary-school math. Entertainment only. | playtest8 E7: distractors rewritten; +labour detail; +40 iq; bank 300+. | quiz-option fix: same-type distractors; IQ real answers; linted.",
   "questions": [
     {
       "category": "law",
@@ -22,7 +22,7 @@
       "choices": [
         "業主共用權責",
         "巴士線",
-        "天氣",
+        "强制條文可以雙方協",
         "手機費"
       ],
       "answerIndex": 0,
@@ -36,7 +36,7 @@
         "大廈業主群體",
         "街邊小販",
         "外遊團友",
-        "遊戲 NPC"
+        "臨時安排等同正式批核"
       ],
       "answerIndex": 0,
       "id": "Q005"
@@ -49,7 +49,7 @@
         "公用地方維修／管理",
         "租客私人旅遊",
         "買跑車",
-        "交遊戲稅"
+        "臨時安排等同正式批"
       ],
       "answerIndex": 0,
       "id": "Q006"
@@ -73,9 +73,9 @@
       "prompt": "香港商場舖租有時寫「營業額分成」，意思係？",
       "choices": [
         "租金可跟生意抽成",
-        "客人分身家",
-        "一定免租",
-        "送舖"
+        "租金只能固定月租",
+        "租金必須按市值每年重估",
+        "租金一律由政府訂明"
       ],
       "answerIndex": 0,
       "id": "Q008"
@@ -164,9 +164,9 @@
       "prompt": "物業管理公司日常工作包括？",
       "choices": [
         "保安、清潔、維修安排",
-        "替業主炒樓",
-        "開法院",
-        "印鈔票"
+        "替業主代理物業買賣",
+        "處理刑事檢控程序",
+        "發行商場專用貨幣"
       ],
       "answerIndex": 0,
       "id": "Q017"
@@ -192,7 +192,7 @@
         "中庭、走廊、扶手電梯",
         "舖內私人貨倉全部",
         "客人口袋",
-        "Boss 房"
+        "臨時安排等同正式批核"
       ],
       "answerIndex": 0,
       "id": "Q019"
@@ -204,7 +204,7 @@
       "choices": [
         "清潔後濕地／雨天入口",
         "天台草地",
-        "停車場天花",
+        "强制條文可以雙方協議放棄",
         "升降機按鈕背面"
       ],
       "answerIndex": 0,
@@ -242,9 +242,9 @@
       "prompt": "香港強制性公積金簡稱？",
       "choices": [
         "強積金／MPF",
-        "強積金／ORSO 唯一名稱",
-        "強積金／CSP",
-        "強積金／GPF"
+        "職業退休計劃／ORSO",
+        "中央公積金／CPF",
+        "社會保障稅／SST"
       ],
       "answerIndex": 0,
       "id": "Q026"
@@ -254,10 +254,10 @@
       "difficulty": "normal",
       "prompt": "僱員同僱主強積金供款比例（一般入門認知）各約？",
       "choices": [
-        "5%",
-        "50%",
-        "0.5%",
-        "25%"
+        "各約 5%",
+        "各約 10%",
+        "各約 2%",
+        "僱主 5%、僱員 0%"
       ],
       "answerIndex": 0,
       "id": "Q027"
@@ -268,9 +268,9 @@
       "prompt": "勞工法例常見「有薪年假」屬於？",
       "choices": [
         "僱員法定權益範疇",
-        "一定無薪",
-        "只得老闆有",
-        "只得兼職有"
+        "純屬公司酌情福利、法例無規管",
+        "只適用於外判合約",
+        "只適用於公務員"
       ],
       "answerIndex": 0,
       "id": "Q028"
@@ -281,9 +281,9 @@
       "prompt": "解僱／辭職通常要留意？",
       "choices": [
         "通知期或代通知金",
-        "一定即日免費走",
-        "一定送樓",
-        "一定罰金幣"
+        "一定可以即日免費離職",
+        "一定要先繳按金先走",
+        "一定要做滿一年先辭"
       ],
       "answerIndex": 0,
       "id": "Q029"
@@ -294,9 +294,9 @@
       "prompt": "「最低工資」大致規管？",
       "choices": [
         "時薪下限",
-        "最高樓價",
-        "最高租金",
-        "遊戲難度"
+        "每月最高工時上限",
+        "每年強制加薪幅度",
+        "最低年假日數"
       ],
       "answerIndex": 0,
       "id": "Q030"
@@ -307,9 +307,9 @@
       "prompt": "產假／侍產假相關資訊，正確態度係？",
       "choices": [
         "跟現行條例同公司政策",
-        "同事口耳相傳就得",
-        "Facebook 帖文為準",
-        "唔使理"
+        "跟同事口耳相傳就夠",
+        "跟網上論壇帖文為準",
+        "跟直屬上司個人喜好"
       ],
       "answerIndex": 0,
       "id": "Q031"
@@ -320,9 +320,9 @@
       "prompt": "病假證明通常由邊個發出先較穩陣？",
       "choices": [
         "註冊醫生",
-        "街坊",
-        "遊戲 Boss",
-        "停車場管理員"
+        "直屬上司簽名紙",
+        "人事部內部備忘",
+        "同事書面作證"
       ],
       "answerIndex": 0,
       "id": "Q032"
@@ -333,9 +333,9 @@
       "prompt": "人力資源日常工作常包括？",
       "choices": [
         "招聘、出勤、薪酬福利協調",
-        "替員工炒樓",
-        "開挖泥車",
-        "印金幣"
+        "替公司炒賣物業",
+        "管理卸貨區車流",
+        "編寫商場租約條款"
       ],
       "answerIndex": 0,
       "id": "Q033"
@@ -346,9 +346,9 @@
       "prompt": "試用期結束後轉正，常見要辦？",
       "choices": [
         "更新合約／人事紀錄",
-        "一定辭職",
-        "一定減薪一半",
-        "刪八達通"
+        "自動視作重新面試",
+        "必須先減薪再轉正",
+        "必須轉做外判合約"
       ],
       "answerIndex": 0,
       "id": "Q034"
@@ -359,9 +359,9 @@
       "prompt": "加班補償（OT）安排應以咩為準？",
       "choices": [
         "法例＋僱傭合約／公司政策",
-        "心情",
-        "天氣",
-        "隨機數"
+        "只跟行業潛規則",
+        "只跟當月營業額",
+        "只跟員工投票結果"
       ],
       "answerIndex": 0,
       "id": "Q035"
@@ -372,9 +372,9 @@
       "prompt": "「連續性合約」入門理解同邊樣有關？",
       "choices": [
         "連續受僱達一定日數／周數門檻",
-        "一定終身僱用",
-        "一定外判",
-        "一定兼職"
+        "一定等同終身僱用",
+        "一定係外判關係",
+        "一定係兼職無保障"
       ],
       "answerIndex": 0,
       "id": "Q036"
@@ -385,9 +385,9 @@
       "prompt": "員工投訴性騷擾，公司應？",
       "choices": [
         "跟程序認真處理",
-        "當冇事笑過",
-        "公開嘲笑",
-        "罰投訴人金幣"
+        "交俾被投訴人自行解決",
+        "等收到第二宗投訴先處理",
+        "叫投訴人先同對方私下傾"
       ],
       "answerIndex": 0,
       "id": "Q037"
@@ -398,9 +398,9 @@
       "prompt": "發糧常見渠道？",
       "choices": [
         "銀行轉帳／支票等約定方式",
-        "只得現金掟落街",
-        "只得遊戲幣",
-        "只得郵票"
+        "只可以用現金當面交收",
+        "只可以用商場代幣",
+        "只可以用郵票匯款"
       ],
       "answerIndex": 0,
       "id": "Q038"
@@ -411,9 +411,9 @@
       "prompt": "僱主無故剋扣工資，風險係？",
       "choices": [
         "可能違法／可被追討",
-        "一定合法",
-        "一定有獎",
-        "自動加薪"
+        "只要寫進員工手冊就合法",
+        "只要多數員工簽名就合法",
+        "商場租戶一律豁免工資規管"
       ],
       "answerIndex": 0,
       "id": "Q039"
@@ -424,9 +424,9 @@
       "prompt": "入職時常見要填？",
       "choices": [
         "個人資料、銀行、強積金表格",
-        "樓宇公契全文",
-        "遊戲攻略",
-        "差餉單"
+        "樓宇公契全文副本",
+        "過去五年所有報稅表",
+        "全部同事嘅薪酬清單"
       ],
       "answerIndex": 0,
       "id": "Q040"
@@ -476,9 +476,9 @@
       "prompt": "商場失物通常交去？",
       "choices": [
         "顧客服務中心／保安",
-        "隨手丟街",
-        "扔落扶手電梯",
-        "餵魚"
+        "自己帶回家處理",
+        "放喺扶手電梯旁等認領",
+        "交俾鄰近商戶保管"
       ],
       "answerIndex": 0,
       "id": "Q044"
@@ -788,7 +788,7 @@
       "prompt": "金幣答啱 +8，全啱三次？",
       "choices": [
         "24",
-        "8",
+        "25",
         "16",
         "32"
       ],
@@ -1022,9 +1022,9 @@
       "prompt": "《僱傭條例》下，連續受僱滿一個月，一般每七日應有？",
       "choices": [
         "1 個休息日",
-        "3 個公眾假期先至有休",
-        "無規定休息",
-        "只得雙數月先有休"
+        "3 個休息日",
+        "無規定休息日",
+        "只得雙數月先有休息日"
       ],
       "answerIndex": 0,
       "id": "lab-rest-day"
@@ -1048,9 +1048,9 @@
       "prompt": "法定假日（stat holiday）同休息日，正確講法係？",
       "choices": [
         "兩者唔同，唔好混為同一日亂扣",
-        "一樣，可以任意對調無影響",
+        "完全一樣，可以自由對調而無影響",
         "只得公務員先有法定假",
-        "商場員工無法定假"
+        "私企員工無法定假"
       ],
       "answerIndex": 0,
       "id": "lab-stat-hol"
@@ -1061,9 +1061,9 @@
       "prompt": "新同事入職當日，人事常見要先做邊樣？",
       "choices": [
         "核對身份／填寫入職及強積金相關表格",
-        "即刻派去見客唔使手續",
-        "叫佢自己買電腦返工",
-        "先罰一個月薪金做按金"
+        "即刻派去見客、手續之後先補",
+        "叫佢自己買齊裝備返工",
+        "先扣一個月薪金做按金"
       ],
       "answerIndex": 0,
       "id": "hr-onboard"
@@ -1074,9 +1074,9 @@
       "prompt": "招聘廣告寫「只限某性別／年齡」而無合理例外，風險係？",
       "choices": [
         "可能觸及歧視相關條例",
-        "完全合法無風險",
-        "只係公關問題唔關法",
-        "商場租戶一律豁免"
+        "完全合法、只要寫明理由",
+        "只係公關風險、唔關法例",
+        "招聘廣告一律豁免平等條例"
       ],
       "answerIndex": 0,
       "id": "hr-equal"
@@ -1087,9 +1087,9 @@
       "prompt": "員工個人資料（例如住址、銀行戶口）應點處理？",
       "choices": [
         "只限有需要職位接觸，妥善保管",
-        "張貼員工休息室牆公布",
-        "WhatsApp 大群隨意傳",
-        "離職即公開畀所有同事"
+        "張貼喺員工休息室公布",
+        "轉發去全公司通訊群組",
+        "離職後公開畀所有前同事"
       ],
       "answerIndex": 0,
       "id": "hr-privacy"
@@ -1100,9 +1100,9 @@
       "prompt": "僱主扣減工資，一般原則係？",
       "choices": [
         "只可喺法例允許嘅項目／限額內扣",
-        "任何理由都可隨便扣一半",
-        "遲到一秒扣全日薪合法",
-        "商場可以自訂無限扣款"
+        "任何理由都可扣減一半工資",
+        "遲到一秒可扣全日薪",
+        "商場可自訂無限扣款上限"
       ],
       "answerIndex": 0,
       "id": "lab-wage-deduct"
@@ -1113,9 +1113,9 @@
       "prompt": "績效評估面談較穩陣做法係？",
       "choices": [
         "有具體例子、雙向溝通、書面記錄",
-        "當眾羞辱先有動力",
-        "只憑傳聞唔使事實",
-        "唔通知員工突然評完"
+        "當眾點名批評先有動力",
+        "只憑傳聞、唔使事實",
+        "唔通知員工、評完先講"
       ],
       "answerIndex": 0,
       "id": "hr-appraisal"
@@ -1126,9 +1126,9 @@
       "prompt": "僱員因工受傷，僱主常見責任包括？",
       "choices": [
         "按《僱員補償條例》等處理補償／通報",
-        "叫員工自己認衰唔使報",
-        "只賠午餐錢就完事",
-        "商場租約自動豁免全部責任"
+        "叫員工自行承擔、公司唔使報",
+        "只賠償當日午餐津貼",
+        "商場租約可豁免全部補償責任"
       ],
       "answerIndex": 0,
       "id": "lab-injury"
@@ -1140,9 +1140,9 @@
       "prompt": "公契（公契及管理協議）主要規管邊啲關係？",
       "choices": [
         "業權共有人之間，以及業權共有人與管理公司之間嘅權利同責任",
-        "只規管短期檔期租約",
-        "只規管建築承建商付款期",
-        "只規管商場推廣檔期"
+        "只規管短期檔期租約嘅推廣條款同退租通知",
+        "只規管建築承建商同發展商之間嘅工程付款期",
+        "只規管商場檔戶同顧客之間嘅消費爭議處理"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/landsd-consent-scheme.html"
@@ -1196,9 +1196,9 @@
       "prompt": "合約完成證明書又稱為咩？",
       "choices": [
         "完工證或滿意紙（Certificate of Compliance）",
-        "佔用許可證（入伙紙）",
-        "預售樓花同意書",
-        "建築圖則批准書"
+        "佔用許可證（Occupation Permit／入伙紙）",
+        "預售樓花同意書（Consent to Sell）",
+        "建築圖則批准書（Building Plan Approval）"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/compliance.html"
@@ -1266,9 +1266,9 @@
       "prompt": "香港私人新樓嘅佔用許可證（入伙紙）由邊個機構發出？",
       "choices": [
         "屋宇署（建築事務監督）",
-        "地政總署",
-        "規劃署",
-        "差餉物業估價署"
+        "地政總署（Land Registry 以外嘅常見混淆）",
+        "規劃署（Town Planning 相關混淆）",
+        "差餉物業估價署（Rating and Valuation）"
       ],
       "answerIndex": 0,
       "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
@@ -1281,7 +1281,7 @@
       "choices": [
         "不得被佔用",
         "可以有限度先作物管辦公室用途",
-        "可以先作售樓用途而自動豁免",
+        "用輪詢代替事件驅動",
         "可以先作商場展覽用途"
       ],
       "answerIndex": 0,
@@ -1463,8 +1463,8 @@
       "choices": [
         "合約完成證明書（Certificate of Compliance）",
         "佔用許可證（Occupation Permit）",
-        "預售樓花同意書",
-        "轉讓同意書"
+        "預售樓花同意書（Consent to Sell）",
+        "轉讓同意書（Consent to Assign）"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/compliance.html"
@@ -1532,7 +1532,7 @@
       "prompt": "申請人不同意政府批出嘅補地價金額，可以點？",
       "choices": [
         "提出上訴",
-        "直接向土地審裁處申請強制售賣",
+        "直接向土地審裁處申請強制",
         "改為申請預售樓花同意",
         "改為申請佔用許可證"
       ],
@@ -1632,7 +1632,7 @@
         "相當於該土地應課差餉租值百分之三，並隨應課差餉租值調整",
         "相當於應課差餉租值百分之五固定不變",
         "相當於土地補價每年百分之三",
-        "免收租金直至首次轉讓"
+        "略過錯誤處理先交功能"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-transaction/lease-modification-land-exchange.html"
@@ -1672,7 +1672,7 @@
       "prompt": "私人發展若撥出地方作公眾通道或交回土地作街道擴闊，屋宇署資料指可能獲批咩？",
       "choices": [
         "額外總樓面面積",
-        "自動豁免補地價",
+        "把配置寫死喺程式碼",
         "自動延長建築規約",
         "自動取得預售同意"
       ],
@@ -1715,7 +1715,7 @@
       "choices": [
         "除經修改條件外，原有條件包括年期及租金保持不變",
         "年期一律重訂為五十年",
-        "租金一律改為應課差餉租值百分之三",
+        "用輪詢代替事件驅動",
         "原有條件全部作廢需重簽"
       ],
       "answerIndex": 0,
@@ -1924,9 +1924,9 @@
       "prompt": "恒隆可持續發展框架提到嘅四大優先範疇，包括以下邊項？",
       "choices": [
         "氣候韌性（Climate Resilience）",
-        "短期炒賣物業優先",
-        "取消持份者溝通",
-        "停止社區投資"
+        "短期炒賣物業回報最大化",
+        "取消所有持份者溝通渠道",
+        "全面停止社區投資項目"
       ],
       "answerIndex": 0,
       "source": "https://www.hanglung.com/en-us/Sustainability/Sustainability-Framework"
@@ -1940,7 +1940,7 @@
         "零售、辦公樓、住宅及服務式寓所",
         "只得工業倉同物流中心",
         "只得碼頭同船塢",
-        "只得單一停車場用途"
+        "政府全資機構"
       ],
       "answerIndex": 0,
       "source": "https://www.hanglung.com/en-us/Business"
@@ -2136,7 +2136,7 @@
         "商戶退換政策、交易條款同相關消費者保障法例",
         "一律七日無條件退款（所有行業自動）",
         "一律不可退換（所有行業自動）",
-        "只憑心情要求全額"
+        "臨時安排等同正式批核"
       ],
       "answerIndex": 0,
       "source": "https://www.consumer.org.hk/tc"
@@ -2400,7 +2400,7 @@
       "prompt": "扶手電梯正確乘搭態度係？",
       "choices": [
         "企穩扶好，照顧同行小童長者",
-        "奔跑逆行",
+        "奔跑逆行（常見但唔恰當嘅場內做法）",
         "坐喺梯級上滑下",
         "推載重貨物車衝落"
       ],
@@ -2444,7 +2444,7 @@
         "換領優惠或抵扣消費（按計劃條款）",
         "代替法定貨幣交稅",
         "轉讓作物業轉讓契",
-        "代替身份證"
+        "代替身份證（常見但唔恰當嘅場內做法）"
       ],
       "answerIndex": 0,
       "source": "常識題（香港日常商場／消費／心算）"
@@ -2470,7 +2470,7 @@
       "prompt": "美食廣場用膳後餐具通常應？",
       "choices": [
         "按場內指示交還或放回收點",
-        "隨意棄置喺行人通道",
+        "先做短期例外",
         "帶走全部公用餐具",
         "倒剩食落扶手電梯"
       ],
@@ -2624,9 +2624,9 @@
       "prompt": "試身室使用禮儀包括？",
       "choices": [
         "保持整潔、帶回多餘衣物交職員",
-        "留下包裝垃圾",
-        "用剪刀改衣",
-        "鎖門長睡"
+        "試完衫後留下包裝同吊牌喺房",
+        "用自備工具改短衣袖長度",
+        "喺試身室鎖門休息至商場關門"
       ],
       "answerIndex": 0,
       "source": "常識題（香港日常商場／消費／心算）"
@@ -2766,7 +2766,7 @@
         "確認金額正確，方便日後退換",
         "立刻丟棄所有紀錄",
         "把收據畀陌生人",
-        "塗改金額"
+        "塗改金額（常見但唔恰當嘅場內做法）"
       ],
       "answerIndex": 0,
       "source": "常識題（香港日常商場／消費／心算）"
@@ -2932,8 +2932,8 @@
       "prompt": "香港物業管理公司發牌，主要由邊個機構負責？",
       "choices": [
         "物業管理業監管局（PMSA）",
-        "屋宇署",
-        "地政總署",
+        "屋宇署（常見但唔準嘅講法）",
+        "地政總署（常見但唔準嘅講法）",
         "差餉物業估價署"
       ],
       "answerIndex": 0,
@@ -3242,7 +3242,7 @@
         "常關（或按消防規定正確狀態），唔好長開阻塞",
         "長期用雜物頂開",
         "拆除改做通道裝飾",
-        "漆成黑色隱藏"
+        "漆成黑色隱藏（似是而非嘅法律講法）"
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
@@ -3269,7 +3269,7 @@
       "choices": [
         "用途、租期、租金同裝修責任等",
         "入伙紙簽發日期由租客決定",
-        "賣地底價",
+        "賣地底價（似是而非嘅法律講法）",
         "地積比率自動更改"
       ],
       "answerIndex": 0,
@@ -3284,7 +3284,7 @@
         "違反消防／管理規定並帶來安全風險",
         "自動加管理費積分",
         "自動升級甲級寫字樓",
-        "自動獲發牌"
+        "自動獲發牌（似是而非嘅法律講法）"
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
@@ -3311,7 +3311,7 @@
       "choices": [
         "通知管理處並按公契／法團程序跟進",
         "即時打通隔籬單位",
-        "停止交差餉",
+        "停止交差餉（似是而非嘅法律講法）",
         "自行更改地契"
       ],
       "answerIndex": 0,
@@ -3437,7 +3437,7 @@
       "choices": [
         "觸犯物管發牌制度相關規定",
         "自動取得甲級寫字樓評級",
-        "自動豁免差餉",
+        "强制條文可以雙方協議放棄",
         "自動延長地契"
       ],
       "answerIndex": 0,
@@ -3484,6 +3484,650 @@
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
+    },
+    {
+      "id": "lab-annual-leave-qual",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "按《僱傭條例》，僱員連續受僱滿多久，一般開始享有有薪年假？",
+      "choices": [
+        "12 個月",
+        "3 個月",
+        "6 個月",
+        "18 個月"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （有薪年假）"
+    },
+    {
+      "id": "lab-418",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "《僱傭條例》下「連續性合約」常用的 418 門檻，正確理解係？",
+      "choices": [
+        "連續 4 周或以上、每周工作滿 18 小時",
+        "連續 4 個月、每月工作滿 18 日",
+        "連續 18 周、每周工作滿 4 小時",
+        "連續 4 日、每日工作滿 18 小時"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （連續性合約）"
+    },
+    {
+      "id": "lab-severance-vs-lsp",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "關於遣散費與長期服務金，下列邊項正確？",
+      "choices": [
+        "一般不可就同一僱傭期同時領取兩者",
+        "可以就同一僱傭期同時全額領取兩項",
+        "只可以領取長期服務金、永遠無遣散費",
+        "兩項都只適用於公務員合約"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （遣散費／長期服務金）"
+    },
+    {
+      "id": "lab-sick-allowance",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "按《僱傭條例》，符合資格的疾病津貼，一般按僱員每日平均工資的多少發放？",
+      "choices": [
+        "五分之四",
+        "全數百分百",
+        "一半",
+        "三分之一"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （疾病津貼）"
+    },
+    {
+      "id": "lab-stat-vs-public",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "法定假日（statutory holiday）同公眾假期（general holiday）主要分別係？",
+      "choices": [
+        "兩者名單同適用範圍唔完全一樣，唔好當同一套",
+        "完全相同，只係中英譯名唔同",
+        "法定假日只得公務員先有、公眾假期人人有",
+        "公眾假期一律無薪、法定假日一律有薪"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/content2_2.htm ； https://www.gov.hk/tc/about/abouthk/holiday/"
+    },
+    {
+      "id": "lab-rest-day-pay",
+      "category": "labour",
+      "difficulty": "normal",
+      "prompt": "關於休息日，下列邊項較符合《僱傭條例》精神？",
+      "choices": [
+        "休息日原則上應給予；若僱員同意在休息日工作，安排須符合條例",
+        "僱主可單方面取消所有休息日改發固定津貼",
+        "休息日一定要用加班費代替、不可放假",
+        "兼職僱員一律無休息日規定"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （休息日）"
+    },
+    {
+      "id": "iq-01",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：2, 6, 12, 20, 30, ? 下一個數係？",
+      "choices": [
+        "42",
+        "40",
+        "36",
+        "48"
+      ],
+      "answerIndex": 0,
+      "solution": "差分依次 +4,+6,+8,+10，下一個 +12 → 30+12=42。"
+    },
+    {
+      "id": "iq-02",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：3, 9, 27, 81, ? 下一個數係？",
+      "choices": [
+        "243",
+        "162",
+        "108",
+        "324"
+      ],
+      "answerIndex": 0,
+      "solution": "每項 ×3：81×3=243。"
+    },
+    {
+      "id": "iq-03",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：1, 1, 2, 3, 5, 8, ? 下一個數係？",
+      "choices": [
+        "13",
+        "11",
+        "12",
+        "15"
+      ],
+      "answerIndex": 0,
+      "solution": "Fibonacci：前兩項之和，8+5=13。"
+    },
+    {
+      "id": "iq-04",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：5, 10, 20, 40, ? 下一個數係？",
+      "choices": [
+        "80",
+        "60",
+        "70",
+        "100"
+      ],
+      "answerIndex": 0,
+      "solution": "每項 ×2。"
+    },
+    {
+      "id": "iq-05",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：7, 10, 15, 22, 31, ? 下一個數係？",
+      "choices": [
+        "42",
+        "40",
+        "39",
+        "45"
+      ],
+      "answerIndex": 0,
+      "solution": "差分 +3,+5,+7,+9，下一個 +11 → 31+11=42。"
+    },
+    {
+      "id": "iq-06",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：100, 96, 88, 76, ? 下一個數係？",
+      "choices": [
+        "60",
+        "64",
+        "68",
+        "52"
+      ],
+      "answerIndex": 0,
+      "solution": "差分 −4,−8,−12，下一個 −16 → 76−16=60。"
+    },
+    {
+      "id": "iq-07",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：2, 3, 5, 8, 12, ? 下一個數係？",
+      "choices": [
+        "17",
+        "15",
+        "16",
+        "18"
+      ],
+      "answerIndex": 0,
+      "solution": "差分 +1,+2,+3,+4，下一個 +5 → 12+5=17。"
+    },
+    {
+      "id": "iq-08",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "數列：1, 4, 9, 16, 25, ? 下一個數係？",
+      "choices": [
+        "36",
+        "30",
+        "32",
+        "49"
+      ],
+      "answerIndex": 0,
+      "solution": "平方數：1²…6²=36。"
+    },
+    {
+      "id": "iq-09",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "甲乙丙三人中只有一人講真話。甲：「乙講真。」乙：「丙講真。」丙：「甲講假。」邊個講真話？",
+      "choices": [
+        "丙",
+        "甲",
+        "乙",
+        "三人一"
+      ],
+      "answerIndex": 0,
+      "solution": "若甲真→乙真，矛盾。若乙真→丙真，矛盾。故丙真。"
+    },
+    {
+      "id": "iq-10",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "抽屜有黑襪白襪各若干。最少要拿幾隻先能保證有一對同色？（最壞情況）",
+      "choices": [
+        "3",
+        "2",
+        "4",
+        "5"
+      ],
+      "answerIndex": 0,
+      "solution": "最壞先拿兩隻異色，第三隻必成對。"
+    },
+    {
+      "id": "iq-11",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "三盞燈、兩個掣；已知「兩個掣之中最少有一個壞」。現況有一燈亮。邊個結論一定啱？",
+      "choices": [
+        "最少有一個掣係壞嘅",
+        "兩個掣一定都壞",
+        "亮燈嗰個掣一定好",
+        "壞掣一定係關掣嗰個"
+      ],
+      "answerIndex": 0,
+      "solution": "題設已說明最少一個壞；其餘過度推論。"
+    },
+    {
+      "id": "iq-12",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "A 說：「B 說謊。」B 說：「C 說謊。」C 說：「A 同 B 都說謊。」只有一人說真話。邊個真？",
+      "choices": [
+        "B",
+        "A",
+        "C",
+        "無法判"
+      ],
+      "answerIndex": 0,
+      "solution": "若 A 真則 B 假⇒C 真，兩真矛盾。若 C 真則 A、B 皆假，但 A 假⇒B 真，矛盾。故 B 真。"
+    },
+    {
+      "id": "iq-13",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "盒子貼籤「蘋果」「橙」「蘋果+橙」全貼錯。打開「蘋果+橙」盒見到蘋果。橙喺邊盒？",
+      "choices": [
+        "貼「蘋果」嘅盒",
+        "貼「橙」嘅盒",
+        "貼「蘋果+橙」嘅盒",
+        "三盒都有橙"
+      ],
+      "answerIndex": 0,
+      "solution": "全錯⇒該盒係純果；見到蘋果⇒蘋果盒。橙在貼「蘋果」的盒。"
+    },
+    {
+      "id": "iq-14",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "所有麻雀都會飛；有啲會飛嘅係飛機。因此：",
+      "choices": [
+        "唔能斷定有麻雀係飛機",
+        "所有飛機都係麻雀",
+        "有麻雀係飛機",
+        "冇飛機會飛"
+      ],
+      "answerIndex": 0,
+      "solution": "「有些會飛的是飛機」不蕴含麻雀與飛機交集。"
+    },
+    {
+      "id": "iq-15",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "所有經理都懂預算；有啲工程師係經理。因此：",
+      "choices": [
+        "有啲工程師懂預算",
+        "所有工程師都懂預算",
+        "冇工程師懂預算",
+        "所有懂預算嘅都係工程師"
+      ],
+      "answerIndex": 0,
+      "solution": "工程師∩經理非空且經理⊆懂預算。"
+    },
+    {
+      "id": "iq-16",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "冇醫生係律師；所有律師都穿西裝。因此：",
+      "choices": [
+        "唔能斷定醫生著唔著西裝",
+        "所有醫生都穿西裝",
+        "冇醫生穿西裝",
+        "所有穿西裝嘅都係律師"
+      ],
+      "answerIndex": 0,
+      "solution": "醫生與律師不相交，但醫生是否穿西裝未給。"
+    },
+    {
+      "id": "iq-17",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "如果落雨就帶傘。今日冇帶傘。結論？",
+      "choices": [
+        "今日冇落雨",
+        "今日有落雨",
+        "唔知今日有冇落雨",
+        "今日一定唔使帶傘"
+      ],
+      "answerIndex": 0,
+      "solution": "modus tollens：¬傘 ⇒ ¬雨。"
+    },
+    {
+      "id": "iq-18",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "今年父親 36 歲、兒子 6 歲。多少年後父親歲數係兒子嘅 3 倍？",
+      "choices": [
+        "9",
+        "6",
+        "12",
+        "8"
+      ],
+      "answerIndex": 0,
+      "solution": "36+x=3(6+x)⇒x=9。"
+    },
+    {
+      "id": "iq-19",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "鐘喺 3 點幾多分，時針同分針重疊？",
+      "choices": [
+        "約 16 分",
+        "15 分整",
+        "18 分",
+        "20 分"
+      ],
+      "answerIndex": 0,
+      "solution": "約 3:16。"
+    },
+    {
+      "id": "iq-20",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "一項目 6 人 8 日做完；同樣效率 4 人要幾多日？",
+      "choices": [
+        "12",
+        "10",
+        "16",
+        "8"
+      ],
+      "answerIndex": 0,
+      "solution": "6×8=48，48/4=12。"
+    },
+    {
+      "id": "iq-21",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "火車 120 km/h 同汽車 80 km/h 相向，相距 200 km，幾耐相遇？",
+      "choices": [
+        "1 小時",
+        "1.5 小時",
+        "2 小時",
+        "2.5 小時"
+      ],
+      "answerIndex": 0,
+      "solution": "相對 200 km/h → 1 小時。"
+    },
+    {
+      "id": "iq-22",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "時針每小時走 30°。由 2 點到 5 點時針走咗幾多度？",
+      "choices": [
+        "90°",
+        "60°",
+        "120°",
+        "150°"
+      ],
+      "answerIndex": 0,
+      "solution": "3 小時 ×30°=90°。"
+    },
+    {
+      "id": "iq-23",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "正立方體有幾個面、幾條棱、幾個頂點？",
+      "choices": [
+        "6 面、12 棱、8 頂點",
+        "6 面、8 棱、12 頂點",
+        "8 面、12 棱、6 頂點",
+        "6 面、10 棱、8 頂點"
+      ],
+      "answerIndex": 0,
+      "solution": "標準立方體計數。"
+    },
+    {
+      "id": "iq-24",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "一張紙對摺兩次（每次對半）再開，通常有幾條摺痕？",
+      "choices": [
+        "3",
+        "2",
+        "4",
+        "1"
+      ],
+      "answerIndex": 0,
+      "solution": "兩次對摺通常 3 條摺痕。"
+    },
+    {
+      "id": "iq-25",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "俯視一個圓柱形水杯，最可能見到邊個形狀？",
+      "choices": [
+        "圓形",
+        "三角形",
+        "正方形",
+        "五邊形"
+      ],
+      "answerIndex": 0,
+      "solution": "杯口俯視見圓。"
+    },
+    {
+      "id": "iq-26",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "骰子對面點數和通常係 7。頂係 3，底係？",
+      "choices": [
+        "4",
+        "3",
+        "5",
+        "1"
+      ],
+      "answerIndex": 0,
+      "solution": "3+4=7。"
+    },
+    {
+      "id": "iq-27",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "立方體展開成十字形網圖，相對嘅兩面喺展開圖上通常？",
+      "choices": [
+        "唔會相鄰共邊",
+        "一定相鄰共邊",
+        "一定對角相觸",
+        "一定重疊喺同一格"
+      ],
+      "answerIndex": 0,
+      "solution": "相對面在展開圖上不相鄰。"
+    },
+    {
+      "id": "iq-28",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "若 △=3、□=4，咁 △+□×△ 等於？（先乘後加）",
+      "choices": [
+        "15",
+        "21",
+        "12",
+        "7"
+      ],
+      "answerIndex": 0,
+      "solution": "4×3+3=15。"
+    },
+    {
+      "id": "iq-29",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "密碼：CAT→24、DOG→26；BAT→？",
+      "choices": [
+        "23",
+        "22",
+        "25",
+        "20"
+      ],
+      "answerIndex": 0,
+      "solution": "字母序號和：B2+A1+T20=23。"
+    },
+    {
+      "id": "iq-30",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "五人排隊，A 唔喺兩端，B 喺 A 右手邊，C 喺最左。邊個一定啱？",
+      "choices": [
+        "C 喺最左，A 唔喺最右",
+        "A 喺最左",
+        "B 喺最左",
+        "A 喺最右"
+      ],
+      "answerIndex": 0,
+      "solution": "C 最左；A 非兩端故非最右。"
+    },
+    {
+      "id": "iq-31",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "命題：若通過測驗則獲獎。小明未獲獎。可推出？",
+      "choices": [
+        "小明未通過測驗",
+        "小明通過測驗",
+        "獎品已經派完",
+        "無法由題目推出"
+      ],
+      "answerIndex": 0,
+      "solution": "modus tollens。"
+    },
+    {
+      "id": "iq-32",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "一串珠：紅藍紅藍紅？下一個最合理？",
+      "choices": [
+        "藍",
+        "紅",
+        "綠",
+        "黃"
+      ],
+      "answerIndex": 0,
+      "solution": "交替規律。"
+    },
+    {
+      "id": "iq-33",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "房間有 3 盞燈、外面 3 個掣，只可入房一次。點樣確定掣同燈對應？",
+      "choices": [
+        "先開一掣一段時間再關，入房摸邊盞燈溫熱",
+        "同時開晒三掣再入房睇一次",
+        "只開一掣入房一次就夠全部對應",
+        "隨機試掣直到對晒"
+      ],
+      "answerIndex": 0,
+      "solution": "熱／亮／冷暗對應曾開／正開／未開。"
+    },
+    {
+      "id": "iq-34",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "所有正方形都係矩形；有啲矩形係菱形。因此：",
+      "choices": [
+        "唔能斷定有正方形係菱形",
+        "所有菱形都係正方形",
+        "所有正方形都係菱形",
+        "冇矩形係正方形"
+      ],
+      "answerIndex": 0,
+      "solution": "正方形⊆矩形，矩形∩菱形非空，但不保证正方形∩菱形。"
+    },
+    {
+      "id": "iq-35",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "買筆：3 支同價共 $36。每支？",
+      "choices": [
+        "$12",
+        "$9",
+        "$18",
+        "$6"
+      ],
+      "answerIndex": 0,
+      "solution": "36/3=12。"
+    },
+    {
+      "id": "iq-36",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "水池：進水管 4 小時注滿、出水管 6 小時抽空。兩管齊開由空開始幾耐滿？",
+      "choices": [
+        "12 小時",
+        "5 小時",
+        "10 小時",
+        "2 小時"
+      ],
+      "answerIndex": 0,
+      "solution": "1/4−1/6=1/12。"
+    },
+    {
+      "id": "iq-37",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "甲比乙高，乙比丙高。邊個最短？",
+      "choices": [
+        "丙",
+        "甲",
+        "乙",
+        "三人一"
+      ],
+      "answerIndex": 0,
+      "solution": "甲>乙>丙。"
+    },
+    {
+      "id": "iq-38",
+      "category": "iq",
+      "difficulty": "normal",
+      "prompt": "擲公正硬幣兩次，至少一次正面嘅概率？",
+      "choices": [
+        "3/4",
+        "1/2",
+        "1/3",
+        "2/3"
+      ],
+      "answerIndex": 0,
+      "solution": "1−1/4=3/4。"
+    },
+    {
+      "id": "iq-39",
+      "category": "iq",
+      "difficulty": "hard",
+      "prompt": "數列：8, 27, 64, 125, ? ",
+      "choices": [
+        "216",
+        "128",
+        "243",
+        "180"
+      ],
+      "answerIndex": 0,
+      "solution": "2³…6³=216。"
+    },
+    {
+      "id": "iq-40",
+      "category": "iq",
+      "difficulty": "hard",
+      "prompt": "三人賽跑：A 贏 B、B 贏 C，若名次可傳遞，可推出？",
+      "choices": [
+        "A 比 C 快",
+        "C 一定贏 A",
+        "三人一樣快",
+        "B 最快"
+      ],
+      "answerIndex": 0,
+      "solution": "A>B>C ⇒ A>C。"
     }
   ]
 }
