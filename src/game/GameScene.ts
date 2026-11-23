@@ -63,7 +63,7 @@ import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
-import { Stage6World, playElevatorRide, ESCALATOR, type Stage6Data } from './stage6World'
+import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
 import {
   ensureShopIcons,
@@ -231,7 +231,7 @@ type Stage1 = {
   cages?: Stage6Data['cages']
   slipZones?: Stage6Data['slipZones']
   floorJunk?: Stage6Data['floorJunk']
-  elevatorX?: number
+  elevatorX?: number | null
   junkUnlockX?: number
   teachSlipX0?: number
   teachSlipX1?: number
@@ -3552,6 +3552,9 @@ export class GameScene extends Phaser.Scene {
     this.s7world?.update(dt)
     tickExhibitAmbient(this.time.now)
     this.updateExhibitBackdrops()
+    // Exhibit is not theme===mall, so tickStage6 never runs — still need s2Pending unlocks
+    // (s7charge / s7hop / s7shield / s7can) + trainer boss trigger via tickStage2.
+    this.tickStage2(dt)
     // Dropped cage obstacles nudge heroes
     for (const z of this.s7world?.dropZones() ?? []) {
       for (const h of [this.boy, this.girl]) {
@@ -3672,19 +3675,8 @@ export class GameScene extends Phaser.Scene {
         this.time.delayedCall(4500, () => arrow.destroy())
       }
     }
-    // Elevator faux-3D once at B→C (after upper deck).
-    if (!this.exhibit && this.s6world?.checkElevator(lead) && !this.storyIntro) {
-      this.physics.pause()
-      for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-      const gate = { destroy: () => undefined }
-      this.storyIntro = gate
-      void this.s6world.playLiftDoors().then(() => playElevatorRide(this)).then(() => {
-        if (this.storyIntro === gate) this.storyIntro = null
-        this.physics.resume()
-        this.resetPauseKeys()
-        floatText(this, lead, LANE_FLOOR_Y - 90, '陰層到……繼續向右 →', '#c0d0ff', { size: 14, dur: 1800 })
-      })
-    }
+    // E5: elevator removed — was same-floor cutscene only (no new area). Escalator kept.
+    // playElevatorRide / checkElevator retained in stage6World for possible reuse.
     // Trainer/director fan OR scrubber P3 floor-blower (work-order M3).
     const dir = this.queen
     const fanActs = dir instanceof SecurityDirector && (dir.act === 'windup' || dir.act === 'stalk' || dir.act === 'intro')
@@ -3702,8 +3694,8 @@ export class GameScene extends Phaser.Scene {
         const body = h.body as Phaser.Physics.Arcade.Body | null
         if (!body) continue
         if (blower && scrubber) {
-          // Into-wind (toward fan on the right) ×0.5
-          if (scrubber.intoWind(body.velocity.x)) body.setVelocityX(body.velocity.x * 0.5)
+          // E8: into-wind (toward boss / with blast) walk ×0.5; leeward unchanged.
+          if (scrubber.intoWind(body.velocity.x, h.x)) body.setVelocityX(body.velocity.x * 0.5)
         } else {
           const movingRight = body.velocity.x > 12
           const mul = this.s6world.headwindMul(h.x, movingRight)
@@ -4820,7 +4812,8 @@ export class GameScene extends Phaser.Scene {
 
   /** Stage 7・Boss 前記貨單攤檔（會員中心金魚眼仍喺 CP2）。 */
   private placeMemoryStall() {
-    if (this.stageNo !== 7) return
+    // E6: stage 7 keeps goldfish quiz only — skip 記貨單 stall (code retained for stage 8+).
+    if (true) return
     const x = this.memoryStallX
     const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
     if (this.textures.exists('cs-cart')) {
@@ -4847,6 +4840,8 @@ export class GameScene extends Phaser.Scene {
   }
 
   private tickMemoryStall() {
+    // E6: disabled on stage 7 (金魚眼搶答 already present). Keep runMemoryStall() for later stages.
+    if (this.stageNo === 7) return
     if (this.stageNo !== 7 || this.memoryDone || this.ended || !this.started || this.storyIntro || this.bossFight) return
     if (this.leadX() < this.memoryStallX) return
     this.memoryDone = true

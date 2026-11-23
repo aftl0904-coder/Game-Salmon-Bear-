@@ -36,7 +36,17 @@ const CHARGE_MUL = 2.5
 const CHARGE_DIST = 200
 const WARN_MS = 400
 const REST_MS = 800
-const HOP_DIST = 140
+/** E2 hop aim */
+const HOP_CROUCH_MS = 400
+const HOP_REST_MS = 700
+const HOP_AIM_JITTER = 16
+const HOP_MELEE_DIST = 60
+const HOP_ARC = 78
+/** E1 shield turn */
+const SHIELD_TURN_DELAY_MS = 1000
+const SHIELD_TURN_ANIM_MS = 250
+const SHIELD_TURN_COOLDOWN_MS = 800
+const SHIELD_HINT_MS = 300
 const CAN_INTERVAL_MS = 2500
 
 // ── 衝鋒蜜僵 ─────────────────────────────────────────────────────────────
@@ -189,13 +199,14 @@ export class ChargeHoneyZombie extends HoneyZombie {
 
 // ── 籠車 ───────────────────────────────────────────────────────────────
 
-/** Hops forward 140px; only hittable while airborne. HP 2. */
+/** E2: aims landing at player (±16); crouch warn + shadow; melee if <60. HP 2. */
 export class HopCage extends HoneyZombie {
-  private phase: 'idle' | 'hop' = 'idle'
+  private phase: 'idle' | 'crouch' | 'hop' = 'idle'
   private t = 0
   private airborne = false
   private costume: Phaser.GameObjects.Graphics
   private badge: Phaser.GameObjects.Image | null = null
+  private shadow: Phaser.GameObjects.Ellipse | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
@@ -232,9 +243,86 @@ export class HopCage extends HoneyZombie {
     g.fillStyle(0xe8d090, 1).fillRect(-6, -18, 12, 5)
   }
 
+  private clearShadow() {
+    this.shadow?.destroy()
+    this.shadow = null
+  }
+
+  private showShadow(atX: number) {
+    this.clearShadow()
+    const floor = this.s2.floorY()
+    this.shadow = this.scene.add
+      .ellipse(atX, floor + 2, 36, 10, 0x101018, 0.45)
+      .setDepth(actorDepth('enemy', this.lane, floor) - 1)
+  }
+
+  /** E2: crouch warn → hop to player X (±16), or melee bounce if <60px. */
+  private beginHop(tgt: HeroRef) {
+    const floor = this.s2.floorY()
+    const dx = tgt.x - this.x
+    const melee = Math.abs(dx) < HOP_MELEE_DIST
+    const aim = melee
+      ? this.x + (Math.sign(dx) || (this.flipX ? -1 : 1)) * 28
+      : tgt.x + Phaser.Math.Between(-HOP_AIM_JITTER, HOP_AIM_JITTER)
+    const toX = aim
+    this.setFlipX(toX < this.x)
+    this.phase = 'crouch'
+    this.airborne = false
+    this.y = floor
+    this.setVelocity(0, 0)
+    this.anim('walk')
+    this.anims.pause()
+    this.showShadow(toX)
+    this.scene.time.delayedCall(HOP_CROUCH_MS, () => {
+      if (!this.active || this.fsm === 'DEAD') {
+        this.clearShadow()
+        return
+      }
+      this.phase = 'hop'
+      this.airborne = true
+      this.anims.resume()
+      this.anim('walk')
+      const fromX = this.x
+      const hop = this.scene.tweens.add({
+        targets: this,
+        x: toX,
+        duration: melee ? 280 : 420,
+        ease: 'Sine.easeInOut',
+        onUpdate: (tw) => {
+          if (!this.active) return
+          const p = tw.progress
+          this.y = floor - Math.sin(p * Math.PI) * (melee ? 36 : HOP_ARC)
+          this.setVelocity(0, 0)
+          ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
+          this.syncCostume()
+        },
+          onComplete: () => {
+          if (!this.active) return
+          this.x = toX
+          this.y = floor
+          // E2: landing hit — keep airborne flag for one contact window frame.
+          this.airborne = true
+          this.contactCd = 0
+          this.phase = 'idle'
+          this.t = HOP_REST_MS
+          this.clearShadow()
+          ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
+          this.setVelocity(0, 0)
+          this.syncCostume()
+          this.scene.time.delayedCall(120, () => {
+            if (this.active) this.airborne = false
+          })
+        },
+      })
+      this.setData('hopTween', hop)
+      void fromX
+    })
+  }
+
   override tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
       this.costume.setVisible(false)
+      this.clearShadow()
       return
     }
     const now = this.scene.time.now
@@ -243,8 +331,12 @@ export class HopCage extends HoneyZombie {
       this.syncCostume()
       return
     }
-    if (this.getData('leaping')) {
+    if (this.getData('leaping') || this.phase === 'crouch' || this.phase === 'hop') {
       this.setVelocity(0, 0)
+      if (this.phase === 'crouch') {
+        this.y = this.s2.floorY()
+        this.airborne = false
+      }
       this.syncCostume()
       return
     }
@@ -268,43 +360,7 @@ export class HopCage extends HoneyZombie {
       this.anim('walk')
       this.anims.pause()
       this.t -= dt
-      if (this.t <= 0 && Math.abs(dx) < 420) {
-        this.phase = 'hop'
-        this.airborne = true
-        this.anims.resume()
-        this.anim('walk')
-        const dir = (Math.sign(dx) || (this.flipX ? -1 : 1)) as 1 | -1
-        this.setFlipX(dir < 0)
-        const fromX = this.x
-        const toX = fromX + dir * HOP_DIST
-        const floor = this.s2.floorY()
-        const hop = this.scene.tweens.add({
-          targets: this,
-          x: toX,
-          duration: 420,
-          ease: 'Sine.easeInOut',
-          onUpdate: (tw) => {
-            if (!this.active) return
-            const p = tw.progress
-            this.y = floor - Math.sin(p * Math.PI) * 78
-            this.setVelocity(0, 0)
-            ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
-            this.syncCostume()
-          },
-          onComplete: () => {
-            if (!this.active) return
-            this.x = toX
-            this.y = floor
-            this.airborne = false
-            this.phase = 'idle'
-            this.t = 700 + Math.random() * 500
-            ;(this.body as Phaser.Physics.Arcade.Body).reset(this.x, this.y)
-            this.setVelocity(0, 0)
-            this.syncCostume()
-          },
-        })
-        this.setData('hopTween', hop)
-      }
+      if (this.t <= 0 && Math.abs(dx) < 420) this.beginHop(tgt)
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))
     this.syncCostume()
@@ -329,6 +385,7 @@ export class HopCage extends HoneyZombie {
     const hop = this.getData('hopTween') as Phaser.Tweens.Tween | undefined
     hop?.stop()
     this.airborne = false
+    this.clearShadow()
     this.costume.destroy()
     this.badge?.destroy()
     this.badge = null
@@ -338,6 +395,7 @@ export class HopCage extends HoneyZombie {
   override destroy(fromScene?: boolean) {
     const hop = this.getData('hopTween') as Phaser.Tweens.Tween | undefined
     hop?.stop()
+    this.clearShadow()
     this.costume?.destroy()
     this.badge?.destroy()
     this.badge = null
@@ -347,10 +405,16 @@ export class HopCage extends HoneyZombie {
 
 // ── 鐵閘板看守員 ───────────────────────────────────────────────────────────
 
-/** Front blocks bullets (ding); must jump behind and hit the back. HP 3. */
+/** Front blocks bullets (ding); must jump behind and hit the back. HP 3. E1 turn delay. */
 export class ShieldKeeper extends AnimEnemy {
   private shieldGfx: Phaser.GameObjects.Graphics
   private badge: Phaser.GameObjects.Image | null = null
+  /** Desired face: flipX true = facing left. */
+  private wantFlipX: boolean | null = null
+  private turnDelayLeft = 0
+  private turnAnimLeft = 0
+  private turnCooldownLeft = 0
+  private hint: Phaser.GameObjects.Text | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -370,6 +434,7 @@ export class ShieldKeeper extends AnimEnemy {
   /** Same face-block rule as LobsterGuard / 霸鼻象 armour. */
   blocks(dir: number) {
     if (this.fsm === 'HURT' || this.fsm === 'DEAD') return false
+    // During turn anim, shield is rotating — still blocks old face until flip commits.
     const face = this.flipX ? -1 : 1
     return dir === -face
   }
@@ -378,13 +443,35 @@ export class ShieldKeeper extends AnimEnemy {
     return this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT' && this.contactCd <= 0
   }
 
+  private clearHint() {
+    this.hint?.destroy()
+    this.hint = null
+  }
+
+  private showHint() {
+    this.clearHint()
+    this.hint = this.scene.add
+      .text(this.x, this.y - 56, '？', {
+        fontFamily: 'sans-serif',
+        fontSize: '18px',
+        color: '#ffe080',
+        stroke: '#201808',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+      .setDepth(this.depth + 5)
+    this.scene.time.delayedCall(SHIELD_HINT_MS, () => this.clearHint())
+  }
+
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
       this.shieldGfx.setVisible(false)
+      this.clearHint()
       return
     }
     const now = this.scene.time.now
     this.contactCd = Math.max(0, this.contactCd - dt)
+    this.turnCooldownLeft = Math.max(0, this.turnCooldownLeft - dt)
     if (isActorFrozen(this, now)) {
       this.drawShield()
       return
@@ -399,12 +486,52 @@ export class ShieldKeeper extends AnimEnemy {
     }
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
     const dx = tgt.x - this.x
-    this.face(dx)
+    const desiredFlip = dx < 0
+
+    // E1: delayed turn when player is behind.
+    if (this.turnAnimLeft > 0) {
+      this.turnAnimLeft -= dt
+      this.setVelocity(0, 0)
+      this.anim('reach')
+      if (this.turnAnimLeft <= 0 && this.wantFlipX != null) {
+        this.setFlipX(this.wantFlipX)
+        this.wantFlipX = null
+        this.turnCooldownLeft = SHIELD_TURN_COOLDOWN_MS
+      }
+      this.syncDepth()
+      this.drawShield()
+      this.hint?.setPosition(this.x, this.y - 56)
+      return
+    }
+
+    if (desiredFlip !== this.flipX && this.turnCooldownLeft <= 0) {
+      if (this.wantFlipX == null) {
+        this.wantFlipX = desiredFlip
+        this.turnDelayLeft = SHIELD_TURN_DELAY_MS
+        this.showHint()
+      }
+      this.turnDelayLeft -= dt
+      if (this.turnDelayLeft <= 0) {
+        this.turnAnimLeft = SHIELD_TURN_ANIM_MS
+        // flip commits at end of anim
+      }
+    } else if (desiredFlip === this.flipX) {
+      // Player back in front — cancel pending turn.
+      this.wantFlipX = null
+      this.turnDelayLeft = 0
+      this.clearHint()
+    }
+
     const near = Math.abs(dx) < 100
     this.anim(near ? 'reach' : 'walk')
-    this.setVelocityX(Math.abs(dx) < 10 ? 0 : Math.sign(dx) * (near ? 16 : 28))
+    // Slow chase while waiting to turn (player behind) — don't spin instantly.
+    const chasingFront = desiredFlip === this.flipX
+    this.setVelocityX(
+      !chasingFront || Math.abs(dx) < 10 ? 0 : Math.sign(dx) * (near ? 16 : 28),
+    )
     this.syncDepth()
     this.drawShield()
+    this.hint?.setPosition(this.x, this.y - 56)
   }
 
   private drawShield() {
@@ -429,6 +556,7 @@ export class ShieldKeeper extends AnimEnemy {
   }
 
   protected override die(dir: number) {
+    this.clearHint()
     this.shieldGfx.destroy()
     this.badge?.destroy()
     this.badge = null
@@ -436,6 +564,7 @@ export class ShieldKeeper extends AnimEnemy {
   }
 
   override destroy(fromScene?: boolean) {
+    this.clearHint()
     this.shieldGfx?.destroy()
     this.badge?.destroy()
     this.badge = null

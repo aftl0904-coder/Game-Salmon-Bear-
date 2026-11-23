@@ -44,7 +44,11 @@ const ACID_NOZZLE_MS = 400
 const ACID_WARN_MS = 800
 const ACID_LIFE_MS = 3000
 const ACID_FADE_MS = 300
-const ACID_HALF = 32
+/** E3: puddle width 48px (half 24); was 64. */
+const ACID_HALF = 24
+const ACID_SPREAD = 170
+const ACID_MIN_GAP = 96
+const ACID_DROP_IF_GAP = 140
 const ACID_HIT_LOCK_MS = 1000
 const FOAM_WARN_MS = 500
 const FOAM_LIFE_MS = 4000
@@ -61,10 +65,15 @@ const HIT_STUN_WINDOW_MS = 3000
 const HIT_STUN_CAP_MS = 300
 const HIT_STUN_IMMUNE_MS = 2000
 const HIT_STUN_PER_HIT_MS = 80
-const BLOWER_PERIOD_MS = 6000
+/** E8: phase cadence P1=8s / P2=6s / P3=4.5s */
+const BLOWER_PERIOD_P1_MS = 8000
+const BLOWER_PERIOD_P2_MS = 6000
+const BLOWER_PERIOD_P3_MS = 4500
 const BLOWER_WARN_MS = 600
 const BLOWER_BLAST_MS = 2500
 const BLOWER_DISABLE_MS = 8000
+const BLOWER_BEHIND_PX = 50
+const BLOWER_FOLLOW_MUL = 0.9
 const BODY_HALF = 48
 const ARENA_PAD = 14
 const REPOSITION_FORCE_ATTACK = 2
@@ -205,8 +214,10 @@ export class MallScrubber extends Enemy {
       .setOrigin(0.5)
       .setVisible(false)
     this.windGfx = scene.add.graphics().setDepth(DEPTH.HAZARD + 1)
+    // E8: start on the ground behind the boss (not floating mid-arena).
+    const behind0 = Phaser.Math.Clamp(x + BLOWER_BEHIND_PX, x0 + 20, x1 - 20)
     this.blower = scene.add
-      .image(x1 - 40, hooks.floorY(), BLOWER_SHEET, BLOWER_FRAME.off)
+      .image(behind0, hooks.floorY(), BLOWER_SHEET, BLOWER_FRAME.off)
       .setOrigin(0.5, 1)
       .setDepth(DEPTH.PROP + 2)
     applyBlowerState(this.blower, 'off')
@@ -267,12 +278,18 @@ export class MallScrubber extends Enemy {
     return this.blowerPhase === 'blast' && this.scene.time.now >= this.blowerDisabledUntil
   }
 
-  intoWind(vx: number) {
-    return this.isBlowerBlasting() && vx > 12
+  /** True when hero velocity is toward the boss (into the wind from behind-boss blower). */
+  intoWind(vx: number, heroX: number) {
+    if (!this.isBlowerBlasting()) return false
+    const wind = this.blowerWindDir()
+    // Moving with the wind direction = walking toward / past boss into the blast.
+    if (wind > 0) return vx > 12 && heroX < this.x + 80
+    return vx < -12 && heroX > this.x - 80
   }
 
   hitBlower(hx: number) {
-    if (this.fsm === 'DEAD' || this.qphase < 3) return
+    // E8: available from P1 (was P3-only).
+    if (this.fsm === 'DEAD') return
     if (this.scene.time.now < this.blowerDisabledUntil) return
     if (Math.abs(hx - this.blower.x) > 40) return
     this.blowerHits++
@@ -472,7 +489,7 @@ export class MallScrubber extends Enemy {
     if (this.marker?.scene) this.marker.setText(this.dir < 0 ? '！←' : '！→').setVisible(true)
   }
 
-  private beginAcid(heroes: Hero[], target: Hero) {
+  beginAcid(heroes: Hero[], target: Hero) {
     if (this.acids.length >= 3) {
       this.beginCharge(heroes, target)
       return
@@ -483,10 +500,43 @@ export class MallScrubber extends Enemy {
     this.setPose('spray')
     this.setAct('warn-acid')
     this.marker.setText('酸！').setVisible(true)
-    let lands = [target.x, target.x - 90, target.x + 90]
-    if (this.isBlowerBlasting()) lands = lands.map((x) => x - 40)
-    this.acidTargets = lands.map((x) => Phaser.Math.Clamp(x, this.arenaX0 + 30, this.arenaX1 - 30))
+    // E3: player / −170 / +170; clamp; drop if neighbours <140; enforce ≥96 gap.
+    let lands = [target.x, target.x - ACID_SPREAD, target.x + ACID_SPREAD]
+    if (this.isBlowerBlasting()) {
+      const windDir = this.blowerWindDir()
+      lands = lands.map((x) => x + windDir * 40)
+    }
+    const lo = this.arenaX0 + 30
+    const hi = this.arenaX1 - 30
+    lands = lands.map((x) => Phaser.Math.Clamp(x, lo, hi))
+    lands.sort((a, b) => a - b)
+    // Drop one if any adjacent gap < ACID_DROP_IF_GAP after clamp.
+    const kept: number[] = []
+    for (const x of lands) {
+      if (!kept.length || x - kept[kept.length - 1]! >= ACID_DROP_IF_GAP) kept.push(x)
+      else if (Math.abs(x - target.x) < Math.abs(kept[kept.length - 1]! - target.x)) {
+        // Prefer keeping the puddle closer to the player when dropping a duplicate cluster.
+        kept[kept.length - 1] = x
+      }
+    }
+    // Final pass: ensure min gap 96 by dropping extras from the right.
+    const spaced: number[] = []
+    for (const x of kept) {
+      if (!spaced.length || x - spaced[spaced.length - 1]! >= ACID_MIN_GAP) spaced.push(x)
+    }
+    this.acidTargets = spaced
     for (const x of this.acidTargets) this.spawnAcidWarn(x)
+  }
+
+  /** Blow direction: same as boss face (toward player). flipX true = facing left = −1. */
+  blowerWindDir(): 1 | -1 {
+    return this.flipX ? -1 : 1
+  }
+
+  blowerPeriodMs() {
+    if (this.qphase >= 3) return BLOWER_PERIOD_P3_MS
+    if (this.qphase >= 2) return BLOWER_PERIOD_P2_MS
+    return BLOWER_PERIOD_P1_MS
   }
 
   private beginFoam(target: Hero) {
@@ -668,23 +718,39 @@ export class MallScrubber extends Enemy {
     })
   }
 
-  private tickBlower(dt: number) {
-    if (this.qphase < 3 || this.fsm === 'DEAD') {
+  tickBlower(dt: number) {
+    // E8: from P1; grounded; follows behind boss 50px @ 0.9 speed; blows toward face.
+    if (this.fsm === 'DEAD') {
       this.blowerPhase = 'idle'
       this.windGfx.clear()
       return
     }
+    const floor = this.hooks6.floorY()
+    // Behind boss relative to facing: if facing left (flipX), behind is to the right.
+    const behind = this.x + (this.flipX ? 1 : -1) * BLOWER_BEHIND_PX
+    const targetX = Phaser.Math.Clamp(behind, this.arenaX0 + 20, this.arenaX1 - 20)
+    // Follow at ~boss chase speed ×0.9 (charge ~160 → ~144); catch-up when far.
+    const dx = targetX - this.blower.x
+    const followSpeed = 144 * BLOWER_FOLLOW_MUL
+    const step = Math.sign(dx) * Math.min(Math.abs(dx), followSpeed * (dt / 1000))
+    this.blower.setPosition(this.blower.x + step, floor)
+    this.blower.setFlipX(this.flipX)
+
     if (this.scene.time.now < this.blowerDisabledUntil) {
       this.blowerPhase = 'idle'
       this.windGfx.clear()
       return
     }
     this.blowerCycle += dt
-    const cycle = this.blowerCycle % BLOWER_PERIOD_MS
+    const period = this.blowerPeriodMs()
+    const cycle = this.blowerCycle % period
+    const wind = this.blowerWindDir()
     if (cycle < BLOWER_WARN_MS) {
       this.blowerPhase = 'warn'
       applyBlowerState(this.blower, 'warn')
       this.windGfx.clear()
+      // Yellow warn lamp
+      this.windGfx.fillStyle(0xf2c230, 0.55).fillCircle(this.blower.x, floor - 28, 6)
     } else if (cycle < BLOWER_WARN_MS + BLOWER_BLAST_MS) {
       this.blowerPhase = 'blast'
       const onFrame = BLOWER_FRAME.on + (Math.floor(this.blowerCycle / 120) % 2)
@@ -692,9 +758,9 @@ export class MallScrubber extends Enemy {
       this.windGfx.clear()
       this.windGfx.lineStyle(2, 0xa8d8ff, 0.45)
       for (let i = 0; i < 5; i++) {
-        const x1 = this.blower.x - 20
-        const y = this.hooks6.floorY() - 10 - i * 6
-        this.windGfx.lineBetween(x1, y, x1 - 80 - i * 12, y - 2)
+        const x0 = this.blower.x + wind * 18
+        const y = floor - 8 - i * 5
+        this.windGfx.lineBetween(x0, y, x0 + wind * (70 + i * 10), y - 1)
       }
     } else {
       this.blowerPhase = 'idle'
@@ -733,7 +799,7 @@ export class MallScrubber extends Enemy {
     this.elapsed += step
     this.setVelocity(0, 0)
     this.y = this.hooks6.floorY()
-    this.blower.setPosition(this.arenaX1 - 40, this.hooks6.floorY())
+    // Blower position updated inside tickBlower (follows behind boss).
     this.tickBlower(step)
     this.tickCart(step)
 

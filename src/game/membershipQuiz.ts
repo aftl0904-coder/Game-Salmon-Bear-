@@ -96,11 +96,11 @@ function pickFromPool(pool: Q[], n: number, seen: Set<string>, exclude: Set<stri
   return ordered.slice(0, Math.min(n, ordered.length))
 }
 
-const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'labour'] as const
+const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'labour', 'iq'] as const
 
 /**
- * Q9 mix — 6 normal: developer 2、hanglung 1、law 1、hr|labour 1、math|mall 1;
- * 1 hard: 50% developer-hard, else other hard. Hard slot indices 3–6.
+ * E7 mix — 6 normal: developer 2、hanglung 1、law|hr|labour 1、iq 1、math|mall 1;
+ * 1 hard (any category, iq hard ok). Hard slot indices 3–6.
  * Fallback when a bucket is empty: developer → law → others.
  */
 function pickRound(rng: () => number): Q[] {
@@ -130,8 +130,8 @@ function pickRound(rng: () => number): Q[] {
 
   fill(['developer'], 2)
   fill(['hanglung'], 1)
-  fill(['law'], 1)
-  fill(['hr', 'labour'], 1)
+  fill(['law', 'hr', 'labour'], 1)
+  fill(['iq'], 1)
   fill(['math', 'mall'], 1)
 
   while (six.length < 6) {
