@@ -324,8 +324,19 @@ export class BootScene extends Phaser.Scene {
       'net-static',
       'number-plate-blank',
       'sign-blank',
+      'enemy-whip',
+      'enemy-cagecart',
+      'enemy-gate',
+      'enemy-feeder',
     ]) {
       this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)
+    }
+    // Animal 2-frame strips (48×24 → two 24×24 frames); do not also load as single image.
+    for (const a of ['rabbit', 'fawn', 'hedgehog'] as const) {
+      this.load.spritesheet(`s7-animal-${a}`, `/art/stage7/animal-${a}.png`, {
+        frameWidth: 24,
+        frameHeight: 24,
+      })
     }
     for (const meta of Object.values(ENEMY_SHEET_MAP)) {
       this.load.image(`enemy-sheet-${meta.id}`, `/art/enemies/${meta.id}.png`)
