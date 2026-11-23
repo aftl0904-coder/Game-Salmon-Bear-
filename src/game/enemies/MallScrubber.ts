@@ -15,39 +15,58 @@ type Act =
   | 'reposition'
   | 'warn-charge'
   | 'charge'
+  | 'charge-return'
   | 'warn-acid'
   | 'acid'
+  | 'warn-foam'
+  | 'foam'
+  | 'warn-brush'
+  | 'brush'
+  | 'warn-cart'
+  | 'cart'
   | 'recover'
-type Move = 'charge' | 'acid'
+type Move = 'charge' | 'acid' | 'foam' | 'brush' | 'cart'
 type Pose = 'idle' | 'warn' | 'charge' | 'recover' | 'spray' | 'defeated'
 type Hooks = {
   floorY: () => number
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
 }
 
-/** Work-order numbers (T2) — do not retune without Claude. */
+/** Batch6 C1 numbers — do not retune without Claude. */
 const CHARGE_SPEED = 360
 const WARN_CHARGE_MS = 600
-/** When warn zone is not escapable in time, lengthen telegraph — never cancel the attack. */
 const WARN_CHARGE_UNSAFE_MS = 900
-/** Max charge travel from boss toward player (not arena edge). */
 const CHARGE_MAX_DIST = 260
-const RECOVER_MS = 1500
-const RECOVER_P3_MS = 1200
+const CHARGE_RETURN_DIST = 140
+const RECOVER_MS = 1200
+const RECOVER_P3_MS = 900
 const ACID_NOZZLE_MS = 400
 const ACID_WARN_MS = 800
 const ACID_LIFE_MS = 3000
 const ACID_FADE_MS = 300
-const ACID_RECOVER_MS = 1000
-const ACID_HALF = 32 // 64px wide
+const ACID_HALF = 32
 const ACID_HIT_LOCK_MS = 1000
+const FOAM_WARN_MS = 500
+const FOAM_LIFE_MS = 4000
+const FOAM_WIDTH = 160
+const FOAM_SLIP_MUL = 0.4
+const BRUSH_WARN_MS = 600
+const BRUSH_SPIN_MS = 1200
+const BRUSH_RANGE = 90
+const CART_WARN_MS = 500
+const CART_SPEED = 90
+const CART_HP = 3
+const CART_COOLDOWN_MS = 12000
+const HIT_STUN_WINDOW_MS = 3000
+const HIT_STUN_CAP_MS = 300
+const HIT_STUN_IMMUNE_MS = 2000
+const HIT_STUN_PER_HIT_MS = 80
 const BLOWER_PERIOD_MS = 6000
 const BLOWER_WARN_MS = 600
 const BLOWER_BLAST_MS = 2500
 const BLOWER_DISABLE_MS = 8000
 const BODY_HALF = 48
 const ARENA_PAD = 14
-/** After this many consecutive repositions, the next action must be an attack. */
 const REPOSITION_FORCE_ATTACK = 2
 
 type Acid = {
@@ -59,7 +78,22 @@ type Acid = {
   hitAt: WeakMap<object, number>
 }
 
-/** PNG sheet keys (BootScene). Frame indices match public/art/c2/*-sheet.json. */
+type FoamZone = {
+  x0: number
+  x1: number
+  until: number
+  g: Phaser.GameObjects.Rectangle
+  label: Phaser.GameObjects.Text
+}
+
+type CleaningCart = {
+  img: Phaser.GameObjects.Rectangle
+  label: Phaser.GameObjects.Text
+  dir: 1 | -1
+  hp: number
+  hitAt: number
+}
+
 const SCRUBBER_SHEET = 'c2-scrubber'
 const BLOWER_SHEET = 'c2-blower'
 const ACID_PUDDLE = 'c2-acid-puddle'
@@ -80,21 +114,35 @@ const BLOWER_FRAME: Record<'off' | 'warn' | 'on' | 'stunned', number> = {
 }
 
 function applyScrubberPose(sprite: Phaser.GameObjects.Sprite, pose: Pose) {
-  if (!sprite.scene.textures.exists(SCRUBBER_SHEET)) return false
+  if (!sprite.scene?.textures?.exists(SCRUBBER_SHEET)) return false
   if (sprite.texture.key !== SCRUBBER_SHEET) sprite.setTexture(SCRUBBER_SHEET, SCRUBBER_FRAME[pose])
   else sprite.setFrame(SCRUBBER_FRAME[pose])
   return true
 }
 
 function applyBlowerState(img: Phaser.GameObjects.Image, state: 'off' | 'warn' | 'on' | 'stunned') {
-  if (!img.scene.textures.exists(BLOWER_SHEET)) return false
+  if (!img.scene?.textures?.exists(BLOWER_SHEET)) return false
   img.setTexture(BLOWER_SHEET, BLOWER_FRAME[state])
   return true
 }
 
+const ATTACK_ACTS = new Set<Act>([
+  'warn-charge',
+  'charge',
+  'charge-return',
+  'warn-acid',
+  'acid',
+  'warn-foam',
+  'foam',
+  'warn-brush',
+  'brush',
+  'warn-cart',
+  'cart',
+])
+
 /**
- * 深層潔淨 X-9 — work-order T2 kit (2026-11-22 JSON).
- * M1 slide · M2 acid · M3 floor blower (P3). Dialogue slots =「（待補）」.
+ * 深層潔淨 X-9 — batch6 C1 rework:
+ * super-armor during attacks, hit-stun cap, 5 moves, face-player.
  */
 export class MallScrubber extends Enemy {
   species = 'mall-scrubber'
@@ -111,17 +159,20 @@ export class MallScrubber extends Enemy {
   private lastHitAt = -1000
   private dir: 1 | -1 = -1
   private endX = 0
+  private returnEndX = 0
   private warning = { x0: 0, x1: 0 }
   private warnGraphic: Phaser.GameObjects.Graphics
   private marker: Phaser.GameObjects.Text
   private hitHeroes = new WeakSet<object>()
   private lastMove: Move | null = null
   private repositionX = 0
-  /** Consecutive reposition acts; ≥ REPOSITION_FORCE_ATTACK forces the next attack through. */
   private repositionStreak = 0
   private warnChargeNeed = WARN_CHARGE_MS
   private acids: Acid[] = []
   private acidTargets: number[] = []
+  private foams: FoamZone[] = []
+  private cart: CleaningCart | null = null
+  private lastCartAt = -CART_COOLDOWN_MS
   blower!: Phaser.GameObjects.Image
   private blowerHits = 0
   private blowerDisabledUntil = 0
@@ -131,6 +182,11 @@ export class MallScrubber extends Enemy {
   private pose: Pose = 'idle'
   private chip?: Phaser.GameObjects.Rectangle
   private recoverNeed = RECOVER_MS
+  private stunBudget = HIT_STUN_CAP_MS
+  private stunWindowStart = 0
+  private stunImmuneUntil = 0
+  private stunUntil = 0
+  private brushHitAt = new WeakMap<object, number>()
 
   constructor(scene: Phaser.Scene, x: number, x0: number, x1: number, hooks: Hooks) {
     super(scene, x, hooks.floorY(), SCRUBBER_SHEET, SCRUBBER_FRAME.idle)
@@ -142,7 +198,6 @@ export class MallScrubber extends Enemy {
     applyScrubberPose(this, 'idle')
     const body = this.body as Phaser.Physics.Arcade.Body
     body.allowGravity = false
-    // Keep legacy collision box (112×80 sheet, body 96×58 @ offset 8,20).
     body.setSize(BODY_HALF * 2, 58).setOffset(8, 20)
     this.warnGraphic = scene.add.graphics().setDepth(DEPTH.HAZARD + 2)
     this.marker = scene.add
@@ -158,7 +213,8 @@ export class MallScrubber extends Enemy {
   }
 
   override canHurtPlayer() {
-    return this.active && this.fsm !== 'DEAD' && this.act === 'charge'
+    if (!this.active || this.fsm === 'DEAD') return false
+    return this.act === 'charge' || this.act === 'charge-return' || this.act === 'brush'
   }
   canHurtHero(hero: object) {
     return !this.hitHeroes.has(hero)
@@ -174,11 +230,43 @@ export class MallScrubber extends Enemy {
       .map((a) => ({ x0: a.x - ACID_HALF, x1: a.x + ACID_HALF, acid: a }))
   }
 
+  foamZones(): Array<{ x0: number; x1: number; mul: number }> {
+    const now = this.scene.time.now
+    return this.foams.filter((z) => z.until > now).map((z) => ({ x0: z.x0, x1: z.x1, mul: FOAM_SLIP_MUL }))
+  }
+
+  brushHurtsHero(hero: object, hx: number): boolean {
+    if (this.act !== 'brush') return false
+    if (Math.abs(hx - this.x) > BRUSH_RANGE) return false
+    const last = this.brushHitAt.get(hero) ?? 0
+    if (this.scene.time.now - last < 500) return false
+    this.brushHitAt.set(hero, this.scene.time.now)
+    return true
+  }
+
+  cartHurtZone(): { x0: number; x1: number } | null {
+    if (!this.cart) return null
+    return { x0: this.cart.img.x - 22, x1: this.cart.img.x + 22 }
+  }
+
+  hitCart(hx: number) {
+    if (!this.cart) return
+    if (Math.abs(hx - this.cart.img.x) > 36) return
+    const now = this.scene.time.now
+    if (now - this.cart.hitAt < 200) return
+    this.cart.hitAt = now
+    this.cart.hp -= 1
+    this.cart.img.setFillStyle(0xffccaa)
+    this.scene.time.delayedCall(60, () => {
+      if (this.cart) this.cart.img.setFillStyle(0xc8d0d8)
+    })
+    if (this.cart.hp <= 0) this.destroyCart()
+  }
+
   isBlowerBlasting() {
     return this.blowerPhase === 'blast' && this.scene.time.now >= this.blowerDisabledUntil
   }
 
-  /** Into-wind = walking toward the fan (right, since fan sits at arenaX1 and blows left). */
   intoWind(vx: number) {
     return this.isBlowerBlasting() && vx > 12
   }
@@ -205,7 +293,6 @@ export class MallScrubber extends Enemy {
   override receiveHit(dmg: number, dir: number): EnemyHitResult {
     if (this.fsm === 'DEAD' || this.scene.time.now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = this.scene.time.now
-    // Front = brush side (flipX false → facing right → front hits from right / dir>0)
     const fromFront = (dir > 0 && !this.flipX) || (dir < 0 && this.flipX)
     const backWeak = this.act === 'recover' && !fromFront
     let raw = dmg
@@ -215,7 +302,12 @@ export class MallScrubber extends Enemy {
     const x = this.x
     const y = this.y
     const result = super.receiveHit(hit, dir)
+    // Super armor: never knock back / interrupt during attack acts.
     this.setPosition(x, y).setVelocity(0, 0)
+    this.setTint(0xffffff)
+    this.scene.time.delayedCall(60, () => {
+      if (this.active && this.fsm !== 'DEAD') this.clearTint()
+    })
     if (result.killed) return result
     this.setFsm('PATROL')
     const fraction = this.hp / this.maxHp
@@ -225,11 +317,37 @@ export class MallScrubber extends Enemy {
       this.hooks6.bossEvent(phase === 2 ? 'phase2' : 'phase3')
       this.scene.cameras.main.shake(180, 0.004)
       this.marker.setText('（待補）').setVisible(true)
-      this.forceRecover(RECOVER_MS)
-    } else if (this.act === 'warn-charge' || this.act === 'charge' || this.act === 'warn-acid' || this.act === 'acid') {
-      this.recover()
+      this.forceRecover(this.recoverMs())
+      return result
     }
+    // Attack acts: damage + flash only — never recover / stun-lock.
+    if (ATTACK_ACTS.has(this.act)) return result
+    // Recover (or idle scan): limited hit-stun only.
+    this.applyHitStun()
     return result
+  }
+
+  private applyHitStun() {
+    const now = this.scene.time.now
+    if (now < this.stunImmuneUntil) return
+    if (now - this.stunWindowStart > HIT_STUN_WINDOW_MS) {
+      this.stunWindowStart = now
+      this.stunBudget = HIT_STUN_CAP_MS
+    }
+    if (this.stunBudget <= 0) {
+      this.stunImmuneUntil = now + HIT_STUN_IMMUNE_MS
+      this.stunBudget = HIT_STUN_CAP_MS
+      this.stunWindowStart = now + HIT_STUN_IMMUNE_MS
+      return
+    }
+    const apply = Math.min(HIT_STUN_PER_HIT_MS, this.stunBudget)
+    this.stunBudget -= apply
+    this.stunUntil = Math.max(this.stunUntil, now + apply)
+    if (this.stunBudget <= 0) {
+      this.stunImmuneUntil = now + HIT_STUN_IMMUNE_MS
+      this.stunBudget = HIT_STUN_CAP_MS
+      this.stunWindowStart = now + HIT_STUN_IMMUNE_MS
+    }
   }
 
   private setPose(pose: Pose) {
@@ -253,11 +371,10 @@ export class MallScrubber extends Enemy {
     body.prevFrame.copy(body.position)
   }
   private recoverMs() {
-    if (this.qphase === 3) return RECOVER_P3_MS // 1500 × 0.8
-    return RECOVER_MS
+    return this.qphase === 3 ? RECOVER_P3_MS : RECOVER_MS
   }
   private recover() {
-    this.forceRecover(this.act === 'acid' || this.act === 'warn-acid' ? ACID_RECOVER_MS : this.recoverMs())
+    this.forceRecover(this.recoverMs())
   }
   private forceRecover(ms: number) {
     this.setVelocity(0, 0)
@@ -269,6 +386,11 @@ export class MallScrubber extends Enemy {
     this.recoverNeed = ms
     this.elapsed = 0
     this.hooks6.bossEvent('weak')
+  }
+
+  private faceTarget(target: Hero) {
+    this.dir = (Math.sign(target.x - this.x) || -1) as 1 | -1
+    this.setFlipX(this.dir < 0)
   }
 
   private safeForAll(heroes: Hero[], x0: number, x1: number, warnMs: number) {
@@ -285,29 +407,33 @@ export class MallScrubber extends Enemy {
     })
   }
 
+  private movePool(): Move[] {
+    const pool: Move[] = ['charge', 'acid', 'foam']
+    if (this.qphase >= 2) pool.push('brush')
+    if (this.qphase >= 3) pool.push('cart')
+    return pool
+  }
+
   private pickMove(): Move {
-    if (this.qphase === 1) return 'charge'
-    // Alternate; never same move twice in a row
-    if (this.lastMove === 'charge') return 'acid'
-    if (this.lastMove === 'acid') return 'charge'
-    return Math.random() < 0.5 ? 'charge' : 'acid'
+    const pool = this.movePool().filter((m) => m !== this.lastMove)
+    if (pool.length === 0) return 'charge'
+    // Cart cooldown: skip if too soon.
+    const filtered =
+      this.scene.time.now - this.lastCartAt < CART_COOLDOWN_MS ? pool.filter((m) => m !== 'cart') : pool
+    const use = filtered.length ? filtered : pool
+    return use[Math.floor(Math.random() * use.length)]!
   }
 
   private beginCharge(heroes: Hero[], target: Hero) {
-    this.dir = (Math.sign(target.x - this.x) || -1) as 1 | -1
-    this.setFlipX(this.dir < 0)
+    this.faceTarget(target)
     const left = this.arenaX0 + ARENA_PAD
     const right = this.arenaX1 - ARENA_PAD
-    // Cap travel at CHARGE_MAX_DIST toward the player — never span the whole arena.
     this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
-    // Too short a lane (pinned at edge): try the other direction once.
     if (Math.abs(this.endX - this.x) < 30) {
       this.dir = (-this.dir) as 1 | -1
       this.setFlipX(this.dir < 0)
       this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
     }
-    // Only reposition when charge travel is still unusable — never cancel for fair-escape.
-    // After REPOSITION_FORCE_ATTACK consecutive repositions, force the attack through.
     if (Math.abs(this.endX - this.x) < 30) {
       if (this.repositionStreak < REPOSITION_FORCE_ATTACK) {
         this.repositionStreak++
@@ -319,7 +445,6 @@ export class MallScrubber extends Enemy {
         this.setAct('reposition')
         return
       }
-      // Forced attack: pick the longer remaining arena span and charge that way.
       const toLeft = this.x - left
       const toRight = right - this.x
       this.dir = (toRight >= toLeft ? 1 : -1) as 1 | -1
@@ -327,43 +452,173 @@ export class MallScrubber extends Enemy {
       this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
     }
     this.repositionStreak = 0
+    this.returnEndX = Phaser.Math.Clamp(this.endX + (-this.dir) * CHARGE_RETURN_DIST, left, right)
     this.warning = {
-      x0: Math.min(this.x, this.endX) - BODY_HALF,
-      x1: Math.max(this.x, this.endX) + BODY_HALF,
+      x0: Math.min(this.x, this.endX, this.returnEndX) - BODY_HALF,
+      x1: Math.max(this.x, this.endX, this.returnEndX) + BODY_HALF,
     }
-    // safeForAll only lengthens the telegraph; the charge always fires.
     this.warnChargeNeed = this.safeForAll(heroes, this.warning.x0, this.warning.x1, WARN_CHARGE_MS)
       ? WARN_CHARGE_MS
       : WARN_CHARGE_UNSAFE_MS
     this.lastMove = 'charge'
     this.setPose('warn')
     this.setAct('warn-charge')
-    // Red translucent warn band
     this.warnGraphic
       .clear()
       .fillStyle(0xff2030, 0.32)
       .fillRect(this.warning.x0, this.y - 64, this.warning.x1 - this.warning.x0, 64)
       .lineStyle(3, 0xff6070, 1)
       .strokeRect(this.warning.x0, this.y - 64, this.warning.x1 - this.warning.x0, 64)
-    this.marker.setText(this.dir < 0 ? '！←' : '！→').setVisible(true)
+    if (this.marker?.scene) this.marker.setText(this.dir < 0 ? '！←' : '！→').setVisible(true)
   }
 
-  private beginAcid(heroes: Hero[]) {
+  private beginAcid(heroes: Hero[], target: Hero) {
     if (this.acids.length >= 3) {
-      this.beginCharge(heroes, heroes[0]!)
+      this.beginCharge(heroes, target)
       return
     }
+    this.faceTarget(target)
     this.repositionStreak = 0
     this.lastMove = 'acid'
     this.setPose('spray')
     this.setAct('warn-acid')
-    this.marker.setText('（待補）').setVisible(true)
-    const target = heroes[0]!
+    this.marker.setText('酸！').setVisible(true)
     let lands = [target.x, target.x - 90, target.x + 90]
     if (this.isBlowerBlasting()) lands = lands.map((x) => x - 40)
     this.acidTargets = lands.map((x) => Phaser.Math.Clamp(x, this.arenaX0 + 30, this.arenaX1 - 30))
-    // Pre-show red circles for all three landings during nozzle warn
     for (const x of this.acidTargets) this.spawnAcidWarn(x)
+  }
+
+  private beginFoam(target: Hero) {
+    this.faceTarget(target)
+    this.repositionStreak = 0
+    this.lastMove = 'foam'
+    this.setPose('spray')
+    this.setAct('warn-foam')
+    this.marker.setText('泡沫！').setVisible(true)
+    const floor = this.hooks6.floorY()
+    const bands = [
+      { x0: this.x - FOAM_WIDTH, x1: this.x },
+      { x0: this.x, x1: this.x + FOAM_WIDTH },
+    ]
+    this.warnGraphic.clear()
+    for (const b of bands) {
+      const x0 = Phaser.Math.Clamp(b.x0, this.arenaX0, this.arenaX1)
+      const x1 = Phaser.Math.Clamp(b.x1, this.arenaX0, this.arenaX1)
+      this.warnGraphic.fillStyle(0xa0e8ff, 0.35).fillRect(x0, floor - 18, x1 - x0, 16)
+    }
+  }
+
+  private spawnFoamZones() {
+    const floor = this.hooks6.floorY()
+    const now = this.scene.time.now
+    const bands = [
+      { x0: this.x - FOAM_WIDTH, x1: this.x },
+      { x0: this.x, x1: this.x + FOAM_WIDTH },
+    ]
+    for (const b of bands) {
+      const x0 = Phaser.Math.Clamp(b.x0, this.arenaX0, this.arenaX1)
+      const x1 = Phaser.Math.Clamp(b.x1, this.arenaX0, this.arenaX1)
+      if (x1 - x0 < 8) continue
+      const mid = (x0 + x1) / 2
+      const g = this.scene.add
+        .rectangle(mid, floor - 6, x1 - x0, 12, 0xb8f0ff, 0.55)
+        .setDepth(DEPTH.HAZARD + 2)
+      const label = this.scene.add
+        .text(mid, floor - 28, '滑', {
+          fontFamily: FONT_UI,
+          fontSize: '10px',
+          color: '#103040',
+          backgroundColor: '#c8f0ff',
+          padding: { x: 2, y: 1 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+      this.foams.push({ x0, x1, until: now + FOAM_LIFE_MS, g, label })
+      this.scene.time.delayedCall(FOAM_LIFE_MS, () => {
+        this.scene.tweens.add({
+          targets: [g, label],
+          alpha: 0,
+          duration: 280,
+          onComplete: () => {
+            g.destroy()
+            label.destroy()
+          },
+        })
+      })
+    }
+  }
+
+  private beginBrush(target: Hero) {
+    this.faceTarget(target)
+    this.repositionStreak = 0
+    this.lastMove = 'brush'
+    this.setPose('warn')
+    this.setAct('warn-brush')
+    this.marker.setText('刷！').setVisible(true)
+    this.warnGraphic
+      .clear()
+      .fillStyle(0xffe080, 0.4)
+      .fillCircle(this.x, this.y - 40, BRUSH_RANGE)
+      .lineStyle(3, 0xffc040, 1)
+      .strokeCircle(this.x, this.y - 40, BRUSH_RANGE)
+    this.scene.cameras.main.shake(BRUSH_WARN_MS, 0.0025)
+  }
+
+  private beginCart(target: Hero) {
+    this.faceTarget(target)
+    this.repositionStreak = 0
+    this.lastMove = 'cart'
+    this.lastCartAt = this.scene.time.now
+    this.setPose('warn')
+    this.setAct('warn-cart')
+    this.marker.setText('清潔車！').setVisible(true)
+    const fromLeft = target.x > (this.arenaX0 + this.arenaX1) / 2
+    const startX = fromLeft ? this.arenaX0 + 20 : this.arenaX1 - 20
+    this.warnGraphic
+      .clear()
+      .fillStyle(0xff8060, 0.3)
+      .fillRect(this.arenaX0, this.hooks6.floorY() - 40, this.arenaX1 - this.arenaX0, 36)
+    this.marker.setPosition(startX, this.hooks6.floorY() - 90)
+  }
+
+  private spawnCart() {
+    this.destroyCart()
+    const floor = this.hooks6.floorY()
+    const fromLeft = this.dir > 0
+    const startX = fromLeft ? this.arenaX0 + 16 : this.arenaX1 - 16
+    const dir = (fromLeft ? 1 : -1) as 1 | -1
+    const img = this.scene.add
+      .rectangle(startX, floor - 18, 40, 28, 0xc8d0d8)
+      .setDepth(DEPTH.HAZARD + 4)
+      .setStrokeStyle(2, 0x607080)
+    const label = this.scene.add
+      .text(startX, floor - 48, '清潔車', {
+        fontFamily: FONT_UI,
+        fontSize: '10px',
+        color: '#203040',
+        backgroundColor: '#e0e8f0',
+        padding: { x: 2, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+    this.cart = { img, label, dir, hp: CART_HP, hitAt: 0 }
+  }
+
+  private destroyCart() {
+    if (!this.cart) return
+    this.cart.img.destroy()
+    this.cart.label.destroy()
+    this.cart = null
+  }
+
+  private tickCart(dt: number) {
+    if (!this.cart) return
+    const step = (CART_SPEED * dt) / 1000
+    const nx = this.cart.img.x + this.cart.dir * step
+    this.cart.img.setX(nx)
+    this.cart.label.setPosition(nx, this.hooks6.floorY() - 48)
+    if (nx < this.arenaX0 - 30 || nx > this.arenaX1 + 30) this.destroyCart()
   }
 
   private spawnAcidWarn(x: number) {
@@ -448,22 +703,45 @@ export class MallScrubber extends Enemy {
     }
   }
 
+  private startMove(heroes: Hero[], target: Hero) {
+    const move = this.pickMove()
+    if (move === 'acid') this.beginAcid(heroes, target)
+    else if (move === 'foam') this.beginFoam(target)
+    else if (move === 'brush') this.beginBrush(target)
+    else if (move === 'cart') this.beginCart(target)
+    else this.beginCharge(heroes, target)
+  }
+
   override tick(dt: number, ctx: Ctx) {
-    if (!this.active || this.fsm === 'DEAD') return
+    if (!this.active || this.fsm === 'DEAD' || !this.scene) return
     if (isActorFrozen(this, this.scene.time.now)) {
       this.setVelocity(0, 0)
       return
     }
     const step = Math.min(Math.max(dt, 0), 50)
+    const now = this.scene.time.now
+    // Hit-stun freeze (recover / scan only; attacks never stun-lock).
+    if (now < this.stunUntil && !ATTACK_ACTS.has(this.act)) {
+      this.setVelocity(0, 0)
+      this.y = this.hooks6.floorY()
+      this.tickBlower(step)
+      this.tickCart(step)
+      this.setDepth(actorDepth('enemy', this.lane, this.y))
+      this.marker.setPosition(this.x, this.y - 102).setDepth(this.depth + 2)
+      return
+    }
     this.elapsed += step
     this.setVelocity(0, 0)
     this.y = this.hooks6.floorY()
     this.blower.setPosition(this.arenaX1 - 40, this.hooks6.floorY())
     this.tickBlower(step)
+    this.tickCart(step)
 
-    const now = this.scene.time.now
     for (let i = this.acids.length - 1; i >= 0; i--) {
       if (this.acids[i]!.until + ACID_FADE_MS <= now) this.acids.splice(i, 1)
+    }
+    for (let i = this.foams.length - 1; i >= 0; i--) {
+      if (this.foams[i]!.until <= now) this.foams.splice(i, 1)
     }
 
     const heroes = [ctx.boy, ctx.girl].filter((h): h is Hero => !!h && h.active && h.alive !== false)
@@ -476,13 +754,12 @@ export class MallScrubber extends Enemy {
       if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(Math.floor(this.elapsed / 280) % 2)
       if (heroes.length && this.elapsed >= 500) {
         const target = heroes.reduce((a, b) => (Math.abs(a.x - this.x) <= Math.abs(b.x - this.x) ? a : b))
-        const move = this.pickMove()
-        if (move === 'acid' && this.qphase >= 2) this.beginAcid(heroes)
-        else this.beginCharge(heroes, target)
+        this.faceTarget(target)
+        this.startMove(heroes, target)
       }
     } else if (this.act === 'reposition') {
       const distance = this.repositionX - this.x
-      const dx = Math.sign(distance) * Math.min(Math.abs(distance), 45 * step / 1000)
+      const dx = Math.sign(distance) * Math.min(Math.abs(distance), (45 * step) / 1000)
       this.setX(this.x + dx)
       this.syncBody()
       if (Math.abs(this.repositionX - this.x) < 0.1) this.setAct('scan')
@@ -497,7 +774,7 @@ export class MallScrubber extends Enemy {
         this.setAct('charge')
       }
     } else if (this.act === 'charge') {
-      const delta = this.dir * CHARGE_SPEED * step / 1000
+      const delta = (this.dir * CHARGE_SPEED * step) / 1000
       const nx = this.dir < 0 ? Math.max(this.endX, this.x + delta) : Math.min(this.endX, this.x + delta)
       this.setX(nx)
       this.syncBody()
@@ -506,12 +783,23 @@ export class MallScrubber extends Enemy {
         dust.setDepth(DEPTH.FX)
         this.scene.tweens.add({ targets: dust, alpha: 0, y: dust.y - 8, duration: 280, onComplete: () => dust.destroy() })
       }
-      if (Math.abs(this.x - this.endX) < 0.5) this.recover()
+      if (Math.abs(this.x - this.endX) < 0.5) {
+        // 180° turn + return charge 140px
+        this.dir = (-this.dir) as 1 | -1
+        this.setFlipX(this.dir < 0)
+        this.hitHeroes = new WeakSet()
+        this.setAct('charge-return')
+      }
+    } else if (this.act === 'charge-return') {
+      const delta = (this.dir * CHARGE_SPEED * step) / 1000
+      const nx =
+        this.dir < 0 ? Math.max(this.returnEndX, this.x + delta) : Math.min(this.returnEndX, this.x + delta)
+      this.setX(nx)
+      this.syncBody()
+      if (Math.abs(this.x - this.returnEndX) < 0.5) this.recover()
     } else if (this.act === 'warn-acid') {
       if (this.elapsed >= ACID_NOZZLE_MS) {
         this.setAct('acid')
-        this.elapsed = 0
-        // Lob visuals toward pre-warned landings
         for (const land of this.acidTargets) {
           const dripKey = this.scene.textures.exists(ACID_DRIP) ? ACID_DRIP : ACID_PUDDLE
           const arc = this.scene.add
@@ -530,6 +818,35 @@ export class MallScrubber extends Enemy {
       }
     } else if (this.act === 'acid') {
       if (this.elapsed >= 500) this.recover()
+    } else if (this.act === 'warn-foam') {
+      if (this.elapsed >= FOAM_WARN_MS) {
+        this.clearWarning()
+        this.spawnFoamZones()
+        this.setAct('foam')
+      }
+    } else if (this.act === 'foam') {
+      if (this.elapsed >= 400) this.recover()
+    } else if (this.act === 'warn-brush') {
+      if (this.elapsed >= BRUSH_WARN_MS) {
+        this.clearWarning()
+        this.hitHeroes = new WeakSet()
+        this.brushHitAt = new WeakMap()
+        this.setFsm('ATTACK')
+        this.setPose('charge')
+        this.setAct('brush')
+      }
+    } else if (this.act === 'brush') {
+      // Spin visual: flip rapidly
+      if (Math.floor(this.elapsed / 80) % 2 === 0) this.setFlipX(!this.flipX)
+      if (this.elapsed >= BRUSH_SPIN_MS) this.recover()
+    } else if (this.act === 'warn-cart') {
+      if (this.elapsed >= CART_WARN_MS) {
+        this.clearWarning()
+        this.spawnCart()
+        this.setAct('cart')
+      }
+    } else if (this.act === 'cart') {
+      if (this.elapsed >= 600) this.recover()
     } else if (this.elapsed >= this.recoverNeed) {
       this.setPose('idle')
       this.setAct('scan')
@@ -548,8 +865,8 @@ export class MallScrubber extends Enemy {
     ;(this.body as Phaser.Physics.Arcade.Body).enable = false
     this.blowerPhase = 'idle'
     this.windGfx.clear()
+    this.destroyCart()
     this.setPose('defeated')
-    // Control chip pops out, flashes, extinguishes
     this.chip = this.scene.add.rectangle(this.x, this.y - 70, 10, 8, 0xffe080).setDepth(DEPTH.FX)
     this.scene.tweens.add({
       targets: this.chip,
@@ -574,14 +891,19 @@ export class MallScrubber extends Enemy {
     this.windGfx?.destroy()
     this.blower?.destroy()
     this.chip?.destroy()
+    this.destroyCart()
     for (const a of this.acids) {
       a.g.destroy()
       a.label.destroy()
     }
     this.acids = []
+    for (const z of this.foams) {
+      z.g.destroy()
+      z.label.destroy()
+    }
+    this.foams = []
     super.destroy(fromScene)
   }
 }
 
-/** Acid hit lock helper for GameScene. */
 export const SCRUBBER_ACID_LOCK_MS = ACID_HIT_LOCK_MS

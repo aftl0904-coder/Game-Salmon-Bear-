@@ -155,7 +155,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     })
   }
 
-  /** T4_DEATH_FADE: collision off immediately → 500ms fade → destroy + coin. */
+  /**
+   * T4_DEATH_FADE / C2_NO_DEATH_DROPS:
+   * collision off immediately → 500ms fade → destroy.
+   * Continent-2 trash mobs drop nothing (no coin / fragment / icon) — fade only.
+   * Healing sushi / honey / coffee paths are separate and untouched.
+   */
   protected runC2DeathFade() {
     this.hp = 0
     this.poseAngle = 0
@@ -169,9 +174,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     if (body) body.enable = false
     this.setVisible(true)
     this.setActive(true)
-    const coinX = this.x
-    const coinY = this.y - 28
-    const wasElite = this.isElite
     const base = this.baseScale || 1
     this.setScale(base)
     this.scene.tweens.add({
@@ -181,8 +183,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       duration: 500,
       ease: 'Quad.out',
       onComplete: () => {
-        this.hooks.spawnCoin?.(coinX, coinY)
-        if (wasElite) this.hooks.spawnCoin?.(coinX + 16, coinY - 10)
         this.label?.destroy()
         this.label = undefined
         this.destroy()

@@ -372,6 +372,7 @@ export class BootScene extends Phaser.Scene {
       'barrier',
       'escalator',
       'lightbox',
+      'lift-door',
     ] as const) {
       this.load.image(`c2-prop-${prop}`, `/art/c2/prop-${prop}.png`)
     }

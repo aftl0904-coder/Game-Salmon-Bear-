@@ -1,0 +1,7 @@
+C4 escalator repro
+tipShown=true
+reachedNext=true
+timingMs=3098
+elevatorX=2140
+Flow: escalator 1860-1980 up -> upper deck @h70 -> tip -> lift 2140 -> C
+Fix: crest releases belt clamp; platforms continuous from 1970.

@@ -111,6 +111,15 @@ export class Stage6World {
   private teachSlipX1: number | null = null
   private slipTaught = false
   private junkTaught = false
+  /** C5 escalator steps animation. */
+  private escRoot: Phaser.GameObjects.Container | null = null
+  private escStepsGfx: Phaser.GameObjects.Graphics | null = null
+  private escStepPhase = 0
+  /** C5 stainless lift doors. */
+  private liftRoot: Phaser.GameObjects.Container | null = null
+  private liftDoorL: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle | null = null
+  private liftDoorR: Phaser.GameObjects.Image | Phaser.GameObjects.Rectangle | null = null
+  private liftFloorLamp: Phaser.GameObjects.Text | null = null
 
   constructor(ctx: Stage6Ctx, d: Stage6Data) {
     this.ctx = ctx
@@ -136,14 +145,139 @@ export class Stage6World {
   }
 
   private buildElevator(x: number) {
+    // C5: stainless bi-parting doors on the upper deck (h=70 after escalator).
     const s = this.ctx.scene
-    const f = this.ctx.floorY
-    const g = s.add.graphics().setDepth(DEPTH.PROP - 1)
-    g.fillStyle(0x2a3340, 1).fillRect(x - 40, f - 110, 80, 110)
-    g.fillStyle(0x1a222c, 1).fillRect(x - 34, f - 104, 30, 98).fillRect(x + 4, f - 104, 30, 98)
-    g.lineStyle(2, 0xc0d0e0, 1).strokeRect(x - 40, f - 110, 80, 110)
-    g.fillStyle(0xffd060, 1).fillRect(x - 12, f - 118, 24, 8)
-    s.add.text(x, f - 128, '電梯', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffe8a0', backgroundColor: '#243040', padding: { x: 3, y: 1 } }).setOrigin(0.5).setDepth(DEPTH.SIGN)
+    const deck = this.ctx.floorY - ESCALATOR.h1
+    const root = s.add.container(x, deck).setDepth(DEPTH.PROP + 3)
+    const frame = s.add.graphics()
+    // Brushed steel frame
+    frame.fillStyle(0x9aa8b4, 1).fillRect(-44, -118, 88, 118)
+    frame.fillStyle(0x6a7884, 1).fillRect(-40, -114, 80, 110)
+    frame.fillStyle(0xc8d4dc, 1).fillRect(-40, -114, 80, 4)
+    frame.fillStyle(0x3a4450, 1).fillRect(-36, -108, 72, 100)
+    // Floor lamp panel (icon digit, not a brand)
+    frame.fillStyle(0x1a2228, 1).fillRoundedRect(-16, -128, 32, 14, 2)
+    frame.fillStyle(0x40e080, 1).fillCircle(-8, -121, 2)
+    frame.fillStyle(0xe0c040, 1).fillCircle(0, -121, 2)
+    frame.fillStyle(0x808890, 1).fillCircle(8, -121, 2)
+    root.add(frame)
+    const lamp = s.add
+      .text(0, -121, 'B2', {
+        fontFamily: FONT_UI,
+        fontSize: '9px',
+        color: '#a8ffc0',
+      })
+      .setOrigin(0.5)
+    root.add(lamp)
+    this.liftFloorLamp = lamp
+    const mkDoor = (ox: number) => {
+      if (s.textures.exists('c2-prop-lift-door')) {
+        return s.add.image(ox, -8, 'c2-prop-lift-door').setOrigin(0.5, 1)
+      }
+      const d = s.add.rectangle(ox, -8, 34, 100, 0xb8c4cc).setOrigin(0.5, 1)
+      d.setStrokeStyle(2, 0x708090)
+      // Center seam highlight via nested rect
+      return d
+    }
+    this.liftDoorL = mkDoor(-17)
+    this.liftDoorR = mkDoor(17)
+    root.add(this.liftDoorL)
+    root.add(this.liftDoorR)
+    // Center seam
+    const seam = s.add.rectangle(0, -58, 2, 96, 0x405060, 0.85)
+    root.add(seam)
+    s.add
+      .text(x, deck - 140, '升降機', {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#e8f0f8',
+        backgroundColor: '#2a3848',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+    this.liftRoot = root
+  }
+
+  /** C5: glass-sided escalator with animated step stripes. */
+  buildEscalatorVisual(floorY: number) {
+    const s = this.ctx.scene
+    if (this.escRoot) {
+      this.escRoot.destroy(true)
+      this.escRoot = null
+    }
+    const root = s.add.container(0, 0).setDepth(DEPTH.PROP + 1)
+    const g = s.add.graphics()
+    // Glass side panels (left & right of ramp)
+    g.fillStyle(0xa8c8e0, 0.28)
+    g.fillTriangle(ESCALATOR.x0 - 4, floorY - 2, ESCALATOR.x1 - 4, floorY - 2, ESCALATOR.x1 - 4, floorY - ESCALATOR.h1 - 8)
+    g.fillStyle(0xd0e8f8, 0.18)
+    g.fillTriangle(ESCALATOR.x0 + 8, floorY - 2, ESCALATOR.x1 + 8, floorY - 2, ESCALATOR.x1 + 8, floorY - ESCALATOR.h1 - 8)
+    // Silver handrails
+    g.lineStyle(3, 0xc8d4e0, 1)
+    g.lineBetween(ESCALATOR.x0, floorY - 10, ESCALATOR.x1, floorY - ESCALATOR.h1 - 10)
+    g.lineStyle(3, 0xa0b0c0, 1)
+    g.lineBetween(ESCALATOR.x0 + 10, floorY - 4, ESCALATOR.x1 + 10, floorY - ESCALATOR.h1 - 4)
+    // Dark grey step bed
+    g.fillStyle(0x3a424c, 1)
+    g.fillTriangle(ESCALATOR.x0, floorY - ESCALATOR.h0, ESCALATOR.x1, floorY - ESCALATOR.h0, ESCALATOR.x1, floorY - ESCALATOR.h1)
+    root.add(g)
+    const steps = s.add.graphics().setDepth(DEPTH.PROP + 1.5)
+    root.add(steps)
+    this.escStepsGfx = steps
+    this.escRoot = root
+    this.escStepPhase = 0
+    this.drawEscalatorSteps(floorY, 0)
+  }
+
+  private drawEscalatorSteps(floorY: number, phase: number) {
+    const g = this.escStepsGfx
+    if (!g) return
+    g.clear()
+    const run = ESCALATOR.x1 - ESCALATOR.x0
+    const rise = ESCALATOR.h1 - ESCALATOR.h0
+    for (let i = 0; i < 8; i++) {
+      const t = ((i + phase) % 8) / 8
+      const x = ESCALATOR.x0 + t * run
+      const y = floorY - ESCALATOR.h0 - t * rise
+      // Grooved step tread
+      g.fillStyle(0x5a6570, 1).fillRect(x - 2, y - 5, 14, 5)
+      g.fillStyle(0x2a3038, 1).fillRect(x - 2, y - 2, 14, 1)
+      g.fillStyle(0x8a98a4, 0.7).fillRect(x - 2, y - 5, 14, 1)
+    }
+  }
+
+  tickEscalatorVisual(dt: number) {
+    if (!this.escStepsGfx) return
+    this.escStepPhase = (this.escStepPhase + (dt / 1000) * 2.2) % 8
+    this.drawEscalatorSteps(this.ctx.floorY, this.escStepPhase)
+  }
+
+  /** Door open → ride → close. Resolves when doors have opened (ride follows). */
+  playLiftDoors(): Promise<void> {
+    return new Promise((resolve) => {
+      const s = this.ctx.scene
+      const L = this.liftDoorL
+      const R = this.liftDoorR
+      if (!L || !R) {
+        resolve()
+        return
+      }
+      this.liftFloorLamp?.setColor('#ffe080')
+      s.tweens.add({
+        targets: L,
+        x: (L.x ?? -17) - 28,
+        duration: 420,
+        ease: 'Quad.easeOut',
+      })
+      s.tweens.add({
+        targets: R,
+        x: (R.x ?? 17) + 28,
+        duration: 420,
+        ease: 'Quad.easeOut',
+        onComplete: () => resolve(),
+      })
+    })
   }
 
   private buildSlip(x0: number, x1: number, mul: number) {
@@ -593,6 +727,14 @@ export class Stage6World {
     this.moodWash?.destroy()
     this.vignette?.destroy()
     this.fanGfx?.destroy()
+    this.escRoot?.destroy(true)
+    this.escRoot = null
+    this.escStepsGfx = null
+    this.liftRoot?.destroy(true)
+    this.liftRoot = null
+    this.liftDoorL = null
+    this.liftDoorR = null
+    this.liftFloorLamp = null
     this.debris = []
     this.sweeps = []
     this.drones = []
