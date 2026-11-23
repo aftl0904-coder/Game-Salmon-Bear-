@@ -198,6 +198,17 @@ export const SFX = {
     noise(0.1, 0.12, 0, 600)
     tone(95, 0.14, 'triangle', 0.14, 40)
   },
+  /** Stage 7 ambient: soft animal call (vol ≈ 0.3). */
+  animalCall: () => {
+    tone(660, 0.12, 'sine', 0.09, 420)
+    tone(880, 0.1, 'triangle', 0.06, 600, 0.05)
+  },
+  /** Stage 7 ambient: iron cage clank. */
+  cageClank: () => {
+    noise(0.04, 0.1, 0, 2200)
+    tone(320, 0.08, 'square', 0.05, 180)
+    tone(210, 0.1, 'triangle', 0.06, 90, 0.02)
+  },
   /** Enemy down: pop + falling sweep + a bright chime (reward). */
   kill: () => {
     buzz(HAPTIC.kill)
@@ -347,6 +358,7 @@ export type SongId =
   | 'boss5'
   | 'mall'
   | 'mallboss'
+  | 'exhibit'
   | 'ending'
   | 'sad'
   | 'story'
@@ -604,6 +616,22 @@ const SONGS: Record<SongId, Song> = {
     leadWave: 'triangle',
     padBars: [0, 1, 2, 3, 4, 5, 6, 7],
     vol: 0.88,
+  },
+  // 第7關・夜倉庫展銷中心：mall ×0.9 BPM、和弦／主旋律整體低 2 半音 (D6)
+  exhibit: {
+    bpm: 94,
+    chords: ['Cm', 'Ab', 'Eb', 'Bb', 'Cm', 'Fm', 'G', 'Cm'],
+    lead: `
+      C5 - - - Eb5 - G5 - - - F5 - Eb5 - D5 -   | C5 - - - Eb5 - - - Ab5 - - - G5 - F5 -
+      G5 - - - Bb5 - - - G5 - F5 - Eb5 - - -   | D5 - - - F5 - - - Bb5 - - - . . . .
+      Eb5 - - - G5 - C6 - - - Bb5 - G5 - Eb5 -   | F5 - - - Ab5 - - - C6 - Bb5 - Ab5 - G5 -
+      B5 - - - D6 - - - G5 - - - . . F5 -   | C6 - - - - - - - G5 - - - Eb5 - - -`,
+    drums: ['k . h . s . h . k . h . s . h .', 'k . h . s . h h k . h k s . h .'],
+    arpBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    bassStyle: 'pad',
+    leadWave: 'triangle',
+    padBars: [0, 1, 2, 3, 4, 5, 6, 7],
+    vol: 0.82,
   },
   // 商場保安總監 Boss：警報巡邏、步步進逼 (144 BPM)，D 小調
   mallboss: {
@@ -937,6 +965,19 @@ export function stopBgm() {
 export function unlockAudio() {
   ensureRunning()
   startBgm()
+}
+
+/** Stage 7 ambient scheduler: animal call every 8–12s + occasional cage clank. */
+let exhibitAmbientAt = 0
+export function tickExhibitAmbient(nowMs: number) {
+  if (muted || !bgmPlaying || currentSong !== 'exhibit') return
+  if (nowMs < exhibitAmbientAt) return
+  exhibitAmbientAt = nowMs + 8000 + Math.random() * 4000
+  if (Math.random() < 0.55) SFX.animalCall()
+  else SFX.cageClank()
+}
+export function resetExhibitAmbient() {
+  exhibitAmbientAt = 0
 }
 
 /** Debug hook (bots / level meter): peak of the master output since the last call. */

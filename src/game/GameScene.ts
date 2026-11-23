@@ -8,7 +8,8 @@ import {
   snapTilePosition,
   snapWorldActors,
 } from './pixelSnap'
-import { SFX, playSong, stopBgm, unlockAudio } from './audio'
+import { SFX, playSong, stopBgm, unlockAudio, tickExhibitAmbient, resetExhibitAmbient } from './audio'
+import { Stage7World, type Stage7Data } from './stage7World'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
@@ -430,6 +431,7 @@ export class GameScene extends Phaser.Scene {
   private puffDeparturePending = false
   private stage7Events: Array<{ kind: string; at: number }> = []
   private s6world: Stage6World | null = null
+  private s7world: Stage7World | null = null
   private cageSaid = false
   /** Mall only: non-combat Security Director sighting (not the scrubber boss). */
   private directorSighted = false
@@ -485,6 +487,9 @@ export class GameScene extends Phaser.Scene {
     this.bossSushiSpawned = false
     this.s6world?.destroy()
     this.s6world = null
+    this.s7world?.destroy()
+    this.s7world = null
+    resetExhibitAmbient()
     this.cageSaid = false
     this.directorSighted = false
     this.s3world?.destroy()
@@ -557,7 +562,21 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.fadeIn(300, 40, 100, 140)
 
     unlockAudio()
-    playSong(this.mall ? 'mall' : this.tower ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
+    playSong(
+      this.exhibit
+        ? 'exhibit'
+        : this.mall
+          ? 'mall'
+          : this.tower
+            ? 'stage5'
+            : this.depot
+              ? 'stage4'
+              : this.market
+                ? 'stage3'
+                : this.tree
+                  ? 'stage2'
+                  : 'stage1',
+    )
 
     this.drawWorld()
     this.buildLevel()
@@ -1085,6 +1104,7 @@ export class GameScene extends Phaser.Scene {
     if (this.tower) this.tickStage5(dt)
     this.collectNearbyCoins()
     if (this.mall) this.tickStage6(dt)
+    if (this.exhibit) this.tickStage7(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -1423,6 +1443,15 @@ export class GameScene extends Phaser.Scene {
     let spd = speed
     if (this.s6world && !h.laneJumping && this.s6world.onEscalator(h) && left && !right) {
       spd = Stage6World.againstWalkSpeed(speed)
+    }
+    // D2: against conveyor (70 px/s) → walk − 70, min 20.
+    if (this.s7world && !h.laneJumping) {
+      const belt = this.s7world.conveyorAt(h.x)
+      if (belt) {
+        const against =
+          (belt.dir > 0 && left && !right) || (belt.dir < 0 && right && !left)
+        if (against) spd = Stage7World.againstWalkSpeed(speed)
+      }
     }
     h.moveSpeed = spd
     h.updatePlayer(dt, {
@@ -2828,7 +2857,7 @@ export class GameScene extends Phaser.Scene {
       this.drawTowerWorld()
       return
     }
-    if (this.mall) {
+    if (this.mall || this.exhibit) {
       this.drawMallWorld()
       return
     }
@@ -3167,6 +3196,48 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** D1: night-warehouse concrete slabs #b9bdb8 (no Stage 6 marble / shop tones). */
+  private makeWarehouseFloors() {
+    const R = RENDER_SCALE
+    const w = 64
+    const h = Math.ceil(GAME_H - LANE_FLOOR_Y) + 6
+    const make = (key: string, a: string, b: string, seam: string) => {
+      if (this.textures.exists(key)) this.textures.remove(key)
+      const tex = this.textures.createCanvas(key, w * R, h * R)
+      if (!tex) return
+      const c = tex.getContext()
+      c.scale(R, R)
+      c.imageSmoothingEnabled = false
+      for (let row = 0; row * 16 < h; row++) {
+        for (let col = 0; col < 2; col++) {
+          c.fillStyle = (row + col) % 2 === 0 ? a : b
+          c.fillRect(col * 32, row * 16, 32, 16)
+        }
+      }
+      c.fillStyle = seam
+      for (let row = 0; row * 16 < h; row++) c.fillRect(0, row * 16, w, 1)
+      c.fillRect(0, 0, 1, h)
+      c.fillRect(31, 0, 1, h)
+      tex.refresh()
+      markHd(tex, R)
+      tex.setFilter(Phaser.Textures.FilterMode.NEAREST)
+    }
+    // Light concrete variants per segment (identity #b9bdb8); pit hole stays dark for ≥50% contrast.
+    make('s7-floor-dock', '#b9bdb8', '#aeb2ad', '#8a8e88')
+    make('s7-floor-hall', '#b4b8b3', '#a9ada8', '#848882')
+    make('s7-floor-shelf', '#b9bdb8', '#b0b4af', '#8a8e88')
+    make('s7-floor-auction', '#b6bab5', '#abafaa', '#868a84')
+    make('s7-floor-arena', '#bcbfba', '#b1b5b0', '#8c908a')
+  }
+
+  private warehouseFloorKey(x: number): string {
+    if (x < 855) return 's7-floor-dock'
+    if (x < 1995) return 's7-floor-hall'
+    if (x < 3135) return 's7-floor-shelf'
+    if (x < 4560) return 's7-floor-auction'
+    return 's7-floor-arena'
+  }
+
   private drawMallWorld() {
     if (this.exhibit) { this.drawExhibitWorld(); return }
     this.makeMallFloors()
@@ -3346,17 +3417,58 @@ export class GameScene extends Phaser.Scene {
 
   /** Exhibition scenery: same coordinates/layers, GameObjects only, never physics entities. */
   private drawExhibitWorld() {
-    this.makeMallFloors()
+    // D1: night-warehouse floors — never reuse Stage 6 marble makeMallFloors.
+    this.makeWarehouseFloors()
     this.bgClouds = []
     this.bgMounts = []
     this.mallFar = { mall: null, fac: null }
+    const f = LANE_FLOOR_Y
+    // Night cold teal/green sky #1f3a44 / #2e5560 — not mall warm white.
     const bg = this.add.graphics().setDepth(DEPTH.SKY)
-    bg.fillStyle(0x28303a, 1).fillRect(0, 0, WORLD_W, WORLD_H)
-    bg.fillStyle(0x53606a, 1).fillRect(0, 42, WORLD_W, LANE_FLOOR_Y - 42)
-    for (let x = 0; x < WORLD_W; x += 180) {
-      bg.fillStyle(0x39434d, 1).fillRect(x, 42, 8, LANE_FLOOR_Y - 42)
-      bg.fillStyle(0x93adb4, 0.3).fillRect(x + 14, 55, 150, 76)
-      bg.lineStyle(3, 0x303b46, 1).strokeRect(x + 14, 55, 150, 76)
+    bg.fillStyle(0x141820, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    bg.fillStyle(0x1f3a44, 1).fillRect(0, 42, WORLD_W, f - 42)
+    bg.fillStyle(0x2e5560, 0.45).fillRect(0, 42, WORLD_W, 48)
+    // A · 卸貨區：貨櫃＋捲閘剪影（唔用商場舖頭素材）
+    for (const x of [80, 360, 640]) {
+      bg.fillStyle(0x2a3840, 1).fillRect(x, f - 110, 90, 108)
+      bg.fillStyle(0xf28c28, 0.85).fillRect(x + 4, f - 106, 82, 6)
+      bg.lineStyle(2, 0x101820, 1).strokeRect(x, f - 110, 90, 108)
+      for (let y = f - 100; y < f - 8; y += 14) bg.lineStyle(1, 0x3a4850, 1).lineBetween(x + 6, y, x + 84, y)
+    }
+    for (const x of [200, 500]) {
+      // Roll-up door
+      bg.fillStyle(0x3a4850, 1).fillRect(x, f - 130, 70, 128)
+      for (let y = f - 128; y < f - 4; y += 8) bg.fillStyle(0x2a3840, 1).fillRect(x + 2, y, 66, 3)
+      bg.fillStyle(0xf28c28, 1).fillRect(x + 28, f - 70, 14, 8)
+    }
+    // C · 倉庫高貨架
+    for (const x of [2050, 2300, 2550, 2800, 3000]) {
+      bg.fillStyle(0x243038, 1).fillRect(x, 50, 14, f - 54)
+      bg.fillStyle(0x3a4850, 1).fillRect(x - 40, 70, 94, 10)
+      bg.fillStyle(0x3a4850, 1).fillRect(x - 40, 120, 94, 10)
+      bg.fillStyle(0x3a4850, 1).fillRect(x - 40, 170, 94, 10)
+      bg.fillStyle(0x4a5860, 0.7).fillRect(x - 36, 78, 28, 36)
+      bg.fillStyle(0x4a5860, 0.7).fillRect(x + 8, 128, 28, 36)
+    }
+    // D · 拍賣槌＋空白大屏幕（無字）
+    {
+      const ax = 3800
+      bg.fillStyle(0x1a2228, 1).fillRect(ax - 80, 55, 200, 90)
+      bg.fillStyle(0x2e5560, 0.5).fillRect(ax - 72, 62, 184, 76)
+      bg.lineStyle(3, 0xf28c28, 0.8).strokeRect(ax - 80, 55, 200, 90)
+      // Gavel silhouette
+      bg.fillStyle(0x8a6040, 1).fillRect(ax + 140, f - 70, 10, 55)
+      bg.fillStyle(0xa87848, 1).fillRect(ax + 128, f - 82, 34, 16)
+    }
+    // E · 圓形表演場邊位籠剪影
+    {
+      const cx = 4960
+      bg.lineStyle(4, 0xf28c28, 0.55).strokeCircle(cx, f - 20, 160)
+      bg.lineStyle(2, 0x2e5560, 0.7).strokeCircle(cx, f - 20, 148)
+      for (const ox of [-140, 140]) {
+        bg.fillStyle(0x1c252a, 1).fillRect(cx + ox - 28, f - 70, 56, 66)
+        bg.lineStyle(2, 0xb2a47e, 1).strokeRect(cx + ox - 28, f - 70, 56, 66)
+      }
     }
     // Camera-fixed A/D/E paintings are clipped to their visible world segments.
     const far = (name: string) => this.textures.exists(`s7-${name}`)
@@ -3383,9 +3495,25 @@ export class GameScene extends Phaser.Scene {
       this.add.image(450, -1, 's7-sign-blank').setOrigin(0.5, 0).setDepth(DEPTH.PROP - 2)
         .setName('stage7-static-sign-plate').setData('stage7-static', true)
     }
-    const sign = this.add.text(450, 55, '森友展銷中心', { fontFamily: FONT_TITLE, fontSize: '20px', color: hasSign ? '#302c27' : '#fff2c0', ...(hasSign ? {} : { backgroundColor: '#54483b', padding: { x: 8, y: 4 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
+    const sign = this.add.text(450, 55, '森友展銷中心・夜', { fontFamily: FONT_TITLE, fontSize: '18px', color: hasSign ? '#e8e0c8' : '#fff2c0', ...(hasSign ? {} : { backgroundColor: '#243040', padding: { x: 8, y: 4 } }) }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
     sign.setData('stage7-static', true)
     for (const [i, d] of (ST.staticDecor ?? []).entries()) {
+      if ((d as { kind: string }).kind === 'price') {
+        const label = String((d as { label?: string }).label ?? '$')
+        this.add
+          .text(d.x, LANE_FLOOR_Y - 88, label, {
+            fontFamily: FONT_UI,
+            fontSize: '14px',
+            color: '#102010',
+            backgroundColor: '#e8f0a0',
+            padding: { x: 5, y: 3 },
+          })
+          .setOrigin(0.5)
+          .setDepth(DEPTH.SIGN)
+          .setName(`stage7-static-${i}-price`)
+          .setData('stage7-static', true)
+        continue
+      }
       if (d.kind === 'net' && this.textures.exists('s7-net-static')) {
         this.add.image(d.x, LANE_FLOOR_Y - 66, 's7-net-static').setDepth(DEPTH.PROP - 1)
           .setName(`stage7-static-${i}-${d.kind}`).setData('stage7-static', true)
@@ -3417,6 +3545,37 @@ export class GameScene extends Phaser.Scene {
       }
     }
     this.buildGroundTiles()
+  }
+
+  /** Stage 7 systems: conveyors, spotlights, rescue cages, drones, ambient. */
+  private tickStage7(dt: number) {
+    this.s7world?.update(dt)
+    tickExhibitAmbient(this.time.now)
+    this.updateExhibitBackdrops()
+    // Dropped cage obstacles nudge heroes
+    for (const z of this.s7world?.dropZones() ?? []) {
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive) continue
+        if (h.x < z.x0 || h.x > z.x1) continue
+        if (h.y > LANE_FLOOR_Y - 36) {
+          const body = h.body as Phaser.Physics.Arcade.Body | null
+          if (!body) continue
+          const push = h.x < (z.x0 + z.x1) / 2 ? -40 : 40
+          h.setVelocityX(body.velocity.x + push)
+        }
+      }
+    }
+  }
+
+  /** Spotlight alarm: one whip-handler ahead and behind the player. */
+  private spawnExhibitAlarmPair(hx: number) {
+    const spots = [hx - 70, hx + 70]
+    for (const x of spots) {
+      const z = new ChargeHoneyZombie(this, Phaser.Math.Clamp(x, 40, WORLD_W - 40), this.s2Hooks())
+      this.addS2Enemy(z)
+      floatText(this, z.x, LANE_FLOOR_Y - 70, '飼養員！', '#ffc080', { size: 11, dur: 900 })
+    }
+    this.stage7Events.push({ kind: 'spotlight-alarm', at: this.time.now })
   }
 
   /** Reuse the existing camera-fixed backgrounds, sliced by visible world bounds. */
@@ -4182,6 +4341,30 @@ export class GameScene extends Phaser.Scene {
       this.events.off(Phaser.Scenes.Events.POST_UPDATE, this.applyEscalatorBelt, this)
     }
 
+    if (this.exhibit) {
+      this.s7world = new Stage7World(
+        {
+          scene: this,
+          floorY: LANE_FLOOR_Y,
+          heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
+          spawnAlarmPair: (hx) => this.spawnExhibitAlarmPair(hx),
+          looseBodies: () => {
+            const out: Array<{ x: number; y: number; setPosition?: (x: number, y: number) => void; active?: boolean; flying?: boolean }> = []
+            for (const o of this.enemies.getChildren()) {
+              const e = o as Phaser.Physics.Arcade.Sprite & { flying?: boolean; active: boolean }
+              if (e.active) out.push(e)
+            }
+            for (const o of this.coinPickups.getChildren()) {
+              const c = o as Phaser.Physics.Arcade.Sprite
+              if (c.active) out.push(c)
+            }
+            return out
+          },
+        },
+        ST as unknown as Stage7Data,
+      )
+    }
+
     if (this.tree || this.market || this.depot || this.tower || this.mall) {
       // Stages 2+ end when the boss falls — keep an inert goal far off-world so overlap checks stay valid.
       this.goal = this.physics.add.sprite(WORLD_W + 400, GROUND_Y - 10, 'goal3d').setVisible(false)
@@ -4254,13 +4437,15 @@ export class GameScene extends Phaser.Scene {
       : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
       : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
       : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
+      : this.exhibit ? { hole: 0x141820, edge: 0xf28c28, top: 0xb9bdb8 }
       : this.mall ? { hole: 0x1a1420, edge: 0xf2c230, top: 0xf4eee4 }
       : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
     for (const p of pits) {
       // Only vertical walls inside the pit: never paint a horizontal lip across its mouth.
       g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
       // B6: mall pits get yellow/black hazard stripes (6px) + subtle upward dark-red glow.
-      if (this.mall) {
+      // D1: exhibit pits reuse hazard stripes with warehouse orange edge.
+      if (this.mall || this.exhibit) {
         const pitH = GAME_H - floor
         // Subtle upward dark-red glow from pit mouth (layered alpha fills).
         const redGlow = this.add.graphics().setDepth(DEPTH.GROUND + 2.2)
@@ -4291,7 +4476,7 @@ export class GameScene extends Phaser.Scene {
       // Earth body + grass lip (same tile as the ground ribbon); 1px dark outline.
       const stepTex = this.tree && this.textures.exists('s2-bark-ground')
         ? 's2-bark-ground'
-        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
+        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.exhibit ? this.warehouseFloorKey(st.x) : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
       if (this.textures.exists(stepTex)) {
         const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
@@ -5143,7 +5328,21 @@ export class GameScene extends Phaser.Scene {
       if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
     })
     const handle = playCutscene(this, this.mall ? 'C2_INTRO' : this.tower ? 'C8' : this.depot ? 'C7' : this.market ? 'C5' : this.tree ? 'C3' : 'C1', () => {
-        playSong(this.mall ? 'mall' : this.tower ? 'stage5' : this.depot ? 'stage4' : this.market ? 'stage3' : this.tree ? 'stage2' : 'stage1')
+        playSong(
+          this.exhibit
+            ? 'exhibit'
+            : this.mall
+              ? 'mall'
+              : this.tower
+                ? 'stage5'
+                : this.depot
+                  ? 'stage4'
+                  : this.market
+                    ? 'stage3'
+                    : this.tree
+                      ? 'stage2'
+                      : 'stage1',
+        )
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -5926,10 +6125,21 @@ export class GameScene extends Phaser.Scene {
 
   /** Clear rank from the run: S = all honey, no continue, little damage. */
   private clearRank(hpLeft: number, hpMax: number): 'S' | 'A' | 'B' | 'C' {
-    if (this.honeyGot >= 3 && this.deaths === 0 && hpLeft >= hpMax - 2) return 'S'
-    if (this.honeyGot >= 2 && this.deaths <= 1) return 'A'
-    if (this.deaths <= 2) return 'B'
-    return 'C'
+    const ranks: Array<'S' | 'A' | 'B' | 'C'> = ['C', 'B', 'A', 'S']
+    let r: 'S' | 'A' | 'B' | 'C' =
+      this.honeyGot >= 3 && this.deaths === 0 && hpLeft >= hpMax - 2
+        ? 'S'
+        : this.honeyGot >= 2 && this.deaths <= 1
+          ? 'A'
+          : this.deaths <= 2
+            ? 'B'
+            : 'C'
+    // D4: rescue all 3 cages → +1 rank (cap S)
+    if (this.exhibit && (this.s7world?.rescueCount ?? 0) >= 3) {
+      const i = ranks.indexOf(r)
+      r = ranks[Math.min(ranks.length - 1, i + 1)]!
+    }
+    return r
   }
 
   /**
@@ -6023,6 +6233,7 @@ export class GameScene extends Phaser.Scene {
     const hpLeft = Math.max(0, this.boy.hp) + Math.max(0, this.girl?.hp ?? 0)
     const hpMax = MAX_HP * (this.girl ? 2 : 1)
     const timeBonus = Math.max(0, 1800 - Math.floor(timeSec * 4))
+    const rescued = this.s7world?.rescueCount ?? 0
     const rows: Array<{ label: string; detail: string; pts: number }> = [
       { label: '基本分', detail: '', pts: 1000 },
       { label: '時間', detail: `${Math.floor(timeSec / 60)}:${String(Math.floor(timeSec % 60)).padStart(2, '0')}`, pts: timeBonus },
@@ -6031,6 +6242,9 @@ export class GameScene extends Phaser.Scene {
       { label: '擊倒', detail: '', pts: this.killBonus },
       ...(ST.friends?.length
         ? [{ label: '小朋友', detail: `${this.friendsSaved.length} / ${ST.friends.length}`, pts: this.friendsSaved.length * 400 }]
+        : []),
+      ...(this.exhibit
+        ? [{ label: '救出動物', detail: `${rescued} / 3`, pts: rescued * 350 }]
         : []),
       { label: '續關', detail: `× ${this.deaths}`, pts: -this.deaths * 200 },
     ]
@@ -6406,10 +6620,10 @@ export class GameScene extends Phaser.Scene {
         : this.textures.exists('tile-ground-top')
         ? 'tile-ground-top'
         : this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    const stride = this.mall ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    const stride = this.mall || this.exhibit ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
     const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
-      const texX = this.mall ? this.mallFloorKey(x) : tex
+      const texX = this.exhibit ? this.warehouseFloorKey(x) : this.mall ? this.mallFloorKey(x) : tex
       // Cut the ribbon at pits: one cropped copy of the tile per piece left between pits
       // (a wide tile can hold a whole pit — the ground after it must still be drawn).
       let segs: Array<[number, number]> = [[x, x + stride]]

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "checks": {
+    "D1_no_st6_textures_used": true,
+    "D1_s7_floors": true,
+    "D1_exhibit_flag": true,
+    "D1_compare": true,
+    "D2_conveyor_dx": 111,
+    "D2_conveyor_approx_140": true,
+    "D2_reverse_progress": true,
+    "D2_reverse_slow": true,
+    "D3_alarm_spawned": true,
+    "D3_avoid_no_spawn": true,
+    "D4_rescue_plus1": true,
+    "D5_enemy_shots": true,
+    "D6_exhibit_song_defined": true,
+    "D6_mall_unchanged": true,
+    "D6_ambient": true,
+    "D4_clear_row": true
+  },
+  "errors": [],
+  "notes": [
+    "D2 reverse Δx=47.0",
+    "D3 alarm detail: {\"n\":2,\"events\":[\"spotlight-alarm\",\"drone-drop\"],\"stage7\":[\"spotlight-alarm\"],\"story\":false}",
+    "D4 rescue: {\"before\":0,\"after\":1,\"hud\":\"救出 1/3\",\"hasWorld\":true}",
+    "D6: ST7 SongId exhibit bpm94 (−2 semitones / Cm); ST6 mall @104; ambient animalCall/cageClank"
+  ],
+  "textureAudit": {
+    "bannedUsedOnStage": [],
+    "s7floors": [
+      "s7-floor-dock",
+      "s7-floor-hall",
+      "s7-floor-shelf",
+      "s7-floor-auction",
+      "s7-floor-arena"
+    ],
+    "theme": true,
+    "floorSample": "s7-floor-dock"
+  },
+  "required": {
+    "D1_exhibit_flag": true,
+    "D1_no_st6_textures_used": true,
+    "D1_s7_floors": true,
+    "D1_compare": true,
+    "D2_conveyor_approx_140": true,
+    "D2_reverse_progress": true,
+    "D3_alarm_spawned": true,
+    "D3_avoid_no_spawn": true,
+    "D4_rescue_plus1": true,
+    "D4_clear_row": true,
+    "D5_enemy_shots": true,
+    "D6_exhibit_song_defined": true,
+    "D6_mall_unchanged": true
+  }
+}

@@ -7,23 +7,29 @@ import { actorDepth } from '../engine/depth'
 import { isActorFrozen } from '../fx'
 
 /**
- * Stage 7 · 森友展銷中心 enemy variety (B4_ST7_ENEMY_VARIETY).
- * Reuses honeyzombie / lobster shield / taxi-charge patterns; C2 mall palette tints.
- *   1. ChargeHoneyZombie  衝鋒蜜僵 — warn → 2.5× charge 200px → rest
- *   2. HopCage            跳跳籠   — hop 140px; only hittable in air
- *   3. ShieldKeeper       盾牌飼養員 — front blocks; hit from behind
- *   4. CanThrower         掟罐員   — stationary parabolic cans
+ * Stage 7 · 森友展銷中心 enemy variety (B4 + batch7 D5 reskin).
+ * Behaviours unchanged; night-warehouse silhouettes distinct from Stage 6 mall skins.
+ *   1. ChargeHoneyZombie  鞭手飼養員 — warn → 2.5× charge 200px → rest
+ *   2. HopCage            籠車 — hop 140px; only hittable in air
+ *   3. ShieldKeeper       鐵閘板看守員 — front blocks; hit from behind
+ *   4. CanThrower         拋飼料桶員 — stationary parabolic cans
  */
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
-/** Continent-2 mall blues / warm product tones (Stage6 UNIFORM + product). */
+/** Night-warehouse palette — deliberately not mall blues/creams (D5). */
 const C2 = {
-  charge: 0xc9a070,
-  hop: 0xc4a276,
-  shield: 0xa8b8ec,
-  can: 0xb89070,
+  charge: 0x5a4030,
+  hop: 0x3a4450,
+  shield: 0x4a5868,
+  can: 0x6a5840,
 } as const
+
+function attachBadge(scene: Phaser.Scene, host: Phaser.GameObjects.Sprite, key: string) {
+  if (!scene.textures.exists(key)) return null
+  const img = scene.add.image(host.x, host.y - 20, key).setDepth(host.depth + 2)
+  return img
+}
 
 const WALK = 40
 const CHARGE_MUL = 2.5
@@ -42,12 +48,14 @@ export class ChargeHoneyZombie extends HoneyZombie {
   private dir: 1 | -1 = 1
   private chargeFrom = 0
   private flash: Phaser.GameObjects.Text | null = null
+  private badge: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
     this.species = 's7charge'
     this.hp = this.maxHp = 3
     this.setTint(C2.charge)
+    this.badge = attachBadge(scene, this, 's7-enemy-whip')
   }
 
   protected override defaultTint() {
@@ -154,6 +162,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
       }
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))
+    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 2).setFlipX(this.flipX)
   }
 
   private syncFlash() {
@@ -164,17 +173,21 @@ export class ChargeHoneyZombie extends HoneyZombie {
   protected override die(dir: number) {
     this.flash?.destroy()
     this.flash = null
+    this.badge?.destroy()
+    this.badge = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.flash?.destroy()
     this.flash = null
+    this.badge?.destroy()
+    this.badge = null
     super.destroy(fromScene)
   }
 }
 
-// ── 跳跳籠 ───────────────────────────────────────────────────────────────
+// ── 籠車 ───────────────────────────────────────────────────────────────
 
 /** Hops forward 140px; only hittable while airborne. HP 2. */
 export class HopCage extends HoneyZombie {
@@ -182,6 +195,7 @@ export class HopCage extends HoneyZombie {
   private t = 0
   private airborne = false
   private costume: Phaser.GameObjects.Graphics
+  private badge: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
@@ -190,6 +204,7 @@ export class HopCage extends HoneyZombie {
     this.setTint(C2.hop)
     this.costume = scene.add.graphics()
     this.drawCage()
+    this.badge = attachBadge(scene, this, 's7-enemy-cagecart')
     this.t = Phaser.Math.Between(200, 700)
   }
 
@@ -301,6 +316,13 @@ export class HopCage extends HoneyZombie {
       .setDepth(this.depth + 1)
       .setVisible(this.active && this.visible && this.fsm !== 'DEAD')
       .setScale(this.flipX ? -1 : 1, 1)
+    if (this.badge) {
+      this.badge
+        .setPosition(this.x, this.y - 24)
+        .setDepth(this.depth + 2)
+        .setVisible(this.active && this.visible && this.fsm !== 'DEAD')
+        .setFlipX(this.flipX)
+    }
   }
 
   protected override die(dir: number) {
@@ -308,6 +330,8 @@ export class HopCage extends HoneyZombie {
     hop?.stop()
     this.airborne = false
     this.costume.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.die(dir)
   }
 
@@ -315,15 +339,18 @@ export class HopCage extends HoneyZombie {
     const hop = this.getData('hopTween') as Phaser.Tweens.Tween | undefined
     hop?.stop()
     this.costume?.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.destroy(fromScene)
   }
 }
 
-// ── 盾牌飼養員 ───────────────────────────────────────────────────────────
+// ── 鐵閘板看守員 ───────────────────────────────────────────────────────────
 
 /** Front blocks bullets (ding); must jump behind and hit the back. HP 3. */
 export class ShieldKeeper extends AnimEnemy {
   private shieldGfx: Phaser.GameObjects.Graphics
+  private badge: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -333,6 +360,7 @@ export class ShieldKeeper extends AnimEnemy {
     this.bodyBox(30, 44)
     this.setTint(C2.shield)
     this.shieldGfx = scene.add.graphics()
+    this.badge = attachBadge(scene, this, 's7-enemy-gate')
   }
 
   protected override defaultTint() {
@@ -390,21 +418,27 @@ export class ShieldKeeper extends AnimEnemy {
     const face = this.flipX ? -1 : 1
     const sx = this.x + face * 16
     const sy = this.y - 28
-    g.fillStyle(0xd8e0f0, 1).fillRoundedRect(sx - 10, sy - 18, 20, 36, 4)
-    g.lineStyle(2, 0x3a4868, 1).strokeRoundedRect(sx - 10, sy - 18, 20, 36, 4)
-    g.lineStyle(2, 0x6a7a9a, 1).lineBetween(sx - 6, sy - 8, sx + 6, sy - 8)
-    g.lineBetween(sx - 6, sy + 4, sx + 6, sy + 4)
-    g.fillStyle(0xc9a040, 1).fillCircle(sx, sy - 2, 3)
+    // Iron gate plate (warehouse steel, not mall acrylic)
+    g.fillStyle(0x708090, 1).fillRoundedRect(sx - 11, sy - 20, 22, 40, 2)
+    g.lineStyle(2, 0x2a3038, 1).strokeRoundedRect(sx - 11, sy - 20, 22, 40, 2)
+    g.lineStyle(2, 0xa0b0c0, 1).lineBetween(sx - 7, sy - 10, sx + 7, sy - 10)
+    g.lineBetween(sx - 7, sy + 2, sx + 7, sy + 2)
+    g.fillStyle(0xc0a040, 1).fillCircle(sx, sy - 2, 3)
     g.setDepth(this.depth + 2)
+    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 3).setFlipX(this.flipX)
   }
 
   protected override die(dir: number) {
     this.shieldGfx.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.shieldGfx?.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.destroy(fromScene)
   }
 }
@@ -416,12 +450,13 @@ export type CanHooks = {
   throwCan: (x: number, y: number, targetX: number) => void
 }
 
-/** Stands still; every 2.5s throws a parabolic can that explodes on the ground. HP 2. */
+/** Stands still; every 2.5s throws a parabolic feed-bucket that explodes on the ground. HP 2. */
 export class CanThrower extends AnimEnemy {
   private cd = 900
   private wind = 0
   private ch: CanHooks
   private canGfx: Phaser.GameObjects.Graphics
+  private badge: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, ch: CanHooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -432,6 +467,7 @@ export class CanThrower extends AnimEnemy {
     this.bodyBox(28, 44)
     this.setTint(C2.can)
     this.canGfx = scene.add.graphics()
+    this.badge = attachBadge(scene, this, 's7-enemy-feeder')
     this.cd = Phaser.Math.Between(600, 1200)
     this.anims.pause()
   }
@@ -509,19 +545,26 @@ export class CanThrower extends AnimEnemy {
     const face = this.flipX ? -1 : 1
     const cx = this.x + face * 14
     const cy = this.y - 34
-    g.fillStyle(0xc07040, 1).fillRoundedRect(cx - 7, cy - 10, 14, 16, 2)
-    g.lineStyle(1, 0x503020, 1).strokeRoundedRect(cx - 7, cy - 10, 14, 16, 2)
+    // Feed bucket (olive/warehouse), not mall soda can
+    g.fillStyle(0x8a9060, 1).fillRoundedRect(cx - 8, cy - 10, 16, 14, 2)
+    g.lineStyle(1, 0x303820, 1).strokeRoundedRect(cx - 8, cy - 10, 16, 14, 2)
+    g.fillStyle(0xc0b070, 1).fillEllipse(cx, cy - 10, 16, 5)
+    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 2).setFlipX(this.flipX)
     g.fillStyle(0xe8d070, 1).fillRect(cx - 5, cy - 4, 10, 3)
     g.setDepth(this.depth + 2)
   }
 
   protected override die(dir: number) {
     this.canGfx.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.canGfx?.destroy()
+    this.badge?.destroy()
+    this.badge = null
     super.destroy(fromScene)
   }
 }
