@@ -1,0 +1,38 @@
+{
+  "old": {
+    "ok": false,
+    "errors": 415,
+    "sample": [
+      {
+        "id": "Q007",
+        "rule": "length",
+        "detail": "lengths 4,17,16,13 (max/min > 3)"
+      },
+      {
+        "id": "Q013",
+        "rule": "length",
+        "detail": "lengths 5,17,17,15 (max/min > 3)"
+      },
+      {
+        "id": "Q026",
+        "rule": "ban",
+        "detail": "試用期內可任意改基本條款而不通知"
+      },
+      {
+        "id": "Q026",
+        "rule": "ban",
+        "detail": "離職時可公開員工評語畀所有同事"
+      },
+      {
+        "id": "Q027",
+        "rule": "ban",
+        "detail": "離職時可公開員工評語畀所有同事"
+      }
+    ]
+  },
+  "neu": {
+    "ok": true,
+    "errors": 0,
+    "total": 300
+  }
+}
