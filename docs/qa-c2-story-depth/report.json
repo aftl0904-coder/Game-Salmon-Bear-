@@ -1,0 +1,10 @@
+{
+  "ok": false,
+  "errors": [
+    "page.evaluate: SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input\n    at eval (eval at evaluate (:234:30), <anonymous>:3:23)\n    at async <anonymous>:260:30\n    at /tmp/gsb-c2-story-depth-2610/scripts/qa/c2-story-depth.mjs:59:28"
+  ],
+  "checks": {},
+  "shots": [
+    "docs/qa-c2-story-depth/error.png"
+  ]
+}
