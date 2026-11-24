@@ -1,0 +1,1 @@
+far.png: 1280x720 RGB opaque; 64 colours; generated 2560x1440 and 2:1 nearest-neighbour scaled, no crop, then quantized to <=64 colours without dithering.

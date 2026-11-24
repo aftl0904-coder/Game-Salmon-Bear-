@@ -1,5 +1,9 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## M7 第6→7關單車過場（`manus/m7-bike-c2-2611`；2026-11-24）
+- 遠景 `public/art/bike-c2/far.png`：1280×720、64 色；build、10 項資料驗證及桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m7-bike-c2/far/`。圖片先以 2560×1440 生成再縮細，並非原生尺寸；未接入遊戲或真機。
+- 中景及側門待製作；本 branch 只交美術，遊戲接入由 Cursor 跟進。
+
 ## M6 補畫（`manus/m6-art-supplement-2611`；2026-11-24）
 - 首件 `public/art/fx/honey-paw.png`：3 格各 16×16、二值 alpha；第 2 格縮小、非真正半透明淡出，需整合時留意。build、10 項資料驗證和桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m6-art/paw/`；未接入遊戲或真機。
 - 壽司 `public/art/items/pickup-sushi.png`：18×22，格式及獨立素材測試見 `docs/qa-m6-art/sushi/`，build 和 10 項資料驗證通過；未接入遊戲或真機。
