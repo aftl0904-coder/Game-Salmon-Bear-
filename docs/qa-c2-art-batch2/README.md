@@ -26,3 +26,8 @@
 - Lunbo and Kibobo were redrawn against `public/art/portraits/lunbo.png` and `public/art/portraits/kibobo.png`; Pupu was explicitly left unchanged. `compare-main3.png` shows each full original portrait sheet beside its current Q-head; all six images were decoded in a browser screenshot.
 - `main3-redraw-dimensions.txt` records 88×88 RGBA, binary alpha and ≤64 colours for both new images and Pupu's unchanged SHA-256. The enclosed transparent pixels in the new Kibobo image form the natural gap between ponytail, head and shoulder, visually checked on contrasting background.
 - `main3-redraw-desktop.png`, `main3-redraw-mobile-touch.png` and `main3-redraw-browser.txt` record standalone preview decoding and desktop mouse / simulated mobile touch selection, not game integration or physical-device testing. `main3-redraw-build.txt` passed; `main3-redraw-validate-data.txt` retains the unchanged baseline stage7 static-decor failure (1/10).
+
+## Pupu shirt correction (2026-11-24)
+
+- `qhead-pupu.png` now has an orange-brown shirt matching `portraits/pupu.png`, not the previous red shirt. The image was generated at a higher resolution then resized to 88×88 with nearest-neighbour; see `pupu-fix-dimensions.txt`. The earlier `main3-redraw-*` and `compare-main3.png` remain historical pre-correction records.
+- `pupu-fix/` records desktop mouse and simulated mobile touch-only standalone previews of the portrait and corrected Q-head, not game integration or physical-device testing. `pupu-fix-build.txt`: build passed. `pupu-fix-validate-data.txt`: the pre-existing `stage7.json / trainer` static-decor validation still fails (1/10); no data or game code was changed.

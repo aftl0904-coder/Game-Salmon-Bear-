@@ -1,0 +1,1 @@
+qhead-pupu.png: 88x88 RGBA; binary alpha; 63 colours; visible bbox=(2,4,86,84). AI generated at higher resolution and resized with nearest-neighbour.
