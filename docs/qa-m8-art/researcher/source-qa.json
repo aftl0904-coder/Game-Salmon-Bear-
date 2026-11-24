@@ -1,0 +1,3345 @@
+{
+  "status": "candidate_only_not_approved_not_integrated",
+  "method": {
+    "segmentation": "source alpha >=128, locate full-height zero-alpha column bands; select original alpha-zero cut lines",
+    "resize": "fixed uniform scale per new source, Lanczos; binary alpha threshold 128 before/after",
+    "palette": "previous global palette unchanged for its 62 used colors; unused indices 0,1 changed to yellow highlights; no dither, all assets share exactly the same 64 RGB entries; transparent index 255",
+    "baseline": "visible bottom exclusive y=201; foot-band midpoint nominal x=86, clamped to keep complete silhouette",
+    "bbox_format": "[left, top, right, bottom] right and bottom exclusive",
+    "gif": "2x nearest neighbor preview; repeats regardless of runtime loop setting",
+    "caveat": "Source >=128 pixels partitioned into the four source regions once, not a claim resizing or alpha threshold preserve every original pixel."
+  },
+  "replacement_sources": {
+    "board_sweep": {
+      "path": "/tmp/m8-boss-fix/raw/board-sweep-variation.png",
+      "sha256": "357fe168f6c012d8aaf4a14333ede6298297b918823a4fdda6e8cee253b30a40",
+      "size": [
+        2688,
+        1152
+      ],
+      "alpha_threshold": 128,
+      "source_alpha_1_to_127_pixels_removed": 106728,
+      "source_alpha_gte128_total": 900716,
+      "cut_lines": [
+        {
+          "nominal_x": 672,
+          "thresholded_transparent_band_inclusive": [
+            654,
+            761
+          ],
+          "chosen_x": 707,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 1344,
+          "thresholded_transparent_band_inclusive": [
+            1340,
+            1382
+          ],
+          "chosen_x": 1360,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 2016,
+          "thresholded_transparent_band_inclusive": [
+            2015,
+            2104
+          ],
+          "chosen_x": 2059,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        }
+      ],
+      "uniform_scale": 0.17683686176836863,
+      "scale_basis": "142 sheet px divided by representative standing source height 803 px",
+      "source_frame_records": [
+        {
+          "frame": 1,
+          "source_region": [
+            0,
+            0,
+            707,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            38,
+            218,
+            654,
+            1021
+          ],
+          "source_alpha_gte128_pixels": 236246,
+          "uniform_scale": 0.17683686176836863,
+          "resize_px": [
+            109,
+            142
+          ],
+          "placement_xy": [
+            28,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 326.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              28,
+              59,
+              137,
+              201
+            ],
+            "width": 109,
+            "height": 142,
+            "margins": [
+              28,
+              59,
+              35,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 62,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 2,
+          "source_region": [
+            707,
+            0,
+            1360,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            762,
+            218,
+            1340,
+            1021
+          ],
+          "source_alpha_gte128_pixels": 203186,
+          "uniform_scale": 0.17683686176836863,
+          "resize_px": [
+            102,
+            142
+          ],
+          "placement_xy": [
+            35,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 289.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              35,
+              59,
+              137,
+              201
+            ],
+            "width": 102,
+            "height": 142,
+            "margins": [
+              35,
+              59,
+              35,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 63,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 3,
+          "source_region": [
+            1360,
+            0,
+            2059,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            1383,
+            221,
+            2015,
+            1021
+          ],
+          "source_alpha_gte128_pixels": 237416,
+          "uniform_scale": 0.17683686176836863,
+          "resize_px": [
+            112,
+            141
+          ],
+          "placement_xy": [
+            33,
+            60
+          ],
+          "foot_anchor_source_in_bbox": 298.5,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              33,
+              60,
+              145,
+              201
+            ],
+            "width": 112,
+            "height": 141,
+            "margins": [
+              33,
+              60,
+              27,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 63,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 4,
+          "source_region": [
+            2059,
+            0,
+            2688,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            2105,
+            218,
+            2674,
+            1021
+          ],
+          "source_alpha_gte128_pixels": 223868,
+          "uniform_scale": 0.17683686176836863,
+          "resize_px": [
+            101,
+            142
+          ],
+          "placement_xy": [
+            36,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 284.5,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              36,
+              59,
+              137,
+              201
+            ],
+            "width": 101,
+            "height": 142,
+            "margins": [
+              36,
+              59,
+              35,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 63,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ]
+    },
+    "bottle_reload": {
+      "path": "/tmp/m8-boss-fix/raw/bottle-reload-variation.png",
+      "sha256": "241d825603321a1001ca5fafc7498d2b43b412e80859fc786417787eb3b46207",
+      "size": [
+        2688,
+        1152
+      ],
+      "alpha_threshold": 128,
+      "source_alpha_1_to_127_pixels_removed": 88544,
+      "source_alpha_gte128_total": 876136,
+      "cut_lines": [
+        {
+          "nominal_x": 672,
+          "thresholded_transparent_band_inclusive": [
+            653,
+            803
+          ],
+          "chosen_x": 728,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 1344,
+          "thresholded_transparent_band_inclusive": [
+            1321,
+            1460
+          ],
+          "chosen_x": 1390,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 2016,
+          "thresholded_transparent_band_inclusive": [
+            1981,
+            2113
+          ],
+          "chosen_x": 2046,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        }
+      ],
+      "uniform_scale": 0.1658878504672897,
+      "scale_basis": "142 sheet px divided by representative standing source height 856 px",
+      "source_frame_records": [
+        {
+          "frame": 1,
+          "source_region": [
+            0,
+            0,
+            728,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            116,
+            188,
+            653,
+            1046
+          ],
+          "source_alpha_gte128_pixels": 219996,
+          "uniform_scale": 0.1658878504672897,
+          "resize_px": [
+            89,
+            142
+          ],
+          "placement_xy": [
+            42,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 268.5,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              42,
+              59,
+              131,
+              201
+            ],
+            "width": 89,
+            "height": 142,
+            "margins": [
+              42,
+              59,
+              41,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 2,
+          "source_region": [
+            728,
+            0,
+            1390,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            804,
+            191,
+            1321,
+            1046
+          ],
+          "source_alpha_gte128_pixels": 213880,
+          "uniform_scale": 0.1658878504672897,
+          "resize_px": [
+            86,
+            142
+          ],
+          "placement_xy": [
+            43,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 258.5,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              43,
+              59,
+              129,
+              201
+            ],
+            "width": 86,
+            "height": 142,
+            "margins": [
+              43,
+              59,
+              43,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 3,
+          "source_region": [
+            1390,
+            0,
+            2046,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            1461,
+            190,
+            1981,
+            1046
+          ],
+          "source_alpha_gte128_pixels": 215525,
+          "uniform_scale": 0.1658878504672897,
+          "resize_px": [
+            86,
+            142
+          ],
+          "placement_xy": [
+            43,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 260.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              43,
+              59,
+              129,
+              201
+            ],
+            "width": 86,
+            "height": 142,
+            "margins": [
+              43,
+              59,
+              43,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 62,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 4,
+          "source_region": [
+            2046,
+            0,
+            2688,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            2114,
+            190,
+            2632,
+            1046
+          ],
+          "source_alpha_gte128_pixels": 226735,
+          "uniform_scale": 0.1658878504672897,
+          "resize_px": [
+            86,
+            142
+          ],
+          "placement_xy": [
+            43,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 259.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              43,
+              59,
+              129,
+              201
+            ],
+            "width": 86,
+            "height": 142,
+            "margins": [
+              43,
+              59,
+              43,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ]
+    },
+    "weakpoint_glow": {
+      "path": "/tmp/m8-boss-fix/raw/weakpoint-glow-variation.png",
+      "sha256": "f1d9e0a0cffd048e0956badf73d8b813900f12c7d3924ad480973140ca2c02a5",
+      "size": [
+        2688,
+        1152
+      ],
+      "alpha_threshold": 128,
+      "source_alpha_1_to_127_pixels_removed": 107627,
+      "source_alpha_gte128_total": 1008149,
+      "cut_lines": [
+        {
+          "nominal_x": 672,
+          "thresholded_transparent_band_inclusive": [
+            633,
+            752
+          ],
+          "chosen_x": 696,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 1344,
+          "thresholded_transparent_band_inclusive": [
+            1303,
+            1412
+          ],
+          "chosen_x": 1362,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        },
+        {
+          "nominal_x": 2016,
+          "thresholded_transparent_band_inclusive": [
+            1967,
+            2114
+          ],
+          "chosen_x": 2032,
+          "original_nonzero_alpha_pixels_on_chosen_line": 0,
+          "thresholded_nonzero_alpha_pixels_on_chosen_line": 0
+        }
+      ],
+      "uniform_scale": 0.15883668903803133,
+      "scale_basis": "142 sheet px divided by representative standing source height 894 px",
+      "source_frame_records": [
+        {
+          "frame": 1,
+          "source_region": [
+            0,
+            0,
+            696,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            77,
+            150,
+            633,
+            1044
+          ],
+          "source_alpha_gte128_pixels": 250986,
+          "uniform_scale": 0.15883668903803133,
+          "resize_px": [
+            88,
+            142
+          ],
+          "placement_xy": [
+            42,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 278.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              42,
+              59,
+              130,
+              201
+            ],
+            "width": 88,
+            "height": 142,
+            "margins": [
+              42,
+              59,
+              42,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 2,
+          "source_region": [
+            696,
+            0,
+            1362,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            753,
+            150,
+            1303,
+            1044
+          ],
+          "source_alpha_gte128_pixels": 251123,
+          "uniform_scale": 0.15883668903803133,
+          "resize_px": [
+            87,
+            142
+          ],
+          "placement_xy": [
+            42,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 275.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              42,
+              59,
+              129,
+              201
+            ],
+            "width": 87,
+            "height": 142,
+            "margins": [
+              42,
+              59,
+              43,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 3,
+          "source_region": [
+            1362,
+            0,
+            2032,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            1413,
+            150,
+            1967,
+            1044
+          ],
+          "source_alpha_gte128_pixels": 252953,
+          "uniform_scale": 0.15883668903803133,
+          "resize_px": [
+            88,
+            142
+          ],
+          "placement_xy": [
+            42,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 277.0,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              42,
+              59,
+              130,
+              201
+            ],
+            "width": 88,
+            "height": 142,
+            "margins": [
+              42,
+              59,
+              42,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        },
+        {
+          "frame": 4,
+          "source_region": [
+            2032,
+            0,
+            2688,
+            1152
+          ],
+          "thresholded_source_bbox": [
+            2115,
+            150,
+            2664,
+            1044
+          ],
+          "source_alpha_gte128_pixels": 253087,
+          "uniform_scale": 0.15883668903803133,
+          "resize_px": [
+            87,
+            142
+          ],
+          "placement_xy": [
+            42,
+            59
+          ],
+          "foot_anchor_source_in_bbox": 274.5,
+          "anchor_clamp_sheet_px": 0,
+          "output_measurement": {
+            "bbox": [
+              42,
+              59,
+              129,
+              201
+            ],
+            "width": 87,
+            "height": 142,
+            "margins": [
+              42,
+              59,
+              43,
+              3
+            ],
+            "alpha_values": [
+              0,
+              255
+            ],
+            "visible_rgb_colors": 64,
+            "edge_nontransparent_pixels": {
+              "left": 0,
+              "right": 0,
+              "top": 0,
+              "bottom": 0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "atlas": {
+    "frameWidth": 172,
+    "frameHeight": 204,
+    "anchorX": 86,
+    "anchorY": 201,
+    "res": 2,
+    "columns": 10,
+    "cell1x": [
+      86,
+      102
+    ],
+    "anims": {
+      "idle": {
+        "start": 0,
+        "count": 4,
+        "fps": 6,
+        "loop": true
+      },
+      "board_warning": {
+        "start": 4,
+        "count": 4,
+        "fps": 6,
+        "loop": false
+      },
+      "board_sweep": {
+        "start": 8,
+        "count": 4,
+        "fps": 8,
+        "loop": false
+      },
+      "bottle_warning": {
+        "start": 12,
+        "count": 4,
+        "fps": 6,
+        "loop": false
+      },
+      "bottle_throw": {
+        "start": 16,
+        "count": 4,
+        "fps": 8,
+        "loop": false
+      },
+      "bottle_reload": {
+        "start": 20,
+        "count": 4,
+        "fps": 6,
+        "loop": false
+      },
+      "weakpoint_glow": {
+        "start": 24,
+        "count": 4,
+        "fps": 6,
+        "loop": true
+      },
+      "hurt": {
+        "start": 28,
+        "count": 4,
+        "fps": 10,
+        "loop": false
+      },
+      "defeat": {
+        "start": 32,
+        "count": 4,
+        "fps": 6,
+        "loop": false
+      },
+      "stop_and_handover": {
+        "start": 36,
+        "count": 4,
+        "fps": 6,
+        "loop": false
+      }
+    }
+  },
+  "frames": [
+    {
+      "name": "idle",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/idle/01.png",
+      "old_sha256": "ab36dbeb1f4fcf1852d71a738e6179ec0ed2ac876a38e6026ddf2eb3d59c6fa9",
+      "bbox": [
+        59,
+        59,
+        118,
+        201
+      ],
+      "width": 59,
+      "height": 142,
+      "margins": [
+        59,
+        59,
+        54,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 0,
+      "atlas_rect": [
+        0,
+        0,
+        172,
+        204
+      ],
+      "output_path": "frames/idle/01.png"
+    },
+    {
+      "name": "idle",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/idle/02.png",
+      "old_sha256": "a7abadd805544ba9d1c6a6073b6a71764b927758cebaf1a52fd4f1c92003187e",
+      "bbox": [
+        59,
+        59,
+        120,
+        201
+      ],
+      "width": 61,
+      "height": 142,
+      "margins": [
+        59,
+        59,
+        52,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 61,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 1,
+      "atlas_rect": [
+        172,
+        0,
+        344,
+        204
+      ],
+      "output_path": "frames/idle/02.png"
+    },
+    {
+      "name": "idle",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/idle/03.png",
+      "old_sha256": "e1b526d07154c8ad7ba34e660ec110ca8e681c52caa685483765b102055738d7",
+      "bbox": [
+        59,
+        59,
+        119,
+        201
+      ],
+      "width": 60,
+      "height": 142,
+      "margins": [
+        59,
+        59,
+        53,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 2,
+      "atlas_rect": [
+        344,
+        0,
+        516,
+        204
+      ],
+      "output_path": "frames/idle/03.png"
+    },
+    {
+      "name": "idle",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/idle/04.png",
+      "old_sha256": "5d7f5c6f3738ddade64841aeebe4c892737fcf2cb57c3c5b3868798622fd322b",
+      "bbox": [
+        58,
+        59,
+        118,
+        201
+      ],
+      "width": 60,
+      "height": 142,
+      "margins": [
+        58,
+        59,
+        54,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 3,
+      "atlas_rect": [
+        516,
+        0,
+        688,
+        204
+      ],
+      "output_path": "frames/idle/04.png"
+    },
+    {
+      "name": "board_warning",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/board_warning/01.png",
+      "old_sha256": "f16370fc8697aac87d4ec62f247b0efdde7d1abe261f3f82067ed51f2cb3e16b",
+      "bbox": [
+        45,
+        56,
+        146,
+        201
+      ],
+      "width": 101,
+      "height": 145,
+      "margins": [
+        45,
+        56,
+        26,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 4,
+      "atlas_rect": [
+        688,
+        0,
+        860,
+        204
+      ],
+      "output_path": "frames/board_warning/01.png"
+    },
+    {
+      "name": "board_warning",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/board_warning/02.png",
+      "old_sha256": "f9a10011d5fb61f61017ab9285cf3590b3d8c71a209f25f54612f8df49c52665",
+      "bbox": [
+        45,
+        56,
+        151,
+        201
+      ],
+      "width": 106,
+      "height": 145,
+      "margins": [
+        45,
+        56,
+        21,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 61,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 5,
+      "atlas_rect": [
+        860,
+        0,
+        1032,
+        204
+      ],
+      "output_path": "frames/board_warning/02.png"
+    },
+    {
+      "name": "board_warning",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/board_warning/03.png",
+      "old_sha256": "daf99cdf9abf4f7a62c3692555296f95326d00cece016c1caf97ea4b67497970",
+      "bbox": [
+        42,
+        56,
+        157,
+        201
+      ],
+      "width": 115,
+      "height": 145,
+      "margins": [
+        42,
+        56,
+        15,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 6,
+      "atlas_rect": [
+        1032,
+        0,
+        1204,
+        204
+      ],
+      "output_path": "frames/board_warning/03.png"
+    },
+    {
+      "name": "board_warning",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/board_warning/04.png",
+      "old_sha256": "6d0b6125acce0fcd91bc853c27d98007054daf9581dac127a1c4d4cccbcb68b2",
+      "bbox": [
+        41,
+        53,
+        159,
+        201
+      ],
+      "width": 118,
+      "height": 148,
+      "margins": [
+        41,
+        53,
+        13,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 7,
+      "atlas_rect": [
+        1204,
+        0,
+        1376,
+        204
+      ],
+      "output_path": "frames/board_warning/04.png"
+    },
+    {
+      "name": "board_sweep",
+      "frame": 1,
+      "source": "/tmp/m8-boss-fix/raw/board-sweep-variation.png",
+      "source_frame_record": {
+        "frame": 1,
+        "source_region": [
+          0,
+          0,
+          707,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          38,
+          218,
+          654,
+          1021
+        ],
+        "source_alpha_gte128_pixels": 236246,
+        "uniform_scale": 0.17683686176836863,
+        "resize_px": [
+          109,
+          142
+        ],
+        "placement_xy": [
+          28,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 326.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            28,
+            59,
+            137,
+            201
+          ],
+          "width": 109,
+          "height": 142,
+          "margins": [
+            28,
+            59,
+            35,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 62,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        28,
+        59,
+        137,
+        201
+      ],
+      "width": 109,
+      "height": 142,
+      "margins": [
+        28,
+        59,
+        35,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 8,
+      "atlas_rect": [
+        1376,
+        0,
+        1548,
+        204
+      ],
+      "output_path": "frames/board_sweep/01.png"
+    },
+    {
+      "name": "board_sweep",
+      "frame": 2,
+      "source": "/tmp/m8-boss-fix/raw/board-sweep-variation.png",
+      "source_frame_record": {
+        "frame": 2,
+        "source_region": [
+          707,
+          0,
+          1360,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          762,
+          218,
+          1340,
+          1021
+        ],
+        "source_alpha_gte128_pixels": 203186,
+        "uniform_scale": 0.17683686176836863,
+        "resize_px": [
+          102,
+          142
+        ],
+        "placement_xy": [
+          35,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 289.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            35,
+            59,
+            137,
+            201
+          ],
+          "width": 102,
+          "height": 142,
+          "margins": [
+            35,
+            59,
+            35,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 63,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        35,
+        59,
+        137,
+        201
+      ],
+      "width": 102,
+      "height": 142,
+      "margins": [
+        35,
+        59,
+        35,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 63,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 9,
+      "atlas_rect": [
+        1548,
+        0,
+        1720,
+        204
+      ],
+      "output_path": "frames/board_sweep/02.png"
+    },
+    {
+      "name": "board_sweep",
+      "frame": 3,
+      "source": "/tmp/m8-boss-fix/raw/board-sweep-variation.png",
+      "source_frame_record": {
+        "frame": 3,
+        "source_region": [
+          1360,
+          0,
+          2059,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          1383,
+          221,
+          2015,
+          1021
+        ],
+        "source_alpha_gte128_pixels": 237416,
+        "uniform_scale": 0.17683686176836863,
+        "resize_px": [
+          112,
+          141
+        ],
+        "placement_xy": [
+          33,
+          60
+        ],
+        "foot_anchor_source_in_bbox": 298.5,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            33,
+            60,
+            145,
+            201
+          ],
+          "width": 112,
+          "height": 141,
+          "margins": [
+            33,
+            60,
+            27,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 63,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        33,
+        60,
+        145,
+        201
+      ],
+      "width": 112,
+      "height": 141,
+      "margins": [
+        33,
+        60,
+        27,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 63,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 10,
+      "atlas_rect": [
+        0,
+        204,
+        172,
+        408
+      ],
+      "output_path": "frames/board_sweep/03.png"
+    },
+    {
+      "name": "board_sweep",
+      "frame": 4,
+      "source": "/tmp/m8-boss-fix/raw/board-sweep-variation.png",
+      "source_frame_record": {
+        "frame": 4,
+        "source_region": [
+          2059,
+          0,
+          2688,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          2105,
+          218,
+          2674,
+          1021
+        ],
+        "source_alpha_gte128_pixels": 223868,
+        "uniform_scale": 0.17683686176836863,
+        "resize_px": [
+          101,
+          142
+        ],
+        "placement_xy": [
+          36,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 284.5,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            36,
+            59,
+            137,
+            201
+          ],
+          "width": 101,
+          "height": 142,
+          "margins": [
+            36,
+            59,
+            35,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 63,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        36,
+        59,
+        137,
+        201
+      ],
+      "width": 101,
+      "height": 142,
+      "margins": [
+        36,
+        59,
+        35,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 63,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 11,
+      "atlas_rect": [
+        172,
+        204,
+        344,
+        408
+      ],
+      "output_path": "frames/board_sweep/04.png"
+    },
+    {
+      "name": "bottle_warning",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_warning/01.png",
+      "old_sha256": "7e6a03b76310c48f15491cdee75275d9dd77aad4999ddd773f4a5e25a7b1d110",
+      "bbox": [
+        46,
+        56,
+        127,
+        201
+      ],
+      "width": 81,
+      "height": 145,
+      "margins": [
+        46,
+        56,
+        45,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 12,
+      "atlas_rect": [
+        344,
+        204,
+        516,
+        408
+      ],
+      "output_path": "frames/bottle_warning/01.png"
+    },
+    {
+      "name": "bottle_warning",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_warning/02.png",
+      "old_sha256": "b5c87bcca4dc53a79ea9cd42f11330f724acd1e1966f6f08016a6a8c171233ba",
+      "bbox": [
+        44,
+        57,
+        128,
+        201
+      ],
+      "width": 84,
+      "height": 144,
+      "margins": [
+        44,
+        57,
+        44,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 13,
+      "atlas_rect": [
+        516,
+        204,
+        688,
+        408
+      ],
+      "output_path": "frames/bottle_warning/02.png"
+    },
+    {
+      "name": "bottle_warning",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_warning/03.png",
+      "old_sha256": "86d68eefd53272e09c2682fba45cde6408a267266f47e4ef1b8abe0e5e6eb04b",
+      "bbox": [
+        44,
+        56,
+        127,
+        201
+      ],
+      "width": 83,
+      "height": 145,
+      "margins": [
+        44,
+        56,
+        45,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 14,
+      "atlas_rect": [
+        688,
+        204,
+        860,
+        408
+      ],
+      "output_path": "frames/bottle_warning/03.png"
+    },
+    {
+      "name": "bottle_warning",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_warning/04.png",
+      "old_sha256": "ec8102c4d28c5bffc590772f6b425755c3c64d90a6b9fb1180a7acbf5efc9a44",
+      "bbox": [
+        31,
+        56,
+        129,
+        201
+      ],
+      "width": 98,
+      "height": 145,
+      "margins": [
+        31,
+        56,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 15,
+      "atlas_rect": [
+        860,
+        204,
+        1032,
+        408
+      ],
+      "output_path": "frames/bottle_warning/04.png"
+    },
+    {
+      "name": "bottle_throw",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_throw/01.png",
+      "old_sha256": "2f56488ee4221ccbfd5e15cc80aa068f07569a5a4cdfed64bf4de8cd4312fccb",
+      "bbox": [
+        26,
+        55,
+        136,
+        201
+      ],
+      "width": 110,
+      "height": 146,
+      "margins": [
+        26,
+        55,
+        36,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 16,
+      "atlas_rect": [
+        1032,
+        204,
+        1204,
+        408
+      ],
+      "output_path": "frames/bottle_throw/01.png"
+    },
+    {
+      "name": "bottle_throw",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_throw/02.png",
+      "old_sha256": "3c0cacb718a6b8b70114fccd92a3d467817b4c4ea1c6e42704252930794052e7",
+      "bbox": [
+        27,
+        54,
+        170,
+        201
+      ],
+      "width": 143,
+      "height": 147,
+      "margins": [
+        27,
+        54,
+        2,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 17,
+      "atlas_rect": [
+        1204,
+        204,
+        1376,
+        408
+      ],
+      "output_path": "frames/bottle_throw/02.png"
+    },
+    {
+      "name": "bottle_throw",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_throw/03.png",
+      "old_sha256": "33646950b4f6c1d5dedc941d3b14cc844eeae7584f832b0d03277a9655116d77",
+      "bbox": [
+        7,
+        56,
+        170,
+        201
+      ],
+      "width": 163,
+      "height": 145,
+      "margins": [
+        7,
+        56,
+        2,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 18,
+      "atlas_rect": [
+        1376,
+        204,
+        1548,
+        408
+      ],
+      "output_path": "frames/bottle_throw/03.png"
+    },
+    {
+      "name": "bottle_throw",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/bottle_throw/04.png",
+      "old_sha256": "23350cbdf251c3e65bdc57484de57471fa4b609ebf8ec172d046d3e2f744de8d",
+      "bbox": [
+        34,
+        56,
+        138,
+        201
+      ],
+      "width": 104,
+      "height": 145,
+      "margins": [
+        34,
+        56,
+        34,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 19,
+      "atlas_rect": [
+        1548,
+        204,
+        1720,
+        408
+      ],
+      "output_path": "frames/bottle_throw/04.png"
+    },
+    {
+      "name": "bottle_reload",
+      "frame": 1,
+      "source": "/tmp/m8-boss-fix/raw/bottle-reload-variation.png",
+      "source_frame_record": {
+        "frame": 1,
+        "source_region": [
+          0,
+          0,
+          728,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          116,
+          188,
+          653,
+          1046
+        ],
+        "source_alpha_gte128_pixels": 219996,
+        "uniform_scale": 0.1658878504672897,
+        "resize_px": [
+          89,
+          142
+        ],
+        "placement_xy": [
+          42,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 268.5,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            42,
+            59,
+            131,
+            201
+          ],
+          "width": 89,
+          "height": 142,
+          "margins": [
+            42,
+            59,
+            41,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        42,
+        59,
+        131,
+        201
+      ],
+      "width": 89,
+      "height": 142,
+      "margins": [
+        42,
+        59,
+        41,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 20,
+      "atlas_rect": [
+        0,
+        408,
+        172,
+        612
+      ],
+      "output_path": "frames/bottle_reload/01.png"
+    },
+    {
+      "name": "bottle_reload",
+      "frame": 2,
+      "source": "/tmp/m8-boss-fix/raw/bottle-reload-variation.png",
+      "source_frame_record": {
+        "frame": 2,
+        "source_region": [
+          728,
+          0,
+          1390,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          804,
+          191,
+          1321,
+          1046
+        ],
+        "source_alpha_gte128_pixels": 213880,
+        "uniform_scale": 0.1658878504672897,
+        "resize_px": [
+          86,
+          142
+        ],
+        "placement_xy": [
+          43,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 258.5,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            43,
+            59,
+            129,
+            201
+          ],
+          "width": 86,
+          "height": 142,
+          "margins": [
+            43,
+            59,
+            43,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        43,
+        59,
+        129,
+        201
+      ],
+      "width": 86,
+      "height": 142,
+      "margins": [
+        43,
+        59,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 21,
+      "atlas_rect": [
+        172,
+        408,
+        344,
+        612
+      ],
+      "output_path": "frames/bottle_reload/02.png"
+    },
+    {
+      "name": "bottle_reload",
+      "frame": 3,
+      "source": "/tmp/m8-boss-fix/raw/bottle-reload-variation.png",
+      "source_frame_record": {
+        "frame": 3,
+        "source_region": [
+          1390,
+          0,
+          2046,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          1461,
+          190,
+          1981,
+          1046
+        ],
+        "source_alpha_gte128_pixels": 215525,
+        "uniform_scale": 0.1658878504672897,
+        "resize_px": [
+          86,
+          142
+        ],
+        "placement_xy": [
+          43,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 260.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            43,
+            59,
+            129,
+            201
+          ],
+          "width": 86,
+          "height": 142,
+          "margins": [
+            43,
+            59,
+            43,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 62,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        43,
+        59,
+        129,
+        201
+      ],
+      "width": 86,
+      "height": 142,
+      "margins": [
+        43,
+        59,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 22,
+      "atlas_rect": [
+        344,
+        408,
+        516,
+        612
+      ],
+      "output_path": "frames/bottle_reload/03.png"
+    },
+    {
+      "name": "bottle_reload",
+      "frame": 4,
+      "source": "/tmp/m8-boss-fix/raw/bottle-reload-variation.png",
+      "source_frame_record": {
+        "frame": 4,
+        "source_region": [
+          2046,
+          0,
+          2688,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          2114,
+          190,
+          2632,
+          1046
+        ],
+        "source_alpha_gte128_pixels": 226735,
+        "uniform_scale": 0.1658878504672897,
+        "resize_px": [
+          86,
+          142
+        ],
+        "placement_xy": [
+          43,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 259.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            43,
+            59,
+            129,
+            201
+          ],
+          "width": 86,
+          "height": 142,
+          "margins": [
+            43,
+            59,
+            43,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        43,
+        59,
+        129,
+        201
+      ],
+      "width": 86,
+      "height": 142,
+      "margins": [
+        43,
+        59,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 23,
+      "atlas_rect": [
+        516,
+        408,
+        688,
+        612
+      ],
+      "output_path": "frames/bottle_reload/04.png"
+    },
+    {
+      "name": "weakpoint_glow",
+      "frame": 1,
+      "source": "/tmp/m8-boss-fix/raw/weakpoint-glow-variation.png",
+      "source_frame_record": {
+        "frame": 1,
+        "source_region": [
+          0,
+          0,
+          696,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          77,
+          150,
+          633,
+          1044
+        ],
+        "source_alpha_gte128_pixels": 250986,
+        "uniform_scale": 0.15883668903803133,
+        "resize_px": [
+          88,
+          142
+        ],
+        "placement_xy": [
+          42,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 278.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            42,
+            59,
+            130,
+            201
+          ],
+          "width": 88,
+          "height": 142,
+          "margins": [
+            42,
+            59,
+            42,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        42,
+        59,
+        130,
+        201
+      ],
+      "width": 88,
+      "height": 142,
+      "margins": [
+        42,
+        59,
+        42,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 24,
+      "atlas_rect": [
+        688,
+        408,
+        860,
+        612
+      ],
+      "output_path": "frames/weakpoint_glow/01.png"
+    },
+    {
+      "name": "weakpoint_glow",
+      "frame": 2,
+      "source": "/tmp/m8-boss-fix/raw/weakpoint-glow-variation.png",
+      "source_frame_record": {
+        "frame": 2,
+        "source_region": [
+          696,
+          0,
+          1362,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          753,
+          150,
+          1303,
+          1044
+        ],
+        "source_alpha_gte128_pixels": 251123,
+        "uniform_scale": 0.15883668903803133,
+        "resize_px": [
+          87,
+          142
+        ],
+        "placement_xy": [
+          42,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 275.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            42,
+            59,
+            129,
+            201
+          ],
+          "width": 87,
+          "height": 142,
+          "margins": [
+            42,
+            59,
+            43,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        42,
+        59,
+        129,
+        201
+      ],
+      "width": 87,
+      "height": 142,
+      "margins": [
+        42,
+        59,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 25,
+      "atlas_rect": [
+        860,
+        408,
+        1032,
+        612
+      ],
+      "output_path": "frames/weakpoint_glow/02.png"
+    },
+    {
+      "name": "weakpoint_glow",
+      "frame": 3,
+      "source": "/tmp/m8-boss-fix/raw/weakpoint-glow-variation.png",
+      "source_frame_record": {
+        "frame": 3,
+        "source_region": [
+          1362,
+          0,
+          2032,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          1413,
+          150,
+          1967,
+          1044
+        ],
+        "source_alpha_gte128_pixels": 252953,
+        "uniform_scale": 0.15883668903803133,
+        "resize_px": [
+          88,
+          142
+        ],
+        "placement_xy": [
+          42,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 277.0,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            42,
+            59,
+            130,
+            201
+          ],
+          "width": 88,
+          "height": 142,
+          "margins": [
+            42,
+            59,
+            42,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        42,
+        59,
+        130,
+        201
+      ],
+      "width": 88,
+      "height": 142,
+      "margins": [
+        42,
+        59,
+        42,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 26,
+      "atlas_rect": [
+        1032,
+        408,
+        1204,
+        612
+      ],
+      "output_path": "frames/weakpoint_glow/03.png"
+    },
+    {
+      "name": "weakpoint_glow",
+      "frame": 4,
+      "source": "/tmp/m8-boss-fix/raw/weakpoint-glow-variation.png",
+      "source_frame_record": {
+        "frame": 4,
+        "source_region": [
+          2032,
+          0,
+          2688,
+          1152
+        ],
+        "thresholded_source_bbox": [
+          2115,
+          150,
+          2664,
+          1044
+        ],
+        "source_alpha_gte128_pixels": 253087,
+        "uniform_scale": 0.15883668903803133,
+        "resize_px": [
+          87,
+          142
+        ],
+        "placement_xy": [
+          42,
+          59
+        ],
+        "foot_anchor_source_in_bbox": 274.5,
+        "anchor_clamp_sheet_px": 0,
+        "output_measurement": {
+          "bbox": [
+            42,
+            59,
+            129,
+            201
+          ],
+          "width": 87,
+          "height": 142,
+          "margins": [
+            42,
+            59,
+            43,
+            3
+          ],
+          "alpha_values": [
+            0,
+            255
+          ],
+          "visible_rgb_colors": 64,
+          "edge_nontransparent_pixels": {
+            "left": 0,
+            "right": 0,
+            "top": 0,
+            "bottom": 0
+          }
+        }
+      },
+      "bbox": [
+        42,
+        59,
+        129,
+        201
+      ],
+      "width": 87,
+      "height": 142,
+      "margins": [
+        42,
+        59,
+        43,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 64,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 27,
+      "atlas_rect": [
+        1204,
+        408,
+        1376,
+        612
+      ],
+      "output_path": "frames/weakpoint_glow/04.png"
+    },
+    {
+      "name": "hurt",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/hurt/01.png",
+      "old_sha256": "3caf6e9f8bb666ebd2f69ee64829263a8b8d8b1856c9be7fce5be37a0d259f2c",
+      "bbox": [
+        32,
+        55,
+        128,
+        201
+      ],
+      "width": 96,
+      "height": 146,
+      "margins": [
+        32,
+        55,
+        44,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 28,
+      "atlas_rect": [
+        1376,
+        408,
+        1548,
+        612
+      ],
+      "output_path": "frames/hurt/01.png"
+    },
+    {
+      "name": "hurt",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/hurt/02.png",
+      "old_sha256": "f0b9ef64e0f59c9b05c0ba1274d92b2de9ab443f8656cba6b1eb6e6e2886f474",
+      "bbox": [
+        45,
+        66,
+        127,
+        201
+      ],
+      "width": 82,
+      "height": 135,
+      "margins": [
+        45,
+        66,
+        45,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 29,
+      "atlas_rect": [
+        1548,
+        408,
+        1720,
+        612
+      ],
+      "output_path": "frames/hurt/02.png"
+    },
+    {
+      "name": "hurt",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/hurt/03.png",
+      "old_sha256": "66c10175cff18d38c47750ac111d7646ba8e9a344885a2887020116476aa688c",
+      "bbox": [
+        45,
+        77,
+        137,
+        201
+      ],
+      "width": 92,
+      "height": 124,
+      "margins": [
+        45,
+        77,
+        35,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 30,
+      "atlas_rect": [
+        0,
+        612,
+        172,
+        816
+      ],
+      "output_path": "frames/hurt/03.png"
+    },
+    {
+      "name": "hurt",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/hurt/04.png",
+      "old_sha256": "027ef3e95704cb3718ea3c9de503222cb1511982d31e434fbc3d90ed55f8dc7b",
+      "bbox": [
+        44,
+        63,
+        135,
+        201
+      ],
+      "width": 91,
+      "height": 138,
+      "margins": [
+        44,
+        63,
+        37,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 31,
+      "atlas_rect": [
+        172,
+        612,
+        344,
+        816
+      ],
+      "output_path": "frames/hurt/04.png"
+    },
+    {
+      "name": "defeat",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/defeat/01.png",
+      "old_sha256": "80ff17d228fa9be0658f762bc1ef490ea1be0eaeb5eba5f63e2f8b150f02cddf",
+      "bbox": [
+        47,
+        70,
+        141,
+        201
+      ],
+      "width": 94,
+      "height": 131,
+      "margins": [
+        47,
+        70,
+        31,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 32,
+      "atlas_rect": [
+        344,
+        612,
+        516,
+        816
+      ],
+      "output_path": "frames/defeat/01.png"
+    },
+    {
+      "name": "defeat",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/defeat/02.png",
+      "old_sha256": "6150696c9602dce67e17c8ad4550278393f12230cfd7f94844faae64b4d40f92",
+      "bbox": [
+        36,
+        102,
+        149,
+        201
+      ],
+      "width": 113,
+      "height": 99,
+      "margins": [
+        36,
+        102,
+        23,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 33,
+      "atlas_rect": [
+        516,
+        612,
+        688,
+        816
+      ],
+      "output_path": "frames/defeat/02.png"
+    },
+    {
+      "name": "defeat",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/defeat/03.png",
+      "old_sha256": "2ecc1a3d1e2bcd7c3342c927ba1f6637f3de3b2f3f0e450dd0ee940399b1664a",
+      "bbox": [
+        20,
+        133,
+        152,
+        201
+      ],
+      "width": 132,
+      "height": 68,
+      "margins": [
+        20,
+        133,
+        20,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 34,
+      "atlas_rect": [
+        688,
+        612,
+        860,
+        816
+      ],
+      "output_path": "frames/defeat/03.png"
+    },
+    {
+      "name": "defeat",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/defeat/04.png",
+      "old_sha256": "a8bfc50ff5283331435c153139f081979f843f48af0e877bfafd18d5a3a55ef3",
+      "bbox": [
+        2,
+        158,
+        170,
+        201
+      ],
+      "width": 168,
+      "height": 43,
+      "margins": [
+        2,
+        158,
+        2,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 35,
+      "atlas_rect": [
+        860,
+        612,
+        1032,
+        816
+      ],
+      "output_path": "frames/defeat/04.png"
+    },
+    {
+      "name": "stop_and_handover",
+      "frame": 1,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/stop_and_handover/01.png",
+      "old_sha256": "f0490d97b086da44ce9244cee983b76b1c2a0294f220eba2ec6cf323c8cf87fa",
+      "bbox": [
+        46,
+        59,
+        134,
+        201
+      ],
+      "width": 88,
+      "height": 142,
+      "margins": [
+        46,
+        59,
+        38,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 36,
+      "atlas_rect": [
+        1032,
+        612,
+        1204,
+        816
+      ],
+      "output_path": "frames/stop_and_handover/01.png"
+    },
+    {
+      "name": "stop_and_handover",
+      "frame": 2,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/stop_and_handover/02.png",
+      "old_sha256": "ad594877938d9edb87ee03b809dc4b4d753f4a0d573bdcae7c7fd3fd56e69716",
+      "bbox": [
+        46,
+        60,
+        134,
+        201
+      ],
+      "width": 88,
+      "height": 141,
+      "margins": [
+        46,
+        60,
+        38,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 37,
+      "atlas_rect": [
+        1204,
+        612,
+        1376,
+        816
+      ],
+      "output_path": "frames/stop_and_handover/02.png"
+    },
+    {
+      "name": "stop_and_handover",
+      "frame": 3,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/stop_and_handover/03.png",
+      "old_sha256": "b6841199cbdffb79a7c85e8626fb0e7792488a1fbad0bd48c853e59032573d45",
+      "bbox": [
+        45,
+        59,
+        138,
+        201
+      ],
+      "width": 93,
+      "height": 142,
+      "margins": [
+        45,
+        59,
+        34,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 62,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 38,
+      "atlas_rect": [
+        1376,
+        612,
+        1548,
+        816
+      ],
+      "output_path": "frames/stop_and_handover/03.png"
+    },
+    {
+      "name": "stop_and_handover",
+      "frame": 4,
+      "source": "unchanged previous PNG",
+      "old_path": "/tmp/m8-boss-output/frames/stop_and_handover/04.png",
+      "old_sha256": "dd8271e72d46ff977cc2004440b641f5a22522f6162679018894f6e532cff820",
+      "bbox": [
+        49,
+        59,
+        134,
+        201
+      ],
+      "width": 85,
+      "height": 142,
+      "margins": [
+        49,
+        59,
+        38,
+        3
+      ],
+      "alpha_values": [
+        0,
+        255
+      ],
+      "visible_rgb_colors": 61,
+      "edge_nontransparent_pixels": {
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "bottom": 0
+      },
+      "atlas_frame_index": 39,
+      "atlas_rect": [
+        1548,
+        612,
+        1720,
+        816
+      ],
+      "output_path": "frames/stop_and_handover/04.png"
+    }
+  ],
+  "checks": {
+    "total_atlas_visible_rgb_colors": 64,
+    "atlas_size": [
+      1720,
+      816
+    ],
+    "gif_frames": {
+      "idle": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "board_warning": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "board_sweep": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          120,
+          120,
+          120,
+          120
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "bottle_warning": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "bottle_throw": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          120,
+          120,
+          120,
+          120
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "bottle_reload": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "weakpoint_glow": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "hurt": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          100,
+          100,
+          100,
+          100
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "defeat": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      },
+      "stop_and_handover": {
+        "size": [
+          344,
+          408
+        ],
+        "actual_frame_durations_ms": [
+          160,
+          160,
+          160,
+          160
+        ],
+        "pixel_mismatches_against_png_2x_nearest": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "preview_loops": true
+      }
+    },
+    "original_frame_pixel_mismatch_counts": {
+      "idle/01": 0,
+      "idle/02": 0,
+      "idle/03": 0,
+      "idle/04": 0,
+      "board_warning/01": 0,
+      "board_warning/02": 0,
+      "board_warning/03": 0,
+      "board_warning/04": 0,
+      "bottle_warning/01": 0,
+      "bottle_warning/02": 0,
+      "bottle_warning/03": 0,
+      "bottle_warning/04": 0,
+      "bottle_throw/01": 0,
+      "bottle_throw/02": 0,
+      "bottle_throw/03": 0,
+      "bottle_throw/04": 0,
+      "hurt/01": 0,
+      "hurt/02": 0,
+      "hurt/03": 0,
+      "hurt/04": 0,
+      "defeat/01": 0,
+      "defeat/02": 0,
+      "defeat/03": 0,
+      "defeat/04": 0,
+      "stop_and_handover/01": 0,
+      "stop_and_handover/02": 0,
+      "stop_and_handover/03": 0,
+      "stop_and_handover/04": 0
+    },
+    "palette_rgb_0_1": [
+      [
+        255,
+        221,
+        54
+      ],
+      [
+        255,
+        244,
+        135
+      ]
+    ],
+    "runtime_integration_or_game_visual_tested": false
+  }
+}
