@@ -1,0 +1,5 @@
+c6-photo.png: 1280x720 RGBA, opaque, aspect preserved
+c7-memo.png: 1280x720 RGBA, opaque, aspect preserved
+c7-pupu-leave.png: 1280x720 RGBA, opaque, aspect preserved
+s6-boss-intro.png: 1280x720 RGBA, opaque, aspect preserved
+s7-boss-intro.png: 1280x720 RGBA, opaque, aspect preserved
