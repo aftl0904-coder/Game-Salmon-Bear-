@@ -92,10 +92,7 @@
     {
       "id": "F10_XMAS_EPILOGUE",
       "desc": "2026 聖誕番外篇：第7關『待續』之後播一次（每次通關第7關都播），播完先入 credits",
-      "stills": {
-        "xmas-01": "public/art/story/xmas-01.png（1280×720，Manus 畫緊；未到就用 ending-c2-10.png 暫代）",
-        "xmas-02": "public/art/story/xmas-02.png（1280×720，Manus 畫緊；未到就用 cover.png 暫代）"
-      },
+      "stills": "public/art/story/xmas-01.png、xmas-02.png（Manus 已交，由 Manus 美術接入工單 M5 帶入）",
       "script": [
         {
           "still": "xmas-01",
@@ -155,7 +152,8 @@
         }
       ],
       "impl": "用現有 cutscene.ts／EndingC2Scene 嘅逐句對白＋靜圖機制（撳掣下一句，可跳過）；唔加新音樂系統，用現有溫和 BGM",
-      "note": "番外篇唔影響主線；噗噗喺度出現係聖誕特別篇，唔使解釋"
+      "note": "番外篇唔影響主線；噗噗喺度出現係聖誕特別篇，唔使解釋",
+      "staging": "docs/bible/xmas-epilogue-staging-copilot.json：每句 auto_ms／camera／fx／sfx 照做（auto_ms 只係節奏參考，仍然撳掣下一句；提早撳就由當前鏡頭位置接落去）；xmas-01→02 喺『倫寶：你嘅喺度。』之前轉，黑場 1 秒"
     },
     {
       "id": "F11_GUIDE_UPDATE",
@@ -187,6 +185,16 @@
         "進入 OPENING 嗰一刻，喺 Boss 頭上彈出「破綻！」（黃字、12–14px、0.6 秒淡出），之後照舊顯示「呼…」同汗滴",
         "非 OPENING 打中照舊「叮！」唔改",
         "唔改任何時間、傷害、震屏"
+      ]
+    },
+    {
+      "id": "F14_FRIEND_CHATTER",
+      "source": "docs/bible/friend-chatter-copilot.json",
+      "do": [
+        "過關畫面（通關卡）：從已救出嘅朋友入面隨機揀一隻，喺卡上顯示佢嘅 clear_chat（格式『名：句子』），每次過關一句",
+        "商店畫面：開商店時隨機揀一隻已救朋友，顯示佢嘅 shop 句",
+        "picnic 句暫時唔用（留俾故事擴充工單）",
+        "未救任何朋友就唔顯示；文字一字不改"
       ]
     }
   ],
