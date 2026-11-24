@@ -65,5 +65,10 @@
  "sign-post": 2,
  "stone-altar": 2,
  "stump-a": 2,
- "stump-b": 2
+ "stump-b": 2,
+ "camp-tent": 2,
+ "camp-fire": 2,
+ "camp-shrine": 2,
+ "pickup-sushi": 1,
+ "hazard-durian": 1
 }

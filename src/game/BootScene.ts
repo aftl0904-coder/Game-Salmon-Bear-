@@ -516,7 +516,7 @@ export class BootScene extends Phaser.Scene {
       'art-enemy-elephant': TARGET_H_ENEMY_L,
       'prop-honey-stack': TARGET_H_ITEM + 4,
       'prop-honey-pot': TARGET_H_ITEM,
-      'hazard-durian': TARGET_H_ITEM + 4,
+      // M6 hazard-durian stays at native 18×22 (same as jar) — no nearestFit upscale.
     }
     for (const [key, h] of Object.entries(fitH)) {
       if (this.textures.exists(key)) nearestFitTextureHeight(this, key, h)

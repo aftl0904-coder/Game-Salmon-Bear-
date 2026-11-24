@@ -6,6 +6,7 @@ import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { animTex, hasAnimSet, portraitTex, stillTex, type AnimSetId } from './heroAnims'
+import { isPicnicStill, overlayPicnicPaws } from './honeyPaw'
 import { buzz, HAPTIC } from './phone'
 import { shakeHoney, type Mini } from './minigames'
 
@@ -427,6 +428,8 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
           if (scene.textures.exists('s6-dome')) c.add(scene.add.image(GAME_W / 2, 130, 's6-dome').setScale(2))
         } else {
           c.add(scene.add.image(GAME_W / 2, GAME_H / 2, stillTex(s.still)))
+          // C1 / C11 / C11_PERFECT picnic stills — a few honey paw prints on the grass.
+          if (isPicnicStill(s.still)) overlayPicnicPaws(scene, c)
         }
         if (s.text) {
           // Words written on the illustration (e.g. the note) — never baked into the art.

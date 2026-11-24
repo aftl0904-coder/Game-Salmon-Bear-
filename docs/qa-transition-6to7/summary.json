@@ -1,0 +1,33 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "name": "chase-boot",
+      "ok": true,
+      "info": {
+        "key": "bike",
+        "chaseTitle": true,
+        "line": true,
+        "hasDebris": true,
+        "hasTrash": true
+      }
+    },
+    {
+      "name": "skip-to-s7",
+      "ok": true,
+      "after": {
+        "playActive": true,
+        "stageNo": 7,
+        "exhibit": true
+      }
+    },
+    {
+      "name": "wiring-note",
+      "ok": true,
+      "wiring": {
+        "dest7": true
+      },
+      "note": "GameScene goNextStage 6→7 next=bike"
+    }
+  ]
+}
