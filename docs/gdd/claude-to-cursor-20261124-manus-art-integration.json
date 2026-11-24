@@ -6,10 +6,11 @@
   "branch": "cursor/manus-art-integration-2610（由最新 origin/main 開；#124 故事深度已 merge）",
   "sources": [
     "origin/manus/c2-art-batch2-2610（qhead 16 張、story 5 張、prop-escalator）",
-    "origin/manus/c2-story-props-2610 @3c604a3（public/art/c2/story/ 6 張）"
+    "origin/manus/c2-story-props-2610 @3c604a3（public/art/c2/story/ 6 張）",
+    "origin/manus/xmas-epilogue-2610 @3bf5be0（public/art/story/xmas-01.png、xmas-02.png）"
   ],
   "step0_bring_files": "git checkout <manus branch> -- <路徑> 將 PNG 帶入你嘅 branch（唔好 merge Manus 成條 branch，只拎 public/art 檔案同 docs/qa-* 截圖）",
-  "pupu_rule": "qhead-pupu.png：開工時睇 manus/c2-art-batch2-2610 最新版。如果仍然係『紅色衫』（似 Winnie the Pooh），唔好用，噗噗 Loading 頭繼續用現有 interim crop；如果已改成橙啡色衫就用。喺回報寫明用咗邊個",
+  "pupu_rule": "qhead-pupu.png 已由 Manus 改好（manus/c2-art-batch2-2610 @7228674，橙啡色衫），Claude 已驗：直接用最新版",
   "tasks": [
     {
       "id": "M1_LOADING_QHEADS",
@@ -48,9 +49,20 @@
         "修正重疊：扶手電梯唔可以同購物小車／其他 prop 重疊；同一 x 範圍內 prop 最少相距 24px；必要時移開小車，唔好移扶手電梯（佢係終點 goal）",
         "截圖第6關扶手電梯位置（手機 390×844 橫向）"
       ]
+    },
+    {
+      "id": "M5_XMAS_STILLS",
+      "files": "public/art/story/xmas-01.png、xmas-02.png（1280×720）",
+      "do": [
+        "帶入檔案並加入 heroAnims.ts STORY_STILLS",
+        "Fun-1 F10 聖誕番外篇會用呢兩張（如 Fun-1 未做，只需載入，唔使做番外篇）"
+      ]
     }
   ],
-  "rules": ["唔改任何遊戲數值／對白", "唔改 Manus PNG 內容（只可整數倍放大顯示）"],
+  "rules": [
+    "唔改任何遊戲數值／對白",
+    "唔改 Manus PNG 內容（只可整數倍放大顯示）"
+  ],
   "acceptance": [
     "npm run build PASS；npm run validate:data PASS",
     "QA 腳本 scripts/qa/manus-art-integration.mjs：assert 全部新 texture key 存在且尺寸正確；Loading 畫面截圖；第6關扶手電梯截圖；c2-ken-photo 遊戲內截圖；s6/s7 boss intro 截圖",
