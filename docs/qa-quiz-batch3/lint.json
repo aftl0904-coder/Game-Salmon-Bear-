@@ -1,0 +1,48 @@
+{
+  "file": "/tmp/gsb-quiz-batch3-2610/data/quiz-mall.json",
+  "ok": false,
+  "total": 300,
+  "errorCount": 8,
+  "errors": [
+    {
+      "id": "mall-15",
+      "rule": "ban-prompt",
+      "detail": "收銀區每分鐘到達18人，3個櫃位各每分鐘服務5人；忽略隨機波動，隊伍每分鐘淨增加幾多人？"
+    },
+    {
+      "id": "mall-33",
+      "rule": "ban-prompt",
+      "detail": "兩個租戶方案的年租收入均為120萬元；甲有20%機率全年收不到租，乙有5%機率全年收不到租，其餘情況全收，忽略其他差異。乙的期望年收租較甲高幾多？"
+    },
+    {
+      "id": "mall-35",
+      "rule": "length",
+      "detail": "lengths 4,1,3,1 (max/min > 3)"
+    },
+    {
+      "id": "hard-13",
+      "rule": "length",
+      "detail": "lengths 7,7,7,2 (max/min > 3)"
+    },
+    {
+      "id": "iq-09",
+      "rule": "length",
+      "detail": "lengths 1,1,1,10 (max/min > 3)"
+    },
+    {
+      "id": "iq-13",
+      "rule": "length",
+      "detail": "lengths 2,1,2,5 (max/min > 3)"
+    },
+    {
+      "id": "iq-20",
+      "rule": "ban-prompt",
+      "detail": "工作可任意分割，每人效率相同且固定，沒有協作損耗；6人8日完成。先由4人做3日，餘下改由6人做，總共幾日完成？"
+    },
+    {
+      "id": "iq-32",
+      "rule": "length",
+      "detail": "lengths 1,1,1,4 (max/min > 3)"
+    }
+  ]
+}

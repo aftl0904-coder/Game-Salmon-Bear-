@@ -1,0 +1,28 @@
+{
+  "from": "Claude",
+  "to": "Cursor",
+  "date": "2026-11-24",
+  "title": "問答第3＋4批：商場30＋IQ40＋數學／難題45題改寫（Copilot稿，Claude已核算）",
+  "branch": "cursor/quiz-batch3-2610（由最新 origin/main 開；quiz-fixes #123 已 merge）",
+  "source": [
+    "docs/bible/quiz-batch3-copilot.json",
+    "docs/bible/quiz-batch4-copilot.json"
+  ],
+  "steps": [
+    "讀兩個 source 嘅 rewritten 陣列（70＋45＝115 題），按 id 覆蓋 data/quiz-mall.json 同 id 題目：prompt、choices（choices[0] 係正確答案 → answerIndex 0）、difficulty（n→normal、h→hard）",
+    "兩個 source 嘅 kept_ids 共 25 題唔郁",
+    "Claude 調整：以下題目心算量大，difficulty 強制改 hard（多 3 秒）：Q042、mall-17、mall-31、iq-01、iq-06",
+    "why 欄位：如 schema 冇 explanation 欄，就唔寫入題庫；有來源 URL 嘅題（batch3：Q047、mall-12、mall-13、mall-21、mall-28；batch4：Q055、math-30、Q081）把 URL 放入 source 欄",
+    "唔好改題目字眼；如發現 lint 唔過（例如選項長短、絕對字眼），列出 id 同原因回報，唔好自己改寫",
+    "batch4 Q060 題幹「80個月租位，每位$40一天」改為「80個時租車位，每位每日收$40」（Claude 改字，避免月租／日租矛盾）"
+  ],
+  "acceptance": [
+    "npm run build PASS；npm run validate:data PASS",
+    "node scripts/qa/quiz-option-lint.mjs 0 錯",
+    "題庫總數仍然 300；iq 難題數 ≥ 14",
+    "grep 題庫冇「按揭／供樓／睇樓／買樓」",
+    "QA 腳本 assert：115 題 prompt 同 source 一致（Q060 除外）、answerIndex 全部 0、batch3 指定 5 題 difficulty=hard",
+    "手機截圖 2 張（一條長題、一條難題）放 docs/qa-quiz-batch3/"
+  ],
+  "deliver": "push 後回報 branch＋commit＋lint 結果；唔使開 PR"
+}
