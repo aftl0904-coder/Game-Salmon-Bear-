@@ -489,5 +489,9 @@
     "from": 7,
     "kind": "tilt",
     "skin": "cart"
-  }
+  },
+  "spikes": [],
+  "durians": [],
+  "friends": [],
+  "crushers": []
 }

@@ -1,3 +1,4 @@
+import { c3Enabled } from './c2Gate'
 import { RENDER_SCALE } from './display'
 import Phaser from 'phaser'
 import { playSong, SFX, unlockAudio } from './audio'
@@ -119,7 +120,7 @@ export class MapScene extends Phaser.Scene {
       this.anims.create({ key: 'map-duo-walk', frames: this.anims.generateFrameNumbers('map-walk-duo', { start: 0, end: 3 }), frameRate: 8, repeat: -1 })
     }
 
-    const maxOpen = Math.min(7, Math.max(data.to, data.from))
+    const maxOpen = Math.min(c3Enabled() ? 8 : 7, Math.max(data.to, data.from))
     this.openStages = Object.keys(cm.places)
       .map(Number)
       .filter((i) => i <= maxOpen)
