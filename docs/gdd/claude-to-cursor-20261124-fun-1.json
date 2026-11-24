@@ -2,7 +2,7 @@
   "from": "Claude",
   "to": "Cursor",
   "date": "2026-11-24",
-  "title": "Fun-1：情感小時刻、合作場面、小驚喜文字、節奏修剪、休息 6 幣、2026 聖誕番外篇",
+  "title": "Fun-1：情感小時刻、合作場面、小驚喜文字、節奏修剪、休息 6 幣、2026 聖誕番外篇＋攻略更新",
   "approved_by": "Alan 2026-11-24（全選 4 項＋聖誕番外由 Claude 寫對白＋休息改 6 幣）",
   "branch": "cursor/fun-1-2610（由最新 origin/main 開）",
   "source_analysis": "docs/bible/fun-analysis-copilot.json（參考；以本工單為準）",
@@ -97,23 +97,76 @@
         "xmas-02": "public/art/story/xmas-02.png（1280×720，Manus 畫緊；未到就用 cover.png 暫代）"
       },
       "script": [
-        { "still": "xmas-01", "line": "【番外篇・2026 聖誕】" },
-        { "still": "xmas-01", "line": "旁白：冒險暫停一晚。今晚冇蜜僵，冇大佬。" },
-        { "still": "xmas-01", "line": "琪寶寶：嘩，大家都嚟齊喇？" },
-        { "still": "xmas-01", "line": "熊仔：我哋留咗兩個位俾你哋㗎！" },
-        { "still": "xmas-01", "line": "招積熊：我冇特登等㗎，只係啱啱得閒。" },
-        { "still": "xmas-01", "line": "噗噗：……蜜。" },
-        { "still": "xmas-01", "line": "倫寶：得啦，今晚成罐都係你嘅。" },
-        { "still": "xmas-02", "line": "琪寶寶：咁我呢？" },
-        { "still": "xmas-02", "line": "倫寶：你嘅喺度。" },
-        { "still": "xmas-02", "line": "琪寶寶：……又係遊戲？" },
-        { "still": "xmas-02", "line": "倫寶：呢隻遊戲，係我哋兩個嘅。" },
-        { "still": "xmas-02", "line": "琪寶寶：傻佬。" },
-        { "still": "xmas-02", "line": "大家：聖誕快樂！" },
-        { "still": "xmas-02", "line": "2026 聖誕快樂 —— 冒險，待續。" }
+        {
+          "still": "xmas-01",
+          "line": "【番外篇・2026 聖誕】"
+        },
+        {
+          "still": "xmas-01",
+          "line": "旁白：冒險暫停一晚。今晚冇蜜僵，冇大佬。"
+        },
+        {
+          "still": "xmas-01",
+          "line": "琪寶寶：嘩，大家都嚟齊喇？"
+        },
+        {
+          "still": "xmas-01",
+          "line": "熊仔：我哋留咗兩個位俾你哋㗎！"
+        },
+        {
+          "still": "xmas-01",
+          "line": "招積熊：我冇特登等㗎，只係啱啱得閒。"
+        },
+        {
+          "still": "xmas-01",
+          "line": "噗噗：……蜜。"
+        },
+        {
+          "still": "xmas-01",
+          "line": "倫寶：得啦，今晚成罐都係你嘅。"
+        },
+        {
+          "still": "xmas-02",
+          "line": "琪寶寶：咁我呢？"
+        },
+        {
+          "still": "xmas-02",
+          "line": "倫寶：你嘅喺度。"
+        },
+        {
+          "still": "xmas-02",
+          "line": "琪寶寶：……又係遊戲？"
+        },
+        {
+          "still": "xmas-02",
+          "line": "倫寶：呢隻遊戲，係我哋兩個嘅。"
+        },
+        {
+          "still": "xmas-02",
+          "line": "琪寶寶：傻佬。"
+        },
+        {
+          "still": "xmas-02",
+          "line": "大家：聖誕快樂！"
+        },
+        {
+          "still": "xmas-02",
+          "line": "2026 聖誕快樂 —— 冒險，待續。"
+        }
       ],
       "impl": "用現有 cutscene.ts／EndingC2Scene 嘅逐句對白＋靜圖機制（撳掣下一句，可跳過）；唔加新音樂系統，用現有溫和 BGM",
       "note": "番外篇唔影響主線；噗噗喺度出現係聖誕特別篇，唔使解釋"
+    },
+    {
+      "id": "F11_GUIDE_UPDATE",
+      "file": "public/guide/index.html",
+      "source": "docs/bible/guide-update2-copilot.json（Copilot 稿，Claude 已審）",
+      "do": [
+        "按每個 section 嘅 guide_location 放入攻略頁：W1 三小節入『四、核心機制』；W2『一齊玩貼士』新增喺『三、操作／HUD』之後；W3 取代『四之4 攤檔小遊戲』入面搶答部份；W4 5 條加入『七、難點、原因、破解』（同現有表格格式一致，重複題目就取代舊條）；W5 2 條加入『五、秘技』",
+        "文字一字不改；『•』開頭嘅變成清單項目",
+        "要同 F1–F10 同一個 branch，咁攻略同遊戲改動同時上線"
+      ],
+      "check": "可見正文唔可以出現 Ken／Leon／守護者／第8關；手機 390×844 截圖新增嘅 4 個位置放 docs/qa-fun-1/"
     }
   ],
   "acceptance": [
