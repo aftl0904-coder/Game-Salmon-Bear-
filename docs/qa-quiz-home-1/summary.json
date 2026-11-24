@@ -1,0 +1,54 @@
+{
+  "ok": true,
+  "checks": {
+    "unitPinAllDevNormal": true,
+    "unitPinSampleIds": [
+      "dev-04",
+      "dev-41",
+      "dev-15",
+      "dev-70",
+      "dev-39",
+      "dev-69",
+      "dev-18",
+      "dev-21",
+      "dev-38",
+      "dev-33",
+      "dev-32",
+      "dev-48"
+    ],
+    "unitUnpinnedFirstCats": [
+      "developer"
+    ]
+  },
+  "modes": {
+    "1p": {
+      "firstId": "dev-41",
+      "firstPrompt": "『地積比率』係指咩？",
+      "firstCategory": "developer",
+      "firstDifficulty": "normal",
+      "pinDoneAfterFirst": true,
+      "secondFirstId": "dev-35",
+      "secondAlsoPinnedDev": true,
+      "stage7quizHomeFirstDone": false,
+      "shots": [
+        "1p-first-q.png",
+        "1p-second-open.png"
+      ]
+    },
+    "2p": {
+      "firstId": "dev-37",
+      "firstPrompt": "地政總署賣地頁指出，賣地表以外嘅政府土地（例如加油站用地）會點？",
+      "firstCategory": "developer",
+      "firstDifficulty": "normal",
+      "pinDoneAfterFirst": true,
+      "secondFirstId": "dev-36",
+      "secondAlsoPinnedDev": true,
+      "stage7quizHomeFirstDone": false,
+      "shots": [
+        "2p-first-q.png",
+        "2p-second-open.png"
+      ]
+    }
+  },
+  "errors": []
+}

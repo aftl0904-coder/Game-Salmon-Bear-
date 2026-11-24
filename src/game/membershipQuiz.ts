@@ -10,10 +10,33 @@ import quizRaw from '../../data/quiz-mall.json'
 type Q = {
   id: string
   category: string
-  difficulty: 'normal' | 'hard'
+  difficulty: 'normal' | 'medium' | 'hard'
   prompt: string
   choices: string[]
   answerIndex: number
+}
+
+/** quiz-home-1: ban 按揭／買樓／睇樓／供樓 from the pinned first question. */
+const HOME_TOPIC_BAN = ['按揭', '買樓', '睇樓', '供樓'] as const
+
+function isHomeTopicBanned(q: Q): boolean {
+  const blob = `${q.prompt}\n${q.choices.join('\n')}`
+  return HOME_TOPIC_BAN.some((k) => blob.includes(k))
+}
+
+/**
+ * Simple 地產發展 (developer) pool for stage-6 first-open pin.
+ * 簡單 = difficulty === 'normal' only (exclude medium/hard).
+ */
+function simpleDeveloperPool(): Q[] {
+  return BANK.questions.filter(
+    (q) => q.category === 'developer' && q.difficulty === 'normal' && !isHomeTopicBanned(q),
+  )
+}
+
+export type PickRoundOpts = {
+  /** Stage 6 first open this play: pin Q1 from simple developer pool. */
+  pinHomeFirst?: boolean
 }
 
 type Bank = {
@@ -102,8 +125,11 @@ const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'la
  * E7 mix — 6 normal: developer 2、hanglung 1、law|hr|labour 1、iq 1、math|mall 1;
  * 1 hard (any category, iq hard ok). Hard slot indices 3–6.
  * Fallback when a bucket is empty: developer → law → others.
+ *
+ * quiz-home-1: when `pinHomeFirst`, replace slot 0 with a simple developer
+ * (地產發展) question; later opens keep the ordinary mix.
  */
-function pickRound(rng: () => number): Q[] {
+function pickRound(rng: () => number, opts?: PickRoundOpts): Q[] {
   const seenList = loadSeenIds()
   const seen = new Set(seenList)
   const normals = BANK.questions.filter((q) => q.difficulty !== 'hard')
@@ -151,7 +177,23 @@ function pickRound(rng: () => number): Q[] {
   const hardSlot = 3 + Math.floor(rng() * 4) // index 3..6
   const round = six.slice(0, 6)
   round.splice(hardSlot, 0, hard)
-  const out = round.slice(0, 7)
+  let out = round.slice(0, 7)
+
+  if (opts?.pinHomeFirst) {
+    const homePool = simpleDeveloperPool()
+    const pinned = pickFromPool(homePool, 1, seen, new Set(), rng)[0] ?? shuffle(homePool, rng)[0]
+    if (pinned) {
+      const rest = out.filter((q) => q.id !== pinned.id)
+      out = [pinned, ...rest].slice(0, 7)
+      while (out.length < 7) {
+        const more = pickFromPool(normals, 1, seen, new Set(out.map((q) => q.id)), rng)
+        if (!more.length) break
+        out.push(more[0]!)
+      }
+      out = out.slice(0, 7)
+    }
+  }
+
   const nextSeen = [...seenList, ...out.map((q) => q.id)]
   // If bank nearly exhausted, allow reshuffle next time
   const normalIds = new Set(normals.map((q) => q.id))
@@ -165,8 +207,8 @@ function pickRound(rng: () => number): Q[] {
 }
 
 /** QA / Playwright: run pickRound without Phaser. */
-export function pickRoundForQa(rng: () => number = Math.random): Q[] {
-  return pickRound(rng)
+export function pickRoundForQa(rng: () => number = Math.random, opts?: PickRoundOpts): Q[] {
+  return pickRound(rng, opts)
 }
 
 type ShuffledQ = Q & { displayChoices: string[]; correctIndex: number }
@@ -238,7 +280,11 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
 
   const twoP = scene.registry.get('playMode') === '2p'
   const rng = () => Math.random()
-  const round = shuffleRoundChoices(pickRound(rng), rng)
+  // quiz-home-1: stage 6 only — first open this play pins Q1 from simple developer pool.
+  const stageNo = Number(scene.registry.get('stageNo') ?? 0)
+  const pinHomeFirst = stageNo === 6 && !scene.registry.get('quizHomeFirstDone')
+  if (pinHomeFirst) scene.registry.set('quizHomeFirstDone', true)
+  const round = shuffleRoundChoices(pickRound(rng, { pinHomeFirst }), rng)
   const scoring = BANK.scoring
   const timeoutPenalty = BANK.timeoutPenalty ?? -2
 
