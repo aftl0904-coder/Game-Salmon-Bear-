@@ -15,6 +15,7 @@ const files = [
   'characters.mjs',
   'companion.mjs',
   'stage7.mjs',
+  'stage8.mjs',
 ]
 let failed = 0
 for (const f of files) {
