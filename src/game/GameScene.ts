@@ -550,6 +550,8 @@ export class GameScene extends Phaser.Scene {
     this.tower = ST.theme === 'tower'
     this.mall = ST.theme === 'mall'
     this.exhibit = this.stageNo === 7
+    // quiz-home-1: each stage-6 play entry may pin first quiz open once.
+    if (this.stageNo === 6) this.registry.set('quizHomeFirstDone', false)
     this.puffDeparturePending = false
     this.stage7Events = []
     this.bossSushiSpawned = false

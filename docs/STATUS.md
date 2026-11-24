@@ -1,5 +1,10 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## Quiz-home-1（`cursor/quiz-home-1-2610`；2026-11-24）
+- 第6關會員中心搶答：每次玩第一次開搶答，Q1 固定由 `developer`（地產發展）`normal` 簡單題池抽取；排除按揭／買樓／睇樓／供樓；之後開搶答照舊隨機。
+- 第7／8關唔受影響（pin 只在 `stageNo === 6`）。
+- QA 1P／2P：`docs/qa-quiz-home-1/`（含題目 id 截圖）。draft／compare，等 Alan merge。
+
 ## Polish-1（`cursor/polish-1-2610`；2026-11-24）
 - M6 壽司／榴槤／營地三件／蜜腳印已接入；榴槤原尺寸 18×22 場上可辨；蜜腳印用 sprite alpha 漸淡（strip 第 3 格空白）。
 - 第1–7關 `signs:[{x,text}]` 提示牌（第1關4 + 第2–7關19）；只顯示唔阻路。
