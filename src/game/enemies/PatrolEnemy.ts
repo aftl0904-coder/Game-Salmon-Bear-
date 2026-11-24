@@ -368,8 +368,8 @@ export class PatrolEnemy extends Enemy {
       // Charger: long, readable run-up so the hero can jump the dash.
       this.windup = aiNum('fish', 'telegraphMs', 800)
     } else if (this.species === 'barrel') {
-      // 疾風桶：固定 600ms 起手（唔影響其他走 else 嘅種類）。
-      this.windup = 600
+      // systems-2: 疾風桶固定 800ms 起手（預警至少 0.8 秒；唔影響其他走 else 嘅種類）。
+      this.windup = 800
     } else {
       this.windup = Math.min(420, Math.max(220, ms))
     }
