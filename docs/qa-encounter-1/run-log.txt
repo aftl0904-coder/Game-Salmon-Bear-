@@ -1,0 +1,4 @@
+setup {"encCount":1,"claimed":[2440,2620,2780,2940],"pendingHasClaimed":false}
+locked {"phase":"wave","waveIdx":0,"bounds":{"x":2400,"w":640},"tagged":[{"species":"s7shield","x":3080},{"species":"s7can","x":3092}]}
+after-w1 {"phase":"wave","waveIdx":1,"tagged":2,"bang":false}
+done {"phase":"done","finished":true,"camFull":5700}

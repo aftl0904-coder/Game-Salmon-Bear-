@@ -532,5 +532,16 @@
   "junkUnlockX": 1200,
   "teachSlipX0": 360,
   "teachSlipX1": 520,
-  "elevatorRemovedNote": "E5 playtest8: elevator was same-floor cutscene only (no teleport). Deleted; escalator kept."
+  "elevatorRemovedNote": "E5 playtest8: elevator was same-floor cutscene only (no teleport). Deleted; escalator kept.",
+  "encounters": [
+    {
+      "x0": 2400,
+      "x1": 3100,
+      "waves": [
+        { "side": "R", "from": [2440, 2620] },
+        { "side": "L", "from": [2780, 2940] }
+      ],
+      "note": "Encounter-1: 施工區中段鎖鏡頭；波1 盾+罐由右入，波2 雙跳籃由左入。總數不變。"
+    }
+  ]
 }

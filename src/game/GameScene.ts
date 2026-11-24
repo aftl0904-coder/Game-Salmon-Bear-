@@ -8,7 +8,8 @@ import {
   snapTilePosition,
   snapWorldActors,
 } from './pixelSnap'
-import { SFX, playSong, stopBgm, unlockAudio, tickExhibitAmbient, resetExhibitAmbient } from './audio'
+import { SFX, playSong, stopBgm, unlockAudio, tickExhibitAmbient, resetExhibitAmbient, setBgmDucked } from './audio'
+import { EncounterController, rosterForEncounter, type EncounterDef } from './encounter'
 import { Stage7World, type Stage7Data } from './stage7World'
 import { calcScore, saveScore, loadScores } from './score'
 import { unlockStage, markFriendSaved } from './progress'
@@ -247,6 +248,8 @@ type Stage1 = {
   junkUnlockX?: number
   teachSlipX0?: number
   teachSlipX1?: number
+  /** Encounter-1: camera-lock wave fights (stage 6+). */
+  encounters?: EncounterDef[]
   trainer?: typeof stage7Raw.trainer
   reactionX?: number
   staticDecor?: typeof stage7Raw.staticDecor
@@ -498,6 +501,9 @@ export class GameScene extends Phaser.Scene {
   private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
   private exhibitMid: { B: Phaser.GameObjects.TileSprite | null; C: Phaser.GameObjects.TileSprite | null } = { B: null, C: null }
   private bossFight = false
+  /** Encounter-1 controllers (stage 6 construction lock). */
+  private encounters: EncounterController[] = []
+  private encounterClaimedXs = new Set<number>()
   /** One 極上壽司船 (100% heal) dropped at the arena entrance per boss — never twice (continue/retry). */
   private bossSushiSpawned = false
   /** Friends freed by hand this run (clear card + perfect ending). */
@@ -562,6 +568,8 @@ export class GameScene extends Phaser.Scene {
     this.s2Pending = []
     this.queen = null
     this.bossFight = false
+    this.encounters = []
+    this.encounterClaimedXs = new Set()
     this.friendsSaved = []
     this.coffeeDone = false
     this.memoryDone = false
@@ -3665,6 +3673,7 @@ export class GameScene extends Phaser.Scene {
   private tickStage6(dt: number) {
     this.s3world?.update(dt)
     this.s6world?.update(dt)
+    for (const enc of this.encounters) enc.update(dt)
     // T3: escalator belt for enemies + grounded coin drops (heroes belt in steerHero).
     if (this.s6world && !this.exhibit) {
       for (const o of this.enemies.getChildren()) {
@@ -7049,6 +7058,10 @@ export class GameScene extends Phaser.Scene {
       reviveActor(h, cx + (h.role === 'girl' ? 60 : 0), laneY(LANE_DEFAULT), this.time.now, 2000)
       h.snapToLane(LANE_DEFAULT, h.x)
     }
+    // Encounter-1: dying inside a lock → checkpoint revive resets the encounter.
+    for (const enc of this.encounters) {
+      if (enc.active) enc.resetFromCheckpoint()
+    }
     this.emitHealth()
     floatText(this, this.boy.x, this.boy.y - 50, '續關！', '#ffe08a')
     this.emitScore('投幣續關！短暫無敵　繼續奪蜜')
@@ -7160,12 +7173,62 @@ export class GameScene extends Phaser.Scene {
    * 分段出場：開場冇怪 → 行一段先出第一波 → 清完先解鎖右手邊後續波。
    * unlockX = 玩家 leadX 達到才啟用（inactive 直到解鎖）。
    */
+  private setupEncounters() {
+    this.encounters = []
+    this.encounterClaimedXs = new Set()
+    const defs = ST.encounters ?? []
+    if (!defs.length) return
+    for (const def of defs) {
+      const roster = rosterForEncounter(ST.enemies, def)
+      for (const r of roster) this.encounterClaimedXs.add(r.x)
+      const ctrl = new EncounterController(def, roster, {
+        scene: this,
+        worldH: WORLD_H,
+        floorY: () => LANE_FLOOR_Y,
+        leadX: () => this.leadX(),
+        heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
+        isSolo: () => this.mode === '1p',
+        spawn: (species, enterX, elite, product) => this.spawnS2(species, enterX, elite, product),
+        liveTagged: () =>
+          this.enemies.getChildren().filter((o) => {
+            const e = o as Phaser.Physics.Arcade.Sprite & { active: boolean; fsm?: string }
+            return e.active && e.getData('encounter') === true && e.fsm !== 'DEAD'
+          }) as Array<Phaser.Physics.Arcade.Sprite & { active: boolean; x: number; y: number; fsm?: string }>,
+        destroyTagged: () => {
+          for (const o of [...this.enemies.getChildren()]) {
+            const e = o as Phaser.Physics.Arcade.Sprite
+            if (e.getData('encounter') === true) {
+              try {
+                e.disableBody(true, true)
+                e.destroy()
+              } catch {
+                /* gone */
+              }
+            }
+          }
+        },
+        setCameraBounds: (x0, x1) => {
+          this.cameras.main.setBounds(x0, 0, x1 - x0, WORLD_H)
+        },
+        clearCameraBounds: () => {
+          this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
+        },
+        onQuietStart: () => setBgmDucked(true),
+        onQuietEnd: () => setBgmDucked(false),
+      })
+      this.encounters.push(ctrl)
+    }
+  }
+
   private placeEnemies() {
     // data/levels/stage1.json — each enemy walks in from the screen edge once lead ≥ unlockX.
     // 單打少啲怪，雙打多啲 (Alan, 2026-10-27): one hero drops every 4th enemy past the first
     // wave; two heroes get an extra copy of every 3rd, a little behind it.
     const solo = this.mode === '1p'
+    this.setupEncounters()
     const place = (en: Stage1['enemies'][number], dx = 0) => {
+      // Encounter-1: claimed X stay out of normal unlock — controller spawns them.
+      if (dx === 0 && this.encounterClaimedXs.has(en.x)) return
       if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can'].includes(en.species)) {
         this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
@@ -7401,18 +7464,23 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private spawnS2(species: string, x: number, elite = false, product = false) {
+  private spawnS2(
+    species: string,
+    x: number,
+    elite = false,
+    product = false,
+  ): Phaser.Physics.Arcade.Sprite | null {
     if (species === 'lobster') {
       const e = this.addS2Enemy(new LobsterGuard(this, x, this.s2Hooks())).setFlipX(true)
       if (elite) e.markElite()
-      return
+      return e
     }
     if (species === 'stallkeeper') {
       const k = new StallKeeper(this, x, this.s2Hooks(), { knife: (kx, ky, dir, high) => this.throwKnife(kx, ky, dir, high) })
       k.stall = this.stalls.find((st) => Math.abs(st.x - x) < 90) ?? null
       this.addS2Enemy(k).setFlipX(true)
       if (elite) k.markElite()
-      return
+      return k
     }
     if (species === 'mirrorshade') {
       const m = this.addS2Enemy(new MirrorShade(this, x, this.s2Hooks()))
@@ -7425,64 +7493,62 @@ export class GameScene extends Phaser.Scene {
         playFx(this, 'enemy-poof', fx, LANE_FLOOR_Y - 20)
         floatText(this, m.x, m.y - 60, '分身！睇地下倒影', '#c8d0ff', { size: 11, dur: 900 })
       }
-      return
+      return m
     }
     if (species === 'guard') {
       const z = new GuardZombie(this, x, this.s2Hooks(), this.exhibit && x >= 1995 && x < 3135)
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
-      return
+      return z
     }
     if (species === 'robotarm') {
-      this.addS2Enemy(new RobotArm(this, x, this.armHooks()))
-      return
+      return this.addS2Enemy(new RobotArm(this, x, this.armHooks()))
     }
     if (species === 's7charge') {
       const z = new ChargeHoneyZombie(this, x, this.s2Hooks())
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
-      return
+      return z
     }
     if (species === 's7hop') {
       const z = new HopCage(this, x, this.s2Hooks())
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
-      return
+      return z
     }
     if (species === 's7shield') {
-      this.addS2Enemy(new ShieldKeeper(this, x, this.s2Hooks())).setFlipX(true)
-      return
+      return this.addS2Enemy(new ShieldKeeper(this, x, this.s2Hooks())).setFlipX(true)
     }
     if (species === 's7can') {
-      this.addS2Enemy(
+      return this.addS2Enemy(
         new CanThrower(this, x, this.s2Hooks(), {
           floorY: () => LANE_FLOOR_Y,
           throwCan: (cx, cy, tx) => this.throwExhibitCan(cx, cy, tx),
         }),
       ).setFlipX(true)
-      return
     }
     if (species === 'honeyzombie') {
       const z = product ? new ProductZombie(this, x, this.s2Hooks()) : new HoneyZombie(this, x, this.s2Hooks())
       z.onSplatter = (sx) => this.honeySplat(sx)
       this.addS2Enemy(z).setFlipX(true)
       if (elite) z.markElite()
-      return
+      return z
     }
     if (species === 'taximonster') {
       const t = this.addS2Enemy(new TaxiMonster(this, x, this.s2Hooks())).setFlipX(true)
       if (elite) t.markElite()
-      return
+      return t
     }
     if (species === 'clockpunch') {
       const c = this.addS2Enemy(new ClockPunch(this, x, this.s2Hooks(), { burst: (bx, by) => this.clockBurst(bx, by) })).setFlipX(true)
       if (elite) c.markElite()
-      return
+      return c
     }
     const e = species === 'bee' ? new BeeSoldier(this, x, this.s2Hooks()) : new HoneySquirrel(this, x, this.s2Hooks())
     this.addS2Enemy(e)
     e.setFlipX(true)
     if (elite) e.markElite()
+    return e
   }
 
   /** 蜜僵 hit: a decorative splat of fake honey underfoot — visual only, no sticky floor. */
