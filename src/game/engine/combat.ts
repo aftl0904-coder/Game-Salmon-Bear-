@@ -83,9 +83,19 @@ export function beginDeathPose(h: CombatActor) {
   setDiePoseVisual(h, h.baseScale, h.facing)
 }
 
-/** Full restore after coin continue. */
-export function reviveActor(h: CombatActor, x: number, y: number, now: number, graceMs = 2000) {
-  h.hp = MAX_HP
+/**
+ * Full restore after coin continue.
+ * `maxHp` defaults to MAX_HP; callers with 大心心／運符 should pass heroMaxHp(h).
+ */
+export function reviveActor(
+  h: CombatActor,
+  x: number,
+  y: number,
+  now: number,
+  graceMs = 2000,
+  maxHp: number = MAX_HP,
+) {
+  h.hp = maxHp
   h.pose = 'idle'
   h.alive = true
   h.hurtCd = 0
