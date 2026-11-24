@@ -1,0 +1,497 @@
+{
+  "changes": [
+    {
+      "item": "Q1：第6、7關一般小怪HP",
+      "old": "HP 2至3；倫寶傷害3，一槍擊殺。",
+      "new": {
+        "stage6": {
+          "charge": 6,
+          "hop": 6,
+          "shield": 6,
+          "throw": 9
+        },
+        "stage7": {
+          "charge": 9,
+          "hop": 9,
+          "shield": 6,
+          "throw": 9
+        },
+        "elite_if_existing": {
+          "stage6": 12,
+          "stage7": 15,
+          "maximum_recommended": 18
+        }
+      },
+      "reason": "倫寶打6／9／12／15／18HP分別要2／3／4／5／6槍；盾兵已有正面防禦，先維持6HP，避免繞背後仍要長時間磨血。只調現有精英數值，不新增精英系統。",
+      "priority": "高",
+      "risk": "這是按倫寶有效命中次數計算，不能同時代表琪寶寶的近戰次數；先不要把所有普通敵人加至12HP。"
+    },
+    {
+      "item": "Q1：現有小怪擊殺次數及時間核算",
+      "old": "第1至5關一般怪HP6、精銳HP9；第6至7關HP2至3。",
+      "new": {
+        "definition": "以下時間由第一發出手計至最後一發出手，不含子彈飛行、追敵、繞盾及閃避；是連續命中的理論下限。",
+        "rows": [
+          {
+            "hp": 2,
+            "ranged_hits": 1,
+            "ranged_normal_seconds": 0,
+            "ranged_spam_seconds": 0,
+            "melee_hits": 2
+          },
+          {
+            "hp": 3,
+            "ranged_hits": 1,
+            "ranged_normal_seconds": 0,
+            "ranged_spam_seconds": 0,
+            "melee_hits": 3
+          },
+          {
+            "hp": 6,
+            "ranged_hits": 2,
+            "ranged_normal_seconds": 0.893,
+            "ranged_spam_seconds": 1.429,
+            "melee_hits": 5
+          },
+          {
+            "hp": 9,
+            "ranged_hits": 3,
+            "ranged_normal_seconds": 1.786,
+            "ranged_spam_seconds": 2.858,
+            "melee_hits": 7
+          },
+          {
+            "hp": 12,
+            "ranged_hits": 4,
+            "ranged_normal_seconds": 2.679,
+            "ranged_spam_seconds": 4.286,
+            "melee_hits": 9
+          },
+          {
+            "hp": 15,
+            "ranged_hits": 5,
+            "ranged_normal_seconds": 3.572,
+            "ranged_spam_seconds": 5.715,
+            "melee_hits": 12
+          },
+          {
+            "hp": 18,
+            "ranged_hits": 6,
+            "ranged_normal_seconds": 4.465,
+            "ranged_spam_seconds": 7.144,
+            "melee_hits": 14
+          }
+        ],
+        "melee_assumption": "每次由第一段開始，傷害按1、1、2循環，沒有漏招或連擊重置。",
+        "stage1to5_recommendation": "一般怪6HP、精銳9HP暫時保留，先改速度及出招節奏。"
+      },
+      "reason": "第6、7關比前期更易，主要是血量由6至9跌至2至3，直接跨過倫寶一槍擊殺門檻。",
+      "priority": "高",
+      "risk": "沒有近戰每段出手時間、連擊間隔及重置條件，無法計算琪寶寶的真實擊殺秒數。"
+    },
+    {
+      "item": "Q2：七個Boss普通難度HP",
+      "old": [180, 36, 36, 40, 48, 55, 55],
+      "new": [54, 57, 60, 63, 66, 69, 72],
+      "reason": "以每次破綻有效命中兩發正面魚籽，即6傷害為基準，分別需要9、10、10、11、11、12、12次破綻；配合下方完整週期，模型時間由93秒逐步增至143.4秒。",
+      "priority": "高",
+      "risk": "只適用於全部Boss已改成破綻期才可受傷的前提；不能先加第2至7關HP、之後才補節奏，也不能把此模型視為雙人或全程背擊的時間保證。"
+    },
+    {
+      "item": "Q2：Boss週期的時間預算",
+      "old": "GUARD1500ms、OPENING2500ms、BREATHER2000ms；WARN及ATTACK未完整提供。",
+      "new": {
+        "guard_ms": 1500,
+        "opening_ms": 2500,
+        "breather_ms": 2000,
+        "phase_break_ms": 2500,
+        "warning_targets_ms_by_stage": [800, 850, 900, 950, 1000, 1050, 1100],
+        "attack_average_budget_ms_by_stage": [3200, 3400, 3600, 3800, 4000, 4200, 4600],
+        "cycle_seconds_by_stage": [10, 10.25, 10.5, 10.75, 11, 11.25, 11.7],
+        "application": "ATTACK是現有招式的平均時間預算，不是要求每招一律相同；先量度實際招式，再只用現有持續時間、收招時間等數字調整。",
+        "warning_floor": "每招實際預警取現值與建議值的較大者，絕不縮短既有預警。"
+      },
+      "reason": "HP只能決定大約幾輪，不能單獨決定90至150秒；必須同時列明每輪時間，才有可檢驗的計算。",
+      "priority": "高",
+      "risk": "若現有ATTACK平均只有1500ms，不能聲稱上列HP自然會達標；也不應為湊時間加入長時間無事發生的等待。"
+    },
+    {
+      "item": "Q3：衝刺型敵人速度",
+      "old": "一般行走32px/s；部分衝刺沿用基礎速度2.5倍。",
+      "new": {
+        "walk_px_s": 48,
+        "walk_multiplier": {
+          "倫寶105": 0.46,
+          "琪寶寶127": 0.38
+        },
+        "charge_px_s": 220,
+        "charge_multiplier": {
+          "倫寶105": 2.1,
+          "琪寶寶127": 1.73
+        },
+        "charge_distance_px": 160,
+        "warning_ms": 1000,
+        "recovery_ms": 1000,
+        "attack_cooldown_ms": 2600
+      },
+      "reason": "普通行走仍慢過兩位主角，但預告後的短衝足以製造壓力；160px衝程約727ms，不靠持續追上玩家增加難度。",
+      "priority": "高",
+      "risk": "若程式只接受衝刺倍率，應以48px/s為基礎設約4.58倍，而非保留2.5倍後誤以為已有220px/s。"
+    },
+    {
+      "item": "Q3：跳跳型敵人速度",
+      "old": "未提供跳躍水平速度及鎖定時點。",
+      "new": {
+        "walk_px_s": 52,
+        "walk_multiplier": {
+          "倫寶105": 0.5,
+          "琪寶寶127": 0.41
+        },
+        "air_horizontal_speed_cap_px_s": 160,
+        "air_speed_cap_multiplier": {
+          "倫寶105": 1.52,
+          "琪寶寶127": 1.26
+        },
+        "maximum_horizontal_jump_distance_px": 144,
+        "warning_ms": 1100,
+        "landing_recovery_ms": 900,
+        "attack_cooldown_ms": 2800
+      },
+      "reason": "以瞄準落點製造壓力，但限制橫向追擊距離及增加落地空檔，讓近戰角色有安全反擊機會。",
+      "priority": "中",
+      "risk": "160px/s是水平速度上限，不是承諾精準落點；必須核對現有跳躍飛行時間，不能同時硬設互不相容的速度、距離及落點。"
+    },
+    {
+      "item": "Q3：盾牌型敵人速度",
+      "old": "行走約32px/s，背後1000ms才轉身。",
+      "new": {
+        "walk_px_s": 40,
+        "walk_multiplier": {
+          "倫寶105": 0.38,
+          "琪寶寶127": 0.31
+        },
+        "turn_delay_ms": 1000,
+        "attack_movement_px_s": 40,
+        "attack_movement_multiplier": {
+          "倫寶105": 0.38,
+          "琪寶寶127": 0.31
+        },
+        "warning_ms": 1000,
+        "recovery_ms": 1000,
+        "attack_cooldown_ms": 2800
+      },
+      "reason": "盾兵的壓力來自站位及擋子彈，不需要再加高速突進；保留1000ms轉身延遲，讓繞背確實有回報。",
+      "priority": "中",
+      "risk": "若現有盾兵沒有獨立攻擊，只套用行速與轉身數字，不新增盾擊或突進。"
+    },
+    {
+      "item": "Q3：擲物型敵人速度",
+      "old": "行走約32px/s，拋物線擲物；部分每2500ms出手。",
+      "new": {
+        "walk_px_s": 32,
+        "walk_multiplier": {
+          "倫寶105": 0.3,
+          "琪寶寶127": 0.25
+        },
+        "projectile_horizontal_speed_target_px_s": 120,
+        "projectile_speed_multiplier": {
+          "倫寶105": 1.14,
+          "琪寶寶127": 0.94
+        },
+        "maximum_horizontal_throw_distance_px": 180,
+        "warning_ms": 1100,
+        "attack_cooldown_ms": 3000,
+        "recovery_ms": 900
+      },
+      "reason": "擲物敵人應靠射線及與盾兵配合製造壓力，不必提高行走速度；較長出手週期給近戰角色接近機會。",
+      "priority": "中",
+      "risk": "120px/s只指水平分量，總飛行時間仍取決於現有垂直初速與重力；不要誤改成總速度或直線子彈。"
+    },
+    {
+      "item": "Q4：普通難度預警標準",
+      "old": "小怪前搖300至340ms；部分危險600ms。",
+      "new": {
+        "absolute_minimum_ms": 800,
+        "normal_default_ms": 1000,
+        "charge_ms": 1000,
+        "hop_ms": 1100,
+        "shield_attack_if_existing_ms": 1000,
+        "throw_ms": 1100,
+        "cage_drone_drop_if_existing_ms": 1200,
+        "overlapping_pressure_recommendation_ms": 1200,
+        "application": "所有數值只向上調；預警由玩家實際看見或聽見提示開始計，不是由隱藏AI計時開始計。"
+      },
+      "reason": "按任務提供的250ms視覺反應加100ms觸控延遲假設，300至340ms連開始輸入都未必夠；1000ms約留下650ms執行移動，倫寶理論可走68.25px。",
+      "priority": "高",
+      "risk": "250ms及100ms只作本次模型假設，不是已核實的人類通用常數；預警足夠也不代表一定有安全路線。"
+    },
+    {
+      "item": "Q4：第6關洗地機預警與危險持續時間",
+      "old": "衝刺預警600／900ms、速度360px/s、距離260px；轉刷預警600ms、範圍90px；風機預警600ms、吹2500ms；酸液維持3000ms。",
+      "new": {
+        "charge_warning_ms": 1100,
+        "charge_speed_px_s": 300,
+        "charge_distance_px": 220,
+        "charge_recovery_ms": {
+          "phase1_2": 1200,
+          "phase3": 1200
+        },
+        "brush_warning_ms": 1200,
+        "brush_duration_ms": 1000,
+        "brush_range_px": 72,
+        "fan_warning_ms": 1200,
+        "fan_active_ms": 1800,
+        "fan_intervals_ms": [8000, 6500, 5500],
+        "acid_warning_ms": 1200,
+        "acid_duration_ms": 1800,
+        "acid_minimum_gap_px": 128
+      },
+      "reason": "先用更長預警、較短危險殘留及較寬避位抵銷加血壓力；倫寶在1200ms預警扣除350ms假設反應後可走89.25px，仍須另計角色碰撞盒。",
+      "priority": "高",
+      "risk": "若酸液或風機跨入OPENING，會降低每輪有效輸出；需量度實際殘留時間，不能假設新HP仍自動符合Boss時間模型。"
+    },
+    {
+      "item": "小怪自行硬直",
+      "old": "每3000至4000ms自行硬直500至1000ms。",
+      "new": {
+        "interval_ms": 4000,
+        "duration_ms": 500
+      },
+      "reason": "保留既有喘息機會，但移除頻密長達1秒的白送輸出；公平性改由清楚預警及出招後空檔提供。",
+      "priority": "低",
+      "risk": "若琪寶寶主要靠此窗口近身，先保留舊值，完成近戰測試後才套用；不要與加血、加速同批一次過改。"
+    },
+    {
+      "item": "Q5：四難度血量倍數",
+      "old": [0.8, 1, 1.3, 1.6],
+      "new": {
+        "easy": 0.8,
+        "normal": 1,
+        "challenge": 1.2,
+        "hell": 1.4
+      },
+      "reason": "不建議再靠血量拉開挑戰與地獄；普通已需9至12次Boss破綻，1.6倍會把部分戰鬥推向過長磨血，反而削弱節奏。",
+      "priority": "中",
+      "risk": "普通72HP的Boss乘1.4為100.8HP；實際整數化及擊殺輪數須按現有程式規則重算，不能保證高難度仍在150秒內。"
+    },
+    {
+      "item": "Q5：四難度攻擊傷害倍數",
+      "old": [0.75, 1, 1.3, 1.6],
+      "new": {
+        "if_fractional_hp_is_already_supported": {
+          "easy": 0.75,
+          "normal": 1,
+          "challenge": 1.25,
+          "hell": 1.5
+        },
+        "if_damage_is_integer_only": {
+          "easy": 1,
+          "normal": 1,
+          "challenge": 1,
+          "hell": 2
+        }
+      },
+      "reason": "先確認傷害是否支援小數：基礎傷害1乘現有倍數後，向下取整可能變0，向上取整會令挑戰與地獄同樣變2，四捨五入亦可能令簡單至挑戰全部仍是1。",
+      "priority": "高",
+      "risk": "只選符合現有HP實作的一組，不新增小數血量系統；整數版地獄兩傷害會令琪寶寶3次受擊死亡，只適合明確自選的最高難度。"
+    },
+    {
+      "item": "Q5：用既有數字拉開難度，不縮預警",
+      "old": "只提供傷害、血量倍數及破綻長度。",
+      "new": {
+        "enemy_walk_and_attack_speed_multiplier": {
+          "easy": 0.85,
+          "normal": 1,
+          "challenge": 1.1,
+          "hell": 1.2
+        },
+        "enemy_attack_cooldown_multiplier": {
+          "easy": 1.2,
+          "normal": 1,
+          "challenge": 0.95,
+          "hell": 0.9
+        },
+        "warning_multiplier": {
+          "easy": 1.2,
+          "normal": 1,
+          "challenge": 1,
+          "hell": 1
+        },
+        "boss_opening_ms": {
+          "easy": 3000,
+          "normal": 2500,
+          "challenge": 2000,
+          "hell": 2000
+        }
+      },
+      "reason": "挑戰與地獄的差異以出招速度及頻率為主，不再單靠更厚血量；所有難度保留可辨識預警。",
+      "priority": "中",
+      "risk": "只可套用現有可配置數字，不新增難度專屬行為；冷卻縮短不得截斷預警、攻擊或收招，也不能套在固定Boss狀態時間上重複加速。"
+    },
+    {
+      "item": "普通難度玩家生存與操作容錯",
+      "old": "倫寶HP6、琪寶寶HP5；受傷無敵1500ms；土狼90ms、預輸入110ms。",
+      "new": {
+        "倫寶_hp": 6,
+        "琪寶寶_hp": 6,
+        "hurt_invulnerability_ms": 1500,
+        "same_enemy_contact_cooldown_ms": 650,
+        "coyote_ms": 110,
+        "jump_buffer_ms": 140
+      },
+      "reason": "琪寶寶近戰範圍只有24px，需要承受更高接近風險，先補1HP並增加既有跳躍輸入容錯，不靠掉落回血。",
+      "priority": "中",
+      "risk": "650ms接觸冷卻不能繞過1500ms全域受傷無敵；若現有程式判定相反，單改數字無法修正邏輯問題。"
+    }
+  ],
+  "boss_hp_calc": [
+    {
+      "stage": 1,
+      "boss": "武者王",
+      "old_hp": 180,
+      "new_hp": 54,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(54 / 6) = 9",
+      "cycle_formula_seconds": "1.5 + 0.8 + 3.2 + 2.5 + 2 = 10",
+      "fight_formula_seconds": "9 × 10 - 最後一次喘氣2 + 兩次換段休息5 = 93",
+      "estimated_seconds": 93,
+      "risk": "180HP在同一模型需30次破綻，約303秒；大幅降血是修正現有數值斷層，不代表把其他關也降至同樣難度。"
+    },
+    {
+      "stage": 2,
+      "boss": "蜜冠女王蜂",
+      "old_hp": 36,
+      "new_hp": 57,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(57 / 6) = 10",
+      "cycle_formula_seconds": "1.5 + 0.85 + 3.4 + 2.5 + 2 = 10.25",
+      "fight_formula_seconds": "10 × 10.25 - 2 + 5 = 105.5",
+      "estimated_seconds": 105.5,
+      "risk": "若飛行位置令倫寶射程130px無法穩定命中兩發，實際時間會超標。"
+    },
+    {
+      "stage": 3,
+      "boss": "月橋鏡鴞",
+      "old_hp": 36,
+      "new_hp": 60,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(60 / 6) = 10",
+      "cycle_formula_seconds": "1.5 + 0.9 + 3.6 + 2.5 + 2 = 10.5",
+      "fight_formula_seconds": "10 × 10.5 - 2 + 5 = 108",
+      "estimated_seconds": 108,
+      "risk": "辨認真身及追位若佔用破綻時間，兩發命中假設不成立；先量度，不再疊加血量。"
+    },
+    {
+      "stage": 4,
+      "boss": "泥怪",
+      "old_hp": 40,
+      "new_hp": 63,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(63 / 6) = 11",
+      "cycle_formula_seconds": "1.5 + 0.95 + 3.8 + 2.5 + 2 = 10.75",
+      "fight_formula_seconds": "11 × 10.75 - 2 + 5 = 121.25",
+      "estimated_seconds": 121.25,
+      "risk": "武器揀選#1的實際取得時點及升級數值未提供，須確認本戰是否仍使用基礎3傷害。"
+    },
+    {
+      "stage": 5,
+      "boss": "Trinity",
+      "old_hp": 48,
+      "new_hp": 66,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(66 / 6) = 11",
+      "cycle_formula_seconds": "1.5 + 1 + 4 + 2.5 + 2 = 11",
+      "fight_formula_seconds": "11 × 11 - 2 + 5 = 124",
+      "estimated_seconds": 124,
+      "risk": "若第4關武器已提升傷害或射速，應用實際每輪輸出重算，不能直接宣稱66HP必定打124秒。"
+    },
+    {
+      "stage": 6,
+      "boss": "深層潔淨X-9",
+      "old_hp": 55,
+      "new_hp": 69,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(69 / 6) = 12",
+      "cycle_formula_seconds": "1.5 + 1.05 + 4.2 + 2.5 + 2 = 11.25",
+      "fight_formula_seconds": "12 × 11.25 - 2 + 5 = 138",
+      "estimated_seconds": 138,
+      "risk": "1.05秒是平均預警預算，不是把本稿1100至1200ms的個別預警縮短；實際平均較長時須重算時間。"
+    },
+    {
+      "stage": 7,
+      "boss": "馴獸師",
+      "old_hp": 55,
+      "new_hp": 72,
+      "damage_per_opening": 6,
+      "openings_formula": "ceil(72 / 6) = 12",
+      "cycle_formula_seconds": "1.5 + 1.1 + 4.6 + 2.5 + 2 = 11.7",
+      "fight_formula_seconds": "12 × 11.7 - 2 + 5 = 143.4",
+      "estimated_seconds": 143.4,
+      "risk": "已接近150秒上限，若有追位、漏槍或長過場，優先降低HP或縮短現有非預警等待，不再加血。"
+    }
+  ],
+  "notes": {
+    "calculation_status": "以上為依照所提供數值計算的設計模型，並非實機測試結果；所有新數字均為建議，不代表已修改遊戲。",
+    "q2_shots_per_opening": {
+      "normal_cooldown": "假設破綻開始時已可射擊，出手時間為0、893、1786ms，第四發2679ms超出窗口，所以理論最多3槍。",
+      "spam_cooldown": "893 × 1.6 = 1428.8ms；出手時間0、1428.8ms，第三發2857.6ms超出窗口，所以理論最多2槍。",
+      "travel_time": "130 / 243 = 0.535秒；最大射程下，正常第三發約2321ms命中，亂射第二發約1964ms命中。",
+      "practical_margin": "正常第三發在最大射程只剩約179ms餘裕；若開始破綻後才追位或反應，第三發容易來不及。",
+      "baseline": "因此以每輪兩發有效正面命中、每發3傷害，即6傷害計算，不假設每輪都能三發或背擊。",
+      "important_missing_fact": "若體力不足也會降低單發傷害，實際每輪可能低於6；目前未提供傷害衰減值，不能補猜。"
+    },
+    "q2_sensitivity": {
+      "three_front_hits_per_opening": "每輪9傷害，七關只需6、7、7、7、8、8、8次破綻。",
+      "two_back_hits_per_opening": "每輪12傷害，七關只需5、5、5、6、6、6、6次破綻。",
+      "three_back_hits_per_opening": "每輪18傷害，七關只需3、4、4、4、4、4、4次破綻。",
+      "conclusion": "同一組固定HP不可能同時保證新手正面兩槍、高手背擊及雙人合作全部都打9至12輪；本稿優先保障普通單人基礎輸出，熟練背擊應獲得較快通關回報。"
+    },
+    "boss_timing_assumptions": [
+      "戰鬥時間由第一輪GUARD開始，計至最後一輪OPENING結束；實際致命一擊較早時會略短。",
+      "兩次換段休息2500ms是額外時間，合共5秒；若實作是取代原BREATHER，須重新計算。",
+      "假設跨血段傷害不被截斷、破綻不會因換段提早結束；若現有實作會截斷，可能需要額外輪數。",
+      "不計入場對白、戰後對白及結局過場。",
+      "第6關個別預警依建議延長後，平均週期須以實際招式權重重新量度。"
+    ],
+    "q3_interpretation": "32px/s本身不是單調的唯一原因；一槍死、頻繁自行硬直及缺乏行為配合更直接。不要把所有敵人都加速至追得上主角。",
+    "q4_reaction_budget": {
+      "assumed_reaction_and_touch_ms": 350,
+      "remaining_time_at_800ms_warning": 450,
+      "倫寶_distance_px_at_800ms": 47.25,
+      "琪寶寶_distance_px_at_800ms": 57.15,
+      "remaining_time_at_1000ms_warning": 650,
+      "倫寶_distance_px_at_1000ms": 68.25,
+      "琪寶寶_distance_px_at_1000ms": 82.55,
+      "formula": "所需預警至少為350ms＋離開危險區所需距離／有效移速×1000；還要計角色半寬、地形及受減速狀態。",
+      "example": "倫寶要移動90px，至少需350＋90／105×1000，約1207ms；因此800ms只是底線，不是所有大範圍招式都公平。"
+    },
+    "q5_recommendation": "不建議把挑戰與地獄的HP倍數再拉開；先確認傷害取整，再用既有速度及冷卻數字區分，普通難度預警不縮短。",
+    "rollout_order": [
+      "第一輪：修正第6、7關一槍死問題，延長預警，保留玩家1500ms無敵。",
+      "第二輪：逐關套用統一Boss節奏，再按實際每輪傷害調HP。",
+      "第三輪：測近戰角色與雙人配置，最後才調高難度倍數及自行硬直。",
+      "每輪只比較同一關、同一角色、同一武器及同一難度，避免同時改太多數字而失去判斷依據。"
+    ],
+    "missing_required_for_final_precision": [
+      "琪寶寶三段連擊的出手時間、段間隔、收招及連擊重置條件。",
+      "重型與快速型武器的傷害、射速、體力消耗及升級數值。",
+      "體力不足時的單發傷害衰減。",
+      "雙人模式是否已有Boss血量倍率。",
+      "難度傷害與HP的小數及取整規則。",
+      "各Boss實際招式時間、換段是否截斷傷害及破綻。",
+      "角色碰撞盒、近戰位移及受傷擊退距離。"
+    ]
+  },
+  "self_check": {
+    "q1_answered": "已列現有與建議HP的遠程命中次數、理論出手時間及近戰命中次數。",
+    "q2_answered": "已列七個Boss新HP、每輪傷害、所需破綻、完整週期及時間公式，並披露必要假設。",
+    "q3_answered": "已分四種行為列行速、攻擊移動或投射物速度，以及相對兩位主角的倍數。",
+    "q4_answered": "已指出300至340ms低於任務提供的350ms反應加觸控假設，建議普通標準1000ms、最低800ms，並按逃離距離覆核。",
+    "q5_answered": "不再拉高血量倍數，提供小數及整數傷害兩種既有實作對應方案。",
+    "numbers_only": "所有建議只涉及現有HP、速度、時間、距離、倍率及輸入容錯數字；沒有新增技能、掉落、回血或攻擊行為。",
+    "warnings_never_shortened": "所有預警以現值與建議值取較大者；Boss平均時間預算不能覆蓋此規則。",
+    "normal_deaths_no_more_than_two": "不能由靜態數值保證平均死亡不超過2次；必須由目標玩家試玩驗收，超標時先增加該招預警200ms或減少範圍15%，不要先削短破綻。",
+    "normal_difficulty_priority": "先保證普通可讀、可避、可反擊；不以地獄難度標準反推普通。",
+    "not_claiming_precision_without_data": "已明確區分算術結果、設計假設與未實測估時，未虛構命中率、死亡率或近戰DPS。"
+  }
+}
