@@ -190,9 +190,14 @@
       "note": "隱藏高台"
     }
   ],
-  "checkpoints": [
-    1340,
-    3080
+  "checkpoints": [1340, 2280, 3080],
+  "secrets": [
+    {"x": 2710, "h": 78, "kind": "sushi"}
+  ],
+  "coins": [
+    {"x": 1400, "h": 22},
+    {"x": 2300, "h": 22},
+    {"x": 3100, "h": 22}
   ],
   "breakables": [
     {
@@ -253,12 +258,12 @@
       "unlockX": 1860
     },
     {
-      "x": 2520,
+      "x": 2420,
       "species": "lobster",
-      "unlockX": 2400
+      "unlockX": 2300
     },
     {
-      "x": 2950,
+      "x": 2970,
       "species": "mirrorshade",
       "unlockX": 2800
     }

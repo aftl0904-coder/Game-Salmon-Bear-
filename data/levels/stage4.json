@@ -145,10 +145,7 @@
       "h": 40
     }
   ],
-  "checkpoints": [
-    1320,
-    3100
-  ],
+  "checkpoints": [1320, 2420, 3100],
   "breakables": [
     {
       "x": 980,
@@ -178,14 +175,14 @@
       "unlockX": 220
     },
     {
-      "x": 850,
+      "x": 870,
       "species": "clockpunch",
       "unlockX": 660
     },
     {
-      "x": 1050,
+      "x": 930,
       "species": "taximonster",
-      "unlockX": 880
+      "unlockX": 830
     },
     {
       "x": 1220,
@@ -213,15 +210,15 @@
       "unlockX": 1700
     },
     {
+      "x": 1900,
+      "species": "honeyzombie",
+      "unlockX": 1800,
+      "note": "S5 鋼架平台段：原先 pit(2040)→platform(2150) 之間冇敵人，淨係跳，加一隻填返個設計筆記講嘅密度。"
+    },
+    {
       "x": 1980,
       "species": "taximonster",
       "unlockX": 1920
-    },
-    {
-      "x": 2080,
-      "species": "honeyzombie",
-      "unlockX": 2000,
-      "note": "S5 鋼架平台段：原先 pit(2040)→platform(2150) 之間冇敵人，淨係跳，加一隻填返個設計筆記講嘅密度。"
     },
     {
       "x": 2200,
@@ -263,6 +260,10 @@
       "h": 60
     },
     {
+      "x": 1380,
+      "h": 22
+    },
+    {
       "x": 2140,
       "h": 48
     },
@@ -299,7 +300,7 @@
       "periodMs": 5200
     },
     {
-      "x": 1240,
+      "x": 1140,
       "periodMs": 4600
     },
     {
