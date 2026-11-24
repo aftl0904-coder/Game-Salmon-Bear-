@@ -1,5 +1,13 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## Polish-1（`cursor/polish-1-2610`；2026-11-24）
+- M6 壽司／榴槤／營地三件／蜜腳印已接入；榴槤原尺寸 18×22 場上可辨；蜜腳印用 sprite alpha 漸淡（strip 第 3 格空白）。
+- 第1–7關 `signs:[{x,text}]` 提示牌（第1關4 + 第2–7關19）；只顯示唔阻路。
+- 第7關噗噗離隊蜜腳印；kenMemo 後兩句對白；C1／C11／C11_PERFECT 野餐 still 疊腳印。
+- P0：射燈場上≥2活躍敵人只示警唔增援；輸送帶 2080–2360 末 40px 唔推人。
+- transition-6to7：BikeScene「追籠車」（臨時 s6/c2 圖）；可跳過；撞只慢。
+- QA：`docs/qa-polish-1/`、`docs/qa-transition-6to7/`。draft PR，等 Alan merge。
+
 ## M7 第6→7關單車過場（`manus/m7-bike-c2-2611`；2026-11-24）
 - 遠景 `public/art/bike-c2/far.png`：1280×720、64 色；build、10 項資料驗證及桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m7-bike-c2/far/`。圖片先以 2560×1440 生成再縮細，並非原生尺寸；未接入遊戲或真機。
 - 中景 `public/art/bike-c2/mid.png`：1280×302、二值透明，左右邊緣像素相同；三張並排檢查及 build、10 項資料驗證、桌面／模擬手機獨立預覽通過，見 `docs/qa-m7-bike-c2/mid/`。原圖等比例縮小，使用少量同圖路緣補接；未在遊戲實際捲動或真機驗證。
@@ -7,13 +15,7 @@
 - 三張已逐張交付；本 branch 只交美術，遊戲接入由 Cursor 跟進。
 
 ## M6 補畫（`manus/m6-art-supplement-2611`；2026-11-24）
-- 首件 `public/art/fx/honey-paw.png`：3 格各 16×16、二值 alpha；第 2 格縮小、非真正半透明淡出，需整合時留意。build、10 項資料驗證和桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m6-art/paw/`；未接入遊戲或真機。
-- 壽司 `public/art/items/pickup-sushi.png`：18×22，格式及獨立素材測試見 `docs/qa-m6-art/sushi/`，build 和 10 項資料驗證通過；未接入遊戲或真機。
-- 榴槤 `public/art/items/hazard-durian.png`：18×22，格式及獨立素材測試見 `docs/qa-m6-art/durian/`，build 和 10 項資料驗證通過；未接入遊戲或真機，尖刺原尺寸較細。
-- 帳篷 `public/art/props/camp-tent.png`：104×60；build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m6-art/tent/`；未接入遊戲或真機，需核對底部錨點。
-- 營火 `public/art/props/camp-fire.png`：兩格各 104×60，上半火焰鏡像、木柴位置保持；build、10 項資料驗證及獨立預覽通過，見 `docs/qa-m6-art/fire/`；未在遊戲播放或真機驗證。
-- 神龕 `public/art/props/camp-shrine.png`：104×60；build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m6-art/shrine/`；未接入遊戲或真機，需核對錨點。
-- 六件全部已逐件交付；本 branch 不改遊戲程式。
+- 六件素材已交付並由 polish-1 接入；獨立預覽見 `docs/qa-m6-art/`。
 
 ## #88 B／C 中景局部接線 checkpoint（2026-11-04；仍 draft）
 - #91 已複驗的 `4dab1f198e2342201d54acdccf6bd0d518be92f6` 走廊／訓練場兩張中景已按各自實際尺寸 nearest 派生 560×360／318×360、≤64 色，接入第7關 B/C；只修改本 branch，來源、雜湊、處理及可重製腳本見 `public/art/stage7/mid-manifest.json`、`docs/qa-c2s2/README.md`。A/D/E 依視野與世界段落裁切，B/C 平鋪依世界起點定位；裁去可視範圍內原圖地台／欄杆以減少地形誤認，沒有改碰撞、AI、固定物或鏈網。

@@ -1,4 +1,4 @@
-import { GAME_W } from './display'
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
@@ -13,8 +13,11 @@ import { saveTransitionCoins } from './run'
  * 單車追逐 — auto-scrolling ride between any two stages (destination + song come from `to`; art is shared).
  * Jump rocks, logs and cones; ramps launch you; bee swarms fly at jump height (stay low);
  * honey puddles slow you. Coins carry over as continues. No damage — a crash just wobbles.
+ *
+ * Polish-1 transition-6to7: `to === 7` → 「追籠車」theme (mall alley + stage6 junk props).
+ * Temp art until Manus delivers chase plates. Missed chase / skip still enters stage 7.
  */
-type Kind = 'rock' | 'log' | 'cone' | 'puddle' | 'ramp' | 'swarm' | 'coin'
+type Kind = 'rock' | 'log' | 'cone' | 'puddle' | 'ramp' | 'swarm' | 'coin' | 'debris' | 'box' | 'trash' | 'cart'
 type Obj = { kind: Kind; x: number; spr: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image; done: boolean; y: number }
 type Rider = {
   set: AnimSetId
@@ -30,10 +33,18 @@ type Rider = {
   pedalKeys: () => boolean
 }
 
-export const DEST_NAMES: Record<number, string> = { 2: '蜜樹丘', 3: '月影夜市', 4: '鹽霧工地', 5: '△畝大廈' }
+export const DEST_NAMES: Record<number, string> = {
+  2: '蜜樹丘',
+  3: '月影夜市',
+  4: '鹽霧工地',
+  5: '△畝大廈',
+  7: '森友展銷中心',
+}
 const ROAD_Y = 316
 const SPEED = 230
 const LENGTH = 9000
+/** ~40s chase at base speed (35–45s window). */
+const CHASE_LENGTH = 9200
 const G = 1500
 /** Course: [distance, kind] — readable rhythm, harder towards the top of the hill. */
 const COURSE: Array<[number, Kind]> = [
@@ -45,6 +56,22 @@ const COURSE: Array<[number, Kind]> = [
   [7000, 'puddle'], [7150, 'log'], [7500, 'ramp'], [7580, 'coin'], [7640, 'coin'], [7700, 'coin'],
   [8000, 'swarm'], [8300, 'rock'], [8420, 'log'],
 ]
+/** Mall-alley chase: stage6 junk only (slow on hit, never HP damage). */
+const CHASE_COURSE: Array<[number, Kind]> = [
+  [500, 'trash'], [720, 'coin'], [980, 'debris'], [1200, 'box'], [1400, 'coin'],
+  [1680, 'cart'], [1900, 'trash'], [2100, 'coin'], [2350, 'debris'], [2600, 'box'],
+  [2850, 'coin'], [3100, 'cart'], [3350, 'trash'], [3600, 'debris'], [3800, 'coin'],
+  [4100, 'box'], [4400, 'cart'], [4650, 'trash'], [4900, 'coin'], [5200, 'debris'],
+  [5500, 'box'], [5750, 'coin'], [6000, 'cart'], [6300, 'trash'], [6600, 'debris'],
+  [6900, 'coin'], [7200, 'box'], [7500, 'cart'], [7800, 'trash'], [8100, 'coin'],
+  [8400, 'debris'], [8700, 'box'],
+]
+const CHASE_LINES = [
+  '倫寶：轆印出咗後門。',
+  '琪寶寶：踩快啲，唔好跟甩！',
+  '倫寶：前面……森友展銷中心？',
+  '噗噗：噗！',
+]
 
 export class BikeScene extends Phaser.Scene {
   private riders: Rider[] = []
@@ -55,6 +82,8 @@ export class BikeScene extends Phaser.Scene {
   private mid!: Phaser.GameObjects.TileSprite
   private road!: Phaser.GameObjects.TileSprite
   private far!: Phaser.GameObjects.Image
+  /** Chase destination (展銷側門) — grows as you near the end. */
+  private goalImg: Phaser.GameObjects.Image | null = null
   private coins = 0
   private crashes = 0
   /** Mashing the attack button pedals harder: more speed, and a rising coin multiplier. */
@@ -67,6 +96,8 @@ export class BikeScene extends Phaser.Scene {
   private finished = false
   private padPrev: Record<string, boolean> = {}
   private toStage = 2
+  /** Stage 6→7 cage-truck chase (mall alley). */
+  private chase = false
 
   constructor() {
     super('bike')
@@ -74,11 +105,16 @@ export class BikeScene extends Phaser.Scene {
 
   init(data?: { to?: number }) {
     const to = data?.to ?? (this.registry.get('stageNo') as number | undefined) ?? 2
-    this.toStage = DEST_NAMES[to] ? to : 2
+    this.chase = to === 7
+    this.toStage = DEST_NAMES[to] ? to : this.chase ? 7 : 2
   }
 
   private destName() {
     return DEST_NAMES[this.toStage] ?? DEST_NAMES[2]!
+  }
+
+  private courseLength() {
+    return this.chase ? CHASE_LENGTH : LENGTH
   }
 
   preload() {
@@ -89,10 +125,19 @@ export class BikeScene extends Phaser.Scene {
     for (const n of ['rock', 'log', 'cone', 'puddle', 'ramp']) L(`bike-${n}`, n)
     if (!this.textures.exists('bike-swarm'))
       this.load.spritesheet('bike-swarm', '/art/bike/swarm.png', { frameWidth: meta.swarm.frameWidth, frameHeight: meta.swarm.frameHeight })
+    // Chase plates (Manus M7 / #144) — dedicated keys so they never clash with Boot s6-* props.
+    if (this.chase) {
+      if (!this.textures.exists('bike-c2-far')) this.load.image('bike-c2-far', '/art/bike-c2/far.png')
+      if (!this.textures.exists('bike-c2-mid')) this.load.image('bike-c2-mid', '/art/bike-c2/mid.png')
+      if (!this.textures.exists('bike-c2-goal')) this.load.image('bike-c2-goal', '/art/bike-c2/goal.png')
+    }
+    // Chase obstacles reuse Boot-loaded s6-* / c2-prop-* keys — do not reload (Phaser key clash).
   }
 
   create() {
-    for (const k of ['far', 'mid', 'road', 'rock', 'log', 'cone', 'puddle', 'ramp', 'swarm']) markHd(this.textures.get(`bike-${k}`), meta.swarm.res)
+    for (const k of ['far', 'mid', 'road', 'rock', 'log', 'cone', 'puddle', 'ramp', 'swarm']) {
+      if (this.textures.exists(`bike-${k}`)) markHd(this.textures.get(`bike-${k}`), meta.swarm.res)
+    }
     this.riders = []
     this.objs = []
     this.dist = 0
@@ -104,17 +149,46 @@ export class BikeScene extends Phaser.Scene {
     this.mash = 0
     this.mult = 1
     this.speedLines = []
+    this.goalImg = null
     const W = GAME_W
-    this.cameras.main.fadeIn(400, 255, 250, 235)
+    this.cameras.main.fadeIn(400, this.chase ? 20 : 255, this.chase ? 18 : 250, this.chase ? 28 : 235)
     unlockAudio()
-    playSong(`stage${this.toStage}` as 'stage2')
+    // No dedicated stage6 BGM yet — reuse stage5 for the alley chase.
+    playSong(this.chase ? 'stage5' : (`stage${Math.min(5, this.toStage)}` as 'stage2'))
 
-    // Far layer stays put (the honey tree is the goal on the horizon); it grows a little as you near it.
-    this.far = this.add.image(W / 2, 360, 'bike-far').setOrigin(0.5, 1)
-    const mh = this.textures.get('bike-mid').get().height
-    this.mid = this.add.tileSprite(0, ROAD_Y + 4 - mh, W, mh, 'bike-mid').setOrigin(0)
-    this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0)
-    if (!this.anims.exists('bike-swarm-fly')) {
+    if (this.chase) {
+      // Manus bike-c2 plates (far / seamless mid / side-door goal). Fallback to temp s6 if missing.
+      this.add.rectangle(0, 0, W, ROAD_Y + 8, 0x121018).setOrigin(0).setDepth(0)
+      const hasC2 = this.textures.exists('bike-c2-far') && this.textures.exists('bike-c2-mid')
+      if (hasC2) {
+        this.far = this.add.image(W / 2, ROAD_Y - 4, 'bike-c2-far').setOrigin(0.5, 1).setDisplaySize(W, Math.round((GAME_H * 5) / 6))
+        const mh = this.textures.get('bike-c2-mid').get().height
+        // mid.png L/R columns match — tileSprite scrolls seamlessly.
+        this.mid = this.add.tileSprite(0, ROAD_Y + 4 - mh, W, mh, 'bike-c2-mid').setOrigin(0)
+        this.road = this.add.tileSprite(0, ROAD_Y - 4, W, 40, 'bike-road').setOrigin(0).setAlpha(0.35).setTint(0x3a3548)
+        if (this.textures.exists('bike-c2-goal')) {
+          this.goalImg = this.add
+            .image(W - 70, ROAD_Y + 2, 'bike-c2-goal')
+            .setOrigin(0.5, 1)
+            .setScale(0.55)
+            .setDepth(5)
+        }
+      } else {
+        const farKey = this.textures.exists('s6-dome') ? 's6-dome' : 'bike-far'
+        this.far = this.add.image(W / 2, ROAD_Y - 8, farKey).setOrigin(0.5, 1).setAlpha(0.55).setTint(0x6a6080)
+        const midKey = this.textures.exists('s6-factory-wall') ? 's6-factory-wall' : 'bike-mid'
+        const mh = this.textures.get(midKey).get().height
+        this.mid = this.add.tileSprite(0, ROAD_Y + 4 - Math.min(mh, 120), W, Math.min(mh, 120), midKey).setOrigin(0).setAlpha(0.85)
+        this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0).setTint(0x4a4558)
+      }
+    } else {
+      // Far layer stays put (the honey tree is the goal on the horizon); it grows a little as you near it.
+      this.far = this.add.image(W / 2, 360, 'bike-far').setOrigin(0.5, 1)
+      const mh = this.textures.get('bike-mid').get().height
+      this.mid = this.add.tileSprite(0, ROAD_Y + 4 - mh, W, mh, 'bike-mid').setOrigin(0)
+      this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0)
+    }
+    if (!this.anims.exists('bike-swarm-fly') && this.textures.exists('bike-swarm')) {
       this.anims.create({ key: 'bike-swarm-fly', frames: this.anims.generateFrameNumbers('bike-swarm', { start: 0, end: 2 }), frameRate: 10, repeat: -1 })
     }
 
@@ -162,14 +236,18 @@ export class BikeScene extends Phaser.Scene {
       .text(W - 6, 26, 'Start／Enter　略過', { fontFamily: FONT_UI, fontSize: '9px', color: '#fff', backgroundColor: '#00000066', padding: { x: 4, y: 2 } })
       .setOrigin(1, 0)
       .setDepth(51)
+    const titleMsg = this.chase
+      ? '追籠車！商場後巷　撞到只會慢\n狂撳 攻擊鍵 踩快啲　終點・展銷側門'
+      : '單車追逐！跳過障礙　蜂群要伏低\n狂撳 攻擊鍵 踩快啲，金幣加倍'
     const title = this.add
-      .text(W / 2, 130, '單車追逐！跳過障礙　蜂群要伏低\n狂撳 攻擊鍵 踩快啲，金幣加倍', { fontFamily: FONT_TITLE, fontSize: '16px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
+      .text(W / 2, 130, titleMsg, { fontFamily: FONT_TITLE, fontSize: '16px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
       .setOrigin(0.5)
       .setDepth(51)
-    this.tweens.add({ targets: title, alpha: 0, delay: 2600, duration: 600 })
+    this.tweens.add({ targets: title, alpha: 0, delay: this.chase ? 3200 : 2600, duration: 600 })
+    if (this.chase) this.playChaseLines()
 
     // Pre-build the course (positions in course distance; drawn as they come on screen).
-    for (const [d, kind] of COURSE) this.spawn(kind, d)
+    for (const [d, kind] of this.chase ? CHASE_COURSE : COURSE) this.spawn(kind, d)
 
     kb.on('keydown-ENTER', this.skipAll, this)
     kb.on('keydown-ESC', this.skipAll, this)
@@ -188,11 +266,57 @@ export class BikeScene extends Phaser.Scene {
     return down && !was
   }
 
+  private playChaseLines() {
+    let i = 0
+    const show = () => {
+      if (this.finished || i >= CHASE_LINES.length) return
+      const line = CHASE_LINES[i++]!
+      const t = this.add
+        .text(GAME_W / 2, 210, line, {
+          fontFamily: FONT_UI,
+          fontSize: '13px',
+          color: '#fff6e0',
+          backgroundColor: '#1a1210',
+          padding: { x: 8, y: 4 },
+        })
+        .setOrigin(0.5)
+        .setDepth(55)
+        .setAlpha(0)
+      this.tweens.add({
+        targets: t,
+        alpha: 1,
+        duration: 180,
+        yoyo: true,
+        hold: 1100,
+        onComplete: () => {
+          t.destroy()
+          show()
+        },
+      })
+    }
+    this.time.delayedCall(400, show)
+  }
+
   private spawn(kind: Kind, d: number) {
-    const key = kind === 'coin' ? 'fxa-coin-spin' : kind === 'swarm' ? 'bike-swarm' : `bike-${kind}`
+    const chaseKey: Partial<Record<Kind, string>> = {
+      debris: 's6-debris',
+      box: 's6-boxstack',
+      trash: 'c2-prop-trash',
+      cart: 'c2-prop-cart',
+    }
+    const key =
+      kind === 'coin'
+        ? 'fxa-coin-spin'
+        : kind === 'swarm'
+          ? 'bike-swarm'
+          : chaseKey[kind]
+            ? chaseKey[kind]!
+            : `bike-${kind}`
     if (!this.textures.exists(key)) return
     const y = kind === 'swarm' ? ROAD_Y - 64 : kind === 'coin' ? ROAD_Y - 58 : kind === 'puddle' ? ROAD_Y + 3 : ROAD_Y + 2
     const spr = this.add.sprite(-100, y, key).setOrigin(0.5, 1).setVisible(false)
+    if (kind === 'box') spr.setScale(0.55)
+    if (kind === 'debris') spr.setScale(0.9)
     if (kind === 'coin' && this.anims.exists('fxa-coin-spin')) spr.play('fxa-coin-spin')
     if (kind === 'swarm') spr.play('bike-swarm-fly')
     this.objs.push({ kind, x: d, spr, done: false, y })
@@ -225,10 +349,19 @@ export class BikeScene extends Phaser.Scene {
     this.drawSpeedLines(boost)
     const v = SPEED * this.speedMul
     this.dist += v * dt
-    this.far.setScale(1 + Math.min(1, this.dist / LENGTH) * 0.18)
-    this.mid.tilePositionX += v * dt * 0.45
+    const len = this.courseLength()
+    const progress = Math.min(1, this.dist / len)
+    if (this.chase && this.goalImg) {
+      // Side door grows as you near the exhibit entrance.
+      this.goalImg.setScale(0.55 + progress * 0.7)
+      this.goalImg.setX(GAME_W - 70 - progress * 30)
+      this.far.setAlpha(0.85 + progress * 0.15)
+    } else {
+      this.far.setScale(1 + progress * 0.18)
+    }
+    this.mid.tilePositionX += v * dt * (this.chase ? 0.85 : 0.45)
     this.road.tilePositionX += v * dt
-    this.marker.x = 176 + Math.min(1, this.dist / LENGTH) * 288
+    this.marker.x = 176 + progress * 288
 
     for (const r of this.riders) {
       if (r.jumpKeys() && !r.air) {
@@ -270,7 +403,7 @@ export class BikeScene extends Phaser.Scene {
       for (const r of this.riders) this.collide(r, o, sx)
     }
 
-    if (this.dist >= LENGTH) this.finish(false)
+    if (this.dist >= this.courseLength()) this.finish(false)
   }
 
   /** Streaks along the road edge so the speed is felt, not just counted. */
@@ -327,6 +460,13 @@ export class BikeScene extends Phaser.Scene {
         // Flies at jump height: being in the air under it gets you stung.
         if (dx < 22 && feet < ROAD_Y - 26 && now > r.hurtUntil) this.crash(r, '叮！')
         break
+      case 'debris':
+      case 'box':
+      case 'trash':
+      case 'cart':
+        // Chase junk: slow only (same as crash wobble — never HP).
+        if (dx < 20 && feet > ROAD_Y - 22 && now > r.hurtUntil) this.crash(r, '撞到！')
+        break
       default:
         if (dx < 16 && feet > ROAD_Y - 18 && now > r.hurtUntil) this.crash(r, '撞到！')
     }
@@ -366,7 +506,8 @@ export class BikeScene extends Phaser.Scene {
       const bg = this.add.graphics()
       bg.fillStyle(0xc8902a, 1).fillRect(-132, -40, 264, 80)
       bg.fillStyle(0x1c120c, 0.96).fillRect(-130, -38, 260, 76)
-      const a = this.add.text(0, -18, `到咗${this.destName()}！`, { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a' }).setOrigin(0.5)
+      const arrive = this.chase ? `到咗${this.destName()}側門！` : `到咗${this.destName()}！`
+      const a = this.add.text(0, -18, arrive, { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a' }).setOrigin(0.5)
       const b = this.add
         .text(0, 14, `金幣 ＋${this.coins}　撞到 ${this.crashes} 次${this.crashes === 0 ? '　完美！' : ''}`, {
           fontFamily: FONT_UI,

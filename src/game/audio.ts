@@ -335,6 +335,12 @@ export const SFX = {
     tone(90, 0.2, 'sine', 0.2, 50)
     tone(1568, 0.25, 'triangle', 0.08, undefined, 0.12)
   },
+  /** Camera shutter click (stage5 photo spot). */
+  shutter: () => {
+    noise(0.04, 0.12, 0, 4500)
+    tone(1800, 0.045, 'square', 0.06)
+    tone(900, 0.06, 'triangle', 0.04, undefined, 0.02)
+  },
 }
 
 // ── Chiptune sequencer (original compositions, synthesised live) ─────────────

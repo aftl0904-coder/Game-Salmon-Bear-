@@ -29,10 +29,16 @@ type Stage7Ctx = {
   spawnAlarmPair: (hx: number) => void
   /** Soft drop / coin / enemy bodies to push on conveyors. */
   looseBodies: () => Array<{ x: number; y: number; setPosition?: (x: number, y: number) => void; active?: boolean; flying?: boolean }>
+  /** Active (non-dead) enemies on field — spotlight reinforce gate. */
+  activeEnemyCount: () => number
+  /** Pits for conveyor end deadzone (same idea as Stage5). */
+  pits?: Array<{ x: number; w: number }>
 }
 
 /** D2 numbers */
 export const CONVEYOR_SPEED = 70
+/** Polish-1 / clarity-2: stand-firm zone before a pit-adjacent belt end. */
+const BELT_PIT_DEADZONE = 40
 /** D3 numbers */
 const SPOT_HALF = 40 // 80px beam
 const SPOT_PERIOD_MS = 4000
@@ -209,6 +215,19 @@ export class Stage7World {
         }
       }
       const along = (CONVEYOR_SPEED * c.dir * dt) / 1000
+      // Pit-adjacent end deadzone: last 40px before a pit — no push so feet can plant.
+      let pushLo = c.x0
+      let pushHi = c.x1
+      for (const p of this.ctx.pits ?? []) {
+        const p0 = p.x
+        const p1 = p.x + p.w
+        if (c.dir > 0 && p0 <= c.x1 + 8 && p1 >= c.x1 - BELT_PIT_DEADZONE) {
+          pushHi = Math.min(pushHi, c.x1 - BELT_PIT_DEADZONE)
+        }
+        if (c.dir < 0 && p1 >= c.x0 - 8 && p0 <= c.x0 + BELT_PIT_DEADZONE) {
+          pushLo = Math.max(pushLo, c.x0 + BELT_PIT_DEADZONE)
+        }
+      }
       const push = (
         actor: {
           x: number
@@ -220,8 +239,10 @@ export class Stage7World {
       ) => {
         if (skipBelt) return
         if (actor.x < c.x0 - 2 || actor.x > c.x1 + 2) return
+        // Exclusive upper bound matches Stage5 (h.x >= hi → no push).
+        if (actor.x < pushLo || actor.x >= pushHi) return
         if (actor.y < this.ctx.floorY - 20 || actor.y > this.ctx.floorY + 8) return
-        const nx = Phaser.Math.Clamp(actor.x + along, c.x0, c.x1)
+        const nx = Phaser.Math.Clamp(actor.x + along, pushLo, Math.max(pushLo, pushHi - 0.01))
         actor.x = nx
         if (actor.setPosition) actor.setPosition(nx, actor.y)
         const body = actor.body as Phaser.Physics.Arcade.Body | null | undefined
@@ -283,10 +304,16 @@ export class Stage7World {
           sp.fired = true
           sp.cooledUntil = now + SPOT_COOLDOWN_MS
           const hx = this.ctx.heroes().find((h) => h?.alive !== false)?.x ?? cx
-          this.ctx.spawnAlarmPair(hx)
-          this.log('spotlight-alarm', hx)
+          // Always flash + sound. Reinforce only when fewer than 2 live enemies.
           SFX.spike()
           floatAlarm(this.ctx.scene, cx, f - 100)
+          const live = this.ctx.activeEnemyCount()
+          if (live >= 2) {
+            this.log('spotlight-warn', hx)
+          } else {
+            this.ctx.spawnAlarmPair(hx)
+            this.log('spotlight-alarm', hx)
+          }
         }
       } else {
         sp.dwell = 0
