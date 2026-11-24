@@ -1,0 +1,2 @@
+desktop: PASS; 104x60, frame 104x60, image decode + mouse; standalone preview, not game; no page errors
+mobile-touch: PASS; 104x60, frame 104x60, image decode + touch only; standalone preview, not game; no page errors
