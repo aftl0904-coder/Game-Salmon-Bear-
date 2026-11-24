@@ -4019,7 +4019,7 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Non-combat: 商場保安總監 briefly appears in the factory approach (story beat only).
-   * Dialogue stays 「待補」 until Alan writes it. Never the stage-6 fight boss.
+   * Sighting line for the roaming 保安總監 cameo. Never the stage-6 fight boss.
    */
   private tickDirectorSighting() {
     if (this.directorSighted || !this.mall || this.exhibit || !this.started || this.bossFight || this.ended) return
@@ -4030,7 +4030,7 @@ export class GameScene extends Phaser.Scene {
     const spr = key
       ? this.add.sprite(x, LANE_FLOOR_Y, key).setOrigin(0.5, 1).setTint(0x3a5a88).setAlpha(0.9).setDepth(DEPTH.WORLD_ENTITY + 40)
       : this.add.rectangle(x, LANE_FLOOR_Y - 40, 36, 72, 0x3a5a88, 0.85).setOrigin(0.5, 1).setDepth(DEPTH.WORLD_ENTITY + 40)
-    floatText(this, x, LANE_FLOOR_Y - 110, '待補', '#c8d8ff', { size: 12, dur: 2400 })
+    floatText(this, x, LANE_FLOOR_Y - 110, '保安總監：「一個都唔可以漏。」', '#c8d8ff', { size: 12, dur: 2400 })
     this.tweens.add({
       targets: spr,
       alpha: 0,
