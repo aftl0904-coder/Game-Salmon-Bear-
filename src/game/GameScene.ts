@@ -7243,7 +7243,8 @@ export class GameScene extends Phaser.Scene {
     for (const h of heroes) {
       h.awaitingContinue = false
       h.lane = LANE_DEFAULT
-      reviveActor(h, cx + (h.role === 'girl' ? 60 : 0), laneY(LANE_DEFAULT), this.time.now, 2000)
+      // fix-2p-1: revive to heroMaxHp (includes 大心心／運符). Dead hero's gear already wiped.
+      reviveActor(h, cx + (h.role === 'girl' ? 60 : 0), laneY(LANE_DEFAULT), this.time.now, 2000, this.heroMaxHp(h))
       h.snapToLane(LANE_DEFAULT, h.x)
     }
     // Encounter-1: dying inside a lock → checkpoint revive resets the encounter.

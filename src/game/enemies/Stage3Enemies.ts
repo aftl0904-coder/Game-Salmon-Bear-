@@ -623,7 +623,9 @@ export class StallKeeper extends AnimEnemy {
     if (this.phase === 'idle') {
       this.anim('idle')
       this.cd -= dt
-      if (this.cd <= 0 && Math.abs(dx) < 300) {
+      // fix-2p-1: only start a throw when on-camera (worldView −16px). Keep |dx|<300,
+      // cadence (cd / throw 260ms / duck), and high/low knife alternate unchanged.
+      if (this.cd <= 0 && Math.abs(dx) < 300 && this.canEngageFromScreen()) {
         this.phase = 'throw'
         this.t = 0
         this.anim('throw')
