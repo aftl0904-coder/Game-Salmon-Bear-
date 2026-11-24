@@ -1,0 +1,211 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "SLEEP_COST": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "friend:huihui": {
+      "pass": true,
+      "detail": "熊仔：你哋嚟到喇！我幫你哋留咗個位。"
+    },
+    "friend:guard": {
+      "pass": true,
+      "detail": "英國熊：立正！多謝兩位救駕。"
+    },
+    "friend:denim": {
+      "pass": true,
+      "detail": "小熊仔：我條吊帶褲勾住咗個籠，好彩你哋嚟。"
+    },
+    "friend:brownie": {
+      "pass": true,
+      "detail": "招積熊：哼，我本來都就快自己出到嚟……多謝。"
+    },
+    "friend:shiba": {
+      "pass": true,
+      "detail": "柴柴：汪！好黑呀，我一直望住你哋盞燈。"
+    },
+    "friend:snowcat": {
+      "pass": true,
+      "detail": "北極熊：呢度好熱……陣間一齊去浸溫泉？"
+    },
+    "friend:ginger": {
+      "pass": true,
+      "detail": "薑餅：差少少就俾人當餅乾賣咗！"
+    },
+    "friend:fleecy": {
+      "pass": true,
+      "detail": "大pat熊：抱一抱先，我好凍。"
+    },
+    "friend:kuro": {
+      "pass": true,
+      "detail": "喵仔：喵……我唔係等你哋，只係啱啱想出嚟。"
+    },
+    "friend:gnome": {
+      "pass": true,
+      "detail": "聖誕伯伯：Ho ho！聖誕禮物提早派——我就係禮物。"
+    },
+    "friend:tigercub": {
+      "pass": true,
+      "detail": "虎仔：我扮老虎嚇佢哋，點知佢哋唔驚。"
+    },
+    "xmas.lineCount": {
+      "got": 14,
+      "want": 14,
+      "pass": true
+    },
+    "xmas[0]": {
+      "pass": true,
+      "detail": "【番外篇・2026 聖誕】"
+    },
+    "xmas[1]": {
+      "pass": true,
+      "detail": "旁白：冒險暫停一晚。今晚冇蜜僵，冇大佬。"
+    },
+    "xmas[2]": {
+      "pass": true,
+      "detail": "琪寶寶：嘩，大家都嚟齊喇？"
+    },
+    "xmas[3]": {
+      "pass": true,
+      "detail": "熊仔：我哋留咗兩個位俾你哋㗎！"
+    },
+    "xmas[4]": {
+      "pass": true,
+      "detail": "招積熊：我冇特登等㗎，只係啱啱得閒。"
+    },
+    "xmas[5]": {
+      "pass": true,
+      "detail": "噗噗：……蜜。"
+    },
+    "xmas[6]": {
+      "pass": true,
+      "detail": "倫寶：得啦，今晚成罐都係你嘅。"
+    },
+    "xmas[7]": {
+      "pass": true,
+      "detail": "琪寶寶：咁我呢？"
+    },
+    "xmas[8]": {
+      "pass": true,
+      "detail": "倫寶：你嘅喺度。"
+    },
+    "xmas[9]": {
+      "pass": true,
+      "detail": "琪寶寶：……又係遊戲？"
+    },
+    "xmas[10]": {
+      "pass": true,
+      "detail": "倫寶：呢隻遊戲，係我哋兩個嘅。"
+    },
+    "xmas[11]": {
+      "pass": true,
+      "detail": "琪寶寶：傻佬。"
+    },
+    "xmas[12]": {
+      "pass": true,
+      "detail": "大家：聖誕快樂！"
+    },
+    "xmas[13]": {
+      "pass": true,
+      "detail": "2026 聖誕快樂 —— 冒險，待續。"
+    },
+    "F3.sign": {
+      "pass": true
+    },
+    "F3.boy": {
+      "pass": true
+    },
+    "F3.girl": {
+      "pass": true
+    },
+    "F4.sign": {
+      "pass": true
+    },
+    "F6.tip": {
+      "pass": true
+    },
+    "F7.squirrelCount": {
+      "got": 3,
+      "want": 3,
+      "pass": true
+    },
+    "F7.no2620": {
+      "pass": true
+    },
+    "F7.platformCoins": {
+      "got": 3,
+      "want": 3,
+      "pass": true
+    },
+    "F8.no2820zombie": {
+      "pass": true
+    },
+    "F5.memoPrefix": {
+      "pass": true,
+      "detail": "驗收員備註：一隻橙色熊喺長櫈瞓咗成朝，未有改善。大堂驗收合格；排水口持續出現琥珀"
+    },
+    "F6.s7hop.unlockX": {
+      "got": 1350,
+      "want": 1350,
+      "pass": true
+    },
+    "guide:小怪同預警": {
+      "pass": true,
+      "detail": "小怪同預警"
+    },
+    "guide:小怪硬淨咗，大部份要打2": {
+      "pass": true,
+      "detail": "小怪硬淨咗，大部份要打2–3下，飛行怪就比較易打低。"
+    },
+    "guide:一齊玩貼士": {
+      "pass": true,
+      "detail": "一齊玩貼士"
+    },
+    "guide:會員中心搶答": {
+      "pass": true,
+      "detail": "會員中心搶答"
+    },
+    "guide:題目有商場營運、物業管理": {
+      "pass": true,
+      "detail": "題目有商場營運、物業管理、法律、發展商、HR／勞工、數學同IQ，唔係淨係考手快。"
+    },
+    "guide:小怪打極未死": {
+      "pass": true,
+      "detail": "小怪打極未死"
+    },
+    "guide:留意多一眼": {
+      "pass": true,
+      "detail": "留意多一眼"
+    },
+    "guide:通關第7關之後有一個聖誕": {
+      "pass": true,
+      "detail": "通關第7關之後有一個聖誕驚喜。"
+    },
+    "guide:過關休息而家6幣，可以回": {
+      "pass": true,
+      "detail": "過關休息而家6幣，可以回滿血。"
+    },
+    "guide.noSpoiler:守護者": {
+      "pass": true
+    },
+    "guide.noSpoiler:第8關": {
+      "pass": true
+    }
+  },
+  "shots": [
+    "docs/qa-fun-1/f3-hotspring-seats.png",
+    "docs/qa-fun-1/f3-hotspring-lines.png",
+    "docs/qa-fun-1/f5-photo-sign.png",
+    "docs/qa-fun-1/f7-coop-tip.png",
+    "docs/qa-fun-1/f2-friend-line.png",
+    "docs/qa-fun-1/f10-xmas-first.png",
+    "docs/qa-fun-1/f10-xmas-last.png",
+    "docs/qa-fun-1/guide-w2-coop.png",
+    "docs/qa-fun-1/guide-w1-core.png",
+    "docs/qa-fun-1/guide-w3-quiz.png",
+    "docs/qa-fun-1/guide-w5-tips.png"
+  ]
+}
