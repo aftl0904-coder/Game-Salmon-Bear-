@@ -39,6 +39,7 @@ import {
   showFragmentRead,
   showKenRead,
   showStoryLines,
+  showStoryStillThen,
 } from './storyDepth'
 import {
   type Creep,
@@ -3333,7 +3334,8 @@ export class GameScene extends Phaser.Scene {
       placeArtOrProp('plant', 'c2-prop-plant', 340, f, 44, DEPTH.PROP + 1)
       placeArtOrProp('bench', 'c2-prop-bench', 480, f, 32, DEPTH.PROP + 1)
       // C5 escalator visual is built when Stage6World constructs (see buildEscalatorVisual).
-      placeArtOrProp('escalator-sign', 'c2-prop-escalator', 1848, f, 40, DEPTH.PROP + 2)
+      // Escalator goal visual (Manus prop-escalator 64×80). Keep at ramp; don't move.
+      placeArtOrProp('escalator-sign', 'c2-prop-escalator', 1920, f, 40, DEPTH.PROP + 2)
       // C4: pre-escalator wayfinding
       this.add
         .text(1840, f - 96, '↑ 上層繼續前進 →', {
@@ -3364,7 +3366,8 @@ export class GameScene extends Phaser.Scene {
         repeat: -1,
       })
       // Corridor décor props (T5b).
-      placeArtOrProp('cart', 'c2-prop-cart', 1020, f, 36, DEPTH.PROP + 1)
+      // Cart kept ≥24px clear of escalator band (1860–1980); was overlapping when near ramp.
+      placeArtOrProp('cart', 'c2-prop-cart', 1680, f, 36, DEPTH.PROP + 1)
       placeArtOrProp('wayfind', 'c2-prop-sign', 1200, f, 48, DEPTH.PROP + 1)
       placeArtOrProp('rail', 'c2-prop-barrier', 1550, f, 28, DEPTH.PROP + 1)
       placeArtOrProp('plant', 'c2-prop-plant', 880, f, 36, DEPTH.PROP + 1)
@@ -3383,7 +3386,7 @@ export class GameScene extends Phaser.Scene {
         { key: 'c2-prop-bench', x: 520 },
         { key: 'c2-prop-trash', x: 680 },
         { key: 'c2-prop-barrier', x: 1520 },
-        { key: 'c2-prop-escalator', x: 1920, label: '扶手電梯' },
+        // Single escalator prop at goal (see placeArtOrProp above); no second copy here.
         { key: 'c2-prop-plant', x: 2150 },
         { key: 'c2-prop-bench', x: 2680 },
         { key: 'c2-prop-sign', x: 3400 },
@@ -3959,41 +3962,46 @@ export class GameScene extends Phaser.Scene {
       this.time.delayedCall(1000, finishDepart)
       return
     }
-    // Narration pages, then motion.
-    this.storyIntro = showStoryLines(this, dep.lines, () => {
-      this.storyIntro = null
-      this.tweens.add({
-        targets: pet,
-        x: hatch.x - 30,
-        duration: 900,
-        ease: 'Sine.out',
-        onComplete: () => {
-          // Look back at heroes
-          pet.setFlipX(this.leadX() < pet.x)
-          this.tweens.add({
-            targets: pet,
-            y: pet.y - 6,
-            duration: 200,
-            yoyo: true,
-            repeat: 1,
-            onComplete: () => {
-              const branch = this.add.image(hatch.x - 8, LANE_FLOOR_Y - 2, 'c2-pupu-branch').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1)
-              pet.setFlipX(false)
-              this.tweens.add({
-                targets: pet,
-                x: hatch.x,
-                alpha: 0,
-                duration: 700,
-                onComplete: () => {
-                  void branch
-                  finishDepart()
-                },
-              })
-            },
-          })
-        },
+    // Manus departure still → narration → motion → 待續
+    const afterStill = () => {
+      this.storyIntro = showStoryLines(this, dep.lines, () => {
+        this.storyIntro = null
+        this.tweens.add({
+          targets: pet,
+          x: hatch.x - 30,
+          duration: 900,
+          ease: 'Sine.out',
+          onComplete: () => {
+            pet.setFlipX(this.leadX() < pet.x)
+            this.tweens.add({
+              targets: pet,
+              y: pet.y - 6,
+              duration: 200,
+              yoyo: true,
+              repeat: 1,
+              onComplete: () => {
+                const branch = this.add
+                  .image(hatch.x - 8, LANE_FLOOR_Y - 2, 'c2-pupu-branch')
+                  .setOrigin(0.5, 1)
+                  .setDepth(DEPTH.PROP + 1)
+                pet.setFlipX(false)
+                this.tweens.add({
+                  targets: pet,
+                  x: hatch.x,
+                  alpha: 0,
+                  duration: 700,
+                  onComplete: () => {
+                    void branch
+                    finishDepart()
+                  },
+                })
+              },
+            })
+          },
+        })
       })
-    })
+    }
+    this.storyIntro = showStoryStillThen(this, 'c7-pupu-leave', afterStill, 1000)
   }
   /** Reuses enemyShots collision; scene timers are independent of P3 AI rate, but frame/delta dependent. */
   private trainerChain(x0: number, x1: number): number {
@@ -5409,6 +5417,11 @@ export class GameScene extends Phaser.Scene {
       .setData('kenTitle', spec.title)
       .setData('kenPresentation', spec.presentation)
       .setData('kenContent', spec.content)
+    // Manus ken-photo is 36×28 — ×2 nearest so Ken/tree/ribbon read in-game.
+    if (this.mall && this.textures.exists(key)) {
+      img.setDisplaySize(36 * 2, 28 * 2)
+      img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
+    }
     this.tweens.add({ targets: img, alpha: 0.85, duration: 900, yoyo: true, repeat: -1 })
     // Hatch for stage7 departure foreshadowing (visual only until boss down)
     if (this.exhibit) {
@@ -5446,6 +5459,7 @@ export class GameScene extends Phaser.Scene {
           this.resetPauseKeys()
         }
       },
+      { still: this.mall ? 'c6-photo' : this.exhibit ? 'c7-memo' : undefined },
     )
   }
 
@@ -7893,13 +7907,20 @@ export class GameScene extends Phaser.Scene {
         this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, this.stageNo === 1 ? 'salmon' : 'deluxe')
       }
     }
-    if (this.depot || this.mall || this.stageNo === 1) {
-      // No dedicated reveal cutscene for 泥鬃 / 武者王 / scrubber — boss card already told the story.
-      // Do NOT park on storyIntro while waiting: update() returns early when storyIntro is set,
-      // which freezes enemy ticks if the delay ever races. Brief wait uses a non-blocking timer.
+    if (this.depot || this.stageNo === 1) {
+      // No dedicated reveal cutscene for 泥鬃 / 武者王 — boss card already told the story.
       this.time.delayedCall(260, () => {
         if (!this.ended) reveal()
       })
+      return
+    }
+    // Mall / exhibit: Manus s6/s7-boss-intro stills (same role as s2–s4-boss-intro).
+    if (this.mall || this.exhibit) {
+      const stillId = this.mall ? 's6-boss-intro' : 's7-boss-intro'
+      this.storyIntro = showStoryStillThen(this, stillId, () => {
+        this.storyIntro = null
+        if (!this.ended) reveal()
+      }, 1100)
       return
     }
     const handle = playCutscene(this, this.tower ? 'C10' : this.market ? 'B3' : 'B2', reveal)

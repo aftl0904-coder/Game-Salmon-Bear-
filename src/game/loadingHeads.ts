@@ -2,20 +2,23 @@ import type Phaser from 'phaser'
 import { FRIENDS, type FriendId } from './friends'
 
 /**
- * F2 loading poster heads — prefer highest-res portraits / friend sheets.
- * Cast ~134px centre-bottom; friends ~92px fill 640×360 (≥60% cover, no overlap).
- * Friends use public/art/loading-heads/*.png (HD magenta-keyed 256px).
+ * Loading poster heads — prefer Manus public/art/qhead/*.png (nearest integer scale).
+ * Fallback: legacy portrait / loading-heads crop via bakeQHead.
  */
 
 export type LoadingHeadSpec = {
   id: string
   name: string
-  /** BootScene texture key */
+  /** BootScene texture key (final display key is also qhead-<id>) */
   src: string
-  /** public URL */
+  /** public URL for Manus PNG (preferred) */
   url: string
+  /** Legacy fallback URL if Manus PNG missing */
+  fallbackUrl?: string
+  /** Layout target size (before integer snap to PNG native) */
   size: number
-  /** Crop mode for bake */
+  /** Native PNG edge (88 cast / 64 friends) */
+  native: number
   crop: 'portrait-cell' | 'top' | 'full'
 }
 
@@ -24,37 +27,45 @@ export const LOADING_CAST: ReadonlyArray<LoadingHeadSpec> = [
   {
     id: 'lunbo',
     name: '倫寶',
-    src: 'load-port-lunbo',
-    url: '/art/portraits/lunbo.png',
+    src: 'qhead-lunbo',
+    url: '/art/qhead/qhead-lunbo.png',
+    fallbackUrl: '/art/portraits/lunbo.png',
     size: 134,
+    native: 88,
     crop: 'portrait-cell',
   },
   {
     id: 'kibobo',
     name: '琪寶寶',
-    src: 'load-port-kibobo',
-    url: '/art/portraits/kibobo.png',
+    src: 'qhead-kibobo',
+    url: '/art/qhead/qhead-kibobo.png',
+    fallbackUrl: '/art/portraits/kibobo.png',
     size: 134,
+    native: 88,
     crop: 'portrait-cell',
   },
   {
     id: 'pupu',
     name: '噗噗',
-    src: 'load-port-pupu',
-    url: '/art/custom/pupu-portrait.png',
+    src: 'qhead-pupu',
+    url: '/art/qhead/qhead-pupu.png',
+    fallbackUrl: '/art/custom/pupu-portrait.png',
     size: 134,
+    native: 88,
     crop: 'full',
   },
 ]
 
-/** Picnic friends — HD loading-heads; 3×134²+11×92² ≈ 63.8% of 640×360. */
+/** Picnic friends — Manus 64×64 qheads. */
 export const LOADING_FRIENDS: ReadonlyArray<LoadingHeadSpec> = (Object.keys(FRIENDS) as FriendId[]).map(
   (id) => ({
     id,
     name: FRIENDS[id].name,
-    src: `load-friend-${id}`,
-    url: `/art/loading-heads/${id}.png`,
+    src: `qhead-${id}`,
+    url: `/art/qhead/qhead-${id}.png`,
+    fallbackUrl: `/art/loading-heads/${id}.png`,
     size: 92,
+    native: 64,
     crop: 'full' as const,
   }),
 )
@@ -62,11 +73,27 @@ export const LOADING_FRIENDS: ReadonlyArray<LoadingHeadSpec> = (Object.keys(FRIE
 export const LOADING_BOOT_IMAGES: ReadonlyArray<{ key: string; url: string }> = [
   ...LOADING_CAST.map((c) => ({ key: c.src, url: c.url })),
   ...LOADING_FRIENDS.map((f) => ({ key: f.src, url: f.url })),
+  { key: 'load-jar-empty', url: '/art/qhead/load-jar-empty.png' },
+  { key: 'load-jar-full', url: '/art/qhead/load-jar-full.png' },
+  // Legacy jar fallback for older UI paths
   { key: 'load-jar', url: '/art/items/jar-real.png' },
+]
+
+/** Legacy fallback sources (portraits) — loaded only if qhead PNG failed. */
+export const LOADING_FALLBACK_IMAGES: ReadonlyArray<{ key: string; url: string }> = [
+  ...LOADING_CAST.filter((c) => c.fallbackUrl).map((c) => ({
+    key: `load-port-${c.id}`,
+    url: c.fallbackUrl!,
+  })),
+  ...LOADING_FRIENDS.filter((f) => f.fallbackUrl).map((f) => ({
+    key: `load-friend-${f.id}`,
+    url: f.fallbackUrl!,
+  })),
 ]
 
 /**
  * Bake a clear Q-head from high-res art with smooth downscale (not nearest upscale).
+ * Used only when Manus qhead PNG is missing.
  */
 export function bakeQHead(
   scene: Phaser.Scene,
@@ -87,7 +114,6 @@ export function bakeQHead(
   let cw = sw
   let ch = sh
   if (crop === 'portrait-cell') {
-    // 432×144 strip = 3×144 cells — use the first (clearest idle) cell.
     const cell = Math.min(sw, sh) || sh
     cw = cell
     ch = cell
@@ -99,7 +125,6 @@ export function bakeQHead(
     sx = 0
     sy = 0
   } else {
-    // full — square crop around upper body for tall portraits
     const side = Math.min(sw, sh)
     cw = side
     ch = side
@@ -128,28 +153,28 @@ export function allLoadingHeadSpecs() {
   ]
 }
 
+/** Integer nearest scale so display = native × N (no blur). */
+export function integerDisplaySize(native: number, target: number): number {
+  const n = Math.max(1, Math.round(target / Math.max(1, native)))
+  return native * n
+}
+
 /**
  * Fixed poster slots (640×360): cast centre-bottom, friends on all four edges.
- * Gaps ≥4px between boxes; logo / jar / stamp zones left clear.
- * Cover: 3×134² + 11×92² ≈ 63.8%.
  */
 const POSTER_SLOTS: ReadonlyArray<{ id: string; x: number; y: number; angle: number }> = [
-  // Cast — largest, centre-bottom
   { id: 'lunbo', x: 168, y: 265, angle: -6 },
   { id: 'pupu', x: 320, y: 290, angle: 0 },
   { id: 'kibobo', x: 472, y: 265, angle: 6 },
-  // Friends — top band (skip logo centre)
   { id: 'huihui', x: 50, y: 48, angle: -5 },
   { id: 'guard', x: 155, y: 46, angle: 4 },
   { id: 'denim', x: 485, y: 46, angle: -4 },
   { id: 'brownie', x: 590, y: 48, angle: 5 },
-  // Mid sides + mid band
   { id: 'snowcat', x: 48, y: 150, angle: -3 },
   { id: 'shiba', x: 592, y: 150, angle: 3 },
   { id: 'ginger', x: 222, y: 148, angle: 6 },
   { id: 'fleecy', x: 418, y: 148, angle: -6 },
   { id: 'kuro', x: 320, y: 162, angle: -2 },
-  // Lower sides (avoid jar / stamp)
   { id: 'gnome', x: 48, y: 255, angle: 4 },
   { id: 'tigercub', x: 592, y: 255, angle: -4 },
 ]

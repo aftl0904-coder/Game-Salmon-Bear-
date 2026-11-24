@@ -294,7 +294,12 @@ export class Stage6World {
     const f = this.ctx.floorY
     const root = s.add.container(x, f).setDepth(DEPTH.PROP + 2)
     // Prefer C2 PNG props (PR-K); fall back to T5b Graphics bin (same hurt footprint via w).
-    const propKeys = ['c2-prop-barrier', 'c2-prop-cart', 'c2-prop-trash'] as const
+    // Never place a cart overlapping the escalator goal (±24px clearance).
+    const nearEsc =
+      x + w / 2 >= ESCALATOR.x0 - 24 && x - w / 2 <= ESCALATOR.x1 + 24
+    const propKeys = nearEsc
+      ? (['c2-prop-barrier', 'c2-prop-trash'] as const)
+      : (['c2-prop-barrier', 'c2-prop-cart', 'c2-prop-trash'] as const)
     const pick = propKeys[Math.abs(Math.floor(x / 17)) % propKeys.length]!
     if (s.textures.exists(pick)) {
       root.add(s.add.image(0, 0, pick).setOrigin(0.5, 1))

@@ -63,7 +63,10 @@ export function pupuDepartureSpec() {
   return DATA.pupuDeparture
 }
 
-/** Bake simple 32-bit props (no geometry primitives as the final look — soft pixel sheets). */
+/**
+ * Fallback bake when Manus PNGs are missing.
+ * BootScene loads public/art/c2/story/*.png first — bake only if a key is absent.
+ */
 export function ensureStoryDepthArt(scene: Phaser.Scene) {
   const bake = (key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void) => {
     if (scene.textures.exists(key)) return
@@ -239,6 +242,58 @@ export function showKenRead(
   presentation: string,
   content: string,
   onDone: () => void,
+  opts?: { still?: string },
 ): DialogHandle {
-  return showStoryLines(scene, [`narr：${presentation}`, `${title}：${content}`], onDone)
+  const stillKey = opts?.still ? `story-${opts.still}` : null
+  let stillRoot: Phaser.GameObjects.Container | null = null
+  if (stillKey && scene.textures.exists(stillKey)) {
+    stillRoot = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 310)
+    stillRoot.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 0.55).setOrigin(0))
+    stillRoot.add(
+      scene.add
+        .image(GAME_W / 2, GAME_H / 2 - 20, stillKey)
+        .setDisplaySize(GAME_W, GAME_H)
+        .setOrigin(0.5),
+    )
+  }
+  return showStoryLines(scene, [`narr：${presentation}`, `${title}：${content}`], () => {
+    stillRoot?.destroy()
+    onDone()
+  })
+}
+
+/** Full-screen story still (boss intro / departure), then continue. */
+export function showStoryStillThen(
+  scene: Phaser.Scene,
+  stillId: string,
+  onDone: () => void,
+  holdMs = 900,
+): DialogHandle {
+  const key = `story-${stillId}`
+  if (!scene.textures.exists(key)) {
+    onDone()
+    return { destroy: () => undefined }
+  }
+  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 330)
+  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x000000, 0.7).setOrigin(0).setInteractive())
+  root.add(scene.add.image(GAME_W / 2, GAME_H / 2, key).setDisplaySize(GAME_W, GAME_H).setOrigin(0.5))
+  let dead = false
+  const finish = () => {
+    if (dead) return
+    dead = true
+    root.destroy()
+    onDone()
+  }
+  const t = scene.time.delayedCall(holdMs, finish)
+  const onKey = () => finish()
+  scene.input.keyboard?.once('keydown', onKey)
+  scene.input.once('pointerdown', onKey)
+  return {
+    destroy: () => {
+      t.remove(false)
+      scene.input.keyboard?.off('keydown', onKey)
+      scene.input.off('pointerdown', onKey)
+      finish()
+    },
+  }
 }

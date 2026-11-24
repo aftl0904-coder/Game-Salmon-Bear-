@@ -1,0 +1,61 @@
+{
+  "from": "Claude",
+  "to": "Cursor",
+  "date": "2026-11-24",
+  "title": "接入 Manus 美術兩批：Loading Q 頭、第6/7關故事圖、扶手電梯、6 個故事小物件",
+  "branch": "cursor/manus-art-integration-2610（由最新 origin/main 開；#124 故事深度已 merge）",
+  "sources": [
+    "origin/manus/c2-art-batch2-2610（qhead 16 張、story 5 張、prop-escalator）",
+    "origin/manus/c2-story-props-2610 @3c604a3（public/art/c2/story/ 6 張）"
+  ],
+  "step0_bring_files": "git checkout <manus branch> -- <路徑> 將 PNG 帶入你嘅 branch（唔好 merge Manus 成條 branch，只拎 public/art 檔案同 docs/qa-* 截圖）",
+  "pupu_rule": "qhead-pupu.png：開工時睇 manus/c2-art-batch2-2610 最新版。如果仍然係『紅色衫』（似 Winnie the Pooh），唔好用，噗噗 Loading 頭繼續用現有 interim crop；如果已改成橙啡色衫就用。喺回報寫明用咗邊個",
+  "tasks": [
+    {
+      "id": "M1_LOADING_QHEADS",
+      "files": "public/art/qhead/qhead-{lunbo,kibobo,pupu,huihui,guard,denim,brownie,snowcat,shiba,ginger,fleecy,gnome,tigercub,kuro}.png（主角 88×88、朋友 64×64）＋ load-jar-empty.png／load-jar-full.png（48×64）",
+      "do": [
+        "src/game/loadingHeads.ts：Q 頭改為直接載入 public/art/qhead/ PNG，取代 crop／magenta-key 嘅 interim 流程（保留 fallback：PNG 缺就用舊方法）",
+        "保持 Alan 要求：頭要大、充滿版面、唔重疊（沿用現有佈局計法，按新 PNG 尺寸放大，nearest 整數倍）",
+        "蜜糖罐進度條：空罐做底、滿罐按進度由下而上 crop 顯示，取代 jar-real＋Graphics"
+      ]
+    },
+    {
+      "id": "M2_STORY_STILLS",
+      "files": "public/art/story/{c6-photo,c7-memo,c7-pupu-leave,s6-boss-intro,s7-boss-intro}.png（1280×720）",
+      "do": [
+        "加入 heroAnims.ts STORY_STILLS 清單",
+        "s6-boss-intro：洗地機 X-9 開戰前卡（同 s2–s4-boss-intro 用法一致）",
+        "s7-boss-intro：馴獸師開戰前卡",
+        "c6-photo：第6關搵到舊相時嘅大圖（storyDepth 舊相片段）",
+        "c7-memo：第7關批示片段大圖",
+        "c7-pupu-leave：第7關尾噗噗離開 → 之後接「待續」"
+      ]
+    },
+    {
+      "id": "M3_STORY_PROPS",
+      "files": "public/art/c2/story/{c2-truth-scrap 28×32, c2-ken-photo 36×28, c2-ken-memo 30×34, c2-pupu-branch 24×10, c2-maint-hatch 40×48, c2-leon-emblem 32×28}.png",
+      "do": [
+        "BootScene 載入同名 key；storyDepth.ts 刪走 ensureStoryDepthArt() 嘅 bake（或改為只喺 PNG 缺時 fallback）",
+        "舊相 c2-ken-photo：遊戲內實際顯示大小截圖；如果睇唔出『有人蹲低扶小樹＋彩色布條』，就用 nearest 整數倍放大顯示（例如 ×2），唔好用模糊縮放；回報截圖"
+      ]
+    },
+    {
+      "id": "M4_ESCALATOR",
+      "files": "public/art/c2/prop-escalator.png（64×80，Manus 重畫）",
+      "do": [
+        "取代第6關 c2-prop-escalator 舊圖（GameScene ~L3317／L3367）",
+        "修正重疊：扶手電梯唔可以同購物小車／其他 prop 重疊；同一 x 範圍內 prop 最少相距 24px；必要時移開小車，唔好移扶手電梯（佢係終點 goal）",
+        "截圖第6關扶手電梯位置（手機 390×844 橫向）"
+      ]
+    }
+  ],
+  "rules": ["唔改任何遊戲數值／對白", "唔改 Manus PNG 內容（只可整數倍放大顯示）"],
+  "acceptance": [
+    "npm run build PASS；npm run validate:data PASS",
+    "QA 腳本 scripts/qa/manus-art-integration.mjs：assert 全部新 texture key 存在且尺寸正確；Loading 畫面截圖；第6關扶手電梯截圖；c2-ken-photo 遊戲內截圖；s6/s7 boss intro 截圖",
+    "截圖放 docs/qa-manus-art-integration/；report.json ok:true",
+    "art-todo.md：Loading Q-heads 表同 ART-REQUEST-21 表狀態改 done（噗噗如未換就寫 pending）"
+  ],
+  "deliver": "push 後回報 branch＋commit＋截圖路徑＋噗噗用咗邊個版本；唔使開 PR"
+}

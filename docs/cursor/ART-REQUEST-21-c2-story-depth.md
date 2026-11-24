@@ -2,7 +2,7 @@
 
 **Branch:** `cursor/c2-story-depth-2610`  
 **Date:** 2026-11-24  
-**Status:** 程式已用臨時 32-bit bake；請換成正式像素稿。
+**Status:** **done**（Manus `public/art/c2/story/*.png`；BootScene 載入，bake 僅 fallback）
 
 ## 需要新圖
 

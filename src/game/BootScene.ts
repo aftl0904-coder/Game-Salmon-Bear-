@@ -37,8 +37,10 @@ import {
 import { buildStampLabel } from './version'
 import {
   LOADING_BOOT_IMAGES,
+  LOADING_FALLBACK_IMAGES,
   allLoadingHeadSpecs,
   bakeQHead,
+  integerDisplaySize,
   layoutLoadingPoster,
 } from './loadingHeads'
 
@@ -91,6 +93,7 @@ export class BootScene extends Phaser.Scene {
   create() {
     this.phase = 'rest'
     this.buildHeadPile()
+    this.upgradeManusJar()
     this.publishLoadingHook()
     this.queueRestAssets()
     this.load.on('progress', (p: number) => {
@@ -199,30 +202,19 @@ export class BootScene extends Phaser.Scene {
     const innerH = this.jarH - pad * 2 - 4
     const fillBottom = jarY + this.jarH / 2 - pad
 
-    // Glass jar back (empty).
+    // Interim Graphics jar during preload; upgradeManusJar() swaps in Manus PNGs in create().
     const body = this.add.graphics().setDepth(25)
+    ;(this as unknown as { jarGfx: Phaser.GameObjects.Graphics }).jarGfx = body
     body.fillStyle(0xfff6d0, 0.22)
     body.fillRoundedRect(jarX - this.jarW / 2, jarY - this.jarH / 2, this.jarW, this.jarH, 10)
     body.lineStyle(3, 0xe0b86a, 1)
     body.strokeRoundedRect(jarX - this.jarW / 2, jarY - this.jarH / 2, this.jarW, this.jarH, 10)
-    // Lid
     body.fillStyle(0xc48a28, 1)
     body.fillRoundedRect(jarX - this.jarW / 2 - 5, jarY - this.jarH / 2 - 10, this.jarW + 10, 14, 4)
-    body.lineStyle(2, 0x5a3810, 1)
-    body.strokeRoundedRect(jarX - this.jarW / 2 - 5, jarY - this.jarH / 2 - 10, this.jarW + 10, 14, 4)
-
-    // Honey fill grows upward from the jar floor.
     this.honeyFill = this.add
       .rectangle(jarX, fillBottom, innerW, 2, 0xf0a820)
       .setOrigin(0.5, 1)
       .setDepth(26)
-    // Highlight stripe on honey surface (redrawn via height only; stripe is a child feel via second rect).
-    const honeyTop = this.add
-      .rectangle(jarX, fillBottom - 1, innerW, 3, 0xffe08a)
-      .setOrigin(0.5, 1)
-      .setDepth(27)
-    ;(this as unknown as { honeyTop: Phaser.GameObjects.Rectangle }).honeyTop = honeyTop
-
     this.honeyMaskGfx = this.add.graphics().setVisible(false)
     this.honeyMaskGfx.fillStyle(0xffffff, 1)
     this.honeyMaskGfx.fillRoundedRect(
@@ -234,51 +226,86 @@ export class BootScene extends Phaser.Scene {
     )
     const mask = this.honeyMaskGfx.createGeometryMask()
     this.honeyFill.setMask(mask)
-    honeyTop.setMask(mask)
+    ;(this as unknown as { jarX: number; jarY: number }).jarX = jarX
+    ;(this as unknown as { jarX: number; jarY: number }).jarY = jarY
+  }
 
-    this.events.once('heads-ready', () => {
-      if (!this.textures.exists('load-jar')) return
-      this.add
-        .image(jarX + this.jarW / 2 + 20, jarY, 'load-jar')
-        .setDisplaySize(24, 28)
-        .setDepth(28)
-    })
+  /** After boot pack: empty jar base + full jar cropped from bottom by progress. */
+  private upgradeManusJar() {
+    if (!this.textures.exists('load-jar-empty') || !this.textures.exists('load-jar-full')) return
+    const jarX = (this as unknown as { jarX: number }).jarX
+    const jarY = (this as unknown as { jarY: number }).jarY
+    const jarGfx = (this as unknown as { jarGfx?: Phaser.GameObjects.Graphics }).jarGfx
+    jarGfx?.destroy()
+    this.honeyFill?.destroy()
+    this.honeyMaskGfx?.destroy()
+    const jarDispW = 48
+    const jarDispH = 64
+    this.add.image(jarX, jarY, 'load-jar-empty').setDisplaySize(jarDispW, jarDispH).setDepth(25)
+    const full = this.add.image(jarX, jarY, 'load-jar-full').setDisplaySize(jarDispW, jarDispH).setDepth(26)
+    full.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
+    ;(this as unknown as { jarFullImg: Phaser.GameObjects.Image }).jarFullImg = full
+    this.honeyMaskGfx = this.add.graphics().setVisible(false)
+    this.honeyFill = this.add.rectangle(jarX, jarY, 1, 1, 0x000000, 0).setVisible(false)
+    this.setProgress(this.loadProgress)
   }
 
   private setProgress(p: number) {
     this.loadProgress = Phaser.Math.Clamp(p, 0, 1)
     const pct = Math.round(this.loadProgress * 100)
     this.progressText?.setText(`載入中… ${pct}%`)
-    if (this.honeyFill) {
+    const jarFull = (this as unknown as { jarFullImg?: Phaser.GameObjects.Image }).jarFullImg
+    if (jarFull && this.honeyMaskGfx) {
+      const jarDispH = 64
+      const jarDispW = 48
+      const h = Math.max(1, jarDispH * this.loadProgress)
+      const top = jarFull.y + jarDispH / 2 - h
+      this.honeyMaskGfx.clear()
+      this.honeyMaskGfx.fillStyle(0xffffff, 1)
+      this.honeyMaskGfx.fillRect(jarFull.x - jarDispW / 2, top, jarDispW, h)
+      jarFull.setMask(this.honeyMaskGfx.createGeometryMask())
+    } else if (this.honeyFill) {
       const pad = 5
       const innerH = this.jarH - pad * 2 - 4
       const h = Math.max(2, innerH * this.loadProgress)
       this.honeyFill.height = h
-      const honeyTop = (this as unknown as { honeyTop?: Phaser.GameObjects.Rectangle }).honeyTop
-      if (honeyTop) honeyTop.y = this.honeyFill.y - h + 3
     }
     this.publishLoadingHook()
   }
 
   private buildHeadPile() {
     const specs = allLoadingHeadSpecs()
-    for (const s of specs) bakeQHead(this, s.src, s.out, s.size, s.crop)
+    for (const s of specs) {
+      // Prefer Manus qhead PNG (src === qhead-<id> === out). Else bake from legacy crop into out.
+      if (this.textures.exists(s.src)) {
+        // already keyed as qhead-*; nothing to bake
+      } else {
+        const legacy =
+          s.id === 'lunbo' || s.id === 'kibobo' || s.id === 'pupu'
+            ? `load-port-${s.id}`
+            : `load-friend-${s.id}`
+        bakeQHead(this, legacy, s.out, s.size, s.crop)
+      }
+    }
 
     this.headsRoot = this.add.container(0, 0).setDepth(10)
     this.heads = []
 
-    // F2: poster fill — cast large centre-bottom, friends around edges, no overlap.
     const layout = layoutLoadingPoster(specs)
     layout.forEach((p, i) => {
       const s = specs.find((x) => x.id === p.id)
-      if (!s || !this.textures.exists(s.out)) return
+      const key = s && this.textures.exists(s.out) ? s.out : s && this.textures.exists(s.src) ? s.src : null
+      if (!s || !key) return
       const isCast = p.id === 'lunbo' || p.id === 'kibobo' || p.id === 'pupu'
+      const native = s.native || (isCast ? 88 : 64)
+      const disp = integerDisplaySize(native, p.size)
       const img = this.add
-        .image(p.x, p.y, s.out)
+        .image(p.x, p.y, key)
         .setOrigin(0.5, 0.5)
         .setDepth(isCast ? 40 + i : 10 + i)
         .setAngle(p.angle)
-      img.setDisplaySize(p.size, p.size)
+      img.setDisplaySize(disp, disp)
+      img.texture.setFilter(Phaser.Textures.FilterMode.NEAREST)
       this.headsRoot!.add(img)
       this.heads.push({
         img,
@@ -289,12 +316,12 @@ export class BootScene extends Phaser.Scene {
       })
     })
 
-    // QA hook — character → file → size
     ;(window as unknown as { __SAKE_LOADING_HEADS__?: unknown }).__SAKE_LOADING_HEADS__ = specs.map((s) => ({
       id: s.id,
       name: s.name,
       file: s.url,
-      size: s.size,
+      size: integerDisplaySize(s.native || 64, s.size),
+      source: this.textures.exists(s.src) ? 'manus-qhead' : 'legacy-bake',
     }))
 
     this.events.emit('heads-ready')
@@ -304,6 +331,9 @@ export class BootScene extends Phaser.Scene {
 
   private queueBootPack() {
     for (const { key, url } of LOADING_BOOT_IMAGES) {
+      this.load.image(key, url)
+    }
+    for (const { key, url } of LOADING_FALLBACK_IMAGES) {
       this.load.image(key, url)
     }
   }
@@ -388,6 +418,17 @@ export class BootScene extends Phaser.Scene {
       this.load.image(`c2-prop-${prop}`, `/art/c2/prop-${prop}.png`)
     }
     this.load.image('c2-mall-props', '/art/c2/mall-props.png')
+    // Manus C2 story-depth props (ART-REQUEST-21) — replace temporary Graphics bake.
+    for (const key of [
+      'c2-truth-scrap',
+      'c2-ken-photo',
+      'c2-ken-memo',
+      'c2-pupu-branch',
+      'c2-maint-hatch',
+      'c2-leon-emblem',
+    ] as const) {
+      this.load.image(key, `/art/c2/story/${key}.png`)
+    }
     // Friend full sprites already in boot pack; cage + remaining only.
     this.load.image('friend-cage', '/art/friends/cage.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')

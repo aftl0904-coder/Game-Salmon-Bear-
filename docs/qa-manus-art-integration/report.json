@@ -1,0 +1,155 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "qhead-lunbo": {
+      "w": 88,
+      "h": 88,
+      "want": 88
+    },
+    "qhead-kibobo": {
+      "w": 88,
+      "h": 88,
+      "want": 88
+    },
+    "qhead-pupu": {
+      "w": 88,
+      "h": 88,
+      "want": 88
+    },
+    "qhead-huihui": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-guard": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-denim": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-brownie": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-snowcat": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-shiba": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-ginger": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-fleecy": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-gnome": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-tigercub": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "qhead-kuro": {
+      "w": 64,
+      "h": 64,
+      "want": 64
+    },
+    "load-jar-empty.png": {
+      "w": 48,
+      "h": 64
+    },
+    "load-jar-full.png": {
+      "w": 48,
+      "h": 64
+    },
+    "prop-escalator.png": {
+      "w": 64,
+      "h": 80
+    },
+    "c6-photo.png": {
+      "w": 1280,
+      "h": 720
+    },
+    "c7-memo.png": {
+      "w": 1280,
+      "h": 720
+    },
+    "c7-pupu-leave.png": {
+      "w": 1280,
+      "h": 720
+    },
+    "s6-boss-intro.png": {
+      "w": 1280,
+      "h": 720
+    },
+    "s7-boss-intro.png": {
+      "w": 1280,
+      "h": 720
+    },
+    "c2-truth-scrap.png": {
+      "w": 28,
+      "h": 32
+    },
+    "c2-ken-photo.png": {
+      "w": 36,
+      "h": 28
+    },
+    "c2-ken-memo.png": {
+      "w": 30,
+      "h": 34
+    },
+    "c2-pupu-branch.png": {
+      "w": 24,
+      "h": 10
+    },
+    "c2-maint-hatch.png": {
+      "w": 40,
+      "h": 48
+    },
+    "c2-leon-emblem.png": {
+      "w": 32,
+      "h": 28
+    },
+    "loadingHeadsHook": 14,
+    "textures": {
+      "qhead-lunbo": true,
+      "qhead-pupu": true,
+      "load-jar-empty": true,
+      "load-jar-full": true,
+      "c2-prop-escalator": true,
+      "c2-ken-photo": true,
+      "c2-truth-scrap": true,
+      "story-s6-boss-intro": true,
+      "story-s7-boss-intro": true,
+      "story-c6-photo": true,
+      "story-c7-memo": true,
+      "story-c7-pupu-leave": true
+    }
+  },
+  "shots": [
+    "docs/qa-manus-art-integration/loading-qheads.png",
+    "docs/qa-manus-art-integration/st6-escalator-mobile-landscape.png",
+    "docs/qa-manus-art-integration/st6-ken-photo.png",
+    "docs/qa-manus-art-integration/s6-boss-intro.png",
+    "docs/qa-manus-art-integration/s7-boss-intro.png"
+  ],
+  "pupuVersion": "manus/c2-art-batch2-2610 qhead-pupu.png (橙黃衫，非紅色 Pooh；已接入)"
+}
