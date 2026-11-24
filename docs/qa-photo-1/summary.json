@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "name": "photo-1p",
+      "ok": true,
+      "r": {
+        "taken": true,
+        "polaroidN": 1,
+        "caption": [
+          "2026・聖誕"
+        ],
+        "texFilter": "ok",
+        "hasTex": true
+      }
+    },
+    {
+      "name": "photo-2p-girl-cross",
+      "ok": true,
+      "r": {
+        "taken": true,
+        "girlX": 3205,
+        "boyX": 3000
+      }
+    },
+    {
+      "name": "photo-mobile",
+      "ok": true,
+      "r": {
+        "taken": true,
+        "polaroidN": 1,
+        "caption": [
+          "2026・聖誕"
+        ],
+        "texFilter": "ok",
+        "hasTex": true
+      }
+    },
+    {
+      "name": "chase-c2-start",
+      "ok": true,
+      "start": {
+        "key": "bike",
+        "far": "bike-c2-far",
+        "mid": "bike-c2-mid",
+        "goal": "bike-c2-goal",
+        "chaseTitle": true
+      }
+    },
+    {
+      "name": "chase-c2-near-end",
+      "ok": true,
+      "end": {
+        "dist": 8558.297700000005,
+        "goalScale": 1.2011748250000003,
+        "midTileX": 396.63365833333404
+      }
+    }
+  ]
+}

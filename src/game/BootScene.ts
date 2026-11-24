@@ -25,6 +25,7 @@ import { OBJECT_CATALOG, allCatalogTextureKeys } from './data/objectCatalog'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { applyEnemyPlaceholderTextures, ENEMY_SHEET_MAP } from './enemyPlaceholders'
 import { applyArtOverrides, preloadArtOverrides } from './artOverrides'
+import { hardenPhotoTexture, preloadPhotoSpot } from './photoSpot'
 import { loadCustomSkins, preloadCustomConfig } from './customSkins'
 import {
   BAKE_RES_FACTOR,
@@ -392,6 +393,7 @@ export class BootScene extends Phaser.Scene {
     this.load.image('friend-cage', '/art/friends/cage.png')
     this.load.image('art-enemy', '/art/fish-enemy.png')
     preloadArtOverrides(this)
+    preloadPhotoSpot(this)
     preloadHeroAnims(this)
     preloadFxAnims(this)
     preloadRound1Map(this)
@@ -412,6 +414,7 @@ export class BootScene extends Phaser.Scene {
     const swapped = applyEnemyPlaceholderTextures(this)
     this.registry.set('enemyPlaceholders', swapped)
     this.registry.set('artOverrides', applyArtOverrides(this))
+    hardenPhotoTexture(this)
     createHeroAnims(this)
     for (const key of this.textures.getTextureKeys()) {
       if (
@@ -516,7 +519,7 @@ export class BootScene extends Phaser.Scene {
       'art-enemy-elephant': TARGET_H_ENEMY_L,
       'prop-honey-stack': TARGET_H_ITEM + 4,
       'prop-honey-pot': TARGET_H_ITEM,
-      'hazard-durian': TARGET_H_ITEM + 4,
+      // M6 hazard-durian stays at native 18×22 (same as jar) — no nearestFit upscale.
     }
     for (const [key, h] of Object.entries(fitH)) {
       if (this.textures.exists(key)) nearestFitTextureHeight(this, key, h)

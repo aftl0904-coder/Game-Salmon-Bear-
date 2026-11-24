@@ -1,4 +1,4 @@
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import hdProps from '../../data/props-hd.json'
 import { markHd } from './heroAnims'
 
@@ -37,6 +37,12 @@ export const ART_OVERRIDES: Record<string, string> = {
   'cs-keeper5': '/art/props/keeper5.png',
   // Goal: the honey tree with the glowing hive.
   goal3d: '/art/props/honey-tree.png',
+  // M6 items (replace isoArt procedural paints).
+  'pickup-sushi': '/art/items/pickup-sushi.png',
+  'hazard-durian': '/art/items/hazard-durian.png',
+  // M6 camp props (tent / shrine; campfire is a 2-frame strip — see applyCampFireOverride).
+  'prop-tent': '/art/props/camp-tent.png',
+  'prop-shrine': '/art/props/camp-shrine.png',
   // Scenery (data/levels/stage1.json "decor").
   'deco-stump-a': '/art/props/stump-a.png',
   'deco-stump-b': '/art/props/stump-b.png',
@@ -95,8 +101,22 @@ export const ART_OVERRIDES: Record<string, string> = {
   's6-boxstack': '/art/props/s6-boxstack.png',
 }
 
+/** Campfire strip key (2× 104×60). Loaded as spritesheet; not in ART_OVERRIDES. */
+export const CAMP_FIRE_SHEET = 'ovr-prop-campfire'
+export const CAMP_FIRE_ANIM = 'prop-campfire-burn'
+/** Honey-paw strip (3× 16×16). Frame 2 is empty; use 0/1 + alpha for fade. */
+export const HONEY_PAW_SHEET = 'fx-honey-paw'
+
 export function preloadArtOverrides(scene: Phaser.Scene) {
   for (const [key, url] of Object.entries(ART_OVERRIDES)) scene.load.image(`ovr-${key}`, url)
+  scene.load.spritesheet(CAMP_FIRE_SHEET, '/art/props/camp-fire.png', {
+    frameWidth: 104,
+    frameHeight: 60,
+  })
+  scene.load.spritesheet(HONEY_PAW_SHEET, '/art/fx/honey-paw.png', {
+    frameWidth: 16,
+    frameHeight: 16,
+  })
 }
 
 export function applyArtOverrides(scene: Phaser.Scene): string[] {
@@ -121,5 +141,46 @@ export function applyArtOverrides(scene: Phaser.Scene): string[] {
     if (tex) markHd(tex, (hdProps as Record<string, number>)[name] ?? 1)
     done.push(key)
   }
+  done.push(...applyCampFireOverride(scene))
+  applyHoneyPawSheet(scene)
   return done
+}
+
+/** Replace procedural campfire with M6 2-frame strip + loop anim. */
+function applyCampFireOverride(scene: Phaser.Scene): string[] {
+  if (!scene.textures.exists(CAMP_FIRE_SHEET)) {
+    console.error(`[artOverrides] missing ${CAMP_FIRE_SHEET}`)
+    return []
+  }
+  markHd(scene.textures.get(CAMP_FIRE_SHEET), (hdProps as Record<string, number>)['camp-fire'] ?? 2)
+  scene.textures.get(CAMP_FIRE_SHEET).setFilter(Phaser.Textures.FilterMode.NEAREST)
+  // Static key for catalog / bakeCastTextures: first frame only.
+  const frame = scene.textures.getFrame(CAMP_FIRE_SHEET, 0)
+  const canvas = document.createElement('canvas')
+  canvas.width = frame.cutWidth
+  canvas.height = frame.cutHeight
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingEnabled = false
+  const src = scene.textures.get(CAMP_FIRE_SHEET).getSourceImage() as CanvasImageSource
+  ctx.drawImage(src, frame.cutX, frame.cutY, frame.cutWidth, frame.cutHeight, 0, 0, frame.cutWidth, frame.cutHeight)
+  if (scene.textures.exists('prop-campfire')) scene.textures.remove('prop-campfire')
+  const tex = scene.textures.addCanvas('prop-campfire', canvas)
+  if (tex) markHd(tex, (hdProps as Record<string, number>)['camp-fire'] ?? 2)
+  if (!scene.anims.exists(CAMP_FIRE_ANIM)) {
+    scene.anims.create({
+      key: CAMP_FIRE_ANIM,
+      frames: scene.anims.generateFrameNumbers(CAMP_FIRE_SHEET, { start: 0, end: 1 }),
+      frameRate: 6,
+      repeat: -1,
+    })
+  }
+  return ['prop-campfire']
+}
+
+function applyHoneyPawSheet(scene: Phaser.Scene) {
+  if (!scene.textures.exists(HONEY_PAW_SHEET)) {
+    console.error(`[artOverrides] missing ${HONEY_PAW_SHEET}`)
+    return
+  }
+  scene.textures.get(HONEY_PAW_SHEET).setFilter(Phaser.Textures.FilterMode.NEAREST)
 }

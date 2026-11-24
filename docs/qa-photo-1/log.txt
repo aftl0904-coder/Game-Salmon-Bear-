@@ -1,0 +1,10 @@
+[2026-11-24T13:34:15.096Z] 1p photo {"taken":true,"polaroidN":1,"caption":["2026・聖誕"],"texFilter":"ok","hasTex":true}
+[2026-11-24T13:34:16.154Z] shot s5-photo-1p
+[2026-11-24T13:34:19.539Z] 2p photo {"taken":true,"girlX":3205,"boyX":3000}
+[2026-11-24T13:34:21.130Z] shot s5-photo-2p
+[2026-11-24T13:34:24.381Z] mobile photo {"taken":true,"polaroidN":1,"caption":["2026・聖誕"],"texFilter":"ok","hasTex":true}
+[2026-11-24T13:34:26.100Z] shot s5-photo-mobile
+[2026-11-24T13:34:30.549Z] chase start {"key":"bike","far":"bike-c2-far","mid":"bike-c2-mid","goal":"bike-c2-goal","chaseTitle":true}
+[2026-11-24T13:34:31.455Z] shot chase-c2-start
+[2026-11-24T13:34:31.879Z] chase end {"dist":8558.297700000005,"goalScale":1.2011748250000003,"midTileX":396.63365833333404}
+[2026-11-24T13:34:32.732Z] shot chase-c2-end
