@@ -1,0 +1,1 @@
+prop-escalator.png: 64x80 RGBA; binary alpha; 63 colors; visible box (3, 14, 61, 66); source main object preserved, isolated background speck excluded.

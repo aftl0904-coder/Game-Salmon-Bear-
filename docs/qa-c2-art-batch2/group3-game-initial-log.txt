@@ -1,0 +1,26 @@
+[
+  {
+    "mode": "desktop",
+    "scope": "Stage 6 injected scene entry and injected player position near escalator; not natural playthrough or physical device",
+    "passed": false,
+    "observation": {
+      "stage": 6,
+      "texture": false,
+      "props": []
+    },
+    "failure": "Error: stage 6 escalator texture or props not found\n    at /tmp/c2-batch2-work/g3-game.cjs:20:105",
+    "errors": []
+  },
+  {
+    "mode": "mobile-touch",
+    "scope": "Stage 6 injected scene entry and injected player position near escalator; not natural playthrough or physical device",
+    "passed": false,
+    "observation": {
+      "stage": 6,
+      "texture": true,
+      "props": []
+    },
+    "failure": "Error: stage 6 escalator texture or props not found\n    at /tmp/c2-batch2-work/g3-game.cjs:20:105",
+    "errors": []
+  }
+]

@@ -1,0 +1,54 @@
+[
+  {
+    "mode": "desktop",
+    "scope": "Stage 6 injected scene entry and injected player position near escalator; not natural playthrough or physical device",
+    "passed": true,
+    "observation": {
+      "stage": 6,
+      "texture": true,
+      "props": [
+        {
+          "x": 1920,
+          "y": 287,
+          "visible": true,
+          "displayWidth": 64,
+          "displayHeight": 80
+        },
+        {
+          "x": 1848,
+          "y": 285,
+          "visible": true,
+          "displayWidth": 64,
+          "displayHeight": 80
+        }
+      ]
+    },
+    "errors": []
+  },
+  {
+    "mode": "mobile-touch",
+    "scope": "Stage 6 injected scene entry and injected player position near escalator; not natural playthrough or physical device",
+    "passed": true,
+    "observation": {
+      "stage": 6,
+      "texture": true,
+      "props": [
+        {
+          "x": 1920,
+          "y": 287,
+          "visible": true,
+          "displayWidth": 64,
+          "displayHeight": 80
+        },
+        {
+          "x": 1848,
+          "y": 285,
+          "visible": true,
+          "displayWidth": 64,
+          "displayHeight": 80
+        }
+      ]
+    },
+    "errors": []
+  }
+]
