@@ -16,7 +16,7 @@ import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, r
 import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled } from './c2Gate'
-import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
 import { attachGearFx, type GearFx } from './gearFx'
 import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
@@ -39,6 +39,7 @@ import {
   showFragmentRead,
   showKenRead,
   showStoryLines,
+  showStoryStillThen,
 } from './storyDepth'
 import {
   type Creep,
@@ -267,7 +268,38 @@ const STAM_REST_MS = 380
 /** The stage that ends the story — only its clear screen offers the credits. */
 const FINAL_STAGE = 5
 /** 瞓覺: coins for a full heal on the clear card. Only worth it because HP carries to the next stage. */
-const SLEEP_COST = 12
+const SLEEP_COST = 6
+/** Fun-1 F2: one-liners when a picnic friend is freed (id → exact copy). */
+const FRIEND_RESCUE_LINES: Record<string, string> = {
+  huihui: '熊仔：你哋嚟到喇！我幫你哋留咗個位。',
+  guard: '英國熊：立正！多謝兩位救駕。',
+  denim: '小熊仔：我條吊帶褲勾住咗個籠，好彩你哋嚟。',
+  brownie: '招積熊：哼，我本來都就快自己出到嚟……多謝。',
+  shiba: '柴柴：汪！好黑呀，我一直望住你哋盞燈。',
+  snowcat: '北極熊：呢度好熱……陣間一齊去浸溫泉？',
+  ginger: '薑餅：差少少就俾人當餅乾賣咗！',
+  fleecy: '大pat熊：我冇事。你哋有冇整親？',
+  kuro: '喵仔：喵……我唔係等你哋，只係啱啱想出嚟。',
+  gnome: '聖誕伯伯：Ho ho！聖誕禮物提早派——我就係禮物。',
+  tigercub: '虎仔：我扮老虎嚇佢哋，點知佢哋唔驚。',
+}
+/** Fun-1 F10 聖誕番外（一字不改）. */
+const XMAS_EPILOGUE: Array<{ still: string; line: string }> = [
+  { still: 'xmas-01', line: '【番外篇・2026 聖誕】' },
+  { still: 'xmas-01', line: '旁白：冒險暫停一晚。今晚冇蜜僵，冇大佬。' },
+  { still: 'xmas-01', line: '琪寶寶：嘩，大家都嚟齊喇？' },
+  { still: 'xmas-01', line: '熊仔：我哋留咗兩個位俾你哋㗎！' },
+  { still: 'xmas-01', line: '招積熊：我冇特登等㗎，只係啱啱得閒。' },
+  { still: 'xmas-01', line: '噗噗：……蜜。' },
+  { still: 'xmas-01', line: '倫寶：得啦，今晚成罐都係你嘅。' },
+  { still: 'xmas-02', line: '琪寶寶：咁我呢？' },
+  { still: 'xmas-02', line: '倫寶：你嘅喺度。' },
+  { still: 'xmas-02', line: '琪寶寶：……又係遊戲？' },
+  { still: 'xmas-02', line: '倫寶：呢隻遊戲，係我哋兩個嘅。' },
+  { still: 'xmas-02', line: '琪寶寶：傻佬。' },
+  { still: 'xmas-02', line: '大家：聖誕快樂！' },
+  { still: 'xmas-02', line: '2026 聖誕快樂 —— 冒險，待續。' },
+]
 /** 賭檔: flat stake, 50% double / 50% lose. */
 const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
@@ -451,6 +483,11 @@ export class GameScene extends Phaser.Scene {
   private cageSaid = false
   /** Mall only: non-combat Security Director sighting (not the scrubber boss). */
   private directorSighted = false
+  /** Fun-1 once-per-entry flags. */
+  private funHotSpringSaid = false
+  private funHotSpringArmedAt = 0
+  private funCageTipSaid = false
+  private funSparkleAt = 0
   private s5world: Stage5World | null = null
   private hotSpringsDone = new Set<number>()
   /** 龍蝦 power-up: attack ×1.5 until this time. */
@@ -1124,6 +1161,7 @@ export class GameScene extends Phaser.Scene {
     this.collectNearbyCoins()
     if (this.mall) this.tickStage6(dt)
     if (this.exhibit) this.tickStage7(dt)
+    this.tickFun1Moments(dt)
     this.checkFall()
     this.updateCheckpoint()
 
@@ -3909,7 +3947,7 @@ export class GameScene extends Phaser.Scene {
     if (this.cageSaid || !this.started || this.leadX() < (ST.reactionX ?? 4390)) return
     this.cageSaid = true
     this.stage7Events.push({ kind: 'reaction', at: this.time.now })
-    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗定住咗，好似聞到好熟悉嘅味道……', '#ffd6e8', { size: 12, dur: 2200 })
+    floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗定住咗，好似聞到好熟悉嘅味道……', '#ffd6e8', { size: 12, dur: 2500 })
     if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
   }
   /** Clear event is in-memory until saveClear commits it with the rest of the run. */
@@ -3935,8 +3973,8 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** 第7關結尾：噗噗聞標籤氣味 → 回頭 → 放樹枝 → 鑽維修口 → 待續. */
-  private playPupuDeparture(onDone: () => void) {
+  /** 第7關結尾：噗噗聞標籤氣味 → 回頭 → 放樹枝 → 鑽維修口 → 待續 → 聖誕番外 → credits. */
+  private playPupuDeparture(_onDone: () => void) {
     ensureStoryDepthArt(this)
     const dep = pupuDepartureSpec()
     const hatch =
@@ -3952,7 +3990,33 @@ export class GameScene extends Phaser.Scene {
       this.petShadow?.setVisible(false)
       this.petJetting = false
       floatText(this, hatch.x, LANE_FLOOR_Y - 96, dep.continued, '#ffd76a', { size: 22, dur: 1600 })
-      this.time.delayedCall(1700, onDone)
+      // Fun-1 F10: after 待續 → 聖誕番外 → credits (still tally clear first via onDone path if needed)
+      this.time.delayedCall(1700, () => {
+        this.playXmasEpilogue(() => {
+          // Score + mark clear, then credits (skip long clear-card detour).
+          if (!this.ended) {
+            const timeSec = (this.time.now - this.startedAt) / 1000
+            this.scorePts =
+              calcScore({
+                timeSec,
+                honey: this.honeyGot,
+                hpBoy: this.boy.hp,
+                hpGirl: this.girl?.hp ?? 0,
+                deaths: this.deaths,
+              }) + this.killBonus
+            if (scoreEligible()) saveScore({ score: this.scorePts, timeSec, honey: this.honeyGot, mode: this.mode, at: Date.now() })
+            this.ended = true
+            this.outroOn = true
+            this.clearAt = this.time.now
+            try {
+              unlockStage(Math.min(10, this.stageNo + 1))
+            } catch {
+              /* ignore */
+            }
+          }
+          this.goCredits()
+        })
+      })
     }
     if (!pet?.active) {
       floatText(this, this.leadX(), LANE_FLOOR_Y - 96, '噗噗追住嗰陣熟悉嘅味道，走咗……', '#ffd6e8', { size: 12, dur: 1800 })
@@ -4385,6 +4449,7 @@ export class GameScene extends Phaser.Scene {
     this.powerPickups = this.physics.add.group()
     this.placeBreakables()
     this.placeFriends()
+    this.placeFun1Decor()
     this.placeCrushers()
     // Secret perches: a reward floating where only a careful climb reaches.
     for (const sc of ST.secrets ?? []) {
@@ -4800,7 +4865,7 @@ export class GameScene extends Phaser.Scene {
     for (const x of this.checkpointXs) {
       if (lead >= x && x > this.lastCheckpointX) {
         this.lastCheckpointX = x
-        floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2200 })
+        floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2500 })
         SFX.coin()
         const i = this.checkpointXs.indexOf(x)
         const mama = this.checkpointMamas[i]
@@ -4877,11 +4942,24 @@ export class GameScene extends Phaser.Scene {
                     tip: '噗噗只係觀眾，唔好跟錯佢！',
                   },
                 ]
-              : [
-                  { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
-                  { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
-                  { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
-                ]
+              : st.game === 'memory'
+                ? [
+                    {
+                      title: `${st.keeper}：${st.sign}`,
+                      lines: ['記住亮燈次序，再跟住撳返出嚟'],
+                      tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+                    },
+                    {
+                      title: '一共四輪',
+                      lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
+                      tip: '記啱嘅輪數換金幣。',
+                    },
+                  ]
+                : [
+                    { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+                    { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+                    { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+                  ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
@@ -4891,7 +4969,7 @@ export class GameScene extends Phaser.Scene {
       this.resetPauseKeys()
       this.drinkCoffee()
       if (st.game === 'flag') {
-        floatText(this, this.boy.x, this.boy.y - 96, '（待補）', '#ffe08a', { size: 13, dur: 2200 })
+        floatText(this, this.boy.x, this.boy.y - 96, '（待補）', '#ffe08a', { size: 13, dur: 2500 })
       }
       if (pts > 0) {
         this.killBonus += pts
@@ -4930,6 +5008,13 @@ export class GameScene extends Phaser.Scene {
       const mini = goldfishQuiz(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
+      return
+    }
+    // Fun-1 F15: stage 7 倉務枱・記憶考驗（memoryGame）；第6關搶答唔郁。
+    if (st.game === 'memory') {
+      const mini = memoryGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => after(r.good * 2, r.good * 120))
       return
     }
     // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
@@ -4975,7 +5060,7 @@ export class GameScene extends Phaser.Scene {
     this.memoryDone = true
     this.physics.pause()
     for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-    floatText(this, this.memoryStallX, LANE_FLOOR_Y - 92, '攤主：（待補）', '#ffe08a', { size: 12, dur: 2200 })
+    floatText(this, this.memoryStallX, LANE_FLOOR_Y - 92, '攤主：（待補）', '#ffe08a', { size: 12, dur: 2500 })
     void this.runMemoryStall()
   }
 
@@ -5032,7 +5117,7 @@ export class GameScene extends Phaser.Scene {
         buyGear(w, item)
         if (this.registry.get('winScreenShown')) this.saveCurrentClear()
       }),
-      friends: () => this.friendsSaved,
+      friends: () => this.rescuedFriendIds(),
       heroes,
       stage: this.stageNo,
     })
@@ -5051,6 +5136,12 @@ export class GameScene extends Phaser.Scene {
       if (this.registry.get('winScreenShown')) this.saveCurrentClear()
       onClose?.()
     })
+  }
+
+  /** Fun-1 F14: all friends rescued this run (registry + this stage). */
+  private rescuedFriendIds(): string[] {
+    const run = (this.registry.get('runFriends') as string[] | undefined) ?? []
+    return [...new Set([...run, ...this.friendsSaved])].filter(isFriendId)
   }
 
   /** 咖啡媽媽's cup: +1 HP for everyone still standing. */
@@ -5655,6 +5746,129 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  /** Fun-1 F3/F4 scenic props + signs (no combat). */
+  private placeFun1Decor() {
+    const f = LANE_FLOOR_Y
+    if (this.market) {
+      // F3: two seats + plaque at hotspring rest (x≈3090 / 3120)
+      for (const x of [3090, 3120]) {
+        if (this.textures.exists('c2-prop-bench')) {
+          this.add.image(x, f, 'c2-prop-bench').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1)
+        } else {
+          this.add.rectangle(x, f - 8, 28, 12, 0x8a6a40).setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1)
+        }
+      }
+      this.add
+        .text(3105, f - 52, '兩個位，留俾你哋。', {
+          fontFamily: FONT_UI,
+          fontSize: '12px',
+          color: '#fff8d0',
+          backgroundColor: '#203040',
+          padding: { x: 5, y: 3 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+    }
+    if (this.tower) {
+      // F4: photo spot plaque before boss (x≈3150)
+      this.add
+        .text(3190, f - 64, '行到呢度，影張先。', {
+          fontFamily: FONT_UI,
+          fontSize: '13px',
+          color: '#fff8d0',
+          backgroundColor: '#203040',
+          padding: { x: 6, y: 3 },
+        })
+        .setOrigin(0.5)
+        .setDepth(DEPTH.SIGN)
+    }
+  }
+
+  /** Fun-1 F3 soak lines / F6 coop tip / F9 sparkle. */
+  private tickFun1Moments(_dt: number) {
+    const x = this.leadX()
+    // F3: stand in 3080–3140 for 1s → boy then girl lines (solo: own line only)
+    if (this.market && !this.funHotSpringSaid && !this.storyIntro && !this.bossFight) {
+      const inZone = x >= 3080 && x <= 3140
+      const grounded = Math.abs((this.boy?.body as Phaser.Physics.Arcade.Body | undefined)?.velocity.y ?? 99) < 20
+      if (inZone && grounded) {
+        if (!this.funHotSpringArmedAt) this.funHotSpringArmedAt = this.time.now
+        if (this.time.now - this.funHotSpringArmedAt >= 1000) {
+          this.funHotSpringSaid = true
+          const solo = this.mode === '1p'
+          const cast = this.registry.get('soloCast') as string | undefined
+          const showBoy = !solo || cast !== 'girl'
+          const showGirl = !solo || cast === 'girl' || this.mode === '2p'
+          if (showBoy && this.boy) {
+            floatText(this, this.boy.x, this.boy.y - 70, '倫寶：唔使趕，浸陣先。', '#fff6e0', { size: 12, dur: 2500 })
+          }
+          if (showGirl) {
+            this.time.delayedCall(showBoy ? 700 : 0, () => {
+              const hx = this.girl?.x ?? this.boy?.x ?? x
+              const hy = (this.girl?.y ?? this.boy?.y ?? LANE_FLOOR_Y) - 70
+              floatText(this, hx, hy, '琪寶寶：好呀，浸完先打。', '#ffe0f0', { size: 12, dur: 2500 })
+            })
+          }
+        }
+      } else {
+        this.funHotSpringArmedAt = 0
+      }
+    }
+    // F6: 2P tip near rescue cage
+    if (this.exhibit && this.mode === '2p' && !this.funCageTipSaid && x >= 1300) {
+      this.funCageTipSaid = true
+      floatText(this, 1400, LANE_FLOOR_Y - 90, '一個開籠，一個睇住！', '#ffe08a', { size: 13, dur: 2400 })
+    }
+    // F9: sparkle above hidden ledge every 3s
+    if (this.market && this.time.now >= this.funSparkleAt) {
+      this.funSparkleAt = this.time.now + 3000
+      const sx = 2815
+      const sy = LANE_FLOOR_Y - 124 - 28
+      const spark = this.add.circle(sx, sy, 6, 0xffe890, 0.55).setDepth(DEPTH.FX)
+      this.tweens.add({
+        targets: spark,
+        alpha: 0,
+        scale: 1.8,
+        duration: 700,
+        onComplete: () => spark.destroy(),
+      })
+    }
+  }
+
+  /** Fun-1 F10: after 待續, play Christmas epilogue then credits. */
+  private playXmasEpilogue(onDone: () => void) {
+    const steps = XMAS_EPILOGUE
+    let i = 0
+    const stillFallback = (id: string) => {
+      if (this.textures.exists(`story-${id}`)) return id
+      if (id === 'xmas-01' && this.textures.exists('story-ending-c2-10')) return 'ending-c2-10'
+      if (id === 'xmas-01' && this.textures.exists('story-c7-pupu-leave')) return 'c7-pupu-leave'
+      if (id === 'xmas-02' && this.textures.exists('story-cover')) return 'cover'
+      return id
+    }
+    const next = () => {
+      if (i >= steps.length) {
+        this.storyIntro = null
+        onDone()
+        return
+      }
+      const step = steps[i++]!
+      const stillId = stillFallback(step.still)
+      const afterStill = () => {
+        this.storyIntro = showStoryLines(this, [step.line], () => {
+          this.storyIntro = null
+          next()
+        })
+      }
+      if (this.textures.exists(`story-${stillId}`)) {
+        this.storyIntro = showStoryStillThen(this, stillId, afterStill, 600)
+      } else {
+        afterStill()
+      }
+    }
+    next()
+  }
+
   /** Honey-crate cages: a friend sits behind the bars; two hits open it. */
   private placeFriends() {
     if (!ST.friends?.length) return
@@ -5716,6 +5930,10 @@ export class GameScene extends Phaser.Scene {
     SFX.sparkle()
     burst(this, pal.x, pal.y - 20, 0xffe890, 12)
     floatText(this, pal.x, pal.y - 60, `救到 ${look.name}！`, '#ffd0e0', { size: 14, dur: 1400 })
+    const rescueLine = FRIEND_RESCUE_LINES[id]
+    if (rescueLine) {
+      floatText(this, pal.x, pal.y - 88, rescueLine, '#fff6e0', { size: 12, dur: 2500 })
+    }
     this.addScorePop(pal.x, pal.y - 80, 500)
     this.killBonus += 500
     const floor = pal.y
@@ -6453,6 +6671,20 @@ export class GameScene extends Phaser.Scene {
         })
         .setOrigin(0.5),
     )
+    // Fun-1 F14: random rescued friend's clear_chat (hidden if none rescued).
+    const clearChat = pickFriendChatter(this.rescuedFriendIds())
+    if (clearChat) {
+      overlay.add(
+        this.add
+          .text(-W / 2 + 151, castY + 34, `${clearChat.name}：${clearChat.clear_chat}`, {
+            fontFamily: FONT_UI,
+            fontSize: '11px',
+            color: '#fff6e0',
+            wordWrap: { width: 230 },
+          })
+          .setOrigin(0.5, 0),
+      )
+    }
     // Tally panel (right)
     const px = 14
     const py = -H / 2 + 64
@@ -7801,7 +8033,7 @@ export class GameScene extends Phaser.Scene {
     SFX.powerUp()
     playSong('stage1')
     this.cameras.main.flash(200, 255, 230, 150)
-    floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '伏兵退散！去蜂巢樹！', '#ffe08a', { size: 18, dur: 2200 })
+    floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, '伏兵退散！去蜂巢樹！', '#ffe08a', { size: 18, dur: 2500 })
     this.emitScore('武者王倒下！去蜂巢樹拎第一罐真蜂蜜')
   }
 
@@ -8051,7 +8283,7 @@ export class GameScene extends Phaser.Scene {
         if (this.ended) return
         SFX.powerUp()
         this.emitScore('深層潔淨 X-9 停機！拎埋嗰罐蜜！')
-        floatText(this, x, 90, depth?.defeatBanner ?? 'X-9 停機', '#9ad4e8', { size: 18, dur: 2200 })
+        floatText(this, x, 90, depth?.defeatBanner ?? 'X-9 停機', '#9ad4e8', { size: 18, dur: 2500 })
         this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
         const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as
           | Phaser.Physics.Arcade.Sprite

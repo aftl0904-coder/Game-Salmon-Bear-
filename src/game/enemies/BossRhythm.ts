@@ -42,6 +42,8 @@ export class BossRhythm {
   private sweat: Phaser.GameObjects.Graphics | null = null
   private forcedBreather = false
   private armed = false
+  /** Fun-1 F13: hide 「呼…」 until 「破綻！」 fade finishes (ms). */
+  private openingBangMs = 0
 
   constructor(opts: BossRhythmOpts) {
     this.scene = opts.scene
@@ -156,7 +158,36 @@ export class BossRhythm {
   private enter(p: RhythmPhase, _overrideMs?: number) {
     this.phase = p
     this.t = 0
+    // Fun-1 F13: on OPENING, pop 「破綻！」 (yellow 12–14px, 0.6s fade), then 「呼…」 as before.
+    if (p === 'OPENING' && this.armed) {
+      this.openingBangMs = 600
+      this.popOpeningBang()
+    } else {
+      this.openingBangMs = 0
+    }
     this.layoutFx()
+  }
+
+  private popOpeningBang() {
+    const headY = this.host.y - (this.host.displayHeight || 64) - 8
+    const label = this.scene.add
+      .text(this.host.x, headY, '破綻！', {
+        fontFamily: 'sans-serif',
+        fontSize: '13px',
+        color: '#ffe040',
+        stroke: '#201008',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth((this.host.depth || 0) + 4)
+    this.scene.tweens.add({
+      targets: label,
+      alpha: 0,
+      y: headY - 14,
+      duration: 600,
+      ease: 'Quad.out',
+      onComplete: () => label.destroy(),
+    })
   }
 
   private flashShield() {
@@ -171,7 +202,8 @@ export class BossRhythm {
 
   private layoutFx() {
     const showShield = this.armed && (this.phase === 'GUARD' || this.phase === 'BREATHER')
-    const showPant = this.armed && this.phase === 'OPENING'
+    // After F13 bang fades (0.6s), show the existing 「呼…」 pant.
+    const showPant = this.armed && this.phase === 'OPENING' && this.t >= this.openingBangMs
     if (showShield) {
       if (!this.shield) {
         this.shield = this.scene.add.graphics().setDepth((this.host.depth || 0) + 2)
