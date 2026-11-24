@@ -1,0 +1,1785 @@
+{
+ "readme": "鮭鮭熊 全故事數據包（2026-11-24 main）。story.json＝第一大陸＋第二大陸開場過場（scenes 內每個 step 有 who/text）；c2-story-depth＝第6、7關碎片；ending-c2＝第二大陸結局；verses＝金句；characters＝角色表。聖誕版範圍＝第1–7關＋聖誕番外，第7關以『待續』收尾；第8–10關係聖誕後續篇。",
+ "story.json": {
+  "note": "In-engine cutscenes (src/game/cutscene.ts). Coordinates: 640×360 screen px, actors' feet on y=240. Every line ≤ 20 字. Speakers: narr / lunbo / kibobo / pupu / mama.",
+  "scenes": {
+   "C2_INTRO": {
+    "title": "大陸2第一關前・野餐後",
+    "steps": [
+     {
+      "music": "story"
+     },
+     {
+      "still": "ending-3"
+     },
+     {
+      "say": "narr",
+      "text": "森林重新平靜，大家終於一齊野餐。"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗，今次可以慢慢食喇。"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗！"
+     },
+     {
+      "say": "lunbo",
+      "text": "食飽之後，一齊去行商場？"
+     },
+     {
+      "say": "kibobo",
+      "text": "好呀，叫埋啲朋友！"
+     },
+     {
+      "still": "c2-mall-door"
+     },
+     {
+      "say": "narr",
+      "text": "大家來到商場門前。"
+     },
+     {
+      "say": "lunbo",
+      "text": "呢個商場……同之前講嗰間好似。"
+     },
+     {
+      "say": "kibobo",
+      "text": "咦？入面好似有啲古怪。"
+     },
+     {
+      "say": "pupu",
+      "text": "噗……？"
+     },
+     {
+      "say": "lunbo",
+      "text": "我哋入去睇清楚。"
+     }
+    ]
+   },
+   "C1": {
+    "title": "第 1 關前・野餐日",
+    "steps": [
+     {
+      "bg": "day"
+     },
+     {
+      "music": "story"
+     },
+     {
+      "prop": "cart",
+      "kind": "cart",
+      "x": 560
+     },
+     {
+      "prop": "picnic",
+      "kind": "picnic",
+      "x": 300
+     },
+     {
+      "actor": "lunbo",
+      "x": 244
+     },
+     {
+      "actor": "pupu",
+      "x": 306
+     },
+     {
+      "actor": "kibobo",
+      "x": 372,
+      "flip": true
+     },
+     {
+      "wait": 700
+     },
+     {
+      "still": "c1-picnic"
+     },
+     {
+      "say": "narr",
+      "text": "野餐日。百畝樹林，天氣好好。"
+     },
+     {
+      "still": null
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗，今日有你最鍾意嘅嘢！",
+      "face": 1
+     },
+     {
+      "say": "kibobo",
+      "text": "嚟，幫手搖勻罐蜂蜜，等陣淋落班戟度！",
+      "face": 1
+     },
+     {
+      "minigame": "shake"
+     },
+     {
+      "hop": "pupu"
+     },
+     {
+      "say": "narr",
+      "text": "噗噗最鍾意野餐。佢寫咗好多張邀請卡，請晒所有小朋友。"
+     },
+     {
+      "say": "lunbo",
+      "text": "不過……點解一個朋友都未到嘅？",
+      "face": 2
+     },
+     {
+      "say": "pupu",
+      "text": "噗？",
+      "face": 0
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-fake",
+      "x": 336,
+      "drop": true
+     },
+     {
+      "say": "lunbo",
+      "text": "咦？邊個放低咗呢罐蜂蜜？"
+     },
+     {
+      "hop": "pupu"
+     },
+     {
+      "say": "pupu",
+      "text": "噗！噗噗！",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 330,
+      "ms": 300
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "wait": 600
+     },
+     {
+      "grey": "pupu",
+      "ms": 2000
+     },
+     {
+      "droop": "pupu"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗……？你點解變晒灰色？",
+      "face": 2
+     },
+     {
+      "music": "sad"
+     },
+     {
+      "fx": "shadow"
+     },
+     {
+      "still": "c1-hollow"
+     },
+     {
+      "say": "narr",
+      "text": "一個三角形嘅影，喺森林上面掠過。"
+     },
+     {
+      "still": null
+     },
+     {
+      "actor": "mama",
+      "x": 610,
+      "flip": true
+     },
+     {
+      "move": "mama",
+      "x": 450,
+      "ms": 900
+     },
+     {
+      "say": "mama",
+      "text": "唔好再俾佢食！",
+      "face": 2
+     },
+     {
+      "still": "c1-mama"
+     },
+     {
+      "say": "mama",
+      "text": "嗰啲唔係真蜂蜜，係假蜜。",
+      "face": 0
+     },
+     {
+      "say": "mama",
+      "text": "要五罐真蜂蜜，先救得返佢。"
+     },
+     {
+      "say": "lunbo",
+      "text": "五罐……喺邊度？",
+      "face": 2
+     },
+     {
+      "say": "mama",
+      "text": "俾三角組織搶晒。第一罐喺樹頂蜂巢。"
+     },
+     {
+      "say": "mama",
+      "text": "不過去蜂巢條路，先俾守蜜人封住咗。"
+     },
+     {
+      "say": "mama",
+      "text": "仲有，你哋啲小朋友收到「免費蜂蜜」傳單，一個跟一個咁行咗去。",
+      "face": 2
+     },
+     {
+      "say": "mama",
+      "text": "佢哋而家俾人鎖喺蜜箱籠入面，散晒去五個地方。"
+     },
+     {
+      "say": "kibobo",
+      "text": "熊仔、英國熊、北極熊……全部都係？",
+      "face": 2
+     },
+     {
+      "still": null
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗，等我哋！帶齊你啲小朋友返嚟，再野餐過！"
+     },
+     {
+      "card": "第一關",
+      "sub": "百畝樹林"
+     }
+    ]
+   },
+   "C2": {
+    "title": "第 1 關後・第一罐",
+    "steps": [
+     {
+      "bg": "day"
+     },
+     {
+      "music": "story"
+     },
+     {
+      "prop": "picnic",
+      "kind": "picnic",
+      "x": 300
+     },
+     {
+      "actor": "lunbo",
+      "x": 244
+     },
+     {
+      "actor": "pupu",
+      "x": 306,
+      "grey": true
+     },
+     {
+      "actor": "kibobo",
+      "x": 372,
+      "flip": true
+     },
+     {
+      "actor": "mama",
+      "x": 460,
+      "flip": true
+     },
+     {
+      "wait": 500
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 330,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "第一罐真蜂蜜，攞返嚟喇！",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 326,
+      "ms": 400
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 0.25,
+      "ms": 1400
+     },
+     {
+      "ear": "pupu"
+     },
+     {
+      "say": "lunbo",
+      "text": "佢隻耳仔……郁咗！",
+      "face": 2
+     },
+     {
+      "say": "pupu",
+      "text": "……噗。"
+     },
+     {
+      "say": "narr",
+      "text": "熊仔同英國熊由樹林跑返嚟，一嘢攬住噗噗。"
+     },
+     {
+      "say": "kibobo",
+      "text": "熊仔、英國熊！你哋冇事就好。",
+      "face": 1
+     },
+     {
+      "say": "narr",
+      "text": "英國熊企直敬禮：「我留喺度，守住張野餐墊！」"
+     },
+     {
+      "prop": "note",
+      "kind": "note",
+      "x": 420,
+      "drop": true
+     },
+     {
+      "say": "narr",
+      "text": "罐底貼住一張便條："
+     },
+     {
+      "still": "c2-note",
+      "text": "夏蜜已押——\n女王蜂・蜜樹丘"
+     },
+     {
+      "say": "lunbo",
+      "text": "女王蜂……蜜樹丘？",
+      "face": 2
+     },
+     {
+      "still": null
+     },
+     {
+      "say": "mama",
+      "text": "鎖匙俾你哋，騎單車去快啲。",
+      "face": 1
+     },
+     {
+      "say": "lunbo",
+      "text": "下一站，蜜樹丘。"
+     },
+     {
+      "card": "第一關・完",
+      "sub": "下一站：蜜樹丘"
+     }
+    ]
+   },
+   "C3": {
+    "title": "第 2 關前・上山",
+    "stage": "tree",
+    "steps": [
+     {
+      "music": "story"
+     },
+     {
+      "still": "c2-bike"
+     },
+     {
+      "say": "narr",
+      "text": "咖啡媽媽借咗兩架單車俾佢哋。一路踩，一路上斜。"
+     },
+     {
+      "say": "narr",
+      "text": "越近蜜樹丘，空氣越甜，雀聲卻冇晒。"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗，坐穩啲呀，就快到喇。",
+      "face": 1
+     },
+     {
+      "say": "pupu",
+      "text": "……"
+     },
+     {
+      "say": "lunbo",
+      "text": "前面嗰棵大樹……發緊光？",
+      "face": 2
+     },
+     {
+      "say": "kibobo",
+      "text": "小熊仔同招積熊，應該就喺上面。",
+      "face": 0
+     },
+     {
+      "still": null
+     },
+     {
+      "actor": "lunbo",
+      "x": 220
+     },
+     {
+      "actor": "pupu",
+      "x": 300,
+      "grey": true
+     },
+     {
+      "actor": "kibobo",
+      "x": 360,
+      "flip": true
+     },
+     {
+      "music": "stop"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "fx": "shadow"
+     },
+     {
+      "say": "narr",
+      "text": "樹身入面成片嗡嗡聲。啲蜂巢流出嚟嘅蜜，黃得好唔自然。"
+     },
+     {
+      "say": "kibobo",
+      "text": "係假蜂蜜……好似黐住噗噗嗰啲一樣。",
+      "face": 2
+     },
+     {
+      "say": "lunbo",
+      "text": "睇住頭頂啲蜜滴，黐到腳就行唔郁。"
+     },
+     {
+      "say": "kibobo",
+      "text": "風口我嚟！風扇一開，我飄得上最高嗰格。",
+      "face": 1
+     },
+     {
+      "card": "第二關",
+      "sub": "蜜樹丘"
+     }
+    ]
+   },
+   "B2": {
+    "title": "女王蜂現身",
+    "stage": "tree",
+    "steps": [
+     {
+      "music": "stop"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "still": "s2-boss-intro"
+     },
+     {
+      "say": "queenEvil",
+      "text": "邊個夠膽入嚟我個蜂巢？"
+     },
+     {
+      "say": "queenEvil",
+      "text": "呢度每一滴蜜，都係三角大人嘅！"
+     },
+     {
+      "say": "lunbo",
+      "text": "佢對眼……同啲蜜一樣咁黃。",
+      "face": 2
+     },
+     {
+      "say": "kibobo",
+      "text": "打甩佢個皇冠！",
+      "face": 0
+     },
+     {
+      "still": null
+     }
+    ]
+   },
+   "C4": {
+    "title": "第 2 關後・第二罐",
+    "stage": "tree",
+    "steps": [
+     {
+      "music": "sad"
+     },
+     {
+      "actor": "lunbo",
+      "x": 200
+     },
+     {
+      "actor": "pupu",
+      "x": 270,
+      "grey": true
+     },
+     {
+      "actor": "kibobo",
+      "x": 330
+     },
+     {
+      "actor": "queen",
+      "x": 470,
+      "flip": true
+     },
+     {
+      "anim": "queen",
+      "name": "defeat"
+     },
+     {
+      "wait": 900
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "music": "story"
+     },
+     {
+      "still": "c3-queen"
+     },
+     {
+      "say": "narr",
+      "text": "皇冠一跌落地，女王蜂眼入面嘅假蜜就散晒。"
+     },
+     {
+      "say": "queen",
+      "text": "……我個頭好痛。我頭先做咗啲咩？",
+      "face": 2
+     },
+     {
+      "say": "queen",
+      "text": "有班戴三角面具嘅人，送咗個皇冠俾我……之後我就乜都唔記得。",
+      "face": 0
+     },
+     {
+      "still": null
+     },
+     {
+      "say": "queen",
+      "text": "呢罐係我哋一直收埋嘅真蜂蜜，拎去俾小熊啦。",
+      "face": 1
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 300,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "多謝你！噗噗，飲啦。",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 296,
+      "ms": 380
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 0.5,
+      "ms": 1400
+     },
+     {
+      "music": "victory"
+     },
+     {
+      "hop": "pupu"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗！"
+     },
+     {
+      "say": "lunbo",
+      "text": "佢識跳喇！仲差三罐。",
+      "face": 1
+     },
+     {
+      "say": "narr",
+      "text": "小熊仔同招積熊由蜂巢後面爬出嚟，成身黐住蜜。"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗噗！"
+     },
+     {
+      "say": "lunbo",
+      "text": "野餐墊又要多留兩個位喇。",
+      "face": 1
+     },
+     {
+      "say": "queen",
+      "text": "嗰班三角面具，往山下個城市走咗。小心啲。",
+      "face": 0
+     },
+     {
+      "card": "第二關・完",
+      "sub": "多謝遊玩・待續"
+     }
+    ]
+   },
+   "C5": {
+    "title": "第 3 關前・夜市",
+    "stage": "market",
+    "steps": [
+     {
+      "music": "story"
+     },
+     {
+      "still": "c3-market"
+     },
+     {
+      "say": "narr",
+      "text": "下山條路通去一個夜市。攤檔一個人都冇，啲鑊仲喺度炒緊嘢。"
+     },
+     {
+      "say": "lunbo",
+      "text": "點解冇人……啲鑊仲熱嘅？",
+      "face": 2
+     },
+     {
+      "say": "kibobo",
+      "text": "燈……自己熄咗。",
+      "face": 2
+     },
+     {
+      "still": null
+     },
+     {
+      "actor": "lunbo",
+      "x": 220
+     },
+     {
+      "actor": "pupu",
+      "x": 300,
+      "grey": 0.5
+     },
+     {
+      "actor": "kibobo",
+      "x": 360,
+      "flip": true
+     },
+     {
+      "music": "stop"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "fx": "shadow"
+     },
+     {
+      "say": "pupu",
+      "text": "噗……噗！"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗話佢聞到蜂蜜味……仲有北極熊同柴柴嘅味道！",
+      "face": 1
+     },
+     {
+      "say": "lunbo",
+      "text": "燈籠熄咗就打返著佢。我哋唔好行散。"
+     },
+     {
+      "say": "narr",
+      "text": "燈籠一盞盞亮返，空巷慢慢現返顏色。"
+     },
+     {
+      "card": "第三關",
+      "sub": "月影夜市"
+     }
+    ]
+   },
+   "B3": {
+    "title": "鏡鴞現身",
+    "stage": "market",
+    "steps": [
+     {
+      "music": "stop"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "still": "s3-boss-intro"
+     },
+     {
+      "say": "owlEvil",
+      "text": "月光照到嘅，都係我嘅。"
+     },
+     {
+      "say": "owlEvil",
+      "text": "三角大人話，呢罐蜜要留喺橋上。"
+     },
+     {
+      "say": "kibobo",
+      "text": "佢心口塊鏡……反光反到我眼都花。",
+      "face": 2
+     },
+     {
+      "say": "lunbo",
+      "text": "睇水面！有倒影嗰隻先係真嘅。",
+      "face": 0
+     },
+     {
+      "still": null
+     }
+    ]
+   },
+   "C6": {
+    "title": "第 3 關後・第三罐",
+    "stage": "market",
+    "steps": [
+     {
+      "music": "sad"
+     },
+     {
+      "actor": "lunbo",
+      "x": 200
+     },
+     {
+      "actor": "pupu",
+      "x": 270,
+      "grey": 0.5
+     },
+     {
+      "actor": "kibobo",
+      "x": 330
+     },
+     {
+      "actor": "owl",
+      "x": 470,
+      "flip": true
+     },
+     {
+      "anim": "owl",
+      "name": "defeat"
+     },
+     {
+      "wait": 900
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "music": "story"
+     },
+     {
+      "say": "narr",
+      "text": "鏡面一裂，貓頭鷹眼入面嘅黃光慢慢褪咗。"
+     },
+     {
+      "say": "owl",
+      "text": "……我好似發咗一場好長嘅夢。",
+      "face": 2
+     },
+     {
+      "say": "owl",
+      "text": "佢哋……喺工地。推土機一路推，成片樹林都冇晒。",
+      "face": 0
+     },
+     {
+      "say": "owl",
+      "text": "呢罐真蜂蜜，我守咗好耐。交俾你哋。",
+      "face": 1
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 300,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "第三罐喇！噗噗，飲啦。",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 296,
+      "ms": 380
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 0.3,
+      "ms": 1400
+     },
+     {
+      "music": "victory"
+     },
+     {
+      "move": "pupu",
+      "x": 340,
+      "ms": 700
+     },
+     {
+      "move": "pupu",
+      "x": 300,
+      "ms": 700
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗噗！"
+     },
+     {
+      "say": "lunbo",
+      "text": "佢識行喇！仲差兩罐。",
+      "face": 1
+     },
+     {
+      "say": "narr",
+      "text": "今次，噗噗唔使再靠人扶，自己行咗幾步。"
+     },
+     {
+      "say": "narr",
+      "text": "北極熊同柴柴由攤檔底下鑽出嚟。柴柴搖到條尾都快甩。"
+     },
+     {
+      "say": "kibobo",
+      "text": "六個小朋友喇！張野餐墊快坐唔落。",
+      "face": 1
+     },
+     {
+      "still": "c4-taxi"
+     },
+     {
+      "say": "narr",
+      "text": "一架的士停喺橋頭。揸車嘅，係咖啡媽媽。"
+     },
+     {
+      "say": "mama",
+      "text": "上車啦，飲杯熱咖啡先。工地好遠㗎。",
+      "face": 1
+     },
+     {
+      "still": null
+     },
+     {
+      "card": "第三關・完",
+      "sub": "下一站：鹽霧工地"
+     }
+    ]
+   },
+   "C7": {
+    "title": "第 4 關前・工地",
+    "stage": "depot",
+    "steps": [
+     {
+      "music": "stage4"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "actor": "lunbo",
+      "x": 240
+     },
+     {
+      "actor": "pupu",
+      "x": 300,
+      "grey": 0.7
+     },
+     {
+      "actor": "kibobo",
+      "x": 360,
+      "flip": true
+     },
+     {
+      "say": "narr",
+      "text": "的士停喺一片圍住鐵皮嘅地方。濃霧落雨，警示燈一閃一閃。"
+     },
+     {
+      "say": "lunbo",
+      "text": "呢度……本來係森林嚟。",
+      "face": 2
+     },
+     {
+      "say": "kibobo",
+      "text": "推土機仲喺度衝嚟衝去。小心啲，跳上鋼架平台避開。",
+      "face": 2
+     },
+     {
+      "say": "pupu",
+      "text": "噗……噗噗。",
+      "face": 0
+     },
+     {
+      "say": "lunbo",
+      "text": "第四罐，就喺呢個工頭手上。"
+     },
+     {
+      "say": "narr",
+      "text": "鐵皮後面，傳嚟一聲又一聲趕工嘅鐘響。"
+     },
+     {
+      "card": "第四關",
+      "sub": "鹽霧工地"
+     }
+    ]
+   },
+   "C9": {
+    "title": "第 4 關後・第四罐",
+    "stage": "depot",
+    "steps": [
+     {
+      "music": "sad"
+     },
+     {
+      "actor": "lunbo",
+      "x": 200
+     },
+     {
+      "actor": "pupu",
+      "x": 270,
+      "grey": 0.7
+     },
+     {
+      "actor": "kibobo",
+      "x": 330
+     },
+     {
+      "wait": 600
+     },
+     {
+      "still": "c6-screen"
+     },
+     {
+      "say": "narr",
+      "text": "工頭嘅電腦仲開住。畫面寫住：「清拆百畝・假蜜量產」。"
+     },
+     {
+      "say": "narr",
+      "text": "泥鬃：「個蜜印甩咗，我先醒返……」"
+     },
+     {
+      "say": "narr",
+      "text": "泥鬃：「啲樹……係我推冧嘅。」"
+     },
+     {
+      "say": "lunbo",
+      "text": "原來係佢哋。",
+      "face": 2
+     },
+     {
+      "still": null
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 300,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "第四罐喇！噗噗，飲啦。",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 296,
+      "ms": 380
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 0.3,
+      "ms": 1400
+     },
+     {
+      "music": "victory"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗噗噗！"
+     },
+     {
+      "ear": "pupu"
+     },
+     {
+      "say": "lunbo",
+      "text": "佢顏色返咗六成喇，仲識揮手！",
+      "face": 1
+     },
+     {
+      "say": "narr",
+      "text": "薑餅同大pat熊由貨櫃後面行出嚟，拖住手。"
+     },
+     {
+      "say": "kibobo",
+      "text": "八個小朋友喇！淨係三個未搵到。",
+      "face": 1
+     },
+     {
+      "card": "第四關・完",
+      "sub": "下一站：△畝大廈"
+     }
+    ]
+   },
+   "C8": {
+    "title": "第 5 關前・△畝大廈",
+    "stage": "tower",
+    "steps": [
+     {
+      "music": "stage5"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "actor": "lunbo",
+      "x": 240
+     },
+     {
+      "actor": "pupu",
+      "x": 300,
+      "grey": 0.7
+     },
+     {
+      "actor": "kibobo",
+      "x": 360,
+      "flip": true
+     },
+     {
+      "say": "narr",
+      "text": "工頭留低嘅地址，帶佢哋去到一座亮晶晶嘅商廈——「△畝發展」總部。"
+     },
+     {
+      "say": "kibobo",
+      "text": "大堂地下有條輸送帶，會推住你行，小心方向。",
+      "face": 2
+     },
+     {
+      "say": "lunbo",
+      "text": "最後一罐真蜂蜜，應該就喺大佬保險箱裏面。",
+      "face": 2
+     },
+     {
+      "say": "pupu",
+      "text": "噗……噗噗！"
+     },
+     {
+      "say": "kibobo",
+      "text": "入去啦。今次，真係最後一關。",
+      "face": 1
+     },
+     {
+      "say": "narr",
+      "text": "大門喺身後合上，樓上仲有一層燈未熄。"
+     },
+     {
+      "card": "第五關",
+      "sub": "△畝大廈"
+     }
+    ]
+   },
+   "C10": {
+    "title": "面具甩開",
+    "stage": "tower",
+    "steps": [
+     {
+      "music": "stop"
+     },
+     {
+      "sfx": "dread"
+     },
+     {
+      "still": "c10-unmask"
+     },
+     {
+      "say": "triboss",
+      "text": "森林？邊個會記得森林。"
+     },
+     {
+      "say": "triboss",
+      "text": "呢度即將起嘅，叫「百畝商場・二期」。"
+     },
+     {
+      "say": "kibobo",
+      "text": "原來「三角大人」，即係你哋地產商！",
+      "face": 2
+     },
+     {
+      "say": "lunbo",
+      "text": "放假蜜清場啲動物，就係為咗起商場？",
+      "face": 2
+     },
+     {
+      "say": "triboss",
+      "text": "森林唔識賺錢。商場先識。"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗同啲朋友嘅家，唔係由你話拆就拆！",
+      "face": 1
+     },
+     {
+      "still": null
+     }
+    ]
+   },
+   "C11": {
+    "title": "結局・森林番晒顏色",
+    "stage": "tower",
+    "steps": [
+     {
+      "music": "sad"
+     },
+     {
+      "actor": "lunbo",
+      "x": 200
+     },
+     {
+      "actor": "pupu",
+      "x": 270,
+      "grey": 0.7
+     },
+     {
+      "actor": "kibobo",
+      "x": 330
+     },
+     {
+      "wait": 600
+     },
+     {
+      "say": "narr",
+      "text": "聖誕伯伯、虎仔同喵仔都搵到喇——十一個朋友，終於齊晒。"
+     },
+     {
+      "say": "kibobo",
+      "text": "剩返大佬保險箱嗰罐，係最後一罐真蜂蜜。",
+      "face": 1
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 300,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "飲埋呢罐，噗噗。",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 296,
+      "ms": 380
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 1,
+      "ms": 2000
+     },
+     {
+      "music": "victory"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗噗噗噗！！"
+     },
+     {
+      "ear": "pupu"
+     },
+     {
+      "fx": "flash"
+     },
+     {
+      "still": "ending-1"
+     },
+     {
+      "say": "narr",
+      "text": "森林由灰返晒顏色，啲動物朋友一個個行返出嚟。"
+     },
+     {
+      "say": "narr",
+      "text": "大佬枱面壓住張紙：「上級批示」。"
+     },
+     {
+      "still": "ending-2"
+     },
+     {
+      "say": "lunbo",
+      "text": "不如而家就喺呢度，大家一齊野餐？",
+      "face": 1
+     },
+     {
+      "say": "kibobo",
+      "text": "好呀，大家齊齊喺度，呢餐一定特別好食！"
+     },
+     {
+      "still": "ending-3",
+      "hideDialog": true,
+      "holdMs": 5000
+     },
+     {
+      "still": null
+     },
+     {
+      "card": "鮭鮭熊",
+      "sub": "全部真蜂蜜搵齊・森林獲救"
+     }
+    ]
+   },
+   "C11_PERFECT": {
+    "title": "結局・完美結局（待填）",
+    "stage": "tower",
+    "steps": [
+     {
+      "music": "sad"
+     },
+     {
+      "actor": "lunbo",
+      "x": 200
+     },
+     {
+      "actor": "pupu",
+      "x": 270,
+      "grey": 0.7
+     },
+     {
+      "actor": "kibobo",
+      "x": 330
+     },
+     {
+      "wait": 600
+     },
+     {
+      "say": "narr",
+      "text": "十一個朋友都返晒嚟，大家終於可以聚返埋一齊。"
+     },
+     {
+      "say": "kibobo",
+      "text": "噗噗，最後一罐真蜜喺度。",
+      "face": 1
+     },
+     {
+      "prop": "jar",
+      "kind": "jar-real",
+      "x": 300,
+      "drop": true
+     },
+     {
+      "sfx": "sparkle"
+     },
+     {
+      "say": "kibobo",
+      "text": "飲咗佢啦，我哋陪住你。",
+      "face": 1
+     },
+     {
+      "move": "pupu",
+      "x": 296,
+      "ms": 380
+     },
+     {
+      "sfx": "gulp"
+     },
+     {
+      "remove": "jar"
+     },
+     {
+      "colour": "pupu",
+      "amount": 1,
+      "ms": 2000
+     },
+     {
+      "music": "victory"
+     },
+     {
+      "say": "pupu",
+      "text": "噗噗！"
+     },
+     {
+      "ear": "pupu"
+     },
+     {
+      "fx": "flash"
+     },
+     {
+      "still": "ending-1"
+     },
+     {
+      "say": "narr",
+      "text": "森林慢慢回復顏色，蜂蜜香又飄返嚟。"
+     },
+     {
+      "still": "ending-2"
+     },
+     {
+      "say": "lunbo",
+      "text": "終於可以同大家一齊野餐喇。",
+      "face": 1
+     },
+     {
+      "say": "kibobo",
+      "text": "有你哋喺度，呢一日就最完美。"
+     },
+     {
+      "still": "ending-3",
+      "hideDialog": true,
+      "holdMs": 5000
+     },
+     {
+      "still": null
+     },
+     {
+      "card": "鮭鮭熊",
+      "sub": "送給 最重要嘅妳"
+     }
+    ]
+   }
+  }
+ },
+ "c2-story-depth.json": {
+  "note": "大陸2 深度故事（2026-11-24 定稿）。對白一字不改；第8–10關內容留低之後用。",
+  "source": "docs/gdd/claude-to-cursor-20261124-c2-story-depth.json",
+  "fragments": {
+   "6": [
+    {
+     "id": "s6-f-b",
+     "segment": "B",
+     "x": 1420,
+     "name": "開幕清潔驗收單",
+     "content": "大堂驗收合格；排水口持續出現琥珀色黏液。處理指示：增加香味劑，暫不追查上游來源。"
+    },
+    {
+     "id": "s6-f-c",
+     "segment": "C",
+     "x": 2520,
+     "name": "工地圍板背面的配送單",
+     "content": "收貨品名：植被整理用假蜜。供應單位：控股集團中央配方部；分店不得自行停用。"
+    },
+    {
+     "id": "s6-f-d",
+     "segment": "D",
+     "x": 3620,
+     "name": "廢棄蜜廠監視器片段",
+     "content": "橙黃色巨影被推進鐵籠，彩色頸巾勾在籠邊；籠車駛過後，原本圍着水槽的小動物全部縮進角落。"
+    }
+   ],
+   "7": [
+    {
+     "id": "s7-f-b",
+     "segment": "B",
+     "x": 1420,
+     "name": "森友展銷價目牌",
+     "content": "夜間限定：森林夥伴展示套裝。原有棲地資料已刪除，請按體型及觀賞價值分類。"
+    },
+    {
+     "id": "s7-f-c",
+     "segment": "C",
+     "x": 2550,
+     "name": "飼養員未寄出的申請",
+     "content": "請保留原來的飲水及休息時間，牠們不是不服從，是太驚。回覆：改用配發工具，未完成展銷不得調離。"
+    },
+    {
+     "id": "s7-f-d",
+     "segment": "D",
+     "x": 3620,
+     "name": "沾着毛的轉運標籤",
+     "content": "橙黃大型個體：轉往總部地底監禁層，禁止與其他動物接觸。標籤邊緣夾着一根長毛，帶有潮濕樹葉的氣味。"
+    }
+   ]
+  },
+  "bossDialogue": {
+   "mall-scrubber": {
+    "preFight": [
+     "X-9：深層潔淨開始。偵測到……活動污漬。",
+     "琪寶寶：佢個水缸換咗強酸，唔係普通清潔水！",
+     "倫寶：避開噴口！佢背脊嗰個鼓風機下面，有件後加嘅嘢。"
+    ],
+    "postFight": [
+     "X-9：外加指令已移除。原有工作：清洗飲水池。",
+     "X-9：請問……飲水嘅動物去咗邊？",
+     "琪寶寶：我哋去搵返佢哋。你先停低，唔好再噴。"
+    ],
+    "phase2": "X-9：深層潔淨開始。偵測到……活動污漬。",
+    "phase3": "琪寶寶：佢個水缸換咗強酸，唔係普通清潔水！",
+    "weak": "倫寶：避開噴口！佢背脊嗰個鼓風機下面，有件後加嘅嘢。",
+    "defeatBanner": "X-9：外加指令已移除。原有工作：清洗飲水池。"
+   },
+   "trainer": {
+    "preFight": [
+     "馴獸師：唔好開籠！一亂，佢哋就會成批運走！",
+     "琪寶寶：你望下，佢哋驚緊嘅係條鞭。",
+     "馴獸師：我唔拎住，下一個人會落手更重……",
+     "倫寶：咁就一齊停低，唔好再幫佢哋做落去。"
+    ],
+    "postFight": [
+     "馴獸師：我成日話自己係為佢哋好，點知佢哋連我隻手都驚。",
+     "琪寶寶：你放低條鞭，等佢哋自己決定行唔行近。",
+     "馴獸師：鎖匙喺度。我會開返啲籠，留低照顧受傷嗰啲。"
+    ]
+   }
+  },
+  "kenPhoto": {
+   "stage": 6,
+   "x": 2080,
+   "title": "舊相",
+   "presentation": "商場通往工地的玻璃走廊掛着一張舊相。",
+   "content": "年輕的Ken蹲在溪邊，把一棵歪斜的小樹扶正；相中樹枝上，掛着一截彩色布條。"
+  },
+  "kenMemo": {
+   "stage": 7,
+   "x": 4100,
+   "title": "批示",
+   "presentation": "展銷中心後台的一封批示。",
+   "content": "Ken批示：「展銷收益撥作動物安置，確保有水、有休息地方。」附件卻把實際籠舍照片換成明亮的示意圖。"
+  },
+  "pupuCage": {
+   "lines": [
+    "噗噗：……",
+    "narr：鐵籠剪影一現，噗噗耳仔突然郁一下；牠踮腳貼近，伸掌碰向彩色頸巾的位置。",
+    "narr：遠處高架通道上，Leon的獅子象徵物閃過一下，隨即隱入暗處。"
+   ]
+  },
+  "pupuDeparture": {
+   "lines": [
+    "narr：噗噗聞到標籤上的毛，循着氣味走向籠車通過的窄小維修口。",
+    "narr：牠回頭望兩位主角，再望向黑暗，最後把一根熟悉的樹枝放在入口，鑽了進去。",
+    "narr：腳步聲消失之後……"
+   ],
+   "continued": "待續",
+   "note": "動作描述照 S3 stage7_pupu；對白框分頁顯示，淡出「待續」。"
+  }
+ },
+ "ending-c2.json": [
+  {
+   "id": 1,
+   "title": "大佬醒覺",
+   "description": "枯咗嘅綠化牆前望住窗外商場，眼神動搖",
+   "image": "/art/story/ending-c2-01.png"
+  },
+  {
+   "id": 2,
+   "title": "宣佈改變",
+   "description": "記者會，宣佈「森林共生式發展」計劃取代拆遷",
+   "image": "/art/story/ending-c2-02.png"
+  },
+  {
+   "id": 3,
+   "title": "動工重建",
+   "description": "低碳建材重建，天台裝太陽能板",
+   "image": "/art/story/ending-c2-03.png"
+  },
+  {
+   "id": 4,
+   "title": "森林回復",
+   "description": "幼苗種返，蜜蜂傳粉，畫面由枯轉青",
+   "image": "/art/story/ending-c2-04.png"
+  },
+  {
+   "id": 5,
+   "title": "動物回歸",
+   "description": "各種森林動物包括獲釋守護者返嚟",
+   "image": "/art/story/ending-c2-05.png"
+  },
+  {
+   "id": 6,
+   "title": "社區共融",
+   "description": "商場同森林並存，社區市集",
+   "image": "/art/story/ending-c2-06.png"
+  },
+  {
+   "id": 7,
+   "title": "朋友大重聚",
+   "description": "救返嘅朋友大合照／大野餐",
+   "image": "/art/story/ending-c2-07.png"
+  },
+  {
+   "id": 8,
+   "title": "噗噗與守護者",
+   "description": "親人同噗噗安定落嚟",
+   "image": "/art/story/ending-c2-08.png"
+  },
+  {
+   "id": 9,
+   "title": "主角靜態一刻",
+   "description": "倫寶／琪寶寶望夕陽下森林",
+   "image": "/art/story/ending-c2-09.png"
+  },
+  {
+   "id": 10,
+   "title": "全景大合照",
+   "description": "主角、朋友、噗噗、守護者，甚至大佬同框",
+   "image": "/art/story/ending-c2-10.png"
+  }
+ ],
+ "verses.json": {
+  "1": {
+   "text": "我豈沒有吩咐你麼？你當剛強壯膽！不要懼怕，也不要驚惶；因為你無論往哪裡去，耶和華－你的神必與你同在。",
+   "ref": "約書亞記 1:9"
+  },
+  "2": {
+   "text": "我兒，你要吃蜜，因為是好的。吃蜂房下滴的蜜，便覺甘甜。",
+   "ref": "箴言 24:13"
+  },
+  "3": {
+   "text": "我們如今彷彿對著鏡子觀看，模糊不清，到那時就要面對面了。我如今所知道的有限，到那時就全知道，如同主知道我一樣。",
+   "ref": "哥林多前書 13:12"
+  },
+  "4": {
+   "text": "我們行善，不可喪志；若不灰心，到了時候就要收成。",
+   "ref": "加拉太書 6:9"
+  },
+  "5": {
+   "text": "那美好的仗我已經打過了，當跑的路我已經跑盡了，所信的道我已經守住了。",
+   "ref": "提摩太後書 4:7"
+  },
+  "6": {
+   "text": "基督釋放了我們，叫我們得自由，所以要站立得穩，不要再被奴僕的軛挾制。",
+   "ref": "加拉太書 5:1"
+  },
+  "7": {
+   "text": "義人顧惜他牲畜的命，惡人的憐憫也是殘忍。",
+   "ref": "箴言 12:10"
+  },
+  "8": {
+   "text": "但要凡事察驗，善美的要持守。",
+   "ref": "帖撒羅尼迦前書 5:21"
+  },
+  "9": {
+   "text": "我雖然行過死蔭的幽谷，也不怕遭害，因為你與我同在，你的杖、你的竿都安慰我。",
+   "ref": "詩篇 23:4"
+  },
+  "10": {
+   "text": "若有人在基督裡，他就是新造的人，舊事已過，都變成新的了。",
+   "ref": "哥林多後書 5:17"
+  }
+ },
+ "characters.json": {
+  "shared": {
+   "hitbox": {
+    "standing": {
+     "w": 12,
+     "h": 24
+    },
+    "crouch": {
+     "w": 12,
+     "h": 14
+    }
+   },
+   "jump": {
+    "gravity": 700,
+    "holdMaxMs": 180,
+    "releaseCut": 0.5,
+    "coyoteMs": 110,
+    "bufferMs": 140,
+    "targetHeightPx": {
+     "tap": 37,
+     "full": 93
+    }
+   },
+   "crouch": {
+    "speedMultiplier": 0.5
+   },
+   "hurt": {
+    "invulnMs": 1000,
+    "knockbackX": 60,
+    "knockbackY": 120
+   },
+   "fall": {
+    "damage": 1,
+    "respawn": "lastCheckpoint"
+   }
+  },
+  "characters": [
+   {
+    "id": "P-01",
+    "name": "倫寶",
+    "role": "ranged",
+    "difficulty": "hard",
+    "hp": 6,
+    "moveSpeed": 105,
+    "jumpVelocity": 360,
+    "weapon": {
+     "name": "鮭魚槍",
+     "look": "手持一條鮭魚形狀嘅槍（原創）"
+    },
+    "attack": {
+     "type": "projectile",
+     "projectile": {
+      "name": "鮭魚籽",
+      "speed": 170,
+      "gravity": 40,
+      "rangePx": 150,
+      "damage": 2,
+      "sizePx": 4,
+      "pierce": 0,
+      "spawnOffset": [
+       20,
+       -14
+      ]
+     },
+     "startupMs": 120,
+     "activeMs": 60,
+     "recoveryMs": 200,
+     "cooldownMs": 520,
+     "maxOnScreen": 3,
+     "canShootCrouching": true,
+     "canShootInAir": true
+    },
+    "special": {
+     "name": "魚籽連射",
+     "shots": 5,
+     "intervalMs": 90,
+     "damage": 1,
+     "cost": 1
+    },
+    "weakness": "動作慢、射擊後有硬直，近身冇保護",
+    "art": {
+     "note": "原創造型；唔模仿任何現有遊戲角色",
+     "license": "project-owned"
+    }
+   },
+   {
+    "id": "P-02",
+    "name": "琪寶寶",
+    "role": "melee",
+    "difficulty": "easy",
+    "hp": 5,
+    "moveSpeed": 127,
+    "jumpVelocity": 360,
+    "weapon": {
+     "name": "劍",
+     "look": "手持短劍，近身快速斬擊（原創）"
+    },
+    "attack": {
+     "type": "melee",
+     "comboWindowMs": 300,
+     "cooldownMs": 140,
+     "hitboxHeightPx": 28,
+     "combo": [
+      {
+       "damage": 1,
+       "startupMs": 40,
+       "activeMs": 80,
+       "recoveryMs": 70,
+       "range": 24
+      },
+      {
+       "damage": 1,
+       "startupMs": 40,
+       "activeMs": 80,
+       "recoveryMs": 70,
+       "range": 24
+      },
+      {
+       "damage": 2,
+       "startupMs": 50,
+       "activeMs": 100,
+       "recoveryMs": 140,
+       "range": 28
+      }
+     ]
+    },
+    "backFan": {
+     "name": "背脊風扇",
+     "look": "背脊揹住一把大風扇（原創造型，跟琪寶寶色板）",
+     "glide": {
+      "holdJumpInAir": true,
+      "fallSpeedMultiplier": 0.35,
+      "maxMs": 900,
+      "extraDistanceTiles": 1
+     }
+    },
+    "special": {
+     "name": "旋風斬",
+     "damage": 2,
+     "radiusPx": 32,
+     "invulnMs": 400,
+     "cost": 1
+    },
+    "weakness": "要近身，容易受傷；血量較少",
+    "art": {
+     "note": "原創造型；唔模仿任何現有遊戲角色",
+     "license": "project-owned"
+    }
+   }
+  ],
+  "balanceTargets": {
+   "dpsRatioGirlToBoy": [
+    1.0,
+    1.5
+   ],
+   "clearRateBotBoy": [
+    0.55,
+    0.7
+   ],
+   "clearRateBotGirl": [
+    0.7,
+    0.85
+   ]
+  },
+  "awaitingConfirmation": true,
+  "note": "取代 data/player.json；確認後接 coop／控制／驗收（項目 3–5）"
+ },
+ "character_notes_alan": "# 角色性格（Alan 2026-11-24 口述，寫對白一律跟）\n\n- 噗噗：外向，冇咩諗法、諗唔到太多嘢，好簡單——就係要食蜂蜜，同大家朋友一齊放鬆開心。（對白仍然只講「噗」，用旁白描述動作）\n- 琪寶寶：正義感強、反應快、聰明、直觀；見到唔啱會即刻出聲。\n- 倫寶：唔係太陽光型，但分析好、會支援人、有大局觀；講嘢少而準。\n- 大pat熊：內向、穩定、穩重；唔多講嘢，講就令人安心。\n\n# 設計大原則（Alan 2026-11-24）\n\n- 點改都好：一定要一個人玩得、兩個人玩都得。任何新設計都要單人可以完成，雙人時有合作樂趣，但唔可以變成必須兩個人。\n",
+ "xmas_epilogue_F10": [
+  "旁白：冒險暫停一晚。今晚冇蜜僵，冇大佬。",
+  "琪寶寶：嘩，大家都嚟齊喇？",
+  "熊仔：我哋留咗兩個位俾你哋㗎！",
+  "招積熊：我冇特登等㗎，只係啱啱得閒。",
+  "噗噗：……蜜。",
+  "倫寶：得啦，今晚成罐都係你嘅。",
+  "琪寶寶：咁我呢？",
+  "倫寶：你嘅喺度。",
+  "琪寶寶：……又係遊戲？",
+  "倫寶：呢隻遊戲，係我哋兩個嘅。",
+  "琪寶寶：傻佬。",
+  "大家：聖誕快樂！",
+  "2026 聖誕快樂 —— 冒險，待續。"
+ ],
+ "stage8_10_decisions": "第8–10關故事你已寫咗r2（蜜腳印線、倫寶第9關送護目鏡、重逢B舔蜜撞正、Ken三句、結局十圖）。今次唔使重寫，只要第1–7關埋伏筆接得上。"
+}
