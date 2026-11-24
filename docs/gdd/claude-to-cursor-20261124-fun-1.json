@@ -167,17 +167,6 @@
       "check": "可見正文唔可以出現 Ken／Leon／守護者／第8關；手機 390×844 截圖新增嘅 4 個位置放 docs/qa-fun-1/"
     },
     {
-      "id": "F12_STAGE5_ROOFTOP_STEPS",
-      "source": "docs/bible/market-benchmark-copilot.json I07（介紹→發展→轉折→總結）",
-      "where": "第5關 S6 天台工地（x 2460–3060）",
-      "do": [
-        "x=2560 嗰隻敵人移去 x=2790（令天台開頭只有推土機 2520，玩家先單獨認識推土機）",
-        "天花尖刺塊 2680 前後 100px 內唔好有敵人（先單獨認識尖刺）",
-        "2790 敵人＋推土機 2860 做『發展』；尖刺 2960＋敵人 2940 保留做最後組合",
-        "其他敵人、機關數值唔改"
-      ]
-    },
-    {
       "id": "F13_BOSS_OPENING_LABEL",
       "source": "market-benchmark I08（令玩家睇得明幾時打得入）",
       "file": "src/game/enemies/BossRhythm.ts",
@@ -204,5 +193,6 @@
     "截圖放 docs/qa-fun-1/：第3關溫泉兩個位＋對白、第5關合照牌、第7關雙人提示、聖誕番外第1句同最後一句、救朋友對白一張",
     "report.json ok:true"
   ],
-  "deliver": "push 後回報 branch＋commit＋截圖；唔使開 PR"
+  "deliver": "push 後回報 branch＋commit＋截圖；唔使開 PR",
+  "note_F12": "F12 已取消：第5關敵人位置改由 Claude 直接做（第一大陸重排 PR），Fun-1 唔好郁第1–5關敵人座標"
 }
