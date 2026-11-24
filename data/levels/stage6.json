@@ -133,20 +133,20 @@
   "crushers": [],
   "debris": [
     {
-      "x": 2230,
+      "x": 2160,
       "periodMs": 3400,
       "offsetMs": 600,
       "warnMs": 950,
       "note": "C・天花碎石"
     },
     {
-      "x": 2430,
+      "x": 2360,
       "periodMs": 3400,
       "offsetMs": 1700,
       "warnMs": 950
     },
     {
-      "x": 2660,
+      "x": 2700,
       "periodMs": 3200,
       "offsetMs": 900,
       "warnMs": 950
