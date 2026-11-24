@@ -5137,9 +5137,7 @@ export class GameScene extends Phaser.Scene {
       this.physics.resume()
       this.resetPauseKeys()
       this.drinkCoffee()
-      if (st.game === 'flag') {
-        floatText(this, this.boy.x, this.boy.y - 96, '（待補）', '#ffe08a', { size: 13, dur: 2500 })
-      }
+      // fix-2p-1 #1: remove stage-1 flag-stall 「（待補）」placeholder toast.
       if (pts > 0) {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
@@ -5148,7 +5146,8 @@ export class GameScene extends Phaser.Scene {
         if (split.boy) this.addCoins('boy', split.boy)
         if (split.girl) this.addCoins('girl', split.girl)
       } else if (coins > 0) {
-        this.addCoins(this.boy.role as Who, coins)
+        // fix-2p-1 #2: 2P stall rewards split evenly across purses.
+        this.awardStallCoins(coins)
       }
     }
     if (choice === 'skip') {
@@ -5261,7 +5260,7 @@ export class GameScene extends Phaser.Scene {
         this.killBonus += pts
         this.addScorePop(this.boy.x, this.boy.y - 80, pts)
       }
-      if (coins > 0) this.addCoins(this.boy.role as Who, coins)
+      if (coins > 0) this.awardStallCoins(coins)
     }
     if (choice === 'skip') {
       after(0, 0)
@@ -6563,6 +6562,19 @@ export class GameScene extends Phaser.Scene {
     this.refreshCoins()
   }
 
+  /** fix-2p-1 #2: 2P stall payout — split coins evenly (odd remainder → boy). 1P unchanged. */
+  private awardStallCoins(coins: number) {
+    if (coins <= 0) return
+    if (this.mode === '2p' && this.girl) {
+      const girlShare = Math.floor(coins / 2)
+      const boyShare = coins - girlShare
+      if (boyShare) this.addCoins('boy', boyShare)
+      if (girlShare) this.addCoins('girl', girlShare)
+      return
+    }
+    this.addCoins(this.boy.role as Who, coins)
+  }
+
   /** What this hero can spend at the friends' stall. */
   purseOf(who: Who) {
     return this.purse[who] ?? 0
@@ -7566,6 +7578,23 @@ export class GameScene extends Phaser.Scene {
         e.setFlipX(false)
         e.setVelocityX(ENEMY_SPEED)
         e.patrolDir = 1
+        // fix-2p-1 #3: left-side entrants flash 「！」so players notice the flank.
+        const bang = this.add
+          .text(e.x, e.y - e.displayHeight - 8, '！', {
+            fontSize: '18px',
+            color: '#ff3030',
+            stroke: '#fff0a0',
+            strokeThickness: 4,
+          })
+          .setOrigin(0.5)
+          .setDepth(e.depth + 5)
+        this.tweens.add({
+          targets: bang,
+          y: bang.y - 12,
+          alpha: 0,
+          duration: 700,
+          onComplete: () => bang.destroy(),
+        })
       } else {
         e.setFlipX(true)
         e.setVelocityX(-ENEMY_SPEED)
