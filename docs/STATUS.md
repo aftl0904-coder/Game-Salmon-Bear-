@@ -8,6 +8,12 @@
 - transition-6to7：BikeScene「追籠車」（臨時 s6/c2 圖）；可跳過；撞只慢。
 - QA：`docs/qa-polish-1/`、`docs/qa-transition-6to7/`。draft PR，等 Alan merge。
 
+## M7 第6→7關單車過場（`manus/m7-bike-c2-2611`；2026-11-24）
+- 遠景 `public/art/bike-c2/far.png`：1280×720、64 色；build、10 項資料驗證及桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m7-bike-c2/far/`。圖片先以 2560×1440 生成再縮細，並非原生尺寸；未接入遊戲或真機。
+- 中景 `public/art/bike-c2/mid.png`：1280×302、二值透明，左右邊緣像素相同；三張並排檢查及 build、10 項資料驗證、桌面／模擬手機獨立預覽通過，見 `docs/qa-m7-bike-c2/mid/`。原圖等比例縮小，使用少量同圖路緣補接；未在遊戲實際捲動或真機驗證。
+- 側門 `public/art/bike-c2/goal.png`：320×240、二值透明，招牌留白；build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m7-bike-c2/goal/`。原圖等比例縮小，未接入遊戲、疊字或真機驗證。
+- 三張已逐張交付；本 branch 只交美術，遊戲接入由 Cursor 跟進。
+
 ## M6 補畫（`manus/m6-art-supplement-2611`；2026-11-24）
 - 六件素材已交付並由 polish-1 接入；獨立預覽見 `docs/qa-m6-art/`。
 
