@@ -470,7 +470,7 @@
   "arenaX1": 5280
  },
  "researcher": {
-  "hp": 42,
+  "hp": 54,
   "phase2At": 0.66,
   "phase3Below": 0.33,
   "swipeWarnMs": 1000,
