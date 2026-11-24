@@ -1,0 +1,6 @@
+c2-truth-scrap.png: 28x32 RGBA, binary alpha, 63 colours, visible bbox=(1, 2, 27, 30), enclosed transparent pixels=0
+c2-ken-photo.png: 36x28 RGBA, binary alpha, 63 colours, visible bbox=(1, 1, 35, 26), enclosed transparent pixels=0
+c2-ken-memo.png: 30x34 RGBA, binary alpha, 63 colours, visible bbox=(3, 1, 27, 33), enclosed transparent pixels=0
+c2-pupu-branch.png: 24x10 RGBA, binary alpha, 63 colours, visible bbox=(1, 1, 23, 9), enclosed transparent pixels=0
+c2-maint-hatch.png: 40x48 RGBA, binary alpha, 63 colours, visible bbox=(5, 1, 34, 47), enclosed transparent pixels=0
+c2-leon-emblem.png: 32x28 RGBA, binary alpha, 63 colours, visible bbox=(4, 1, 28, 27), enclosed transparent pixels=0

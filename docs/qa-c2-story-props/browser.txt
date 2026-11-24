@@ -1,0 +1,2 @@
+desktop: PASS, 6 images decoded and selected via mouse; standalone preview, no page errors, not in game.
+mobile-touch: PASS, 6 images decoded and selected via touchscreen only; standalone preview, no page errors, not in game.
