@@ -21,9 +21,9 @@
       "prompt": "大廈公契（DMC）主要規管？",
       "choices": [
         "業主共用權責",
-        "只規管租客私人裝修色水",
-        "只規管街外巴士站安排",
-        "只規管個人電話月費"
+        "只規管個別單位內部傢俬擺設",
+        "只規管租客私人銀行戶口",
+        "只規管街外小販牌照"
       ],
       "answerIndex": 0,
       "id": "Q004"
@@ -36,7 +36,7 @@
         "大廈業主群體",
         "單一個單位嘅租客",
         "外牆廣告承辦商",
-        "物管公司股東會"
+        "物管公司員工會"
       ],
       "answerIndex": 0,
       "id": "Q005"
@@ -47,9 +47,9 @@
       "prompt": "管理費多數用嚟處理？",
       "choices": [
         "公用地方維修同管理",
-        "租客私人旅遊開支",
+        "個別業主私人旅遊開支",
         "個別業主私人汽車保養",
-        "街坊聯誼聚餐費用"
+        "私人單位內部裝修全額"
       ],
       "answerIndex": 0,
       "id": "Q006"
@@ -109,28 +109,30 @@
     {
       "category": "law",
       "difficulty": "normal",
-      "prompt": "差餉／地租主要同邊樣有關？",
+      "prompt": "差餉同《地租（評估及徵收）條例》下嘅地租，主要按咩計算？",
       "choices": [
-        "物業應課差餉租值",
-        "當日早餐物價指數",
-        "八達通卡內餘額",
-        "行山徑總里程"
+        "應課差餉租值",
+        "單位實用面積呎數",
+        "物業市值成交價",
+        "管理費收費水平"
       ],
       "answerIndex": 0,
-      "id": "Q011"
+      "id": "Q011",
+      "source": "https://www.rvd.gov.hk/tc/our_services/government_rent.html"
     },
     {
       "category": "law",
       "difficulty": "normal",
-      "prompt": "停車場月租位通常唔等於？",
+      "prompt": "一般月租停車位，單憑每月交租通常會得到咩？",
       "choices": [
-        "擁有車位業權",
-        "只係可以泊車使用",
-        "只要每月交費就有業權",
-        "有車位編號就等於業權"
+        "按合約使用車位嘅權利",
+        "車位業權",
+        "車位業權嘅一半份數",
+        "優先購買權"
       ],
       "answerIndex": 0,
-      "id": "Q012"
+      "id": "Q012",
+      "source": "常識題（香港商場／大廈停車場月租慣例）"
     },
     {
       "category": "law",
@@ -166,7 +168,7 @@
         "保安、清潔、維修安排",
         "替業主代理物業買賣",
         "處理刑事檢控程序",
-        "發行商場專用貨幣"
+        "審批土地契約修訂"
       ],
       "answerIndex": 0,
       "id": "Q017"
@@ -177,9 +179,9 @@
       "prompt": "欠交管理費可能導致？",
       "choices": [
         "法團或管理處追討",
-        "只需過半租客同意",
-        "自動獲贈汽車",
-        "個別業主私人保養費會獲豁免"
+        "自動獲免費續租",
+        "自動豁免差餉",
+        "管理處無權再追討"
       ],
       "answerIndex": 0,
       "id": "Q018"
@@ -187,12 +189,12 @@
     {
       "category": "law",
       "difficulty": "normal",
-      "prompt": "商場「公共地方」例如？",
+      "prompt": "商場「公共地方」（按公契界定）例如？",
       "choices": [
         "中庭、走廊、扶手電梯",
         "舖內私人貨倉",
         "租戶員工休息室",
-        "租約訂明專用卸貨位以外空間"
+        "租戶租用嘅舖位入面"
       ],
       "answerIndex": 0,
       "id": "Q019"
@@ -203,9 +205,9 @@
       "prompt": "物管「小心地滑」告示常見於？",
       "choices": [
         "清潔後濕地或雨天入口",
-        "天台草地專用區域",
-        "升降機按鈕背面",
-        "雙方協議可唔張貼"
+        "天台機房內側",
+        "升降機井底維修口",
+        "只需口頭提醒唔使張貼"
       ],
       "answerIndex": 0,
       "id": "Q022"
@@ -217,8 +219,8 @@
       "choices": [
         "食肆、零售、服務",
         "以工廠生產為主",
-        "以農田耕作體驗為主",
-        "以貨運碼頭服務為主"
+        "以倉庫物流為主",
+        "以住宅出租為主"
       ],
       "answerIndex": 0,
       "id": "Q023"
@@ -230,8 +232,8 @@
       "choices": [
         "樓宇可入住或交付",
         "仍屬開始打樁階段",
-        "代表項目必須封盤",
-        "代表項目必須拆樓"
+        "代表項目必須永久封盤",
+        "代表項目必須清拆重建"
       ],
       "answerIndex": 0,
       "id": "Q024"
@@ -281,7 +283,7 @@
       "prompt": "解僱／辭職通常要留意？",
       "choices": [
         "通知期或代通知金",
-        "一定可以即日免費離職",
+        "可以隨時免費離職",
         "一定要先繳按金先走",
         "一定要做滿一年先辭"
       ],
@@ -876,7 +878,7 @@
     {
       "category": "math",
       "difficulty": "normal",
-      "prompt": "訂金 $5,000 扣首月租 $12,000，仍要補？",
+      "prompt": "按金 $5,000 扣首月租 $12,000，仍要補？",
       "choices": [
         "$7,000",
         "$5,000",
@@ -1036,7 +1038,7 @@
       "choices": [
         "7 日",
         "1 個月",
-        "即日無須通知",
+        "無須任何通知期",
         "90 日"
       ],
       "answerIndex": 0,
@@ -1253,8 +1255,8 @@
       "choices": [
         "建築事務監督發出嘅佔用許可證",
         "地政總署預售樓花同意書",
-        "差餉物業估價署估價",
-        "消防處臨時表演許可"
+        "差餉物業估價署估價證明",
+        "消防處表演活動許可"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/building-covenant.html"
@@ -1279,13 +1281,13 @@
       "difficulty": "normal",
       "prompt": "根據《建築物條例》，新建築物未獲發佔用許可證前可以點？",
       "choices": [
-        "不得被佔用",
+        "除法定例外例如不多於兩名管理員或持有效臨時佔用許可證外，不得佔用",
         "可以有限度先作物管辦公室用途",
-        "只需業主立案法團多數通過",
+        "只需業主立案法團多數通過即可入住",
         "可以先作商場臨時活動用途"
       ],
       "answerIndex": 0,
-      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
+      "source": "《建築物條例》第123章第21條；https://www.bd.gov.hk/tc/building-works/new-building-works/occupation-permit/index.html"
     },
     {
       "id": "dev-15",
@@ -1322,9 +1324,9 @@
       "prompt": "屋宇署規管私營建築發展工程，主要根據邊套法律？",
       "choices": [
         "《建築物條例》及其附屬法例",
-        "《建築物管理條例》為唯一依據",
-        "《土地審裁處條例》為唯一依據",
-        "《物業轉易及財產條例》為唯一依據"
+        "《建築物管理條例》即可全面取代",
+        "《土地審裁處條例》即可全面取代",
+        "《物業轉易及財產條例》即可全面取代"
       ],
       "answerIndex": 0,
       "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
@@ -1337,7 +1339,7 @@
       "choices": [
         "中央處理建築圖則制度",
         "分區地政處獨立終審制度",
-        "差餉署預審制度",
+        "差餉物業估價署預審制度",
         "土地註冊處預審制度"
       ],
       "answerIndex": 0,
@@ -1491,8 +1493,8 @@
       "choices": [
         "《建築物條例》",
         "《建築物管理條例》",
-        "《城市規劃條例》單獨規管建造",
-        "《土地註冊條例》單獨規管建造"
+        "《城市規劃條例》便可取代建造規管",
+        "《土地註冊條例》便可取代建造規管"
       ],
       "answerIndex": 0,
       "source": "https://www.bd.gov.hk/tc/resources/codes-and-references/notices-and-reports/GFA.html"
@@ -1520,7 +1522,7 @@
         "向地政總署提出理據申請延長建築規約期限",
         "向屋宇署申請延長入伙紙有效期",
         "向規劃署申請延長規劃許可",
-        "向差餉署申請延長估價週期"
+        "向差餉物業估價署申請延長估價週期"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/building-covenant.html"
@@ -1548,7 +1550,7 @@
         "建築事務監督同意展開及進行有關建築工程",
         "地政總署預售樓花同意",
         "規劃署規劃許可即可開工",
-        "差餉署估價完成即可開工"
+        "差餉物業估價署估價完成即可開工"
       ],
       "answerIndex": 0,
       "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
@@ -1557,15 +1559,15 @@
       "id": "dev-41",
       "category": "developer",
       "difficulty": "normal",
-      "prompt": "「上蓋面積」同「地積比率」呢類發展參數，主要用來描述咩？",
+      "prompt": "『地積比率』係指咩？",
       "choices": [
-        "地盤可以起幾多／起幾高嘅發展量相關限制",
-        "只描述物業管理費格式",
-        "只描述商場積分規則",
-        "只描述寫字樓空調時段"
+        "總樓面面積同地盤面積嘅比率",
+        "建築物覆蓋地盤嘅面積比例，即上蓋面積",
+        "樓宇最高可建高度",
+        "實用面積同建築面積嘅比率"
       ],
       "answerIndex": 0,
-      "source": "https://www.bd.gov.hk/tc/resources/codes-and-references/notices-and-reports/GFA.html"
+      "source": "屋宇署作業備考 APP-19；https://www.bd.gov.hk/tc/resources/codes-and-references/practice-notes-and-circular-letters/index_pnap.html"
     },
     {
       "id": "dev-46",
@@ -1616,8 +1618,8 @@
       "prompt": "公契批核時，除《建築物管理條例》外，仲會跟邊份指引？",
       "choices": [
         "法律諮詢及田土轉易處通函第79號公契指引及其修訂本",
-        "屋宇署作業備考全部條文自動適用",
-        "規劃署香港規劃標準與準則全部章節",
+        "屋宇署作業備考每條都自動套用",
+        "規劃署香港規劃標準與準則每章都套用",
         "差餉物業估價署估價手冊"
       ],
       "answerIndex": 0,
@@ -1632,7 +1634,7 @@
         "相當於該土地應課差餉租值百分之三，並隨應課差餉租值調整",
         "相當於應課差餉租值百分之五固定不變",
         "相當於土地補價每年百分之三",
-        "略過錯誤處理先交功能"
+        "相當於應課差餉租值百分之一，固定不變"
       ],
       "answerIndex": 0,
       "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-transaction/lease-modification-land-exchange.html"
@@ -1672,7 +1674,7 @@
       "prompt": "私人發展若撥出地方作公眾通道或交回土地作街道擴闊，屋宇署資料指可能獲批咩？",
       "choices": [
         "額外總樓面面積",
-        "把配置寫死喺程式碼",
+        "豁免補地價",
         "自動延長建築規約",
         "自動取得預售同意"
       ],
@@ -1700,7 +1702,7 @@
       "prompt": "地政總署估價組除補地價外，仲負責邊類租金評估例子？",
       "choices": [
         "特別用途短期租約如巴士廠、加油站用地",
-        "私人住宅差餉每年重估全部個案",
+        "私人住宅差餉每年重估所有個案",
         "全部商場管理費審批",
         "全部寫字樓空調收費審批"
       ],
@@ -2005,12 +2007,12 @@
       "id": "hl-20",
       "category": "hanglung",
       "difficulty": "hard",
-      "prompt": "恒隆「HOUSE 66」喺官網公司業務頁點樣描述？",
+      "prompt": "恒隆「HOUSE 66」係咩性質？",
       "choices": [
-        "橫跨內地約10個項目、8個城市嘅會員計劃",
-        "只限香港一個商場嘅臨時積分卡",
-        "只限員工內部聯誼會",
-        "只限酒店住客過夜禮遇計劃"
+        "會員計劃",
+        "酒店品牌",
+        "寫字樓品牌",
+        "慈善基金"
       ],
       "answerIndex": 0,
       "source": "https://www.hanglung.com/en-us/business"
@@ -2023,8 +2025,8 @@
       "choices": [
         "《建築物管理條例》第344章",
         "《建築物條例》第123章",
-        "《公司條例》取代公契",
-        "《城市規劃條例》"
+        "《公司條例》第622章",
+        "《城市規劃條例》第131章"
       ],
       "answerIndex": 0,
       "source": "https://www.elegislation.gov.hk/hk/cap344"
@@ -2050,8 +2052,8 @@
       "prompt": "公契通常規管樓宇邊啲事務？",
       "choices": [
         "公用地方使用、管理費、業權份數等",
-        "只規管街外停車咪錶",
-        "只規管巴士路線",
+        "只規管街外停車收費錶",
+        "只規管巴士路線編號",
         "只規管街市檔位分配"
       ],
       "answerIndex": 0,
@@ -2063,13 +2065,13 @@
       "difficulty": "normal",
       "prompt": "大廈維修工程費用分攤，一般參考咩？",
       "choices": [
-        "公契同業主立案法團／管理公司決議",
-        "個別住戶社交媒體投票",
-        "物業代理公司內部指引",
-        "銀行內部估價指引"
+        "一般按公契規定分攤；公契冇規定時，按各業主所佔業權份數",
+        "按各單位實用面積平均分",
+        "按住戶人數分嘅常見誤解",
+        "由管理公司自行決定比例"
       ],
       "answerIndex": 0,
-      "source": "https://www.buildingmgt.gov.hk/tc/"
+      "source": "https://www.buildingmgt.gov.hk/tc/Daily_Operation_of_Building_Management/5_1_3_1.html"
     },
     {
       "id": "law-37",
@@ -2078,9 +2080,9 @@
       "prompt": "物業轉讓後更新差餉繳納人資料，通常同邊方面有關？",
       "choices": [
         "差餉物業估價署相關安排",
-        "旅遊發展局活動登記",
-        "康文署球場租用紀錄",
-        "漁護署郊野公園通行證"
+        "屋宇署佔用許可證更新",
+        "地政總署賣地表更新",
+        "物業管理業監管局牌照更新"
       ],
       "answerIndex": 0,
       "source": "https://www.rvd.gov.hk/tc/"
@@ -2092,9 +2094,9 @@
       "prompt": "業主委員會／法團會議，較穩陣做法係？",
       "choices": [
         "按《建築物管理條例》同公契程序召開同表決",
-        "只喺即時通訊群組口頭決定即具全部效力",
-        "只由物管公司單方面決定永遠有效",
-        "只由最大業主一人決定"
+        "只喺即時通訊群組口頭決定即具效力",
+        "只由物管公司單方面決定便有效",
+        "只由最大業主一人決定便有效"
       ],
       "answerIndex": 0,
       "source": "https://www.buildingmgt.gov.hk/tc/"
@@ -2103,7 +2105,7 @@
       "id": "law-42",
       "category": "law",
       "difficulty": "normal",
-      "prompt": "消費者網購預繳大額訂金，較穩陣係？",
+      "prompt": "消費者網購預繳大額款項，較穩陣係？",
       "choices": [
         "先核實商戶同條款，保留交易紀錄",
         "只憑陌生連結即時轉賬",
@@ -2117,7 +2119,7 @@
       "id": "law-43",
       "category": "law",
       "difficulty": "normal",
-      "prompt": "大廈公用人牆漏水爭議，第一步較穩陣係？",
+      "prompt": "大廈公用牆身漏水爭議，第一步較穩陣係？",
       "choices": [
         "按公契／管理程序通知管理處並保留紀錄",
         "延後至有正式文件先處理",
@@ -2149,7 +2151,7 @@
       "choices": [
         "按公契同法例程序追討",
         "直接切斷公共食水而無須程序",
-        "直接沒收單位業權即日",
+        "直接沒收單位業權而無須裁決",
         "禁止業主回家而無須裁決"
       ],
       "answerIndex": 0,
@@ -2229,15 +2231,15 @@
       "id": "math-31",
       "category": "math",
       "difficulty": "normal",
-      "prompt": "樓價 $5,000,000，一成首期係？",
+      "prompt": "營業額 $5,000,000，抽成一成，抽成金額係？",
       "choices": [
         "$500,000",
         "$50,000",
-        "$1,000,000",
-        "$250,000"
+        "$5,000,000",
+        "$1,000,000"
       ],
       "answerIndex": 0,
-      "source": "常識題（香港日常商場／消費／心算）"
+      "source": "常識題（香港商場營業額抽成計數）"
     },
     {
       "id": "math-32",
@@ -2313,15 +2315,15 @@
       "id": "math-37",
       "category": "math",
       "difficulty": "normal",
-      "prompt": "訂金係樓價 5%，樓價 $6,000,000，訂金？",
+      "prompt": "租約按金係月租 5%，月租 $6,000，按金？",
       "choices": [
-        "$300,000",
-        "$60,000",
-        "$600,000",
-        "$150,000"
+        "$300",
+        "$600",
+        "$5,000",
+        "$6,000"
       ],
       "answerIndex": 0,
-      "source": "常識題（香港日常商場／消費／心算）"
+      "source": "常識題（香港租務按金計數）"
     },
     {
       "id": "math-38",
@@ -2786,20 +2788,6 @@
       "source": "常識題（香港日常商場／消費／心算）"
     },
     {
-      "id": "hard-11",
-      "category": "hard",
-      "difficulty": "hard",
-      "prompt": "樓價 $4,200,000，首期 20%，貸款額係？",
-      "choices": [
-        "$3,360,000",
-        "$840,000",
-        "$4,200,000",
-        "$2,100,000"
-      ],
-      "answerIndex": 0,
-      "source": "常識題（香港日常商場／消費／心算）"
-    },
-    {
       "id": "hard-12",
       "category": "hard",
       "difficulty": "hard",
@@ -2865,20 +2853,6 @@
         "$7,000",
         "$7,400",
         "$6,800"
-      ],
-      "answerIndex": 0,
-      "source": "常識題（香港日常商場／消費／心算）"
-    },
-    {
-      "id": "hard-17",
-      "category": "hard",
-      "difficulty": "hard",
-      "prompt": "買樓訂金 5%，其後另付首期至合共 10%。樓價 $8,000,000，簽正式約後仍要補幾多先到 10%？",
-      "choices": [
-        "$400,000",
-        "$800,000",
-        "$200,000",
-        "$600,000"
       ],
       "answerIndex": 0,
       "source": "常識題（香港日常商場／消費／心算）"
@@ -2988,7 +2962,7 @@
       "prompt": "業主立案法團主要依據邊條條例運作？",
       "choices": [
         "《建築物管理條例》第344章",
-        "《建築物條例》單獨取代",
+        "《建築物條例》便可取代",
         "《城市規劃條例》",
         "《廣播條例》"
       ],
@@ -3027,15 +3001,15 @@
       "id": "dev-68",
       "category": "developer",
       "difficulty": "normal",
-      "prompt": "甲級寫字樓（Grade A office）一般強調咩？",
+      "prompt": "甲級寫字樓按差餉物業估價署分類，一般強調咩？",
       "choices": [
-        "優質位置、設施同物業管理水準",
-        "多數由工業倉改建而成",
-        "多數屬臨時板房用途",
-        "通常唔設升降機"
+        "優質裝修、具彈性間隔、完善空調同升降機設備、專業管理",
+        "主要睇所在地區是否核心商業區",
+        "主要睇樓齡是否十年內",
+        "主要睇租金是否高於區內平均"
       ],
       "answerIndex": 0,
-      "source": "常識題（香港物業管理／商場／商業大廈營運）"
+      "source": "差餉物業估價署技術附註私人寫字樓分類；https://www.rvd.gov.hk/tc/"
     },
     {
       "id": "dev-69",
@@ -3064,104 +3038,6 @@
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
-    },
-    {
-      "id": "dev-71",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "政府賣地近年通常用咩方式公開出售土地？",
-      "choices": [
-        "公開招標",
-        "秘密私下轉讓",
-        "只限公開抽籤",
-        "只限物管公司內部認購"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-sale.html"
-    },
-    {
-      "id": "dev-72",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "每年政府公布預計推售土地嘅文件通常叫？",
-      "choices": [
-        "賣地表",
-        "物管服務合約",
-        "商場積分章程",
-        "寫字樓裝修指南"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-sale.html"
-    },
-    {
-      "id": "dev-73",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "契約修訂或換地令業權人獲益時，通常要支付咩？",
-      "choices": [
-        "補地價",
-        "管理費按金",
-        "物業代理佣金",
-        "商場推廣費"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/premium-rental-assessment.html"
-    },
-    {
-      "id": "dev-74",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "合約完成證明書（滿意紙）由邊個部門發出？",
-      "choices": [
-        "地政總署",
-        "屋宇署",
-        "規劃署",
-        "物業管理業監管局"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/compliance.html"
-    },
-    {
-      "id": "dev-75",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "佔用許可證（入伙紙）由邊個機構發出？",
-      "choices": [
-        "屋宇署",
-        "地政總署",
-        "差餉物業估價署",
-        "物業管理業監管局"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
-    },
-    {
-      "id": "dev-76",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "建築規約一般要求地段業權人做咩？",
-      "choices": [
-        "喺期限內建成契約訂明嘅發展項目",
-        "即日開商場推廣",
-        "即日簽訂租約",
-        "即日委任物管公司"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/building-covenant.html"
-    },
-    {
-      "id": "dev-77",
-      "category": "developer",
-      "difficulty": "normal",
-      "prompt": "私人建築工程展開前，一般要委聘邊類人士呈交圖則？",
-      "choices": [
-        "認可人士",
-        "只委聘物業管理員",
-        "只委聘商場推廣公司",
-        "只委聘清潔公司"
-      ],
-      "answerIndex": 0,
-      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
     },
     {
       "id": "law-51",
@@ -3226,9 +3102,9 @@
       "prompt": "商場商戶裝修要配合邊類管理安排（常見）？",
       "choices": [
         "物業管理公司／大廈管理規定同審批程序",
-        "只向差餉署口頭備案",
-        "只向旅遊事務署申請",
-        "只向漁護署申請"
+        "只向差餉物業估價署口頭備案",
+        "只向屋宇署申請入伙紙",
+        "只向地政總署申請賣地"
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
@@ -3254,9 +3130,9 @@
       "prompt": "管理處拒絕合理查閱公契相關管理資料時，業主可參考邊類制度？",
       "choices": [
         "《建築物管理條例》同相關管理程序",
-        "商場積分兌換制度",
+        "商場積分兌換章程",
         "寫字樓空調時間表",
-        "賣地表抽籤制度"
+        "政府賣地表抽籤安排"
       ],
       "answerIndex": 0,
       "source": "https://www.buildingmgt.gov.hk/tc/"
@@ -3298,7 +3174,7 @@
         "物業管理業監管局持牌人登記冊",
         "屋宇署佔用許可證名單",
         "地政總署賣地表",
-        "差餉估價冊"
+        "差餉物業估價署估價冊"
       ],
       "answerIndex": 0,
       "source": "https://www.pmsa.org.hk/tc/licensing/"
@@ -3325,7 +3201,7 @@
       "choices": [
         "租約同物業管理安排",
         "地政總署賣地條款單一決定",
-        "PMSA 發牌條件單一決定",
+        "物業管理業監管局發牌條件單一決定",
         "屋宇署入伙紙單一決定"
       ],
       "answerIndex": 0,
@@ -3366,9 +3242,9 @@
       "prompt": "物業管理操守／違紀投訴，可向邊個機構反映（牌照制度下）？",
       "choices": [
         "物業管理業監管局",
-        "旅遊發展局",
-        "康文署",
-        "漁護署"
+        "民政事務總署",
+        "屋宇署",
+        "消費者委員會"
       ],
       "answerIndex": 0,
       "source": "https://www.pmsa.org.hk/tc/"
@@ -3380,9 +3256,9 @@
       "prompt": "寫字樓「公用地方」例子包括？",
       "choices": [
         "大堂、升降機大堂、走火梯等",
-        "租戶辦公室內部桌椅",
-        "員工私人抽屜",
-        "商戶倉庫私人物品"
+        "租戶單位內嘅會議室",
+        "租戶專用嘅儲物室",
+        "個別租戶租用嘅天台"
       ],
       "answerIndex": 0,
       "source": "常識題（香港物業管理／商場／商業大廈營運）"
@@ -3433,29 +3309,29 @@
       "id": "law-70",
       "category": "law",
       "difficulty": "normal",
-      "prompt": "物管公司無牌經營物業管理服務，風險係？",
+      "prompt": "依法須領牌嘅物業管理公司無牌經營，風險係？",
       "choices": [
-        "觸犯物管發牌制度相關規定",
-        "自動取得甲級寫字樓評級",
-        "雙方協議即可豁免牌照",
-        "自動延長相關地契年期"
+        "可能觸犯《物業管理服務條例》",
+        "只屬行政失誤冇法律後果",
+        "只要業主立案法團同意就可豁免",
+        "只要聘用持牌物業管理人就公司唔使領牌"
       ],
       "answerIndex": 0,
-      "source": "https://www.pmsa.org.hk/tc/licensing/"
+      "source": "https://www.pmsa.org.hk/tc/licensing-regime"
     },
     {
       "id": "law-71",
       "category": "law",
       "difficulty": "normal",
-      "prompt": "商業大廈升降機故障時，正確態度係？",
+      "prompt": "被困喺升降機入面，正確做法係？",
       "choices": [
-        "按管理程序報修同疏散指示",
-        "強行撬門自行維修",
-        "關閉走火梯避免人群",
-        "堵塞大堂出口方便維修"
+        "按警鐘或對講機求助、保持冷靜等救援",
+        "自己撬開門爬出去",
+        "不停跳動令升降機重新啟動",
+        "打開天花檢修口爬上機頂"
       ],
       "answerIndex": 0,
-      "source": "常識題（香港物業管理／商場／商業大廈營運）"
+      "source": "https://www.emsd.gov.hk/m/tc/lifts_and_escalators_safety/responsible_persons_corner/safe_use_of_lifts_escalators/"
     },
     {
       "id": "law-72",
@@ -3464,7 +3340,7 @@
       "prompt": "公契對管理費欠繳，常見後果方向係？",
       "choices": [
         "可按公契／法例程序追討",
-        "直接沒收單位業權即日",
+        "直接沒收單位業權而無須裁決",
         "禁止使用公共食水而無須程序",
         "自動轉為政府物業"
       ],
@@ -3503,15 +3379,15 @@
       "id": "lab-418",
       "category": "labour",
       "difficulty": "normal",
-      "prompt": "《僱傭條例》下「連續性合約」常用的 418 門檻，正確理解係？",
+      "prompt": "由 2026 年 1 月 18 日起，《僱傭條例》『連續性合約』嘅新工時門檻係？",
       "choices": [
-        "連續 4 周或以上、每周工作滿 18 小時",
-        "連續 4 個月、每月工作滿 18 日",
-        "連續 18 周、每周工作滿 4 小時",
-        "連續 4 日、每日工作滿 18 小時"
+        "連續 4 星期，每星期最少 17 小時；或某星期不足 17 小時但連同之前 3 星期合計最少 68 小時",
+        "連續 4 星期，每星期最少 18 小時",
+        "連續 4 星期，合計最少 72 小時",
+        "連續 6 星期，每星期最少 8 小時"
       ],
       "answerIndex": 0,
-      "source": "https://www.labour.gov.hk/tc/public/pdf/erc/EO_brief.pdf （連續性合約）"
+      "source": "https://www.labour.gov.hk/tc/news/EAO2025.htm"
     },
     {
       "id": "lab-severance-vs-lsp",
@@ -4128,6 +4004,132 @@
       ],
       "answerIndex": 0,
       "solution": "A>B>C ⇒ A>C。"
+    },
+    {
+      "id": "hard-21",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "舖位基本月租 $28,000，另加營業額 5% 抽成。若本月營業額 $420,000，本月總應付租金係？",
+      "choices": [
+        "$49,000",
+        "$28,000",
+        "$21,000",
+        "$42,000"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港商場商業租務計數：基本租＋營業額分成）"
+    },
+    {
+      "id": "hard-22",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "管理費 $4.8／呎，實用 650 呎，下季加 10%。加價後每月管理費約？",
+      "choices": [
+        "$3,432",
+        "$3,120",
+        "$3,600",
+        "$2,808"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港物管管理費計數）"
+    },
+    {
+      "id": "dev-78",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "商場「人流統計」數據常見用途係？",
+      "choices": [
+        "評估推廣成效同商戶經營表現參考",
+        "取代消防疏散演練紀錄",
+        "直接用作差餉估價嘅官方依據",
+        "自動批出建築圖則"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港商場營運：人流數據用途）"
+    },
+    {
+      "id": "dev-79",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "寫字樓「中央空調」收費，租約上較常見做法係？",
+      "choices": [
+        "按租約訂明計入管理費或另列能源費",
+        "一律由政府差餉署代收",
+        "一律由地政總署按地契收取",
+        "一律免費無須寫入租約"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港寫字樓租務／設施管理）"
+    },
+    {
+      "id": "dev-80",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "物管公司處理業主投訴，較穩陣紀錄方式係？",
+      "choices": [
+        "書面或系統紀錄投訴內容、跟進同結果",
+        "只喺即時通訊口頭回覆便算完結",
+        "刪除投訴以免影響考核",
+        "轉交無關部門後不再跟進"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.pmsa.org.hk/tc/"
+    },
+    {
+      "id": "dev-81",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "發展項目申請「預售樓花同意書」，主要向邊個部門提出？",
+      "choices": [
+        "地政總署",
+        "差餉物業估價署",
+        "物業管理業監管局",
+        "消防處"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/consent.htm"
+    },
+    {
+      "id": "dev-82",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "商場卸貨區繁忙時段嘅管理重點通常係？",
+      "choices": [
+        "安排時段、維持通道暢通同注意安全",
+        "容許商戶長期佔用走火通道卸貨",
+        "關閉逃生指示方便泊車",
+        "將卸貨區改作永久零售舖"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港商場營運／物管日常）"
+    },
+    {
+      "id": "dev-83",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "寫字樓大堂訪客登記常見目的係？",
+      "choices": [
+        "保安管理同訪客出入紀錄",
+        "取代差餉繳納人登記",
+        "自動完成土地註冊手續",
+        "取代入伙紙申請"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港寫字樓物管日常）"
+    },
+    {
+      "id": "dev-84",
+      "category": "developer",
+      "difficulty": "medium",
+      "prompt": "呈交建築圖則俾屋宇署審批期間，發展商通常仲要配合咩？",
+      "choices": [
+        "按部門意見修訂圖則並回覆至獲批",
+        "只靠物管公司會議通過即可當獲批",
+        "只靠商場商戶聯署即可當獲批",
+        "只靠銀行估價報告即可當獲批"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html"
     }
   ]
 }
