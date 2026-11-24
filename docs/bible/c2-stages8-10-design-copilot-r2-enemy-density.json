@@ -1,0 +1,321 @@
+{
+  "stage8_segments_revised": [
+    {
+      "segment": "A",
+      "name": "無人接待層",
+      "length_px": 960,
+      "enemy_count": 1,
+      "enemies": [
+        {
+          "type": "巡檢推車",
+          "behaviour": "charge",
+          "spawn_x": 384,
+          "trigger": "最前玩家到x=160時啟動。",
+          "activity_range_x": [224, 608],
+          "warning_ms": 800
+        }
+      ],
+      "combination": "單隻衝鋒教學，沒有其他敵人或傷害機關同時干擾。",
+      "mechanic_changes": "保留x=720隔離閘及原教學週期；敵人最遠只到x=608，不進入門洞。",
+      "unchanged": "平台、故事演出及其餘佈局不變。"
+    },
+    {
+      "segment": "B",
+      "name": "配方封裝走廊",
+      "length_px": 1120,
+      "enemy_count": 2,
+      "enemies": [
+        {
+          "type": "資料護送員",
+          "behaviour": "shield",
+          "spawn_x": 880,
+          "trigger": "最前玩家通過第二道閘並到x=784時啟動；若距離玩家不足128px，延後至玩家離開出生緩衝區。",
+          "activity_range_x": [848, 976],
+          "turn_delay_ms": 1000,
+          "warning_ms": 800
+        },
+        {
+          "type": "封存投遞員",
+          "behaviour": "throw",
+          "spawn_x": 1056,
+          "trigger": "同組護送員啟動後1200ms啟動。",
+          "activity_range_x": [1024, 1088],
+          "throw_interval_ms": 2500,
+          "warning_ms": 800
+        }
+      ],
+      "combination": "shield＋throw：護送員擋正面，投遞員在後方擲物；玩家可引盾兵前移，再繞背處理。",
+      "mechanic_changes": [
+        "保留x=288及x=736兩道隔離閘。",
+        "敵人及投射物不得進入x=704至816的第二道閘保護區。",
+        "投遞員只向x=848至1088內已完成預警的落點投擲，不跨閘攻擊。"
+      ],
+      "collectible_adjustment": "原x=944碎片仍在主路，但閱讀框只在兩隻敵人及其投射物清除後開啟；拾取可先登記，不在戰鬥中彈框。",
+      "unchanged": "碎片文字、平台及兩道閘的原有週期不變。"
+    },
+    {
+      "segment": "C",
+      "name": "伺服器冷卻列",
+      "length_px": 1280,
+      "enemy_count": 2,
+      "enemies": [
+        {
+          "type": "冷卻維修球",
+          "behaviour": "hop",
+          "spawn_x": 416,
+          "trigger": "最前玩家到x=224時啟動。",
+          "activity_range_x": [320, 736],
+          "warning_ms": 1000,
+          "landing_rest_ms": 700
+        },
+        {
+          "type": "巡檢推車",
+          "behaviour": "charge",
+          "spawn_x": 672,
+          "trigger": "最前玩家到x=416且維修球已完成第一次落地時啟動。",
+          "activity_range_x": [448, 736],
+          "warning_ms": 800
+        }
+      ],
+      "combination": "hop＋charge：維修球迫玩家離開原位，推車迫玩家留意橫向路線；兩者攻擊錯峰，不要求空中側穿敵人。",
+      "mechanic_changes": [
+        "移除全部散熱風。",
+        "新機關使用下方兩個方案其中一個，放在x=192至288及x=704至768。",
+        "第二個機關位於戰鬥區尾端，但不與敵人攻擊同時進入ACTIVE。",
+        "保留x=896至960的64px窿；x=768至1088為無敵人、無投射物、無傷害機關的起跳及落地保護區。"
+      ],
+      "unchanged": "兩個原有平台、窿寬及x=1088碎片位置與內容不變。"
+    },
+    {
+      "segment": "D",
+      "name": "原始紀錄室",
+      "length_px": 1120,
+      "enemy_count": 2,
+      "enemies": [
+        {
+          "type": "資料護送員",
+          "behaviour": "shield",
+          "spawn_x": 608,
+          "trigger": "最前玩家到x=416時啟動。",
+          "activity_range_x": [512, 800],
+          "turn_delay_ms": 1000,
+          "warning_ms": 800
+        },
+        {
+          "type": "封存投遞員",
+          "behaviour": "throw",
+          "spawn_x": 832,
+          "trigger": "最前玩家到x=480，且護送員啟動已滿800ms時啟動。",
+          "activity_range_x": [800, 864],
+          "throw_interval_ms": 2500,
+          "warning_ms": 800
+        }
+      ],
+      "combination": "shield＋throw＋單組計時機關：兩隻敵人較早形成交叉壓力，玩家要先判斷落點，再利用盾兵1000ms轉身延遲繞背。",
+      "mechanic_changes": [
+        "保留x=256隔離閘。",
+        "移除x=416至608散熱風，改為新機關x=544至640。",
+        "新機關ACTIVE期間不開始新的敵人攻擊；敵人仍可移動及持盾。",
+        "敵人及投射物不得進入x=896以後的閱讀區。"
+      ],
+      "unchanged": "x=736至864平台、x=960碎片及Ken伏筆內容不變。"
+    },
+    {
+      "segment": "E",
+      "name": "配方中控室",
+      "length_px": 1280,
+      "enemy_count_excluding_boss": 0,
+      "enemy_changes": "不新增小怪。",
+      "mechanic_changes": [
+        "刪除Boss場兩組散熱風及所有相關風力判定。",
+        "以選定的新機關替換Boss場局部座標x=96至192及x=768至864的兩個區域。",
+        "只在第二、三段血的GUARD起點允許其中一區開始WARN；同時最多一區啟動。",
+        "WARN800ms、ACTIVE600ms，均在GUARD1500ms內結束；Boss進入WARN前已完全關閉。",
+        "不在OPENING或BREATHER啟動，保留原本完整輸出及休息時間。",
+        "原第二段招式名稱由「散熱推進」改為「機架推進」，衝刺距離、速度、停步及其餘數值不變。"
+      ],
+      "unchanged": "Boss血段、其餘招式、對白、戰後武器揀選、小遊戲及故事內容不變。"
+    }
+  ],
+  "new_mechanic_options": [
+    {
+      "id": "option_A",
+      "name": "冷卻管檢修放汽",
+      "recommended": true,
+      "how_to_play": "地面檢修口先亮起條紋並冒出不傷人的細霧，之後向上排出短促高溫蒸汽；玩家等停汽或提前走出標示區。",
+      "implementation": "計時器切換OFF、WARN、ACTIVE；只有ACTIVE開啟矩形傷害區，不施加推力、不改移速、不生成殘留液體。",
+      "timing_ms": {
+        "off": 2800,
+        "warn": 1000,
+        "active": 800,
+        "cycle_total": 4600
+      },
+      "range": {
+        "standard_width_px": 96,
+        "narrow_variant_width_px": 64,
+        "height_px": 80,
+        "origin": "由可站立表面向上；C段尾端使用64px窄版，其餘使用96px版。"
+      },
+      "effect": "沿用一般機關傷害及現有受傷無敵時間；不即死、不擊退、不消耗額外資源。",
+      "warning": "1000ms橙白斜紋閃爍、檢修蓋震動及洩壓聲；WARN細霧沒有碰撞傷害。",
+      "enemy_pairing": [
+        "C段首個檢修口獨立教學，第二個與hop＋charge錯峰。",
+        "D段檢修口位於盾兵活動區，迫玩家調整繞背時機，但不與拋物落地或衝鋒同時傷害。",
+        "Boss場使用E段指定短週期覆寫，只在GUARD內排汽。"
+      ],
+      "fairness": [
+        "每個檢修口至少一側有128px連續安全地面。",
+        "不設在窿前後128px或閘門門洞。",
+        "WARN開始後不追蹤玩家、不移動傷害區。",
+        "ACTIVE前若已有敵人攻擊尚未結束，延後整次WARN，不在最後一刻突然啟動。"
+      ],
+      "difference_from_stage6": "不是風場，不推人、不減速；亦不是酸液或持續地面污染，而是固定位置、短時間、清楚預告的垂直排汽。",
+      "art_delta": "用檢修蓋、三態指示燈及蒸汽動畫取代原風口、箭頭及水平氣流。"
+    },
+    {
+      "id": "option_B",
+      "name": "伺服器接地放電板",
+      "recommended": false,
+      "how_to_play": "機櫃接地板先亮起逐格電量燈，充電完成後短暫放電；玩家觀察固定節奏，離開板面或等放電結束再通過。",
+      "implementation": "計時器切換OFF、WARN、ACTIVE；固定矩形傷害區，不需電流物理、連鎖傳導或追蹤玩家。",
+      "timing_ms": {
+        "off": 3000,
+        "warn": 1200,
+        "active": 600,
+        "cycle_total": 4800
+      },
+      "range": {
+        "standard_width_px": 96,
+        "narrow_variant_width_px": 64,
+        "height_px": 48,
+        "origin": "由可站立表面向上；C段尾端使用64px窄版，其餘使用96px版。"
+      },
+      "effect": "沿用一般機關傷害及現有受傷無敵時間；不麻痺、不扣體力、不即死、不擊退。",
+      "warning": "1200ms內四格指示燈逐格亮起，地面出現鋸齒圖案並播放升調電流聲；正式放電前不造成傷害。",
+      "enemy_pairing": [
+        "C段利用短放電窗口與hop＋charge輪流施壓，不同時封住落點。",
+        "D段盾兵可站在板面附近，但放電只傷玩家，不新增敵人受機關傷害系統；美術須清楚表現其絕緣鞋。",
+        "Boss場使用E段指定短週期覆寫，只在GUARD內放電。"
+      ],
+      "fairness": [
+        "不要求跳過電板，等待亦能通過。",
+        "不放在窿邊、閘門門洞或收集品閱讀位置。",
+        "傷害區不沿金屬地面擴散。",
+        "放電前的完整WARN不得因玩家走近而縮短。"
+      ],
+      "difference_from_stage6": "沒有風力、位移、酸液或扶手電梯；屬固定地面區域的短脈衝電力危險，也不是會追蹤或召援的探射燈。",
+      "art_delta": "用接地板、四格電量燈及低矮電弧動畫取代原風場素材。"
+    }
+  ],
+  "stage9_enemy_plan": {
+    "total": 7,
+    "maximum_active": 2,
+    "segments": [
+      "A：1隻charge，單獨守入口，保留守護者轉移過場。",
+      "B：2隻shield＋throw，安排在押送閘後的完整地面，不跨閘攻擊。",
+      "C：2隻hop＋charge，安排在無窿、無壓實機的走廊，兩者攻擊錯峰；噗噗仍未返隊。",
+      "D：2隻shield＋throw，壓實機與敵人攻擊錯峰，不把唯一避位封死。",
+      "E：0隻一般敵人，只打首席獄卒；關尾噗噗返隊，新裝備由倫寶找回並協助穿戴。"
+    ],
+    "unchanged": "其餘故事、收集品及Boss設計不變；噗噗返隊時間以最新入職資料的關尾設定為準。"
+  },
+  "stage10_enemy_plan": {
+    "total": 7,
+    "maximum_active": 2,
+    "segments": [
+      "A：1隻charge清運車，單獨守後巷入口。",
+      "B：2隻shield＋throw，安排在扶手電梯出口後的平地，不在梯口夾擊。",
+      "C：2隻hop＋throw，升降機短戰錯開1000ms啟動，保留至少160px連續避位。",
+      "D：2隻shield＋charge，安排在排煙風口之間的安全平地，風口ACTIVE時不開始衝鋒。",
+      "E：0隻一般敵人，只打Leon，保留Ken三句過場及守護者團聚。"
+    ],
+    "unchanged": "其餘關卡路線、故事、收集品、Boss及結局方向不變。"
+  },
+  "self_check": [
+    {
+      "condition": "只作指定範圍修訂",
+      "status": "已做到",
+      "detail": "只改敵人配置、替換第8關風機及必要安全參數；故事、武器選擇、小遊戲及Boss其餘內容不變。"
+    },
+    {
+      "condition": "第8關A至D共6至8隻",
+      "status": "已做到",
+      "detail": "A=1、B=2、C=2、D=2，合共7隻；E不加小怪。"
+    },
+    {
+      "condition": "同時最多2隻活躍",
+      "status": "需落實共用啟動規則",
+      "detail": "每關使用最多2個一般敵人活躍名額；前組未清除時，後組觸發只登記為待啟動，不立即出生；不靠玩家跑遠便刪除舊敵人。"
+    },
+    {
+      "condition": "避免延後出生貼身傷害",
+      "status": "已指定",
+      "detail": "敵人須在鏡頭可見範圍內、距任一玩家至少128px才啟動；位置不安全便延後，出生後先有800ms不攻擊、不造成接觸傷害的準備期。"
+    },
+    {
+      "condition": "所有非窿危險至少800ms預警",
+      "status": "已指定覆寫",
+      "detail": "三關新增配置的charge預警由舊400ms改為800ms；hop至少1000ms；throw出手前800ms顯示固定落點，之後不追蹤；shield首次接敵及每次重新貼身進攻前有800ms準備。預警期不啟用該次攻擊或主動接觸傷害。"
+    },
+    {
+      "condition": "空中側撞規則不變",
+      "status": "已做到",
+      "detail": "敵人進入有效攻擊狀態後，空中側撞仍扣血；不把側穿敵人當必要解法，也不要求踩敵通關。"
+    },
+    {
+      "condition": "組合有壓力但不形成必吃傷害",
+      "status": "需落實局部攻擊錯峰",
+      "detail": "同組兩敵可以同時移動、持盾及預警，但衝鋒掃過、hop落地、投擲物落地及機關ACTIVE的傷害時段不得重疊；每個傷害時段後至少留300ms無新傷害起始的間隔。"
+    },
+    {
+      "condition": "錯峰不靠臨時取消預警",
+      "status": "已指定",
+      "detail": "在WARN開始前預留完整攻擊時段；衝突則延後WARN，不在預警完結後無提示改時間，也不縮短預警。"
+    },
+    {
+      "condition": "不在窿上或關閘位置放敵人",
+      "status": "已做到",
+      "detail": "第8關C段x=768至1088禁止敵人、投射物及新機關；B、D敵人活動區與閘門分離。"
+    },
+    {
+      "condition": "A最易、D最難",
+      "status": "設計上已做到，待實測",
+      "detail": "A單敵；B兩敵延後組隊且無傷害機關；C加入瞄準跳躍及衝鋒；D兩敵較早同場，並加入戰鬥區計時危險。"
+    },
+    {
+      "condition": "新機關提供兩方案",
+      "status": "已做到",
+      "detail": "建議採用檢修放汽；接地放電板為備選，兩者只選一個，不同時加入。"
+    },
+    {
+      "condition": "不重複第6、7關指定機關",
+      "status": "已做到",
+      "detail": "第8關完全移除風力；新機關不推人、不輸送、不掃描、不召援、不救籠，也不留下酸液。"
+    },
+    {
+      "condition": "只需計時器與碰撞區",
+      "status": "已做到",
+      "detail": "新機關均為固定區域三態計時物件；敵人錯峰只需局部排程旗標，不新增物理模擬。"
+    },
+    {
+      "condition": "敵人死亡不掉物品",
+      "status": "已做到",
+      "detail": "不增加掉落、回血或體力補給；原有碎片不是敵人掉落。"
+    },
+    {
+      "condition": "第9、10關同樣6至8隻",
+      "status": "已做到",
+      "detail": "兩關均為1＋2＋2＋2＋0，共7隻一般敵人，同時最多2隻。"
+    },
+    {
+      "condition": "其他舊稿危險不會繞過新預警規則",
+      "status": "整合時必須核對",
+      "detail": "沿用的Boss及第9、10關機關也須符合至少800ms預警；本次沒有重寫其餘招式，但不能因標示沿用而保留不合規的傷害。"
+    },
+    {
+      "condition": "關卡時間仍為4至6分鐘",
+      "status": "未實測",
+      "detail": "敵人增加後不能保證原估時；先測7隻配置，若超時優先減少敵人血量或空走距離，不縮短預警、不增加掉落、不改Boss故事。"
+    }
+  ]
+}
