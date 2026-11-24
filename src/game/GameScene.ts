@@ -22,7 +22,8 @@ import { c2Enabled } from './c2Gate'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
 import { attachGearFx, type GearFx } from './gearFx'
-import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
+import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, tierOf, weaponFloor, type Who } from './gear'
+import { inCombatView } from './engine/cameraView'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
@@ -1069,6 +1070,8 @@ export class GameScene extends Phaser.Scene {
       floatText(this, x, y - 18, '蜂蜜＋１', '#ffcc44')
     }
     this.emitScore()
+    // systems-1: 琪寶寶在場時，執蜂蜜／打爛蜂巢都 call 噗噗（petJetting 中會跳過）。
+    this.summonBearAssist()
   }
 
   /** Toggle Arcade Physics body/velocity debug in real time (~ / F2). */
@@ -1695,7 +1698,9 @@ export class GameScene extends Phaser.Scene {
 
   /**
    * Honey special (T / ; / pad X): needs 1 MP charge from eating蜂蜜.
-   * P1 attack = F（超任 Y）／J（舊鍵）both fire salmon — intentional aliases.
+   * systems-1: hits every living enemy in combat view (camera −16px).
+   * Trash dmg = specialPower + 1 (base 4); boss = trash × 2 (base 8). Charm / 力符 via specialPower.
+   * No on-screen enemies → 「無目標」, do not spend honey. 2P still shares 1 charge.
    */
   private fireHoneySpecial(h: Hero) {
     if (!h.alive) return
@@ -1704,18 +1709,14 @@ export class GameScene extends Phaser.Scene {
       SFX.land()
       return
     }
-    let best: PatrolEnemy | null = null
-    let bestD = Infinity
+    const targets: PatrolEnemy[] = []
     for (const o of this.enemies.getChildren()) {
       const e = o as PatrolEnemy
-      if (!e.active || e.fsm === 'DEAD') continue
-      const d = Phaser.Math.Distance.Between(h.x, h.y, e.x, e.y)
-      if (d < bestD) {
-        bestD = d
-        best = e
-      }
+      if (!e.active || e.fsm === 'DEAD' || e.isDead) continue
+      if (!inCombatView(this, e.x, e.y, 16)) continue
+      targets.push(e)
     }
-    if (!best) {
+    if (!targets.length) {
       floatText(this, h.x, h.y - 40, '無目標', '#aaaaaa')
       return
     }
@@ -1724,35 +1725,24 @@ export class GameScene extends Phaser.Scene {
     this.emitScore()
     freezeActors(this, this.combatActors(), ATTACK_COMMIT_FREEZE_MS)
     SFX.swing()
-    const jet = this.honeys.create(h.x, h.y - 28, 'fx-honey') as Phaser.Physics.Arcade.Sprite
-    jet.setScale(2 * PROJ_DISPLAY_SCALE).setDepth(actorDepth('shot', h.lane, h.y))
-    enableActorSprite(jet)
-    ;(jet.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    const ang = Phaser.Math.Angle.Between(h.x, h.y - 28, best.x, best.y - 20)
-    const spd = 620
-    jet.setVelocity(Math.cos(ang) * spd, Math.sin(ang) * spd)
-    jet.setData('lane', best.lane)
-    jet.setData('fromY', best.y)
-    jet.setData('homing', best)
-    jet.setData('by', h.role as Who)
-    this.entities.add(jet, 'projectile')
+    const caster = h.role as Who
+    const trashDmg = specialPower(caster) + 1
+    for (const e of targets) {
+      const isBoss = !!(e.boss || e.kind === 'boss')
+      const dmg = isBoss ? trashDmg * 2 : trashDmg
+      const dir = (Math.sign(e.x - h.x) || h.facing) as 1 | -1
+      this.damageEnemy(e, dmg, dir)
+    }
     const ultName = h.role === 'girl' ? '蜜光斬' : '鮭魚瀑布'
     floatText(this, h.x, h.y - 48, ultName, '#66ddff')
     burst(this, h.x, h.y - 28, 0x66ccff, 10)
     this.playUltimateFx(h)
     this.emitScore(`${ultName}！蜂蜜 MP 清空`)
-    this.time.delayedCall(900, () => {
-      if (jet.active) jet.destroy()
-    })
   }
 
   /**
-   * ART-16 絕招 FX (docs/cursor/ART-REQUEST-16-ultimate-fx.md): full-screen flourish
-   * layered on top of the unchanged single-target homing shot above — a short
-   * role-tinted charge-aura pulse at the hero, then the named full-screen sweep
-   * (倫寶 鮭魚瀑布 / 琪寶寶 蜜光斬) across the screen. Pure visual juice: targeting and
-   * damage still come from the homing `jet` fired just above, not from this sweep —
-   * turning it into real multi-enemy AoE is a balance call Alan hasn't scoped yet.
+   * ART-16 絕招 FX: full-screen flourish — charge-aura at the hero, then the named
+   * sweep (倫寶 鮭魚瀑布 / 琪寶寶 蜜光斬). Damage is applied in fireHoneySpecial (AoE).
    */
   private playUltimateFx(h: Hero) {
     const girl = h.role === 'girl'
@@ -5565,13 +5555,16 @@ export class GameScene extends Phaser.Scene {
       if (landed && !fromCombo) this.comboHit(this.heroByRole(byRole), CB.COMBO_GAIN_SHOT)
     })
     this.physics.add.overlap(this.honeys, this.enemies, (jet, enemy) => {
+      // Legacy homing-jet path (systems-1 special is instant AoE; keep for any leftover jets).
       const j = jet as Phaser.Physics.Arcade.Sprite
       const e = enemy as PatrolEnemy
       if (!e.active || e.isDead) return
       const g = this.girl
       j.destroy()
       const caster = (j.getData('by') as Who | undefined) ?? ((g?.role ?? this.boy.role) as Who)
-      this.damageEnemy(e, specialPower(caster), Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
+      const trashDmg = specialPower(caster) + 1
+      const isBoss = !!(e.boss || e.kind === 'boss')
+      this.damageEnemy(e, isBoss ? trashDmg * 2 : trashDmg, Math.sign(e.x - (g?.x ?? this.boy.x)) || 1)
     })
     // Enemy body ↔ player hurtbox
     this.physics.add.overlap(this.boy, this.enemies, (_b, e) => this.hurtHero(this.boy, e as PatrolEnemy))
@@ -6360,9 +6353,10 @@ export class GameScene extends Phaser.Scene {
     return Math.max(1, amount - damageCut(h.role as Who))
   }
 
-  /** i-frames after a hit: the charm stretches them. */
+  /** i-frames after a hit: charm stretches base; armour adds +300ms per tier. */
   private iframes(h: Hero) {
-    return Math.round(HURT_IFRAME_MS * iframeMul(h.role as Who))
+    const who = h.role as Who
+    return Math.round(HURT_IFRAME_MS * iframeMul(who)) + 300 * tierOf(who, 'armour')
   }
 
   private takePowerUp(h: Hero, item: Phaser.Physics.Arcade.Sprite) {
