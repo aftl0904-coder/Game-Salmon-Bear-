@@ -1,0 +1,180 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "name": "spike-tip-width",
+      "ok": true,
+      "spikes": [
+        {
+          "x": 4708,
+          "dispW": 16,
+          "bodyW": 10,
+          "bodyH": 17,
+          "left": 4703,
+          "right": 4713
+        },
+        {
+          "x": 4724,
+          "dispW": 16,
+          "bodyW": 10,
+          "bodyH": 17,
+          "left": 4719,
+          "right": 4729
+        },
+        {
+          "x": 4740,
+          "dispW": 16,
+          "bodyW": 10,
+          "bodyH": 17,
+          "left": 4735,
+          "right": 4745
+        }
+      ]
+    },
+    {
+      "name": "knock-1p-s1",
+      "before": {
+        "x": 4650,
+        "hp": 6,
+        "enemyX": null
+      },
+      "after": {
+        "beforeX": 4650,
+        "afterX": 4650,
+        "vx": 0,
+        "kxRaw": 340,
+        "kxSafe": 0,
+        "flipped": false,
+        "zeroed": true
+      }
+    },
+    {
+      "name": "knock-1p-s5",
+      "before": {
+        "x": 648,
+        "hp": 6,
+        "enemyX": 688
+      },
+      "after": {
+        "beforeX": 491,
+        "afterX": 483,
+        "vx": -340,
+        "kxRaw": -340,
+        "kxSafe": -340,
+        "flipped": false,
+        "zeroed": false
+      }
+    },
+    {
+      "name": "knock-1p-s6",
+      "before": {
+        "x": 611,
+        "hp": 6,
+        "enemyX": 651
+      },
+      "after": {
+        "beforeX": 611,
+        "afterX": 603,
+        "vx": -340,
+        "kxRaw": -340,
+        "kxSafe": -340,
+        "flipped": false,
+        "zeroed": false
+      }
+    },
+    {
+      "name": "knock-2p-s1",
+      "before": {
+        "x": 627,
+        "hp": 6,
+        "enemyX": 667
+      },
+      "after": {
+        "beforeX": 627,
+        "afterX": 619,
+        "vx": -340,
+        "kxRaw": -340,
+        "kxSafe": -340,
+        "flipped": false,
+        "zeroed": false
+      }
+    },
+    {
+      "name": "knock-2p-s5",
+      "before": {
+        "x": 648,
+        "hp": 6,
+        "enemyX": 688
+      },
+      "after": {
+        "beforeX": 418,
+        "afterX": 418,
+        "vx": 340,
+        "kxRaw": 340,
+        "kxSafe": 340,
+        "flipped": false,
+        "zeroed": false
+      }
+    },
+    {
+      "name": "knock-2p-s6",
+      "before": {
+        "x": 617,
+        "hp": 6,
+        "enemyX": 657
+      },
+      "after": {
+        "beforeX": 598,
+        "afterX": 606,
+        "vx": 340,
+        "kxRaw": 340,
+        "kxSafe": 340,
+        "flipped": false,
+        "zeroed": false
+      }
+    },
+    {
+      "name": "belt-deadzone",
+      "ok": true,
+      "liveOk": true,
+      "belt": [
+        {
+          "x": 560,
+          "before": 560,
+          "after": 490,
+          "moved": true
+        },
+        {
+          "x": 580,
+          "before": 580,
+          "after": 580,
+          "moved": false
+        },
+        {
+          "x": 590,
+          "before": 590,
+          "after": 590,
+          "moved": false
+        },
+        {
+          "x": 600,
+          "before": 600,
+          "after": 600,
+          "moved": false
+        },
+        {
+          "x": 610,
+          "before": 610,
+          "after": 610,
+          "moved": false
+        },
+        {
+          "x": 615,
+          "before": 615,
+          "after": 615,
+          "moved": false
+        }
+      ]
+    }
+  ]
+}

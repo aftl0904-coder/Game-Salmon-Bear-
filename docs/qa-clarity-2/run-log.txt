@@ -1,0 +1,23 @@
+[2026-11-24T12:24:56.079Z] spikes@4700 [{"x":4708,"dispW":16,"bodyW":10,"bodyH":17,"left":4703,"right":4713},{"x":4724,"dispW":16,"bodyW":10,"bodyH":17,"left":4719,"right":4729},{"x":4740,"dispW":16,"bodyW":10,"bodyH":17,"left":4735,"right":4745}]
+[2026-11-24T12:24:58.091Z] shot s1-spikes-4700-hitbox
+[2026-11-24T12:25:00.034Z] shot 1p-s1-knock-before
+[2026-11-24T12:25:00.067Z] 1p-s1 knock {"before":{"x":4650,"hp":6,"enemyX":null},"after":{"beforeX":4650,"afterX":4650,"vx":0,"kxRaw":340,"kxSafe":0,"flipped":false,"zeroed":true}}
+[2026-11-24T12:25:01.136Z] shot 1p-s1-knock-after
+[2026-11-24T12:25:03.840Z] shot 1p-s5-knock-before
+[2026-11-24T12:25:03.848Z] 1p-s5 knock {"before":{"x":648,"hp":6,"enemyX":688},"after":{"beforeX":491,"afterX":483,"vx":-340,"kxRaw":-340,"kxSafe":-340,"flipped":false,"zeroed":false}}
+[2026-11-24T12:25:05.079Z] shot 1p-s5-knock-after
+[2026-11-24T12:25:07.048Z] shot 1p-s6-knock-before
+[2026-11-24T12:25:07.058Z] 1p-s6 knock {"before":{"x":611,"hp":6,"enemyX":651},"after":{"beforeX":611,"afterX":603,"vx":-340,"kxRaw":-340,"kxSafe":-340,"flipped":false,"zeroed":false}}
+[2026-11-24T12:25:08.200Z] shot 1p-s6-knock-after
+[2026-11-24T12:25:10.466Z] shot 2p-s1-knock-before
+[2026-11-24T12:25:10.470Z] 2p-s1 knock {"before":{"x":627,"hp":6,"enemyX":667},"after":{"beforeX":627,"afterX":619,"vx":-340,"kxRaw":-340,"kxSafe":-340,"flipped":false,"zeroed":false}}
+[2026-11-24T12:25:12.148Z] shot 2p-s1-knock-after
+[2026-11-24T12:25:15.972Z] shot 2p-s5-knock-before
+[2026-11-24T12:25:15.977Z] 2p-s5 knock {"before":{"x":648,"hp":6,"enemyX":688},"after":{"beforeX":418,"afterX":418,"vx":340,"kxRaw":340,"kxSafe":340,"flipped":false,"zeroed":false}}
+[2026-11-24T12:25:17.015Z] shot 2p-s5-knock-after
+[2026-11-24T12:25:19.446Z] shot 2p-s6-knock-before
+[2026-11-24T12:25:19.464Z] 2p-s6 knock {"before":{"x":617,"hp":6,"enemyX":657},"after":{"beforeX":598,"afterX":606,"vx":340,"kxRaw":340,"kxSafe":340,"flipped":false,"zeroed":false}}
+[2026-11-24T12:25:20.650Z] shot 2p-s6-knock-after
+[2026-11-24T12:25:21.951Z] belt-deadzone [{"x":560,"before":560,"after":490,"moved":true},{"x":580,"before":580,"after":580,"moved":false},{"x":590,"before":590,"after":590,"moved":false},{"x":600,"before":600,"after":600,"moved":false},{"x":610,"before":610,"after":610,"moved":false},{"x":615,"before":615,"after":615,"moved":false}]
+[2026-11-24T12:25:22.971Z] shot s5-belt-deadzone-580
+[2026-11-24T12:25:23.770Z] shot s5-belt-stand-firm
