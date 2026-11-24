@@ -1,0 +1,17 @@
+[2026-11-24T13:17:56.370Z] m6 tex {"sushi":{"w":18,"h":22},"durian":{"w":18,"h":22},"tent":{"w":52,"h":30},"shrine":{"w":52,"h":30},"campfire":{"w":52,"h":30},"paw":true,"fireSheet":true,"fireAnim":true}
+[2026-11-24T13:17:57.694Z] s1 {"signs":[{"x":100,"text":"前面有魚，試下你嘅攻擊。"}],"durians":[{"x":1600,"dw":18,"dh":22,"tex":"hazard-durian"},{"x":2940,"dw":18,"dh":22,"tex":"hazard-durian"},{"x":4240,"dw":18,"dh":22,"tex":"hazard-durian"},{"x":5360,"dw":18,"dh":22,"tex":"hazard-durian"}],"tent":true}
+[2026-11-24T13:17:59.073Z] shot s1-camp-signs
+[2026-11-24T13:17:59.896Z] shot s1-durian-native
+[2026-11-24T13:18:01.235Z] stage2 signs placed=3 expect>=3
+[2026-11-24T13:18:02.058Z] shot s2-sign
+[2026-11-24T13:18:03.386Z] stage3 signs placed=5 expect>=4
+[2026-11-24T13:18:04.683Z] stage4 signs placed=3 expect>=3
+[2026-11-24T13:18:05.985Z] stage5 signs placed=4 expect>=3
+[2026-11-24T13:18:07.348Z] stage6 signs placed=5 expect>=3
+[2026-11-24T13:18:08.708Z] stage7 signs placed=4 expect>=3
+[2026-11-24T13:18:09.686Z] shot s7-sign
+[2026-11-24T13:18:11.024Z] spotlight {"before":1,"mid":3,"after":3,"warned":true,"eventsBefore":1,"logs":[],"n":3}
+[2026-11-24T13:18:11.062Z] gate {"n":3,"countBefore":3,"countAfter":3,"spawned":false}
+[2026-11-24T13:18:11.099Z] belt {"samples":[{"x":2200,"x0":2200,"x1":2201.12,"moved":true},{"x":2300,"x0":2300,"x1":2301.12,"moved":true},{"x":2320,"x0":2320,"x1":2320,"moved":false},{"x":2340,"x0":2340,"x1":2340,"moved":false},{"x":2355,"x0":2355,"x1":2355,"moved":false}],"land":2376,"onRev0":2420,"onRev1":2420,"revMoved":false}
+[2026-11-24T13:18:12.057Z] shot s7-belt-deadzone
+[2026-11-24T13:18:12.851Z] shot s7-reverse-belt

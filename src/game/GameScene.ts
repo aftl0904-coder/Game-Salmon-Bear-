@@ -44,6 +44,8 @@ import {
   showStoryLines,
   showStoryStillThen,
 } from './storyDepth'
+import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
+import { placeHoneyPawTrail } from './honeyPaw'
 import {
   type Creep,
   type EnemyKind,
@@ -213,6 +215,8 @@ type Stage1 = {
   /** 噗噗's picnic friends locked in honey-crate cages (docs/bible/friends.md). h = perch height. */
   friends?: Array<{ x: number; id: string; h?: number }>
   decor?: { back: Array<{ x: number; kind: string }>; hang?: Array<{ x: number; kind: string }> }
+  /** Display-only tip signs (no collision). */
+  signs?: Array<{ x: number; text: string }>
   /** Floating coin trails (h = height above floor). */
   coins?: Array<{ x: number; h: number }>
   /** Hidden rewards on hard-to-reach perches. */
@@ -4114,6 +4118,18 @@ export class GameScene extends Phaser.Scene {
       this.time.delayedCall(1000, finishDepart)
       return
     }
+    // Faint gold honey-paw trail toward the hatch (display-only; no extra dialogue / dwell).
+    {
+      const fromX = pet.x
+      const toX = hatch.x - 8
+      const y = LANE_FLOOR_Y + 1
+      const n = 5
+      const pts = Array.from({ length: n }, (_, i) => {
+        const t = (i + 1) / (n + 1)
+        return { x: fromX + (toX - fromX) * t, y, flip: i % 2 === 1 }
+      })
+      placeHoneyPawTrail(this, pts, { depth: DEPTH.PROP - 1, alpha0: 0.65, alpha1: 0.18, tint: 0xffd76a })
+    }
     // Narration pages, then motion.
     this.storyIntro = showStoryLines(this, dep.lines, () => {
       this.storyIntro = null
@@ -4635,6 +4651,12 @@ export class GameScene extends Phaser.Scene {
           floorY: LANE_FLOOR_Y,
           heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
           spawnAlarmPair: (hx) => this.spawnExhibitAlarmPair(hx),
+          activeEnemyCount: () =>
+            this.enemies.getChildren().filter((o) => {
+              const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string; active: boolean }
+              return e.active && e.fsm !== 'DEAD'
+            }).length,
+          pits: ST.pits?.map((p) => ({ x: p.x, w: p.w })),
           looseBodies: () => {
             const out: Array<{ x: number; y: number; setPosition?: (x: number, y: number) => void; active?: boolean; flying?: boolean }> = []
             for (const o of this.enemies.getChildren()) {
@@ -4825,9 +4847,27 @@ export class GameScene extends Phaser.Scene {
       enablePixelSprite(this.farTrunks as unknown as Phaser.GameObjects.Image)
     }
     for (const d of ST.decor?.back ?? []) {
+      const top = groundTopBelow(d.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
+      // M6 camp props (PNG overrides / fire strip).
+      if (d.kind === 'tent' || d.kind === 'shrine' || d.kind === 'campfire') {
+        const plant = top + (d.kind === 'tent' ? 5 : d.kind === 'shrine' ? 3 : 2)
+        if (d.kind === 'campfire' && this.textures.exists(CAMP_FIRE_SHEET) && this.anims.exists(CAMP_FIRE_ANIM)) {
+          const fire = this.add
+            .sprite(d.x, plant, CAMP_FIRE_SHEET, 0)
+            .setOrigin(0.5, 1)
+            .setDepth(DEPTH.PROP - 2)
+          fire.play(CAMP_FIRE_ANIM)
+          enablePixelSprite(fire)
+        } else {
+          const key = d.kind === 'tent' ? 'prop-tent' : d.kind === 'shrine' ? 'prop-shrine' : 'prop-campfire'
+          if (!this.textures.exists(key)) continue
+          const img = this.add.image(d.x, plant, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
+          enablePixelSprite(img)
+        }
+        continue
+      }
       const key = d.kind === 'picnic' ? 'cs-picnic' : d.kind.startsWith('s2-') || d.kind.startsWith('s3-') ? d.kind : `deco-${d.kind}`
       if (!this.textures.exists(key)) continue
-      const top = groundTopBelow(d.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
       const img = this.add.image(d.x, top + 2, key).setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
       if (key === 's2-honeycomb-wall') img.setAlpha(0.9).setTint(0xd0a060)
       if (key === 's2-triangle-mark') img.setY(top - 30)
@@ -4846,6 +4886,7 @@ export class GameScene extends Phaser.Scene {
         this.add.text(d.x, top - 27, '→', { fontFamily: FONT_UI, fontSize: '10px', color: '#3a2414' }).setOrigin(0.5).setDepth(DEPTH.PROP - 1)
       }
     }
+    this.placeLevelSigns()
     // Vines hanging from the canopy (stage 2), swaying a little.
     for (const d of ST.decor?.hang ?? []) {
       if (!this.textures.exists(d.kind)) continue
@@ -4865,6 +4906,29 @@ export class GameScene extends Phaser.Scene {
       const g = this.add.image(x, top + 4, key).setOrigin(0.5, 1).setDepth(DEPTH.FX - 10)
       if (this.tree) g.setTint(0x8a8050)
       enablePixelSprite(g)
+    }
+  }
+
+  /** Level JSON `signs:[{x,text}]` — display-only tip boards (no collision / blocking). */
+  private placeLevelSigns() {
+    for (const s of ST.signs ?? []) {
+      const top = groundTopBelow(s.x, LANE_FLOOR_Y - 60, 6) ?? LANE_FLOOR_Y
+      if (this.textures.exists('deco-sign-post')) {
+        const post = this.add.image(s.x, top + 2, 'deco-sign-post').setOrigin(0.5, 1).setDepth(DEPTH.PROP - 2)
+        enablePixelSprite(post)
+      }
+      this.add
+        .text(s.x, top - 36, s.text, {
+          fontFamily: FONT_UI,
+          fontSize: '10px',
+          color: '#fff8d0',
+          backgroundColor: '#2a1e14',
+          padding: { x: 4, y: 3 },
+          align: 'center',
+          wordWrap: { width: 120, useAdvancedWrap: true },
+        })
+        .setOrigin(0.5, 1)
+        .setDepth(DEPTH.SIGN)
     }
   }
 
@@ -5633,6 +5697,24 @@ export class GameScene extends Phaser.Scene {
       String(near.getData('kenPresentation')),
       String(near.getData('kenContent')),
       () => {
+        // Stage7 kenMemo: short reaction after reading (exhibit only).
+        if (this.exhibit) {
+          this.storyIntro = showStoryLines(
+            this,
+            [
+              '琪寶寶：批示有寫照顧，現場就冇做到。',
+              '倫寶：簽過就要跟，唔係寫完就算。',
+            ],
+            () => {
+              this.storyIntro = null
+              if (!this.ended) {
+                this.physics.resume()
+                this.resetPauseKeys()
+              }
+            },
+          )
+          return
+        }
         this.storyIntro = null
         if (!this.ended) {
           this.physics.resume()
@@ -8587,13 +8669,14 @@ export class GameScene extends Phaser.Scene {
     // would leave players on the clear card with registry already on the next stage).
     this.registry.set('leavingToMenu', false)
     this.stopUi()
-    // C2 mall → exhibit: the clear button already promised 「第二關」— auto-travel,
-    // no pick gate that can strand players. C1 keeps pick+bike as before.
+    // C2 mall → exhibit: auto-travel (no pick). Polish-1 transition-6to7: chase via BikeScene.
+    // Later C2 legs stay direct-to-play until their own transition ships.
     const c2Advance = fromStage >= 6 && toStage <= 7
+    const nextScene = fromStage === 6 && toStage === 7 ? 'bike' : fromStage >= 6 ? 'play' : 'bike'
     this.scene.start('worldmap', {
       from: fromStage,
       to: toStage,
-      next: fromStage >= 6 ? 'play' : 'bike',
+      next: nextScene,
       stageNo: toStage,
       pick: !c2Advance,
     })

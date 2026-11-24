@@ -1,0 +1,2 @@
+bike {"key":"bike","chaseTitle":true,"line":true,"hasDebris":true,"hasTrash":true}
+after skip {"playActive":true,"stageNo":7,"exhibit":true}

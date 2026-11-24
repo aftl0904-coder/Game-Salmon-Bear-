@@ -1,0 +1,258 @@
+{
+  "ok": true,
+  "cases": [
+    {
+      "name": "m6-textures",
+      "ok": true,
+      "tex": {
+        "sushi": {
+          "w": 18,
+          "h": 22
+        },
+        "durian": {
+          "w": 18,
+          "h": 22
+        },
+        "tent": {
+          "w": 52,
+          "h": 30
+        },
+        "shrine": {
+          "w": 52,
+          "h": 30
+        },
+        "campfire": {
+          "w": 52,
+          "h": 30
+        },
+        "paw": true,
+        "fireSheet": true,
+        "fireAnim": true
+      }
+    },
+    {
+      "name": "s1-signs-durian",
+      "ok": true,
+      "s1": {
+        "signs": [
+          {
+            "x": 100,
+            "text": "前面有魚，試下你嘅攻擊。"
+          }
+        ],
+        "durians": [
+          {
+            "x": 1600,
+            "dw": 18,
+            "dh": 22,
+            "tex": "hazard-durian"
+          },
+          {
+            "x": 2940,
+            "dw": 18,
+            "dh": 22,
+            "tex": "hazard-durian"
+          },
+          {
+            "x": 4240,
+            "dw": 18,
+            "dh": 22,
+            "tex": "hazard-durian"
+          },
+          {
+            "x": 5360,
+            "dw": 18,
+            "dh": 22,
+            "tex": "hazard-durian"
+          }
+        ],
+        "tent": true
+      }
+    },
+    {
+      "name": "signs-s2",
+      "ok": true,
+      "count": 3,
+      "expect": 3,
+      "sample": [
+        {
+          "x": 150,
+          "text": "風口企上去，會將你彈高。"
+        },
+        {
+          "x": 1430,
+          "text": "頭頂滴蜜，黐到就行唔郁。"
+        },
+        {
+          "x": 2370,
+          "text": "松鼠成群撲埋嚟，退後打。"
+        }
+      ]
+    },
+    {
+      "name": "signs-s3",
+      "ok": true,
+      "count": 5,
+      "expect": 4,
+      "sample": [
+        {
+          "x": 130,
+          "text": "燈籠熄咗，打一下就著返。"
+        },
+        {
+          "x": 660,
+          "text": "飛刀分高低，跳或者蹲低避。"
+        },
+        {
+          "x": 1480,
+          "text": "暗巷睇倒影，有影先係真身。"
+        }
+      ]
+    },
+    {
+      "name": "signs-s4",
+      "ok": true,
+      "count": 3,
+      "expect": 3,
+      "sample": [
+        {
+          "x": 120,
+          "text": "黃燈閃，推土機就嚟，上高避。"
+        },
+        {
+          "x": 690,
+          "text": "前面有地刺，睇清楚先跳。"
+        },
+        {
+          "x": 1440,
+          "text": "走廊兩邊都有嚟，企中間打。"
+        }
+      ]
+    },
+    {
+      "name": "signs-s5",
+      "ok": true,
+      "count": 4,
+      "expect": 3,
+      "sample": [
+        {
+          "x": 60,
+          "text": "輸送帶會推你，睇清方向。"
+        },
+        {
+          "x": 1500,
+          "text": "停電樓層，跟住燈籠行。"
+        },
+        {
+          "x": 2575,
+          "text": "天台壓碎機，等佢升先過。"
+        }
+      ]
+    },
+    {
+      "name": "signs-s6",
+      "ok": true,
+      "count": 5,
+      "expect": 3,
+      "sample": [
+        {
+          "x": 1840,
+          "text": "↑ 上層繼續前進 →"
+        },
+        {
+          "x": 1972,
+          "text": "→"
+        },
+        {
+          "x": 1432,
+          "text": "P"
+        }
+      ]
+    },
+    {
+      "name": "signs-s7",
+      "ok": true,
+      "count": 4,
+      "expect": 3,
+      "sample": [
+        {
+          "x": 1050,
+          "text": "$12"
+        },
+        {
+          "x": 1250,
+          "text": "$48"
+        },
+        {
+          "x": 1700,
+          "text": "$99"
+        }
+      ]
+    },
+    {
+      "name": "spotlight-no-reinforce-at-2",
+      "ok": true,
+      "spot": {
+        "before": 1,
+        "mid": 3,
+        "after": 3,
+        "warned": true,
+        "eventsBefore": 1,
+        "logs": [],
+        "n": 3
+      }
+    },
+    {
+      "name": "spotlight-gate-logic",
+      "ok": true,
+      "gate": {
+        "n": 3,
+        "countBefore": 3,
+        "countAfter": 3,
+        "spawned": false
+      }
+    },
+    {
+      "name": "s7-belt-deadzone",
+      "ok": true,
+      "belt": {
+        "samples": [
+          {
+            "x": 2200,
+            "x0": 2200,
+            "x1": 2201.12,
+            "moved": true
+          },
+          {
+            "x": 2300,
+            "x0": 2300,
+            "x1": 2301.12,
+            "moved": true
+          },
+          {
+            "x": 2320,
+            "x0": 2320,
+            "x1": 2320,
+            "moved": false
+          },
+          {
+            "x": 2340,
+            "x0": 2340,
+            "x1": 2340,
+            "moved": false
+          },
+          {
+            "x": 2355,
+            "x0": 2355,
+            "x1": 2355,
+            "moved": false
+          }
+        ],
+        "land": 2376,
+        "onRev0": 2420,
+        "onRev1": 2420,
+        "revMoved": false
+      }
+    }
+  ]
+}
