@@ -167,6 +167,27 @@
         "要同 F1–F10 同一個 branch，咁攻略同遊戲改動同時上線"
       ],
       "check": "可見正文唔可以出現 Ken／Leon／守護者／第8關；手機 390×844 截圖新增嘅 4 個位置放 docs/qa-fun-1/"
+    },
+    {
+      "id": "F12_STAGE5_ROOFTOP_STEPS",
+      "source": "docs/bible/market-benchmark-copilot.json I07（介紹→發展→轉折→總結）",
+      "where": "第5關 S6 天台工地（x 2460–3060）",
+      "do": [
+        "x=2560 嗰隻敵人移去 x=2790（令天台開頭只有推土機 2520，玩家先單獨認識推土機）",
+        "天花尖刺塊 2680 前後 100px 內唔好有敵人（先單獨認識尖刺）",
+        "2790 敵人＋推土機 2860 做『發展』；尖刺 2960＋敵人 2940 保留做最後組合",
+        "其他敵人、機關數值唔改"
+      ]
+    },
+    {
+      "id": "F13_BOSS_OPENING_LABEL",
+      "source": "market-benchmark I08（令玩家睇得明幾時打得入）",
+      "file": "src/game/enemies/BossRhythm.ts",
+      "do": [
+        "進入 OPENING 嗰一刻，喺 Boss 頭上彈出「破綻！」（黃字、12–14px、0.6 秒淡出），之後照舊顯示「呼…」同汗滴",
+        "非 OPENING 打中照舊「叮！」唔改",
+        "唔改任何時間、傷害、震屏"
+      ]
     }
   ],
   "acceptance": [

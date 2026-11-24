@@ -1,0 +1,505 @@
+{
+  "benchmarks": [
+    {
+      "game": "Super Mario Bros. Wonder",
+      "comparison_scope": "直接對標：2D同屏合作。",
+      "reception": "原版Switch的Metascore為92；只作評價背景，不把評分當成設計成效證明。[1](https://www.metacritic.com/game/super-mario-bros-wonder/)",
+      "coop": "最多4人本地合作，可分享道具、乘搭隊友，以及接觸變成幽靈的隊友令其回場。[2](https://supermariobroswonder.nintendo.com/en/)",
+      "level_length": "未搵到可靠、統一口徑的每關分鐘數。",
+      "checkpoints": "未搵到可靠的全遊戲平均檢查點間距。",
+      "boss_length": "未搵到可靠的普通玩家Boss戰中位數。",
+      "accessibility": "部分角色不受敵人傷害，但仍會跌落窿；這是可選角色差異，不代表全遊戲無風險。[3](https://www.nintendo.com/au/games/nintendo-switch/super-mario-bros-wonder/)",
+      "creative_hook": "Wonder Flower令熟悉場景出現意外變化；值得借的是每關有一個可描述的驚喜，而不是照搬變身。[3](https://www.nintendo.com/au/games/nintendo-switch/super-mario-bros-wonder/)",
+      "source_url": [
+        "https://supermariobroswonder.nintendo.com/en/",
+        "https://www.nintendo.com/au/games/nintendo-switch/super-mario-bros-wonder/",
+        "https://www.metacritic.com/game/super-mario-bros-wonder/"
+      ]
+    },
+    {
+      "game": "Rayman Legends",
+      "comparison_scope": "直接對標：2D同屏合作；不同平台的Murfy操作有差異。",
+      "reception": "Wii U版Metascore為92。[4](https://www.metacritic.com/game/rayman-legends/)",
+      "coop": "最多4人合作；部分版本由另一玩家操作Murfy，移動平台或協助通過障礙。[5](https://primagames.com/news/rayman-legends-co-op-multiplayer-tips)",
+      "level_length": "未搵到可靠的每關平均時間；不以整體通關時數除關數冒充。",
+      "checkpoints": "全隊失去活動角色後回到上一檢查點；未搵到平均間距。[5](https://primagames.com/news/rayman-legends-co-op-multiplayer-tips)",
+      "boss_length": "未搵到可靠的Boss戰中位數。",
+      "accessibility": "受挫玩家可變成漂浮狀態，由隊友接觸救回，降低一人失誤立即中斷全隊的機會。[5](https://primagames.com/news/rayman-legends-co-op-multiplayer-tips)",
+      "creative_hook": "合作不只增加火力，亦可讓玩家改變另一人的通行條件；但不能把特定平台的觸控玩法當成所有版本都有。[5](https://primagames.com/news/rayman-legends-co-op-multiplayer-tips)",
+      "source_url": [
+        "https://primagames.com/news/rayman-legends-co-op-multiplayer-tips",
+        "https://www.metacritic.com/game/rayman-legends/"
+      ]
+    },
+    {
+      "game": "Unravel Two",
+      "comparison_scope": "直接對標：2D合作平台；亦支援單人控制兩個角色。",
+      "reception": "評價屬普遍正面；來源列出不同平台Metascore約76至82，不把它說成一致的頂級評分。[6](https://www.metacritic.com/game/unravel-two/)",
+      "coop": "兩個角色由線連接，可互作支點、擺盪及協助攀爬；單人可切換或合併角色。[7](https://www.indiegamewebsite.com/2018/07/06/unravel-2-review/)",
+      "level_length": "未搵到可靠的首次遊玩每關中位數。",
+      "checkpoints": "未搵到可靠的平均檢查點間距。",
+      "boss_length": "未搵到可與鮭鮭熊七場傳統Boss逐一比較的時長資料。",
+      "accessibility": "提供慢動作、提示及角色合併；主線與額外高難挑戰分開。[8](https://www.gamebyte.com/reviews/gamebyte-reviews-unravel-2/)",
+      "creative_hook": "開發者明言線代表愛與人際連結，互相幫助及救援本身就是故事，不只靠對白講感情。[9](https://www.ps4blog.net/2018/06/ps4blog-net-interview-martin-sahlin-on-unravel-two/)",
+      "source_url": [
+        "https://www.indiegamewebsite.com/2018/07/06/unravel-2-review/",
+        "https://www.gamebyte.com/reviews/gamebyte-reviews-unravel-2/",
+        "https://www.ps4blog.net/2018/06/ps4blog-net-interview-martin-sahlin-on-unravel-two/",
+        "https://www.metacritic.com/game/unravel-two/"
+      ]
+    },
+    {
+      "game": "Shovel Knight: Shovel of Hope",
+      "comparison_scope": "直接對標：像素風2D動作平台；合作只限指定戰役及支援平台。",
+      "reception": "原作不同平台獲普遍正面評價；該評價不能單獨證明後加合作模式同樣成功。[10](https://www.metacritic.com/game/shovel-knight/)",
+      "coop": "金幣共享、生命分開；可踩隊友彈高，共享畫面亦要求彼此等待。[11](https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/)",
+      "level_length": "未搵到可靠的普通玩家每關中位數。",
+      "checkpoints": "攻略可確認關內設檢查點，但未搵到全關平均間距。[12](https://www.honestgamers.com/guides/shovel-knight/20/read/400.html)",
+      "boss_length": "未搵到可靠的Boss戰中位數。",
+      "accessibility": "倒下玩家可在隊友安全站立時復活，但會平分存活者生命，救援有代價。[11](https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/)",
+      "creative_hook": "同一個攻擊動作既可打敵人，也可幫隊友到高處，讓合作直接長在核心操作上。[11](https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/)",
+      "source_url": [
+        "https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/",
+        "https://www.honestgamers.com/guides/shovel-knight/20/read/400.html",
+        "https://www.metacritic.com/game/shovel-knight/"
+      ]
+    },
+    {
+      "game": "Kirby’s Return to Dream Land Deluxe",
+      "comparison_scope": "直接對標：2D玩法、同屏合作；不是3D的Forgotten Land。",
+      "reception": "Metascore為79；Nintendo Life給9／10，但其他評論亦指出前段偏易或重複，適合連缺點一起借鑒。[13](https://www.metacritic.com/game/kirbys-return-to-dream-land-deluxe/)[14](https://www.nintendolife.com/games/nintendo-switch/kirbys_return_to_dream_land_deluxe)[15](https://www.nintendolife.com/news/2023/02/round-up-the-reviews-are-in-for-kirbys-return-to-dream-land-deluxe)",
+      "coop": "1至4人，可選不同角色，亦可疊乘發動Team Attack。[16](https://kirbysreturntodreamlanddeluxe.nintendo.com/)",
+      "level_length": "未搵到可靠的逐關平均時間；評論的整體流程時數不等於關卡長度。",
+      "checkpoints": "未搵到可靠的平均檢查點間距。",
+      "boss_length": "未搵到可靠的Boss戰中位數。",
+      "accessibility": "提供可選Helper Magolor協助主冒險。[16](https://kirbysreturntodreamlanddeluxe.nintendo.com/)",
+      "creative_hook": "主線冒險之外有獨立小遊戲空間，合作角色亦有不同動作；但小遊戲數量多不代表每個都好玩。[16](https://kirbysreturntodreamlanddeluxe.nintendo.com/)[15](https://www.nintendolife.com/news/2023/02/round-up-the-reviews-are-in-for-kirbys-return-to-dream-land-deluxe)",
+      "source_url": [
+        "https://kirbysreturntodreamlanddeluxe.nintendo.com/",
+        "https://www.metacritic.com/game/kirbys-return-to-dream-land-deluxe/",
+        "https://www.nintendolife.com/games/nintendo-switch/kirbys_return_to_dream_land_deluxe",
+        "https://www.nintendolife.com/news/2023/02/round-up-the-reviews-are-in-for-kirbys-return-to-dream-land-deluxe"
+      ]
+    },
+    {
+      "game": "Cuphead",
+      "comparison_scope": "直接對標：2D雙人動作及Boss演出；不適合作新手難度標準。",
+      "reception": "Xbox One版Metascore為86。[17](https://www.metacritic.com/game/cuphead/critic-reviews/)",
+      "coop": "官方確認單人及本地合作，核心偏向Boss戰。[18](https://www.cupheadgame.com/)",
+      "level_length": "未搵到可靠的普通玩家關卡中位數。",
+      "checkpoints": "原版評測指出關卡及Boss內沒有檢查點；這是其高壓設計，不應直接套用到鮭鮭熊。[19](https://sea.ign.com/cuphead/122661/cuphead-review)",
+      "boss_length": "評論曾用90秒描述一次成功戰鬥，但不是統計中位數，不能據此宣稱市場Boss標準是90秒。[17](https://www.metacritic.com/game/cuphead/critic-reviews/)",
+      "accessibility": "有Simple模式，但原版最終流程受Regular通關要求限制；評論亦指出雙人畫面可能更難讀，不保證雙人較容易。[20](https://br.ign.com/cuphead/54013/review/review-cuphead)[19](https://sea.ign.com/cuphead/122661/cuphead-review)",
+      "creative_hook": "每個Boss有強烈外形、動作及階段變化；值得借演出辨識度，不借高死亡門檻。[21](https://www.gamedeveloper.com/business/road-to-the-igf-studio-mdhr-s-i-cuphead-i-)",
+      "source_url": [
+        "https://www.cupheadgame.com/",
+        "https://sea.ign.com/cuphead/122661/cuphead-review",
+        "https://br.ign.com/cuphead/54013/review/review-cuphead",
+        "https://www.metacritic.com/game/cuphead/critic-reviews/",
+        "https://www.gamedeveloper.com/business/road-to-the-igf-studio-mdhr-s-i-cuphead-i-"
+      ]
+    },
+    {
+      "game": "It Takes Two",
+      "comparison_scope": "跨類型參考：主要是3D雙人冒險，不納入2D關長或檢查點數值比較。",
+      "reception": "各主要版本獲普遍正面評價，來源列出多個版本約88至89分。[22](https://www.metacritic.com/game/it-takes-two/)",
+      "coop": "純雙人設計，以互相連接的不同能力完成挑戰；不能當成可直接移植到單人兼容遊戲的模板。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)",
+      "level_length": "未搵到與鮭鮭熊4至6分鐘關卡同口徑的可靠數據。",
+      "checkpoints": "未搵到可靠的平均間距。",
+      "boss_length": "未搵到可靠的Boss戰中位數。",
+      "accessibility": "官方確認本地分割畫面合作；本次未取得足夠可靠資料量化其死亡重試時間或新手補救效果。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)",
+      "creative_hook": "官方把玩法與關係故事的結合列為核心：兩人必須處理差異、共同前進。對鮭鮭熊的啟發是讓幫助對方成為可玩的動作，而非照搬婚姻衝突劇情。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)",
+      "source_url": [
+        "https://www.ea.com/games/it-takes-two/it-takes-two/features",
+        "https://www.metacritic.com/game/it-takes-two/"
+      ]
+    }
+  ],
+  "design_numbers": [
+    {
+      "metric": "新手平台遊戲的檢查點間距",
+      "typical_value": "未搵到可支持跨遊戲市場中位數的可靠資料。",
+      "interpretation": "不把某款遊戲的房間數或單段攻略當成市場標準。",
+      "our_test_target": "建議先以高壓段失敗後重走已掌握內容不超過30至45秒作內部測試目標，不是市場數據。",
+      "source_url": []
+    },
+    {
+      "metric": "死亡後重新取得操作的時間",
+      "typical_value": "未搵到可比較裝置、動畫及讀取條件的市場中位數。",
+      "interpretation": "須分開計死亡至可操作的等待，以及可操作後重走至失敗點的時間。",
+      "our_test_target": "先量現況；若已有可調過場參數，以死亡後2秒內可操作作工程目標，仍保留清裝結算。",
+      "source_url": []
+    },
+    {
+      "metric": "敵人預警長度",
+      "typical_value": "未搵到可靠的跨遊戲統一秒數。",
+      "interpretation": "預警是否公平還取決於逃離距離、移速、畫面可見度及輸入方式，不能只比較秒數。",
+      "our_test_target": "保留至少0.8秒；大範圍招式按實際逃離時間加長，不追求更短。",
+      "source_url": []
+    },
+    {
+      "metric": "Boss戰時長",
+      "typical_value": "未搵到可靠的普通玩家跨遊戲中位數。",
+      "interpretation": "Cuphead評論中的90秒是個別描述，不是抽樣統計。[17](https://www.metacritic.com/game/cuphead/critic-reviews/)",
+      "our_test_target": "沿用80至120秒目標，但分開測倫寶單人、琪寶寶單人及雙人，不能只量其中一種。",
+      "source_url": [
+        "https://www.metacritic.com/game/cuphead/critic-reviews/"
+      ]
+    },
+    {
+      "metric": "每關新機制數量及教學結構",
+      "typical_value": "有開發者支持每關圍繞清楚核心概念，以及介紹、發展、轉折、總結四步；這不是市場平均每關只有一個機制。[24](https://www.gamedeveloper.com/design/the-secret-to-i-mario-i-level-design)",
+      "interpretation": "相關分析以約5分鐘展示一個概念的變化作例子，不是所有遊戲都應5分鐘一關。[25](https://mcvuk.com/business-news/publishing/video-nintendos-level-design-secrets-in-four-steps/)",
+      "our_test_target": "每關選一個主題機制，其餘作配角；首次出現先讓玩家安全看懂。",
+      "source_url": [
+        "https://www.gamedeveloper.com/design/the-secret-to-i-mario-i-level-design",
+        "https://mcvuk.com/business-news/publishing/video-nintendos-level-design-secrets-in-four-steps/"
+      ]
+    },
+    {
+      "metric": "跳躍輸入容錯",
+      "typical_value": "開發者確認土狼時間、跳躍預輸入及頂點半重力等技術，但該文章沒有提供可當市場標準的毫秒值。[26](https://www.maddymakesgames.com/articles/celeste_and_forgiveness/index.html)",
+      "interpretation": "可借原理，不應把網上常見的100ms當成已核實市場中位數。",
+      "our_test_target": "先驗收已有寬鬆判定，不因追對標而再改重力或加新移動能力。",
+      "source_url": [
+        "https://www.maddymakesgames.com/articles/celeste_and_forgiveness/index.html"
+      ]
+    },
+    {
+      "metric": "雙人功能的開發風險",
+      "typical_value": "Unravel Two創意總監特別指出，兩角色下的鏡頭及事件觸發很難處理；沒有提供可通用的工日數。[27](https://www.ea.com/games/battlefield/news/unravel-two-director-ama)",
+      "interpretation": "新合作物理、鏡頭或同步條件不能因為畫面簡單就估成半日。",
+      "our_test_target": "聖誕前只重組現有系統，隊友受風及相簿存檔放之後。",
+      "source_url": [
+        "https://www.ea.com/games/battlefield/news/unravel-two-director-ama"
+      ]
+    }
+  ],
+  "gap_table": [
+    {
+      "metric": "單關流程",
+      "ours": "主路4至6分鐘，加Boss80至120秒，即約5分20秒至8分鐘。",
+      "market_median": null,
+      "gap": "未搵到，不能計市場差值。",
+      "decision": "暫不縮關長；先量每段是否重複。七關無死亡、不計小遊戲及商店約37分20秒至56分鐘，作為禮物已有完整一晚的核心流程。",
+      "calculation": "7×(240＋80)／60至7×(360＋120)／60；實際遊玩會因探索、閱讀及重試增加。"
+    },
+    {
+      "metric": "檢查點密度",
+      "ours": "每關2至4個檢查點。",
+      "market_median": null,
+      "gap": "未搵到市場中位數。",
+      "decision": "追求少重跑，不追求固定每1000px幾個。",
+      "calculation": "若2至4個均指關內檢查點，則分成3至5段；均分模型下每段48至120秒、760至1900px。這不是實際擺位結果。",
+      "action": "優先移現有檢查點至高失敗段之前，並量實際重走時間；清裝照常。"
+    },
+    {
+      "metric": "合作必要性",
+      "ours": "已有遠近戰差異，但多數仍可各自清敵。",
+      "market_median": "不適用，合作方式不是可直接取中位數的單一數值。",
+      "gap": "缺少明確的『你做這件事，令我更容易完成另一件事』場面。",
+      "decision": "要追原理，不追純雙人硬鎖；先做風口上下路及開籠掩護。",
+      "evidence": "不同作品分別用互補能力、隊友支點及救援建立相互依賴。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)[11](https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/)[7](https://www.indiegamewebsite.com/2018/07/06/unravel-2-review/)"
+    },
+    {
+      "metric": "死亡代價",
+      "ours": "死亡清晒身上裝備，刻意保留。",
+      "market_median": "不適用，失敗代價包括生命、時間、資源等不同維度。",
+      "gap": "部分對標遊戲提供隊友回場或可選援助，但不能據此判定清裝必須取消。[2](https://supermariobroswonder.nintendo.com/en/)[16](https://kirbysreturntodreamlanddeluxe.nintendo.com/)",
+      "decision": "不追免懲罰；減少無謂等待及已解內容重跑，令清裝之外不再疊加時間浪費。"
+    },
+    {
+      "metric": "戰鬥可讀性",
+      "ours": "預警至少0.8秒，小怪2至3下。",
+      "market_median": null,
+      "gap": "未搵到可靠預警秒數或小怪命中數中位數。",
+      "decision": "不改已定數字；驗收兩人、子彈、預警同場時是否仍看得清，尤其第3、6、7關。"
+    },
+    {
+      "metric": "Boss輸出窗口",
+      "ours": "破綻2.5秒；按最新任務描述，目標80至120秒。",
+      "market_median": null,
+      "gap": "未搵到可比較的市場中位數。",
+      "decision": "先核對哪些Boss真的已套節奏；未套用的不能當完成。優先讓守備與破綻可辨識，不為對標而一律加血。"
+    },
+    {
+      "metric": "情感表達",
+      "ours": "朋友熊、溫泉、噗噗、真相碎片及聖誕驚喜。",
+      "market_median": "不適用。",
+      "gap": "已有私人意義，但部分仍停留在文字或背景。",
+      "decision": "讓玩家有空一起停留、發現及照顧對方；不是再加長對白。",
+      "evidence": "Unravel Two開發者把連結、互助及共同克服困難直接設成玩法目標。[9](https://www.ps4blog.net/2018/06/ps4blog-net-interview-martin-sahlin-on-unravel-two/)"
+    }
+  ],
+  "ideas": [
+    {
+      "id": "I01",
+      "name": "預警與落點看得清",
+      "from_game_principle": "借Celeste把容錯放在操作細節的原理；本項具體視覺調整是本作建議，不是其原版數值。[26](https://www.maddymakesgames.com/articles/celeste_and_forgiveness/index.html)",
+      "fun": 4,
+      "couple_fit": 5,
+      "size": "S",
+      "risk": 1,
+      "fit_score": 20,
+      "calc": "(4×5)／(1×1)=20",
+      "where_in_our_game": "第3關暗巷、第6關碎石、第7關射燈附近；只調已有預警、敵人及地面圖層的亮度、透明度或對比，不增加閃爍頻率。",
+      "solo_ok": "完全適用單人，沒有新操作。",
+      "acceptance": "手機單人及手掣雙人各跑一次，預警不被角色特效遮住，落點與背景可分辨。",
+      "risk_note": "S只涵蓋已有顯示參數；需要重畫素材便另估，不偷偷擴項。"
+    },
+    {
+      "id": "I02",
+      "name": "蜂蜜先看見，再找路",
+      "from_game_principle": "借Unravel Two把額外探索與主線通過分開的做法。[8](https://www.gamebyte.com/reviews/gamebyte-reviews-unravel-2/)",
+      "fun": 4,
+      "couple_fit": 4,
+      "size": "S",
+      "risk": 1,
+      "fit_score": 16,
+      "calc": "(4×4)／(1×1)=16",
+      "where_in_our_game": "只選第1及第3關各一個現有蜂蜜罐，移到主路可看見、需繞小路取得的位置；沿用已有高台及閃光。",
+      "solo_ok": "兩位角色都可用現有路線取得；不是琪寶寶專屬。",
+      "acceptance": "首次經過能發現獎勵，但不必取得也能繼續；回程不新增盲跳。",
+      "risk_note": "只移物件才是S；若要改平台幾何或碰撞，升M並重算預算。"
+    },
+    {
+      "id": "I03",
+      "name": "檢查點移到真正會失敗之前",
+      "from_game_principle": "借關內檢查點把重試切成局部練習的原理；不借Cuphead無檢查點的高壓做法。[12](https://www.honestgamers.com/guides/shovel-knight/20/read/400.html)[19](https://sea.ign.com/cuphead/122661/cuphead-review)",
+      "fun": 5,
+      "couple_fit": 5,
+      "size": "S",
+      "risk": 2,
+      "fit_score": 12.5,
+      "calc": "(5×5)／(1×2)=12.5",
+      "where_in_our_game": "先只改第1關移動木板／祭壇段，以及第7關高貨架段各一個現有檢查點座標；保留總數。",
+      "solo_ok": "單人與雙人使用同一安全出生點。",
+      "acceptance": "重生不在敵人或機關傷害區；檢查點不越過必需故事事件；死亡清裝仍執行。",
+      "risk_note": "若檢查點綁定劇情或物件重設邏輯，不能只搬座標，該點延後處理。"
+    },
+    {
+      "id": "I04",
+      "name": "兩個安全停留位，讓旅程有回憶",
+      "from_game_principle": "借Unravel Two把共同經歷及真實記憶轉成場景的原理，不複製其場景或故事。[27](https://www.ea.com/games/battlefield/news/unravel-two-director-ama)",
+      "fun": 4,
+      "couple_fit": 5,
+      "size": "M",
+      "risk": 1,
+      "fit_score": 10,
+      "calc": "(4×5)／(2×1)=10",
+      "where_in_our_game": "第3關溫泉及第5關Boss前，用現有道具、對白框及安全地面留兩人站位；可自行截圖，不做相機系統。",
+      "solo_ok": "單人也可停留；文字不用兩人同時到場才觸發。",
+      "acceptance": "不強制等待、不加敵人偷襲、不改原有回血規則。",
+      "risk_note": "沒有現成素材便只用文字及既有擺設，不加大型新美術。"
+    },
+    {
+      "id": "I05",
+      "name": "第2關上下路支援",
+      "from_game_principle": "借It Takes Two互補能力原理，但不借其必須兩人的通關鎖。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)",
+      "fun": 5,
+      "couple_fit": 5,
+      "size": "M",
+      "risk": 2,
+      "fit_score": 6.25,
+      "calc": "(5×5)／(2×2)=6.25",
+      "where_in_our_game": "第2關一處現有風口，琪寶寶較容易飄上高台探索，倫寶在下路處理可命中的敵人；兩路在同一畫面匯合。",
+      "solo_ok": "倫寶仍可經既有平台到高台；單人可先清敵再探索。",
+      "acceptance": "實測子彈射線、兩角色跳高及鏡頭；不假設子彈穿平台，不新增隊友受風。",
+      "risk_note": "先只做一個示範場面，不改全關上下路。"
+    },
+    {
+      "id": "I06",
+      "name": "第7關一個開籠，一個守路",
+      "from_game_principle": "借合作遊戲讓不同任務同時有用的原理；救援對象仍是本作朋友熊。",
+      "fun": 5,
+      "couple_fit": 5,
+      "size": "M",
+      "risk": 2,
+      "fit_score": 6.25,
+      "calc": "(5×5)／(2×2)=6.25",
+      "where_in_our_game": "第7關一個現有救籠旁重排一組現有敵人；鎖維持3下，朋友沿用既有短對白。",
+      "solo_ok": "可先清敵再打鎖；不設倒數、同步攻擊或兩人壓板。",
+      "acceptance": "敵人不在籠內出生；開對白時附近沒有未處理的強制傷害。",
+      "risk_note": "不加怪總數、不改小怪2至3下，不把守路變成必須承傷。"
+    },
+    {
+      "id": "I07",
+      "name": "把第5關回顧剪成四步小高潮",
+      "from_game_principle": "借介紹、發展、轉折、總結的關卡結構，不借具體關卡內容。[24](https://www.gamedeveloper.com/design/the-secret-to-i-mario-i-level-design)",
+      "fun": 5,
+      "couple_fit": 4,
+      "size": "M",
+      "risk": 2,
+      "fit_score": 5,
+      "calc": "(5×4)／(2×2)=5",
+      "where_in_our_game": "只改第5關一段回顧走廊：先單獨重遇一種舊機關，再加入一種已識敵人，最後短組合，之後接原有溫泉。",
+      "solo_ok": "所有步驟可順序處理，沒有合作硬鎖。",
+      "acceptance": "刪掉功能重複的擺位，不削敵人血量；新手能講出這段主要考甚麼。",
+      "risk_note": "範圍限定一段走廊，不能把七關重設計包成一個M。"
+    },
+    {
+      "id": "I08",
+      "name": "武者王破綻回饋先做好一場",
+      "from_game_principle": "借Cuphead每個Boss動作及階段有辨識度的原理，不借其高死亡難度。[21](https://www.gamedeveloper.com/business/road-to-the-igf-studio-mdhr-s-i-cuphead-i-)",
+      "fun": 4,
+      "couple_fit": 4,
+      "size": "M",
+      "risk": 2,
+      "fit_score": 4,
+      "calc": "(4×4)／(2×2)=4",
+      "where_in_our_game": "只處理已套節奏的第1關：沿用現有音效及閃光，分清守備擋下與破綻命中；若已有文字提示位置，加短字『破綻』。",
+      "solo_ok": "兩角色都得到相同狀態資訊。",
+      "acceptance": "不改2.5秒破綻、不改傷害、不新增強烈震屏；玩家能看懂為何某次打不入。",
+      "risk_note": "沒有現成提示元件便不加新HUD；不把其餘六場Boss節奏移植塞入此M。"
+    },
+    {
+      "id": "I09",
+      "name": "回憶相簿",
+      "from_game_principle": "借共同經歷值得回看的情感原理；相簿是本作原創提案，不宣稱來源遊戲都有此功能。",
+      "fun": 4,
+      "couple_fit": 5,
+      "size": "L",
+      "risk": 2,
+      "fit_score": 2.5,
+      "calc": "(4×5)／(4×2)=2.5",
+      "where_in_our_game": "聖誕後讓第3關溫泉、第5關休息位及已救朋友的既有畫面可在選單重看；需要解鎖記錄及存檔。",
+      "solo_ok": "單人到訪也可解鎖，不檢查雙人同時在場。",
+      "acceptance": "不影響主線存檔，不因重看重複派幣或道具。",
+      "risk_note": "涉及UI、存檔及舊檔兼容，L只代表評分權重，不是四日交付承諾。"
+    },
+    {
+      "id": "I10",
+      "name": "風扇真正幫隊友過一程",
+      "from_game_principle": "借Shovel of Hope以既有角色動作幫隊友到高處的原理，不複製踩頭彈跳。[11](https://old.yachtclubgames.com/shovel-of-hope-co-op-instruction-manual/)",
+      "fun": 5,
+      "couple_fit": 5,
+      "size": "L",
+      "risk": 3,
+      "fit_score": 2.0833,
+      "calc": "(5×5)／(4×3)=2.0833",
+      "where_in_our_game": "聖誕後在第2關可選支路測試風扇對隊友的作用範圍、上升速度及安全落點，不改必要主路。",
+      "solo_ok": "原有單人平台路線保留，合作只提供另一條走法。",
+      "acceptance": "不能把隊友吹入窿、卡在鏡頭外或連續無限升高；兩人不同步操作亦可恢復。",
+      "risk_note": "新增隊友受力、碰撞與鏡頭測試，不能當成現有風口改幾個數字。"
+    }
+  ],
+  "pre_christmas_top": [
+    {
+      "rank": 1,
+      "idea_id": "I01",
+      "name": "預警與落點看得清",
+      "fit_score": 20,
+      "size": "S"
+    },
+    {
+      "rank": 2,
+      "idea_id": "I02",
+      "name": "蜂蜜先看見，再找路",
+      "fit_score": 16,
+      "size": "S"
+    },
+    {
+      "rank": 3,
+      "idea_id": "I03",
+      "name": "檢查點移到真正會失敗之前",
+      "fit_score": 12.5,
+      "size": "S"
+    },
+    {
+      "rank": 4,
+      "idea_id": "I04",
+      "name": "兩個安全停留位",
+      "fit_score": 10,
+      "size": "M"
+    },
+    {
+      "rank": 5,
+      "idea_id": "I05",
+      "name": "第2關上下路支援",
+      "fit_score": 6.25,
+      "size": "M"
+    },
+    {
+      "rank": 6,
+      "idea_id": "I06",
+      "name": "第7關開籠與守路",
+      "fit_score": 6.25,
+      "size": "M"
+    },
+    {
+      "rank": 7,
+      "idea_id": "I07",
+      "name": "第5關四步小高潮",
+      "fit_score": 5,
+      "size": "M"
+    },
+    {
+      "rank": 8,
+      "idea_id": "I08",
+      "name": "武者王破綻回饋",
+      "fit_score": 4,
+      "size": "M"
+    }
+  ],
+  "post_christmas_top": [
+    {
+      "rank": 9,
+      "idea_id": "I09",
+      "name": "回憶相簿",
+      "fit_score": 2.5,
+      "size": "L"
+    },
+    {
+      "rank": 10,
+      "idea_id": "I10",
+      "name": "風扇幫隊友",
+      "fit_score": 2.0833,
+      "size": "L"
+    }
+  ],
+  "self_check": {
+    "main_conclusion": "最值得追的不是市面遊戲的內容量，而是看得懂、幫到對方、失敗後快啲再試，以及有地方一起停留。鮭鮭熊已有足夠系統，聖誕前應做組合與打磨，不再擴張。",
+    "research_scope": "共7款：6款2D合作動作／平台直接參考，加1款3D關係合作遊戲作跨類型參考；沒有把3D章節時長混入2D市場中位數。",
+    "reception_honesty": "不是每款都屬90分級；已區分頂級評價與普遍正面，亦保留對難度、重複及多人可讀性的負面觀察。",
+    "numeric_honesty": "未取得足夠同口徑數據計算關長、檢查點、重試、預警或Boss時長的市場中位數；相應欄位明寫未搵到或null，沒有以個別例子冒充市場統計。",
+    "R3_relationship_principle": "It Takes Two以互補能力把共同前進變成必要行動；Unravel Two開發者把連結與互相幫助設為玩法主題。對本作的推論是讓兩人輪流支援，而不是指定一人永遠帶另一人。[23](https://www.ea.com/games/it-takes-two/it-takes-two/features)[9](https://www.ps4blog.net/2018/06/ps4blog-net-interview-martin-sahlin-on-unravel-two/)",
+    "fit_definition": {
+      "formula": "Fit=(趣味提升×適合情侶度)／(工作量權重×風險)",
+      "size_weights": {
+        "S": 1,
+        "M": 2,
+        "L": 4
+      },
+      "risk_scale": {
+        "1": "主要為現有參數、文字或擺位，依賴較少。",
+        "2": "涉及碰撞、事件或跨系統回歸。",
+        "3": "涉及新物理、鏡頭或高卡死風險。"
+      },
+      "qualification": "趣味及情侶分是本次設計判斷，不是玩家研究量度；Fit是排序工具，不是成功機率。"
+    },
+    "budget": {
+      "pre_christmas_items": "3個S＋5個M。",
+      "weighted_units": 13,
+      "M_equivalent": 6.5,
+      "limit_M_equivalent": 8,
+      "calculation": "(3×1＋5×2)／2＝6.5M，低於8M。",
+      "calendar_estimate": "按S每項最多半日、M每項1至2日，內容改動估6.5至11.5個工作日；另預留4日整體測試與修錯，合計10.5至15.5日。",
+      "capacity_assumption": "沿用任務提供的20個工作日作規劃容量，不視為已核實可用工時；亦未扣除原有未完成工單。",
+      "buffer": "若20日全部可用，餘4.5至9.5日處理原有工作及不確定性；不是承諾一定夠。",
+      "cut_rule": "任何S升M、任何M超2日都重算；先刪I08，再刪I07，不壓縮測試或動已定死亡規則。"
+    },
+    "validation": [
+      "至少用倫寶單人、琪寶寶單人、雙人手掣三種配置跑入選場面。",
+      "手機另測預警可見度、觸控跳躍及文字閱讀，不以電腦鍵盤測試代替。",
+      "記錄死亡至可操作、重走至失敗點、Boss有效戰鬥時間，三項分開。",
+      "合作場面觀察兩人有沒有自然商量及交換工作，不只看通關速度。",
+      "清裝後以實際可取得裝備狀態測Boss，避免只測滿裝成功。",
+      "不假設兩個角色一定能分開走出同屏範圍；所有上下路先驗鏡頭。"
+    ],
+    "fixed_rules": "死亡清裝保留、預警至少0.8秒保留、小怪2至3下保留；沒有以免傷角色或復活功能暗中取代這些規則。",
+    "solo_compatibility": "每個入選項已列單人走法；沒有同步鎖、雙人必按開關或單人無法取得的必要道具。",
+    "implementation_honesty": "尚未讀取程式庫；S／M是有前提的估算。未確認已有的HUD、受風、存檔或事件功能，不當成現成能力。",
+    "content_rules": "參考遊戲名稱只出現在研究報告，不放入遊戲內容；不複製角色、美術或劇情，不涉及禁止題材，不透露後續關卡。",
+    "source_format": "source_url保留已取得的來源網址；事實主張另附對應引用。沒有用評分、個別評論或本作自訂目標填補缺失市場數據。"
+  }
+}
