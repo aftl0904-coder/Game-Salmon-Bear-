@@ -1,0 +1,1 @@
+goal.png 320x240 RGBA; binary alpha; 63 opaque RGB colours; no dithering. Generated 2176x1632, alpha threshold >=128, bbox (65, 325, 2111, 1301); nearest-neighbour proportional scaling to (312, 149), placed at (4,87); no retained content cropped after threshold.
