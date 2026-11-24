@@ -1,0 +1,752 @@
+{
+  "changes": [
+    {
+      "stage": "全關",
+      "item": "合併結果的適用範圍",
+      "old": "上一稿未包含第1至5關完整敵人分布，部分Boss時間預算與延長預警建議不一致。",
+      "new": {
+        "baseline": "普通難度、倫寶基礎魚籽傷害3、未計武器升級。",
+        "status": "本稿取代上一份平衡建議；全部為待實測數值，不代表已修改遊戲。",
+        "priority_order": [
+          "先修正過短預警。",
+          "再修正一槍死及前後關血量倒退。",
+          "再測Boss節奏與HP。",
+          "最後調敵人數量及高難度倍率。"
+        ]
+      },
+      "reason": "避免同時加血、加速及加敵人，令普通難度突然失控。",
+      "priority": "高",
+      "risk": "缺少近戰攻速、武器升級及雙人血量規則，不能把以下模型當成所有角色配置的精確結果。"
+    },
+    {
+      "stage": 1,
+      "item": "小怪HP及祭壇伏兵",
+      "old": {
+        "路障": 6,
+        "追擊": 6,
+        "伏兵": 6,
+        "守蜜": 9,
+        "祭壇伏兵": "4隻，是否包含在16隻內未明。"
+      },
+      "new": {
+        "路障": 6,
+        "追擊": 6,
+        "伏兵": 6,
+        "守蜜": 9,
+        "祭壇伏兵": 6,
+        "existing_elite_if_present": 12,
+        "altar_total_count": 4,
+        "altar_maximum_active": 2
+      },
+      "reason": "第1關原本已需2至3槍，不應跟後關一起盲目加血；祭壇保留4隻總數，但只在既有生成設定支援時限制同時2隻。",
+      "priority": "高",
+      "risk": "若現有祭壇沒有分批生成參數，不能為此新增波次系統；先保留原配置並列為測試風險。"
+    },
+    {
+      "stage": 2,
+      "item": "逐種小怪HP",
+      "old": {
+        "蜜蜂兵": 1,
+        "蜜松鼠": 2,
+        "追擊": 6,
+        "伏兵": 6,
+        "守蜜": 9
+      },
+      "new": {
+        "蜜蜂兵": 6,
+        "蜜松鼠": 6,
+        "追擊": 6,
+        "伏兵": 6,
+        "守蜜": 9,
+        "existing_elite_if_present": 12
+      },
+      "reason": "一般怪統一至少2槍，守蜜3槍；本關已有15隻，不加數量，避免血量與密度同時上升。",
+      "priority": "高",
+      "risk": "蜜蜂兵由1HP升至6HP，若飛行高度令近戰無法命中，不能靠HP修正；該類先保留舊值並標記阻塞，不能硬套2槍標準。"
+    },
+    {
+      "stage": 3,
+      "item": "逐種小怪HP",
+      "old": {
+        "龍蝦守衛": 3,
+        "攤販": 2,
+        "鏡影": 1
+      },
+      "new": {
+        "龍蝦守衛": 9,
+        "攤販": 6,
+        "鏡影": 6,
+        "existing_elite_if_present": 12
+      },
+      "reason": "守衛3槍、其餘2槍，以角色職能區分耐打程度；與第2關相比，增加3槍守衛的比例。",
+      "priority": "高",
+      "risk": "此處鏡影指關卡內一般敵人，不包括Boss假身；若鏡影有頻繁無敵或瞬移，先用6HP，不再上調。"
+    },
+    {
+      "stage": 4,
+      "item": "逐種小怪HP",
+      "old": {
+        "蜜僵": 2,
+        "鬧鐘拳": 2,
+        "的士怪": 3
+      },
+      "new": {
+        "蜜僵": 6,
+        "鬧鐘拳": 9,
+        "的士怪": 9,
+        "existing_elite_if_present": 15
+      },
+      "reason": "群體雜兵維持2槍，具明確攻擊職能的敵人3槍；工地已有推土機及地刺，不用全部加至4槍。",
+      "priority": "高",
+      "risk": "武器揀選#1可能改變實際擊殺槍數；以上以基礎3傷害計，升級後應容許更快擊殺。"
+    },
+    {
+      "stage": 5,
+      "item": "逐種小怪HP",
+      "old": {
+        "追擊": 6,
+        "蜜蜂": 1,
+        "鏡影": 1,
+        "的士怪": 3
+      },
+      "new": {
+        "追擊": 9,
+        "蜜蜂": 6,
+        "鏡影": 6,
+        "的士怪": 9,
+        "existing_elite_if_present": 15
+      },
+      "reason": "以追擊及的士怪3槍、其他2槍形成第一大陸終關壓力；難度由組合與環境增加，不強迫所有怪升至4槍。",
+      "priority": "高",
+      "risk": "蜜蜂及鏡影舊HP按前述同類推定，套用前須核對第5關是否有獨立覆寫。"
+    },
+    {
+      "stage": 6,
+      "item": "逐種小怪HP",
+      "old": "一般怪HP2至3，倫寶一槍死。",
+      "new": {
+        "charge": 9,
+        "hop": 9,
+        "shield": 6,
+        "throw": 9,
+        "cage_drone_if_present": 6,
+        "existing_elite_if_present": 15
+      },
+      "reason": "一般進攻怪3槍，盾兵及空中目標2槍；比上一稿第6關6HP起步更連貫，但不疊加敵人數量。",
+      "priority": "高",
+      "risk": "空中目標須能被現有角色處理；不新增精英或無人機，只調已存在個體。"
+    },
+    {
+      "stage": 7,
+      "item": "逐種小怪HP",
+      "old": "一般怪HP2至3，倫寶一槍死。",
+      "new": {
+        "charge": 9,
+        "hop": 9,
+        "shield": 6,
+        "throw": 12,
+        "cage_drone_if_present": 9,
+        "existing_elite_if_present": 15,
+        "elite_upper_limit": 18
+      },
+      "reason": "以4槍後排擲物怪及3槍無人機提升壓力，盾兵不加厚，保留繞背回報。",
+      "priority": "高",
+      "risk": "18HP只作現有精英上限，不建議全面套用；第7關已有輸送帶、射燈及救籠，不應再同時加密度。"
+    },
+    {
+      "stage": "全關",
+      "item": "Q1及Q6：擊殺次數與時間對照",
+      "old": "一槍傷害3；琪寶寶連擊1／1／2。",
+      "new": {
+        "formula": "遠程命中次數=ceil(HP/3)；首發至末發出手時間=(命中次數-1)×冷卻。",
+        "rows": [
+          {
+            "hp": 1,
+            "ranged_hits": 1,
+            "melee_hits": 1
+          },
+          {
+            "hp": 2,
+            "ranged_hits": 1,
+            "melee_hits": 2
+          },
+          {
+            "hp": 3,
+            "ranged_hits": 1,
+            "melee_hits": 3
+          },
+          {
+            "hp": 6,
+            "ranged_hits": 2,
+            "normal_fire_seconds": 0.893,
+            "spam_fire_seconds": 1.429,
+            "melee_hits": 5
+          },
+          {
+            "hp": 9,
+            "ranged_hits": 3,
+            "normal_fire_seconds": 1.786,
+            "spam_fire_seconds": 2.858,
+            "melee_hits": 7
+          },
+          {
+            "hp": 12,
+            "ranged_hits": 4,
+            "normal_fire_seconds": 2.679,
+            "spam_fire_seconds": 4.286,
+            "melee_hits": 9
+          },
+          {
+            "hp": 15,
+            "ranged_hits": 5,
+            "normal_fire_seconds": 3.572,
+            "spam_fire_seconds": 5.715,
+            "melee_hits": 12
+          },
+          {
+            "hp": 18,
+            "ranged_hits": 6,
+            "normal_fire_seconds": 4.465,
+            "spam_fire_seconds": 7.144,
+            "melee_hits": 14
+          }
+        ],
+        "melee_assumption": "從第一段開始，1／1／2連續循環，沒有漏招或連擊重置。",
+        "time_exclusions": "不含子彈飛行、追位、繞盾及閃避。"
+      },
+      "reason": "2至4下與4至6下標準只能先定義為倫寶基礎魚籽命中，不能假稱兩位主角需要相同攻擊次數。",
+      "priority": "高",
+      "risk": "琪寶寶缺少攻速資料，不能計近戰DPS或承諾她能在同一時間擊殺。"
+    },
+    {
+      "stage": "全關",
+      "item": "Q3：四類敵人移動與攻擊速度",
+      "old": "一般行32px/s、巡邏29px/s，部分收招260至280ms。",
+      "new": {
+        "charge": {
+          "walk_px_s": 48,
+          "walk_ratio_倫寶_琪寶寶": [0.46, 0.38],
+          "attack_px_s": 220,
+          "attack_ratio_倫寶_琪寶寶": [2.1, 1.73],
+          "distance_px": 160,
+          "warning_ms": 1000,
+          "recovery_ms": 1000,
+          "cooldown_ms": 2600
+        },
+        "hop": {
+          "walk_px_s": 52,
+          "walk_ratio_倫寶_琪寶寶": [0.5, 0.41],
+          "horizontal_attack_speed_cap_px_s": 160,
+          "attack_ratio_倫寶_琪寶寶": [1.52, 1.26],
+          "horizontal_distance_cap_px": 144,
+          "warning_ms": 1100,
+          "landing_recovery_ms": 900,
+          "cooldown_ms": 2800
+        },
+        "shield": {
+          "walk_px_s": 40,
+          "walk_ratio_倫寶_琪寶寶": [0.38, 0.31],
+          "attack_movement_px_s_if_existing": 40,
+          "turn_delay_ms": 1000,
+          "warning_ms_if_existing_attack": 1000,
+          "recovery_ms_if_existing_attack": 1000,
+          "cooldown_ms_if_existing_attack": 2800
+        },
+        "throw": {
+          "walk_px_s": 32,
+          "walk_ratio_倫寶_琪寶寶": [0.3, 0.25],
+          "projectile_horizontal_speed_target_px_s": 120,
+          "projectile_ratio_倫寶_琪寶寶": [1.14, 0.94],
+          "range_cap_px": 180,
+          "warning_ms": 1100,
+          "recovery_ms": 900,
+          "cooldown_ms": 3000
+        },
+        "application": "只套用到已有對應行為的敵人；不把蜜蜂、鏡影等強行改造成新行為。"
+      },
+      "reason": "提高接敵壓力，但用較長收招提供近戰反擊機會；單調不能只靠加行速解決。",
+      "priority": "中",
+      "risk": "跳躍與拋物線的速度、距離及飛行時間須符合現有公式；冷卻不得截斷預警或收招。"
+    },
+    {
+      "stage": "全關",
+      "item": "Q4：預警底線與反應模型",
+      "old": "小怪前搖300至340ms。",
+      "new": {
+        "absolute_minimum_ms": 800,
+        "normal_default_ms": 1000,
+        "hop_and_throw_ms": 1100,
+        "large_area_or_drone_drop_ms": 1200,
+        "rule": "實際值=max(現有預警,建議預警)。",
+        "model": "沿用任務提供的250ms視覺反應＋100ms觸控假設，不當成通用生理常數。",
+        "escape_formula": "預警至少=350ms＋所需逃離距離／有效移速×1000。",
+        "倫寶_escape_distance_after_assumed_reaction_px": {
+          "800ms": 47.25,
+          "1000ms": 68.25,
+          "1100ms": 78.75,
+          "1200ms": 89.25
+        }
+      },
+      "reason": "300至340ms低於本模型350ms反應加輸入假設；800ms也只夠倫寶移動47.25px，不能一律視為公平。",
+      "priority": "高",
+      "risk": "必須另計碰撞盒、濕滑、風力、近戰距離及空中側撞；沒有安全路線時，延長預警仍不足。"
+    },
+    {
+      "stage": "1、5",
+      "item": "Q8：天花尖刺塊",
+      "old": {
+        "warning_ms": 450,
+        "fall_ms": 140,
+        "hold_ms": 500,
+        "rise_ms": 900,
+        "wait_ms": 900,
+        "cycle_ms": 2890
+      },
+      "new": {
+        "warning_ms": 1000,
+        "fall_ms": 140,
+        "hold_ms": 500,
+        "rise_ms": 900,
+        "wait_ms": 900,
+        "cycle_ms": 3440,
+        "damage": "一般機關傷害，不即死。"
+      },
+      "reason": "只延長預警550ms，保留落下節奏；若實際逃離距離超過68.25px加碰撞盒需求，預警再增至1200ms或以上。",
+      "priority": "高",
+      "risk": "若程式另有固定週期計時，必須同步更新，避免下一輪提早覆蓋本輪。"
+    },
+    {
+      "stage": 2,
+      "item": "Q8：滴蜜",
+      "old": "每2200ms一次，未提供預警及落地殘留。",
+      "new": {
+        "cycle_ms": 3000,
+        "warning_ms": 1000,
+        "remaining_cycle_budget_ms": 2000,
+        "application": "在已有預警參數上延長；下落、殘留及休息合計須放入其餘2000ms，不能把3000ms誤當額外休息。"
+      },
+      "reason": "本關小怪由一槍變兩槍，先減低滴落頻率，避免戰鬥加厚後環境壓力同步暴增。",
+      "priority": "中",
+      "risk": "未提供滴蜜完整狀態時間；若沒有可見預警或可調參數，單改週期不會自動產生1000ms預警，須列為程式能力缺口。"
+    },
+    {
+      "stage": 3,
+      "item": "Q8：蒸汽口",
+      "old": "週期2600ms，未提供噴發持續時間。",
+      "new": {
+        "cycle_ms": 3400,
+        "warning_ms": 1000,
+        "active_ms": 800,
+        "off_ms": 1600
+      },
+      "reason": "固定位置危險保留明確節奏，噴發後有1600ms停歇，配合增加至兩三槍的小怪。",
+      "priority": "中",
+      "risk": "三態時間只在現有蒸汽口已有相應參數時直接套用；若沒有預警狀態，不得聲稱純改數字已完成。"
+    },
+    {
+      "stage": "1至5",
+      "item": "Q8：其他機關",
+      "old": "窿、地刺、榴槤、推土機、風口、黑暗、濕滑及移動平台未提供完整尺寸與時間。",
+      "new": {
+        "pit_counts": "暫不增加。",
+        "static_spikes": "保持可見、非即死；固定地刺沒有啟動前搖，須以接近前可見距離驗收。",
+        "falling_durian_or_bulldozer_if_timed": "已有預警參數至少1000ms，大範圍1200ms；不縮短現有較長值。",
+        "updraft": "第2關托高150先保留，不在缺少落點資料時加大。",
+        "moving_platform": "速度及行程先保留，缺少數值不能精算。",
+        "darkness_and_slippery_floor": "先保留，不與敵人加速同批加強。"
+      },
+      "reason": "週期是否合理取決於危險持續、通過距離及安全落點，不能只看一個週期數字下結論。",
+      "priority": "高",
+      "risk": "窿是唯一即死來源；第1關已有7個窿，不應再靠加窿製造難度。"
+    },
+    {
+      "stage": "1至7",
+      "item": "Q2及Q7：Boss統一血量與節奏",
+      "old": "HP180／36／36／40／48／55／55，只有第1關已套節奏。",
+      "new": {
+        "hp": [54, 57, 60, 63, 66, 69, 72],
+        "guard_ms": 1500,
+        "opening_ms": 2500,
+        "breather_ms": 2000,
+        "phase_break_ms": 2500,
+        "baseline_damage_per_opening": 6,
+        "target_openings": [9, 10, 10, 11, 11, 12, 12],
+        "implementation_dependency": "第2至7關必須先支援既定Boss節奏，再套本HP模型；若未套用，只能視為條件式建議，不能宣稱純改HP已達標。"
+      },
+      "reason": "建立單一連貫曲線，修正第1關血量遠高於後關的斷層。",
+      "priority": "高",
+      "risk": "每輪6傷害是假設，不是實測平均；高手背擊、雙人及升級武器會更快，近戰或漏槍會更慢。"
+    },
+    {
+      "stage": 1,
+      "item": "武者王攻擊預警",
+      "old": "擲物500ms、250ms出手；衝刺前搖400ms、340px/s、最長650ms。",
+      "new": {
+        "throw_windup_total_ms": 1100,
+        "throw_release_at_ms": 1000,
+        "charge_warning_ms": 1000,
+        "charge_speed_px_s": 260,
+        "charge_max_duration_ms": 650,
+        "charge_max_distance_px": 169
+      },
+      "reason": "擲物要改實際出手時點，不只是延長動畫尾段；衝刺保留短促感但減少無法反應的突進。",
+      "priority": "高",
+      "risk": "Boss曲線中的800ms是週期下限預算，不可覆蓋本項1000ms預警；實際週期須按招式比例重算。"
+    },
+    {
+      "stage": "2、3",
+      "item": "Boss召喚物、假身及木箱HP",
+      "old": "小蜜蜂1、蜜蛋1、假身1、木箱3。",
+      "new": {
+        "summoned_bee": 1,
+        "honey_egg": 1,
+        "false_image": 1,
+        "wooden_box": 3
+      },
+      "reason": "這些是Boss機制目標，不是一般關卡小怪；保留快速清除，避免套用6至12HP後拖垮Boss節奏。",
+      "priority": "高",
+      "risk": "若小蜜蜂其實會長時間留場並獨立作戰，仍須量度同時數量，但不在缺少資料時加血。"
+    },
+    {
+      "stage": 5,
+      "item": "羽毛雨",
+      "old": "預警2400ms、落下1800ms。",
+      "new": {
+        "warning_ms": 2400,
+        "fall_duration_ms": 1800
+      },
+      "reason": "預警已高於底線，不縮短；是否公平取決於安全縫隙及羽毛碰撞區，而非預警越長越好。",
+      "priority": "中",
+      "risk": "該招單是預警加落下已4200ms，不能套用比4200ms更短的整招時間；Boss曲線須使用實際平均。"
+    },
+    {
+      "stage": 6,
+      "item": "洗地機公平性數值",
+      "old": "衝刺360px/s、260px、預警600／900ms；轉刷預警600ms、1200ms、90px；風機預警600ms、吹2500ms；酸液預警800ms、留3000ms、間隔96px。",
+      "new": {
+        "charge_warning_ms": 1200,
+        "charge_speed_px_s": 300,
+        "charge_distance_px": 220,
+        "charge_recovery_ms_all_phases": 1200,
+        "brush_warning_ms": 1200,
+        "brush_duration_ms": 1000,
+        "brush_range_px": 72,
+        "fan_warning_ms": 1200,
+        "fan_active_ms": 1800,
+        "fan_intervals_ms": [8000, 6500, 5500],
+        "acid_warning_ms": 1200,
+        "acid_duration_ms": 1800,
+        "acid_minimum_gap_px": 128
+      },
+      "reason": "加血後同步減少危險殘留及第三段壓縮收招，保留反擊空間；本稿統一1200ms預警，修正上一稿平均預算不一致。",
+      "priority": "高",
+      "risk": "酸液及風場若跨入破綻，實際每輪輸出可能低於6，須以實測修正HP。"
+    },
+    {
+      "stage": "全關",
+      "item": "Q5：四難度倍率",
+      "old": {
+        "enemy_hp": [0.8, 1, 1.3, 1.6],
+        "enemy_damage": [0.75, 1, 1.3, 1.6]
+      },
+      "new": {
+        "difficulty_order": ["簡單", "普通", "挑戰", "地獄"],
+        "enemy_hp": [0.8, 1, 1.2, 1.4],
+        "damage_if_fractional_hp_already_supported": [0.75, 1, 1.25, 1.5],
+        "damage_if_integer_only": [1, 1, 1, 2],
+        "existing_speed_parameters_multiplier": [0.85, 1, 1.1, 1.2],
+        "existing_attack_cooldown_multiplier": [1.2, 1, 0.95, 0.9],
+        "warning_multiplier": [1.2, 1, 1, 1],
+        "boss_opening_ms": [3000, 2500, 2000, 2000]
+      },
+      "reason": "不再靠更厚血量拉開高難度，改用既有速度及頻率參數；預警不縮短。",
+      "priority": "中",
+      "risk": "傷害基礎1乘小數的取整會改變實際難度；只選符合現有實作的方案，不新增小數血量或難度行為系統。"
+    },
+    {
+      "stage": "全關",
+      "item": "玩家容錯與自行硬直",
+      "old": "倫寶HP6、琪寶寶HP5；受傷無敵1500ms；土狼90ms、預輸入110ms；敵人每3000至4000ms自行硬直500至1000ms。",
+      "new": {
+        "倫寶_hp": 6,
+        "琪寶寶_hp": 6,
+        "hurt_invulnerability_ms": 1500,
+        "same_enemy_contact_cooldown_ms": 650,
+        "coyote_ms": 110,
+        "jump_buffer_ms": 140,
+        "enemy_self_stagger": "第一輪保留現值；近戰驗收通過後，才考慮間隔4000ms、持續500ms。"
+      },
+      "reason": "近戰角色先補1HP及輸入容錯，不同時抽走既有安全窗口；比上一稿直接縮硬直更保守。",
+      "priority": "中",
+      "risk": "650ms接觸冷卻不得繞過1500ms全域無敵；若現有判定邏輯有誤，數字調整不能代替修正。"
+    }
+  ],
+  "boss_hp_curve": [
+    {
+      "stage": 1,
+      "name": "武者王",
+      "old_hp": 180,
+      "new_hp": 54,
+      "opening_damage": 6,
+      "openings": 9,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 800,
+        "attack_average": 3200,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(54/6)=9；每輪10秒；9×10-2+5=93秒。",
+      "model_seconds": 93,
+      "qualification": "800ms只是原曲線下限；套用本稿1000ms以上實際預警後，平均週期會增加，須重算，不能縮回800ms。"
+    },
+    {
+      "stage": 2,
+      "name": "蜜冠女王蜂",
+      "old_hp": 36,
+      "new_hp": 57,
+      "opening_damage": 6,
+      "openings": 10,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 850,
+        "attack_average": 3400,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(57/6)=10；每輪10.25秒；10×10.25-2+5=105.5秒。",
+      "model_seconds": 105.5,
+      "qualification": "召喚物清除及飛行追位時間未提供；若破綻無法穩定命中兩發，應降HP而非增加破綻外傷害系統。"
+    },
+    {
+      "stage": 3,
+      "name": "月橋鏡鴞",
+      "old_hp": 36,
+      "new_hp": 60,
+      "opening_damage": 6,
+      "openings": 10,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 900,
+        "attack_average": 3600,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(60/6)=10；每輪10.5秒；10×10.5-2+5=108秒。",
+      "model_seconds": 108,
+      "qualification": "假身保留1HP；辨認真身若消耗破綻時間，實際輪數會增加。"
+    },
+    {
+      "stage": 4,
+      "name": "泥鬃",
+      "old_hp": 40,
+      "new_hp": 63,
+      "opening_damage": 6,
+      "openings": 11,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 950,
+        "attack_average": 3800,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(63/6)=11；每輪10.75秒；11×10.75-2+5=121.25秒。",
+      "model_seconds": 121.25,
+      "qualification": "名稱採最新補充資料；是否與前稿泥怪同一實體須由Claude按現有Boss ID確認。"
+    },
+    {
+      "stage": 5,
+      "name": "△畝大佬",
+      "old_hp": 48,
+      "new_hp": 66,
+      "opening_damage": 6,
+      "openings": 11,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 1000,
+        "attack_average": 4000,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(66/6)=11；每輪11秒；11×11-2+5=124秒。",
+      "model_seconds": 124,
+      "qualification": "羽毛雨保留2400ms預警；平均預警1000ms只在招式加權後成立，不能把羽毛雨縮短。名稱與前稿Trinity的對應須核對Boss ID。"
+    },
+    {
+      "stage": 6,
+      "name": "深層潔淨X-9",
+      "old_hp": 55,
+      "new_hp": 69,
+      "opening_damage": 6,
+      "openings": 12,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 1200,
+        "attack_average": 4200,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(69/6)=12；每輪11.4秒；12×11.4-2+5=139.8秒。",
+      "model_seconds": 139.8,
+      "qualification": "修正上一稿平均預警短於個別招式建議的問題；ATTACK4200ms仍是待量度的平均預算，不是已知現值。"
+    },
+    {
+      "stage": 7,
+      "name": "馴獸師",
+      "old_hp": 55,
+      "new_hp": 72,
+      "opening_damage": 6,
+      "openings": 12,
+      "timing_budget_ms": {
+        "guard": 1500,
+        "warning_average_minimum": 1200,
+        "attack_average": 4400,
+        "opening": 2500,
+        "breather": 2000
+      },
+      "formula": "ceil(72/6)=12；每輪11.6秒；12×11.6-2+5=142.2秒。",
+      "model_seconds": 142.2,
+      "qualification": "若實測超過150秒，先按每輪有效輸出降低HP；不要為湊時長增加無事發生的等待。"
+    }
+  ],
+  "density_table": {
+    "definition": "密度=一般敵人數÷全關長度×1000；Boss、召喚物及未確認是否重複計算的祭壇伏兵分開列。",
+    "recommended_band": {
+      "intro_stage_enemies_per_1000px": [2.8, 3.5],
+      "later_stages_enemies_per_1000px": [3.4, 4],
+      "qualification": "這是本遊戲待測的設計起點，不是通用標準；機關多、飛行怪多或近戰難接近時取下限。"
+    },
+    "rows": [
+      {
+        "stage": 1,
+        "length_px": 5700,
+        "current_enemies": 16,
+        "current_density": 2.807,
+        "altar_extra_if_not_included": 4,
+        "density_if_20_total": 3.509,
+        "recommended_enemies": 16,
+        "recommended_length_px": 5700,
+        "recommended_density": 2.807,
+        "action": "不加怪、不加窿；先保留長度，確認祭壇4隻是否已計入16隻。",
+        "reason": "本關已有7個窿及多類機關，長度也比後關多約50%；密度低不等於壓力低。"
+      },
+      {
+        "stage": 2,
+        "length_px": 3820,
+        "current_enemies": 15,
+        "current_density": 3.927,
+        "recommended_enemies": 15,
+        "recommended_density": 3.927,
+        "action": "維持數量，只改HP及預警。",
+        "reason": "現有密度已接近建議上限，一槍死才是主要問題。"
+      },
+      {
+        "stage": 3,
+        "length_px": 3820,
+        "current_enemies": 9,
+        "current_density": 2.356,
+        "recommended_enemies": 13,
+        "recommended_density": 3.403,
+        "recommended_composition": {
+          "龍蝦守衛": 5,
+          "攤販": 4,
+          "鏡影": 4
+        },
+        "action": "先測9隻新HP；仍有長空白段才把既有生成數量調至13。",
+        "reason": "是第1至5關最明顯偏疏的一關，但黑暗與蒸汽仍須保留安全間隔。",
+        "implementation_limit": "只在既有生成點或數量參數可調時增加；不在本工單新增生成系統。"
+      },
+      {
+        "stage": 4,
+        "length_px": 3800,
+        "current_enemies": 14,
+        "current_density": 3.684,
+        "recommended_enemies": 14,
+        "recommended_density": 3.684,
+        "action": "維持數量。",
+        "reason": "14隻加推土機、地刺已足夠；先把一槍怪改成2至3槍。"
+      },
+      {
+        "stage": 5,
+        "length_px": 3800,
+        "current_enemies": 14,
+        "current_density": 3.684,
+        "recommended_enemies": 15,
+        "recommended_density": 3.947,
+        "recommended_composition": {
+          "追擊": 4,
+          "蜜蜂": 4,
+          "鏡影": 4,
+          "的士怪": 3
+        },
+        "action": "新HP驗收後，才考慮把追擊數量由3調至4。",
+        "reason": "以一隻額外地面追擊補終關壓力，不增加空中怪或即死機關。"
+      },
+      {
+        "stage": 6,
+        "length_px": null,
+        "current_enemies": null,
+        "current_density": null,
+        "recommended_enemies": null,
+        "action": "先維持現有數量，套用HP及預警修正；取得長度與敵人清單後再計。",
+        "reason": "目前沒有第6關長度及一般敵人總數，不能假填密度。"
+      },
+      {
+        "stage": 7,
+        "length_px": null,
+        "current_enemies": null,
+        "current_density": null,
+        "recommended_enemies": null,
+        "action": "先維持現有數量；因輸送帶、射燈及救籠較多，取得資料後優先按建議區間下限驗收。",
+        "reason": "不能把第8關7隻敵人的方案誤當第7關現況。"
+      }
+    ],
+    "length_assessment": {
+      "stage1_flat_run_seconds": {
+        "倫寶": 54.29,
+        "琪寶寶": 44.88
+      },
+      "stage2_flat_run_seconds": {
+        "倫寶": 36.38,
+        "琪寶寶": 30.08
+      },
+      "interpretation": "純跑差約15至18秒，不能只因5700px便斷言第1關一定過長；真正耗時可能來自7個窿、伏兵及死亡重跑。",
+      "recommendation": "本輪不改關卡總長；先量度無死亡通關時間及各檢查點重跑時間，再決定是否縮短。"
+    }
+  },
+  "self_check": {
+    "q1_q6": "已逐關逐種列新HP，普通敵人2至4槍、現有精英4至6槍；Boss機制目標保留例外，沒有新增精英。",
+    "q2_q7_shot_calculation": {
+      "normal": "2500ms窗口、893ms冷卻，若首發在0ms，出手0／893／1786ms，理論3發。",
+      "spam": "冷卻1428.8ms，出手0／1428.8ms，理論2發。",
+      "travel": "最大射程飛行130／243=0.535秒；正常第三發約2321ms命中，只剩179ms餘裕。",
+      "baseline": "因此以兩發正面有效命中=6傷害計算，並非假設每輪必定打滿。",
+      "sensitivity": "每輪3發正面為9傷害，所需輪數降至6／7／7／7／8／8／8；背擊、雙人及升級武器更快，固定HP無法同時保證所有配置9至12輪。"
+    },
+    "boss_timing_limits": [
+      "Boss時間為模型，不是實測。",
+      "公式假設兩次2500ms換段休息額外加入，且最後一輪不再喘氣。",
+      "若換段截斷傷害、截斷破綻或以休息取代喘氣，須重算。",
+      "第1至5關平均預警預算不是覆蓋個別較長預警的指令。",
+      "第2至7關未套節奏前，不能把本稿當成只改HP即可完成的工單。"
+    ],
+    "q3": "已保留四行為速度與相對兩位主角倍率；不把所有敵人都加速至追得上玩家。",
+    "q4_q8": "天花尖刺塊改1000ms，滴蜜及蒸汽提供週期建議；缺少狀態或預警能力的機關明確列為阻塞，不假稱改數字即可補功能。",
+    "q5": "血量倍率不再拉高；傷害依現有小數或整數實作選一組，預警只加長。",
+    "q9": "第1至5關密度已計算；第3關建議加至13、第5關最多加至15，其餘維持；第6、7關資料不足，不虛構。",
+    "numbers_only": "只建議現有HP、速度、時間、距離、倍率、生成數量及輸入容錯；若某項沒有現有可調參數，須先標記能力缺口，不自行新增系統。",
+    "no_healing_drops": "沒有新增掉落、回血或補給。",
+    "death_target": "普通每Boss平均死亡不超過2次是實測驗收目標，不能由靜態數值保證；超標先延長問題招式預警200ms或減範圍15%，不先削短破綻。",
+    "melee_risk": "琪寶寶24px近戰距離與連擊時間仍是最大缺口；未測近戰前，不全面套15至18HP精英。",
+    "required_next_data": [
+      "第6、7關長度、一般敵人數及種類。",
+      "祭壇4隻是否包含在第1關16隻內。",
+      "琪寶寶連擊出手、段間隔、收招及重置時間。",
+      "重型與快速型武器數值、取得時點及體力傷害衰減。",
+      "雙人Boss血量倍率與傷害取整規則。",
+      "各Boss實際招式時間、換段處理及機關完整狀態。",
+      "第4、5關最新Boss名稱與既有ID對應。"
+    ],
+    "merge_summary": "本稿補齊第1至5關一槍怪與密度斷層，保留第一關較低戰鬥密度，並修正第6、7關Boss預警預算；所有加怪建議排在HP及公平性驗收之後。"
+  }
+}
