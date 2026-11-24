@@ -176,8 +176,8 @@
         {
           "name": "KING_HP_RHYTHM",
           "old": 180,
-          "new": 72,
-          "note": "r3 修正：倫寶滿氣每破綻實際 9 傷害 → 72 HP ≈ 8 次破綻（琪寶寶 6 次、雙人 4 次）"
+          "new": 60,
+          "note": "FINAL：60（已隨 PR #126 merge）。72 版本作廢"
         },
         {
           "name": "WINDUP_MS（衝刺前搖）",
@@ -243,5 +243,5 @@
     "report.json 要 ok:true，列出每個改動 old→new"
   ],
   "deliver": "push 後回報 branch、commit、acceptance 結果；唔使開 PR（Claude 開）",
-  "revision": "r2 2026-11-24：H4 HP 54→72；新增 H6"
+  "revision": "r3 FINAL 2026-11-24：KING_HP_RHYTHM=60，H6 已 merge（PR #126）。本工單完結"
 }
