@@ -5,7 +5,9 @@
   "title": "Balance-1：小怪唔再一槍死＋預警公平化＋武者王減血",
   "approved_by": "Alan 2026-11-24（「Ok」）",
   "branch": "cursor/balance-1-2610（由最新 origin/main 開）",
-  "source_docs": ["docs/bible/balance-copilot-r2-merged.json（參考，以本工單數字為準）"],
+  "source_docs": [
+    "docs/bible/balance-copilot-r2-merged.json（參考，以本工單數字為準）"
+  ],
   "rules": [
     "只改下面列明嘅數字，唔加新系統、唔改其他行為",
     "Boss 召喚物／分身／木箱 HP 唔改（MiniBee 1、HoneyEgg 1、OwlDecoy 1、OwlCrate 3、MarketStall 3）",
@@ -18,14 +20,56 @@
       "id": "H1_STAGE2_5_MINOR_HP",
       "desc": "第2–5關小怪 HP（倫寶一槍 3 傷害 → 要 2–3 槍）",
       "edits": [
-        { "file": "src/game/enemies/Stage2Enemies.ts", "class": "BeeSoldier", "old": "hp 1", "new": "hp 3", "note": "飛行怪，特登留低少少，琪寶寶近戰難打中" },
-        { "file": "src/game/enemies/Stage2Enemies.ts", "class": "HoneySquirrel", "old": "hp 2", "new": "hp 6" },
-        { "file": "src/game/enemies/Stage3Enemies.ts", "class": "LobsterGuard", "old": "hp 3", "new": "hp 9" },
-        { "file": "src/game/enemies/Stage3Enemies.ts", "class": "StallKeeper", "old": "hp 2", "new": "hp 6" },
-        { "file": "src/game/enemies/Stage3Enemies.ts", "class": "MirrorShade", "old": "hp 1", "new": "hp 6" },
-        { "file": "src/game/enemies/Stage4Enemies.ts", "class": "HoneyZombie", "old": "hp 2", "new": "hp 6", "note": "GuardZombie／ChargeHoneyZombie 繼承佢但自己再設 hp，確認子類唔受影響" },
-        { "file": "src/game/enemies/Stage4Enemies.ts", "class": "ClockPunch", "old": "hp 2", "new": "hp 9" },
-        { "file": "src/game/enemies/Stage4Enemies.ts", "class": "TaxiMonster", "old": "hp 3", "new": "hp 9" }
+        {
+          "file": "src/game/enemies/Stage2Enemies.ts",
+          "class": "BeeSoldier",
+          "old": "hp 1",
+          "new": "hp 3",
+          "note": "飛行怪，特登留低少少，琪寶寶近戰難打中"
+        },
+        {
+          "file": "src/game/enemies/Stage2Enemies.ts",
+          "class": "HoneySquirrel",
+          "old": "hp 2",
+          "new": "hp 6"
+        },
+        {
+          "file": "src/game/enemies/Stage3Enemies.ts",
+          "class": "LobsterGuard",
+          "old": "hp 3",
+          "new": "hp 9"
+        },
+        {
+          "file": "src/game/enemies/Stage3Enemies.ts",
+          "class": "StallKeeper",
+          "old": "hp 2",
+          "new": "hp 6"
+        },
+        {
+          "file": "src/game/enemies/Stage3Enemies.ts",
+          "class": "MirrorShade",
+          "old": "hp 1",
+          "new": "hp 6"
+        },
+        {
+          "file": "src/game/enemies/Stage4Enemies.ts",
+          "class": "HoneyZombie",
+          "old": "hp 2",
+          "new": "hp 6",
+          "note": "GuardZombie／ChargeHoneyZombie 繼承佢但自己再設 hp，確認子類唔受影響"
+        },
+        {
+          "file": "src/game/enemies/Stage4Enemies.ts",
+          "class": "ClockPunch",
+          "old": "hp 2",
+          "new": "hp 9"
+        },
+        {
+          "file": "src/game/enemies/Stage4Enemies.ts",
+          "class": "TaxiMonster",
+          "old": "hp 3",
+          "new": "hp 9"
+        }
       ],
       "check": "第5關用返同一批 class（bee／mirrorshade／taximonster），自動跟住變；如果第5關有獨立 hp 覆寫，照上面數字改"
     },
@@ -33,23 +77,76 @@
       "id": "H2_STAGE6_7_MINOR",
       "desc": "第6、7關小怪（兩關都用 src/game/enemies/Stage7Enemies.ts 四個 class）",
       "hp": [
-        { "class": "ChargeHoneyZombie (s7charge)", "old": 3, "new": 9 },
-        { "class": "HopCage (s7hop)", "old": 2, "new": 9 },
-        { "class": "ShieldKeeper (s7shield)", "old": 3, "new": 6 },
-        { "class": "CanThrower (s7can)", "old": 2, "new": 9 }
+        {
+          "class": "ChargeHoneyZombie (s7charge)",
+          "old": 3,
+          "new": 9
+        },
+        {
+          "class": "HopCage (s7hop)",
+          "old": 2,
+          "new": 9
+        },
+        {
+          "class": "ShieldKeeper (s7shield)",
+          "old": 3,
+          "new": 6
+        },
+        {
+          "class": "CanThrower (s7can)",
+          "old": 2,
+          "new": 9
+        }
       ],
       "also": [
-        { "class": "GuardZombie (Stage6Enemies.ts, species guard)", "old": 3, "new": 6 }
+        {
+          "class": "GuardZombie (Stage6Enemies.ts, species guard)",
+          "old": 3,
+          "new": 6
+        }
       ],
       "constants_in_Stage7Enemies.ts": [
-        { "name": "新增 CHARGE_WALK", "new": 48, "note": "衝鋒蜜僵行路用；其他 class 繼續用 WALK=40" },
-        { "name": "CHARGE_MUL", "old": 2.5, "new": 4.58, "note": "48×4.58 ≈ 220 px/s" },
-        { "name": "CHARGE_DIST", "old": 200, "new": 160 },
-        { "name": "WARN_MS", "old": 400, "new": 800 },
-        { "name": "REST_MS", "old": 800, "new": 1000 },
-        { "name": "HOP_CROUCH_MS", "old": 400, "new": 800 },
-        { "name": "HOP_REST_MS", "old": 700, "new": 900 },
-        { "name": "CAN_INTERVAL_MS", "old": 2500, "new": 3000 }
+        {
+          "name": "新增 CHARGE_WALK",
+          "new": 48,
+          "note": "衝鋒蜜僵行路用；其他 class 繼續用 WALK=40"
+        },
+        {
+          "name": "CHARGE_MUL",
+          "old": 2.5,
+          "new": 4.58,
+          "note": "48×4.58 ≈ 220 px/s"
+        },
+        {
+          "name": "CHARGE_DIST",
+          "old": 200,
+          "new": 160
+        },
+        {
+          "name": "WARN_MS",
+          "old": 400,
+          "new": 800
+        },
+        {
+          "name": "REST_MS",
+          "old": 800,
+          "new": 1000
+        },
+        {
+          "name": "HOP_CROUCH_MS",
+          "old": 400,
+          "new": 800
+        },
+        {
+          "name": "HOP_REST_MS",
+          "old": 700,
+          "new": 900
+        },
+        {
+          "name": "CAN_INTERVAL_MS",
+          "old": 2500,
+          "new": 3000
+        }
       ],
       "can_throw_warning": "CanThrower 出手前要有 ≥800ms 可見預警（舉手／閃光）。如果而家短過 800ms，只延長嗰段時間，唔加新動畫系統",
       "shield": "SHIELD_TURN_DELAY_MS 1000 唔改"
@@ -58,8 +155,17 @@
       "id": "H3_CRUSHER_WARN",
       "desc": "天花尖刺塊預警",
       "edits": [
-        { "file": "data/levels/stage1.json", "field": "crushers[].warnMs", "new": 1000 },
-        { "file": "data/levels/stage5.json", "field": "crushers[].warnMs", "old": "450／420", "new": 1000 }
+        {
+          "file": "data/levels/stage1.json",
+          "field": "crushers[].warnMs",
+          "new": 1000
+        },
+        {
+          "file": "data/levels/stage5.json",
+          "field": "crushers[].warnMs",
+          "old": "450／420",
+          "new": 1000
+        }
       ],
       "check": "如果程式有固定總週期，要確保延長預警後唔會重疊下一輪"
     },
@@ -67,10 +173,27 @@
       "id": "H4_WARRIOR_KING",
       "file": "src/game/enemies/Stage1Boss.ts",
       "edits": [
-        { "name": "KING_HP_RHYTHM", "old": 180, "new": 54 },
-        { "name": "WINDUP_MS（衝刺前搖）", "old": 400, "new": 1000 },
-        { "name": "THROW_RELEASE_MS", "old": 250, "new": 1000 },
-        { "name": "THROW_TOTAL_MS", "old": 500, "new": 1100 }
+        {
+          "name": "KING_HP_RHYTHM",
+          "old": 180,
+          "new": 72,
+          "note": "r3 修正：倫寶滿氣每破綻實際 9 傷害 → 72 HP ≈ 8 次破綻（琪寶寶 6 次、雙人 4 次）"
+        },
+        {
+          "name": "WINDUP_MS（衝刺前搖）",
+          "old": 400,
+          "new": 1000
+        },
+        {
+          "name": "THROW_RELEASE_MS",
+          "old": 250,
+          "new": 1000
+        },
+        {
+          "name": "THROW_TOTAL_MS",
+          "old": 500,
+          "new": 1100
+        }
       ],
       "keep": "DASH_SPEED 340、DASH_MAX_MS 650 唔改；BossRhythm 時間唔改",
       "note": "更新 KING_HP_RHYTHM 上面嘅註解（而家寫住 180 嘅計法）"
@@ -79,17 +202,46 @@
       "id": "H5_JUMP_LENIENCY",
       "file": "data/characters.json",
       "edits": [
-        { "field": "shared.jump.coyoteMs", "old": 90, "new": 110 },
-        { "field": "shared.jump.bufferMs", "old": 110, "new": 140 }
+        {
+          "field": "shared.jump.coyoteMs",
+          "old": 90,
+          "new": 110
+        },
+        {
+          "field": "shared.jump.bufferMs",
+          "old": 110,
+          "new": 140
+        }
       ]
+    },
+    {
+      "id": "H6_GIRL_SWORD",
+      "desc": "琪寶寶輸出由倫寶 2.1 倍降到約 1.4 倍（Alan：要強啲但唔使強咁多）",
+      "edits": [
+        {
+          "file": "src/game/engine/constants.ts",
+          "name": "SWORD_COOLDOWN_MS",
+          "old": "Math.round(220 / 0.8 / 0.8) = 344",
+          "new": 480
+        },
+        {
+          "file": "src/game/GameScene.ts",
+          "name": "STAM_SWORD",
+          "old": 0.2,
+          "new": 0.32
+        }
+      ],
+      "keep": "倫寶 SALMON_SHOT_COOLDOWN_MS、STAM_SHOT 唔改",
+      "qa": "模擬／實測：滿氣、裸裝，2500ms 內連斬，總傷害應約 13（倫寶同條件 9）"
     }
   ],
   "acceptance": [
     "npm run build PASS；npm run validate:data PASS",
     "QA 腳本 scripts/qa/balance-1.mjs：逐個 spawn 上面每種敵人，assert maxHp 等於新值；assert Stage7Enemies 常數同 Stage1Boss 常數等於新值；assert stage1／stage5 crushers warnMs = 1000",
     "實機截圖：第4關打一隻蜜僵要 2 槍、第6關打一隻衝鋒蜜僵要 3 槍（docs/qa-balance-1/）",
-    "第1關武者王：用 dev 跳關打一次，記錄由開打到打死嘅秒數（目標約 90–120 秒），寫入 report.json",
+    "第1關武者王：用 dev 跳關各用倫寶、琪寶寶打一次，記錄由開打到打死秒數（目標 80–120 秒），寫入 report.json",
     "report.json 要 ok:true，列出每個改動 old→new"
   ],
-  "deliver": "push 後回報 branch、commit、acceptance 結果；唔使開 PR（Claude 開）"
+  "deliver": "push 後回報 branch、commit、acceptance 結果；唔使開 PR（Claude 開）",
+  "revision": "r2 2026-11-24：H4 HP 54→72；新增 H6"
 }
