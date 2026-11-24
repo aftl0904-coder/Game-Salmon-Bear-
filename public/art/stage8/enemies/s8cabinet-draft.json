@@ -1,0 +1,45 @@
+{
+  "frameWidth": 256,
+  "frameHeight": 352,
+  "res": 4,
+  "columns": 12,
+  "anims": {
+    "idle": {
+      "start": 0,
+      "count": 4,
+      "fps": 4,
+      "loop": true
+    },
+    "walk": {
+      "start": 4,
+      "count": 4,
+      "fps": 6,
+      "loop": true
+    },
+    "warning": {
+      "start": 8,
+      "count": 4,
+      "fps": 4,
+      "loop": false
+    },
+    "attack": {
+      "start": 12,
+      "count": 4,
+      "fps": 8,
+      "loop": false
+    },
+    "hurt": {
+      "start": 16,
+      "count": 4,
+      "fps": 8,
+      "loop": false
+    },
+    "defeat": {
+      "start": 20,
+      "count": 4,
+      "fps": 6,
+      "loop": false
+    }
+  },
+  "note": "56px idle candidate; warning starts with idle, 3 open-door frames rescaled from 50px candidate. Attack frame 3 is shifted 3.44 logical px, warning-to-attack may jump. FPS proposals only; no runtime integration."
+}
