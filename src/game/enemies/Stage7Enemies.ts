@@ -31,27 +31,33 @@ function attachBadge(scene: Phaser.Scene, host: Phaser.GameObjects.Sprite, key: 
   return img
 }
 
-const WALK = 40
-const CHARGE_MUL = 2.5
-const CHARGE_DIST = 200
-const WARN_MS = 400
-const REST_MS = 800
+/** Non-charge Stage7 walk speed (shield chase uses its own 16/28). Kept exported for QA/docs. */
+export const WALK = 40
+/** Charge-zombie patrol / charge base speed. */
+export const CHARGE_WALK = 48
+/** 48 × 4.58 ≈ 220 px/s charge. */
+export const CHARGE_MUL = 4.58
+export const CHARGE_DIST = 160
+export const WARN_MS = 800
+export const REST_MS = 1000
 /** E2 hop aim */
-const HOP_CROUCH_MS = 400
-const HOP_REST_MS = 700
+export const HOP_CROUCH_MS = 800
+export const HOP_REST_MS = 900
 const HOP_AIM_JITTER = 16
 const HOP_MELEE_DIST = 60
 const HOP_ARC = 78
 /** E1 shield turn */
-const SHIELD_TURN_DELAY_MS = 1000
+export const SHIELD_TURN_DELAY_MS = 1000
 const SHIELD_TURN_ANIM_MS = 250
 const SHIELD_TURN_COOLDOWN_MS = 800
 const SHIELD_HINT_MS = 300
-const CAN_INTERVAL_MS = 2500
+export const CAN_INTERVAL_MS = 3000
+/** CanThrower visible wind-up before release (≥800ms). */
+export const CAN_WIND_MS = 800
 
 // ── 衝鋒蜜僵 ─────────────────────────────────────────────────────────────
 
-/** See player → 400ms warn → charge at 2.5× walk for 200px → rest 800ms. HP 3. */
+/** See player → 800ms warn → charge ~220px/s for 160px → rest 1000ms. HP 9. */
 export class ChargeHoneyZombie extends HoneyZombie {
   private phase: 'idle' | 'warn' | 'charge' | 'rest' = 'idle'
   private t = 0
@@ -63,7 +69,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
     this.species = 's7charge'
-    this.hp = this.maxHp = 3
+    this.hp = this.maxHp = 9
     this.setTint(C2.charge)
     this.badge = attachBadge(scene, this, 's7-enemy-whip')
   }
@@ -111,7 +117,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
     if (this.phase === 'idle') {
       this.setFlipX(dx < 0)
       this.anim(Math.abs(dx) < 46 ? 'reach' : 'walk')
-      const speed = WALK
+      const speed = CHARGE_WALK
       this.setVelocityX(Math.abs(dx) < 8 ? 0 : Math.sign(dx) * speed)
       if (Math.abs(dx) < 280 && Math.abs(dx) > 36) {
         this.phase = 'warn'
@@ -148,11 +154,11 @@ export class ChargeHoneyZombie extends HoneyZombie {
         this.setFsm('ATTACK')
         this.hitThis = false
         this.anim('walk')
-        this.setVelocityX(this.dir * WALK * CHARGE_MUL)
+        this.setVelocityX(this.dir * CHARGE_WALK * CHARGE_MUL)
       }
     } else if (this.phase === 'charge') {
       this.setFlipX(this.dir < 0)
-      this.setVelocityX(this.dir * WALK * CHARGE_MUL)
+      this.setVelocityX(this.dir * CHARGE_WALK * CHARGE_MUL)
       const body = this.body as Phaser.Physics.Arcade.Body
       const traveled = Math.abs(this.x - this.chargeFrom)
       if (traveled >= CHARGE_DIST || body.blocked.left || body.blocked.right || this.t > 2800) {
@@ -199,7 +205,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
 
 // ── 籠車 ───────────────────────────────────────────────────────────────
 
-/** E2: aims landing at player (±16); crouch warn + shadow; melee if <60. HP 2. */
+/** E2: aims landing at player (±16); crouch warn + shadow; melee if <60. HP 9. */
 export class HopCage extends HoneyZombie {
   private phase: 'idle' | 'crouch' | 'hop' = 'idle'
   private t = 0
@@ -211,7 +217,7 @@ export class HopCage extends HoneyZombie {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
     this.species = 's7hop'
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 9
     this.setTint(C2.hop)
     this.costume = scene.add.graphics()
     this.drawCage()
@@ -405,7 +411,7 @@ export class HopCage extends HoneyZombie {
 
 // ── 鐵閘板看守員 ───────────────────────────────────────────────────────────
 
-/** Front blocks bullets (ding); must jump behind and hit the back. HP 3. E1 turn delay. */
+/** Front blocks bullets (ding); must jump behind and hit the back. HP 6. E1 turn delay. */
 export class ShieldKeeper extends AnimEnemy {
   private shieldGfx: Phaser.GameObjects.Graphics
   private badge: Phaser.GameObjects.Image | null = null
@@ -419,7 +425,7 @@ export class ShieldKeeper extends AnimEnemy {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 's7shield'
-    this.hp = this.maxHp = 3
+    this.hp = this.maxHp = 6
     this.hurtMs = 240
     this.bodyBox(30, 44)
     this.setTint(C2.shield)
@@ -579,7 +585,7 @@ export type CanHooks = {
   throwCan: (x: number, y: number, targetX: number) => void
 }
 
-/** Stands still; every 2.5s throws a parabolic feed-bucket that explodes on the ground. HP 2. */
+/** Stands still; every 3s throws a parabolic feed-bucket that explodes on the ground. HP 9. */
 export class CanThrower extends AnimEnemy {
   private cd = 900
   private wind = 0
@@ -591,7 +597,7 @@ export class CanThrower extends AnimEnemy {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 's7can'
     this.ch = ch
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 9
     this.hurtMs = 220
     this.bodyBox(28, 44)
     this.setTint(C2.can)
@@ -656,7 +662,7 @@ export class CanThrower extends AnimEnemy {
       this.anims.pause()
       this.cd -= dt
       if (this.cd <= 0 && Math.abs(dx) < 460) {
-        this.wind = 380
+        this.wind = CAN_WIND_MS
       }
     }
     this.syncDepth()

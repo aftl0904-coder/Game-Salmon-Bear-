@@ -450,7 +450,7 @@ export class LobsterGuard extends AnimEnemy {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'lobster', hooks, 'walk')
     this.species = 'lobster'
-    this.hp = this.maxHp = 3
+    this.hp = this.maxHp = 9
     this.bodyBox(30, 40)
   }
   /** A hit pushing it in `dir` came from the front (claws) → blocked, unless it is recovering. */
@@ -584,7 +584,7 @@ export class StallKeeper extends AnimEnemy {
     super(scene, x, hooks.floorY(), 'stallkeeper', hooks, 'idle')
     this.species = 'stallkeeper'
     this.kh = kh
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 6
     this.bodyBox(26, 44)
   }
   private covered() {
@@ -667,7 +667,7 @@ export class MirrorShade extends AnimEnemy {
     this.species = 'mirrorshade'
     this.flying = true
     this.fake = fake
-    this.hp = this.maxHp = 1
+    this.hp = this.maxHp = 6
     this.bodyBox(26, 36)
     this.cd = Phaser.Math.Between(1600, 2600)
     if (fake) {

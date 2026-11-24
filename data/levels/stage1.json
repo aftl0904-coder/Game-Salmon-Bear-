@@ -371,7 +371,7 @@
   {
    "x": 1530,
    "restH": 78,
-   "warnMs": 450,
+   "warnMs": 1000,
    "downMs": 140,
    "stayMs": 500,
    "upMs": 900,
@@ -381,7 +381,7 @@
   {
    "x": 2810,
    "restH": 78,
-   "warnMs": 450,
+   "warnMs": 1000,
    "downMs": 140,
    "stayMs": 500,
    "upMs": 900,

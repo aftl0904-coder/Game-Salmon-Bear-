@@ -27,7 +27,7 @@ for(const segment of segments){
 const t=level.trainer||{}
 for(const [key,value] of Object.entries({hp:55,phase2At:0.66,phase3Below:0.3,phase3Rate:1.3,summonPerCycle:1,summonMaxAlive:2,chainWarnMs:800,chainLifeMs:1500,chainWidth:108}))check(t[key]===value,`trainer ${key} must be ${value}`)
 check(level.boss?.kind==='trainer'&&level.boss.arenaX1-level.boss.arenaX0>t.chainWidth+32,'boss arena and safe space')
-check((level.staticDecor||[]).length>0&&(level.staticDecor||[]).every(o=>['cage','chain','net'].includes(o.kind)&&o.x>=0&&o.x<level.worldW),'static decor types and positions')
+check((level.staticDecor||[]).length>0&&(level.staticDecor||[]).every(o=>['cage','chain','net','price'].includes(o.kind)&&o.x>=0&&o.x<level.worldW),'static decor types and positions')
 const card=bosses.bosses?.trainer
 const approved={
   name:'馴獸師',
