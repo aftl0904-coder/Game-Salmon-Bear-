@@ -1,0 +1,17 @@
+{
+  "from": "Claude", "to": "Cursor", "date": "2026-11-24",
+  "title": "第二大陸『次世代感』第一輪（第6、7關）",
+  "source": "docs/bible/nextgen-c2-copilot.json（Copilot 研究，Claude 已核對現有程式）",
+  "branch": "cursor/nextgen-1-2610（由最新 origin/main 開；排喺 Fun-1 之後）",
+  "rules": ["唔改任何戰鬥數值、碰撞、預警時間", "第1–5關外觀同手感一律唔郁（全部用 stage>=6 判斷）", "單人手機要正常", "預警閃光唔可以被新效果遮住"],
+  "tasks": [
+    { "id": "N1_COLOR", "desc": "第6關冷白／灰藍底色，第7關深藍低飽和；主角、蜂蜜、朋友熊保持暖色（唔受背景 tint 影響）", "how": "只調現有背景層（mallFar／exhibitFar／exhibitMid、光暗層）嘅 tint／alpha；地面頂邊同預警唔可以被壓暗", "accept": "手機截圖：窿、地面、兩個主角清楚" },
+    { "id": "N2_HUD_C2", "desc": "第二大陸 HUD 換新外觀：hudSnes.ts 入面金色鉚釘框改深色面板＋暖色重點（stage>=6）", "how": "只改顏色同框線，心、耐力、金幣、進度條位置同大小完全唔變；觸控按鈕唔郁", "accept": "第5關同第6關 HUD 截圖對比" },
+    { "id": "N3_MUSIC_ZONES", "desc": "第6關由商場段（A–C）入廢棄蜜工場（D）時，切換去現有較低沉嘅 BGM；第7關用現有夜間曲", "how": "只用現有音檔；淡出淡入 800ms；如冇合適現成曲目就略過並回報", "accept": "預警音效唔被蓋過；重生唔會疊播" },
+    { "id": "N4_PARALLAX", "desc": "第6、7關遠景（mallFar、exhibitFar）而家係 scrollFactor 0 固定，改成有少少視差", "how": "遠景 image 放大到 1.08 倍，隨鏡頭水平位置做 0.05 倍位移（左右各最多 ±25px，唔露邊）；中景 tileSprite（exhibitMid）tilePositionX = 鏡頭 x × 0.4；碰撞層唔變", "accept": "行一個來回，背景冇露邊、冇喺腳下滑" },
+    { "id": "N5_BOSS_ENTRANCE", "desc": "第6、7關 Boss 戰前：先全屏顯示 Manus 畫嘅 s6-boss-intro／s7-boss-intro（1200ms 淡入淡出），再鏡頭由 Boss 位置平移返兩個主角（600ms），之後先播戰前對白同開打", "how": "用現有 cutscene／tween；可以撳掣跳過；鏡頭返位之後 Boss 先開始第一次攻擊", "accept": "跳過都唔會卡；雙人時兩個主角都喺畫面內" },
+    { "id": "N6_HIT_FEEL", "desc": "第6、7關命中回饋：魚籽命中出圓點粒子、劍命中出短線粒子（各最多 6 粒、120ms）；盾擋同有效命中用唔同現有音效", "how": "接現有命中事件，唔改傷害、攻速、判定框；唔加每下震屏", "accept": "銀槍多粒子彈時粒子唔爆量；FPS 冇明顯下降" }
+  ],
+  "acceptance_all": ["build＋validate:data PASS", "第5關同第6關各一張截圖證明第一大陸冇變", "截圖／短錄影放 docs/qa-nextgen-1/", "report.json ok:true"],
+  "deliver": "push 後回報 branch＋commit＋截圖；唔使開 PR（Claude 開）；唔好加 [deploy]"
+}

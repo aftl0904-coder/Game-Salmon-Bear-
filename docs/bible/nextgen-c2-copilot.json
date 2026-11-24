@@ -1,0 +1,428 @@
+{
+  "case_studies": [
+    {
+      "series": "Mega Man → Mega Man X",
+      "keep": "保留橫向跳射、打Boss取得武器的核心循環；官方亦把X定位為經典主角的後繼者。[1](https://store.playstation.com/en-us/concept/231109)",
+      "upgrade": "把改變集中在移動能力與戰鬥空間，而不只是增加敵人血量；這是本次對其設計的歸納。",
+      "new_mechanics": "X可衝刺及蹬牆跳；初代X的衝刺須取得腳部升級，不能誤寫成一開始已有。[1](https://store.playstation.com/en-us/concept/231109)[2](https://gamefaqs.gamespot.com/snes/588479-mega-man-x/faqs/10693)",
+      "presentation": "官方把X系列早期作品列為16-bit，並指出X4進入32-bit年代；因此「原版→X」與「X早期→X4」是兩次不同的演進，不能混為一談。[1](https://store.playstation.com/en-us/concept/231109)",
+      "lesson_for_us": "先讓舊操作有更清楚的回饋與更豐富的使用場景；新增移動能力必須連關卡一起驗證，不能只加一個按鈕。",
+      "source_url": [
+        "[官方系列介紹](https://store.playstation.com/en-us/concept/231109)",
+        "[初代X操作與升級攻略](https://gamefaqs.gamespot.com/snes/588479-mega-man-x/faqs/10693)"
+      ]
+    },
+    {
+      "series": "Super Mario Bros. 3 → Super Mario World",
+      "keep": "仍以橫向移動、跳躍及能力變化推進；開發者談及兩作時，強調持續尋找角色還可以怎樣變化。[3](https://iwataasks.nintendo.com/interviews/wii/mario25th/2/4/)",
+      "upgrade": "不是把前作全部換掉，而是讓熟悉主角獲得一個容易記住的新搭檔與新動作。",
+      "new_mechanics": "Super Mario World加入可騎乘的Yoshi及披風飛行；訪談指出騎乘構想早已存在，但較早硬件未能實現。[4](https://iwataasks.nintendo.com/interviews/wii/nsmb/1/7/)[3](https://iwataasks.nintendo.com/interviews/wii/mario25th/2/4/)",
+      "presentation": "開發者明確談到，前作已很成熟，難題是如何在Super NES呈現新鮮的Mario；角色新設計亦要融入既有世界。[5](https://www.nintendo.com/en-gb/News/2017/October/Nintendo-Classic-Mini-SNES-developer-interview-Volume-5-Super-Mario-World-and-Super-Mario-World-2-Yoshi-s-Island-1290850.html)",
+      "lesson_for_us": "噗噗、魚籽、劍、蜂蜜及朋友仍是辨識核心；第二大陸應擴大它們的表現，不另造一套陌生主角。",
+      "source_url": [
+        "[官方開發者訪談：新平台與角色設計](https://www.nintendo.com/en-gb/News/2017/October/Nintendo-Classic-Mini-SNES-developer-interview-Volume-5-Super-Mario-World-and-Super-Mario-World-2-Yoshi-s-Island-1290850.html)",
+        "[官方訪談：騎乘構想與硬件限制](https://iwataasks.nintendo.com/interviews/wii/nsmb/1/7/)",
+        "[官方訪談：系列動作演進](https://iwataasks.nintendo.com/interviews/wii/mario25th/2/4/)"
+      ]
+    },
+    {
+      "series": "Castlevania: Rondo of Blood → Symphony of the Night",
+      "keep": "保留城堡、怪物、橫向動作及系列音樂美術身份，但遊戲結構有重大改變。[6](https://www.konami.com/games/castlevania/eu/en/page/history_2018_x_son_rob)",
+      "upgrade": "由關卡及分支路線，轉向更大規模的非線性探索與裝備選擇。[6](https://www.konami.com/games/castlevania/eu/en/page/history_2018_x_son_rob)",
+      "new_mechanics": "Symphony of the Night結合RPG元素、探索、平台動作及大量武器道具；不是單純把Rondo畫得更細緻。[6](https://www.konami.com/games/castlevania/eu/en/page/history_2018_x_son_rob)",
+      "presentation": "官方指出Rondo利用CD-ROM媒體呈現畫面與音樂，Symphony則以更完整的美術與配樂建立世界氣氛。[6](https://www.konami.com/games/castlevania/eu/en/page/history_2018_x_son_rob)",
+      "lesson_for_us": "可借聲畫與世界細節一起升級的原理，但不適合為聖誕版突然改成開放探索或增加裝備系統。",
+      "source_url": [
+        "[官方兩作介紹](https://www.konami.com/games/castlevania/eu/en/page/history_2018_x_son_rob)"
+      ]
+    },
+    {
+      "series": "經典Sonic → Sonic Mania",
+      "keep": "保留2D速度感、經典角色差異及舊區域，再加入新變化；官方把它描述為過去與未來的結合。[7](https://www.playstation.com/en-us/games/sonic-mania/)",
+      "upgrade": "屬跨年代的復古續作參考，不是嚴格相鄰兩代硬件比較；價值在於熟悉關卡可以有新節奏，而非全部推倒重來。",
+      "new_mechanics": "新增Drop Dash，在空中準備、落地後衝出；操作資料可參考其數碼說明書引文，但本次未取得原說明書頁面。[8](https://sonic.fandom.com/wiki/Drop_Dash)",
+      "presentation": "官方列出60FPS、復古風高清畫面、經典區域新變化及新Boss。[7](https://www.playstation.com/en-us/games/sonic-mania/)",
+      "lesson_for_us": "保留像素語言不代表只能做舊式演出；流暢、層次與熟悉場景的新用法，同樣可以令人覺得換咗一代。",
+      "source_url": [
+        "[官方產品介紹](https://www.playstation.com/en-us/games/sonic-mania/)",
+        "[Drop Dash說明書引文與資料](https://sonic.fandom.com/wiki/Drop_Dash)"
+      ]
+    },
+    {
+      "series": "Rayman → Rayman Origins",
+      "keep": "回到2D平台、熟悉角色及奇趣世界；官方直接以回歸系列根源定位。[9](https://store.ubisoft.com/tr/rayman-origins/5704fac688a7e32b078b4676.html)",
+      "upgrade": "加入最多4人即入即出的合作，並以更完整的動畫與動作回饋更新體驗。[9](https://store.ubisoft.com/tr/rayman-origins/5704fac688a7e32b078b4676.html)[10](https://www.gamedeveloper.com/design/remaking-i-rayman-i-camera-character-controls)",
+      "new_mechanics": "本地多人合作擴大共同遊玩的方式；開發者分享強調先確立鏡頭、角色與操作，再圍繞能力建關。[9](https://store.ubisoft.com/tr/rayman-origins/5704fac688a7e32b078b4676.html)[10](https://www.gamedeveloper.com/design/remaking-i-rayman-i-camera-character-controls)",
+      "presentation": "UbiArt讓高解像手繪概念圖轉成背景及角色動畫；這是製作管線的改變，不只是加濾鏡。[11](https://www.gamedeveloper.com/business/ubisoft-s-ancel-planning-to-open-up-i-rayman-origins-i-tech)",
+      "lesson_for_us": "最優先升級角色回饋與雙人鏡頭可讀性；不能讓華麗背景掩蓋平台及預警。",
+      "source_url": [
+        "[官方遊戲介紹](https://store.ubisoft.com/tr/rayman-origins/5704fac688a7e32b078b4676.html)",
+        "[開發者回顧：鏡頭、角色、操作](https://www.gamedeveloper.com/design/remaking-i-rayman-i-camera-character-controls)",
+        "[UbiArt製作技術報道](https://www.gamedeveloper.com/business/ubisoft-s-ancel-planning-to-open-up-i-rayman-origins-i-tech)"
+      ]
+    },
+    {
+      "series": "Donkey Kong Country Returns → Tropical Freeze",
+      "keep": "保留橫向跑跳、翻滾、木桶及礦車等系列動作與交通工具。[12](https://www.nintendo.com/en-gb/games/oms/dkc-tf/gameplay.html)",
+      "upgrade": "在既有橫向玩法中擴充角色能力、水下探索與場景演出，而非改成自由3D移動。[12](https://www.nintendo.com/en-gb/games/oms/dkc-tf/gameplay.html)[13](https://www.nintendo.com/my/switch/afwt/index.html)",
+      "new_mechanics": "Tropical Freeze提供不同搭檔能力、拉動把手及水下游動等互動；各角色能力可用於探索。[12](https://www.nintendo.com/en-gb/games/oms/dkc-tf/gameplay.html)[13](https://www.nintendo.com/my/switch/afwt/index.html)",
+      "presentation": "官方特別列出木桶段的動態鏡頭角度，讓相同橫向玩法有更大場面感。[12](https://www.nintendo.com/en-gb/games/oms/dkc-tf/gameplay.html)",
+      "lesson_for_us": "可借背景與鏡頭令世界變大，但鮭鮭熊仍是2D碰撞，不能承諾用鏡頭tween就做到真正3D轉場。",
+      "source_url": [
+        "[官方玩法及動態鏡頭介紹](https://www.nintendo.com/en-gb/games/oms/dkc-tf/gameplay.html)",
+        "[官方角色能力介紹](https://www.nintendo.com/my/switch/afwt/index.html)"
+      ]
+    }
+  ],
+  "principles": {
+    "familiar": [
+      {
+        "id": "F1",
+        "principle": "保留肌肉記憶",
+        "application": "第6關仍用原本跳、射、斬及風扇；不突然換鍵位、重力或基本攻擊節奏。"
+      },
+      {
+        "id": "F2",
+        "principle": "保留角色輪廓與性格",
+        "application": "倫寶少講而準、琪寶寶直率、噗噗外向愛蜜；畫面升級不等於角色變成另一個人。"
+      },
+      {
+        "id": "F3",
+        "principle": "保留成功與失敗的規則",
+        "application": "死亡清裝、預警至少0.8秒、小怪2至3下不變；新光影不能暗改碰撞或傷害。"
+      },
+      {
+        "id": "F4",
+        "principle": "保留獎勵語言",
+        "application": "仍以蜂蜜、朋友、金幣及角色反應鼓勵探索，不突然加入另一套貨幣或評分系統。"
+      },
+      {
+        "id": "F5",
+        "principle": "保留兩人一起冒險的重心",
+        "application": "合作仍是支援、等一等及一起發現，不把其中一人變成只負責開門的工具。"
+      }
+    ],
+    "next_gen": [
+      {
+        "id": "N1",
+        "principle": "畫面有前後層次，玩法平面更清楚",
+        "application": "背景更深，站立面、角色及預警反而更容易讀。"
+      },
+      {
+        "id": "N2",
+        "principle": "世界會回應玩家",
+        "application": "命中、開籠及擊倒有一致聲畫回應，唔係只見數字減少。"
+      },
+      {
+        "id": "N3",
+        "principle": "鏡頭開始識講故事",
+        "application": "只在安全時短暫展示場景或Boss，正式戰鬥仍優先照顧操作。"
+      },
+      {
+        "id": "N4",
+        "principle": "聲音有空間與段落",
+        "application": "商場、工場及夜倉庫聽起來不同，但警示音永遠清楚。"
+      },
+      {
+        "id": "N5",
+        "principle": "少量新能力，要改變玩法而非增加負擔",
+        "application": "新操作留待完整測試；先讓現有能力在新組合中發揮，再決定是否需要新增。"
+      }
+    ]
+  },
+  "signatures": [
+    {
+      "id": "S01",
+      "name": "冷色世界，暖色主角",
+      "principle": ["F2", "F3", "N1"],
+      "how_in_our_game": "第6關用冷白與灰藍商場底色，第7關用深藍與低飽和倉庫底色；主角、蜂蜜及朋友保留暖色。沿用光暗層調整，不做全畫面模糊；地面頂邊及預警不受裝飾暗層壓黑。",
+      "size": "S",
+      "risk": 1,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "兩個角色同屏時更容易找到自己，暗景不等於睇唔到。",
+      "fit_score": 20,
+      "calc": "(4×5)／(1×1)=20",
+      "acceptance": "手機亮度一般時仍分得清窿、地面及兩位主角；不改第一大陸色調。"
+    },
+    {
+      "id": "S02",
+      "name": "HUD換外框，不換位置",
+      "principle": ["F1", "F4", "N1"],
+      "how_in_our_game": "第二大陸只替現有HUD底板、邊框及章節字色換成乾淨的深色面板與暖色重點；心、耐力、金幣及玩家位置完全不變。只重用現有圖形與字體，不新增資訊欄。",
+      "size": "S",
+      "risk": 1,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "一眼知道進入新篇章，但不用重新學搵血量。",
+      "fit_score": 20,
+      "calc": "(4×5)／(1×1)=20",
+      "acceptance": "兩人HUD不互相遮擋，觸控按鈕位置與大小不變；若底板是不可調的整張圖，升M並重算預算。"
+    },
+    {
+      "id": "S03",
+      "name": "先聽到空間變咗",
+      "principle": ["F1", "N4"],
+      "how_in_our_game": "只用已有音檔：第6關由商場進工場時切換既有較低調BGM，第7關用既有夜間曲；設定場景音量，不做同步音軌分層。若沒有合適現成曲目，本項不實作，不用加大機械噪音代替。",
+      "size": "S",
+      "risk": 1,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "兩人未讀文件已感到環境變化，亦不影響交談。",
+      "fit_score": 20,
+      "calc": "(4×5)／(1×1)=20",
+      "acceptance": "BGM不蓋過預警；重生不疊播；只在已有場景音訊切換點改配置，否則升M。"
+    },
+    {
+      "id": "S04",
+      "name": "兩層景深卷軸",
+      "principle": ["F1", "N1"],
+      "how_in_our_game": "第6關中庭及第7關貨架各選一段，把可分離的現有背景拆成遠景與中景；設計起點為遠景跟隨鏡頭位移0.25倍、中景0.6倍，遊戲碰撞層維持1倍。只做平面視差，不做真景深或3D旋轉。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 5,
+      "familiar": 5,
+      "couple_benefit": "同一個640×360畫面有更大空間感，角色操作仍完全熟悉。",
+      "fit_score": 6.25,
+      "calc": "(5×5)／(2×2)=6.25",
+      "acceptance": "背景不露邊、不在玩家腳下滑動；若現有背景不能分層，先只做其中一關，不臨時重畫整關。"
+    },
+    {
+      "id": "S05",
+      "name": "Boss有一次真正出場",
+      "principle": ["F3", "N3"],
+      "how_in_our_game": "第6、7關各在原戰前對白中加入一次短鏡頭：用1200ms展示Boss，再用600ms回到正常雙人構圖；總長1800ms。沿用現有鏡頭tween及戰前安全狀態，不新增可玩時鏡頭鎖定。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 5,
+      "familiar": 5,
+      "couple_benefit": "兩人一起看到威脅登場，不會一人還在看景、另一人已經捱打。",
+      "fit_score": 6.25,
+      "calc": "(5×5)／(2×2)=6.25",
+      "acceptance": "鏡頭回位後才開始完整GUARD及預警；跳過對白亦能恢復鏡頭，兩名玩家不被裁走。"
+    },
+    {
+      "id": "S06",
+      "name": "魚籽與劍，有不同的命中質感",
+      "principle": ["F1", "F2", "N2"],
+      "how_in_our_game": "第6、7關沿用現有命中特效事件：魚籽命中用短促圓點粒子，劍命中用短線粒子；每次最多6粒、存活120ms，不改傷害、攻速、判定框或耐力。盾擋與有效命中沿用不同既有音效；不每下震屏。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "兩人都更清楚自己有冇幫到手，亦保留遠近戰個性。",
+      "fit_score": 5,
+      "calc": "(4×5)／(2×2)=5",
+      "acceptance": "多彈槍不造成粒子暴增；特效不能遮住敵人預警。沒有可重用粒子素材時只做既有命中閃光，不另開素材製作。"
+    },
+    {
+      "id": "S07",
+      "name": "機關動作帶動背景反應",
+      "principle": ["F3", "N2"],
+      "how_in_our_game": "留待後續關卡：既有閘門或機械啟動時，同一事件帶動背景指示燈與少量粒子；碰撞區、預警與裝飾分開，燈變化不能取代正式預警。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "兩人更容易一起判斷場景正在發生甚麼。",
+      "fit_score": 5,
+      "calc": "(4×5)／(2×2)=5",
+      "acceptance": "不新增機關種類，只接既有事件；裝飾失效也不影響通關。"
+    },
+    {
+      "id": "S08",
+      "name": "對白有表情，但唔變視覺小說",
+      "principle": ["F2", "N3"],
+      "how_in_our_game": "後續關卡先做倫寶、琪寶寶各兩個小頭像表情，嵌入原對白框；倫寶以觀察與支援為主，琪寶寶見到不對即反應。噗噗用開心、望蜜及靠近朋友的動作，不增加人類語句。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "不用加長對白，也能看懂兩人的反應與關係。",
+      "fit_score": 5,
+      "calc": "(4×5)／(2×2)=5",
+      "acceptance": "M包含四張小頭像及對白框接入；若需要重畫完整立繪或全角色表情，重新估算，不包在此項。"
+    },
+    {
+      "id": "S09",
+      "name": "同一旋律，換一種心情",
+      "principle": ["F2", "F4", "N4"],
+      "how_in_our_game": "後續關卡以第一大陸原創旋律做一段較疏落的重新編曲，保留可辨識短句，換音色與節奏；仍是一條普通BGM，不要求動態混音。",
+      "size": "M",
+      "risk": 2,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "玩家聽得出仍是同一趟旅程，情緒卻成熟咗。",
+      "fit_score": 5,
+      "calc": "(4×5)／(2×2)=5",
+      "acceptance": "必須有可合法改編的原創旋律及音訊製作能力；現有團隊未列音樂製作資源，未取得音檔前不排入承諾工期。"
+    },
+    {
+      "id": "S10",
+      "name": "可選的短步閃身",
+      "principle": ["F1", "N5"],
+      "how_in_our_game": "只作聖誕後原型：兩角色可用短步調位，不附無敵、不穿敵人；手機必須有清楚單鍵入口，不用雙擊方向或複雜組合。先在安全可選支路測試，不改第一大陸必要跳躍。",
+      "size": "L",
+      "risk": 3,
+      "next_gen": 5,
+      "familiar": 4,
+      "couple_benefit": "提供主動調位的新鮮感，但不要求較弱玩家用它才過到關。",
+      "fit_score": 1.6667,
+      "calc": "(5×4)／(4×3)=1.6667",
+      "acceptance": "需新增輸入、冷卻、碰撞及教學測試；若會令近戰失去風險或擠壓觸控按鈕，取消，不為次世代標籤硬加。"
+    },
+    {
+      "id": "S11",
+      "name": "探索與戰鬥的同步音樂分層",
+      "principle": ["F1", "N4"],
+      "how_in_our_game": "聖誕後取得同長度、同速度的音軌分層後，按既有戰鬥狀態淡入節奏層；不靠音樂節拍判定攻擊，不改預警。",
+      "size": "L",
+      "risk": 3,
+      "next_gen": 4,
+      "familiar": 5,
+      "couple_benefit": "兩人自然感到壓力升降，唔使再多一個HUD。",
+      "fit_score": 1.6667,
+      "calc": "(4×5)／(4×3)=1.6667",
+      "acceptance": "現有BGM播放不等於已有音軌同步；須驗證手機音訊解鎖、暫停恢復、重生及切頁，沒有分軌素材便不做。"
+    },
+    {
+      "id": "S12",
+      "name": "最後一擊的短慢鏡",
+      "principle": ["F3", "N3"],
+      "how_in_our_game": "聖誕後只在Boss HP歸零、全部危險已停用時，測試300ms短慢鏡，再恢復正常；不在一般命中或仍可受傷時減速。",
+      "size": "L",
+      "risk": 3,
+      "next_gen": 4,
+      "familiar": 4,
+      "couple_benefit": "共同完成戰鬥有一個清楚收尾，不打斷平時操作。",
+      "fit_score": 1.3333,
+      "calc": "(4×4)／(4×3)=1.3333",
+      "acceptance": "鏡頭tween不等於全遊戲慢鏡；需同步物理、計時器、動畫及音訊，避免死亡、跳過或切場後殘留減速。"
+    }
+  ],
+  "pre_christmas_stage6_7": [
+    {
+      "order": 1,
+      "signature_id": "S01",
+      "scope": "兩關色彩與光暗層整理",
+      "size": "S",
+      "fit_score": 20,
+      "M_equivalent": 0.5
+    },
+    {
+      "order": 2,
+      "signature_id": "S02",
+      "scope": "共用第二大陸HUD外框，不改資訊位置",
+      "size": "S",
+      "fit_score": 20,
+      "M_equivalent": 0.5
+    },
+    {
+      "order": 3,
+      "signature_id": "S03",
+      "scope": "只重配現有BGM及場景音量",
+      "size": "S",
+      "fit_score": 20,
+      "M_equivalent": 0.5
+    },
+    {
+      "order": 4,
+      "signature_id": "S04",
+      "scope": "每關一段兩層背景視差，不重做整關",
+      "size": "M",
+      "fit_score": 6.25,
+      "M_equivalent": 1
+    },
+    {
+      "order": 5,
+      "signature_id": "S05",
+      "scope": "兩場Boss各一次1800ms戰前鏡頭",
+      "size": "M",
+      "fit_score": 6.25,
+      "M_equivalent": 1
+    },
+    {
+      "order": 6,
+      "signature_id": "S06",
+      "scope": "兩角色共用命中回饋整理，只在第6、7關啟用",
+      "size": "M",
+      "fit_score": 5,
+      "M_equivalent": 1
+    }
+  ],
+  "stages8_10": [
+    {
+      "signature_id": "S07",
+      "decision": "優先",
+      "reason": "用既有機關事件帶動背景，比新增玩家操作更容易保住單人兼容；不涉及故事內容。"
+    },
+    {
+      "signature_id": "S08",
+      "decision": "優先",
+      "reason": "用少量表情提升角色演出，控制美術量，不擴充成全套立繪系統。"
+    },
+    {
+      "signature_id": "S09",
+      "decision": "有音樂資源才做",
+      "reason": "重新編曲比動態音樂系統風險低，但現有團隊未確認有音訊製作能力。"
+    },
+    {
+      "signature_id": "S10",
+      "decision": "只做原型，未通過手機測試不採用",
+      "reason": "新操作是最像續作、亦最容易破壞原有手感的一項，不應預先承諾成正式能力。"
+    },
+    {
+      "signature_id": "S11",
+      "decision": "延後",
+      "reason": "先有分軌素材與同步測試，再談動態音樂，不能只用兩條BGM同時播放冒充。"
+    },
+    {
+      "signature_id": "S12",
+      "decision": "最後考慮",
+      "reason": "收益主要是演出，卻牽涉全局時間；穩定性比短慢鏡重要。"
+    }
+  ],
+  "self_check": {
+    "direction": "建議第二大陸的簽名是「同一對主角，進入更有層次、會回應、識用鏡頭與聲音講故事的世界」，不是更黑、更難或更多按鈕。",
+    "research_count": "6個系列演進例子，符合6至8個要求；其中Sonic Mania屬跨年代復古續作，已明確區分，不假裝全部是相鄰硬件世代。",
+    "research_limits": "本次找到的來源足以支持操作、演出及製作方向；未搵到能量化「次世代感提升百分比」的可靠數據，沒有虛構。",
+    "principles_status": "熟悉感及次世代感各5條，是根據案例作出的設計歸納，不是來源逐字提出的通用定律。",
+    "signature_count": 12,
+    "coverage": {
+      "visuals": ["S01", "S04", "S05"],
+      "feel": ["S06", "S10"],
+      "sound": ["S03", "S09", "S11"],
+      "UI": ["S02"],
+      "story_presentation": ["S05", "S08"],
+      "level_interaction": ["S07"]
+    },
+    "fit_method": {
+      "formula": "(次世代感×熟悉感保留)／(工作量權重×風險)",
+      "size_weights": {"S": 1, "M": 2, "L": 4},
+      "risk_scale": "1為局部參數或外觀；2為跨事件、素材或鏡頭整合；3為新操作、音訊同步或全局時間。",
+      "qualification": "分數是本次主觀設計排序，不是玩家實驗結果；同分時優先依賴少、可獨立回退的項目。"
+    },
+    "pre_christmas_budget": {
+      "selected": "3個S＋3個M",
+      "calculation": "(3×1＋3×2)／2＝4.5個M",
+      "reserved": "餘0.5個M留作這批改動的整合驗收。",
+      "total_with_reserve": "5個M，沒有超過上限。",
+      "qualification": "M等價是依題定權重換算，不是工日保證；每個M已包含本項基本測試，0.5M只作跨項回歸，不取代整個遊戲的既有測試預算。",
+      "cut_rule": "任一S升M便先取消S03或縮S04至一關；任一項超估算，刪功能而不是削測試。"
+    },
+    "first_minute_target": "第6關首分鐘讓玩家依次感到色彩變了、背景有深度、聲音空間不同，但第一下跳躍與攻擊仍熟悉；Boss鏡頭留到戰前，不把所有特效塞在開場。",
+    "technical_honesty": [
+      "16-bit與32-bit在此是美術及演出方向，不代表網頁引擎真的切換硬件位元數。",
+      "保持640×360邏輯畫面，不靠提高解析度假裝升級。",
+      "視差不是景深模糊；2D鏡頭tween不是3D旋轉。",
+      "既有粒子不等於已有新粒子素材，既有BGM不等於已有分軌音樂。",
+      "未讀repo，所有S／M均有明列前提；實作前由Claude核對現有事件及素材。"
+    ],
+    "performance_acceptance": "在同一手機、同一場景比較開關新效果；若新增效果令幀時間或輸入明顯變差，先減粒子及背景層，不降低預警清晰度。未量度前不承諾60FPS。",
+    "coop_and_mobile": "聖誕前六項都不增加按鍵；戰前鏡頭須同時容納兩人。唯一新操作S10列L，必須單人手機可用且不成必要通關條件。",
+    "fixed_rules": "死亡清裝、至少0.8秒預警、小怪2至3下全部保留；沒有新增無敵閃避或以視覺效果改傷害。",
+    "character_consistency": "噗噗保持外向、簡單、愛蜜與朋友；琪寶寶直率聰明；倫寶分析與支援；不以新演出改寫性格。",
+    "content_guardrails": "研究名稱只出現在報告，不放入遊戲；不複製角色、美術或劇情，沒有後續故事劇透或禁止題材。",
+    "handoff_summary": "聖誕前先做色彩、HUD、現有聲音、局部視差、Boss短鏡頭及命中回饋；新操作、分層音樂及慢鏡留待之後，避免把續作感誤做成系統膨脹。"
+  }
+}
