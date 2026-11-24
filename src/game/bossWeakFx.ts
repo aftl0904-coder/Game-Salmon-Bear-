@@ -42,6 +42,8 @@ export function playBossWeakHitFx(
   playWeakHitSfx()
   freezeActors(scene, actors, WEAK_HIT_FREEZE_MS)
   const now = scene.time.now
+  // scene.time restarts from 0 on scene restart / next stage — reset the gate instead of muting the toast.
+  if (now < lastWeakToastAt) lastWeakToastAt = -WEAK_TOAST_GAP_MS
   if (now - lastWeakToastAt >= WEAK_TOAST_GAP_MS) {
     lastWeakToastAt = now
     floatText(scene, x, y - 56, '弱點！', '#5cffd0', { size: 18, rise: 40, dur: 700 })
