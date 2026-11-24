@@ -14,6 +14,16 @@ import { SFX, playSong, stopBgm, unlockAudio, tickExhibitAmbient, resetExhibitAm
 import { EncounterController, rosterForEncounter, type EncounterDef } from './encounter'
 import { Stage7World, type Stage7Data } from './stage7World'
 import { calcScore, saveScore, loadScores } from './score'
+import {
+  playLogEnabled,
+  recordHurt,
+  recordDeath,
+  recordContinue,
+  recordClear,
+  resetStageFps,
+  tickStageFps,
+  stageFpsSnapshot,
+} from './playLog'
 import { unlockStage, markFriendSaved } from './progress'
 import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
 import { stage7GrowthHook } from './growthHook'
@@ -1083,6 +1093,14 @@ export class GameScene extends Phaser.Scene {
   }
 
   beginDie(h: Hero, msg: string) {
+    if (playLogEnabled() && h.pose !== 'die') {
+      recordDeath({
+        stage: this.stageNo,
+        mode: this.mode,
+        hero: h.role === 'girl' ? 'girl' : 'boy',
+        x: h.x,
+      })
+    }
     beginDeathPose(h)
     this.refreshHearts()
     this.lose(msg)
@@ -1130,6 +1148,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.storyIntro) return
+
+    // log-1: sample FPS only while the stage is actively playable.
+    if (playLogEnabled()) tickStageFps(dt)
 
     if (hasPrayCharge() && Phaser.Input.Keyboard.JustDown(this.keyO)) this.tryPray()
     this.prayIcon?.setVisible(hasPrayCharge())
@@ -2266,7 +2287,58 @@ export class GameScene extends Phaser.Scene {
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts()
+    this.logHurtEvent(
+      h,
+      bossHit || pe.boss ? `boss:${pe.species || 'boss'}` : `enemy:${pe.species || '?'}`,
+      dmg,
+      hpLeft,
+    )
     if (hpLeft <= 0) this.knockOut(h)
+  }
+
+  /** log-1 helper — no-op unless `?log=1`. */
+  private logHurtEvent(h: Hero, cause: string, dmg: number, hpLeft: number) {
+    if (!playLogEnabled()) return
+    recordHurt({
+      stage: this.stageNo,
+      mode: this.mode,
+      hero: h.role === 'girl' ? 'girl' : 'boy',
+      x: h.x,
+      cause,
+      dmg,
+      hpAfter: hpLeft,
+    })
+  }
+
+  /** Map hazard float labels → `hazard:<data key>` / `boss:<kind>`. */
+  private hazardLogCause(label: string | undefined, boss?: boolean): string {
+    const strip = (s: string) => {
+      let t = s
+      const bang = t.search(/[!\uFF01]/)
+      if (bang >= 0) t = t.slice(0, bang)
+      t = t.replace(/\s*-?\d+$/, '')
+      return t.trim()
+    }
+    if (boss) {
+      const raw = strip(label ?? 'boss')
+      const kind =
+        raw.includes('反光') ? 'reflect'
+        : raw.includes('推土') ? 'bulldozer'
+        : raw.includes('罐') ? 'can'
+        : raw || '?'
+      return `boss:${kind}`
+    }
+    const raw = strip(label ?? '')
+    const key =
+      raw === '尖刺' || raw === '尖刺塊' ? 'spikes'
+      : raw.includes('榴槤') ? 'durian'
+      : raw === '熔岩' ? 'lava'
+      : raw.includes('化學') ? 'acid'
+      : raw.includes('轉刷') ? 'scrubber'
+      : raw.includes('清潔車') ? 'cart'
+      : raw.includes('錯掣') ? 'wrong_button'
+      : raw || '?'
+    return `hazard:${key}`
   }
 
   /**
@@ -2366,8 +2438,9 @@ export class GameScene extends Phaser.Scene {
   ): boolean {
     if (this.ended || !this.started) return false
     if (!canTakeDamage(h, this.time.now)) return false
+    const dmg = this.incoming(h, 1)
     const hpLeft = applyDamage(h, {
-      amount: this.incoming(h, 1),
+      amount: dmg,
       knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who), opts.source ?? null),
       knockbackY: opts.knockY,
       iframeMs: this.iframes(h),
@@ -2391,6 +2464,7 @@ export class GameScene extends Phaser.Scene {
     this.juice.shakeDamage()
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts?.()
+    this.logHurtEvent(h, this.hazardLogCause(opts.label, opts.boss), dmg, hpLeft)
     if (hpLeft <= 0) this.knockOut(h)
     return true
   }
@@ -2406,8 +2480,9 @@ export class GameScene extends Phaser.Scene {
           h.snapToLane(h.lane, respawnX)
           continue
         }
+        const dmg = 1
         const hpLeft = applyDamage(h, {
-          amount: 1,
+          amount: dmg,
           knockbackX: 0,
           knockbackY: 0,
           now: this.time.now,
@@ -2421,6 +2496,7 @@ export class GameScene extends Phaser.Scene {
         SFX.spike()
         if (h.role === 'girl') this.summonBearAssist()
         this.refreshHearts()
+        this.logHurtEvent(h, 'pit', dmg, hpLeft)
         if (hpLeft <= 0) this.knockOut(h)
       }
     }
@@ -2452,6 +2528,14 @@ export class GameScene extends Phaser.Scene {
    */
   private knockOut(h: Hero) {
     if (!h.alive || h.pose === 'die') return
+    if (playLogEnabled()) {
+      recordDeath({
+        stage: this.stageNo,
+        mode: this.mode,
+        hero: h.role === 'girl' ? 'girl' : 'boy',
+        x: h.x,
+      })
+    }
     SFX.die()
     buzz(HAPTIC.die)
     const lost = dropOnDeath(h.role as Who)
@@ -4106,6 +4190,7 @@ export class GameScene extends Phaser.Scene {
             this.ended = true
             this.outroOn = true
             this.clearAt = this.time.now
+            this.logStageClear()
             try {
               unlockStage(Math.min(10, this.stageNo + 1))
             } catch {
@@ -5822,6 +5907,12 @@ export class GameScene extends Phaser.Scene {
     floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
     this.refreshHearts()
     if (h.role === 'girl') this.summonBearAssist()
+    const src =
+      (shot.getData('from') as string | undefined) ||
+      (shot.getData('species') as string | undefined) ||
+      (shot.getData('owner') as string | undefined) ||
+      (bossShot ? 'boss' : '?')
+    this.logHurtEvent(h, `bullet:${src}`, dmg, hpLeft)
     if (hpLeft <= 0) this.knockOut(h)
   }
 
@@ -5856,6 +5947,7 @@ export class GameScene extends Phaser.Scene {
         if (this.started) return
         this.started = true
         this.startedAt = this.time.now
+        resetStageFps()
         this.pauseReadyAt = this.time.now + 1200
         this.resetPauseKeys()
         this.storyIntro = null
@@ -6599,11 +6691,27 @@ export class GameScene extends Phaser.Scene {
   /** C2 (first real honey → 噗噗's ear twitches → note to 蜜樹丘), then the clear card. */
   private outroOn = false
   private clearAt = 0
+  /** log-1: stage clear + FPS snapshot (localStorage only). */
+  private logStageClear() {
+    if (!playLogEnabled()) return
+    const fps = stageFpsSnapshot()
+    const timeSec = Math.max(0, ((this.clearAt || this.time.now) - this.startedAt) / 1000)
+    recordClear({
+      stage: this.stageNo,
+      mode: this.mode,
+      timeSec,
+      deaths: this.deaths,
+      fpsAvg: fps.avg,
+      fpsMin1s: fps.min1s,
+    })
+  }
+
   private playOutro() {
     if (this.outroOn) return
     this.outroOn = true
     this.clearAt = this.time.now
     this.ended = true
+    this.logStageClear()
     this.physics.pause()
     stopBgm()
     SFX.win()
@@ -7236,6 +7344,9 @@ export class GameScene extends Phaser.Scene {
     SFX.continue()
     this.awaitingContinue = false
     this.ended = false
+    if (playLogEnabled()) {
+      recordContinue({ stage: this.stageNo, mode: this.mode })
+    }
     EventBus.emit(GameEvents.GAME_OVER, { active: false })
 
     const cx = Phaser.Math.Clamp(this.checkpointX - 40, 100, WORLD_W - 200)

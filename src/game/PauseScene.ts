@@ -4,6 +4,7 @@ import { SFX, setBgmDucked } from './audio'
 import { TouchInput, isPhonePlay } from './touchInput'
 import { connectedPads } from './gamepadBridge'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { clearPlayLog, copyPlayLogTsv, loadPlayLog, playLogEnabled } from './playLog'
 
 export type PauseData = {
   mode: '1p' | '2p'
@@ -23,6 +24,7 @@ export class PauseScene extends Phaser.Scene {
   private data_!: PauseData
   private closing = false
   private readyAt = 0
+  private logStatus?: Phaser.GameObjects.Text
 
   constructor() {
     super('pause')
@@ -38,12 +40,13 @@ export class PauseScene extends Phaser.Scene {
     SFX.blip(440)
     const W = GAME_W
     const H = GAME_H
+    const showLog = playLogEnabled()
 
     const dim = this.add.rectangle(W / 2, H / 2, W, H, 0x06040a, 0.62).setInteractive()
     dim.on('pointerdown', () => undefined)
 
     const pw = 220
-    const ph = 132
+    const ph = showLog ? 168 : 132
     const px = W / 2 - pw / 2
     const py = H / 2 - ph / 2 - 18
     const g = this.add.graphics()
@@ -81,6 +84,47 @@ export class PauseScene extends Phaser.Scene {
       .text(0, 0, '▶', { fontFamily: FONT_UI, fontSize: '11px', color: '#ffd76a', stroke: '#0c0604', strokeThickness: 2 })
       .setOrigin(0.5)
     this.tweens.add({ targets: this.arrow, x: '+=3', duration: 380, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+
+    // log-1: only when ?log=1 — copy / clear stay local (no network).
+    if (showLog) {
+      const n = loadPlayLog().length
+      this.logStatus = this.add
+        .text(W / 2, py + ph - 28, `紀錄 ${n} 條`, {
+          fontFamily: FONT_UI,
+          fontSize: '9px',
+          color: '#8a7a68',
+        })
+        .setOrigin(0.5)
+      const mkBtn = (x: number, label: string, onClick: () => void) => {
+        const t = this.add
+          .text(x, py + ph - 12, label, {
+            fontFamily: FONT_UI,
+            fontSize: '10px',
+            color: '#ffe08a',
+            stroke: '#0c0604',
+            strokeThickness: 2,
+            backgroundColor: '#2a1a10',
+            padding: { x: 6, y: 3 },
+          })
+          .setOrigin(0.5)
+          .setInteractive({ useHandCursor: true })
+        t.on('pointerover', () => t.setColor('#fff2c0'))
+        t.on('pointerout', () => t.setColor('#ffe08a'))
+        t.on('pointerdown', onClick)
+        return t
+      }
+      mkBtn(W / 2 - 52, '複製紀錄', () => {
+        void copyPlayLogTsv().then((ok) => {
+          this.logStatus?.setText(ok ? `已複製 ${loadPlayLog().length} 條 TSV` : '複製失敗')
+          SFX.blip(ok ? 720 : 220)
+        })
+      })
+      mkBtn(W / 2 + 52, '清除紀錄', () => {
+        clearPlayLog()
+        this.logStatus?.setText('紀錄已清除')
+        SFX.blip(360)
+      })
+    }
 
     const pads = connectedPads().length
     const keys = isPhonePlay()
