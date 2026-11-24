@@ -1,4 +1,4 @@
-import { GAME_W } from './display'
+import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { playSong, SFX, unlockAudio } from './audio'
 import { TouchInput } from './touchInput'
@@ -82,6 +82,8 @@ export class BikeScene extends Phaser.Scene {
   private mid!: Phaser.GameObjects.TileSprite
   private road!: Phaser.GameObjects.TileSprite
   private far!: Phaser.GameObjects.Image
+  /** Chase destination (展銷側門) — grows as you near the end. */
+  private goalImg: Phaser.GameObjects.Image | null = null
   private coins = 0
   private crashes = 0
   /** Mashing the attack button pedals harder: more speed, and a rising coin multiplier. */
@@ -123,6 +125,12 @@ export class BikeScene extends Phaser.Scene {
     for (const n of ['rock', 'log', 'cone', 'puddle', 'ramp']) L(`bike-${n}`, n)
     if (!this.textures.exists('bike-swarm'))
       this.load.spritesheet('bike-swarm', '/art/bike/swarm.png', { frameWidth: meta.swarm.frameWidth, frameHeight: meta.swarm.frameHeight })
+    // Chase plates (Manus M7 / #144) — dedicated keys so they never clash with Boot s6-* props.
+    if (this.chase) {
+      if (!this.textures.exists('bike-c2-far')) this.load.image('bike-c2-far', '/art/bike-c2/far.png')
+      if (!this.textures.exists('bike-c2-mid')) this.load.image('bike-c2-mid', '/art/bike-c2/mid.png')
+      if (!this.textures.exists('bike-c2-goal')) this.load.image('bike-c2-goal', '/art/bike-c2/goal.png')
+    }
     // Chase obstacles reuse Boot-loaded s6-* / c2-prop-* keys — do not reload (Phaser key clash).
   }
 
@@ -141,6 +149,7 @@ export class BikeScene extends Phaser.Scene {
     this.mash = 0
     this.mult = 1
     this.speedLines = []
+    this.goalImg = null
     const W = GAME_W
     this.cameras.main.fadeIn(400, this.chase ? 20 : 255, this.chase ? 18 : 250, this.chase ? 28 : 235)
     unlockAudio()
@@ -148,14 +157,30 @@ export class BikeScene extends Phaser.Scene {
     playSong(this.chase ? 'stage5' : (`stage${Math.min(5, this.toStage)}` as 'stage2'))
 
     if (this.chase) {
-      // Temp mall-alley backdrop until Manus chase plates land.
-      this.add.rectangle(0, 0, W, ROAD_Y + 8, 0x1a1524).setOrigin(0).setDepth(0)
-      const farKey = this.textures.exists('s6-dome') ? 's6-dome' : 'bike-far'
-      this.far = this.add.image(W / 2, ROAD_Y - 8, farKey).setOrigin(0.5, 1).setAlpha(0.55).setTint(0x6a6080)
-      const midKey = this.textures.exists('s6-factory-wall') ? 's6-factory-wall' : 'bike-mid'
-      const mh = this.textures.get(midKey).get().height
-      this.mid = this.add.tileSprite(0, ROAD_Y + 4 - Math.min(mh, 120), W, Math.min(mh, 120), midKey).setOrigin(0).setAlpha(0.85)
-      this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0).setTint(0x4a4558)
+      // Manus bike-c2 plates (far / seamless mid / side-door goal). Fallback to temp s6 if missing.
+      this.add.rectangle(0, 0, W, ROAD_Y + 8, 0x121018).setOrigin(0).setDepth(0)
+      const hasC2 = this.textures.exists('bike-c2-far') && this.textures.exists('bike-c2-mid')
+      if (hasC2) {
+        this.far = this.add.image(W / 2, ROAD_Y - 4, 'bike-c2-far').setOrigin(0.5, 1).setDisplaySize(W, Math.round((GAME_H * 5) / 6))
+        const mh = this.textures.get('bike-c2-mid').get().height
+        // mid.png L/R columns match — tileSprite scrolls seamlessly.
+        this.mid = this.add.tileSprite(0, ROAD_Y + 4 - mh, W, mh, 'bike-c2-mid').setOrigin(0)
+        this.road = this.add.tileSprite(0, ROAD_Y - 4, W, 40, 'bike-road').setOrigin(0).setAlpha(0.35).setTint(0x3a3548)
+        if (this.textures.exists('bike-c2-goal')) {
+          this.goalImg = this.add
+            .image(W - 70, ROAD_Y + 2, 'bike-c2-goal')
+            .setOrigin(0.5, 1)
+            .setScale(0.55)
+            .setDepth(5)
+        }
+      } else {
+        const farKey = this.textures.exists('s6-dome') ? 's6-dome' : 'bike-far'
+        this.far = this.add.image(W / 2, ROAD_Y - 8, farKey).setOrigin(0.5, 1).setAlpha(0.55).setTint(0x6a6080)
+        const midKey = this.textures.exists('s6-factory-wall') ? 's6-factory-wall' : 'bike-mid'
+        const mh = this.textures.get(midKey).get().height
+        this.mid = this.add.tileSprite(0, ROAD_Y + 4 - Math.min(mh, 120), W, Math.min(mh, 120), midKey).setOrigin(0).setAlpha(0.85)
+        this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0).setTint(0x4a4558)
+      }
     } else {
       // Far layer stays put (the honey tree is the goal on the horizon); it grows a little as you near it.
       this.far = this.add.image(W / 2, 360, 'bike-far').setOrigin(0.5, 1)
@@ -325,10 +350,18 @@ export class BikeScene extends Phaser.Scene {
     const v = SPEED * this.speedMul
     this.dist += v * dt
     const len = this.courseLength()
-    this.far.setScale(1 + Math.min(1, this.dist / len) * 0.18)
-    this.mid.tilePositionX += v * dt * 0.45
+    const progress = Math.min(1, this.dist / len)
+    if (this.chase && this.goalImg) {
+      // Side door grows as you near the exhibit entrance.
+      this.goalImg.setScale(0.55 + progress * 0.7)
+      this.goalImg.setX(GAME_W - 70 - progress * 30)
+      this.far.setAlpha(0.85 + progress * 0.15)
+    } else {
+      this.far.setScale(1 + progress * 0.18)
+    }
+    this.mid.tilePositionX += v * dt * (this.chase ? 0.85 : 0.45)
     this.road.tilePositionX += v * dt
-    this.marker.x = 176 + Math.min(1, this.dist / len) * 288
+    this.marker.x = 176 + progress * 288
 
     for (const r of this.riders) {
       if (r.jumpKeys() && !r.air) {

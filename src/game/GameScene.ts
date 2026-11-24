@@ -46,6 +46,7 @@ import {
 } from './storyDepth'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
+import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
 import {
   type Creep,
   type EnemyKind,
@@ -497,6 +498,8 @@ export class GameScene extends Phaser.Scene {
   private funHotSpringArmedAt = 0
   private funCageTipSaid = false
   private funSparkleAt = 0
+  /** Stage5 photo spot — once per play through. */
+  private funPhotoTaken = false
   private s5world: Stage5World | null = null
   private hotSpringsDone = new Set<number>()
   /** 龍蝦 power-up: attack ×1.5 until this time. */
@@ -5970,9 +5973,17 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Fun-1 F3 soak lines / F6 coop tip / F9 sparkle. */
+  /** Fun-1 F3 soak lines / F6 coop tip / F9 sparkle / photo-1 polaroid. */
   private tickFun1Moments(_dt: number) {
     const x = this.leadX()
+    // Photo-1: any hero first crosses x≈3190 on stage 5 (tower) — flash + polaroid, no pause.
+    if (this.tower && !this.funPhotoTaken && this.started && !this.ended) {
+      const crossed = [this.boy, this.girl].some((h) => !!h?.alive && h.x >= PHOTO_SPOT_X)
+      if (crossed) {
+        this.funPhotoTaken = true
+        playPhotoPolaroid(this)
+      }
+    }
     // F3: stand in 3080–3140 for 1s → boy then girl lines (solo: own line only)
     if (this.market && !this.funHotSpringSaid && !this.storyIntro && !this.bossFight) {
       const inZone = x >= 3080 && x <= 3140
