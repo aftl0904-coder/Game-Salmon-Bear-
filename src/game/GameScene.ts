@@ -278,7 +278,7 @@ const FRIEND_RESCUE_LINES: Record<string, string> = {
   shiba: '柴柴：汪！好黑呀，我一直望住你哋盞燈。',
   snowcat: '北極熊：呢度好熱……陣間一齊去浸溫泉？',
   ginger: '薑餅：差少少就俾人當餅乾賣咗！',
-  fleecy: '大pat熊：抱一抱先，我好凍。',
+  fleecy: '大pat熊：我冇事。你哋有冇整親？',
   kuro: '喵仔：喵……我唔係等你哋，只係啱啱想出嚟。',
   gnome: '聖誕伯伯：Ho ho！聖誕禮物提早派——我就係禮物。',
   tigercub: '虎仔：我扮老虎嚇佢哋，點知佢哋唔驚。',
