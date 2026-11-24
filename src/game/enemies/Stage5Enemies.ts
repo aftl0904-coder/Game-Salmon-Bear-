@@ -80,7 +80,8 @@ export class TriBoss extends AnimEnemy {
     this.kind = 'boss'
     this.boss = true
     this.th = th
-    this.hp = this.maxHp = 48
+    // Alan 2026-11-24: no weak point — 48 ≈ 4 min for new 1P; cut to 28.
+    this.hp = this.maxHp = 28
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
