@@ -12,11 +12,14 @@ import { DEPTH } from './engine/depth'
  *    GameScene.tickHotSprings — no continuous state, so it doesn't need a class here.
  */
 
-export type Stage5Ctx = { scene: Phaser.Scene; floorY: number }
+export type Stage5Ctx = { scene: Phaser.Scene; floorY: number; pits?: Array<{ x: number; w: number }> }
 export type Stage5Data = {
   conveyors?: Array<{ x0: number; x1: number; dir: 1 | -1; speed?: number }>
   hotSprings?: Array<{ x: number }>
 }
+
+/** Clarity-2: stand-firm zone before a pit-adjacent belt end. */
+const BELT_PIT_DEADZONE = 40
 
 export class Stage5World {
   private ctx: Stage5Ctx
@@ -36,6 +39,17 @@ export class Stage5World {
     if (!z) return
     const grounded = !h.laneJumping && h.y >= this.ctx.floorY - 4
     if (!grounded) return
+    // Clarity-2: last 40px next to a pit — no push so the hero can plant feet.
+    let lo = z.x0
+    let hi = z.x1
+    for (const p of this.ctx.pits ?? []) {
+      const p0 = p.x
+      const p1 = p.x + p.w
+      if (p0 >= z.x1 - 2 && p0 <= z.x1 + 8) hi = Math.min(hi, z.x1 - BELT_PIT_DEADZONE)
+      if (p1 <= z.x0 + 2 && p1 >= z.x0 - 8) lo = Math.max(lo, z.x0 + BELT_PIT_DEADZONE)
+    }
+    // hi is the start of the pit-side deadzone (exclusive upper bound for push).
+    if (h.x < lo || h.x >= hi) return
     h.x += z.dir * (z.speed ?? 70) * (dt / 1000)
   }
 

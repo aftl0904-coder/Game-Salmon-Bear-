@@ -1,6 +1,8 @@
 /** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen, flashDamageSource } from './fx'
+import { registerTiles } from './tiles'
+import { registerIsoArt } from './isoArt'
 import {
   enablePixelSprite,
   enableActorSprite,
@@ -2214,7 +2216,11 @@ export class GameScene extends Phaser.Scene {
     const rawDmg = Math.max(1, Math.round(ENEMY_ATTACK_DMG * this.speciesAtkMul(pe) * difficultyAtkMul(getDifficulty())))
     const dmg = this.incoming(h, rawDmg)
     const bossHit = e instanceof MirrorOwl
-    const kx = this.safeKnockX(h, away * Math.round((bossHit ? BOSS_KNOCK_X * Math.max(gearKnock, 0.85) : 340 * speciesKnock * gearKnock)))
+    const kx = this.safeKnockX(
+      h,
+      away * Math.round((bossHit ? BOSS_KNOCK_X * Math.max(gearKnock, 0.85) : 340 * speciesKnock * gearKnock)),
+      pe,
+    )
     const ky = -Math.round(320 * Math.max(0.45, speciesKnock) * gearKnock)
     const hpLeft = applyDamage(h, {
       amount: dmg,
@@ -2269,16 +2275,64 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Knockback never throws a hero into a pit: zero the push if a pit edge lies that way. */
-  private safeKnockX(h: Hero, kx: number) {
-    if (!kx || !terrainEnabled()) return kx
-    const dir = Math.sign(kx)
+  /**
+   * Clarity-2: if knock direction has a hazard within ~80px (pit / spike / durian /
+   * floor junk / other enemy), reverse knock; if both sides blocked, horizontal = 0
+   * (vertical knock from caller still applies).
+   */
+  private safeKnockX(h: Hero, kx: number, exclude?: Phaser.GameObjects.GameObject | null) {
+    if (!kx) return kx
     const reach = 80
-    for (const p of terrainPits()) {
-      const near = dir > 0 ? p.x0 >= h.x - 4 && p.x0 <= h.x + reach : p.x1 <= h.x + 4 && p.x1 >= h.x - reach
-      if (near) return 0
-    }
+    const blocked = (dir: number) => this.knockDirBlocked(h, dir, reach, exclude)
+    const dir = Math.sign(kx) as 1 | -1
+    const fwd = blocked(dir)
+    const back = blocked(-dir as 1 | -1)
+    if (fwd && back) return 0
+    if (fwd) return -kx
     return kx
+  }
+
+  private knockDirBlocked(
+    h: Hero,
+    dir: number,
+    reach: number,
+    exclude?: Phaser.GameObjects.GameObject | null,
+  ): boolean {
+    if (terrainEnabled()) {
+      for (const p of terrainPits()) {
+        const near =
+          dir > 0
+            ? p.x0 >= h.x - 4 && p.x0 <= h.x + reach
+            : p.x1 <= h.x + 4 && p.x1 >= h.x - reach
+        if (near) return true
+      }
+    }
+    for (const o of this.hazards?.getChildren() ?? []) {
+      const s = o as Phaser.Physics.Arcade.Sprite
+      if (!s.active || s === exclude) continue
+      const kind = s.getData('hazardKind') as string | undefined
+      if (kind !== 'spike' && kind !== 'durian') continue
+      const body = s.body as Phaser.Physics.Arcade.StaticBody | null
+      const left = body?.left ?? s.x - s.displayWidth * 0.5
+      const right = body?.right ?? s.x + s.displayWidth * 0.5
+      if (dir > 0 && left >= h.x - 4 && left <= h.x + reach) return true
+      if (dir < 0 && right <= h.x + 4 && right >= h.x - reach) return true
+    }
+    for (const j of this.s6world?.junkZones() ?? []) {
+      const half = j.w * 0.55
+      const left = j.x - half
+      const right = j.x + half
+      if (dir > 0 && left >= h.x - 4 && left <= h.x + reach) return true
+      if (dir < 0 && right <= h.x + 4 && right >= h.x - reach) return true
+    }
+    for (const o of this.enemies?.getChildren() ?? []) {
+      const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string; active: boolean }
+      if (!e.active || e === exclude || e === h || e.fsm === 'DEAD') continue
+      if (Math.abs(e.y - h.y) > 48) continue
+      if (dir > 0 && e.x > h.x && e.x <= h.x + reach) return true
+      if (dir < 0 && e.x < h.x && e.x >= h.x - reach) return true
+    }
+    return false
   }
 
   private spike(h: Hero) {
@@ -2307,7 +2361,7 @@ export class GameScene extends Phaser.Scene {
     if (!canTakeDamage(h, this.time.now)) return false
     const hpLeft = applyDamage(h, {
       amount: this.incoming(h, 1),
-      knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who)),
+      knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who), opts.source ?? null),
       knockbackY: opts.knockY,
       iframeMs: this.iframes(h),
       lockMs: opts.boss ? BOSS_HURT_LOCK_MS : undefined,
@@ -4537,7 +4591,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.tower) {
-      this.s5world = new Stage5World({ scene: this, floorY: LANE_FLOOR_Y }, ST)
+      this.s5world = new Stage5World(
+        { scene: this, floorY: LANE_FLOOR_Y, pits: ST.pits?.map((p) => ({ x: p.x, w: p.w })) },
+        ST,
+      )
     }
 
     if (this.mall) {
@@ -5661,7 +5718,7 @@ export class GameScene extends Phaser.Scene {
     else shot.destroy()
     const away = (Math.sign(h.x - shot.x) || -1) as 1 | -1
     const dmg = this.incoming(h, shotDmg)
-    const bkx = this.safeKnockX(h, away * (bossShot ? BOSS_KNOCK_X : 180))
+    const bkx = this.safeKnockX(h, away * (bossShot ? BOSS_KNOCK_X : 180), shot)
     const hpLeft = applyDamage(h, {
       amount: dmg,
       knockbackX: bkx,
@@ -7165,22 +7222,47 @@ export class GameScene extends Phaser.Scene {
   }
 
   private spikes(x: number, n: number) {
+    // Boot normally registers these; forced scene.start in QA can race ahead of paint.
+    if (!this.textures.exists('blk-spike') || !this.textures.exists('til-spike')) {
+      registerTiles(this)
+      registerIsoArt(this)
+    }
     const tex = this.textures.exists('blk-spike') ? 'blk-spike' : 'til-spike'
-    const stride = this.textures.exists(tex) ? this.textures.get(tex).get().width : 24
+    const frame = this.textures.exists(tex) ? this.textures.get(tex).get() : null
+    const stride = frame?.width || 24
+    const placed: Phaser.Physics.Arcade.Sprite[] = []
     for (let i = 0; i < n; i++) {
       const s = this.hazards.create(
         Math.round(x + i * stride + stride / 2),
         Math.round(LANE_FLOOR_Y + 4),
         tex,
       ) as Phaser.Physics.Arcade.Sprite
+      if (s.texture?.key === '__MISSING__' && this.textures.exists(tex)) s.setTexture(tex)
       s.setOrigin(0.5, 0)
       s.setScale(1)
       s.setAngle(0)
       s.refreshBody()
+      enablePixelSprite(s)
       s.setDepth(DEPTH.HAZARD)
       s.setData('hazardKind', 'spike')
-      enablePixelSprite(s)
+      s.setData('spikeTex', tex)
+      placed.push(s)
     }
+    // Clarity-2: shrink hurtbox after the static group finishes refreshing bodies.
+    this.time.delayedCall(0, () => {
+      for (const s of placed) {
+        if (!s.active) continue
+        const kind = (s.getData('spikeTex') as string) || tex
+        const b = s.body as Phaser.Physics.Arcade.StaticBody | null
+        if (!b) continue
+        const tipW =
+          kind === 'blk-spike' ? Math.round(s.displayWidth * 0.62) : Math.round(s.displayWidth * 0.9)
+        const tipH =
+          kind === 'blk-spike' ? Math.round(s.displayHeight * 0.72) : Math.round(s.displayHeight * 0.85)
+        b.setSize(tipW, tipH)
+        b.setOffset((s.displayWidth - tipW) / 2, 0)
+      }
+    })
   }
 
   /** 榴槤陷阱 — 主角踩到會拮腳，減 1 格生命 */

@@ -293,6 +293,13 @@ export class Stage6World {
     this.slips.push({ x0, x1, mul, flash })
   }
 
+  /** Clarity-2: safeKnockX reads active junk footprints. */
+  junkZones(): Array<{ x: number; w: number }> {
+    const junkOn = this.ctx.heroes().some((h) => h.active && h.x >= this.junkUnlockX)
+    if (!junkOn) return []
+    return this.junk.map((j) => ({ x: j.x, w: j.w }))
+  }
+
   private buildJunk(x: number, w: number) {
     const s = this.ctx.scene
     const f = this.ctx.floorY
