@@ -173,7 +173,8 @@ export class MirrorOwl extends AnimEnemy {
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(bossHitDamage(dmg, { weak: this.act === 'weak', weakBase: 2, capNormal: 2, capWeak: 4 }), dir)
+    const weak = this.act === 'weak'
+    const r = super.receiveHit(bossHitDamage(dmg, { weak, weakBase: 2, capNormal: 2, capWeak: 4 }), dir)
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')
@@ -182,7 +183,7 @@ export class MirrorOwl extends AnimEnemy {
       this.updatePhase()
       if (this.qphase === before) this.countGreed()
     }
-    return r
+    return { ...r, weak }
   }
 
   /** Counter windows (perched / dazed / weak / observing) allow 3 free hits; the 4th is punished. */

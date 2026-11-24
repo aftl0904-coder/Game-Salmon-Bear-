@@ -5,7 +5,12 @@ import { inCombatView } from '../engine/cameraView'
 /** Expandable enemy FSM (macro states). */
 export type EnemyFsm = 'PATROL' | 'CHASE' | 'ATTACK' | 'HURT' | 'DEAD'
 export type AttackMode = 'melee' | 'projectile'
-export type EnemyHitResult = { killed: boolean; hp: number }
+export type EnemyHitResult = {
+  killed: boolean
+  hp: number
+  /** weak-hit-1: true when this hit used bossHitDamage's weak branch. */
+  weak?: boolean
+}
 export type EnemySpawnCoin = (x: number, y: number) => void
 export type EnemyHooks = {
   spawnCoin?: EnemySpawnCoin

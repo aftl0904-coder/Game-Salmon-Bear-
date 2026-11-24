@@ -177,6 +177,14 @@ export const SFX = {
     tone(190, 0.07, 'square', 0.12, 120)
     tone(70, 0.14, 'sine', 0.2, 40)
   },
+  /** weak-hit-1: same layers as hit, pitched up so boss weak windows read instantly. */
+  weakHit: () => {
+    noise(0.022, 0.2, 0, 4200)
+    noise(0.05, 0.12, 0.004, 1400)
+    tone(320, 0.07, 'square', 0.11, 200)
+    tone(140, 0.12, 'sine', 0.16, 70)
+    tone(880, 0.04, 'triangle', 0.05, 600)
+  },
   /** Shield / armour ding — bright metallic clang (Stage 7 盾牌飼養員 front block). */
   ding: () => {
     tone(1480, 0.05, 'square', 0.07, 900)

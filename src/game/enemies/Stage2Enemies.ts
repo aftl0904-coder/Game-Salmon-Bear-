@@ -415,7 +415,8 @@ export class QueenBee extends AnimEnemy {
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
-    const hitDmg = bossHitDamage(dmg, { weak: this.act === 'weak', weakBase: 3, capNormal: 2, capWeak: 5 })
+    const weak = this.act === 'weak'
+    const hitDmg = bossHitDamage(dmg, { weak, weakBase: 3, capNormal: 2, capWeak: 5 })
     // Bosses don't fly across the arena when hit.
     const before = { x: this.x, y: this.y }
     const r = super.receiveHit(hitDmg, dir)
@@ -423,7 +424,7 @@ export class QueenBee extends AnimEnemy {
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')
     if (!r.killed) this.updatePhase()
-    return r
+    return { ...r, weak }
   }
 
   private updatePhase() {

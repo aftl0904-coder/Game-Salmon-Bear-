@@ -1,6 +1,7 @@
 /** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
 import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen, flashDamageSource } from './fx'
+import { playBossWeakHitFx } from './bossWeakFx'
 import { registerTiles } from './tiles'
 import { registerIsoArt } from './isoArt'
 import {
@@ -2107,16 +2108,23 @@ export class GameScene extends Phaser.Scene {
       burst(this, pe.x, pe.y - 28, 0xa8e8ff, 5)
       return false
     }
-    floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
-    SFX.hit()
-    // Hit confirm: freeze all characters 0.2s; do NOT pause world (ammo free).
-    freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
-    this.juice.shakeDamage()
     const midY = pe.y - Math.max(16, pe.displayHeight * 0.45)
-    if (hasFx(this, 'hit-spark')) playFx(this, 'hit-spark', pe.x - dir * 6, midY, { scale: heavy ? 1.5 : 1 })
-    else burst(this, pe.x, pe.y - 18, 0xffe8a0, heavy ? 8 : 6)
-    impactRing(this, pe.x, pe.y - 12, heavy ? 0xffcc66 : 0xffe8a0, 8)
-    this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
+    // weak-hit-1: weak-branch boss hits get distinct spark / freeze / SFX / 「弱點！」.
+    if (result.weak) {
+      playBossWeakHitFx(this, pe.x - dir * 6, midY, this.combatActors())
+      this.juice.shakeDamage()
+      this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
+    } else {
+      floatText(this, pe.x, pe.y - 40, heavy ? '重擊！' : '！')
+      SFX.hit()
+      // Hit confirm: freeze all characters; do NOT pause world (ammo free). Normal = 70ms.
+      freezeActors(this, this.combatActors(), HIT_CONFIRM_FREEZE_MS)
+      this.juice.shakeDamage()
+      if (hasFx(this, 'hit-spark')) playFx(this, 'hit-spark', pe.x - dir * 6, midY, { scale: heavy ? 1.5 : 1 })
+      else burst(this, pe.x, pe.y - 18, 0xffe8a0, heavy ? 8 : 6)
+      impactRing(this, pe.x, pe.y - 12, heavy ? 0xffcc66 : 0xffe8a0, 8)
+      this.addScorePop(pe.x, pe.y - 56, SCORE_HIT)
+    }
     if (result.killed) {
       SFX.kill()
       // 紅魚's own death frames already burst into smoke; the others get a puff.

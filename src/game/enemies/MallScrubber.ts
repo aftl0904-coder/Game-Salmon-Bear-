@@ -315,10 +315,11 @@ export class MallScrubber extends Enemy {
     let raw = dmg
     if (backWeak) raw = Math.max(1, Math.round(dmg * 2))
     else if (fromFront && this.act !== 'recover') raw = Math.max(1, Math.floor(dmg * 0.5))
-    const hit = bossHitDamage(raw, { weak: this.act === 'recover', weakBase: 3, capNormal: 2, capWeak: 5 })
+    const weak = this.act === 'recover'
+    const hit = bossHitDamage(raw, { weak, weakBase: 3, capNormal: 2, capWeak: 5 })
     const x = this.x
     const y = this.y
-    const result = super.receiveHit(hit, dir)
+    const result = { ...super.receiveHit(hit, dir), weak }
     // Super armor: never knock back / interrupt during attack acts.
     this.setPosition(x, y).setVelocity(0, 0)
     this.setTint(0xffffff)

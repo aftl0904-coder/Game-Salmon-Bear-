@@ -110,6 +110,7 @@ export class WarriorKing extends AnimEnemy {
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
     // OPENING uses existing weak window (weakBase 3); back/front both open here.
+    // canTakeDamage() only during OPENING → every landed hit is a weak hit.
     const hitDmg = bossHitDamage(dmg, { weak: true, weakBase: 3, capNormal: 2, capWeak: 5 })
     const before = { x: this.x, y: this.y }
     let r: EnemyHitResult
@@ -125,7 +126,7 @@ export class WarriorKing extends AnimEnemy {
       if (this.fsm === 'HURT') this.setFsm('ATTACK')
     }
     if (!r.killed) this.updatePhase()
-    return r
+    return { ...r, weak: true }
   }
 
   private updatePhase() {
