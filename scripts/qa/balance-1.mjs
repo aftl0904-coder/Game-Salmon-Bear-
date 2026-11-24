@@ -67,13 +67,13 @@ assertEq('HOP_REST_MS', readExportNum(s7src, 'HOP_REST_MS'), 900)
 assertEq('CAN_INTERVAL_MS', readExportNum(s7src, 'CAN_INTERVAL_MS'), 3000)
 assertEq('CAN_WIND_MS', readExportNum(s7src, 'CAN_WIND_MS'), 800)
 assertEq('SHIELD_TURN_DELAY_MS', readExportNum(s7src, 'SHIELD_TURN_DELAY_MS'), 1000)
-assertEq('KING_HP_RHYTHM', readExportNum(s1src, 'KING_HP_RHYTHM'), 54)
+assertEq('KING_HP_RHYTHM', readExportNum(s1src, 'KING_HP_RHYTHM'), 60)
 assertEq('WINDUP_MS', readExportNum(s1src, 'WINDUP_MS'), 1000)
 assertEq('THROW_RELEASE_MS', readExportNum(s1src, 'THROW_RELEASE_MS'), 1000)
 assertEq('THROW_TOTAL_MS', readExportNum(s1src, 'THROW_TOTAL_MS'), 1100)
 assertEq('DASH_SPEED', readExportNum(s1src, 'DASH_SPEED'), 340)
 noteChange('H2 charge walk/mul/dist/warn', '40/2.5/200/400', '48/4.58/160/800')
-noteChange('H4 KING_HP_RHYTHM', 180, 54)
+noteChange('H4 KING_HP_RHYTHM', 180, 60)
 noteChange('H4 WINDUP/THROW_RELEASE/THROW_TOTAL', '400/250/500', '1000/1000/1100')
 
 const browser = await chromium.launch({
@@ -361,9 +361,9 @@ try {
   report.warriorKingClearSec = +clearSec.toFixed(1)
   report.checks.warriorKingMaxHp = await page.evaluate(() => {
     // may be destroyed — re-read from last known via KING export
-    return 54
+    return 60
   })
-  assertEq('WarriorKing maxHp (const)', 54, 54)
+  assertEq('WarriorKing maxHp (const)', 60, 60)
   if (!dead) fail(`Warrior King not defeated in time (${clearSec}s)`)
   report.checks.warriorKingClearInWindow = clearSec >= 60 && clearSec <= 150
   // Soft note: target 90–120; scripted OPENING DPS may be faster — still record

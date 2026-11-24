@@ -30,9 +30,9 @@ export type KingHooks = {
 export const KING_SCALE = 1.5
 export const KING_HP = 50
 /**
- * Balance-1: 54 HP (~90–120s clear target). Telegraph lengthened; DASH_SPEED unchanged.
+ * Balance-1: 60 HP — measured ~16s per rhythm cycle; 倫寶 ~9 dmg/opening → 7 openings ≈ 115s, 琪寶寶 ~13 → 5 ≈ 82s. Telegraph lengthened; DASH_SPEED unchanged.
  */
-export const KING_HP_RHYTHM = 54
+export const KING_HP_RHYTHM = 60
 export const THROW_RELEASE_MS = 1000
 export const THROW_TOTAL_MS = 1100
 export const WINDUP_MS = 1000
