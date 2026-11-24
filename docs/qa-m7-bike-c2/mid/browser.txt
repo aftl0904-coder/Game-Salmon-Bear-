@@ -1,0 +1,2 @@
+desktop: PASS; 1280x302, image decode + mouse; standalone preview, not game; no page errors
+mobile-touch: PASS; 1280x302, image decode + touch only; standalone preview, not game; no page errors
