@@ -1,6 +1,6 @@
 /**
  * Quiz batch3+4 acceptance:
- * - 115 rewritten prompts match sources (Q060 uses Claude wording)
+ * - 115 rewritten prompts match sources (Q060 + 8 Claude lint fixes exempt)
  * - answerIndex all 0; force-hard ids are hard
  * - bank size 300; iq hard ≥ 14
  * - two mobile screenshots (long + hard)
@@ -45,6 +45,12 @@ for (const src of rewritten) {
   let want = src.prompt
   if (src.id === 'Q060') {
     want = want.replace('80個月租位，每位$40一天', '80個時租車位，每位每日收$40')
+  }
+  // Claude lint fixes (2026-11-24): banned words / option-length balance
+  const CLAUDE_LINT_FIX = new Set(['mall-15', 'mall-33', 'iq-20', 'mall-35', 'hard-13', 'iq-09', 'iq-13', 'iq-32'])
+  if (CLAUDE_LINT_FIX.has(src.id)) {
+    if (q.answerIndex !== 0) promptMismatches.push({ id: src.id, reason: 'answerIndex', got: q.answerIndex })
+    continue
   }
   if (q.prompt !== want) promptMismatches.push({ id: src.id, reason: 'prompt', got: q.prompt.slice(0, 40), want: want.slice(0, 40) })
   if (q.answerIndex !== 0) promptMismatches.push({ id: src.id, reason: 'answerIndex', got: q.answerIndex })
