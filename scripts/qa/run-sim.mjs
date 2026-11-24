@@ -30,8 +30,12 @@ const CFG = {
     normal: { name: '普通', walk: 0.70, enemy: 0.15, hazard: 0.10, pitBase: 0.05, boss: 0.22, fightSec: 4.0, hazardSec: 1.2 },
     expert: { name: '熟手', walk: 0.85, enemy: 0.05, hazard: 0.03, pitBase: 0.015, boss: 0.08, fightSec: 2.5, hazardSec: 0.5 }
   },
-  // 2P 假設：血池合計、打得快、但畫面亂少少；跌坑只有跌嗰個返存檔點，隊伍唔使重行
-  coop: { hearts: 12, enemyMul: 1.15, fightMul: 0.65, bossOpeningMul: 0.6, rejoinSec: 4 }
+  // 2P（跟真實規則）：每人各自 6 格；任何一個死 = 全隊續關返存檔點；
+  // 敵人攻擊分散（每人承受 enemyShare），畫面亂少少（chaos）；兩個人都要過坑；
+  // Boss HP ×1.5、兩個人一齊打（每個破綻打兩份）；跌坑嗰個扣 1 格、隊伍唔使重行
+  coop: { enemyShare: 0.6, chaos: 1.15, fightMul: 0.65, bossHpMul: 1.5, attackers: 2, bossShare: 0.6, rejoinSec: 4 },
+  // 物種中招倍率（預設 1）；例：第1關新起手時間估算 { barrel: 0.33, fish: 0.33, elephant: 0.33 }
+  speciesMul: {}
 };
 
 const num = v => typeof v === 'number' && Number.isFinite(v);
@@ -48,7 +52,7 @@ function rng(seed) { // mulberry32
 
 function build(d) {
   const ev = [];
-  arr(d.enemies).forEach(e => { const x = xOf(e); if (num(x)) ev.push({ kind: 'enemy', x, id: `敵 ${x}${e.species ? ' ' + e.species : ''}` }); });
+  arr(d.enemies).forEach(e => { const x = xOf(e); if (num(x)) ev.push({ kind: 'enemy', x, species: e.species, id: `敵 ${x}${e.species ? ' ' + e.species : ''}` }); });
   for (const f of CFG.hazardFields) arr(d[f]).forEach(h => { const x = xOf(h); if (num(x)) ev.push({ kind: 'hazard', x, id: `${f} ${x}` }); });
   arr(d.pits).forEach(p => {
     const x0 = num(p?.x0) ? p.x0 : p?.x, x1 = num(p?.x1) ? p.x1 : num(p?.w) ? p.x + p.w : null;
@@ -66,38 +70,42 @@ function build(d) {
   return { ev, cps, endX };
 }
 
-function runOnce(S, T, coop, R) {
-  const H = coop ? CFG.coop.hearts : CFG.hearts;
-  let t = 0, hearts = H, pos = 0, cp = 0, i = 0, deaths = 0, falls = 0, restarts = 0;
+function runOnce(S, T, coop, R, spMul = CFG.speciesMul) {
+  const C = CFG.coop, n = coop ? 2 : 1;
+  let t = 0, pos = 0, cp = 0, i = 0, deaths = 0, falls = 0, restarts = 0;
+  let hearts = Array(n).fill(CFG.hearts);
   const fails = {};
   const v = CFG.speed * T.walk;
   const die = id => {
-    deaths++; fails[id] = (fails[id] || 0) + 1; t += CFG.respawnSec; hearts = H;
+    deaths++; fails[id] = (fails[id] || 0) + 1; t += CFG.respawnSec; hearts = Array(n).fill(CFG.hearts);
     pos = cp; i = S.ev.findIndex(e => e.x >= cp); restarts++;
   };
+  // 每個主角各自擲一次；任何一個扣到 0 就全隊死
+  const hitEach = p => { for (let h = 0; h < n; h++) if (R() < Math.min(1, p) && --hearts[h] <= 0) return true; return false; };
   while (i >= 0 && i < S.ev.length) {
     if (restarts > CFG.maxRestarts) return { t, deaths, falls, fails, stuck: true };
     const e = S.ev[i];
     t += Math.max(0, e.x - pos) / v; pos = e.x;
     for (const c of S.cps) if (c <= pos) cp = c;
     if (e.kind === 'enemy' || e.kind === 'hazard') {
-      t += e.kind === 'enemy' ? T.fightSec * (coop ? CFG.coop.fightMul : 1) : T.hazardSec;
-      const p = e.kind === 'enemy' ? T.enemy * (coop ? CFG.coop.enemyMul : 1) : T.hazard;
-      if (R() < Math.min(1, p) && --hearts <= 0) { die(e.id); continue; }
+      t += e.kind === 'enemy' ? T.fightSec * (coop ? C.fightMul : 1) : T.hazardSec;
+      let p = e.kind === 'enemy' ? T.enemy * (spMul[e.species] ?? 1) : T.hazard;
+      if (coop && e.kind === 'enemy') p *= C.enemyShare * C.chaos;
+      if (hitEach(p)) { die(e.id); continue; }
     } else if (e.kind === 'pit') {
-      let p = Math.min(T.pitCap ?? CFG.pitCap, T.pitBase * e.w / CFG.pitRefW * (e.moving ? CFG.movingPitMul : 1));
-      if (coop) p = 1 - (1 - p) ** 2;
-      if (R() < p) {
-        falls++; fails[e.id] = (fails[e.id] || 0) + 1; t += CFG.fallSec; hearts--;
-        if (hearts <= 0) { die(e.id); continue; }
-        if (coop) t += CFG.coop.rejoinSec;
+      const p = Math.min(T.pitCap ?? CFG.pitCap, T.pitBase * e.w / CFG.pitRefW * (e.moving ? CFG.movingPitMul : 1));
+      let fell = false, dead = false;
+      for (let h = 0; h < n; h++) if (R() < p) { fell = true; falls++; fails[e.id] = (fails[e.id] || 0) + 1; t += CFG.fallSec; if (--hearts[h] <= 0) dead = true; }
+      if (dead) { die(e.id); continue; }
+      if (fell) {
+        if (coop) t += C.rejoinSec;
         else { pos = cp; i = S.ev.findIndex(x => x.x >= cp); restarts++; continue; }
       }
-    } else if (e.kind === 'heal') hearts = H;
+    } else if (e.kind === 'heal') hearts = Array(n).fill(CFG.hearts);
     else if (e.kind === 'boss') {
-      const n = Math.max(1, Math.round(e.openings * (coop ? CFG.coop.bossOpeningMul : 1)));
+      const k = Math.max(1, Math.round(e.openings * (coop ? C.bossHpMul / C.attackers : 1)));
       let dead = false;
-      for (let c = 0; c < n; c++) { t += CFG.bossCycleSec; if (R() < T.boss && --hearts <= 0) { dead = true; break; } }
+      for (let c = 0; c < k; c++) { t += CFG.bossCycleSec; if (hitEach(coop ? T.boss * C.bossShare : T.boss)) { dead = true; break; } }
       if (dead) { die('Boss'); continue; }
     }
     i++;
@@ -113,7 +121,7 @@ function simulate(d, opts = {}) {
     const runs = opts.runs ?? CFG.runs, ts = [], fails = {};
     let deaths = 0, falls = 0, stuck = 0;
     for (let n = 0; n < runs; n++) {
-      const r = runOnce(S, T, coop, R);
+      const r = runOnce(S, T, coop, R, { ...CFG.speciesMul, ...(opts.speciesMul || {}) });
       ts.push(r.t); deaths += r.deaths; falls += r.falls; stuck += r.stuck;
       for (const [id, c] of Object.entries(r.fails)) fails[id] = (fails[id] || 0) + c;
     }
@@ -128,11 +136,11 @@ function simulate(d, opts = {}) {
   return out;
 }
 
-function report(stages) {
+function report(stages, opts = {}) {
   const lines = [], totals = {}, prevD = [];
   const extra = Object.values(CFG.extraPerStageSec).reduce((a, b) => a + b, 0);
   for (const [name, d] of Object.entries(stages)) {
-    const res = simulate(d);
+    const res = simulate(d, opts);
     lines.push(`##### ${name} #####`);
     for (const [k, r] of Object.entries(res)) {
       totals[k] = (totals[k] || 0) + r.mean;
