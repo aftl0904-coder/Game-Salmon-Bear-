@@ -96,3 +96,4 @@
 - `npm run build` 通過；既有 main 基線 `validate:data` 在 `stage7.json / trainer: static decor types and positions` 失敗（1/10），本美術分支未修改資料或遊戲程式。
 - 第2組：第6、7關五張故事圖按指定草稿與現有造型製作，1280×720；參考只讀提取自 `claude/c2s1-work-order` 草稿及 Cursor 馴獸師素材，沒有修改其他 branch。獨立預覽 QA 見同一資料夾，build 通過；既有資料驗證仍失敗，未真機、未接入遊戲。
 - 第3組：扶手電梯重畫並原尺寸 64×80 替換。桌面／模擬手機獨立預覽及注入第6關位置局部測試見 QA；現有場景有兩個道具實例，畫面與小車／原有大電梯有重疊，需整合方檢查擺位，本分支不改程式。未真機／自然通關；build 通過，既有資料驗證失敗不變。
+- 主角大頭依 Claude 指示對照 portraits 重畫：倫寶黑色短刺頭及橙色連帽衫／白內衫；琪寶寶啡色長馬尾及米色 T 恤；噗噗原檔不變。三人比較圖及重測見 `docs/qa-c2-art-batch2/compare-main3.png` 和 `main3-redraw-*`；未真機、未接入遊戲，原有資料驗證失敗不變。

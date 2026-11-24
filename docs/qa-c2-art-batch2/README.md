@@ -2,7 +2,7 @@
 
 ## Group 1: loading portraits and jars
 
-- Fourteen portraits and two jars are standalone PNG assets; no game code or integration is changed.
+- Fourteen portraits and two jars are standalone PNG assets; no game code or integration is changed. The `group1-*` files record the initial batch before the two-main-character redraw; current redraw checks are in `main3-redraw-*` below.
 - `group1-dimensions.txt` and `group1-alpha-check.txt` record dimensions, binary alpha and palette checks. The empty jar has intentionally transparent glass; the full jar also has small transparent glass highlights. The enclosed transparency in Kibobo is the gap between her braid and head, visually checked against a contrasting background.
 - `group1-desktop.png` and `group1-mobile-touch.png`, with `group1-browser.txt`, record a desktop mouse and simulated mobile touch-only test of image decoding and selection in a standalone preview. This does not test actual game integration or a physical phone.
 - `group1-build.txt`: `npm run build` (`tsc && vite build`) passed.
@@ -20,3 +20,9 @@
 - The additional Playwright test (`group3-game-test.json`, `group3-game-log.txt` and the two `group3-game-*.png` screenshots) loads the game fully, then injects stage 6 and the player position near the prop and isolates enemies. Desktop uses keyboard, simulated mobile uses touch for interaction; it is not a natural playthrough or physical-device test. The texture loaded and two instances were found at x=1848 and x=1920 with no page errors. The screenshot shows the new small escalator overlapping nearby scenery/cart and the existing large functional escalator: placement and legibility need the integration owner to review; this art-only task does not change code or placement.
 - The first attempt jumped into the scene before loading had finished and failed: texture/props were missing. Its log, JSON and screenshots are retained as `group3-game-initial-*`. The later test waits for the menu before injecting and is not evidence of a full playthrough.
 - `group3-build.txt`: `npm run build` passed. `group3-validate-data.txt`: the same existing stage7 static-decor data validation failed (1/10).
+
+## Main characters redraw
+
+- Lunbo and Kibobo were redrawn against `public/art/portraits/lunbo.png` and `public/art/portraits/kibobo.png`; Pupu was explicitly left unchanged. `compare-main3.png` shows each full original portrait sheet beside its current Q-head; all six images were decoded in a browser screenshot.
+- `main3-redraw-dimensions.txt` records 88×88 RGBA, binary alpha and ≤64 colours for both new images and Pupu's unchanged SHA-256. The enclosed transparent pixels in the new Kibobo image form the natural gap between ponytail, head and shoulder, visually checked on contrasting background.
+- `main3-redraw-desktop.png`, `main3-redraw-mobile-touch.png` and `main3-redraw-browser.txt` record standalone preview decoding and desktop mouse / simulated mobile touch selection, not game integration or physical-device testing. `main3-redraw-build.txt` passed; `main3-redraw-validate-data.txt` retains the unchanged baseline stage7 static-decor failure (1/10).

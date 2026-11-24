@@ -1,0 +1,2 @@
+desktop: PASS, 3 image files decoded and selectable via mouse; standalone art preview, not in game; no page errors.
+mobile-touch: PASS, 3 image files decoded and selectable via touchscreen only; standalone art preview, not in game; no page errors.
