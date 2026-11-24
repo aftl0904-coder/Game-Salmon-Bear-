@@ -1,0 +1,17 @@
+load-jar-empty.png: 48x64 RGBA, binary alpha, 63 colours, 1203 enclosed transparent px
+load-jar-full.png: 48x64 RGBA, binary alpha, 63 colours, 65 enclosed transparent px
+qhead-brownie.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-denim.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-fleecy.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-ginger.png: 64x64 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+qhead-gnome.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-guard.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-huihui.png: 64x64 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+qhead-kibobo.png: 88x88 RGBA, binary alpha, 63 colours, 20 enclosed transparent px
+qhead-kuro.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-lunbo.png: 88x88 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+qhead-pupu.png: 88x88 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+qhead-shiba.png: 64x64 RGBA, binary alpha, 64 colours, 0 enclosed transparent px
+qhead-snowcat.png: 64x64 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+qhead-tigercub.png: 64x64 RGBA, binary alpha, 63 colours, 0 enclosed transparent px
+Note: qhead-kibobo enclosed transparent pixels are intentional open hair-braid gaps, visually checked on contrasting background.

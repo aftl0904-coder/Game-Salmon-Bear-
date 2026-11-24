@@ -89,3 +89,8 @@
 - Alan 確認此前交給他的兩組文字可用；普通結局 1 句、完美結局 7 句及字卡逐字原文和決定見 `docs/bible/c1-approved-ending-dialogue-20261104.md`。只替換相應佔位，不改故事流程、判定或其他演出。
 - #103 合照停留五秒已在 main；本 branch 保留 `holdMs:5000` 並接入 Alan／Claude 定稿對白（含蜂蜜香旁白）。#90 開場已合主線。
 - QA 及原始紀錄見 `docs/qa-c1-approved-ending/`。測試以明確標示的注入場景進入，只測結局演出，不是假稱自然通關；真機及真人完整通關均未驗證。
+
+## 9. Loading 素材批次（`manus/c2-art-batch2-2610`）
+
+- 第1組：14 張角色大頭與空／滿蜜糖罐已製作，未接入遊戲；尺寸、色數、透明度及桌面滑鼠／模擬手機純 touch 獨立預覽見 `docs/qa-c2-art-batch2/`。未真機、未遊戲內測試。
+- `npm run build` 通過；既有 main 基線 `validate:data` 在 `stage7.json / trainer: static decor types and positions` 失敗（1/10），本美術分支未修改資料或遊戲程式。

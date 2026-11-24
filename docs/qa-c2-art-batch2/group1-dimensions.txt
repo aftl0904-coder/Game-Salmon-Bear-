@@ -1,0 +1,16 @@
+qhead-lunbo.png (88, 88) visible box (2, 3, 86, 85) colors 63
+qhead-kibobo.png (88, 88) visible box (2, 2, 86, 85) colors 63
+qhead-pupu.png (88, 88) visible box (2, 4, 86, 84) colors 63
+qhead-huihui.png (64, 64) visible box (2, 5, 62, 59) colors 63
+qhead-guard.png (64, 64) visible box (6, 2, 57, 62) colors 64
+qhead-denim.png (64, 64) visible box (2, 4, 62, 60) colors 64
+qhead-brownie.png (64, 64) visible box (2, 3, 62, 61) colors 64
+qhead-snowcat.png (64, 64) visible box (2, 5, 62, 58) colors 63
+qhead-shiba.png (64, 64) visible box (2, 3, 62, 60) colors 64
+qhead-ginger.png (64, 64) visible box (2, 2, 62, 61) colors 63
+qhead-fleecy.png (64, 64) visible box (2, 6, 62, 57) colors 64
+qhead-gnome.png (64, 64) visible box (4, 2, 60, 62) colors 64
+qhead-tigercub.png (64, 64) visible box (2, 2, 62, 61) colors 63
+qhead-kuro.png (64, 64) visible box (3, 2, 60, 62) colors 64
+load-jar-empty.png (48, 64) visible box (2, 4, 46, 59) colors 63
+load-jar-full.png (48, 64) visible box (2, 4, 46, 59) colors 63
