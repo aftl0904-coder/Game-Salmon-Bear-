@@ -607,6 +607,141 @@
       "answerIndex": 0,
       "source": "https://www.landreg.gov.hk/tc/home/index.htm",
       "retiredReason": "B5：抽走按揭／買樓／睇樓／供樓／私人租約／售樓銷售文件類"
+    },
+    {
+      "id": "hard-11",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "樓價 $4,200,000，首期 20%，貸款額係？",
+      "choices": [
+        "$3,360,000",
+        "$840,000",
+        "$4,200,000",
+        "$2,100,000"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "買樓首期／貸款題，Alan 唔要買樓題"
+    },
+    {
+      "id": "hard-17",
+      "category": "hard",
+      "difficulty": "hard",
+      "prompt": "買樓訂金 5%，其後另付首期至合共 10%。樓價 $8,000,000，簽正式約後仍要補幾多先到 10%？",
+      "choices": [
+        "$400,000",
+        "$800,000",
+        "$200,000",
+        "$600,000"
+      ],
+      "answerIndex": 0,
+      "source": "常識題（香港日常商場／消費／心算）",
+      "retiredReason": "買樓訂金題，Alan 唔要買樓題"
+    },
+    {
+      "id": "dev-74",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "合約完成證明書（滿意紙）由邊個部門發出？",
+      "choices": [
+        "地政總署",
+        "屋宇署",
+        "規劃署",
+        "物業管理業監管局"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/compliance.html",
+      "retiredReason": "與 dev-09 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-76",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "建築規約一般要求地段業權人做咩？",
+      "choices": [
+        "喺期限內建成契約訂明嘅發展項目",
+        "即日開商場推廣",
+        "即日簽訂租約",
+        "即日委任物管公司"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/dev-control-compliance/building-covenant.html",
+      "retiredReason": "與 dev-11 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-75",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "佔用許可證（入伙紙）由邊個機構發出？",
+      "choices": [
+        "屋宇署",
+        "地政總署",
+        "差餉物業估價署",
+        "物業管理業監管局"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html",
+      "retiredReason": "與 dev-13 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-77",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "私人建築工程展開前，一般要委聘邊類人士呈交圖則？",
+      "choices": [
+        "認可人士",
+        "只委聘物業管理員",
+        "只委聘商場推廣公司",
+        "只委聘清潔公司"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.bd.gov.hk/tc/building-works/new-building-works/index.html",
+      "retiredReason": "與 dev-15 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-73",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "契約修訂或換地令業權人獲益時，通常要支付咩？",
+      "choices": [
+        "補地價",
+        "管理費按金",
+        "物業代理佣金",
+        "商場推廣費"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/premium-rental-assessment.html",
+      "retiredReason": "與 dev-19 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-71",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "政府賣地近年通常用咩方式公開出售土地？",
+      "choices": [
+        "公開招標",
+        "秘密私下轉讓",
+        "只限公開抽籤",
+        "只限物管公司內部認購"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-sale.html",
+      "retiredReason": "與 dev-22 重複知識點，保留前者"
+    },
+    {
+      "id": "dev-72",
+      "category": "developer",
+      "difficulty": "normal",
+      "prompt": "每年政府公布預計推售土地嘅文件通常叫？",
+      "choices": [
+        "賣地表",
+        "物管服務合約",
+        "商場積分章程",
+        "寫字樓裝修指南"
+      ],
+      "answerIndex": 0,
+      "source": "https://www.landsd.gov.hk/tc/land-disposal-transaction/land-sale.html",
+      "retiredReason": "與 dev-23 重複知識點，保留前者"
     }
   ]
 }

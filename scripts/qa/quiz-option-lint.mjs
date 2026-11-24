@@ -2,11 +2,12 @@
  * Quiz option lint (playtest8 follow-up + old-bank polish).
  *
  * Checks every question in data/quiz-mall.json:
- *  (a) Banned substrings must not appear in any choice
+ *  (a) Banned substrings must not appear in any choice (or prompt for agency/meta bans)
  *  (b) Parentheses （）() are banned in choices (no meta notes)
  *  (c) If the correct answer is a plain number / $n / n/n / n%, every choice must contain a digit
  *  (d) max(choice length) / min(choice length) <= 3
  *  (e) Absolute-word trap: if exactly one choice contains 一定|永遠|完全|全部, FAIL
+ *  (f) Buy-context words 首期|按揭|貸款額|訂金 in prompt or choices → FAIL
  *
  * Usage:
  *   node scripts/qa/quiz-option-lint.mjs              # lint current file → exit 0/1
@@ -25,10 +26,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const ROOT = path.resolve(__dirname, '../..')
 
 const BAN =
-  /忽略|當成|干擾項|差一步|漏咗|亂加|亂對調|任意|隨意|完全省略|公開員工評語|就得|隨時得|鼓勵|當展覽|免費倉|似是而非|潛規則|投票結果/
+  /忽略|當成|干擾項|差一步|漏咗|亂加|亂對調|任意|隨意|完全省略|公開員工評語|就得|隨時得|鼓勵|當展覽|免費倉|似是而非|潛規則|投票結果|旅遊發展局|旅發局|康文署|漁護署|程式碼|錯誤處理|唯一依據|單獨規管|全部條文自動適用|即日/
 
 const PAREN = /[（）()]/
 const ABS = /一定|永遠|完全|全部/
+const BUY = /首期|按揭|貸款額|訂金/
 
 const args = process.argv.slice(2)
 let file = path.join(ROOT, 'data/quiz-mall.json')
@@ -68,6 +70,13 @@ export function lintQuizBank(data) {
       if (PAREN.test(c)) {
         errors.push({ id, rule: 'paren', detail: c })
       }
+    }
+    if (BAN.test(String(q.prompt || ''))) {
+      errors.push({ id, rule: 'ban-prompt', detail: q.prompt })
+    }
+    const blob = `${q.prompt || ''} ${choices.join(' ')}`
+    if (BUY.test(blob)) {
+      errors.push({ id, rule: 'buy-context', detail: blob.match(BUY)?.[0] })
     }
     const absFlags = choices.map((c) => ABS.test(c))
     if (absFlags.filter(Boolean).length === 1) {
