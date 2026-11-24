@@ -1,0 +1,1685 @@
+{
+  "character": "drone",
+  "source": "/tmp/m8-art-work/drone-actions-raw.png",
+  "source_sha256": "0debb080746ddfb06de0c942f986bacf5129aa269aad7890c7f1ab72e9d7300b",
+  "source_size": [
+    1536,
+    2304
+  ],
+  "source_alpha_min_max": [
+    0,
+    254
+  ],
+  "source_alpha_unique_count": 255,
+  "alpha_binarization": {
+    "threshold_kept_greater_or_equal": 128,
+    "raw_nonzero_pixels": 1287948,
+    "discarded_partial_alpha_pixels": 408824,
+    "discarded_fraction_of_nonzero": 0.31742,
+    "note": "Partial-alpha pixels below threshold, including haze and noise, are removed before separators are measured."
+  },
+  "alternative_warning_source": null,
+  "geometry": {
+    "target_idle_height_logical_px": 40,
+    "idle_source_bbox_heights_px": [
+      258,
+      259,
+      261,
+      255
+    ],
+    "idle_source_median_height_px": 258.5,
+    "original_sheet_source_to_logical_scale": 0.15473887814313347,
+    "source_pixels_per_logical_pixel": 6.4624999999999995,
+    "output_idle_height_logical_px": [
+      40,
+      40,
+      40,
+      39
+    ],
+    "output_idle_median_height_logical_px": 40.0,
+    "output_idle_median_error_px": 0.0,
+    "all_action_frame_logical": [
+      64,
+      88
+    ],
+    "resolution_multiplier": 4,
+    "frame_sheet_px": [
+      256,
+      352
+    ],
+    "atlas_sheet_px": [
+      3072,
+      704
+    ],
+    "atlas_columns": 12,
+    "atlas_rows": 2,
+    "source_registration": "original sheet: per-column idle bbox centre; row baseline at max alpha-thresholded source y; authored per-frame variation retained. Cabinet alternative warning has its own source scale and registration as recorded in alternative_warning_source and each frame.",
+    "logical_registration_xy": [
+      32,
+      86
+    ],
+    "phaser_origin_bottom_center_xy": [
+      32,
+      88
+    ],
+    "origin_caveat": "The reference row baseline is 2 logical pixels above the geometric origin at y=88; one fully transparent border row is mandatory. Relative pose motion is retained.",
+    "resampling": "nearest neighbour to 64x88, then nearest-neighbour x4; no aspect ratio changes"
+  },
+  "palette": {
+    "shared_across_entire_character_atlas": true,
+    "opaque_rgb_colors_total": 64,
+    "rgba_alpha_values": [
+      0,
+      255
+    ],
+    "quantization": "global Pillow median-cut 64, no dithering",
+    "mean_absolute_rgb_channel_error_at_sampled_opaque_pixels": 5.6695,
+    "contains_pure_black_opaque": false
+  },
+  "separators": {
+    "method": "alpha >=128 made fully opaque, alpha <128 made transparent; detect zero-alpha rows and columns",
+    "horizontal": [
+      {
+        "between": [
+          "idle",
+          "walk"
+        ],
+        "binary_transparent_y_inclusive": [
+          345,
+          444
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "walk",
+          "warning"
+        ],
+        "binary_transparent_y_inclusive": [
+          704,
+          785
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          712,
+          714,
+          722,
+          768,
+          770,
+          774
+        ]
+      },
+      {
+        "between": [
+          "warning",
+          "attack"
+        ],
+        "binary_transparent_y_inclusive": [
+          1045,
+          1128
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          1070
+        ]
+      },
+      {
+        "between": [
+          "attack",
+          "hurt"
+        ],
+        "binary_transparent_y_inclusive": [
+          1465,
+          1518
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "hurt",
+          "defeat"
+        ],
+        "binary_transparent_y_inclusive": [
+          1800,
+          1907
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      }
+    ],
+    "rows": [
+      {
+        "action": "idle",
+        "source_content_y_inclusive": [
+          84,
+          344
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            313,
+            464
+          ],
+          [
+            685,
+            836
+          ],
+          [
+            1058,
+            1208
+          ]
+        ],
+        "split_x": [
+          388,
+          760,
+          1133
+        ]
+      },
+      {
+        "action": "walk",
+        "source_content_y_inclusive": [
+          445,
+          703
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            314,
+            464
+          ],
+          [
+            689,
+            835
+          ],
+          [
+            1061,
+            1208
+          ]
+        ],
+        "split_x": [
+          389,
+          762,
+          1134
+        ]
+      },
+      {
+        "action": "warning",
+        "source_content_y_inclusive": [
+          786,
+          1044
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            317,
+            464
+          ],
+          [
+            690,
+            837
+          ],
+          [
+            1070,
+            1208
+          ]
+        ],
+        "split_x": [
+          390,
+          763,
+          1139
+        ]
+      },
+      {
+        "action": "attack",
+        "source_content_y_inclusive": [
+          1129,
+          1464
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            316,
+            468
+          ],
+          [
+            709,
+            827
+          ],
+          [
+            1106,
+            1212
+          ]
+        ],
+        "split_x": [
+          392,
+          768,
+          1159
+        ]
+      },
+      {
+        "action": "hurt",
+        "source_content_y_inclusive": [
+          1519,
+          1799
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            334,
+            465
+          ],
+          [
+            736,
+            848
+          ],
+          [
+            1112,
+            1238
+          ]
+        ],
+        "split_x": [
+          399,
+          792,
+          1175
+        ]
+      },
+      {
+        "action": "defeat",
+        "source_content_y_inclusive": [
+          1908,
+          2229
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            341,
+            464
+          ],
+          [
+            715,
+            846
+          ],
+          [
+            1099,
+            1218
+          ]
+        ],
+        "split_x": [
+          402,
+          780,
+          1158
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "frame_count": 24,
+    "all_frames_all_edges_transparent": true,
+    "all_frames_nonempty": true,
+    "cross_frame_boundary_verification": "Every binary cut column and inter-row separator consists entirely of alpha=0. Each frame extracted only from its own separated region. Does not establish semantic identity or validate low-alpha haze.",
+    "min_silhouette_iou_after_downsample_inverse_projection": 0.93386,
+    "mean_silhouette_iou_after_downsample_inverse_projection": 0.94973,
+    "atlas_sha256": "d1d1575c03b3cdce58b36a4c40b0eeead9565e7a78a068e8f1093fceeee07ca6"
+  },
+  "frames": [
+    {
+      "row": 0,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        84,
+        388,
+        345
+      ],
+      "source_opaque_bbox_xyxy": [
+        92,
+        85,
+        313,
+        343
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "idle",
+      "frame_in_action": 0,
+      "atlas_index": 0,
+      "source_x_registration": 202.0,
+      "source_y_registration": 344,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35749,
+      "logical_foreground_pixels": 857,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95304,
+      "output_png": "drone/frames/idle-01.png",
+      "output_sha256": "ce3d0be201bc92af987e3f91ff1dd8c5eb3b8f8b9af14b0e234270e85217aeed",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "source_crop_xyxy": [
+        388,
+        84,
+        760,
+        345
+      ],
+      "source_opaque_bbox_xyxy": [
+        465,
+        85,
+        685,
+        344
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "idle",
+      "frame_in_action": 1,
+      "atlas_index": 1,
+      "source_x_registration": 574.5,
+      "source_y_registration": 344,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36019,
+      "logical_foreground_pixels": 865,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95595,
+      "output_png": "drone/frames/idle-02.png",
+      "output_sha256": "2eee79c942bcc83965f811e61e42d36e7ff3b5e30ec0db2bc67ea879f98ccb90",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "source_crop_xyxy": [
+        760,
+        84,
+        1133,
+        345
+      ],
+      "source_opaque_bbox_xyxy": [
+        837,
+        84,
+        1058,
+        345
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "idle",
+      "frame_in_action": 2,
+      "atlas_index": 2,
+      "source_x_registration": 947.0,
+      "source_y_registration": 344,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36200,
+      "logical_foreground_pixels": 862,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95437,
+      "output_png": "drone/frames/idle-03.png",
+      "output_sha256": "d97be50db52e7c8d045c35e38f1a65b17a1a8276649d0bdd9264fb1cc5848de4",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "source_crop_xyxy": [
+        1133,
+        84,
+        1536,
+        345
+      ],
+      "source_opaque_bbox_xyxy": [
+        1209,
+        90,
+        1430,
+        345
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "idle",
+      "frame_in_action": 3,
+      "atlas_index": 3,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 344,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36037,
+      "logical_foreground_pixels": 857,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        47,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9528,
+      "output_png": "drone/frames/idle-04.png",
+      "output_sha256": "61145c28c874d6ca41d1457a147def5f23d2342ebcd554fd65e2d3370f53c2d8",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        445,
+        389,
+        704
+      ],
+      "source_opaque_bbox_xyxy": [
+        92,
+        445,
+        314,
+        700
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "walk",
+      "frame_in_action": 0,
+      "atlas_index": 4,
+      "source_x_registration": 202.0,
+      "source_y_registration": 703,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36450,
+      "logical_foreground_pixels": 874,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95045,
+      "output_png": "drone/frames/walk-01.png",
+      "output_sha256": "631e0ae2cb8318a74a0ac8ddca2abd4f9d22a12bfb559e979736939ce362a70a",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "source_crop_xyxy": [
+        389,
+        445,
+        762,
+        704
+      ],
+      "source_opaque_bbox_xyxy": [
+        465,
+        448,
+        689,
+        700
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "walk",
+      "frame_in_action": 1,
+      "atlas_index": 5,
+      "source_x_registration": 574.5,
+      "source_y_registration": 703,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36337,
+      "logical_foreground_pixels": 875,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        47,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94892,
+      "output_png": "drone/frames/walk-02.png",
+      "output_sha256": "0e99ad672a66bfab29f1ff2b065283ee74328cc7999a09121e513a4635462bcd",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "source_crop_xyxy": [
+        762,
+        445,
+        1134,
+        704
+      ],
+      "source_opaque_bbox_xyxy": [
+        836,
+        450,
+        1061,
+        704
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "walk",
+      "frame_in_action": 2,
+      "atlas_index": 6,
+      "source_x_registration": 947.0,
+      "source_y_registration": 703,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37601,
+      "logical_foreground_pixels": 899,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        47,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95115,
+      "output_png": "drone/frames/walk-03.png",
+      "output_sha256": "fee1a840a59c652ac7805455f1cd363d425e588e8934d6d0fc3aa92f3a780cd3",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "source_crop_xyxy": [
+        1134,
+        445,
+        1536,
+        704
+      ],
+      "source_opaque_bbox_xyxy": [
+        1209,
+        448,
+        1438,
+        700
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "walk",
+      "frame_in_action": 3,
+      "atlas_index": 7,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 703,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36681,
+      "logical_foreground_pixels": 880,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        47,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94965,
+      "output_png": "drone/frames/walk-04.png",
+      "output_sha256": "cbeba48e81a67a2923eda2fa2897218886c6c479e9087ba34c908b76713f93e8",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        786,
+        390,
+        1045
+      ],
+      "source_opaque_bbox_xyxy": [
+        92,
+        786,
+        317,
+        1042
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "warning",
+      "frame_in_action": 0,
+      "atlas_index": 8,
+      "source_x_registration": 202.0,
+      "source_y_registration": 1044,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36660,
+      "logical_foreground_pixels": 882,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95501,
+      "output_png": "drone/frames/warning-01.png",
+      "output_sha256": "3ae8bce4ca4950738f49fd374bcf3d9210f8c35f29d373eb3611446892cd3677",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "source_crop_xyxy": [
+        390,
+        786,
+        763,
+        1045
+      ],
+      "source_opaque_bbox_xyxy": [
+        465,
+        786,
+        690,
+        1043
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "warning",
+      "frame_in_action": 1,
+      "atlas_index": 9,
+      "source_x_registration": 574.5,
+      "source_y_registration": 1044,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36750,
+      "logical_foreground_pixels": 881,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9571,
+      "output_png": "drone/frames/warning-02.png",
+      "output_sha256": "8d33410838f749237cc0716337dfc1a51f71f2e9ee3e39a3bcf5fb3565cc8105",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "source_crop_xyxy": [
+        763,
+        786,
+        1139,
+        1045
+      ],
+      "source_opaque_bbox_xyxy": [
+        838,
+        788,
+        1070,
+        1044
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "warning",
+      "frame_in_action": 2,
+      "atlas_index": 10,
+      "source_x_registration": 947.0,
+      "source_y_registration": 1044,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36879,
+      "logical_foreground_pixels": 886,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        51,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95246,
+      "output_png": "drone/frames/warning-03.png",
+      "output_sha256": "6545aca8d6e7cccc7ebf603817049b1f906dc10cc220b86e8f442f8d0d1ff03d",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "source_crop_xyxy": [
+        1139,
+        786,
+        1536,
+        1045
+      ],
+      "source_opaque_bbox_xyxy": [
+        1209,
+        788,
+        1436,
+        1045
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "warning",
+      "frame_in_action": 3,
+      "atlas_index": 11,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 1044,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37065,
+      "logical_foreground_pixels": 888,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        46,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95282,
+      "output_png": "drone/frames/warning-04.png",
+      "output_sha256": "807ed729dd726db1b784690f0113fc54e472db7064e44e445819d01d7cfc2d8a",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1129,
+        392,
+        1465
+      ],
+      "source_opaque_bbox_xyxy": [
+        83,
+        1129,
+        316,
+        1377
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "attack",
+      "frame_in_action": 0,
+      "atlas_index": 12,
+      "source_x_registration": 202.0,
+      "source_y_registration": 1464,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35451,
+      "logical_foreground_pixels": 848,
+      "logical_alpha_bbox_xyxy": [
+        14,
+        34,
+        49,
+        73
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94905,
+      "output_png": "drone/frames/attack-01.png",
+      "output_sha256": "4a95170132a01b0c27eb0a0f001050d19245e9cd2cd3c1a98d4cc438efd5025b",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "source_crop_xyxy": [
+        392,
+        1129,
+        768,
+        1465
+      ],
+      "source_opaque_bbox_xyxy": [
+        469,
+        1159,
+        709,
+        1414
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "attack",
+      "frame_in_action": 1,
+      "atlas_index": 13,
+      "source_x_registration": 574.5,
+      "source_y_registration": 1464,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35242,
+      "logical_foreground_pixels": 841,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        39,
+        53,
+        78
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94412,
+      "output_png": "drone/frames/attack-02.png",
+      "output_sha256": "567b403d314c38adfaad8cb00a211bd65f696952bb48704263861ffe0feffc99",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "source_crop_xyxy": [
+        768,
+        1129,
+        1159,
+        1465
+      ],
+      "source_opaque_bbox_xyxy": [
+        828,
+        1177,
+        1106,
+        1434
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "attack",
+      "frame_in_action": 2,
+      "atlas_index": 14,
+      "source_x_registration": 947.0,
+      "source_y_registration": 1464,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35751,
+      "logical_foreground_pixels": 864,
+      "logical_alpha_bbox_xyxy": [
+        14,
+        42,
+        57,
+        81
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93886,
+      "output_png": "drone/frames/attack-03.png",
+      "output_sha256": "46658996038ef71938fa7d1d01aff449d9bbcf4157f1ca44b6ca37e505327a01",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "source_crop_xyxy": [
+        1159,
+        1129,
+        1536,
+        1465
+      ],
+      "source_opaque_bbox_xyxy": [
+        1213,
+        1177,
+        1498,
+        1465
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "attack",
+      "frame_in_action": 3,
+      "atlas_index": 15,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 1464,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36159,
+      "logical_foreground_pixels": 869,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        43,
+        60,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93386,
+      "output_png": "drone/frames/attack-04.png",
+      "output_sha256": "475d9a02e137c850ca8fdfcef23d8c64e65b313e176e333993ed8ee2973b9d12",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1519,
+        399,
+        1800
+      ],
+      "source_opaque_bbox_xyxy": [
+        75,
+        1522,
+        334,
+        1768
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "hurt",
+      "frame_in_action": 0,
+      "atlas_index": 16,
+      "source_x_registration": 202.0,
+      "source_y_registration": 1799,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 38621,
+      "logical_foreground_pixels": 928,
+      "logical_alpha_bbox_xyxy": [
+        13,
+        43,
+        52,
+        81
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94307,
+      "output_png": "drone/frames/hurt-01.png",
+      "output_sha256": "ccfa547d490b3e673c9ea347f4aa474442775ac7b6da76d0d4f1762b8871664b",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "source_crop_xyxy": [
+        399,
+        1519,
+        792,
+        1800
+      ],
+      "source_opaque_bbox_xyxy": [
+        466,
+        1519,
+        736,
+        1778
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "hurt",
+      "frame_in_action": 1,
+      "atlas_index": 17,
+      "source_x_registration": 574.5,
+      "source_y_registration": 1799,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37287,
+      "logical_foreground_pixels": 890,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        43,
+        57,
+        83
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94344,
+      "output_png": "drone/frames/hurt-02.png",
+      "output_sha256": "00516951fad1670904999e7902f4e5007d08272eee10d94b7fe733833299097d",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "source_crop_xyxy": [
+        792,
+        1519,
+        1175,
+        1800
+      ],
+      "source_opaque_bbox_xyxy": [
+        849,
+        1537,
+        1112,
+        1789
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "hurt",
+      "frame_in_action": 2,
+      "atlas_index": 18,
+      "source_x_registration": 947.0,
+      "source_y_registration": 1799,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37380,
+      "logical_foreground_pixels": 896,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        45,
+        57,
+        84
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94081,
+      "output_png": "drone/frames/hurt-03.png",
+      "output_sha256": "eb20ba4fe01b946942ca5a595fdc7ff6bccd0363a773e8c3296380ff39376f4c",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "source_crop_xyxy": [
+        1175,
+        1519,
+        1536,
+        1800
+      ],
+      "source_opaque_bbox_xyxy": [
+        1239,
+        1553,
+        1480,
+        1800
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "hurt",
+      "frame_in_action": 3,
+      "atlas_index": 19,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 1799,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35064,
+      "logical_foreground_pixels": 843,
+      "logical_alpha_bbox_xyxy": [
+        20,
+        48,
+        57,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94577,
+      "output_png": "drone/frames/hurt-04.png",
+      "output_sha256": "998502a6965628f8b73040bc763f704a47483082c9c662fce42f018aea69c26d",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1908,
+        402,
+        2230
+      ],
+      "source_opaque_bbox_xyxy": [
+        88,
+        1908,
+        341,
+        2167
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 202.0,
+      "action": "defeat",
+      "frame_in_action": 0,
+      "atlas_index": 20,
+      "source_x_registration": 202.0,
+      "source_y_registration": 2229,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37988,
+      "logical_foreground_pixels": 903,
+      "logical_alpha_bbox_xyxy": [
+        14,
+        36,
+        53,
+        76
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95499,
+      "output_png": "drone/frames/defeat-01.png",
+      "output_sha256": "76a8c75f808d058be2fc168deb6381c452406ea03f741bf334ec5361acb0b7fd",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "source_crop_xyxy": [
+        402,
+        1908,
+        780,
+        2230
+      ],
+      "source_opaque_bbox_xyxy": [
+        465,
+        1917,
+        715,
+        2173
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 574.5,
+      "action": "defeat",
+      "frame_in_action": 1,
+      "atlas_index": 21,
+      "source_x_registration": 574.5,
+      "source_y_registration": 2229,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37344,
+      "logical_foreground_pixels": 891,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        38,
+        53,
+        77
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95352,
+      "output_png": "drone/frames/defeat-02.png",
+      "output_sha256": "57a54f1c5311c6695d22cc55b550fe23e2b54382c1710ea45e7df51dbd21da7c",
+      "output_opaque_rgb_color_count": 64,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "source_crop_xyxy": [
+        780,
+        1908,
+        1158,
+        2230
+      ],
+      "source_opaque_bbox_xyxy": [
+        847,
+        1931,
+        1099,
+        2190
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 947.0,
+      "action": "defeat",
+      "frame_in_action": 2,
+      "atlas_index": 22,
+      "source_x_registration": 947.0,
+      "source_y_registration": 2229,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 38432,
+      "logical_foreground_pixels": 920,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        40,
+        56,
+        80
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95412,
+      "output_png": "drone/frames/defeat-03.png",
+      "output_sha256": "458e040b74e23b1966963b2883a67a45010de6cd614adc6e090c9eda811289de",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "source_crop_xyxy": [
+        1158,
+        1908,
+        1536,
+        2230
+      ],
+      "source_opaque_bbox_xyxy": [
+        1219,
+        2004,
+        1485,
+        2230
+      ],
+      "source_path": "/tmp/m8-art-work/drone-actions-raw.png",
+      "source_to_logical_scale": 0.15473887814313347,
+      "source_x_anchor": 1319.0,
+      "action": "defeat",
+      "frame_in_action": 3,
+      "atlas_index": 23,
+      "source_x_registration": 1319.0,
+      "source_y_registration": 2229,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 35977,
+      "logical_foreground_pixels": 857,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        51,
+        57,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95815,
+      "output_png": "drone/frames/defeat-04.png",
+      "output_sha256": "e9c1540133ec34f4259b45b7159089f7c0ab2d6a6c2ce2aa211c6a98600e0cef",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    }
+  ]
+}

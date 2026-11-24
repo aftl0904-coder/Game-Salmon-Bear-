@@ -1,0 +1,24 @@
+{
+  "items": [
+    {
+      "name": "s8drone",
+      "path": "public/art/stage8/enemies/s8drone.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 24,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "s8tube",
+      "path": "public/art/stage8/enemies/s8tube.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 24,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    }
+  ]
+}
