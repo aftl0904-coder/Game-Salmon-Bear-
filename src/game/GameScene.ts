@@ -1,6 +1,6 @@
 /** User QA handoff: see /QA_HANDOFF_GATE.md (Visual/Feel/Fun ≥7.5; overall ~8.0+ before user fine-feel). */
 import Phaser from 'phaser'
-import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen } from './fx'
+import { burst, floatText, impactRing, scorePop, startIFrameBlink, JuiceManager, freezeActors, isActorFrozen, flashDamageSource } from './fx'
 import {
   enablePixelSprite,
   enableActorSprite,
@@ -174,7 +174,7 @@ import {
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { PLAYER } from './config/playerData'
 import { CAMERA, tutorialSign } from './config/gameData'
-import { assertIntegerScale, isDebugQuery } from './assertIntegerScale'
+import { assertIntegerScale, isDebugQuery, isHitboxQuery } from './assertIntegerScale'
 import { addGroundShadow, addContactShadowBand, type GroundShadow } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
 import { ENVIRONMENT, environmentById } from './config/gameData'
@@ -620,6 +620,11 @@ export class GameScene extends Phaser.Scene {
       })
     }
     this.debugOverlay = new DebugOverlay(this)
+    // Clarity-1: `?hitbox=1` turns on the F1 collision overlay (phone-friendly).
+    if (isHitboxQuery()) {
+      this.debugOverlay.toggle()
+      this.resetPhysicsDebug(true)
+    }
     this.juice = new JuiceManager(this)
     // Snap AFTER Arcade step — update() runs before worldstep, so in-update
     // snaps get overwritten by fractional velocity before render.
@@ -2178,6 +2183,10 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(160, () => {
       if (h.pose !== 'die' && h.hurtLock <= 0) h.clearTint()
     })
+    // Clarity-1: source white-flash + hit-spark at contact (no extra shake).
+    const contactX = (h.x + pe.x) / 2
+    const contactY = (h.y + pe.y) / 2 - 12
+    flashDamageSource(this, pe, contactX, contactY)
     SFX.hurt()
     buzz(HAPTIC.hurt)
     freezeActors(this, [h], PLAYER_HURT_FREEZE_MS)
@@ -2236,9 +2245,20 @@ export class GameScene extends Phaser.Scene {
       label: '榴槤！腳痛！',
     })
   }
-  private hazardHit(h: Hero, opts: { knockX: number; knockY: number; label?: string; boss?: boolean } = { knockX: 0, knockY: -560 }) {
-    if (this.ended || !this.started) return
-    if (!canTakeDamage(h, this.time.now)) return
+  private hazardHit(
+    h: Hero,
+    opts: {
+      knockX: number
+      knockY: number
+      label?: string
+      boss?: boolean
+      source?: Phaser.GameObjects.GameObject | null
+      contactX?: number
+      contactY?: number
+    } = { knockX: 0, knockY: -560 },
+  ): boolean {
+    if (this.ended || !this.started) return false
+    if (!canTakeDamage(h, this.time.now)) return false
     const hpLeft = applyDamage(h, {
       amount: this.incoming(h, 1),
       knockbackX: this.safeKnockX(h, opts.knockX * knockMul(h.role as Who)),
@@ -2250,6 +2270,13 @@ export class GameScene extends Phaser.Scene {
     if (opts.boss) h.hurtDamp = BOSS_HURT_DAMP
     applyHurtPose(h, -h.facing)
     startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
+    // Clarity-1: flash damage source + hit-spark at contact (no extra shake).
+    flashDamageSource(
+      this,
+      opts.source ?? null,
+      opts.contactX ?? h.x,
+      opts.contactY ?? h.y - 16,
+    )
     SFX.spike()
     burst(this, h.x, h.y - 16, 0xff6633, 10)
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
@@ -2258,6 +2285,7 @@ export class GameScene extends Phaser.Scene {
     if (h.role === 'girl') this.summonBearAssist()
     this.refreshHearts?.()
     if (hpLeft <= 0) this.knockOut(h)
+    return true
   }
   private checkFall() {
     const heroes = [this.boy, this.girl].filter((h): h is Hero => !!h)
@@ -4444,7 +4472,15 @@ export class GameScene extends Phaser.Scene {
           scene: this,
           floorY: LANE_FLOOR_Y,
           heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
-          hurt: (h, dir, label) => this.hazardHit(h, { knockX: dir * 220, knockY: -380, label }),
+          hurt: (h, dir, label, source) =>
+            this.hazardHit(h, {
+              knockX: dir * 220,
+              knockY: -380,
+              label,
+              source: source ?? null,
+              contactX: source && 'x' in source ? (source as { x: number }).x : h.x,
+              contactY: h.y - 20,
+            }),
           dropShot: (x, y) => this.droneBolt(x, y),
           enemyBodies: () =>
             this.enemies.getChildren().map((o) => {
@@ -5537,6 +5573,8 @@ export class GameScene extends Phaser.Scene {
     freezeActors(this, [h], FISH_BULLET_FREEZE_MS)
     this.knockAfterFreeze(h, bkx, -160, FISH_BULLET_FREEZE_MS, bossShot)
     startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
+    // Clarity-1: flash bullet + hit-spark at contact (no extra shake).
+    flashDamageSource(this, shot, (h.x + shot.x) / 2, (h.y + shot.y) / 2)
     SFX.hurt()
     burst(this, h.x, h.y - 20, 0xffaa66, 5)
     floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
@@ -8209,7 +8247,8 @@ export class GameScene extends Phaser.Scene {
         },
         spawnProjectile: (en, dir) => {
           const pe = en as PatrolEnemy
-          if (pe.species === 'barrel') this.spawnRock(pe, dir)
+          // Clarity-1: off-screen throwers may chase, but must not fire.
+          if (pe.species === 'barrel' && pe.canEngageFromScreen()) this.spawnRock(pe, dir)
         },
       },
     })

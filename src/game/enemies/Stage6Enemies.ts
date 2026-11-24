@@ -196,7 +196,8 @@ export class RobotArm extends Enemy {
     this.t -= dt
     if (this.phase === 'idle') {
       this.setScale(this.baseScale || 1)
-      if (this.t <= 0 && Math.abs(dx) < ARM_RANGE) {
+      // Clarity-1: only begin aim/shoot when on-camera; off-screen stay idle.
+      if (this.t <= 0 && Math.abs(dx) < ARM_RANGE && this.canEngageFromScreen()) {
         this.phase = 'aim'
         this.t = ARM_AIM_MS
       }
@@ -207,11 +208,16 @@ export class RobotArm extends Enemy {
       this.setScale(1, 1 - 0.06 * (1 - this.t / ARM_AIM_MS))
       if (this.t <= 0) {
         this.clearTint()
-        const high = this.shots % 2 === 1
-        this.shots++
-        this.ah.shoot(this.x + (dx < 0 ? -34 : 34), this.ah.floorY(), dx < 0 ? -1 : 1, high)
-        this.phase = 'rest'
-        this.t = ARM_REST_MS
+        if (!this.canEngageFromScreen()) {
+          this.phase = 'idle'
+          this.t = ARM_IDLE_MS
+        } else {
+          const high = this.shots % 2 === 1
+          this.shots++
+          this.ah.shoot(this.x + (dx < 0 ? -34 : 34), this.ah.floorY(), dx < 0 ? -1 : 1, high)
+          this.phase = 'rest'
+          this.t = ARM_REST_MS
+        }
       }
     } else if (this.t <= 0) {
       this.phase = 'idle'

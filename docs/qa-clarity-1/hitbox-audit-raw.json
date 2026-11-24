@@ -1,0 +1,782 @@
+[
+  {
+    "stage": 1,
+    "pits": [
+      {
+        "x0": 672,
+        "x1": 704,
+        "w": 32,
+        "note": ""
+      },
+      {
+        "x0": 1184,
+        "x1": 1224,
+        "w": 40,
+        "note": ""
+      },
+      {
+        "x0": 1872,
+        "x1": 2016,
+        "w": 144,
+        "note": "中間有 platform，唔可以一跳過"
+      },
+      {
+        "x0": 2464,
+        "x1": 2504,
+        "w": 40,
+        "note": ""
+      },
+      {
+        "x0": 3152,
+        "x1": 3296,
+        "w": 144,
+        "note": ""
+      },
+      {
+        "x0": 4524,
+        "x1": 4588,
+        "w": 64,
+        "note": ""
+      },
+      {
+        "x0": 5116,
+        "x1": 5228,
+        "w": 112,
+        "note": "移動木板坑"
+      }
+    ],
+    "spikes": [
+      {
+        "x": 420,
+        "n": 2
+      },
+      {
+        "x": 3840,
+        "n": 2
+      },
+      {
+        "x": 4700,
+        "n": 3
+      }
+    ],
+    "junk": [],
+    "enemyCount": 16,
+    "clusters": [
+      {
+        "enemy": {
+          "x": 1290,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "hazard": {
+          "x": 1204,
+          "kind": "pit",
+          "x0": 1184,
+          "x1": 1224
+        },
+        "gap": 66
+      },
+      {
+        "enemy": {
+          "x": 1700,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 1790,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "gap": 90
+      },
+      {
+        "enemy": {
+          "x": 1790,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 1700,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "gap": 90
+      },
+      {
+        "enemy": {
+          "x": 2570,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "hazard": {
+          "x": 2484,
+          "kind": "pit",
+          "x0": 2464,
+          "x1": 2504
+        },
+        "gap": 66
+      },
+      {
+        "enemy": {
+          "x": 2980,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 3050,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "gap": 70
+      },
+      {
+        "enemy": {
+          "x": 2980,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 3070,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "gap": 90
+      },
+      {
+        "enemy": {
+          "x": 3050,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 2980,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "gap": 70
+      },
+      {
+        "enemy": {
+          "x": 3050,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 3070,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "gap": 20
+      },
+      {
+        "enemy": {
+          "x": 3070,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 2980,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "gap": 90
+      },
+      {
+        "enemy": {
+          "x": 3070,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 3050,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "gap": 20
+      },
+      {
+        "enemy": {
+          "x": 4460,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "hazard": {
+          "x": 4556,
+          "kind": "pit",
+          "x0": 4524,
+          "x1": 4588
+        },
+        "gap": 64
+      },
+      {
+        "enemy": {
+          "x": 4800,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 4880,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "gap": 80
+      },
+      {
+        "enemy": {
+          "x": 4880,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "nearEnemy": {
+          "x": 4800,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "gap": 80
+      }
+    ],
+    "knockRisks": [
+      {
+        "enemy": {
+          "x": 520,
+          "species": "fish",
+          "kind": "blocker",
+          "elite": false
+        },
+        "spike": {
+          "x": 420,
+          "n": 2
+        },
+        "note": "knock may land on spikes"
+      },
+      {
+        "enemy": {
+          "x": 1080,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 1184,
+          "x1": 1224,
+          "w": 40,
+          "note": ""
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 1290,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 1184,
+          "x1": 1224,
+          "w": 40,
+          "note": ""
+        },
+        "side": "toward-right-edge"
+      },
+      {
+        "enemy": {
+          "x": 1790,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 1872,
+          "x1": 2016,
+          "w": 144,
+          "note": "中間有 platform，唔可以一跳過"
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 2100,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "pit": {
+          "x0": 1872,
+          "x1": 2016,
+          "w": 144,
+          "note": "中間有 platform，唔可以一跳過"
+        },
+        "side": "toward-right-edge"
+      },
+      {
+        "enemy": {
+          "x": 2360,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 2464,
+          "x1": 2504,
+          "w": 40,
+          "note": ""
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 2570,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "pit": {
+          "x0": 2464,
+          "x1": 2504,
+          "w": 40,
+          "note": ""
+        },
+        "side": "toward-right-edge"
+      },
+      {
+        "enemy": {
+          "x": 3050,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "pit": {
+          "x0": 3152,
+          "x1": 3296,
+          "w": 144,
+          "note": ""
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 3070,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 3152,
+          "x1": 3296,
+          "w": 144,
+          "note": ""
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 3380,
+          "species": "barrel",
+          "kind": "ambusher",
+          "elite": false
+        },
+        "pit": {
+          "x0": 3152,
+          "x1": 3296,
+          "w": 144,
+          "note": ""
+        },
+        "side": "toward-right-edge"
+      },
+      {
+        "enemy": {
+          "x": 3940,
+          "species": "fish",
+          "kind": "blocker",
+          "elite": false
+        },
+        "spike": {
+          "x": 3840,
+          "n": 2
+        },
+        "note": "knock may land on spikes"
+      },
+      {
+        "enemy": {
+          "x": 4460,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": false
+        },
+        "pit": {
+          "x0": 4524,
+          "x1": 4588,
+          "w": 64,
+          "note": ""
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 4800,
+          "species": "elephant",
+          "kind": "guardian",
+          "elite": false
+        },
+        "spike": {
+          "x": 4700,
+          "n": 3
+        },
+        "note": "knock may land on spikes"
+      }
+    ]
+  },
+  {
+    "stage": 5,
+    "pits": [
+      {
+        "x0": 620,
+        "x1": 664,
+        "w": 44,
+        "note": "大堂輸送帶缺口"
+      },
+      {
+        "x0": 1980,
+        "x1": 2036,
+        "w": 56,
+        "note": "停電樓層地板缺口"
+      },
+      {
+        "x0": 2760,
+        "x1": 2820,
+        "w": 60,
+        "note": "天台缺口"
+      },
+      {
+        "x0": 3160,
+        "x1": 3200,
+        "w": 40,
+        "note": ""
+      }
+    ],
+    "spikes": [],
+    "junk": [],
+    "enemyCount": 14,
+    "clusters": [
+      {
+        "enemy": {
+          "x": 600,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": true
+        },
+        "hazard": {
+          "x": 642,
+          "kind": "pit",
+          "x0": 620,
+          "x1": 664
+        },
+        "gap": 20
+      },
+      {
+        "enemy": {
+          "x": 2080,
+          "species": "mirrorshade",
+          "elite": true
+        },
+        "hazard": {
+          "x": 2008,
+          "kind": "pit",
+          "x0": 1980,
+          "x1": 2036
+        },
+        "gap": 44
+      },
+      {
+        "enemy": {
+          "x": 2760,
+          "species": "taximonster",
+          "elite": false
+        },
+        "hazard": {
+          "x": 2790,
+          "kind": "pit",
+          "x0": 2760,
+          "x1": 2820
+        },
+        "gap": 0
+      }
+    ],
+    "knockRisks": [
+      {
+        "enemy": {
+          "x": 600,
+          "species": "fish",
+          "kind": "chaser",
+          "elite": true
+        },
+        "pit": {
+          "x0": 620,
+          "x1": 664,
+          "w": 44,
+          "note": "大堂輸送帶缺口"
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 2080,
+          "species": "mirrorshade",
+          "elite": true
+        },
+        "pit": {
+          "x0": 1980,
+          "x1": 2036,
+          "w": 56,
+          "note": "停電樓層地板缺口"
+        },
+        "side": "toward-right-edge"
+      },
+      {
+        "enemy": {
+          "x": 2760,
+          "species": "taximonster",
+          "elite": false
+        },
+        "pit": {
+          "x0": 2760,
+          "x1": 2820,
+          "w": 60,
+          "note": "天台缺口"
+        },
+        "side": "toward-left-edge"
+      },
+      {
+        "enemy": {
+          "x": 2940,
+          "species": "taximonster",
+          "elite": true
+        },
+        "pit": {
+          "x0": 2760,
+          "x1": 2820,
+          "w": 60,
+          "note": "天台缺口"
+        },
+        "side": "toward-right-edge"
+      }
+    ]
+  },
+  {
+    "stage": 6,
+    "pits": [
+      {
+        "x0": 1560,
+        "x1": 1624,
+        "w": 64,
+        "note": "B・保留一個缺口"
+      },
+      {
+        "x0": 3350,
+        "x1": 3402,
+        "w": 52,
+        "note": "D・工場缺口"
+      }
+    ],
+    "spikes": [],
+    "junk": [
+      {
+        "x": 1340,
+        "w": 36,
+        "note": "尖角雜物"
+      },
+      {
+        "x": 1680,
+        "w": 40,
+        "note": "廢鐵角"
+      },
+      {
+        "x": 2450,
+        "w": 38,
+        "note": "碎玻璃堆"
+      },
+      {
+        "x": 3580,
+        "w": 42,
+        "note": "工場廢料"
+      },
+      {
+        "x": 4100,
+        "w": 36,
+        "note": "破筐"
+      }
+    ],
+    "enemyCount": 20,
+    "clusters": [
+      {
+        "enemy": {
+          "x": 1400,
+          "species": "s7charge",
+          "elite": false
+        },
+        "hazard": {
+          "x": 1340,
+          "kind": "junk",
+          "w": 36
+        },
+        "gap": 60
+      },
+      {
+        "enemy": {
+          "x": 2440,
+          "species": "s7shield",
+          "elite": false
+        },
+        "hazard": {
+          "x": 2450,
+          "kind": "junk",
+          "w": 38
+        },
+        "gap": 10
+      },
+      {
+        "enemy": {
+          "x": 3540,
+          "species": "s7shield",
+          "elite": false
+        },
+        "hazard": {
+          "x": 3580,
+          "kind": "junk",
+          "w": 42
+        },
+        "gap": 40
+      },
+      {
+        "enemy": {
+          "x": 4060,
+          "species": "s7charge",
+          "elite": false
+        },
+        "hazard": {
+          "x": 4100,
+          "kind": "junk",
+          "w": 36
+        },
+        "gap": 40
+      }
+    ],
+    "knockRisks": [
+      {
+        "enemy": {
+          "x": 1240,
+          "species": "s7hop",
+          "elite": false
+        },
+        "junk": {
+          "x": 1340,
+          "w": 36,
+          "note": "尖角雜物"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 1400,
+          "species": "s7charge",
+          "elite": false
+        },
+        "junk": {
+          "x": 1340,
+          "w": 36,
+          "note": "尖角雜物"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 1780,
+          "species": "s7shield",
+          "elite": false
+        },
+        "junk": {
+          "x": 1680,
+          "w": 40,
+          "note": "廢鐵角"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 2440,
+          "species": "s7shield",
+          "elite": false
+        },
+        "junk": {
+          "x": 2450,
+          "w": 38,
+          "note": "碎玻璃堆"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 3540,
+          "species": "s7shield",
+          "elite": false
+        },
+        "junk": {
+          "x": 3580,
+          "w": 42,
+          "note": "工場廢料"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 4060,
+          "species": "s7charge",
+          "elite": false
+        },
+        "junk": {
+          "x": 4100,
+          "w": 36,
+          "note": "破筐"
+        },
+        "note": "knock may land on junk"
+      },
+      {
+        "enemy": {
+          "x": 4200,
+          "species": "s7shield",
+          "elite": false
+        },
+        "junk": {
+          "x": 4100,
+          "w": 36,
+          "note": "破筐"
+        },
+        "note": "knock may land on junk"
+      }
+    ]
+  }
+]

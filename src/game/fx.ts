@@ -1,4 +1,4 @@
-import type Phaser from 'phaser'
+import Phaser from 'phaser'
 import {
   HITFREEZE_MS,
   HIT_SHAKE_MS,
@@ -9,6 +9,46 @@ import {
 } from './engine/constants'
 import { DEPTH } from './engine/depth'
 import { FONT_UI } from './ui/fonts'
+import { hasFx, playFx } from './fxAnims'
+
+type Tintable = {
+  active?: boolean
+  setTint?: (c: number) => unknown
+  clearTint?: () => unknown
+  setTintMode?: (m: number) => unknown
+  list?: Tintable[]
+}
+
+/**
+ * Clarity-1: on real HP loss, flash the damage source white for 80ms and spawn
+ * hit-spark at the contact point. Does not add camera shake.
+ */
+export function flashDamageSource(
+  scene: Phaser.Scene,
+  source: Tintable | Phaser.GameObjects.GameObject | null | undefined,
+  contactX: number,
+  contactY: number,
+) {
+  if (hasFx(scene, 'hit-spark')) {
+    playFx(scene, 'hit-spark', contactX, contactY, { depth: DEPTH.FX + 2 })
+  }
+  const flashOne = (obj: Tintable | undefined | null) => {
+    if (!obj || typeof obj.setTint !== 'function') return
+    obj.setTint(0xffffff)
+    obj.setTintMode?.(Phaser.TintModes.FILL)
+    scene.time.delayedCall(80, () => {
+      if (obj.active === false) return
+      obj.setTintMode?.(Phaser.TintModes.MULTIPLY)
+      obj.clearTint?.()
+    })
+  }
+  const root = source as Tintable | null | undefined
+  if (root?.list && Array.isArray(root.list)) {
+    for (const child of root.list) flashOne(child)
+  } else {
+    flashOne(root)
+  }
+}
 
 export function burst(
   scene: Phaser.Scene,

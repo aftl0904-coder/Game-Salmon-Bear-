@@ -1,0 +1,185 @@
+{
+  "ok": true,
+  "results": [
+    {
+      "stage": 1,
+      "mode": "1p",
+      "cast": "boy",
+      "tag": "1p-boy-s1",
+      "info": {
+        "stageNo": 1,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 0,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 5,
+      "mode": "1p",
+      "cast": "boy",
+      "tag": "1p-boy-s5",
+      "info": {
+        "stageNo": 5,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 2,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 6,
+      "mode": "1p",
+      "cast": "boy",
+      "tag": "1p-boy-s6",
+      "info": {
+        "stageNo": 6,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 1,
+        "offscreenAttackers": 0,
+        "junkIframeOk": true,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 1,
+      "mode": "1p",
+      "cast": "girl",
+      "tag": "1p-girl-s1",
+      "info": {
+        "stageNo": 1,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 0,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 5,
+      "mode": "1p",
+      "cast": "girl",
+      "tag": "1p-girl-s5",
+      "info": {
+        "stageNo": 5,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 2,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 6,
+      "mode": "1p",
+      "cast": "girl",
+      "tag": "1p-girl-s6",
+      "info": {
+        "stageNo": 6,
+        "mode": "1p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": null,
+        "girlAlive": false,
+        "enemyCount": 1,
+        "offscreenAttackers": 0,
+        "junkIframeOk": true,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 1,
+      "mode": "2p",
+      "cast": "boy",
+      "tag": "2p-s1",
+      "info": {
+        "stageNo": 1,
+        "mode": "2p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": 5,
+        "girlAlive": true,
+        "enemyCount": 1,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 5,
+      "mode": "2p",
+      "cast": "boy",
+      "tag": "2p-s5",
+      "info": {
+        "stageNo": 5,
+        "mode": "2p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": 6,
+        "girlAlive": true,
+        "enemyCount": 2,
+        "offscreenAttackers": 0,
+        "junkIframeOk": null,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    },
+    {
+      "stage": 6,
+      "mode": "2p",
+      "cast": "boy",
+      "tag": "2p-s6",
+      "info": {
+        "stageNo": 6,
+        "mode": "2p",
+        "overlayOn": true,
+        "hitboxQ": true,
+        "boyHp": 6,
+        "girlHp": 5,
+        "girlAlive": true,
+        "enemyCount": 2,
+        "offscreenAttackers": 0,
+        "junkIframeOk": true,
+        "flashOk": true,
+        "hasHitSparkAnim": false
+      }
+    }
+  ]
+}

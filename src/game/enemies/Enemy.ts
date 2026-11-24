@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { LANE_DEFAULT, type LaneId } from '../engine/lanes'
+import { inCombatView } from '../engine/cameraView'
 
 /** Expandable enemy FSM (macro states). */
 export type EnemyFsm = 'PATROL' | 'CHASE' | 'ATTACK' | 'HURT' | 'DEAD'
@@ -85,8 +86,17 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.eliteMarker.setPosition(this.x, this.y - this.displayHeight - 6)
   }
 
+  /** Clarity-1: on-camera (worldView −16px) before starting a new attack. */
+  canEngageFromScreen(): boolean {
+    return inCombatView(this.scene, this.x, this.y, 16)
+  }
+
   setFsm(next: EnemyFsm) {
     if (this.fsm === next) return
+    // Off-screen: walk closer only — do not begin ATTACK from chase/patrol.
+    if (next === 'ATTACK' && (this.fsm === 'CHASE' || this.fsm === 'PATROL') && !this.canEngageFromScreen()) {
+      return
+    }
     const prev = this.fsm
     this.fsm = next
     this.onEnterFsm(next, prev)

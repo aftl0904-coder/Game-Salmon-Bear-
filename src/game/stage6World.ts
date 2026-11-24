@@ -21,7 +21,11 @@ export type Stage6Ctx = {
   scene: Phaser.Scene
   floorY: number
   heroes: () => Player[]
-  hurt: (h: Player, dir: number, label: string) => void
+  /**
+   * Returns true only when damage actually applied (false during i-frames).
+   * Optional `source` is the visual to white-flash (Clarity-1).
+   */
+  hurt: (h: Player, dir: number, label: string, source?: Phaser.GameObjects.GameObject) => boolean
   /** A bolt dropped on a hero by the patrol drone. */
   dropShot: (x: number, y: number) => void
   enemyBodies?: () => Array<{ x: number; body: Phaser.Physics.Arcade.Body | null; active: boolean }>
@@ -679,10 +683,13 @@ export class Stage6World {
         if (airborne) continue
         if (Math.abs(h.x - j.x) < j.w * 0.55) {
           j.cd.set(h, 900)
-          this.ctx.hurt(h, h.x < j.x ? -1 : 1, '雜物 -1')
-          burst(this.ctx.scene, j.x, this.ctx.floorY - 20, 0xff8060, 6)
-          SFX.hurt()
-          this.log('junk-hit', j.x)
+          // Clarity-1: only SFX / burst when HP actually dropped (not during i-frames).
+          const applied = this.ctx.hurt(h, h.x < j.x ? -1 : 1, '雜物 -1', j.root)
+          if (applied) {
+            burst(this.ctx.scene, j.x, this.ctx.floorY - 20, 0xff8060, 6)
+            SFX.hurt()
+            this.log('junk-hit', j.x)
+          }
         }
       }
     }
