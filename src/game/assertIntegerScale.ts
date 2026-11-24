@@ -46,3 +46,12 @@ export function isDebugQuery(): boolean {
     return false
   }
 }
+
+/** Clarity-1: `?hitbox=1` enables the F1 collision overlay (works on phone too). */
+export function isHitboxQuery(): boolean {
+  try {
+    return new URLSearchParams(window.location.search).get('hitbox') === '1'
+  } catch {
+    return false
+  }
+}

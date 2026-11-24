@@ -357,6 +357,8 @@ export class PatrolEnemy extends Enemy {
   }
 
   private beginWindup(ms: number) {
+    // Clarity-1: off-screen enemies may chase closer, but must not start an attack.
+    if (!this.canEngageFromScreen()) return
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
     // 霸鼻象：蓄力至少 0.5s；其他種保持原 telegraph。

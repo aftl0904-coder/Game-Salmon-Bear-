@@ -1,0 +1,36 @@
+[2026-11-24T07:04:26.977Z] === 1p-boy-s1 ===
+[2026-11-24T07:04:30.343Z] probe {"stageNo":1,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":0,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:04:31.191Z] shot 1p-boy-s1
+[2026-11-24T07:04:33.045Z] shot 1p-boy-s1-contact
+[2026-11-24T07:04:33.045Z] === 1p-boy-s5 ===
+[2026-11-24T07:04:36.341Z] probe {"stageNo":5,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":2,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:04:38.705Z] shot 1p-boy-s5
+[2026-11-24T07:04:40.025Z] shot 1p-boy-s5-contact
+[2026-11-24T07:04:40.025Z] === 1p-boy-s6 ===
+[2026-11-24T07:04:43.842Z] probe {"stageNo":6,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":1,"offscreenAttackers":0,"junkIframeOk":true,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:04:44.651Z] shot 1p-boy-s6
+[2026-11-24T07:04:47.342Z] shot 1p-boy-s6-contact
+[2026-11-24T07:04:47.342Z] === 1p-girl-s1 ===
+[2026-11-24T07:04:50.605Z] probe {"stageNo":1,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":0,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:04:51.439Z] shot 1p-girl-s1
+[2026-11-24T07:04:52.714Z] shot 1p-girl-s1-contact
+[2026-11-24T07:04:52.714Z] === 1p-girl-s5 ===
+[2026-11-24T07:04:56.014Z] probe {"stageNo":5,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":2,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:04:57.798Z] shot 1p-girl-s5
+[2026-11-24T07:04:59.125Z] shot 1p-girl-s5-contact
+[2026-11-24T07:04:59.125Z] === 1p-girl-s6 ===
+[2026-11-24T07:05:02.966Z] probe {"stageNo":6,"mode":"1p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":null,"girlAlive":false,"enemyCount":1,"offscreenAttackers":0,"junkIframeOk":true,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:05:05.447Z] shot 1p-girl-s6
+[2026-11-24T07:05:06.939Z] shot 1p-girl-s6-contact
+[2026-11-24T07:05:06.939Z] === 2p-s1 ===
+[2026-11-24T07:05:10.193Z] probe {"stageNo":1,"mode":"2p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":5,"girlAlive":true,"enemyCount":1,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:05:11.446Z] shot 2p-s1
+[2026-11-24T07:05:12.913Z] shot 2p-s1-contact
+[2026-11-24T07:05:12.914Z] === 2p-s5 ===
+[2026-11-24T07:05:16.121Z] probe {"stageNo":5,"mode":"2p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":6,"girlAlive":true,"enemyCount":2,"offscreenAttackers":0,"junkIframeOk":null,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:05:17.175Z] shot 2p-s5
+[2026-11-24T07:05:19.369Z] shot 2p-s5-contact
+[2026-11-24T07:05:19.369Z] === 2p-s6 ===
+[2026-11-24T07:05:23.176Z] probe {"stageNo":6,"mode":"2p","overlayOn":true,"hitboxQ":true,"boyHp":6,"girlHp":5,"girlAlive":true,"enemyCount":2,"offscreenAttackers":0,"junkIframeOk":true,"flashOk":true,"hasHitSparkAnim":false}
+[2026-11-24T07:05:24.360Z] shot 2p-s6
+[2026-11-24T07:05:25.767Z] shot 2p-s6-contact
