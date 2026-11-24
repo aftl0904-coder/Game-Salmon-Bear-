@@ -167,9 +167,19 @@
       "loot": "coin"
     },
     {
+      "x": 1380,
+      "kind": "pot",
+      "loot": "power"
+    },
+    {
       "x": 1740,
       "kind": "pot",
       "loot": "food"
+    },
+    {
+      "x": 2500,
+      "kind": "pot",
+      "loot": "power"
     },
     {
       "x": 2900,

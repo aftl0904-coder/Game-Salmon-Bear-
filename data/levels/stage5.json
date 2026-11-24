@@ -59,6 +59,8 @@
   "breakables": [
     { "x": 380, "kind": "pot", "loot": "coin" },
     { "x": 1200, "kind": "pot", "loot": "food" },
+    { "x": 1480, "kind": "pot", "loot": "power" },
+    { "x": 2420, "kind": "pot", "loot": "power" },
     { "x": 2600, "kind": "pot", "loot": "coin" }
   ],
 
