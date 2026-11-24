@@ -4942,11 +4942,24 @@ export class GameScene extends Phaser.Scene {
                     tip: '噗噗只係觀眾，唔好跟錯佢！',
                   },
                 ]
-              : [
-                  { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
-                  { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
-                  { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
-                ]
+              : st.game === 'memory'
+                ? [
+                    {
+                      title: `${st.keeper}：${st.sign}`,
+                      lines: ['記住亮燈次序，再跟住撳返出嚟'],
+                      tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+                    },
+                    {
+                      title: '一共四輪',
+                      lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
+                      tip: '記啱嘅輪數換金幣。',
+                    },
+                  ]
+                : [
+                    { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+                    { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+                    { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+                  ]
     const choice = await showTutorial(this, `stall-${st.game}`, pages)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
@@ -4995,6 +5008,13 @@ export class GameScene extends Phaser.Scene {
       const mini = goldfishQuiz(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
+      return
+    }
+    // Fun-1 F15: stage 7 倉務枱・記憶考驗（memoryGame）；第6關搶答唔郁。
+    if (st.game === 'memory') {
+      const mini = memoryGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => after(r.good * 2, r.good * 120))
       return
     }
     // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）

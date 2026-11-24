@@ -1,0 +1,39 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "s7.game": {
+      "pass": true,
+      "detail": "memory"
+    },
+    "s7.keeper": {
+      "pass": true
+    },
+    "s7.sign": {
+      "pass": true
+    },
+    "s7.greet": {
+      "pass": true
+    },
+    "s6.game": {
+      "pass": true,
+      "detail": "goldfish"
+    },
+    "memoryBranch": {
+      "pass": true
+    },
+    "tutorialLine": {
+      "pass": true
+    },
+    "s6.runtime.goldfish": {
+      "pass": true,
+      "detail": "goldfish"
+    }
+  },
+  "shots": [
+    "docs/qa-fun-1/f15-s7-stall-1p-tutorial.png",
+    "docs/qa-fun-1/f15-s7-stall-1p-memory.png",
+    "docs/qa-fun-1/f15-s7-stall-2p-tutorial.png",
+    "docs/qa-fun-1/f15-s7-stall-2p-memory.png"
+  ]
+}
