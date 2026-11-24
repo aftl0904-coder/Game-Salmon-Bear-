@@ -31,7 +31,7 @@ export class GuardZombie extends HoneyZombie {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, useWhip = false) {
     super(scene, x, hooks)
     this.species = 'guard'
-    this.hp = this.maxHp = 3
+    this.hp = this.maxHp = 6
     this.useC2Guard = hasAnimSet(scene, 'c2guard')
     if (this.useC2Guard) {
       // Dedicated 32-bit guard sheet — no tint / procedural cap.

@@ -249,7 +249,7 @@ const WEAPON_MAX_LV = 3
  * 0.52 brings continuous-fire drain (÷0.893s cooldown) in line with the sword's
  * continuous-swing drain (0.2 ÷ 0.344s ≈ 0.58/s) — Alan, 2026-11-02.
  */
-const STAM_SWORD = 0.2
+const STAM_SWORD = 0.32
 const STAM_SHOT = 0.52
 const STAM_RECOVER = 0.55
 const STAM_REST_MS = 380

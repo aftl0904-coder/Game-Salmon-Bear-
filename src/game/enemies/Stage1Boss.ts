@@ -30,15 +30,14 @@ export type KingHooks = {
 export const KING_SCALE = 1.5
 export const KING_HP = 50
 /**
- * PR-F: round(50×0.7)=35 melted in ~1 OPENING at weak×3.
- * Tuned to 180 so ~3–4 OPENINGs (6 hits × 3 dmg ≈ 18) clear one HP third (60).
+ * Balance-1: 60 HP — measured ~16s per rhythm cycle; 倫寶 ~9 dmg/opening → 7 openings ≈ 115s, 琪寶寶 ~13 → 5 ≈ 82s. Telegraph lengthened; DASH_SPEED unchanged.
  */
-export const KING_HP_RHYTHM = 180
-const THROW_RELEASE_MS = 250
-const THROW_TOTAL_MS = 500
-const WINDUP_MS = 400
-const DASH_SPEED = 340
-const DASH_MAX_MS = 650
+export const KING_HP_RHYTHM = 60
+export const THROW_RELEASE_MS = 1000
+export const THROW_TOTAL_MS = 1100
+export const WINDUP_MS = 1000
+export const DASH_SPEED = 340
+export const DASH_MAX_MS = 650
 const INTRO_MS = 1200
 
 type Act = 'intro' | 'stalk' | 'throw' | 'fan' | 'windup' | 'dash' | 'recover' | 'exposed'

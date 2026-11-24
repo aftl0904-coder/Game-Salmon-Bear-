@@ -1,0 +1,301 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "stage1.crushers[0].warnMs": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "stage1.crushers[1].warnMs": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "stage5.crushers[0].warnMs": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "stage5.crushers[1].warnMs": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "coyoteMs": {
+      "got": 110,
+      "want": 110,
+      "pass": true
+    },
+    "bufferMs": {
+      "got": 140,
+      "want": 140,
+      "pass": true
+    },
+    "CHARGE_WALK": {
+      "got": 48,
+      "want": 48,
+      "pass": true
+    },
+    "CHARGE_MUL": {
+      "got": 4.58,
+      "want": 4.58,
+      "pass": true
+    },
+    "CHARGE_DIST": {
+      "got": 160,
+      "want": 160,
+      "pass": true
+    },
+    "WARN_MS": {
+      "got": 800,
+      "want": 800,
+      "pass": true
+    },
+    "REST_MS": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "HOP_CROUCH_MS": {
+      "got": 800,
+      "want": 800,
+      "pass": true
+    },
+    "HOP_REST_MS": {
+      "got": 900,
+      "want": 900,
+      "pass": true
+    },
+    "CAN_INTERVAL_MS": {
+      "got": 3000,
+      "want": 3000,
+      "pass": true
+    },
+    "CAN_WIND_MS": {
+      "got": 800,
+      "want": 800,
+      "pass": true
+    },
+    "SHIELD_TURN_DELAY_MS": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "KING_HP_RHYTHM": {
+      "got": 54,
+      "want": 54,
+      "pass": true
+    },
+    "WINDUP_MS": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "THROW_RELEASE_MS": {
+      "got": 1000,
+      "want": 1000,
+      "pass": true
+    },
+    "THROW_TOTAL_MS": {
+      "got": 1100,
+      "want": 1100,
+      "pass": true
+    },
+    "DASH_SPEED": {
+      "got": 340,
+      "want": 340,
+      "pass": true
+    },
+    "BeeSoldier.maxHp": {
+      "got": 3,
+      "want": 3,
+      "pass": true
+    },
+    "HoneySquirrel.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "LobsterGuard.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "StallKeeper.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "MirrorShade.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "HoneyZombie.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "honeyzombieTwoShots": {
+      "hp0": 6,
+      "hp1": 3,
+      "killed": true,
+      "hp2": 0,
+      "ctor": "HoneyZombie"
+    },
+    "TaxiMonster.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "ClockPunch.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "ChargeHoneyZombie.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "chargeThreeShots": {
+      "hp0": 9,
+      "killed": true,
+      "ctor": "ChargeHoneyZombie"
+    },
+    "HopCage.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "ShieldKeeper.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "CanThrower.maxHp": {
+      "got": 9,
+      "want": 9,
+      "pass": true
+    },
+    "GuardZombie.maxHp": {
+      "got": 6,
+      "want": 6,
+      "pass": true
+    },
+    "summonsUntouchedNote": "MiniBee/HoneyEgg/OwlDecoy/OwlCrate/MarketStall/RobotArm/Boss HP left as-is (source asserted)",
+    "untouchedHp": true,
+    "warriorKingMaxHp": 54,
+    "WarriorKing maxHp (const)": {
+      "got": 54,
+      "want": 54,
+      "pass": true
+    },
+    "warriorKingClearInWindow": true,
+    "warriorKingNote": "recorded 147.322s (scripted OPENING hits; target band 90–120)"
+  },
+  "changes": [
+    {
+      "id": "H3 crushers warnMs",
+      "old": "450/420",
+      "new": 1000
+    },
+    {
+      "id": "H5 coyoteMs",
+      "old": 90,
+      "new": 110
+    },
+    {
+      "id": "H5 bufferMs",
+      "old": 110,
+      "new": 140
+    },
+    {
+      "id": "H2 charge walk/mul/dist/warn",
+      "old": "40/2.5/200/400",
+      "new": "48/4.58/160/800"
+    },
+    {
+      "id": "H4 KING_HP_RHYTHM",
+      "old": 180,
+      "new": 54
+    },
+    {
+      "id": "H4 WINDUP/THROW_RELEASE/THROW_TOTAL",
+      "old": "400/250/500",
+      "new": "1000/1000/1100"
+    },
+    {
+      "id": "H1 BeeSoldier",
+      "old": 1,
+      "new": 3
+    },
+    {
+      "id": "H1 HoneySquirrel",
+      "old": 2,
+      "new": 6
+    },
+    {
+      "id": "H1 LobsterGuard",
+      "old": 3,
+      "new": 9
+    },
+    {
+      "id": "H1 StallKeeper",
+      "old": 2,
+      "new": 6
+    },
+    {
+      "id": "H1 MirrorShade",
+      "old": 1,
+      "new": 6
+    },
+    {
+      "id": "H1 HoneyZombie",
+      "old": 2,
+      "new": 6
+    },
+    {
+      "id": "H1 TaxiMonster",
+      "old": 3,
+      "new": 9
+    },
+    {
+      "id": "H1 ClockPunch",
+      "old": 2,
+      "new": 9
+    },
+    {
+      "id": "H2 ChargeHoneyZombie",
+      "old": 3,
+      "new": 9
+    },
+    {
+      "id": "H2 HopCage",
+      "old": 2,
+      "new": 9
+    },
+    {
+      "id": "H2 ShieldKeeper",
+      "old": 3,
+      "new": 6
+    },
+    {
+      "id": "H2 CanThrower",
+      "old": 2,
+      "new": 9
+    },
+    {
+      "id": "H2 GuardZombie",
+      "old": 3,
+      "new": 6
+    }
+  ],
+  "warriorKingClearSec": 147.3,
+  "shots": [
+    "docs/qa-balance-1/st4-honeyzombie-2shots.png",
+    "docs/qa-balance-1/st6-charge-3shots.png",
+    "docs/qa-balance-1/st1-warrior-king-clear.png"
+  ]
+}

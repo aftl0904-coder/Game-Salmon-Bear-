@@ -29,7 +29,7 @@ export class HoneyZombie extends AnimEnemy {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 'honeyzombie'
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 6
     this.hurtMs = 260
     this.bodyBox(30, 44)
     this.setFsm('CHASE')
@@ -95,7 +95,7 @@ export class TaxiMonster extends AnimEnemy {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'taximonster', hooks, 'idle')
     this.species = 'taximonster'
-    this.hp = this.maxHp = 3
+    this.hp = this.maxHp = 9
     this.hurtMs = 260
     this.bodyBox(64, 34)
   }
@@ -176,7 +176,7 @@ export class ClockPunch extends AnimEnemy {
     super(scene, x, hooks.floorY(), 'clockpunch', hooks, 'walk')
     this.species = 'clockpunch'
     this.ch = ch
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 9
     this.hurtMs = 220
     this.bodyBox(34, 44)
   }

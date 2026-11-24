@@ -8,8 +8,8 @@
       "gravity": 700,
       "holdMaxMs": 180,
       "releaseCut": 0.5,
-      "coyoteMs": 90,
-      "bufferMs": 110,
+      "coyoteMs": 110,
+      "bufferMs": 140,
       "targetHeightPx": { "tap": 37, "full": 93 }
     },
     "crouch": { "speedMultiplier": 0.5 },

@@ -127,7 +127,7 @@ export class BeeSoldier extends AnimEnemy {
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY() - 92, 'beesoldier', hooks, 'fly')
     this.flying = true
-    this.hp = this.maxHp = 1
+    this.hp = this.maxHp = 3
     this.hoverY = this.y
     this.bodyBox(26, 22)
     this.cd = Phaser.Math.Between(900, 1600)
@@ -218,7 +218,7 @@ export class HoneySquirrel extends AnimEnemy {
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'squirrel', hooks, 'walk')
-    this.hp = this.maxHp = 2
+    this.hp = this.maxHp = 6
     this.speed = Phaser.Math.Between(20, 32)
     this.bodyBox(24, 34)
   }

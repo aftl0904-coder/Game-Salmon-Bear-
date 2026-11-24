@@ -32,8 +32,8 @@
   ],
   "movingPlatforms": [],
   "crushers": [
-    { "x": 2680, "restH": 78, "warnMs": 450, "downMs": 140, "stayMs": 500, "upMs": 900, "idleMs": 900, "note": "天台・天花尖刺塊" },
-    { "x": 2960, "restH": 78, "warnMs": 420, "downMs": 140, "stayMs": 480, "upMs": 900, "idleMs": 900 }
+    { "x": 2680, "restH": 78, "warnMs": 1000, "downMs": 140, "stayMs": 500, "upMs": 900, "idleMs": 900, "note": "天台・天花尖刺塊" },
+    { "x": 2960, "restH": 78, "warnMs": 1000, "downMs": 140, "stayMs": 480, "upMs": 900, "idleMs": 900 }
   ],
   "spikes": [],
   "durians": [],

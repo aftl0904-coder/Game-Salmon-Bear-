@@ -204,7 +204,7 @@ export const SALMON_SHOT_SPEED = Math.round(520 * 0.7 * LAYOUT_SCALE)
  * 鮭魚槍基底：400/0.7；劍撃基底：220
  */
 export const SALMON_SHOT_COOLDOWN_MS = Math.round(400 / 0.7 / 0.8 / 0.8)
-export const SWORD_COOLDOWN_MS = Math.round(220 / 0.8 / 0.8)
+export const SWORD_COOLDOWN_MS = 480 // balance-1 H6: 琪寶寶 ≈1.4× 倫寶 per opening (was 344)
 /**
  * 琪寶寶劍撃 hitbox 寬／高／持續 — fixed px, deliberately NOT tied to
  * WEAPON_DISPLAY_SCALE (sprite display scale). Commit 20d7079 bumped
