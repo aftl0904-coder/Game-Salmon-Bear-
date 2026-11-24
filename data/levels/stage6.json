@@ -209,124 +209,124 @@
   ],
   "enemies": [
     {
-      "x": 580,
+      "x": 200,
       "species": "s7charge",
-      "unlockX": 480,
-      "note": "A・衝鋒保安蜜僵"
+      "unlockX": 80,
+      "note": "A・單隻衝刺開場，先讀預警，沒有其他敵人夾擊。"
     },
     {
-      "x": 700,
+      "x": 480,
       "species": "s7hop",
-      "unlockX": 600,
-      "note": "A・彈跳購物籃"
+      "unlockX": 360,
+      "note": "A・第二個獨立教學，與前一隻分組；清除前敵後才啟動。"
     },
     {
-      "x": 820,
+      "x": 920,
       "species": "s7shield",
-      "unlockX": 720,
-      "note": "A・持盾推車員"
+      "unlockX": 800,
+      "note": "B・走廊第一組前排，與1100擲罐組成盾後投擲。"
     },
     {
-      "x": 980,
+      "x": 1100,
       "species": "s7can",
-      "unlockX": 900,
-      "note": "B・掟罐清潔工"
+      "unlockX": 800,
+      "note": "B・與盾兵相距180px，後排施壓但保留繞背空間。"
     },
     {
-      "x": 1180,
+      "x": 1240,
+      "species": "s7hop",
+      "unlockX": 1120,
+      "note": "B・第二組先以落點預警迫玩家移位。"
+    },
+    {
+      "x": 1400,
       "species": "s7charge",
-      "unlockX": 1080,
-      "note": "B・衝鋒保安蜜僵"
+      "unlockX": 1120,
+      "note": "B・與跳籃配對，向左衝160px，不朝1560窿口發"
     },
     {
-      "x": 1420,
-      "species": "s7hop",
-      "unlockX": 1300,
-      "note": "B・彈跳購物籃"
-    },
-    {
-      "x": 1680,
+      "x": 1780,
       "species": "s7shield",
-      "unlockX": 1550,
-      "note": "B・持盾推車員"
+      "unlockX": 1660,
+      "note": "B・檢查點保護區後重新開一組，不在窿邊接敵。"
     },
     {
-      "x": 1880,
+      "x": 1940,
       "species": "s7can",
-      "unlockX": 1750,
-      "note": "B・掟罐清潔工"
+      "unlockX": 1660,
+      "note": "B・盾後投擲作走廊收尾，與施工區下一組分開啟動。"
     },
     {
-      "x": 2088,
+      "x": 2080,
       "species": "s7hop",
-      "unlockX": 2000,
-      "note": "C4・上層彈跳購物籃"
+      "unlockX": 1960,
+      "note": "C・施工區先跳籃、後衝刺，改變上一組盾罐的應對。"
     },
     {
-      "x": 2140,
+      "x": 2260,
       "species": "s7charge",
-      "unlockX": 2020,
-      "note": "C・衝鋒保安蜜僵"
+      "unlockX": 1960,
+      "note": "C・與2080跳籃配對；兩者攻擊錯峰，碎石不在唯一避"
     },
     {
-      "x": 2420,
+      "x": 2440,
       "species": "s7shield",
-      "unlockX": 2280,
-      "note": "C・持盾推車員"
+      "unlockX": 2320,
+      "note": "C・施工區中段前排，玩家可先引開盾兵再處理後排。"
     },
     {
-      "x": 2680,
+      "x": 2620,
       "species": "s7can",
-      "unlockX": 2550,
-      "note": "C・掟罐清潔工"
+      "unlockX": 2320,
+      "note": "C・後排擲罐與盾兵形成第二種組合，不延續跳籃衝刺。"
     },
     {
-      "x": 2920,
+      "x": 2780,
       "species": "s7hop",
-      "unlockX": 2780,
-      "note": "C・彈跳購物籃"
+      "unlockX": 2660,
+      "note": "C・施工區末段改為雙跳籃，先啟動此隻。"
     },
     {
-      "x": 3280,
+      "x": 2940,
+      "species": "s7hop",
+      "unlockX": 2660,
+      "note": "C・第二隻延後啟動及落地，形成交替跳躍，不同時鎖定同"
+    },
+    {
+      "x": 3540,
       "species": "s7shield",
-      "unlockX": 3180,
-      "note": "D・持盾推車員"
+      "unlockX": 3420,
+      "note": "D・跨過3350窿及其保護區後才開戰，避免隔窿盾罐夾"
     },
     {
-      "x": 3560,
-      "species": "s7hop",
-      "unlockX": 3400,
-      "note": "D・彈跳購物籃"
-    },
-    {
-      "x": 3820,
+      "x": 3740,
       "species": "s7can",
-      "unlockX": 3680,
-      "note": "D・掟罐清潔工"
+      "unlockX": 3420,
+      "note": "D・工場第一組後排，與盾兵相距200px。"
     },
     {
-      "x": 4120,
+      "x": 3880,
+      "species": "s7hop",
+      "unlockX": 3760,
+      "note": "D・工場第二組先跳籃，與前組盾罐形成節奏切換。"
+    },
+    {
+      "x": 4060,
       "species": "s7charge",
-      "unlockX": 3980,
-      "note": "D・衝鋒保安蜜僵"
+      "unlockX": 3760,
+      "note": "D・與3880跳籃配對，兩者錯峰進攻。"
     },
     {
-      "x": 4620,
-      "species": "s7can",
-      "unlockX": 4500,
-      "note": "E・掟罐清潔工"
-    },
-    {
-      "x": 4720,
-      "species": "s7hop",
-      "unlockX": 4580,
-      "note": "E・彈跳購物籃"
-    },
-    {
-      "x": 4820,
+      "x": 4200,
       "species": "s7shield",
-      "unlockX": 4680,
-      "note": "E・持盾推車員"
+      "unlockX": 4080,
+      "note": "D・最後一組前排，與Boss入口保持距離。"
+    },
+    {
+      "x": 4380,
+      "species": "s7can",
+      "unlockX": 4080,
+      "note": "D・最後一組後排；原Boss入口三隻全部搬走，清組後"
     }
   ],
   "altarAmbush": [],
