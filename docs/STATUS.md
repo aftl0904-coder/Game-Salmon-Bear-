@@ -5,6 +5,11 @@
 - 第7／8關唔受影響（pin 只在 `stageNo === 6`）。
 - QA 1P／2P：`docs/qa-quiz-home-1/`（含題目 id 截圖）。draft／compare，等 Alan merge。
 
+## M8 第8關「配方控制中心」美術（`manus/m8-art-2611`；2026-11-25）
+- 五段遠景 `public/art/stage8/bg-{reception,pipes,machine,records,control}.png`：各 640×360，build、10 項資料驗證及桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m8-art/backgrounds/`。由 2560×1440 等比例縮小，未接入遊戲或真機。
+- 其他敵人、Boss、機關及劇情圖仍製作中。故事檔 `art_needed` 有 8 張，交代寫 7 張，已請 Claude 確認，不自行刪減。
+- 本分支只交美術，無遊戲程式改動；第8關不屬聖誕首版。
+
 ## Polish-1（`cursor/polish-1-2610`；2026-11-24）
 - M6 壽司／榴槤／營地三件／蜜腳印已接入；榴槤原尺寸 18×22 場上可辨；蜜腳印用 sprite alpha 漸淡（strip 第 3 格空白）。
 - 第1–7關 `signs:[{x,text}]` 提示牌（第1關4 + 第2–7關19）；只顯示唔阻路。
