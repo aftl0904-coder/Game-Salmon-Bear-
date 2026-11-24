@@ -7579,8 +7579,10 @@ export class GameScene extends Phaser.Scene {
         e.setVelocityX(ENEMY_SPEED)
         e.patrolDir = 1
         // fix-2p-1 #3: left-side entrants flash 「！」so players notice the flank.
+        // Entrant spawns off-screen left — pin the 「！」 to the visible left edge.
+        const bangX = Math.max(e.x, this.cameras.main.scrollX + 14)
         const bang = this.add
-          .text(e.x, e.y - e.displayHeight - 8, '！', {
+          .text(bangX, e.y - e.displayHeight - 8, '！', {
             fontSize: '18px',
             color: '#ff3030',
             stroke: '#fff0a0',
@@ -7592,7 +7594,7 @@ export class GameScene extends Phaser.Scene {
           targets: bang,
           y: bang.y - 12,
           alpha: 0,
-          duration: 700,
+          duration: 800,
           onComplete: () => bang.destroy(),
         })
       } else {
