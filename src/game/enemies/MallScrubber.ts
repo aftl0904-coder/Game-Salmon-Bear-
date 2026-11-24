@@ -26,7 +26,7 @@ type Act =
   | 'cart'
   | 'recover'
 type Move = 'charge' | 'acid' | 'foam' | 'brush' | 'cart'
-type Pose = 'idle' | 'warn' | 'charge' | 'recover' | 'spray' | 'defeated'
+type Pose = 'idle' | 'warn' | 'charge' | 'recover' | 'spray' | 'spin' | 'defeated'
 type Hooks = {
   floorY: () => number
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
@@ -91,36 +91,44 @@ type FoamZone = {
   x0: number
   x1: number
   until: number
-  g: Phaser.GameObjects.Rectangle
+  g: Phaser.GameObjects.Image
   label: Phaser.GameObjects.Text
 }
 
 type CleaningCart = {
-  img: Phaser.GameObjects.Rectangle
+  img: Phaser.GameObjects.Image
   label: Phaser.GameObjects.Text
   dir: 1 | -1
   hp: number
   hitAt: number
 }
 
+/** Manus scrubber-sheet-v2: 12×96 @ 1152×80. Brush/nozzle face LEFT in art. */
 const SCRUBBER_SHEET = 'c2-scrubber'
 const BLOWER_SHEET = 'c2-blower'
+const CART_SHEET = 'c2-clean-cart'
+const FOAM_SHEET = 'c2-foam'
 const ACID_PUDDLE = 'c2-acid-puddle'
 const ACID_DRIP = 'c2-acid-drip'
+/** 0–1 idle · 2–3 warn · 4–5 charge · 6–7 recover · 8 spray · 9–10 spin · 11 defeated */
 const SCRUBBER_FRAME: Record<Pose, number> = {
   idle: 0,
   warn: 2,
   charge: 4,
   recover: 6,
   spray: 8,
-  defeated: 9,
+  spin: 9,
+  defeated: 11,
 }
+/** blower-sheet-v2: 0 off · 1 warn · 2–3 on (no stunned frame — reuse off + tint) */
 const BLOWER_FRAME: Record<'off' | 'warn' | 'on' | 'stunned', number> = {
   off: 0,
   warn: 1,
   on: 2,
-  stunned: 4,
+  stunned: 0,
 }
+const CART_FRAME = { push: 0, broken: 1 } as const
+const FOAM_FRAMES = 2
 
 function applyScrubberPose(sprite: Phaser.GameObjects.Sprite, pose: Pose) {
   if (!sprite.scene?.textures?.exists(SCRUBBER_SHEET)) return false
@@ -133,6 +141,13 @@ function applyBlowerState(img: Phaser.GameObjects.Image, state: 'off' | 'warn' |
   if (!img.scene?.textures?.exists(BLOWER_SHEET)) return false
   img.setTexture(BLOWER_SHEET, BLOWER_FRAME[state])
   return true
+}
+
+/** Pose 2-frame anim: idle/warn/charge/recover/spin use base + 0|1. */
+function poseAnimFrame(pose: Pose, elapsedMs: number, period = 280): number {
+  const base = SCRUBBER_FRAME[pose]
+  if (pose === 'spray' || pose === 'defeated') return base
+  return base + (Math.floor(elapsedMs / period) % 2)
 }
 
 const ATTACK_ACTS = new Set<Act>([
@@ -267,11 +282,19 @@ export class MallScrubber extends Enemy {
     if (now - this.cart.hitAt < 200) return
     this.cart.hitAt = now
     this.cart.hp -= 1
-    this.cart.img.setFillStyle(0xffccaa)
+    this.cart.img.setTint(0xffccaa)
     this.scene.time.delayedCall(60, () => {
-      if (this.cart) this.cart.img.setFillStyle(0xc8d0d8)
+      if (this.cart) this.cart.img.clearTint()
     })
-    if (this.cart.hp <= 0) this.destroyCart()
+    if (this.cart.hp <= 0) {
+      if (this.scene.textures.exists(CART_SHEET)) this.cart.img.setFrame(CART_FRAME.broken)
+      const dead = this.cart
+      this.cart = null
+      this.scene.time.delayedCall(220, () => {
+        dead.img.destroy()
+        dead.label.destroy()
+      })
+    }
   }
 
   isBlowerBlasting() {
@@ -407,7 +430,8 @@ export class MallScrubber extends Enemy {
 
   private faceTarget(target: Hero) {
     this.dir = (Math.sign(target.x - this.x) || -1) as 1 | -1
-    this.setFlipX(this.dir < 0)
+    // Manus art faces LEFT; flipX true when facing right (toward +x).
+    this.setFlipX(this.dir > 0)
   }
 
   private safeForAll(heroes: Hero[], x0: number, x1: number, warnMs: number) {
@@ -448,7 +472,7 @@ export class MallScrubber extends Enemy {
     this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
     if (Math.abs(this.endX - this.x) < 30) {
       this.dir = (-this.dir) as 1 | -1
-      this.setFlipX(this.dir < 0)
+      this.setFlipX(this.dir > 0)
       this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
     }
     if (Math.abs(this.endX - this.x) < 30) {
@@ -465,7 +489,7 @@ export class MallScrubber extends Enemy {
       const toLeft = this.x - left
       const toRight = right - this.x
       this.dir = (toRight >= toLeft ? 1 : -1) as 1 | -1
-      this.setFlipX(this.dir < 0)
+      this.setFlipX(this.dir > 0)
       this.endX = Phaser.Math.Clamp(this.x + this.dir * CHARGE_MAX_DIST, left, right)
     }
     this.repositionStreak = 0
@@ -528,9 +552,9 @@ export class MallScrubber extends Enemy {
     for (const x of this.acidTargets) this.spawnAcidWarn(x)
   }
 
-  /** Blow direction: same as boss face (toward player). flipX true = facing left = −1. */
+  /** Blow toward player = boss face. Art faces left; flipX true = facing right = +1. */
   blowerWindDir(): 1 | -1 {
-    return this.flipX ? -1 : 1
+    return this.flipX ? 1 : -1
   }
 
   blowerPeriodMs() {
@@ -571,8 +595,11 @@ export class MallScrubber extends Enemy {
       const x1 = Phaser.Math.Clamp(b.x1, this.arenaX0, this.arenaX1)
       if (x1 - x0 < 8) continue
       const mid = (x0 + x1) / 2
+      const w = Math.max(8, x1 - x0)
       const g = this.scene.add
-        .rectangle(mid, floor - 6, x1 - x0, 12, 0xb8f0ff, 0.55)
+        .image(mid, floor - 6, FOAM_SHEET, 0)
+        .setOrigin(0.5, 1)
+        .setDisplaySize(w, 12)
         .setDepth(DEPTH.HAZARD + 2)
       const label = this.scene.add
         .text(mid, floor - 28, '滑', {
@@ -639,9 +666,10 @@ export class MallScrubber extends Enemy {
     const startX = fromLeft ? this.arenaX0 + 16 : this.arenaX1 - 16
     const dir = (fromLeft ? 1 : -1) as 1 | -1
     const img = this.scene.add
-      .rectangle(startX, floor - 18, 40, 28, 0xc8d0d8)
+      .image(startX, floor, CART_SHEET, CART_FRAME.push)
+      .setOrigin(0.5, 1)
       .setDepth(DEPTH.HAZARD + 4)
-      .setStrokeStyle(2, 0x607080)
+      .setFlipX(dir < 0)
     const label = this.scene.add
       .text(startX, floor - 48, '清潔車', {
         fontFamily: FONT_UI,
@@ -726,14 +754,15 @@ export class MallScrubber extends Enemy {
       return
     }
     const floor = this.hooks6.floorY()
-    // Behind boss relative to facing: if facing left (flipX), behind is to the right.
-    const behind = this.x + (this.flipX ? 1 : -1) * BLOWER_BEHIND_PX
+    // Behind boss relative to facing: art faces left; flipX true = facing right → behind is −x.
+    const behind = this.x + (this.flipX ? -1 : 1) * BLOWER_BEHIND_PX
     const targetX = Phaser.Math.Clamp(behind, this.arenaX0 + 20, this.arenaX1 - 20)
     // Follow at ~boss chase speed ×0.9 (charge ~160 → ~144); catch-up when far.
     const dx = targetX - this.blower.x
     const followSpeed = 144 * BLOWER_FOLLOW_MUL
     const step = Math.sign(dx) * Math.min(Math.abs(dx), followSpeed * (dt / 1000))
     this.blower.setPosition(this.blower.x + step, floor)
+    // Outlet faces left in art; match boss flip so wind always aims at the player.
     this.blower.setFlipX(this.flipX)
 
     if (this.scene.time.now < this.blowerDisabledUntil) {
@@ -811,13 +840,18 @@ export class MallScrubber extends Enemy {
     }
 
     const heroes = [ctx.boy, ctx.girl].filter((h): h is Hero => !!h && h.active && h.alive !== false)
+    // Foam sheet 0–1 loop while zones live.
+    for (const z of this.foams) {
+      if (z.g.active) z.g.setFrame(Math.floor(this.elapsed / 160) % FOAM_FRAMES)
+    }
+
     if (this.act === 'intro') {
       this.setPose('idle')
-      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(Math.floor(this.elapsed / 280) % 2)
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('idle', this.elapsed))
       if (this.elapsed >= 900) this.setAct('scan')
     } else if (this.act === 'scan') {
       this.setPose('idle')
-      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(Math.floor(this.elapsed / 280) % 2)
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('idle', this.elapsed))
       if (heroes.length && this.elapsed >= 500) {
         const target = heroes.reduce((a, b) => (Math.abs(a.x - this.x) <= Math.abs(b.x - this.x) ? a : b))
         this.faceTarget(target)
@@ -830,6 +864,7 @@ export class MallScrubber extends Enemy {
       this.syncBody()
       if (Math.abs(this.repositionX - this.x) < 0.1) this.setAct('scan')
     } else if (this.act === 'warn-charge') {
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('warn', this.elapsed))
       if (!heroes.length) this.recover()
       else if (this.elapsed >= this.warnChargeNeed) {
         this.clearWarning()
@@ -840,6 +875,7 @@ export class MallScrubber extends Enemy {
         this.setAct('charge')
       }
     } else if (this.act === 'charge') {
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('charge', this.elapsed, 120))
       const delta = (this.dir * CHARGE_SPEED * step) / 1000
       const nx = this.dir < 0 ? Math.max(this.endX, this.x + delta) : Math.min(this.endX, this.x + delta)
       this.setX(nx)
@@ -852,11 +888,12 @@ export class MallScrubber extends Enemy {
       if (Math.abs(this.x - this.endX) < 0.5) {
         // 180° turn + return charge 140px
         this.dir = (-this.dir) as 1 | -1
-        this.setFlipX(this.dir < 0)
+        this.setFlipX(this.dir > 0)
         this.hitHeroes = new WeakSet()
         this.setAct('charge-return')
       }
     } else if (this.act === 'charge-return') {
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('charge', this.elapsed, 120))
       const delta = (this.dir * CHARGE_SPEED * step) / 1000
       const nx =
         this.dir < 0 ? Math.max(this.returnEndX, this.x + delta) : Math.min(this.returnEndX, this.x + delta)
@@ -898,12 +935,12 @@ export class MallScrubber extends Enemy {
         this.hitHeroes = new WeakSet()
         this.brushHitAt = new WeakMap()
         this.setFsm('ATTACK')
-        this.setPose('charge')
+        this.setPose('spin')
         this.setAct('brush')
       }
     } else if (this.act === 'brush') {
-      // Spin visual: flip rapidly
-      if (Math.floor(this.elapsed / 80) % 2 === 0) this.setFlipX(!this.flipX)
+      // M4: spin frames 9–10 (no flip spam — art already has brush whirl).
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('spin', this.elapsed, 80))
       if (this.elapsed >= BRUSH_SPIN_MS) this.recover()
     } else if (this.act === 'warn-cart') {
       if (this.elapsed >= CART_WARN_MS) {
@@ -913,6 +950,12 @@ export class MallScrubber extends Enemy {
       }
     } else if (this.act === 'cart') {
       if (this.elapsed >= 600) this.recover()
+    } else if (this.act === 'recover') {
+      if (this.scene.textures.exists(SCRUBBER_SHEET)) this.setFrame(poseAnimFrame('recover', this.elapsed))
+      if (this.elapsed >= this.recoverNeed) {
+        this.setPose('idle')
+        this.setAct('scan')
+      }
     } else if (this.elapsed >= this.recoverNeed) {
       this.setPose('idle')
       this.setAct('scan')

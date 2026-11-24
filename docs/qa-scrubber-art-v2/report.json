@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "texMeta": {
+      "scrubberFrames": 13,
+      "blowerFrames": 5,
+      "cartFrames": 3,
+      "foamFrames": 3
+    },
+    "body": {
+      "texture": "c2-scrubber",
+      "bodyW": 96,
+      "bodyH": 58,
+      "offsetX": 8,
+      "offsetY": 20,
+      "blowerTex": "c2-blower"
+    }
+  },
+  "shots": [
+    "docs/qa-scrubber-art-v2/boss-idle.png",
+    "docs/qa-scrubber-art-v2/boss-warn.png",
+    "docs/qa-scrubber-art-v2/boss-charge.png",
+    "docs/qa-scrubber-art-v2/boss-recover.png",
+    "docs/qa-scrubber-art-v2/boss-spray.png",
+    "docs/qa-scrubber-art-v2/boss-spin.png",
+    "docs/qa-scrubber-art-v2/boss-defeated.png",
+    "docs/qa-scrubber-art-v2/boss-face-L.png",
+    "docs/qa-scrubber-art-v2/boss-face-R.png",
+    "docs/qa-scrubber-art-v2/blower-on.png",
+    "docs/qa-scrubber-art-v2/clean-cart-push.png",
+    "docs/qa-scrubber-art-v2/clean-cart-broken.png",
+    "docs/qa-scrubber-art-v2/foam-0.png",
+    "docs/qa-scrubber-art-v2/foam-1.png"
+  ]
+}

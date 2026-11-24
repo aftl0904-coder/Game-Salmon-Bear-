@@ -357,14 +357,22 @@ export class BootScene extends Phaser.Scene {
     for (const id of ['omamori', 'speed', 'power', 'stamina', 'luck'] as const) {
       this.load.image(`charm-${id}`, `/art/items/charm-${id}.png`)
     }
-    // C2 mall art (PR-K / B7) — scrubber boss, floor blower, acid FX, clutter props.
-    this.load.spritesheet('c2-scrubber', '/art/c2/scrubber-sheet.png', {
-      frameWidth: 112,
+    // C2 mall art — Manus scrubber-art-v2 sheets (left-facing brush / blower nozzle).
+    this.load.spritesheet('c2-scrubber', '/art/c2/scrubber-sheet-v2.png', {
+      frameWidth: 96,
       frameHeight: 80,
     })
-    this.load.spritesheet('c2-blower', '/art/c2/blower-sheet.png', {
+    this.load.spritesheet('c2-blower', '/art/c2/blower-sheet-v2.png', {
       frameWidth: 48,
       frameHeight: 40,
+    })
+    this.load.spritesheet('c2-clean-cart', '/art/c2/clean-cart.png', {
+      frameWidth: 48,
+      frameHeight: 32,
+    })
+    this.load.spritesheet('c2-foam', '/art/c2/foam.png', {
+      frameWidth: 160,
+      frameHeight: 12,
     })
     this.load.spritesheet('c2-acid-puddle', '/art/c2/acid-puddle-strip.png', {
       frameWidth: 64,
