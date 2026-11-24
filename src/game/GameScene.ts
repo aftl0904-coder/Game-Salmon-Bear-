@@ -16,7 +16,7 @@ import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, r
 import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled } from './c2Gate'
-import { ensureFriendArt, friendTex, FRIENDS, isFriendId } from './friends'
+import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
 import { attachGearFx, type GearFx } from './gearFx'
 import { bonusHearts, buy as buyGear, damageCut, dropOnDeath, gearById, iframeMul, jumpMul, knockMul, specialPower, speedMul, stamMax, stamRecoverMul, weaponFloor, type Who } from './gear'
@@ -5097,7 +5097,7 @@ export class GameScene extends Phaser.Scene {
         buyGear(w, item)
         if (this.registry.get('winScreenShown')) this.saveCurrentClear()
       }),
-      friends: () => this.friendsSaved,
+      friends: () => this.rescuedFriendIds(),
       heroes,
       stage: this.stageNo,
     })
@@ -5116,6 +5116,12 @@ export class GameScene extends Phaser.Scene {
       if (this.registry.get('winScreenShown')) this.saveCurrentClear()
       onClose?.()
     })
+  }
+
+  /** Fun-1 F14: all friends rescued this run (registry + this stage). */
+  private rescuedFriendIds(): string[] {
+    const run = (this.registry.get('runFriends') as string[] | undefined) ?? []
+    return [...new Set([...run, ...this.friendsSaved])].filter(isFriendId)
   }
 
   /** 咖啡媽媽's cup: +1 HP for everyone still standing. */
@@ -6645,6 +6651,20 @@ export class GameScene extends Phaser.Scene {
         })
         .setOrigin(0.5),
     )
+    // Fun-1 F14: random rescued friend's clear_chat (hidden if none rescued).
+    const clearChat = pickFriendChatter(this.rescuedFriendIds())
+    if (clearChat) {
+      overlay.add(
+        this.add
+          .text(-W / 2 + 151, castY + 34, `${clearChat.name}：${clearChat.clear_chat}`, {
+            fontFamily: FONT_UI,
+            fontSize: '11px',
+            color: '#fff6e0',
+            wordWrap: { width: 230 },
+          })
+          .setOrigin(0.5, 0),
+      )
+    }
     // Tally panel (right)
     const px = 14
     const py = -H / 2 + 64

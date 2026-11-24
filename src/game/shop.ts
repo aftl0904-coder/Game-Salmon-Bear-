@@ -6,7 +6,7 @@ import { SFX } from './audio'
 import { TouchInput, isPhonePlay } from './touchInput'
 import { buzz, HAPTIC } from './phone'
 import { GEAR, STAT_NAMES, buy, nextPrice, stats, tierOf, type GearDef, type StatId, type Who } from './gear'
-import { FRIENDS, ensureFriendArt, friendTex, isFriendId } from './friends'
+import { FRIENDS, ensureFriendArt, friendTex, isFriendId, pickFriendChatter } from './friends'
 
 /**
  * 小朋友檔口 (docs/bible/story.md §5): the friends you freed set up a stall beside the
@@ -69,6 +69,21 @@ export function openShop(scene: Phaser.Scene, hooks: ShopHooks): Shop {
     root.add(img)
     scene.tweens.add({ targets: img, y: 120, duration: 420, yoyo: true, repeat: -1, delay: i * 130, ease: 'Sine.inOut' })
   })
+  // Fun-1 F14: random rescued friend's shop line (hidden if none rescued).
+  const shopChat = pickFriendChatter(freed)
+  if (shopChat) {
+    root.add(
+      scene.add
+        .text(GAME_W / 2, 104, `${shopChat.name}：${shopChat.shop}`, {
+          fontFamily: FONT_UI,
+          fontSize: '11px',
+          color: '#fff6e0',
+          backgroundColor: '#203040',
+          padding: { x: 6, y: 2 },
+        })
+        .setOrigin(0.5, 0),
+    )
+  }
 
   const panel = scene.add.graphics()
   const PW = GAME_W - 56 - 150

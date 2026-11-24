@@ -1,10 +1,27 @@
 import Phaser from 'phaser'
+import chatterRaw from '../../data/friend-chatter.json'
 
 /**
  * 噗噗's picnic friends (docs/bible/friends.md): plush toys locked in honey-crate cages.
  * Until Cursor's sheets arrive (art-src/anim/friends/<id>, batch 06) each friend is a small
  * procedurally drawn plush in its own colours; the cage likewise.
  */
+
+/** Fun-1 F14: clear / shop one-liners (docs/bible/friend-chatter-copilot.json). */
+type FriendChatter = { id: string; name: string; clear_chat: string; shop: string; picnic: string }
+const FRIEND_CHATTER = (chatterRaw as { friends: FriendChatter[] }).friends
+const CHATTER_BY_ID: Record<string, FriendChatter> = Object.fromEntries(FRIEND_CHATTER.map((f) => [f.id, f]))
+
+export function friendChatter(id: string): FriendChatter | null {
+  return CHATTER_BY_ID[id] ?? null
+}
+
+/** Pick one rescued friend at random; null if none. */
+export function pickFriendChatter(ids: string[]): FriendChatter | null {
+  const pool = ids.map((id) => CHATTER_BY_ID[id]).filter((f): f is FriendChatter => !!f)
+  if (!pool.length) return null
+  return pool[Math.floor(Math.random() * pool.length)]!
+}
 
 export type FriendId = 'huihui' | 'guard' | 'denim' | 'brownie' | 'snowcat' | 'shiba' | 'ginger' | 'fleecy' | 'gnome' | 'tigercub' | 'kuro'
 

@@ -117,6 +117,19 @@ const guideBits = [
   '過關休息而家6幣，可以回滿血。',
 ]
 for (const bit of guideBits) assert(`guide:${bit.slice(0, 12)}`, guidePlain.includes(bit), bit)
+
+// F13 / F14
+const rhythm = fs.readFileSync('src/game/enemies/BossRhythm.ts', 'utf8')
+assert('F13.bang', rhythm.includes("'破綻！'") || rhythm.includes('"破綻！"'))
+assert('F13.delayPant', rhythm.includes('openingBangMs'))
+assert('F13.fade600', /duration:\s*600/.test(rhythm))
+const chatter = JSON.parse(fs.readFileSync('docs/bible/friend-chatter-copilot.json', 'utf8'))
+assertEq('F14.friendCount', chatter.friends.length, 11)
+assert('F14.clear_chat', chatter.friends.every((f) => f.clear_chat && f.shop))
+assert('F14.pickHelper', gs.includes('pickFriendChatter') || fs.readFileSync('src/game/friends.ts','utf8').includes('pickFriendChatter'))
+assert('F14.shopWire', fs.readFileSync('src/game/shop.ts','utf8').includes('pickFriendChatter'))
+assert('F14.dataMirror', fs.existsSync('data/friend-chatter.json'))
+
 for (const bad of ['守護者', '第8關']) {
   // strip base64 already; avoid false positives from leftover chunks
   assert(`guide.noSpoiler:${bad}`, !guidePlain.includes(bad))
