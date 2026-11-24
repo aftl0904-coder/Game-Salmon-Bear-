@@ -106,7 +106,11 @@ export class TriBoss extends AnimEnemy {
     }
     this.lastHitAt = now
     const before = { x: this.x, y: this.y }
-    const r = super.receiveHit(bossHitDamage(dmg, { capNormal: 2 }), dir)
+    // Crack window already fires bossEvent('weak') — apply weak damage (base 3, cap 5).
+    const r = super.receiveHit(
+      bossHitDamage(dmg, { weak: this.act === 'crack', weakBase: 3, capNormal: 2, capWeak: 5 }),
+      dir,
+    )
     this.setPosition(before.x, before.y)
     this.setVelocity(0, 0)
     if (this.fsm === 'HURT') this.setFsm('ATTACK')
