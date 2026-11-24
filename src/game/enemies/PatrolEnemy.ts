@@ -361,21 +361,40 @@ export class PatrolEnemy extends Enemy {
     if (!this.canEngageFromScreen()) return
     this.setFsm('ATTACK')
     this.atkPhase = 'windup'
-    // 霸鼻象：蓄力至少 0.5s；其他種保持原 telegraph。
+    // systems-2: stage-1 cast telegraph lengthening (also applies on stages 2/5).
     if (this.species === 'elephant') {
-      this.windup = Math.max(500, ms)
+      this.windup = Math.max(800, ms)
     } else if (this.species === 'fish') {
       // Charger: long, readable run-up so the hero can jump the dash.
-      this.windup = aiNum('fish', 'telegraphMs', 720)
-      // Exclamation telegraph above head.
-      const bang = this.scene.add.text(this.x, this.y - this.displayHeight - 8, '！', { fontSize: '18px', color: '#ff3030', stroke: '#fff0a0', strokeThickness: 4 }).setOrigin(0.5).setDepth(this.depth + 5)
-      this.scene.tweens.add({ targets: bang, y: bang.y - 10, alpha: 0, duration: Math.max(280, this.windup), onComplete: () => bang.destroy() })
+      this.windup = aiNum('fish', 'telegraphMs', 800)
+    } else if (this.species === 'barrel') {
+      // 疾風桶：固定 600ms 起手（唔影響其他走 else 嘅種類）。
+      this.windup = 600
     } else {
       this.windup = Math.min(420, Math.max(220, ms))
     }
     this.hitThis = false
     freezeActors(this.scene, [this], ATTACK_COMMIT_FREEZE_MS)
     this.setTint(0xff1111)
+    // Clear windup warn: fish already had 「！」; barrel／elephant get the same bang + red tint.
+    if (this.species === 'fish' || this.species === 'barrel' || this.species === 'elephant') {
+      const bang = this.scene.add
+        .text(this.x, this.y - this.displayHeight - 8, '！', {
+          fontSize: '18px',
+          color: '#ff3030',
+          stroke: '#fff0a0',
+          strokeThickness: 4,
+        })
+        .setOrigin(0.5)
+        .setDepth(this.depth + 5)
+      this.scene.tweens.add({
+        targets: bang,
+        y: bang.y - 10,
+        alpha: 0,
+        duration: Math.max(280, this.windup),
+        onComplete: () => bang.destroy(),
+      })
+    }
     this.hooks.telegraph?.(this, this.altarAmbush ? 'ambush' : 'windup')
     this.applyPose()
     this.syncWeapon()

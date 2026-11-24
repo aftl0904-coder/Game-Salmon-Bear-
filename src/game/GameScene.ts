@@ -1980,7 +1980,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 噗噗：可愛 pose hold 1s，再短衝半傷. */
   private summonBearAssist() {
-    const g = this.girlHero()
+    const g = this.petOwner()
     if (!g || !this.pet || this.petJetting || g.hp <= 0) return
     const pet = this.pet
     this.petJetting = true
@@ -2002,7 +2002,7 @@ export class GameScene extends Phaser.Scene {
       ease: 'Sine.inOut',
     })
     this.time.delayedCall(BEAR_POSE_MS, () => {
-      if (!this.girlHero() || !this.pet) {
+      if (!this.petOwner() || !this.pet) {
         this.petJetting = false
         return
       }
@@ -2018,7 +2018,7 @@ export class GameScene extends Phaser.Scene {
         duration: 140,
         ease: 'Cubic.out',
         onComplete: () => {
-          if (!this.girlHero() || !this.pet) {
+          if (!this.petOwner() || !this.pet) {
             this.petJetting = false
             return
           }
@@ -2254,7 +2254,7 @@ export class GameScene extends Phaser.Scene {
       pe.species === 'barrel' ? '#ffaa77' : '#ff6677',
     )
     this.juice.shakeDamage()
-    if (h.role === 'girl') this.summonBearAssist()
+    if (h === this.petOwner()) this.summonBearAssist()
     this.refreshHearts()
     if (hpLeft <= 0) this.knockOut(h)
   }
@@ -2379,7 +2379,7 @@ export class GameScene extends Phaser.Scene {
     if (opts.label) floatText(this, h.x, h.y - 36, opts.label, '#ff8866')
     this.dropWeaponLv(h)
     this.juice.shakeDamage()
-    if (h.role === 'girl') this.summonBearAssist()
+    if (h === this.petOwner()) this.summonBearAssist()
     this.refreshHearts?.()
     if (hpLeft <= 0) this.knockOut(h)
     return true
@@ -2409,7 +2409,7 @@ export class GameScene extends Phaser.Scene {
         applyHurtPose(h, -h.facing)
         startIFrameBlink(h as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(h))
         SFX.spike()
-        if (h.role === 'girl') this.summonBearAssist()
+        if (h === this.petOwner()) this.summonBearAssist()
         this.refreshHearts()
         if (hpLeft <= 0) this.knockOut(h)
       }
@@ -2718,13 +2718,23 @@ export class GameScene extends Phaser.Scene {
     return null
   }
 
-  /** 噗噗：跟在琪寶寶身後（2P 或 1P 琪寶寶）。 */
+  /**
+   * systems-2: who 噗噗 follows / assists.
+   * 2P → 琪寶寶；1P 琪寶寶 → 琪寶寶；1P 倫寶 → 倫寶.
+   */
+  private petOwner(): Hero | null {
+    if (this.mode === '2p') return this.girl
+    if (this.mode === '1p') return this.boy
+    return this.girlHero()
+  }
+
+  /** 噗噗：跟住 petOwner（2P／1P 琪寶寶／1P 倫寶）。 */
   private updatePet() {
-    const g = this.girlHero()
+    const g = this.petOwner()
     const pet = this.pet
     if (!g || !pet) return
     let followX = g.x - g.facing * PET_FOLLOW_BEHIND
-    if (this.girl && Math.abs(followX - this.boy.x) < 56) {
+    if (this.mode === '2p' && this.girl && Math.abs(followX - this.boy.x) < 56) {
       followX = g.x - g.facing * (PET_FOLLOW_BEHIND + 40)
     }
     const followY = laneY(g.lane)
@@ -5428,7 +5438,11 @@ export class GameScene extends Phaser.Scene {
     this.entities.add(this.boy, 'player')
     this.boyShadow = addGroundShadow(this, this.boy, (t) => this.groundYFor(t))
 
-    if (this.mode !== '2p') return
+    if (this.mode !== '2p') {
+      // systems-2: 1P 倫寶 also gets 噗噗 (respect puffAway).
+      this.attachPetCompanion(this.boy, boyLane)
+      return
+    }
 
     const girlLane = clampLane(LANE_DEFAULT + 1)
     const girlY = laneY(girlLane)
@@ -5442,6 +5456,27 @@ export class GameScene extends Phaser.Scene {
     this.attachGirlGear(this.girl, girlLane)
   }
 
+  /** Spawn 噗噗 beside owner unless already left (puffAway). */
+  private attachPetCompanion(owner: Hero, lane: LaneId) {
+    if (puffAway()) return
+    const petStartX = owner.x - PET_FOLLOW_BEHIND
+    const petAnim = hasAnimSet(this, 'pupu')
+    this.pet = this.physics.add.sprite(petStartX, owner.y, petAnim ? animTex('pupu') : 'art-bear')
+    if (petAnim) this.pet.anims.play('pupu-idle')
+    this.pet.setOrigin(0.5, 1)
+    enableActorSprite(this.pet)
+    this.pet
+      .setScale(this.petScaleForGirl(owner))
+      .setAlpha(0.85)
+      .setDepth(actorDepth('pet', lane, owner.y))
+      .setVisible(true)
+    this.pet.setCollideWorldBounds(false)
+    ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
+    this.pet.setData('lane', lane)
+    this.entities.add(this.pet, 'pet')
+    this.petShadow = addGroundShadow(this, this.pet, (t) => this.groundYFor(t), 0.85)
+  }
+
   /** 琪寶寶 sword／噗噗 — 電風扇已 stamp 喺 art-girl 背脊. */
   private attachGirlGear(g: Hero, lane: LaneId) {
     if (puffAway()) {
@@ -5453,22 +5488,7 @@ export class GameScene extends Phaser.Scene {
       enableActorSprite(this.sword)
       return
     }
-    const petStartX = g.x - PET_FOLLOW_BEHIND
-    const petAnim = hasAnimSet(this, 'pupu')
-    this.pet = this.physics.add.sprite(petStartX, g.y, petAnim ? animTex('pupu') : 'art-bear')
-    if (petAnim) this.pet.anims.play('pupu-idle')
-    this.pet.setOrigin(0.5, 1)
-    enableActorSprite(this.pet)
-    this.pet
-      .setScale(this.petScaleForGirl(g))
-      .setAlpha(0.85)
-      .setDepth(actorDepth('pet', lane, g.y))
-      .setVisible(true)
-    this.pet.setCollideWorldBounds(false)
-    ;(this.pet.body as Phaser.Physics.Arcade.Body).allowGravity = false
-    this.pet.setData('lane', lane)
-    this.entities.add(this.pet, 'pet')
-    this.petShadow = addGroundShadow(this, this.pet, (t) => this.groundYFor(t), 0.85)
+    this.attachPetCompanion(g, lane)
     // Animated 琪寶寶 carries her sword + fan in the frames — no separate prop sprite.
     if (g.animSet) {
       this.sword = null
@@ -5814,7 +5834,7 @@ export class GameScene extends Phaser.Scene {
     burst(this, h.x, h.y - 20, 0xffaa66, 5)
     floatText(this, h.x, h.y - 36, `-${dmg}`, '#ffaa66', { size: 16, dur: 700 })
     this.refreshHearts()
-    if (h.role === 'girl') this.summonBearAssist()
+    if (h === this.petOwner()) this.summonBearAssist()
     if (hpLeft <= 0) this.knockOut(h)
   }
 
@@ -8234,6 +8254,18 @@ export class GameScene extends Phaser.Scene {
     return e
   }
 
+  /**
+   * systems-2: when both heroes are present (2P), boss max HP ×1.5 (rounded).
+   * Phase thresholds use hp/maxHp ratios — scaling both keeps phase timing.
+   * Call after addS2Enemy (after difficulty mul). 1P unchanged.
+   */
+  private scaleBossHpFor2P(e: { hp?: number; maxHp?: number }) {
+    if (this.mode !== '2p' || !this.boy || !this.girl) return
+    if (typeof e.hp !== 'number' || typeof e.maxHp !== 'number') return
+    e.maxHp = Math.max(1, Math.round(e.maxHp * 1.5))
+    e.hp = e.maxHp
+  }
+
   /** Stage 1's altar climax: the trigger, the arena clamp and the HP bar; the fight itself is WarriorKing. */
   private tickStage1Boss() {
     const b = ST.boss
@@ -8389,6 +8421,8 @@ export class GameScene extends Phaser.Scene {
       q.onDefeated = () => (this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
+      // systems-2: 2P both heroes present → boss HP ×1.5 (phase % thresholds unchanged).
+      this.scaleBossHpFor2P(q)
       this.queen = q
       this.buildBossBar()
       floatText(this, this.cameras.main.scrollX + GAME_W / 2, 90, this.bossName(), this.stageNo === 1 ? '#ff7a4a' : this.mall ? '#9ad4e8' : this.tower ? '#ff6a4a' : this.depot ? '#ffb060' : this.market ? '#d8e0ff' : '#ffcc44', { size: 22, dur: 1600 })

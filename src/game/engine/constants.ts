@@ -113,8 +113,8 @@ export const HIT_CONFIRM_FREEZE_MS = 70
 export const PLAYER_HURT_FREEZE_MS = 200
 /** 大象蓄力鼻擊 */
 export const ELEPHANT_WINDUP_MS = 500
-/** 大象打中後短暫「霸體」——別人打唔入 */
-export const ELEPHANT_DOMINATE_MS = 1200
+/** 大象打中後短暫「霸體」——別人打唔入（systems-2: 1200→800） */
+export const ELEPHANT_DOMINATE_MS = 800
 /** 刺刺魚小彈傷害（低） */
 export const FISH_BULLET_DMG = 1
 /** 刺刺魚彈命中 freeze */
