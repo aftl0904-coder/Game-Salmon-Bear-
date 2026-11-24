@@ -6,4 +6,4 @@
 
 `browser.txt`、`desktop-*.png`、`mobile-touch-*.png`：桌面滑鼠及模擬手機純 touch 獨立選取預覽七圖，非遊戲或真機測試。`build.txt` 記錄 TypeScript + Vite，`validate-data.txt` 記錄全部 10 項資料驗證；均通過，現有 Vite 大 chunk 警告仍在。
 
-第八張 `S8_C_監視器內噗噗離開` 原稿錯把噗噗畫在監視器外，**不合格，沒有收錄**，正在修正。七圖尚未接入遊戲，未測真機、文字覆蓋或畫面轉場；藝術與劇情效果仍待 Claude 一併檢查。
+第八張 `S8_C_監視器內噗噗離開` 原稿錯把噗噗畫在監視器外，**不合格，沒有收錄本批**；修正版已另交，見 `docs/qa-m8-art/story-final/`。七圖尚未接入遊戲，未測真機、文字覆蓋或畫面轉場；藝術與劇情效果仍待 Claude 一併檢查。

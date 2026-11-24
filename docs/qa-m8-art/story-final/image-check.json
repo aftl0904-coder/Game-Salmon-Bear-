@@ -1,0 +1,13 @@
+[
+  {
+    "name": "S8_C_監視器內噗噗離開",
+    "path": "public/art/story/S8_C_監視器內噗噗離開.png",
+    "mode": "RGB",
+    "size": [
+      1280,
+      720
+    ],
+    "visible_colors": 128,
+    "pass": true
+  }
+]
