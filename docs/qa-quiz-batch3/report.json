@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "total": 300,
+    "rewrittenCount": 115,
+    "promptMismatches": [],
+    "forceHard": {
+      "Q042": "hard",
+      "mall-17": "hard",
+      "mall-31": "hard",
+      "iq-01": "hard",
+      "iq-06": "hard"
+    },
+    "iqHard": 16,
+    "buyContextGrep": [
+      {
+        "id": "Q014",
+        "word": "睇樓"
+      },
+      {
+        "id": "dev-68",
+        "word": "睇樓"
+      }
+    ],
+    "longId": "Q042",
+    "hardShotId": "mall-17"
+  },
+  "lintNote": "See quiz-option-lint; WO says do not rewrite on lint fail",
+  "shots": [
+    "docs/qa-quiz-batch3/mobile-long-prompt.png",
+    "docs/qa-quiz-batch3/mobile-hard.png"
+  ]
+}

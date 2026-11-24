@@ -101,94 +101,112 @@
   ],
   "enemies": [
     {
-      "x": 480,
+      "x": 200,
       "species": "s7charge",
-      "unlockX": 280
+      "unlockX": 80,
+      "note": "A・第一隻單獨出現，出生點不在輸送帶上，先熟悉卸貨區"
     },
     {
-      "x": 640,
+      "x": 520,
       "species": "s7hop",
-      "unlockX": 450
+      "unlockX": 400,
+      "note": "A・第二隻單獨出現，使用既有輸送帶增加移位感，不與首"
     },
     {
-      "x": 780,
+      "x": 960,
       "species": "s7shield",
-      "unlockX": 600
+      "unlockX": 840,
+      "note": "B・展示廳第一組前排，位於800檢查點保護區之外。"
     },
     {
-      "x": 1030,
+      "x": 1140,
       "species": "s7can",
-      "unlockX": 880
+      "unlockX": 840,
+      "note": "B・盾後投擲配合展示廳環境，但不再額外疊加兩隻射燈援"
     },
     {
-      "x": 1240,
-      "species": "s7charge",
-      "unlockX": 1050
-    },
-    {
-      "x": 1530,
+      "x": 1280,
       "species": "s7hop",
-      "unlockX": 1350
+      "unlockX": 1160,
+      "note": "B・出生點距1400救籠120px，可向救籠方向接近"
+    },
+    {
+      "x": 1520,
+      "species": "s7charge",
+      "unlockX": 1160,
+      "note": "B・出生點距救籠120px，與1280跳籃錯峰；玩家"
+    },
+    {
+      "x": 1660,
+      "species": "s7shield",
+      "unlockX": 1540,
+      "note": "B・救籠後改回前後排組合，不連續使用跳籃衝刺。"
     },
     {
       "x": 1820,
-      "species": "s7shield",
-      "unlockX": 1650
-    },
-    {
-      "x": 2100,
       "species": "s7can",
-      "unlockX": 2000
+      "unlockX": 1540,
+      "note": "B・展示廳收尾後排，與1960檢查點相距140px。"
     },
     {
-      "x": 2510,
-      "species": "s7hop",
-      "unlockX": 2280
-    },
-    {
-      "x": 2920,
+      "x": 2090,
       "species": "s7shield",
-      "unlockX": 2680
+      "unlockX": 1990,
+      "note": "C・檢查點後130px才放前排，與窿前保護區分離。"
     },
     {
-      "x": 3260,
+      "x": 2200,
+      "species": "s7can",
+      "unlockX": 1990,
+      "note": "C・同在第一個窿左側，不安排隔窿投擲；與2090盾兵"
+    },
+    {
+      "x": 2600,
+      "species": "s7hop",
+      "unlockX": 2480,
+      "note": "C・在逆向輸送帶上配合衝刺，但延後到衝刺首輪結束後才"
+    },
+    {
+      "x": 2660,
       "species": "s7charge",
-      "unlockX": 3150
+      "unlockX": 2480,
+      "note": "C・逆向輸送帶上的衝刺位；首輪向左衝160px至25"
     },
     {
-      "x": 3480,
-      "species": "s7can",
-      "unlockX": 3280
-    },
-    {
-      "x": 3720,
-      "species": "s7hop",
-      "unlockX": 3500
-    },
-    {
-      "x": 3980,
+      "x": 3240,
       "species": "s7shield",
-      "unlockX": 3780
+      "unlockX": 3120,
+      "note": "D・3100檢查點後140px開第一組，拍賣台入口先"
+    },
+    {
+      "x": 3420,
+      "species": "s7can",
+      "unlockX": 3120,
+      "note": "D・與3240盾兵配對，先在射燈區前建立前後排壓力。"
+    },
+    {
+      "x": 3580,
+      "species": "s7hop",
+      "unlockX": 3460,
+      "note": "D・拍賣台中段跳籃配衝刺；射燈召援須服從全關活躍上限"
+    },
+    {
+      "x": 3760,
+      "species": "s7charge",
+      "unlockX": 3460,
+      "note": "D・與3580跳籃配對；出生點距3900救籠140p"
+    },
+    {
+      "x": 4060,
+      "species": "s7shield",
+      "unlockX": 3940,
+      "note": "D・救籠後最後一組改為盾加跳籃，不再重複盾罐。"
     },
     {
       "x": 4280,
-      "species": "s7charge",
-      "unlockX": 4080
-    },
-    {
-      "x": 4575,
       "species": "s7hop",
-      "unlockX": 4520
-    },
-    {
-      "x": 4610,
-      "species": "s7can",
-      "unlockX": 4560
-    },
-    {
-      "x": 4645,
-      "species": "s7shield",
-      "unlockX": 4590
+      "unlockX": 3940,
+      "note": "D・從盾兵後方跳出形成不同威脅；清除後至Boss入口"
     }
   ],
   "altarAmbush": [],

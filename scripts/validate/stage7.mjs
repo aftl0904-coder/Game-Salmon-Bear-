@@ -21,7 +21,10 @@ for(let i=1;i<ordered.length;i++)check(ordered[i].species!==ordered[i-1].species
 for(const segment of segments){
   const inSeg=enemies.filter(e=>e.x>=segment.x0&&e.x<segment.x1)
   const kinds=new Set(inSeg.map(e=>e.species))
-  check(kinds.size>=3,`${segment.id}: ≥3 behavior types (got ${[...kinds].join(',')||'none'})`)
+  // 2026-11-24 relayout: A = one-at-a-time teaching, E = boss arena only (no minor enemies); variety rule applies to B–D
+  if(['B','C','D'].includes(segment.id))check(kinds.size>=3,`${segment.id}: ≥3 behavior types (got ${[...kinds].join(',')||'none'})`)
+  if(segment.id==='A')check(kinds.size>=2,`A: ≥2 teaching types (got ${[...kinds].join(',')||'none'})`)
+  if(segment.id==='E')check(inSeg.length===0,`E: boss arena should have no minor enemies (got ${inSeg.length})`)
   for(const e of inSeg)check(Number.isFinite(e.unlockX)&&e.unlockX<=e.x,'enemy unlock before position')
 }
 const t=level.trainer||{}
