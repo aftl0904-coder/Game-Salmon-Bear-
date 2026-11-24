@@ -1,0 +1,494 @@
+{
+ "_draft": "第8關設計稿 r1（Claude 2026-11-24）。未入遊戲；Cursor 接入時搬去 data/levels/stage8.json。新欄位：pipeSprays、valves、researcher、stallX、transition。",
+ "id": "ST-08",
+ "name": "配方控制中心・研發層",
+ "theme": "lab-night",
+ "worldW": 5700,
+ "segments": [
+  {
+   "id": "A",
+   "x0": 0,
+   "x1": 855,
+   "note": "無人接待層：教無人機同試管兵；會員中心搶答攤"
+  },
+  {
+   "id": "B",
+   "x0": 855,
+   "x1": 1995,
+   "note": "假蜜管道：新機制「管道噴蜜＋閥門」"
+  },
+  {
+   "id": "C",
+   "x0": 1995,
+   "x1": 3135,
+   "note": "機房：風口上機櫃、機械臂；監視器見噗噗"
+  },
+  {
+   "id": "D",
+   "x0": 3135,
+   "x1": 4560,
+   "note": "原始紀錄庫：文件櫃怪、移動書架過坑"
+  },
+  {
+   "id": "E",
+   "x0": 4560,
+   "x1": 5700,
+   "note": "中控室：主任研究員"
+  }
+ ],
+ "signs": [
+  {
+   "x": 100,
+   "text": "蜜腳印未乾，沿住搵。"
+  },
+  {
+   "x": 900,
+   "text": "管道一震就噴，等佢停。"
+  },
+  {
+   "x": 1000,
+   "text": "打爛閥門，管道就停。"
+  },
+  {
+   "x": 2010,
+   "text": "企上風口，吹你上機櫃。"
+  },
+  {
+   "x": 3150,
+   "text": "書架會郁，睇準先跳。"
+  }
+ ],
+ "checkpoints": [
+  840,
+  1980,
+  3120,
+  4520
+ ],
+ "pits": [
+  {
+   "x": 1580,
+   "w": 56
+  },
+  {
+   "x": 2780,
+   "w": 60
+  },
+  {
+   "x": 3900,
+   "w": 96
+  }
+ ],
+ "steps": [
+  {
+   "x": 480,
+   "w": 96,
+   "h": 20,
+   "note": "A・接待櫃枱"
+  },
+  {
+   "x": 3300,
+   "w": 100,
+   "h": 28,
+   "note": "D・文件堆台階"
+  }
+ ],
+ "platforms": [
+  {
+   "x": 2300,
+   "w": 90,
+   "h": 40,
+   "note": "C・矮機櫃"
+  },
+  {
+   "x": 2420,
+   "w": 80,
+   "h": 76,
+   "note": "C・高機櫃（隱藏壽司）"
+  }
+ ],
+ "shelves": [
+  {
+   "x": 2210,
+   "w": 52,
+   "h": 140,
+   "note": "C・風口頂，只有琪寶寶飄得上（3個幣）"
+  }
+ ],
+ "movingPlatforms": [
+  {
+   "x": 3916,
+   "w": 64,
+   "h": 16,
+   "range": 24,
+   "periodMs": 3200,
+   "note": "D・移動書架"
+  }
+ ],
+ "windVents": [
+  {
+   "x": 2240,
+   "lift": 150
+  }
+ ],
+ "sticky": [
+  {
+   "x0": 1250,
+   "x1": 1340,
+   "note": "B・漏咗假蜜，地下黐腳"
+  }
+ ],
+ "pipeSprays": [
+  {
+   "x": 1100,
+   "w": 36,
+   "periodMs": 3600,
+   "phaseMs": 0,
+   "warnMs": 1000,
+   "onMs": 1200,
+   "valve": "V1"
+  },
+  {
+   "x": 1420,
+   "w": 36,
+   "periodMs": 3600,
+   "phaseMs": 1200,
+   "warnMs": 1000,
+   "onMs": 1200,
+   "valve": "V1"
+  },
+  {
+   "x": 1720,
+   "w": 36,
+   "periodMs": 3600,
+   "phaseMs": 2400,
+   "warnMs": 1000,
+   "onMs": 1200,
+   "valve": "V2"
+  },
+  {
+   "x": 3460,
+   "w": 36,
+   "periodMs": 4000,
+   "phaseMs": 0,
+   "warnMs": 1000,
+   "onMs": 1200
+  }
+ ],
+ "valves": [
+  {
+   "id": "V1",
+   "x": 1060,
+   "hits": 2,
+   "note": "打兩下停 1100、1420"
+  },
+  {
+   "id": "V2",
+   "x": 1660,
+   "hits": 2,
+   "note": "打兩下停 1720"
+  }
+ ],
+ "honey": [
+  {
+   "x": 470,
+   "h": 40
+  },
+  {
+   "x": 1880,
+   "h": 40
+  },
+  {
+   "x": 2960,
+   "h": 40
+  },
+  {
+   "x": 4300,
+   "h": 40
+  }
+ ],
+ "coins": [
+  {
+   "x": 200,
+   "h": 22
+  },
+  {
+   "x": 380,
+   "h": 36
+  },
+  {
+   "x": 640,
+   "h": 22
+  },
+  {
+   "x": 900,
+   "h": 22
+  },
+  {
+   "x": 1180,
+   "h": 40
+  },
+  {
+   "x": 1480,
+   "h": 22
+  },
+  {
+   "x": 1820,
+   "h": 36
+  },
+  {
+   "x": 2080,
+   "h": 22
+  },
+  {
+   "x": 2340,
+   "h": 62
+  },
+  {
+   "x": 2560,
+   "h": 22
+  },
+  {
+   "x": 3000,
+   "h": 36
+  },
+  {
+   "x": 3220,
+   "h": 22
+  },
+  {
+   "x": 3380,
+   "h": 50
+  },
+  {
+   "x": 3640,
+   "h": 22
+  },
+  {
+   "x": 3960,
+   "h": 46
+  },
+  {
+   "x": 4180,
+   "h": 22
+  },
+  {
+   "x": 4400,
+   "h": 36
+  },
+  {
+   "x": 4800,
+   "h": 22
+  },
+  {
+   "x": 5000,
+   "h": 40
+  },
+  {
+   "x": 5200,
+   "h": 22
+  }
+ ],
+ "secrets": [
+  {
+   "x": 2460,
+   "h": 112,
+   "kind": "sushi",
+   "note": "C・高機櫃上面"
+  },
+  {
+   "x": 2236,
+   "h": 150,
+   "kind": "coins",
+   "note": "C・風口頂（琪寶寶）"
+  }
+ ],
+ "breakables": [
+  {
+   "x": 600,
+   "kind": "pot",
+   "loot": "coin"
+  },
+  {
+   "x": 1240,
+   "kind": "pot",
+   "loot": "food"
+  },
+  {
+   "x": 2100,
+   "kind": "pot",
+   "loot": "power"
+  },
+  {
+   "x": 2520,
+   "kind": "pot",
+   "loot": "coin"
+  },
+  {
+   "x": 3240,
+   "kind": "pot",
+   "loot": "power"
+  },
+  {
+   "x": 3620,
+   "kind": "pot",
+   "loot": "food"
+  },
+  {
+   "x": 4460,
+   "kind": "pot",
+   "loot": "food"
+  }
+ ],
+ "enemies": [
+  {
+   "x": 260,
+   "species": "s7charge",
+   "unlockX": 60,
+   "note": "A・熟悉敵人開場"
+  },
+  {
+   "x": 520,
+   "species": "s8drone",
+   "unlockX": 240,
+   "note": "A・新敵：巡邏無人機（單獨教）"
+  },
+  {
+   "x": 760,
+   "species": "s8tube",
+   "unlockX": 480,
+   "note": "A・新敵：試管兵（單獨教）"
+  },
+  {
+   "x": 1000,
+   "species": "s8tube",
+   "unlockX": 700,
+   "note": "B・閥門前"
+  },
+  {
+   "x": 1300,
+   "species": "s8drone",
+   "unlockX": 1020,
+   "note": "B・管道之間"
+  },
+  {
+   "x": 1500,
+   "species": "s7shield",
+   "unlockX": 1220,
+   "note": "B・黐腳區後"
+  },
+  {
+   "x": 1760,
+   "species": "s8cabinet",
+   "unlockX": 1460,
+   "note": "B・中型敵 1",
+   "mid": true
+  },
+  {
+   "x": 1920,
+   "species": "s8tube",
+   "unlockX": 1640,
+   "note": "B・出口"
+  },
+  {
+   "x": 2150,
+   "species": "robotarm",
+   "unlockX": 1770,
+   "note": "C・機械臂（原地出現，unlock ≤ x−380）"
+  },
+  {
+   "x": 2400,
+   "species": "s8drone",
+   "unlockX": 2120,
+   "note": "C・機櫃上空"
+  },
+  {
+   "x": 2620,
+   "species": "s7charge",
+   "unlockX": 2340,
+   "note": "C・過坑前"
+  },
+  {
+   "x": 2900,
+   "species": "s8tube",
+   "unlockX": 2600,
+   "note": "C・監視器前"
+  },
+  {
+   "x": 3060,
+   "species": "s8drone",
+   "unlockX": 2760,
+   "note": "C・出口"
+  },
+  {
+   "x": 3320,
+   "species": "s7shield",
+   "unlockX": 3020,
+   "note": "D・文件堆"
+  },
+  {
+   "x": 3540,
+   "species": "s8tube",
+   "unlockX": 3260,
+   "note": "D・噴管旁"
+  },
+  {
+   "x": 3760,
+   "species": "s8cabinet",
+   "unlockX": 3460,
+   "note": "D・中型敵 2",
+   "mid": true
+  },
+  {
+   "x": 4060,
+   "species": "robotarm",
+   "unlockX": 3680,
+   "note": "D・過坑後（unlock ≤ x−380）"
+  },
+  {
+   "x": 4120,
+   "species": "s8drone",
+   "unlockX": 3840,
+   "note": "D・書架上空"
+  },
+  {
+   "x": 4300,
+   "species": "s7charge",
+   "unlockX": 4020,
+   "note": "D・Boss 前"
+  },
+  {
+   "x": 4420,
+   "species": "s8tube",
+   "unlockX": 4140,
+   "note": "D・Boss 前"
+  }
+ ],
+ "boss": {
+  "kind": "researcher",
+  "triggerX": 4680,
+  "arenaX0": 4640,
+  "arenaX1": 5280
+ },
+ "researcher": {
+  "hp": 42,
+  "phase2At": 0.66,
+  "phase3Below": 0.33,
+  "swipeWarnMs": 1000,
+  "flaskWarnMs": 1000,
+  "flaskCount": 3,
+  "puddleMs": 3000,
+  "refillExposedMs": 2000,
+  "summonPerCycle": 1,
+  "summonMaxAlive": 2,
+  "weakBase": 3,
+  "capWeak": 5,
+  "capNormal": 2
+ },
+ "stallX": 640,
+ "stall": "quiz2",
+ "transition": {
+  "from": 7,
+  "kind": "tilt",
+  "skin": "cart"
+ }
+}
