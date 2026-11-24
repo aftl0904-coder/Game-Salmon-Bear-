@@ -361,7 +361,7 @@
  "movingPlatforms": [
   {
    "x": 5146,
-   "w": 56,
+   "w": 64,
    "h": 16,
    "range": 28,
    "periodMs": 3200,
