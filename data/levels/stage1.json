@@ -190,25 +190,20 @@
   }
  ],
  "spikes": [
-  {
-   "x": 420,
-   "n": 2
-  },
-  {
-   "x": 3840,
-   "n": 2
-  },
-  {
-   "x": 4700,
-   "n": 3
-  }
+   {
+     "x": 420,
+     "n": 2
+   },
+   {
+     "x": 3860,
+     "n": 2
+   },
+   {
+     "x": 4700,
+     "n": 3
+   }
  ],
- "durians": [
-  1660,
-  2940,
-  4240,
-  5360
- ],
+ "durians": [1600, 2940, 4240, 5360],
  "honey": [
   {
    "x": 1400,
@@ -236,105 +231,106 @@
  ],
  "checkpoints": [
   1340,
-  2620,
+  2640,
+  4140,
   4980
  ],
  "enemies": [
   {
-   "x": 520,
+   "x": 300,
    "species": "fish",
    "kind": "blocker",
-   "unlockX": 300
+   "unlockX": 160
   },
   {
-   "x": 1080,
+   "x": 520,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 860
+   "unlockX": 380
   },
   {
-   "x": 1290,
+   "x": 900,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 1100
+   "unlockX": 780
   },
   {
    "x": 1700,
    "species": "barrel",
    "kind": "ambusher",
-   "unlockX": 1500
+   "unlockX": 1510
   },
   {
-   "x": 1790,
+   "x": 1740,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 1560
+   "unlockX": 1510
   },
   {
-   "x": 2100,
+   "x": 2160,
    "species": "barrel",
    "kind": "ambusher",
    "unlockX": 2040
   },
   {
-   "x": 2360,
+   "x": 2280,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 2140
+   "unlockX": 2040
   },
   {
-   "x": 2570,
+   "x": 2880,
    "species": "barrel",
    "kind": "ambusher",
-   "unlockX": 2380
+   "unlockX": 2760
   },
   {
-   "x": 2980,
-   "species": "barrel",
-   "kind": "ambusher",
-   "unlockX": 2780
-  },
-  {
-   "x": 3050,
+   "x": 3000,
    "species": "elephant",
    "kind": "guardian",
-   "unlockX": 2850
+   "unlockX": 2760
   },
   {
-   "x": 3070,
+   "x": 3420,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 2840
+   "unlockX": 3300
   },
   {
-   "x": 3380,
+   "x": 3600,
    "species": "barrel",
    "kind": "ambusher",
-   "unlockX": 3320
+   "unlockX": 3480
+  },
+  {
+   "x": 3700,
+   "species": "elephant",
+   "kind": "guardian",
+   "unlockX": 3480
+  },
+  {
+   "x": 3780,
+   "species": "barrel",
+   "kind": "ambusher",
+   "unlockX": 3660
   },
   {
    "x": 3940,
    "species": "fish",
    "kind": "blocker",
-   "unlockX": 3720
+   "unlockX": 3660
   },
   {
-   "x": 4460,
+   "x": 4340,
    "species": "fish",
    "kind": "chaser",
-   "unlockX": 4260
+   "unlockX": 4220
   },
   {
    "x": 4800,
-   "species": "elephant",
-   "kind": "guardian",
-   "unlockX": 4600
-  },
-  {
-   "x": 4880,
    "species": "barrel",
    "kind": "ambusher",
-   "unlockX": 4660
+   "unlockX": 4680
   }
  ],
  "altarAmbush": [
@@ -356,7 +352,12 @@
   }
  ],
  "altarTriggerX": 5280,
- "boss": { "kind": "warriorking", "triggerX": 5280, "arenaX0": 5240, "arenaX1": 5690 },
+ "boss": {
+  "kind": "warriorking",
+  "triggerX": 5280,
+  "arenaX0": 5240,
+  "arenaX1": 5690
+ },
  "movingPlatforms": [
   {
    "x": 5148,
@@ -557,6 +558,18 @@
  },
  "coins": [
   {
+   "x": 180,
+   "h": 22
+  },
+  {
+   "x": 560,
+   "h": 22
+  },
+  {
+   "x": 1008,
+   "h": 34
+  },
+  {
    "x": 1050,
    "h": 72
   },
@@ -569,6 +582,10 @@
    "h": 72
   },
   {
+   "x": 2160,
+   "h": 22
+  },
+  {
    "x": 2330,
    "h": 72
   },
@@ -579,6 +596,14 @@
   {
    "x": 2358,
    "h": 72
+  },
+  {
+   "x": 3450,
+   "h": 22
+  },
+  {
+   "x": 4000,
+   "h": 22
   },
   {
    "x": 4656,
