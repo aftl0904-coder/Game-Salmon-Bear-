@@ -1,5 +1,14 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## M6 補畫（`manus/m6-art-supplement-2611`；2026-11-24）
+- 首件 `public/art/fx/honey-paw.png`：3 格各 16×16、二值 alpha；第 2 格縮小、非真正半透明淡出，需整合時留意。build、10 項資料驗證和桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m6-art/paw/`；未接入遊戲或真機。
+- 壽司 `public/art/items/pickup-sushi.png`：18×22，格式及獨立素材測試見 `docs/qa-m6-art/sushi/`，build 和 10 項資料驗證通過；未接入遊戲或真機。
+- 榴槤 `public/art/items/hazard-durian.png`：18×22，格式及獨立素材測試見 `docs/qa-m6-art/durian/`，build 和 10 項資料驗證通過；未接入遊戲或真機，尖刺原尺寸較細。
+- 帳篷 `public/art/props/camp-tent.png`：104×60；build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m6-art/tent/`；未接入遊戲或真機，需核對底部錨點。
+- 營火 `public/art/props/camp-fire.png`：兩格各 104×60，上半火焰鏡像、木柴位置保持；build、10 項資料驗證及獨立預覽通過，見 `docs/qa-m6-art/fire/`；未在遊戲播放或真機驗證。
+- 神龕 `public/art/props/camp-shrine.png`：104×60；build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m6-art/shrine/`；未接入遊戲或真機，需核對錨點。
+- 六件全部已逐件交付；本 branch 不改遊戲程式。
+
 ## #88 B／C 中景局部接線 checkpoint（2026-11-04；仍 draft）
 - #91 已複驗的 `4dab1f198e2342201d54acdccf6bd0d518be92f6` 走廊／訓練場兩張中景已按各自實際尺寸 nearest 派生 560×360／318×360、≤64 色，接入第7關 B/C；只修改本 branch，來源、雜湊、處理及可重製腳本見 `public/art/stage7/mid-manifest.json`、`docs/qa-c2s2/README.md`。A/D/E 依視野與世界段落裁切，B/C 平鋪依世界起點定位；裁去可視範圍內原圖地台／欄杆以減少地形誤認，沒有改碰撞、AI、固定物或鏈網。
 - **局部接線，未經瀏覽器驗收，不代表完成。** build 和 10 項資料檢查 exit 0；純幾何短測覆蓋 10,121 個相機位置、輸出 byte-for-byte 重製，但不能證明 Phaser 實際圖層、接縫、坑、角色可讀性或玩法。已存桌面／模擬手機短測腳本及方案；按指示等通知才跑瀏覽器，不跑長測。鏈網時間／扣血次序及背景模擬失敗、原有長測等仍保留，不 merge／close／部署。

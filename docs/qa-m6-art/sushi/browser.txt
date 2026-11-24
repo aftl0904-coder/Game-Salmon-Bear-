@@ -1,0 +1,2 @@
+desktop: PASS; 18x22, frame 18x22, image decode + mouse; standalone preview, not game; no page errors
+mobile-touch: PASS; 18x22, frame 18x22, image decode + touch only; standalone preview, not game; no page errors
