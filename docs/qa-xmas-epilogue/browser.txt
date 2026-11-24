@@ -1,0 +1,2 @@
+desktop: PASS, 2 images decoded and selected via mouse; standalone asset preview, no page errors, not in game.
+mobile-touch: PASS, 2 images decoded and selected via touchscreen only; standalone asset preview, no page errors, not in game.
