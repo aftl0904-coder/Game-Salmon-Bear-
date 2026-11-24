@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "from": "Claude", "to": "Cursor（Auto）", "date": "2026-11-24",
+    "source": "Copilot 核對第一批（law／Q0xx 50 條）＋ Claude 自己核對（labour／hr／math／hard／hanglung）",
+    "branch": "由最新 origin/main 開 cursor/quiz-fixes-2610（如果 cursor/quiz-468-2610 未合，一併做埋 lab-418）",
+    "file": "只改 data/quiz-mall.json（＋ quiz-retired.json）同 lint",
+    "rules": "正確答案照舊放第一個（answerIndex 0，遊戲會打亂）；每條改過嘅題要有 source；錯選項要係同一情境下嘅常見誤解；唔准荒謬、離題部門（旅發局、康文署、漁護署之類）；開唔到 PR 報 branch 名"
+  },
+  "must_fix": [
+    { "id": "lab-418", "fix": "改做 468 新制（見上一單）；source https://www.labour.gov.hk/tc/news/EAO2025.htm" },
+    { "id": "Q012", "fix": "重寫。prompt：「一般月租停車位，單憑每月交租通常會得到咩？」A 按合約使用車位嘅權利 / B 車位業權 / C 車位業權嘅一半份數 / D 優先購買權" },
+    { "id": "Q019", "fix": "prompt 加「（按公契界定）」；D 改做「租戶租用嘅舖位入面」" },
+    { "id": "law-34", "fix": "A 改為「一般按公契規定分攤；公契冇規定時，按各業主所佔業權份數」；錯選項：按各單位實用面積平均分 / 按住戶人數分 / 由管理公司自行決定比例；source https://www.buildingmgt.gov.hk/tc/Daily_Operation_of_Building_Management/5_1_3_1.html" },
+    { "id": "law-70", "fix": "prompt 改「依法須領牌嘅物業管理公司無牌經營，風險係？」A 可能觸犯《物業管理服務條例》；錯選項：只屬行政失誤冇法律後果 / 只要業主立案法團同意就可豁免 / 只要聘用持牌物業管理人就公司唔使領牌；source https://www.pmsa.org.hk/tc/licensing-regime" },
+    { "id": "law-71", "fix": "prompt 改「被困喺升降機入面，正確做法係？」A 按警鐘或對講機求助、保持冷靜等救援 / B 自己撬開門爬出去 / C 不停跳動令升降機重新啟動 / D 打開天花檢修口爬上機頂；source https://www.emsd.gov.hk/m/tc/lifts_and_escalators_safety/responsible_persons_corner/safe_use_of_lifts_escalators/" },
+    { "id": "law-66", "fix": "錯選項改做同層級『地方』：租戶單位內嘅會議室 / 租戶專用嘅儲物室 / 個別租戶租用嘅天台" },
+    { "id": "law-43", "fix": "「公用人牆」改「公用牆身」" },
+    { "id": "Q011", "fix": "prompt 改「差餉同《地租（評估及徵收）條例》下嘅地租，主要按咩計算？」A 應課差餉租值；source https://www.rvd.gov.hk/tc/our_services/government_rent.html" },
+    { "id": "dev-51", "fix": "D「略過錯誤處理先交功能」改做「相當於應課差餉租值百分之一，固定不變」" },
+    { "id": "dev-54", "fix": "B「把配置寫死喺程式碼」改做「豁免補地價」" },
+    { "id": "hl-20", "fix": "刪去『10 個項目、8 個城市』呢類會變而且同 hl-07 矛盾嘅數字；改問 HOUSE 66 係咩性質（會員計劃），錯選項用其他性質（酒店品牌／寫字樓品牌／慈善基金）" },
+    { "id": "hard-11", "fix": "搬去 quiz-retired.json（講首期貸款，Alan 唔要買樓題）；補一條商業租務計數題" },
+    { "id": "hard-17", "fix": "搬去 quiz-retired.json（買樓訂金）；補一條管理費／物管計數題" }
+  ],
+  "distractor_rewrite": {
+    "ids": ["Q004","Q005","Q006","Q007","Q008","Q017","Q018","Q022","Q023","Q024","law-26","law-31","law-37","law-38","law-42","law-47","law-48","law-53","law-55","law-56","law-57","law-58","law-59","law-60","law-61","law-62","law-63","law-64","law-65","law-68","law-69","law-72","law-73"],
+    "rule": "正確答案唔使改。三個錯選項全部改做同一情境入面一般人真係可能揀嘅答案；部門題用相關部門（屋宇署／地政總署／民政事務總署／差餉物業估價署／物業管理業監管局／消防處）互相做干擾，唔好用旅發局、康文署、漁護署",
+    "example": "law-65 物管投訴向邊度反映？→ 物業管理業監管局 / 民政事務總署 / 屋宇署 / 消費者委員會"
+  },
+  "lint_add": ["禁字：旅遊發展局、旅發局、康文署、漁護署、程式碼、錯誤處理", "prompt 或 choices 出現『首期』『按揭』『貸款額』『訂金』（買樓語境）→ FAIL"],
+  "acceptance": [
+    "must_fix 全部改好（逐條寫入 docs/gdd/quiz-developer-review.md，改前改後）",
+    "distractor_rewrite 33 條改好",
+    "quiz-option-lint PASS",
+    "題庫總數維持 300（退役 2 條、新補 2 條）"
+  ],
+  "report_format": "【Cursor → Claude】quiz-fixes 完成\nbranch／commit：\n改咗幾多條：\nlint：\n預覽："
+}
