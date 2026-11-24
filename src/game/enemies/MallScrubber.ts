@@ -333,7 +333,7 @@ export class MallScrubber extends Enemy {
       this.qphase = phase
       this.hooks6.bossEvent(phase === 2 ? 'phase2' : 'phase3')
       this.scene.cameras.main.shake(180, 0.004)
-      this.marker.setText('（待補）').setVisible(true)
+      this.marker.setText('外加指令升級').setVisible(true)
       this.forceRecover(this.recoverMs())
       return result
     }

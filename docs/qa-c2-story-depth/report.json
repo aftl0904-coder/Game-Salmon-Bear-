@@ -1,0 +1,93 @@
+{
+  "ok": true,
+  "errors": [],
+  "checks": {
+    "cards": {
+      "scrubberHasDaibu": false,
+      "trainerHasDaibu": false,
+      "scrubberName": "深層潔淨 X-9",
+      "trainerName": "馴獸師"
+    },
+    "stage6Fragments": {
+      "truthCount": 3,
+      "xs": [
+        1420,
+        2520,
+        3620
+      ],
+      "names": [
+        "開幕清潔驗收單",
+        "工地圍板背面的配送單",
+        "廢棄蜜廠監視器片段"
+      ]
+    },
+    "stage6Frag1Float": true,
+    "stage6Frag2Float": true,
+    "stage6Frag3Float": true,
+    "stage6Got": 3,
+    "stage6KenProp": true,
+    "stage6Photo": {
+      "title": "舊相",
+      "saw": [
+        "商場通往工地的玻璃走廊掛着一張舊相。"
+      ]
+    },
+    "stage6PreFight": {
+      "saw": 2,
+      "need": 3
+    },
+    "stage6PostFight": {
+      "saw": 1,
+      "need": 3
+    },
+    "stage7Fragments": {
+      "truthCount": 3,
+      "xs": [
+        1420,
+        2550,
+        3620
+      ],
+      "names": [
+        "森友展銷價目牌",
+        "飼養員未寄出的申請",
+        "沾着毛的轉運標籤"
+      ]
+    },
+    "stage7Frag1Float": true,
+    "stage7Frag2Float": true,
+    "stage7Frag3Float": true,
+    "stage7Got": 3,
+    "stage7KenProp": true,
+    "stage7Memo": {
+      "title": "批示",
+      "saw": [
+        "展銷中心後台的一封批示。"
+      ]
+    },
+    "stage7PreFight": {
+      "saw": 1,
+      "need": 4
+    },
+    "stage7PostFight": {
+      "saw": 1,
+      "need": 3
+    },
+    "stage7DepartureContinued": true
+  },
+  "shots": [
+    "docs/qa-c2-story-depth/st6-frag-1.png",
+    "docs/qa-c2-story-depth/st6-frag-2.png",
+    "docs/qa-c2-story-depth/st6-frag-3.png",
+    "docs/qa-c2-story-depth/st6-frags-done.png",
+    "docs/qa-c2-story-depth/st6-old-photo.png",
+    "docs/qa-c2-story-depth/st6-boss-pre.png",
+    "docs/qa-c2-story-depth/st6-boss-post.png",
+    "docs/qa-c2-story-depth/st7-frag-1.png",
+    "docs/qa-c2-story-depth/st7-frag-2.png",
+    "docs/qa-c2-story-depth/st7-frag-3.png",
+    "docs/qa-c2-story-depth/st7-frags-done.png",
+    "docs/qa-c2-story-depth/st7-memo.png",
+    "docs/qa-c2-story-depth/st7-boss-post.png",
+    "docs/qa-c2-story-depth/st7-departure-continued.png"
+  ]
+}

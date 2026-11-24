@@ -30,6 +30,17 @@ import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
 import { hasBossCard, playBossCard } from './bossCard'
 import {
+  bossDepthDialogue,
+  ensureStoryDepthArt,
+  fragmentsForStage,
+  kenMemoSpec,
+  kenPhotoSpec,
+  pupuDepartureSpec,
+  showFragmentRead,
+  showKenRead,
+  showStoryLines,
+} from './storyDepth'
+import {
   type Creep,
   type EnemyKind,
   type EnemySpecies,
@@ -389,6 +400,11 @@ export class GameScene extends Phaser.Scene {
   private girlGoal = false
   private bossOn = false
   private honeyGot = 0
+  /** 大陸2 真相碎片（第6／7關各 3 件）。 */
+  private truthGot = 0
+  private truthPickups!: Phaser.Physics.Arcade.Group
+  private kenPropRead = false
+  private leonFlashed = false
   private petJetting = false
   private scorePts = 0
   private killBonus = 0
@@ -532,6 +548,9 @@ export class GameScene extends Phaser.Scene {
     this.boyGoal = false
     this.girlGoal = false
     this.honeyGot = 0
+    this.truthGot = 0
+    this.kenPropRead = false
+    this.leonFlashed = false
     this.petJetting = false
     this.scorePts = 0
     this.killBonus = 0
@@ -3761,6 +3780,7 @@ export class GameScene extends Phaser.Scene {
     if (this.exhibit) {
       this.tickExhibitReaction()
     } else this.tickCage()
+    this.tickKenStoryProp()
     this.tickStage2(dt)
   }
 
@@ -3815,7 +3835,7 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Walk close to the caged silhouette in the honey factory: 噗噗 reacts once. */
+  /** Walk close to the caged silhouette in the honey factory: 噗噗 reacts once + Leon flash. */
   private tickCage() {
     if (this.cageSaid || !this.started) return
     for (const c of ST.cages ?? []) {
@@ -3824,7 +3844,39 @@ export class GameScene extends Phaser.Scene {
       this.cageSaid = true
       const px = this.pet?.x ?? c.x - 60
       floatText(this, px, LANE_FLOOR_Y - 96, '噗噗隻耳仔輕輕郁咗一下……', '#ffd6e8', { size: 12, rise: 8, dur: 3200 })
-      if (this.pet) this.tweens.add({ targets: this.pet, y: this.pet.y - 8, yoyo: true, duration: 180, repeat: 1 })
+      if (this.pet) {
+        const pet = this.pet
+        // Ear twitch → tip-toe closer → reach toward scarf position on the cage.
+        this.tweens.add({ targets: pet, y: pet.y - 8, yoyo: true, duration: 160, repeat: 1 })
+        this.tweens.add({
+          targets: pet,
+          x: c.x - 48,
+          duration: 700,
+          ease: 'Sine.out',
+          onComplete: () => {
+            if (!pet.active) return
+            if (pet.anims?.exists?.('pupu-cute-pose')) pet.anims.play('pupu-cute-pose')
+            this.tweens.add({ targets: pet, x: pet.x + 6, duration: 220, yoyo: true, repeat: 1 })
+          },
+        })
+      }
+      if (!this.leonFlashed) {
+        this.leonFlashed = true
+        ensureStoryDepthArt(this)
+        const emblem = this.add
+          .image(c.x + 160, LANE_FLOOR_Y - 140, 'c2-leon-emblem')
+          .setAlpha(0)
+          .setDepth(DEPTH.FX + 4)
+        this.tweens.add({
+          targets: emblem,
+          alpha: 0.95,
+          x: c.x + 200,
+          duration: 400,
+          yoyo: true,
+          hold: 200,
+          onComplete: () => emblem.destroy(),
+        })
+      }
       break
     }
   }
@@ -3863,15 +3915,85 @@ export class GameScene extends Phaser.Scene {
   /** Clear event is in-memory until saveClear commits it with the rest of the run. */
   private trainerDefeated() {
     if (this.ended || this.puffDeparturePending) return
-    if (isSideTrip() || !puffAway()) {
-      this.puffDeparturePending = true
-      this.stage7Events.push({ kind: 'departure', at: this.time.now })
-      floatText(this, this.pet?.x ?? this.leadX(), LANE_FLOOR_Y - 96, '噗噗追住嗰陣熟悉嘅味道，走咗……', '#ffd6e8', { size: 12, dur: 1800 })
-      if (this.pet) { this.tweens.killTweensOf(this.pet); this.pet.destroy(); this.pet = null }
+    const depth = bossDepthDialogue('trainer')
+    const runDepartureThenClear = () => {
+      this.storyIntro = null
+      if (isSideTrip() || !puffAway()) {
+        this.puffDeparturePending = true
+        this.stage7Events.push({ kind: 'departure', at: this.time.now })
+        this.playPupuDeparture(() => this.queenDefeated())
+        return
+      }
+      this.queenDefeated()
+    }
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    if (depth?.postFight?.length) {
+      this.storyIntro = showStoryLines(this, depth.postFight, runDepartureThenClear)
+    } else {
+      runDepartureThenClear()
+    }
+  }
+
+  /** 第7關結尾：噗噗聞標籤氣味 → 回頭 → 放樹枝 → 鑽維修口 → 待續. */
+  private playPupuDeparture(onDone: () => void) {
+    ensureStoryDepthArt(this)
+    const dep = pupuDepartureSpec()
+    const hatch =
+      (this.children.list.find((o) => (o as Phaser.GameObjects.Image).getData?.('maintHatch')) as Phaser.GameObjects.Image | undefined) ??
+      this.add.image(this.leadX() + 180, LANE_FLOOR_Y, 'c2-maint-hatch').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+    const pet = this.pet
+    const finishDepart = () => {
+      if (pet) {
+        this.tweens.killTweensOf(pet)
+        pet.destroy()
+        this.pet = null
+      }
       this.petShadow?.setVisible(false)
       this.petJetting = false
+      floatText(this, hatch.x, LANE_FLOOR_Y - 96, dep.continued, '#ffd76a', { size: 22, dur: 1600 })
+      this.time.delayedCall(1700, onDone)
     }
-    this.queenDefeated()
+    if (!pet?.active) {
+      floatText(this, this.leadX(), LANE_FLOOR_Y - 96, '噗噗追住嗰陣熟悉嘅味道，走咗……', '#ffd6e8', { size: 12, dur: 1800 })
+      this.time.delayedCall(1000, finishDepart)
+      return
+    }
+    // Narration pages, then motion.
+    this.storyIntro = showStoryLines(this, dep.lines, () => {
+      this.storyIntro = null
+      this.tweens.add({
+        targets: pet,
+        x: hatch.x - 30,
+        duration: 900,
+        ease: 'Sine.out',
+        onComplete: () => {
+          // Look back at heroes
+          pet.setFlipX(this.leadX() < pet.x)
+          this.tweens.add({
+            targets: pet,
+            y: pet.y - 6,
+            duration: 200,
+            yoyo: true,
+            repeat: 1,
+            onComplete: () => {
+              const branch = this.add.image(hatch.x - 8, LANE_FLOOR_Y - 2, 'c2-pupu-branch').setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1)
+              pet.setFlipX(false)
+              this.tweens.add({
+                targets: pet,
+                x: hatch.x,
+                alpha: 0,
+                duration: 700,
+                onComplete: () => {
+                  void branch
+                  finishDepart()
+                },
+              })
+            },
+          })
+        },
+      })
+    })
   }
   /** Reuses enemyShots collision; scene timers are independent of P3 AI rate, but frame/delta dependent. */
   private trainerChain(x0: number, x1: number): number {
@@ -4219,6 +4341,7 @@ export class GameScene extends Phaser.Scene {
     this.coinPickups = this.physics.add.group()
     this.honeyPickups = this.physics.add.group()
     this.sushiPickups = this.physics.add.group()
+    this.truthPickups = this.physics.add.group()
     this.levelMap = createRound1Tilemap(this, this.pots, this.hazards)
     if (this.levelMap?.solids) {
       this.levelMap.solids.setCollisionByExclusion([-1])
@@ -4252,6 +4375,11 @@ export class GameScene extends Phaser.Scene {
     this.placeCheckpoints()
     this.placeMemoryStall()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
+    if (this.mall || this.exhibit) {
+      ensureStoryDepthArt(this)
+      this.placeTruthFragments()
+      this.placeKenStoryProp()
+    }
 
     // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
     this.powerPickups = this.physics.add.group()
@@ -5195,6 +5323,7 @@ export class GameScene extends Phaser.Scene {
     })
     this.physics.add.overlap(this.boy, this.coinPickups, (_b, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite, this.boy))
     this.physics.add.overlap(this.boy, this.honeyPickups, (_b, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
+    this.physics.add.overlap(this.boy, this.truthPickups, (_b, t) => this.takeTruthFragment(t as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.sushiPickups, (_b, s) => this.takeSushi(this.boy, s as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.powerPickups, (_b, p) => this.takePowerUp(this.boy, p as Phaser.Physics.Arcade.Sprite))
     this.physics.add.overlap(this.boy, this.enemyShots, (_b, s) => this.hitByFishBullet(this.boy, s as Phaser.Physics.Arcade.Sprite))
@@ -5209,10 +5338,115 @@ export class GameScene extends Phaser.Scene {
       })
       this.physics.add.overlap(g, this.coinPickups, (_g, c) => this.takeCoin(c as Phaser.Physics.Arcade.Sprite, g))
       this.physics.add.overlap(g, this.honeyPickups, (_g, h) => this.takeHoneyPickup(h as Phaser.Physics.Arcade.Sprite))
+      this.physics.add.overlap(g, this.truthPickups, (_g, t) => this.takeTruthFragment(t as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.sushiPickups, (_g, s) => this.takeSushi(g, s as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.powerPickups, (_g, p) => this.takePowerUp(g, p as Phaser.Physics.Arcade.Sprite))
       this.physics.add.overlap(g, this.enemyShots, (_g, s) => this.hitByFishBullet(g, s as Phaser.Physics.Arcade.Sprite))
     }
+  }
+
+  private placeTruthFragments() {
+    const list = fragmentsForStage(this.stageNo)
+    for (const f of list) {
+      const spr = this.truthPickups.create(f.x, LANE_FLOOR_Y - 18, 'c2-truth-scrap') as Phaser.Physics.Arcade.Sprite
+      spr.setOrigin(0.5, 1).setDepth(DEPTH.PROP + 3)
+      const body = spr.body as Phaser.Physics.Arcade.Body
+      body.allowGravity = false
+      body.setAllowGravity(false)
+      body.setSize(22, 26).setOffset(3, 4)
+      spr.setData('truthId', f.id)
+      spr.setData('truthName', f.name)
+      spr.setData('truthContent', f.content)
+      this.tweens.add({
+        targets: spr,
+        y: spr.y - 4,
+        duration: 700,
+        yoyo: true,
+        repeat: -1,
+        ease: 'Sine.inOut',
+      })
+      // Soft sparkle pulse
+      this.tweens.add({
+        targets: spr,
+        alpha: 0.75,
+        duration: 480,
+        yoyo: true,
+        repeat: -1,
+      })
+    }
+  }
+
+  private takeTruthFragment(spr: Phaser.Physics.Arcade.Sprite) {
+    if (!spr.active || this.storyIntro || this.ended) return
+    const name = String(spr.getData('truthName') ?? '真相碎片')
+    const content = String(spr.getData('truthContent') ?? '')
+    spr.disableBody(true, true)
+    this.tweens.killTweensOf(spr)
+    spr.destroy()
+    this.truthGot = Math.min(3, this.truthGot + 1)
+    SFX.sparkle()
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    this.storyIntro = showFragmentRead(this, name, content, () => {
+      this.storyIntro = null
+      if (!this.ended) {
+        this.physics.resume()
+        this.resetPauseKeys()
+      }
+      floatText(this, this.leadX(), LANE_FLOOR_Y - 100, `真相碎片 ${this.truthGot}/3`, '#ffe08a', { size: 13, dur: 1400 })
+    })
+  }
+
+  private placeKenStoryProp() {
+    const spec = this.mall ? kenPhotoSpec() : this.exhibit ? kenMemoSpec() : null
+    if (!spec || spec.stage !== this.stageNo) return
+    const key = this.mall ? 'c2-ken-photo' : 'c2-ken-memo'
+    const img = this.add
+      .image(spec.x, LANE_FLOOR_Y - (this.mall ? 72 : 40), key)
+      .setOrigin(0.5, 1)
+      .setDepth(DEPTH.PROP + 2)
+      .setData('kenProp', true)
+      .setData('kenTitle', spec.title)
+      .setData('kenPresentation', spec.presentation)
+      .setData('kenContent', spec.content)
+    this.tweens.add({ targets: img, alpha: 0.85, duration: 900, yoyo: true, repeat: -1 })
+    // Hatch for stage7 departure foreshadowing (visual only until boss down)
+    if (this.exhibit) {
+      this.add
+        .image(spec.x + 220, LANE_FLOOR_Y, 'c2-maint-hatch')
+        .setOrigin(0.5, 1)
+        .setDepth(DEPTH.PROP)
+        .setAlpha(0.95)
+        .setData('maintHatch', true)
+    }
+  }
+
+  private tickKenStoryProp() {
+    if (this.kenPropRead || this.storyIntro || !this.started || this.ended || this.bossFight) return
+    if (!(this.mall || this.exhibit)) return
+    const near = this.children.list.find((o) => (o as Phaser.GameObjects.Image).getData?.('kenProp')) as
+      | Phaser.GameObjects.Image
+      | undefined
+    if (!near?.active) return
+    const hx = this.leadX()
+    if (Math.abs(hx - near.x) > 56) return
+    // Auto-read once when walking close (main-route info — same as fragments).
+    this.kenPropRead = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    this.storyIntro = showKenRead(
+      this,
+      String(near.getData('kenTitle')),
+      String(near.getData('kenPresentation')),
+      String(near.getData('kenContent')),
+      () => {
+        this.storyIntro = null
+        if (!this.ended) {
+          this.physics.resume()
+          this.resetPauseKeys()
+        }
+      },
+    )
   }
 
   /** 刺刺魚小彈 — 低傷 + 短 freeze */
@@ -6233,6 +6467,9 @@ export class GameScene extends Phaser.Scene {
       { label: '基本分', detail: '', pts: 1000 },
       { label: '時間', detail: `${Math.floor(timeSec / 60)}:${String(Math.floor(timeSec % 60)).padStart(2, '0')}`, pts: timeBonus },
       { label: '真蜂蜜', detail: `${this.honeyGot} / 3`, pts: this.honeyGot * 300 },
+      ...(this.mall || this.exhibit
+        ? [{ label: '真相碎片', detail: `${this.truthGot} / 3`, pts: this.truthGot * 250 }]
+        : []),
       { label: '剩餘生命', detail: `♥ ${hpLeft}`, pts: hpLeft * 150 },
       { label: '擊倒', detail: '', pts: this.killBonus },
       ...(ST.friends?.length
@@ -7593,11 +7830,21 @@ export class GameScene extends Phaser.Scene {
     const kind = this.stageNo === 1 ? 'altar' : (b.kind as string)
     this.showWarning(() => {
       if (this.ended) return
+      const afterCard = () => {
+        const depth = bossDepthDialogue(kind)
+        if (depth?.preFight?.length) {
+          this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
+            monoDefault: kind === 'mall-scrubber',
+          })
+        } else {
+          this.queenReveal(b)
+        }
+      }
       if (hasBossCard(kind)) {
-        const card = playBossCard(this, kind, () => this.queenReveal(b))
+        const card = playBossCard(this, kind, afterCard)
         this.storyIntro = card
       } else {
-        this.queenReveal(b)
+        afterCard()
       }
     })
   }
@@ -7685,6 +7932,7 @@ export class GameScene extends Phaser.Scene {
   private onQueenEvent(kind: 'phase2' | 'phase3' | 'weak' | 'finale' | 'defeat') {
     const cx = this.cameras.main.scrollX + GAME_W / 2
     if (this.exhibit && kind !== 'defeat') return
+    const scrub = this.mall ? bossDepthDialogue('mall-scrubber') : null
     if (kind === 'phase2') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 200, 90)
@@ -7692,7 +7940,16 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！' : this.mall ? '（待補）' : this.tower ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！' : this.depot ? '佢企上高台——蜜僵同釘槍嚟喇！' : this.market ? '分身！睇水面倒影搵真身' : '佢落地生蛋！快啲打爛啲蛋！',
+        this.stageNo === 1
+          ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！'
+          : scrub?.phase2 ??
+            (this.tower
+              ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！'
+              : this.depot
+                ? '佢企上高台——蜜僵同釘槍嚟喇！'
+                : this.market
+                  ? '分身！睇水面倒影搵真身'
+                  : '佢落地生蛋！快啲打爛啲蛋！'),
         '#ffe08a',
         { size: 16, dur: 2000 },
       )
@@ -7703,13 +7960,38 @@ export class GameScene extends Phaser.Scene {
         this,
         cx,
         96,
-        this.stageNo === 1 ? '狂暴！三連桶——衝完會有破綻！' : this.mall ? '（待補）' : this.tower ? '三角盾開咗！等盾裂先打佢！' : this.depot ? '落車肉搏——打佢披風上嘅蜜印！' : this.market ? '佢守住蜜箱——打爛個箱！' : '小心！假蜜噴射——跳開！',
+        this.stageNo === 1
+          ? '狂暴！三連桶——衝完會有破綻！'
+          : scrub?.phase3 ??
+            (this.tower
+              ? '三角盾開咗！等盾裂先打佢！'
+              : this.depot
+                ? '落車肉搏——打佢披風上嘅蜜印！'
+                : this.market
+                  ? '佢守住蜜箱——打爛個箱！'
+                  : '小心！假蜜噴射——跳開！'),
         '#ff9a3a',
         { size: 16, dur: 2000 },
       )
     } else if (kind === 'weak' && this.queen) {
       SFX.sparkle()
-      floatText(this, this.queen.x, this.queen.y - 110, this.stageNo === 1 ? '佢喘氣！破綻——而家打！' : this.mall ? '（待補）' : this.tower ? '盾裂咗！而家打！' : this.depot ? '弱點！而家打！' : this.market ? '暈咗！而家打！' : '頭頂發光——而家打！', '#fff0a0', { size: 13, dur: 1400 })
+      floatText(
+        this,
+        this.queen.x,
+        this.queen.y - 110,
+        this.stageNo === 1
+          ? '佢喘氣！破綻——而家打！'
+          : scrub?.weak ??
+            (this.tower
+              ? '盾裂咗！而家打！'
+              : this.depot
+                ? '弱點！而家打！'
+                : this.market
+                  ? '暈咗！而家打！'
+                  : '頭頂發光——而家打！'),
+        '#fff0a0',
+        { size: 13, dur: 1400 },
+      )
     } else if (kind === 'finale' && this.queen) {
       SFX.sparkle()
       this.cameras.main.flash(200, 255, 220, 160)
@@ -7718,7 +8000,18 @@ export class GameScene extends Phaser.Scene {
       SFX.kill()
       this.cameras.main.flash(300, 255, 250, 220)
       this.cameras.main.shake(400, 0.008)
-      if (this.queen && !this.exhibit) floatText(this, this.queen.x, this.queen.y - 120, this.stageNo === 1 ? '頭盔跌咗！' : this.mall ? '（待補）' : this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！', '#ffe08a', { size: 18, dur: 1800 })
+      if (this.queen && !this.exhibit)
+        floatText(
+          this,
+          this.queen.x,
+          this.queen.y - 120,
+          this.stageNo === 1
+            ? '頭盔跌咗！'
+            : scrub?.defeatBanner ??
+              (this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！'),
+          '#ffe08a',
+          { size: 18, dur: 1800 },
+        )
       // Her swarm and eggs fall with her.
       for (const o of [...this.enemies.getChildren()]) {
         const e = o as PatrolEnemy
@@ -7731,37 +8024,48 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Mall boss down: chip already popped in MallScrubber.die → 噗噗 sniffs → honey jar. */
+  /** Mall boss down: post-fight dialogue → 噗噗 sniffs → honey jar. */
   private mallDefeated() {
     if (this.ended) return
     const b = ST.boss!
     const x = (b.arenaX0 + b.arenaX1) / 2
     const qx = this.queen?.x ?? x
-    // Pure motion, no dialogue: 噗噗 walks over and sniffs the stopped machine.
-    if (this.pet?.active) {
-      const pet = this.pet
-      this.tweens.add({
-        targets: pet,
-        x: qx - 36,
-        duration: 700,
-        ease: 'Sine.out',
-        onComplete: () => {
-          if (pet.anims?.exists?.('pupu-cute-pose')) pet.anims.play('pupu-cute-pose')
-          this.tweens.add({ targets: pet, y: pet.y - 4, duration: 180, yoyo: true, repeat: 2 })
-        },
+    const depth = bossDepthDialogue('mall-scrubber')
+    const afterTalk = () => {
+      if (this.ended) return
+      this.storyIntro = null
+      if (this.pet?.active) {
+        const pet = this.pet
+        this.tweens.add({
+          targets: pet,
+          x: qx - 36,
+          duration: 700,
+          ease: 'Sine.out',
+          onComplete: () => {
+            if (pet.anims?.exists?.('pupu-cute-pose')) pet.anims.play('pupu-cute-pose')
+            this.tweens.add({ targets: pet, y: pet.y - 4, duration: 180, yoyo: true, repeat: 2 })
+          },
+        })
+      }
+      this.time.delayedCall(900, () => {
+        if (this.ended) return
+        SFX.powerUp()
+        this.emitScore('深層潔淨 X-9 停機！拎埋嗰罐蜜！')
+        floatText(this, x, 90, depth?.defeatBanner ?? 'X-9 停機', '#9ad4e8', { size: 18, dur: 2200 })
+        this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
+        const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as
+          | Phaser.Physics.Arcade.Sprite
+          | undefined
+        jar?.setData('bossJar', true)
       })
     }
-    this.time.delayedCall(1200, () => {
-      if (this.ended) return
-      SFX.powerUp()
-      this.emitScore('深層潔淨 X-9 停機！拎埋嗰罐蜜！')
-      floatText(this, x, 90, '（待補）', '#ffe08a', { size: 18, dur: 2200 })
-      this.spawnHoneyJar(x, LANE_FLOOR_Y - 34)
-      const jar = this.honeyPickups.getChildren().find((o) => (o as Phaser.Physics.Arcade.Sprite).x === x) as
-        | Phaser.Physics.Arcade.Sprite
-        | undefined
-      jar?.setData('bossJar', true)
-    })
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    if (depth?.postFight?.length) {
+      this.storyIntro = showStoryLines(this, depth.postFight, afterTalk, { monoDefault: true })
+    } else {
+      afterTalk()
+    }
   }
 
   private queenDefeated() {
