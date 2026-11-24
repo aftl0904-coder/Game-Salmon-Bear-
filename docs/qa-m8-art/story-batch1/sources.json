@@ -1,0 +1,86 @@
+[
+  {
+    "art_needed": "S8_A_無人接待全景",
+    "file": "public/art/story/S8_A_無人接待全景.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "8ff008bfc82a254435621ccef735b0c4474325f8db474cdc6945f7ee337c86dd",
+    "final_sha256": "635273b3181ce15c8e8d21c973c2392c963623456d28f2a929e49797d0ed72ce",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_B_真蜜腳印與假蜜管道對照",
+    "file": "public/art/story/S8_B_真蜜腳印與假蜜管道對照.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "68a66c16db6331221259562f0e3254735ff49b74861a2c5dc9e681dc47309392",
+    "final_sha256": "7a185454e1a8de865d99363b1228e08c196ef27577df85a29142f0774262e22d",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_C_監視器內噗噗舔掌",
+    "file": "public/art/story/S8_C_監視器內噗噗舔掌.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "bf3b102ed60b0f8ec8f263ea001d889910f50df3594a12722f23863d49c15d14",
+    "final_sha256": "18c57387c705e93c99398cb6cae2eb80a7ef1a70039dcfc96ebb05ff935902be",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_D_原稿與摘要並排",
+    "file": "public/art/story/S8_D_原稿與摘要並排.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "51d895b80b924eb5ff657c090af80d764466188ddf9997dfa423675c232086f5",
+    "final_sha256": "cd5faa7ebf46da073a1c45aecdac83bd9aa4ed235d1d154be9d0f948cdcad008",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_D_下層門前蜜印",
+    "file": "public/art/story/S8_D_下層門前蜜印.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "4e39bb2f29e41939d9e26bd2f9921574b40b77a333d42b720d8cbd28c754e865",
+    "final_sha256": "bc78e5185b16478505a2de122843e5744afcc47df696cda2f10f0b3326c731bb",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_E_綠色進度與受傷動物",
+    "file": "public/art/story/S8_E_綠色進度與受傷動物.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "47413c5bd3073b6ddf983f21465cec70862ab450a4ad630db2fe1f5d6a1fffca",
+    "final_sha256": "9e721c1db4c424a69bfc6c4ff893a2bf5d3627392e380fb55c5cbfe93312760b",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  },
+  {
+    "art_needed": "S8_E_主任擋住報告",
+    "file": "public/art/story/S8_E_主任擋住報告.png",
+    "raw_size": [
+      2560,
+      1440
+    ],
+    "source_sha256": "7b2e248b57b637de00f9efc6bd3341f1014e304e9eff3a22beb304d537160b31",
+    "final_sha256": "6b254ac76c09128725373d2bf7cd99a18f485af4e8704abec9658663dd00a43d",
+    "procedure": "2560x1440 16:9 -> 1280x720 nearest, no crop, 128 RGB colors, no dithering",
+    "raw_source_persisted_in_repo": false
+  }
+]
