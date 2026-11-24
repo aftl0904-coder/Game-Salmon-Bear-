@@ -1,0 +1,553 @@
+{
+  "bosses": [
+    {
+      "stage": 2,
+      "name": "蜜冠女王蜂",
+      "current_reading": "GitHub頁面未能取得程式內容；以下按boss_summary制定，狀態名稱來自摘要，數值是本次交付設定，不是聲稱讀到的現值。",
+      "hp": 81,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 9,
+        "phase_openings": [3, 3, 3],
+        "phase_cycle_totals_ms": [27600, 27600, 28200],
+        "formula": "(27600＋27600＋28200－2000＋2×2500)／1000＝86.4秒。",
+        "model_seconds": 86.4,
+        "scope": "倫寶每輪命中9傷害，計至最後一次破綻結束；不含入場及戰後對白。"
+      },
+      "phase_thresholds": {
+        "phase1": "HP 55至81",
+        "phase2": "HP 28至54",
+        "phase3": "HP 1至27",
+        "transition": "當前OPENING完整結束後換段；每段招式序列由第一招重新開始。"
+      },
+      "rhythm_moves": [
+        {
+          "state": "spray",
+          "warn_ms": 1000,
+          "attack_ms": 2000,
+          "next": "OPENING",
+          "phases": [1, 2, 3],
+          "implementation": "沿用原噴射彈形、數量及速度；2000ms包含出手與本輪投射物處理時間，不在OPENING繼續發射。"
+        },
+        {
+          "state": "summon",
+          "warn_ms": 1000,
+          "attack_ms": 2600,
+          "next": "OPENING",
+          "phases": [1, 3],
+          "implementation": "沿用原召喚數量，小蜜蜂HP維持1；召喚及其可攻擊時段受本輪ATTACK管理。"
+        },
+        {
+          "state": "eggs",
+          "warn_ms": 1000,
+          "attack_ms": 2600,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "蜜蛋HP維持1；產卵及原有孵化效果不得在安全狀態另開攻擊。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["spray", "summon"],
+        "phase2": ["spray", "eggs"],
+        "phase3": ["summon", "spray", "eggs"]
+      },
+      "state_mapping": {
+        "hover": "GUARD及BREATHER的原有待機表現。",
+        "rise": "併入對應招式的WARN或ATTACK，不額外加一段未計時流程。",
+        "land": "在ATTACK結束前完成，讓OPENING期間兩位角色都能接近命中。"
+      },
+      "signature_kept": "飛行女王、噴射、小蜜蜂及蜜蛋均保留，不把三種攻擊改成同一招。",
+      "risk": [
+        "若OPENING仍停在劍打不到的高度，13傷害近戰基準不成立；必須用既有land狀態完成落地。",
+        "若小蜜蜂及蜜蛋目前獨立更新，必須接入節奏狀態的傷害管理；不能只改Boss本體。",
+        "原噴射及孵化實際持續時間未知，Claude須確認能否在指定ATTACK內完成。"
+      ]
+    },
+    {
+      "stage": 3,
+      "name": "月橋鏡鴞",
+      "current_reading": "未取得程式內容；按摘要狀態映射，沒有確認各狀態目前的碰撞及計時實作。",
+      "hp": 81,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 9,
+        "phase_openings": [3, 3, 3],
+        "phase_cycle_totals_ms": [26800, 29600, 29200],
+        "formula": "(26800＋29600＋29200－2000＋5000)／1000＝88.6秒。",
+        "model_seconds": 88.6
+      },
+      "phase_thresholds": {
+        "phase1": "HP 55至81",
+        "phase2": "HP 28至54",
+        "phase3": "HP 1至27"
+      },
+      "rhythm_moves": [
+        {
+          "state": "dive",
+          "warn_ms": 1000,
+          "attack_ms": 1800,
+          "next": "OPENING",
+          "phases": [1],
+          "implementation": "保留原俯衝軌跡；回到可近戰位置的移動包含在1800ms內。"
+        },
+        {
+          "state": "feathers",
+          "warn_ms": 1000,
+          "attack_ms": 2200,
+          "next": "OPENING",
+          "phases": [1],
+          "implementation": "保留原羽毛攻擊，最後投射物的危險時段不得跨入OPENING。"
+        },
+        {
+          "state": "split",
+          "warn_ms": 1200,
+          "attack_ms": 3000,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "保留原分身數量、倒影線索及分身HP1；3000ms內完成原有分身攻擊，結束時真身回到可命中位置。"
+        },
+        {
+          "state": "plunge",
+          "warn_ms": 1200,
+          "attack_ms": 2000,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "沿用原下墜招式；落地及收招計入2000ms。"
+        },
+        {
+          "state": "blast",
+          "warn_ms": 1200,
+          "attack_ms": 2600,
+          "next": "OPENING",
+          "phases": [3],
+          "implementation": "沿用原爆發攻擊，不新增彈形或追蹤方式。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["dive", "feathers"],
+        "phase2": ["split", "plunge"],
+        "phase3": ["split", "blast", "plunge"]
+      },
+      "state_mapping": {
+        "fly": "既有移動表現，納入當前狀態計時，不另加飛行等待。",
+        "perch": "OPENING停留位置，必須讓兩角色均可用現有操作命中。",
+        "wooden_box": "木箱HP3保留，不套Boss的只限OPENING受傷規則。"
+      },
+      "signature_kept": "倒影辨真身、分身、飛行俯衝及木箱保留。",
+      "risk": [
+        "分身若在OPENING仍可攻擊，會破壞可反擊窗口；須管理其攻擊判定。",
+        "真身不能到OPENING才開始長距離飛回，否則2500ms大部分用於追位。",
+        "不把真身判定改成只靠文字標示；保留原倒影玩法。"
+      ]
+    },
+    {
+      "stage": 4,
+      "name": "泥鬃",
+      "current_reading": "未取得程式內容；以下使用摘要中的ride、charge等名稱，不確認其是否為同一狀態列舉。",
+      "hp": 90,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 10,
+        "phase_openings": [4, 3, 3],
+        "phase_cycle_totals_ms": [35600, 28400, 28700],
+        "formula": "(35600＋28400＋28700－2000＋5000)／1000＝95.7秒。",
+        "model_seconds": 95.7,
+        "threshold_note": "每輪扣9時，第四輪後HP54才進第二段，第七輪後HP27才進第三段。"
+      },
+      "phase_thresholds": {
+        "phase1": "HP 61至90",
+        "phase2": "HP 31至60",
+        "phase3": "HP 1至30"
+      },
+      "rhythm_moves": [
+        {
+          "state": "charge",
+          "warn_ms": 1000,
+          "attack_ms": 2000,
+          "next": "OPENING",
+          "phases": [1, 2],
+          "implementation": "沿用原衝刺速度及距離，衝完的收招包含在2000ms內。"
+        },
+        {
+          "state": "strike",
+          "warn_ms": 1000,
+          "attack_ms": 1800,
+          "next": "OPENING",
+          "phases": [1, 3],
+          "implementation": "沿用原近身攻擊；不額外增加第二次無預警追打。"
+        },
+        {
+          "state": "volley",
+          "warn_ms": 1100,
+          "attack_ms": 2600,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "沿用原連射數量與間隔，投射物危險時段包含在2600ms內。"
+        },
+        {
+          "state": "summon",
+          "warn_ms": 1200,
+          "attack_ms": 3000,
+          "next": "OPENING",
+          "phases": [3],
+          "implementation": "保留原召喚種類、數量及HP，不額外加怪；召喚物傷害受本輪狀態管理。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["charge", "strike"],
+        "phase2": ["volley", "charge"],
+        "phase3": ["summon", "volley", "strike"]
+      },
+      "state_mapping": {
+        "ride": "GUARD的既有表現。",
+        "approach": "GUARD內移動，1500ms到時不得另等接近完成。",
+        "windup": "對應WARN。",
+        "exposed": "對應OPENING，普通2500ms。",
+        "recover": "對應BREATHER，2000ms。"
+      },
+      "signature_kept": "騎乘接近、衝刺、近身打擊、連射及召喚均保留。",
+      "risk": [
+        "approach若原本必須貼近才結束，可能令一輪時間失控；必須受GUARD總時長約束。",
+        "不能把原exposed再串到OPENING，否則會出現兩次破綻。",
+        "原召喚物的HP未提供，本稿明確維持原值。"
+      ]
+    },
+    {
+      "stage": 5,
+      "name": "△畝大佬",
+      "current_reading": "未取得程式內容；保留最新摘要名稱，不自行改回其他舊稿角色名稱。",
+      "hp": 81,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 9,
+        "phase_openings": [3, 3, 3],
+        "phase_cycle_totals_ms": [28600, 30400, 30400],
+        "formula": "(28600＋30400＋30400－2000＋5000)／1000＝92.4秒。",
+        "model_seconds": 92.4,
+        "note": "不強求每關秒數單調增加；本關保留較長羽毛雨預警，避免只靠加血拖長。"
+      },
+      "phase_thresholds": {
+        "phase1": "HP 55至81",
+        "phase2": "HP 28至54",
+        "phase3": "HP 1至27"
+      },
+      "rhythm_moves": [
+        {
+          "state": "volley",
+          "warn_ms": 1000,
+          "attack_ms": 2200,
+          "next": "OPENING",
+          "phases": [1],
+          "implementation": "保留原連射，point作本招預警動作，不額外串一次point計時。"
+        },
+        {
+          "state": "rain",
+          "warn_ms": 2400,
+          "attack_ms": 1800,
+          "next": "OPENING",
+          "phases": [1, 2, 3],
+          "implementation": "完整保留羽毛雨2400ms預警及1800ms落下時段。"
+        },
+        {
+          "state": "dozer",
+          "warn_ms": 1200,
+          "attack_ms": 2800,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "沿用原推土機攻擊；2800ms內完成有效危險通過，不新增車輛。"
+        },
+        {
+          "state": "storm",
+          "warn_ms": 1200,
+          "attack_ms": 3000,
+          "next": "OPENING",
+          "phases": [3],
+          "implementation": "沿用原風暴招式，沒有新增彈幕或額外環境效果。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["volley", "rain"],
+        "phase2": ["rain", "dozer"],
+        "phase3": ["storm", "rain", "dozer"]
+      },
+      "state_mapping": {
+        "point": "對應招式的WARN表現。",
+        "shield": "對應GUARD，不另加獨立護盾等待。",
+        "crack": "若屬換段演出，包含在2500ms換段休息內。",
+        "unmask": "保留原有劇情觸發條件，不每輪播放；死亡後演出不計戰鬥時長。"
+      },
+      "signature_kept": "指揮姿態、羽毛雨、風暴、推土機及揭面演出保留。",
+      "risk": [
+        "crack及unmask的原有劇情條件未讀到，不能按名稱直接當作可循環招式。",
+        "推土機或羽毛若離開畫面後仍有傷害判定，須在OPENING前處理。",
+        "原本2400ms預警不得被全域1000ms預設覆蓋。"
+      ]
+    },
+    {
+      "stage": 6,
+      "name": "深層潔淨X-9",
+      "current_reading": "未取得MallScrubber.ts及相關檔案；本體數值按摘要保留，以下state為描述性映射鍵，並非已核實程式列舉。",
+      "hp": 81,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 9,
+        "phase_openings": [3, 3, 3],
+        "phase_cycle_totals_ms": [35600, 35500, 35500],
+        "formula": "(35600＋35500＋35500－2000＋5000)／1000＝109.6秒。",
+        "model_seconds": 109.6,
+        "critical_condition": "此時間只在每招ATTACK固定5000ms、風機及殘留危險能按全域狀態規則處理時成立；若保留獨立風機跨狀態攻擊，不能宣稱已符合本節奏。"
+      },
+      "phase_thresholds": {
+        "phase1": "HP 55至81",
+        "phase2": "HP 28至54",
+        "phase3": "HP 1至27"
+      },
+      "rhythm_moves": [
+        {
+          "state": "charge",
+          "state_verified": false,
+          "warn_ms": 900,
+          "attack_ms": 5000,
+          "next": "OPENING",
+          "phases": [1, 2, 3],
+          "parameters": {
+            "speed_px_s": 360,
+            "maximum_distance_px": 260,
+            "recovery_ms_phase1_2": 1200,
+            "recovery_ms_phase3": 900
+          },
+          "implementation": "衝刺本身最長約722ms，之後沿用原收招；ATTACK其餘時間保留既有待機及風機活動，不新增第二次衝刺。"
+        },
+        {
+          "state": "acid",
+          "state_verified": false,
+          "warn_ms": 800,
+          "attack_ms": 5000,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "parameters": {
+            "acid_duration_ms": 3000,
+            "spread_each_side_px": 170,
+            "minimum_gap_px": 96
+          },
+          "implementation": "保留原酸液數值；最後一灘必須在ATTACK第2000ms或之前生成，才可完整維持3000ms而不跨入OPENING。"
+        },
+        {
+          "state": "brush",
+          "state_verified": false,
+          "warn_ms": 800,
+          "attack_ms": 5000,
+          "next": "OPENING",
+          "phases": [1, 3],
+          "parameters": {
+            "brush_duration_ms": 1200,
+            "range_px": 90
+          },
+          "implementation": "轉刷持續與範圍不減；其餘ATTACK時間不新增攻擊，只容納原有收招及風機。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["charge", "brush"],
+        "phase2": ["acid", "charge"],
+        "phase3": ["brush", "acid", "charge"]
+      },
+      "signature_kept": {
+        "description": "保留高速衝刺、完整酸液殘留、轉刷及背後風機，不採用舊稿減速、縮範圍或縮短酸液的建議。",
+        "fan_interval_ms": [8000, 6000, 4500],
+        "fan_warning_ms": 800,
+        "fan_active_ms": 2500,
+        "hit_stagger_cap_ms": 300,
+        "hit_stagger_window_ms": 3000
+      },
+      "risk": [
+        "存在不可隱瞞的要求衝突：把原本可持續施壓的風機限制在ATTACK，必然改變原有壓力分布；不能僅憑HP55升81便證明整體沒有削弱。",
+        "若風機2500ms效果不得截斷，又不能跨入OPENING，則必須安排其最遲於ATTACK第2500ms開始；這可能改變原8000／6000／4500ms的實際啟動頻率。",
+        "因此本Boss是有阻塞條件的實作規格，不是已核實可直接貼入的最終設定；Claude須先核對風機計時及狀態整合方式。",
+        "若需要延長ATTACK等風機自然結束，109.6秒模型失效，須按實際序列重算。",
+        "摘要未列出其他可能已有招式；若repo還有肥皂泡、清潔車等，不能默默刪除，須補入後重算。"
+      ]
+    },
+    {
+      "stage": 7,
+      "name": "馴獸師",
+      "current_reading": "未取得程式內容；bolts、stalk等依摘要使用，鏈網及召喚的真正狀態名稱尚未確認。",
+      "hp": 90,
+      "hp_calc": {
+        "damage_per_opening": 9,
+        "openings": 10,
+        "phase_openings": [4, 3, 3],
+        "phase_cycle_totals_ms": [36000, 28600, 29500],
+        "formula": "(36000＋28600＋29500－2000＋5000)／1000＝97.1秒。",
+        "model_seconds": 97.1,
+        "threshold_note": "沿用原HP低於30%加速門檻，第三段由HP26開始，不改成三分之一。"
+      },
+      "phase_thresholds": {
+        "phase1": "HP 61至90",
+        "phase2": "HP 27至60",
+        "phase3": "HP 1至26，即HP／maxHP＜0.30"
+      },
+      "rhythm_moves": [
+        {
+          "state": "bolts",
+          "warn_ms_by_phase": {
+            "phase1": 1000,
+            "phase2": 1100,
+            "phase3": 1100
+          },
+          "attack_ms_by_phase": {
+            "phase1": 2000,
+            "phase2": 2400,
+            "phase3": 2600
+          },
+          "next": "OPENING",
+          "phases": [1, 2, 3],
+          "parameters": {
+            "phase1_bolts": 3,
+            "phase1_bolt_gap_ms": 260,
+            "phase1_bolt_speed_px_s": 210,
+            "phase1_movement_speed_px_s": 150,
+            "phase2_3": "保留原有數量、速度及加速參數，摘要未提供，不虛構。"
+          },
+          "implementation": "保留原飛刀攻擊；發射及飛行危險時段均包含在ATTACK內。"
+        },
+        {
+          "state": "chain",
+          "state_verified": false,
+          "warn_ms": 1200,
+          "attack_ms": 2400,
+          "next": "OPENING",
+          "phases": [2, 3],
+          "implementation": "對應摘要的預警鏈網，沿用原覆蓋範圍與效果，不新增追蹤或禁錮機制。"
+        },
+        {
+          "state": "summon",
+          "state_verified": false,
+          "warn_ms": 1200,
+          "attack_ms": 3000,
+          "next": "OPENING",
+          "phases": [3],
+          "implementation": "沿用原產品化蜜僵種類、數量及HP；不套一般小怪新HP覆寫。"
+        }
+      ],
+      "phase_sequences": {
+        "phase1": ["bolts"],
+        "phase2": ["bolts", "chain"],
+        "phase3": ["summon", "bolts", "chain"]
+      },
+      "state_mapping": {
+        "stalk": "納入GUARD1500ms，不在其後額外加1100ms追蹤。",
+        "warn": "由本招WARN時間管理，不再重複跑原warn計時。",
+        "speed": "視為參數而非已確認狀態；低於30%的原加速保留。",
+        "exposed": "由原例1500ms改為OPENING普通2500ms，不另串一次。"
+      },
+      "signature_kept": "飛刀、鏈網、產品化蜜僵及低血加速保留。",
+      "risk": [
+        "第三段參數缺失，無法核實更快飛刀能否在2600ms內完成及退場。",
+        "鏈網若會持續禁錮到OPENING，會侵蝕反擊窗口，須確認其原有解除條件。",
+        "召喚物不得在安全狀態自行攻擊；若其AI沒有狀態閘，須整合而非只改數字。"
+      ]
+    }
+  ],
+  "global_rules": {
+    "delivery_status": "按摘要完成的確定性設計規格，供Claude對照repo整合；不是已讀取程式後的可直接貼入設定。第6關風機與不削弱要求存在阻塞，不能標示全案無條件可實作。",
+    "source_access": "已嘗試開啟提供的8個GitHub頁面，未取得任何程式內容；沒有確認欄位、列舉、碰撞或事件實作。",
+    "rhythm": {
+      "sequence": ["GUARD", "WARN", "ATTACK", "OPENING", "BREATHER"],
+      "guard_ms": 1500,
+      "opening_ms": {
+        "easy": 3000,
+        "normal": 2500,
+        "challenge": 2000,
+        "hell": 2000
+      },
+      "breather_ms": 2000,
+      "phase_break_ms": 2500,
+      "phase_break_rule": "換段休息額外加入一次；不重複播放舊recover或舊換段等待。",
+      "move_rule": "本稿每招均接OPENING，不使用直接串下一招；避免一次預警後無限連段。",
+      "sequence_rule": "各段phase_sequences循環使用，換段重設序列索引。",
+      "warning_rule": "實際預警=max(原招式預警,本稿預警)，不得縮短原有較長值；若因此增加時間，重算hp_calc。"
+    },
+    "damage_contract": {
+      "boss_receives_damage": "只在OPENING可扣Boss HP；其他狀態命中為0傷害，沿用叮聲回饋。",
+      "boss_contact_damage": "只在ATTACK啟用；其他狀態不因本體側撞扣血。",
+      "other_damage_sources": "為維持完整安全窗口，Boss所屬投射物、召喚物及場地攻擊亦須接受狀態管理；這是移植工作，不是假設目前已存在。",
+      "projectile_cleanup": "一般Boss在ATTACK結束前完成危險退場；若需切換時關閉傷害，須確認不影響其他敵人的投射物。",
+      "summon_hp": "召喚物、分身、蜜蛋及木箱HP維持原值；不因Boss護盾而變成無敵。",
+      "summon_lifecycle": "不默默改成到時死亡；安全狀態只停其攻擊及接觸傷害，保留其原有可受傷規則。若這會造成累積，須沿用原召喚上限，未確認前不可無上限疊加。",
+      "back_damage": "雙倍背擊只限第1關；第2至7關不新增背擊倍率。",
+      "hit_stagger": "硬直不得重設或延長OPENING計時；第6關保留300ms／3000ms上限。"
+    },
+    "opening_contract": {
+      "presentation": "沿用頭上呼…及汗滴。",
+      "position": "進OPENING前完成原有落地或回位，不能用2500ms破綻追逐Boss。",
+      "reachability": "兩角色都能以現有能力命中；飛行Boss不能只照顧遠程。",
+      "phase_crossing": "跨血段不截斷當前OPENING及已命中傷害；破綻結束後進換段休息。",
+      "multiple_thresholds": "同一OPENING跨過多個門檻，只休息2500ms一次，直接進入對應血段。",
+      "death": "HP到0立即結束傷害及戰鬥，不再等待BREATHER或換段。"
+    },
+    "timing_calculation": {
+      "formula": "每輪=1500＋WARN＋ATTACK＋2500＋2000；總模型時間=各輪總和−最後一次BREATHER2000＋兩次換段休息5000。",
+      "damage_model": "倫寶每次破綻有效命中9，逐輪扣HP並按下一輪開始時HP選血段；不是單用平均招式時間乘輪數。",
+      "model_precision": "列出的秒數是確定序列與固定傷害下的算術結果，不是實測平均；致命一擊早於最後破綻結束時，實際會較短。",
+      "stage1_discrepancy": "提供的第1關實測一輪約16秒，與列出的固定狀態時間及單招長度不一致；本稿不擅自補隱藏時間，也不把16秒套到其他Boss。",
+      "two_player_scope": "HP以倫寶單人為基準；琪寶寶及雙人會更快。沒有已確認的雙人HP倍率時，不新增一套倍率系統。"
+    },
+    "implementation_order": [
+      "先確認BossRhythm實際時間單位、轉態及傷害入口。",
+      "逐Boss映射原狀態，移除重複的前搖、exposed及recover計時。",
+      "接入本體、投射物及召喚物傷害閘。",
+      "先做第2關單人驗收，再複用到其餘Boss。",
+      "第6關先解決風機規則衝突，未解決前不提交為完成。",
+      "每隻量一次完整狀態時間線，再核對80至120秒目標。"
+    ]
+  },
+  "missing_data": [
+    {
+      "item": "BossRhythm.ts全文",
+      "needed_for": "核對GUARD、WARN、ATTACK、OPENING、BREATHER是否還包含隱藏等待，以及第1關一輪16秒的來源。"
+    },
+    {
+      "item": "Stage1Boss.ts的節奏呼叫及傷害入口",
+      "needed_for": "確認預警1000ms與出手1000ms是否分屬兩段、是否重複計時，以及換段休息是否額外加入。"
+    },
+    {
+      "item": "第2至7關Boss類別的狀態列舉、update及takeDamage相關片段",
+      "needed_for": "把本稿狀態鍵對應到真正程式欄位；第6關charge／acid／brush及第7關chain／summon尚未核實。"
+    },
+    {
+      "item": "各招原預警、投射物生命期、原召喚數量及上限",
+      "needed_for": "確保不縮短既有預警、不默刪招式、不改召喚物HP，以及ATTACK結束前可處理殘留。"
+    },
+    {
+      "item": "MallScrubber風機計時及效果程式",
+      "needed_for": "確認8000／6000／4500ms是起點間隔、結束後冷卻還是獨立時鐘；決定能否同時保留頻率、2500ms完整效果及安全破綻。"
+    },
+    {
+      "item": "第6關不削弱的驗收口徑",
+      "needed_for": "需確認是保留單招速度、範圍及持續時間，還是連每分鐘攻擊次數與風機跨狀態壓力也不得下降；後者可能與統一節奏直接衝突。"
+    },
+    {
+      "item": "第7關第二、三段完整參數及鏈網解除條件",
+      "needed_for": "保留低血加速，同時確認飛刀及鏈網不侵蝕OPENING。"
+    },
+    {
+      "item": "Boss場地、碰撞盒及飛行Boss落地位置",
+      "needed_for": "驗收近戰可達性、衝刺安全區及固定攻擊時間是否可行。"
+    }
+  ],
+  "self_check": {
+    "boss_count": 6,
+    "parameter_coverage": "已逐隻提供普通HP、血段、招式預警、ATTACK時長、下一狀態、固定序列、特色及風險。",
+    "calculation": "已用程式逐輪模擬9傷害、血段切換及序列重設，得到86.4／88.6／95.7／92.4／109.6／97.1秒。",
+    "target_80_120": "六個模型均落在80至120秒，但依賴所列狀態時長、可達性及傷害管理；不是六場實測均已達標。",
+    "warning_minimum": "所有指定預警至少800ms；原值較長時保留原值並重算時間。",
+    "no_new_moves": "只使用摘要列出的招式；狀態映射不等於已確認程式名稱。",
+    "no_new_systems": "只擴展既定Boss節奏至現有攻擊；沒有新增技能、彈形、玩家能力或經濟系統，但狀態傷害閘需要程式整合，不能包裝成純改數字。",
+    "summon_hp_unchanged": "小蜜蜂1、蜜蛋1、分身1、木箱3維持；其他召喚物沿用原值。",
+    "stage6_no_nerf": "保留摘要中的速度、距離、酸液、轉刷、風機及硬直上限；但無法證明整體不削弱，已明確標出風機與安全破綻的衝突，未作虛假完成聲明。",
+    "stage1_16_seconds": "沒有忽略實測與名義時長不一致的問題；需讀取程式或時間線後才能校準。",
+    "repo_access_honesty": "8個指定頁面均已嘗試，但未取得程式；因此本稿不能誠實標示為無缺漏、可直接貼入repo的最終參數。",
+    "spoilers": "沒有涉及第8關之後。",
+    "handoff": "Claude可先用本稿建立映射及測試工單；補齊missing_data後才可解除阻塞並簽成最終實作設定。"
+  }
+}

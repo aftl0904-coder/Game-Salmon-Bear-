@@ -1,0 +1,21 @@
+{
+  "status": "HOLD：等 Alan 試完第1關武者王手感先發出",
+  "from": "Claude",
+  "to": "Cursor",
+  "title": "Boss 節奏推廣：第2–5關（女王蜂、鏡鴞、泥鬃、△畝大佬）",
+  "branch": "cursor/boss-rhythm-2to5-2610",
+  "design_source": "docs/bible/boss-rhythm-2to7-copilot.json（Copilot 設計稿；佢冇讀到程式，狀態名要你對返真程式）",
+  "scope_decision_by_Claude": [
+    "只做第2–5關。第6關洗地機、第7關馴獸師已有自己嘅『預警→出招→收招破綻』設計，套 BossRhythm 會同背後風機規則衝突（Copilot 都標咗阻塞），維持現狀",
+    "第1關武者王唔郁"
+  ],
+  "do": [
+    "每隻 Boss 接入現有 src/game/enemies/BossRhythm.ts（同 Stage1Boss 一樣用法）：GUARD 打中只『叮！』、ATTACK 先有接觸傷害、OPENING 先扣血、BREATHER 喘氣",
+    "招式序列、每招 warn／attack 時間、血段用設計稿 bosses[stage 2–5].rhythm_moves 同 phase_sequences；實際預警取 max(原有, 設計稿)",
+    "召喚物（小蜜蜂、蜜蛋、分身、木箱）HP 唔改；喺 GUARD／OPENING／BREATHER 期間停止攻擊同接觸傷害",
+    "飛行 Boss（女王蜂、鏡鴞）入 OPENING 前一定要落地／回到近戰打得到嘅高度",
+    "HP 先用設計稿數值（81／81／90／81），之後按實測調"
+  ],
+  "measure_then_tune": "QA 腳本用倫寶單人、每個破綻打 3 槍，記錄每隻 Boss 開打到死嘅秒數；目標 90–120 秒。超出就按比例調 HP（例如 150 秒 → HP ×0.75），寫入 report，回報最終 HP",
+  "acceptance": ["build＋validate:data PASS", "每隻 Boss：非破綻打中 0 傷害（叮）、破綻扣血、召喚物喺安全期唔攻擊", "4 隻 Boss 秒數＋最終 HP 寫入 docs/qa-boss-rhythm-2to5/report.json", "每隻一張 OPENING 截圖"]
+}
