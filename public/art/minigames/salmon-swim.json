@@ -1,0 +1,14 @@
+{
+  "frameWidth": 40,
+  "frameHeight": 24,
+  "columns": 2,
+  "anims": {
+    "swim": {
+      "label": "游動",
+      "start": 0,
+      "count": 2,
+      "fps": 5,
+      "loop": true
+    }
+  }
+}

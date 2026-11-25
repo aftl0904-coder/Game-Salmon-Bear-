@@ -1,0 +1,14 @@
+{
+  "frameWidth": 28,
+  "frameHeight": 32,
+  "columns": 2,
+  "anims": {
+    "sway": {
+      "label": "擺動",
+      "start": 0,
+      "count": 2,
+      "fps": 4,
+      "loop": true
+    }
+  }
+}
