@@ -80,6 +80,7 @@ import {
   stage9LinesToRaw,
   stage9Sections,
 } from './stage9Story'
+import { stage10BossDialogue } from './stage10Story'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
 import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
@@ -122,6 +123,7 @@ import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHo
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { LabDrone, TubeSoldier, FileCabinet, ChiefResearcher, type ResearcherCfg } from './enemies/Stage8Enemies'
 import { JailGuard, LockBot, ChiefWarden, applyChainSlow, LOCK_CHAIN, type WardenCfg } from './enemies/Stage9Enemies'
+import { BuildingGuard, Leon, type LeonCfg } from './enemies/Stage10Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -277,7 +279,7 @@ type Stage1 = {
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'mall-scrubber' | 'trainer' | 'researcher' | 'warden'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'mall-scrubber' | 'trainer' | 'researcher' | 'warden' | 'leon'; triggerX: number; arenaX0: number; arenaX1: number }
   /** Stage 8 researcher boss tuning (HP / phases). */
   researcher?: { hp: number; phase2At: number; phase3Below: number; swipeWarnMs?: number; flaskWarnMs?: number; flaskCount?: number; puddleMs?: number; refillExposedMs?: number; summonPerCycle?: number; summonMaxAlive?: number; weakBase?: number; capWeak?: number; capNormal?: number }
   pipeSprays?: Array<{ x: number; w: number; periodMs: number; phaseMs: number; warnMs: number; onMs: number; valve?: string }>
@@ -288,6 +290,8 @@ type Stage1 = {
   safeZones?: Array<{ x0: number; x1: number }>
   /** Stage 9 warden boss tuning (full AI in s9-3). */
   warden?: { hp: number; phase2At: number; phase3Below: number; slamWarnMs?: number; keyThrowWarnMs?: number; gateDropWarnMs?: number; keysDroppedMs?: number; summonPerCycle?: number; summonMaxAlive?: number; weakBase?: number; capWeak?: number; capNormal?: number }
+  /** Stage 10 Leon boss tuning. */
+  leon?: LeonCfg & { midCutsceneMs?: number }
   /** Stage 3 (月影夜市) extras — see stage3World.ts. */
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
@@ -539,7 +543,7 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
-  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | ChiefResearcher | ChiefWarden | null = null
+  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | ChiefResearcher | ChiefWarden | Leon | null = null
   /** 月影夜市 (stage 3). */
   private market = false
   private s3world: Stage3World | null = null
@@ -5314,7 +5318,7 @@ export class GameScene extends Phaser.Scene {
           scene: this,
           leadX: () => this.leadX(),
           heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
-          spawn: (species, enterX) => this.spawnS2(species === 's10guard' ? 's9guard' : species, enterX),
+          spawn: (species, enterX) => this.spawnS2(species, enterX),
           liveTagged: () => this.s10ElevChildren().filter((e) => e.active && e.fsm !== 'DEAD'),
           destroyTagged: () => {
             for (const e of this.s10ElevChildren()) {
@@ -8391,8 +8395,8 @@ export class GameScene extends Phaser.Scene {
       if (dx === 0 && this.encounterClaimedXs.has(en.x)) return
       // s9-1: never schedule enemies inside safeZones (C reunion wait).
       if ((ST.safeZones ?? []).some((z) => en.x + dx >= z.x0 && en.x + dx <= z.x1)) return
-      const species = en.species === 's10guard' ? 's9guard' : en.species
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(species)) {
+      const species = en.species
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot', 's10guard'].includes(species)) {
         this.s2Pending.push({ x: en.x + dx, species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
@@ -8727,6 +8731,9 @@ export class GameScene extends Phaser.Scene {
     // s9-2: real behaviours (tinted stand-ins until stage9 art).
     if (species === 's9guard') {
       return this.addS2Enemy(new JailGuard(this, x, this.s2Hooks())).setFlipX(true)
+    }
+    if (species === 's10guard') {
+      return this.addS2Enemy(new BuildingGuard(this, x, this.s2Hooks())).setFlipX(true)
     }
     if (species === 's9lockbot') {
       return this.addS2Enemy(
@@ -9554,7 +9561,9 @@ export class GameScene extends Phaser.Scene {
             ? stage8BossDialogue()
             : kind === 'warden'
               ? stage9BossDialogue()
-              : bossDepthDialogue(kind)
+              : kind === 'leon'
+                ? stage10BossDialogue()
+                : bossDepthDialogue(kind)
         const startLines = () => {
           if (depth?.preFight?.length) {
             this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
@@ -9581,23 +9590,72 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.vault
-      ? '首席獄卒'
-      : this.lab
-        ? '主任研究員'
-        : this.exhibit
-          ? '馴獸師'
-          : this.stageNo === 1
-            ? '武者王'
-            : this.mall
-              ? '深層潔淨 X-9'
-              : this.tower
-                ? '△畝大佬'
-                : this.depot
-                  ? '泥鬃'
-                  : this.market
-                    ? '月橋鏡鴞'
-                    : '蜜冠女王蜂'
+    return this.rainTower
+      ? 'Leon'
+      : this.vault
+        ? '首席獄卒'
+        : this.lab
+          ? '主任研究員'
+          : this.exhibit
+            ? '馴獸師'
+            : this.stageNo === 1
+              ? '武者王'
+              : this.mall
+                ? '深層潔淨 X-9'
+                : this.tower
+                  ? '△畝大佬'
+                  : this.depot
+                    ? '泥鬃'
+                    : this.market
+                      ? '月橋鏡鴞'
+                      : '蜜冠女王蜂'
+  }
+
+  private leonCfg(): LeonCfg {
+    const L = ST.leon!
+    return {
+      hp: L.hp,
+      phase2At: L.phase2At,
+      phase3Below: L.phase3Below,
+      chargeWarnMs: L.chargeWarnMs ?? 1000,
+      shieldBashWarnMs: L.shieldBashWarnMs ?? 1000,
+      callGuardsWarnMs: L.callGuardsWarnMs ?? 1000,
+      chargeTiredMs: L.chargeTiredMs ?? 2000,
+      summonPerCycle: L.summonPerCycle ?? 1,
+      summonMaxAlive: L.summonMaxAlive ?? 2,
+      weakBase: L.weakBase ?? 3,
+      capWeak: L.capWeak ?? 5,
+      capNormal: L.capNormal ?? 2,
+    }
+  }
+
+  private leonHooks() {
+    const b = ST.boss!
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      summonGuards: (per: number, maxAlive: number) => {
+        let n = 0
+        const alive = this.enemies.getChildren().filter((o) => {
+          const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string; getData: (k: string) => unknown }
+          return e.active && e.getData('leon-summon') && e.fsm !== 'DEAD'
+        }).length
+        const room = Math.max(0, maxAlive - alive)
+        for (let i = 0; i < Math.min(per, room); i++) {
+          const x = Phaser.Math.Clamp(
+            (b.arenaX0 + b.arenaX1) / 2 + (i === 0 ? -60 : 60),
+            b.arenaX0 + 40,
+            b.arenaX1 - 40,
+          )
+          const g = this.spawnS2('s10guard', x)
+          if (g) {
+            g.setData('leon-summon', true)
+            n++
+          }
+        }
+        return n
+      },
+      bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => this.onQueenEvent(kind),
+    }
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -9613,6 +9671,8 @@ export class GameScene extends Phaser.Scene {
       SFX.boss()
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
+        : this.rainTower
+        ? new Leon(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.leonCfg(), this.leonHooks())
         : this.vault
         ? new ChiefWarden(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.wardenCfg(), this.wardenHooks())
         : this.lab
@@ -9631,7 +9691,20 @@ export class GameScene extends Phaser.Scene {
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => (this.lab ? this.researcherDefeated() : this.vault ? this.wardenDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
+      q.onDefeated = () =>
+        this.rainTower
+          ? this.leonDefeated()
+          : this.lab
+            ? this.researcherDefeated()
+            : this.vault
+              ? this.wardenDefeated()
+              : this.exhibit
+                ? this.trainerDefeated()
+                : this.stageNo === 1
+                  ? this.kingDefeated()
+                  : this.mall
+                    ? this.mallDefeated()
+                    : this.queenDefeated()
       this.addS2Enemy(q)
       q.setFlipX(true)
       // systems-2: 2P both heroes present → boss HP ×1.5 (phase % thresholds unchanged).
@@ -9645,7 +9718,7 @@ export class GameScene extends Phaser.Scene {
         this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, this.stageNo === 1 ? 'salmon' : 'deluxe')
       }
     }
-    if (this.depot || this.mall || this.lab || this.vault || this.stageNo === 1) {
+    if (this.depot || this.mall || this.lab || this.vault || this.rainTower || this.stageNo === 1) {
       // No dedicated reveal cutscene for 泥鬃 / 武者王 / scrubber — boss card already told the story.
       // Do NOT park on storyIntro while waiting: update() returns early when storyIntro is set,
       // which freezes enemy ticks if the delay ever races. Brief wait uses a non-blocking timer.
@@ -9686,6 +9759,7 @@ export class GameScene extends Phaser.Scene {
     if (this.exhibit && kind !== 'defeat') return
     const scrub = this.mall ? bossDepthDialogue('mall-scrubber') : null
     const researcher = this.lab ? stage8BossDialogue() : null
+    const leon = this.rainTower ? stage10BossDialogue() : null
     if (kind === 'phase2') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 200, 90)
@@ -9695,7 +9769,8 @@ export class GameScene extends Phaser.Scene {
         96,
         this.stageNo === 1
           ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！'
-          : researcher?.phase2 ??
+          : leon?.phase2 ??
+            researcher?.phase2 ??
             scrub?.phase2 ??
             (this.tower
               ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！'
@@ -9827,6 +9902,23 @@ export class GameScene extends Phaser.Scene {
   private wardenDefeated() {
     if (this.ended) return
     const depth = stage9BossDialogue()
+    const go = () => {
+      this.storyIntro = null
+      this.queenDefeated()
+    }
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    if (depth?.postFight?.length) {
+      this.storyIntro = showStoryLines(this, depth.postFight, go)
+    } else {
+      go()
+    }
+  }
+
+  /** Stage 10 Leon: postFight then clear. */
+  private leonDefeated() {
+    if (this.ended) return
+    const depth = stage10BossDialogue()
     const go = () => {
       this.storyIntro = null
       this.queenDefeated()

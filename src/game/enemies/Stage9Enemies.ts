@@ -1,7 +1,7 @@
 /**
  * Stage 9 · 地底監禁層 enemies (s9-2).
  * Numbers locked to the s9-2 ticket — do not retune here.
- * Art: tinted stand-ins until Manus stage9 sheets land.
+ * Art: Manus #173 sheets via art-s9s10 (JSON `frames`); tinted stand-ins if missing.
  *
  *  1. JailGuard  獄卒兵       — close 140 → raise baton 1000ms → swipe 60px → rest 900ms
  *  2. LockBot    鎖匠機械人   — close 200 → warn 1000ms → linear chain 200px; hit → half speed 1000ms; every 3000ms
@@ -14,6 +14,19 @@ import { isActorFrozen, floatText } from '../fx'
 import { SFX } from '../audio'
 import { bossHitDamage } from '../engine/bossDamage'
 import { DEPTH } from '../engine/depth'
+import { hasStage910Anim, stage910AnimTex, type Stage910AnimId } from '../stage910Art'
+import type { AnimSetId } from '../heroAnims'
+
+function bindStage910Sheet(enemy: AnimEnemy, id: Stage910AnimId, first: string) {
+  if (!hasStage910Anim(enemy.scene, id)) return false
+  enemy.set = id as AnimSetId
+  enemy.setTexture(stage910AnimTex(id), 0)
+  enemy.setOrigin(0.5, 1)
+  enemy.clearTint()
+  ;(enemy as unknown as { animName: string }).animName = ''
+  enemy.anim(first)
+  return true
+}
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
@@ -52,27 +65,31 @@ export type LockBotHooks = {
 export class JailGuard extends AnimEnemy {
   private phase: 'walk' | 'warn' | 'swipe' | 'rest' = 'walk'
   private t = 0
-  private baton: Phaser.GameObjects.Rectangle
+  private baton: Phaser.GameObjects.Rectangle | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
   private swipeDir: 1 | -1 = 1
   private swipeOriginX = 0
+  private readonly realArt: boolean
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 's9guard'
     this.hp = this.maxHp = GUARD_HP
     this.hurtMs = 200
-    this.bodyBox(28, 44)
-    this.setTint(TINT.guard)
-    this.baton = scene.add
-      .rectangle(x, this.y - 36, 6, 22, 0x4a3020, 1)
-      .setStrokeStyle(1, 0xc8a060)
-      .setDepth(this.depth + 3)
-      .setOrigin(0.5, 1)
+    this.realArt = bindStage910Sheet(this, 's9jailguard', 'walk')
+    this.bodyBox(this.realArt ? 32 : 28, this.realArt ? 56 : 44)
+    if (!this.realArt) {
+      this.setTint(TINT.guard)
+      this.baton = scene.add
+        .rectangle(x, this.y - 36, 6, 22, 0x4a3020, 1)
+        .setStrokeStyle(1, 0xc8a060)
+        .setDepth(this.depth + 3)
+        .setOrigin(0.5, 1)
+    }
   }
 
   protected override defaultTint() {
-    return TINT.guard
+    return this.realArt ? 0xffffff : TINT.guard
   }
 
   canHurtPlayer() {
@@ -81,7 +98,7 @@ export class JailGuard extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.baton.setVisible(false)
+      this.baton?.setVisible(false)
       this.clearWarn()
       return
     }
@@ -104,7 +121,7 @@ export class JailGuard extends AnimEnemy {
     this.t += dt
 
     if (this.phase === 'walk') {
-      this.anim(Math.abs(dx) < GUARD_ENGAGE ? 'reach' : 'walk')
+      this.anim(Math.abs(dx) < GUARD_ENGAGE ? (this.realArt ? 'warning' : 'reach') : 'walk')
       this.face(dx)
       this.syncBaton(false)
       if (Math.abs(dx) <= GUARD_ENGAGE) {
@@ -120,14 +137,14 @@ export class JailGuard extends AnimEnemy {
       }
     } else if (this.phase === 'warn') {
       this.setVelocity(0, 0)
-      this.anim('reach')
+      this.anim(this.realArt ? 'warning' : 'reach')
       this.face(this.swipeDir)
       const blink = Math.floor(now / 100) % 2 === 0
-      this.setTint(blink ? 0xffe080 : TINT.guard)
+      if (!this.realArt) this.setTint(blink ? 0xffe080 : TINT.guard)
       this.syncBaton(true)
       this.warnMark?.setPosition(this.x, this.y - 58)
       if (this.t >= GUARD_WARN_MS) {
-        this.setTint(TINT.guard)
+        if (!this.realArt) this.setTint(TINT.guard)
         this.clearWarn()
         this.phase = 'swipe'
         this.t = 0
@@ -137,7 +154,7 @@ export class JailGuard extends AnimEnemy {
         SFX.swing?.()
       }
     } else if (this.phase === 'swipe') {
-      this.setTint(TINT.guard)
+      if (!this.realArt) this.setTint(TINT.guard)
       // Lunge forward up to 60px during the swipe window.
       const k = Math.min(1, this.t / GUARD_SWIPE_MS)
       const targetX = this.swipeOriginX + this.swipeDir * GUARD_SWIPE_PX * k
@@ -197,7 +214,7 @@ export class JailGuard extends AnimEnemy {
 
   protected override die(dir: number) {
     this.clearWarn()
-    this.baton.destroy()
+    this.baton?.destroy()
     super.die(dir)
   }
 
@@ -215,8 +232,9 @@ export class LockBot extends AnimEnemy {
   private phase: 'walk' | 'warn' | 'cool' = 'walk'
   private t = 0
   private lh: LockBotHooks
-  private arm: Phaser.GameObjects.Rectangle
+  private arm: Phaser.GameObjects.Rectangle | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
+  private readonly realArt: boolean
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, lh: LockBotHooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -224,17 +242,20 @@ export class LockBot extends AnimEnemy {
     this.lh = lh
     this.hp = this.maxHp = LOCK_HP
     this.hurtMs = 220
-    this.bodyBox(36, 48)
-    this.setTint(TINT.lockbot)
-    this.arm = scene.add
-      .rectangle(x, this.y - 28, 18, 8, 0x608090, 1)
-      .setStrokeStyle(1, 0xd0e0f0)
-      .setDepth(this.depth + 3)
-      .setOrigin(0, 0.5)
+    this.realArt = bindStage910Sheet(this, 's9lockbot', 'walk')
+    this.bodyBox(this.realArt ? 40 : 36, this.realArt ? 56 : 48)
+    if (!this.realArt) {
+      this.setTint(TINT.lockbot)
+      this.arm = scene.add
+        .rectangle(x, this.y - 28, 18, 8, 0x608090, 1)
+        .setStrokeStyle(1, 0xd0e0f0)
+        .setDepth(this.depth + 3)
+        .setOrigin(0, 0.5)
+    }
   }
 
   protected override defaultTint() {
-    return TINT.lockbot
+    return this.realArt ? 0xffffff : TINT.lockbot
   }
 
   canHurtPlayer() {
@@ -252,7 +273,7 @@ export class LockBot extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.arm.setVisible(false)
+      this.arm?.setVisible(false)
       this.clearWarn()
       return
     }
@@ -276,7 +297,7 @@ export class LockBot extends AnimEnemy {
     this.t += dt
 
     if (this.phase === 'walk') {
-      this.anim(Math.abs(dx) < LOCK_ENGAGE ? 'reach' : 'walk')
+      this.anim(Math.abs(dx) < LOCK_ENGAGE ? (this.realArt ? 'warning' : 'reach') : 'walk')
       this.syncArm(false)
       if (Math.abs(dx) <= LOCK_ENGAGE) {
         this.setVelocity(0, 0)
@@ -290,19 +311,20 @@ export class LockBot extends AnimEnemy {
       }
     } else if (this.phase === 'warn') {
       this.setVelocity(0, 0)
-      this.anim('reach')
+      this.anim(this.realArt ? 'warning' : 'reach')
       const blink = Math.floor(now / 100) % 2 === 0
-      this.setTint(blink ? 0xffc080 : TINT.lockbot)
+      if (!this.realArt) this.setTint(blink ? 0xffc080 : TINT.lockbot)
       this.syncArm(true)
       this.warnMark?.setPosition(this.x, this.y - 62)
       if (this.t >= LOCK_WARN_MS) {
-        this.setTint(TINT.lockbot)
+        if (!this.realArt) this.setTint(TINT.lockbot)
         this.clearWarn()
         const dir: 1 | -1 = dx >= 0 ? 1 : -1
         this.lh.throwChain(this.x + dir * 16, this.y - 36, dir)
         this.phase = 'cool'
         this.t = 0
         this.syncArm(false)
+        if (this.realArt) this.anim('attack')
         SFX.swing?.()
       }
     } else {
@@ -349,7 +371,7 @@ export class LockBot extends AnimEnemy {
 
   protected override die(dir: number) {
     this.clearWarn()
-    this.arm.destroy()
+    this.arm?.destroy()
     super.die(dir)
   }
 
@@ -439,9 +461,10 @@ export class ChiefWarden extends AnimEnemy {
   private slamOriginX = 0
   private wh: WardenHooks
   private cfg: WardenCfg
-  private baton: Phaser.GameObjects.Rectangle
+  private baton: Phaser.GameObjects.Rectangle | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
   private keyPile: Phaser.GameObjects.Rectangle | null = null
+  private readonly realArt: boolean
 
   constructor(
     scene: Phaser.Scene,
@@ -461,19 +484,24 @@ export class ChiefWarden extends AnimEnemy {
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
-    this.setTint(WARDEN_TINT)
+    this.realArt = bindStage910Sheet(this, 's9chief', 'idle')
+    const bw = this.realArt ? 48 : 44
+    const bh = this.realArt ? 72 : 56
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.setSize(44, 56)
-    body.setOffset((this.frame.width - 44) / 2, this.frame.height - 56 - 6)
-    this.baton = scene.add
-      .rectangle(x, this.y - 40, 8, 28, 0x3a3028, 1)
-      .setStrokeStyle(1, 0xc8a060)
-      .setDepth(this.depth + 3)
-      .setOrigin(0.5, 1)
+    body.setSize(bw, bh)
+    body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    if (!this.realArt) {
+      this.setTint(WARDEN_TINT)
+      this.baton = scene.add
+        .rectangle(x, this.y - 40, 8, 28, 0x3a3028, 1)
+        .setStrokeStyle(1, 0xc8a060)
+        .setDepth(this.depth + 3)
+        .setOrigin(0.5, 1)
+    }
   }
 
   protected override defaultTint() {
-    return WARDEN_TINT
+    return this.realArt ? 0xffffff : WARDEN_TINT
   }
 
   canHurtPlayer() {
@@ -519,32 +547,52 @@ export class ChiefWarden extends AnimEnemy {
     this.t = 0
     this.setVelocity(0, 0)
     if (a === 'keysDown') {
-      this.setTint(0xffe060)
+      if (!this.realArt) this.setTint(0xffe060)
       this.wh.bossEvent('weak')
       this.showKeyPile(true)
     } else if (a === 'slamWarn' || a === 'keyWarn' || a === 'gateWarn') {
-      this.setTint(0xffc080)
+      if (!this.realArt) this.setTint(0xffc080)
       this.showWarn()
     } else {
-      this.setTint(WARDEN_TINT)
+      if (!this.realArt) this.setTint(WARDEN_TINT)
       this.clearWarn()
       if (a !== 'gateDrop') this.showKeyPile(false)
     }
-    this.anim(
-      a === 'slam' || a === 'slamWarn'
-        ? 'rain'
-        : a === 'keyThrow' || a === 'keyWarn'
-          ? 'point'
-          : a === 'keysDown'
-            ? 'hurt'
-            : 'idle',
-    )
+    if (this.realArt) {
+      this.anim(
+        a === 'slamWarn'
+          ? 'baton_warning'
+          : a === 'slam'
+            ? 'baton_sweep'
+            : a === 'keyWarn'
+              ? 'key_warning'
+              : a === 'keyThrow'
+                ? 'key_throw'
+                : a === 'gateWarn'
+                  ? 'gate_warning'
+                  : a === 'gateDrop'
+                    ? 'gate_action'
+                    : a === 'keysDown'
+                      ? 'weakpoint_glow'
+                      : 'idle',
+      )
+    } else {
+      this.anim(
+        a === 'slam' || a === 'slamWarn'
+          ? 'rain'
+          : a === 'keyThrow' || a === 'keyWarn'
+            ? 'point'
+            : a === 'keysDown'
+              ? 'hurt'
+              : 'idle',
+      )
+    }
   }
 
   protected override die(_dir: number) {
     this.clearWarn()
     this.showKeyPile(false)
-    this.baton.destroy()
+    this.baton?.destroy()
     this.hp = 0
     this.act = 'intro'
     this.boss = false
@@ -570,7 +618,7 @@ export class ChiefWarden extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.baton.setVisible(false)
+      this.baton?.setVisible(false)
       return
     }
     const now = this.scene.time.now
