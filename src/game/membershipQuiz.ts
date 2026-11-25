@@ -37,6 +37,8 @@ function simpleDeveloperPool(): Q[] {
 export type PickRoundOpts = {
   /** Stage 6 first open this play: pin Q1 from simple developer pool. */
   pinHomeFirst?: boolean
+  /** Hard-exclude question ids (e.g. stage 8 avoids this-run stage 6 round). */
+  excludeIds?: string[]
 }
 
 type Bank = {
@@ -134,7 +136,7 @@ function pickRound(rng: () => number, opts?: PickRoundOpts): Q[] {
   const seen = new Set(seenList)
   const normals = BANK.questions.filter((q) => q.difficulty !== 'hard')
   const hards = BANK.questions.filter((q) => q.difficulty === 'hard')
-  const exclude = new Set<string>()
+  const exclude = new Set<string>(opts?.excludeIds ?? [])
   const six: Q[] = []
 
   const fill = (cats: string[], n: number) => {
@@ -284,7 +286,14 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
   const stageNo = Number(scene.registry.get('stageNo') ?? 0)
   const pinHomeFirst = stageNo === 6 && !scene.registry.get('quizHomeFirstDone')
   if (pinHomeFirst) scene.registry.set('quizHomeFirstDone', true)
-  const round = shuffleRoundChoices(pickRound(rng, { pinHomeFirst }), rng)
+  // s8-4: stage 8 avoids questions already asked in this run's stage 6 quiz.
+  const excludeIds =
+    stageNo === 8
+      ? ((scene.registry.get('runQuizIdsStage6') as string[] | undefined) ?? []).filter((id) => typeof id === 'string')
+      : undefined
+  const picked = pickRound(rng, { pinHomeFirst, excludeIds })
+  if (stageNo === 6) scene.registry.set('runQuizIdsStage6', picked.map((q) => q.id))
+  const round = shuffleRoundChoices(picked, rng)
   const scoring = BANK.scoring
   const timeoutPenalty = BANK.timeoutPenalty ?? -2
 
