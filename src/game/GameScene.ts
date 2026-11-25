@@ -21,6 +21,15 @@ import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled, c3Enabled } from './c2Gate'
 import { Stage8Pipes } from './stage8Pipes'
+import {
+  mountLabFarPlates,
+  placeLabProps,
+  STAGE8_BOSS_STILL,
+  STAGE8_SECTION_ENTER_STILL,
+  STAGE8_SECTION_MID_STILL,
+  updateLabBackdrops,
+  type LabFarPlates,
+} from './stage8Art'
 import { Stage9Gates } from './stage9Gates'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -554,6 +563,7 @@ export class GameScene extends Phaser.Scene {
   private towerFar: { hq: Phaser.GameObjects.Image | null; roof: Phaser.GameObjects.Image | null } = { hq: null, roof: null }
   private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
   private exhibitMid: { B: Phaser.GameObjects.TileSprite | null; C: Phaser.GameObjects.TileSprite | null } = { B: null, C: null }
+  private labFar: LabFarPlates = { A: null, B: null, C: null, D: null, E: null }
   private bossFight = false
   /** Encounter-1 controllers (stage 6 construction lock). */
   private encounters: EncounterController[] = []
@@ -601,6 +611,7 @@ export class GameScene extends Phaser.Scene {
     this.exhibit = this.stageNo === 7
     this.lab = this.stageNo === 8
     this.vault = this.stageNo === 9
+    this.labFar = { A: null, B: null, C: null, D: null, E: null }
     this.s8pipes?.destroy()
     this.s8pipes = null
     this.s9gates?.destroy()
@@ -3826,6 +3837,7 @@ export class GameScene extends Phaser.Scene {
 
   /** Stage 8: pipes + enemies + ChiefResearcher (s8-3). */
   private tickStage8(dt: number) {
+    updateLabBackdrops(this.labFar, this.cameras.main.scrollX)
     this.tickStage8Story()
     this.tickLabMembershipStall()
     this.s8pipes?.update(dt)
@@ -3856,22 +3868,29 @@ export class GameScene extends Phaser.Scene {
     this.tickStage2(dt)
   }
 
-  /** Night lab backdrop — prefer stage8 art (#157); fall back to stage7 exhibit tones. */
+  /** Night lab backdrop — Manus A–E far plates by segments (art-s8). */
   private drawLabWorld() {
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x0c1218, 1).fillRect(0, 0, WORLD_W, WORLD_H)
     g.fillStyle(0x1a2830, 0.55).fillRect(0, 48, WORLD_W, 220)
     this.bgClouds = []
     this.bgMounts = []
-    // Prefer dedicated stage-8 bgs when Manus art is present; else reuse exhibit slices.
-    const farKey = this.textures.exists('stage8-bg-far')
-      ? 'stage8-bg-far'
-      : this.textures.exists('entrance-far')
-        ? 'entrance-far'
-        : null
-    if (farKey) {
-      this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.85)
+    this.labFar = mountLabFarPlates(this)
+    if (this.labFar.A || this.labFar.B) {
+      updateLabBackdrops(this.labFar, this.cameras.main.scrollX)
+    } else {
+      const farKey = this.textures.exists('stage8-bg-far')
+        ? 'stage8-bg-far'
+        : this.textures.exists('entrance-far')
+          ? 'entrance-far'
+          : null
+      if (farKey) {
+        this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.85)
+      }
     }
+    const shelfX = (ST.shelves?.[0] as { x?: number } | undefined)?.x
+    const movingX = (ST.movingPlatforms?.[0] as { x?: number } | undefined)?.x
+    placeLabProps(this, LANE_FLOOR_Y, { shelfX, movingX })
     this.buildGroundTiles()
   }
 
@@ -5630,13 +5649,21 @@ export class GameScene extends Phaser.Scene {
         if (!lines.length) continue
         this.physics.pause()
         for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-        this.storyIntro = showStoryLines(this, lines, () => {
-          this.storyIntro = null
-          if (!this.ended) {
-            this.physics.resume()
-            this.resetPauseKeys()
-          }
-        })
+        const stillId = STAGE8_SECTION_ENTER_STILL[sec.seg]
+        const afterStill = () => {
+          this.storyIntro = showStoryLines(this, lines, () => {
+            this.storyIntro = null
+            if (!this.ended) {
+              this.physics.resume()
+              this.resetPauseKeys()
+            }
+          })
+        }
+        if (stillId && this.textures.exists(`story-${stillId}`)) {
+          this.storyIntro = showStoryStillThen(this, stillId, afterStill, 700)
+        } else {
+          afterStill()
+        }
         return
       }
       if (!this.s8MidDone.has(sec.seg) && lead >= sec.midX) {
@@ -5671,7 +5698,14 @@ export class GameScene extends Phaser.Scene {
         if (!lines.length) continue
         this.physics.pause()
         for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
-        this.storyIntro = showStoryLines(this, lines, afterMid)
+        const midStill = STAGE8_SECTION_MID_STILL[sec.seg]
+        if (midStill && this.textures.exists(`story-${midStill}`) && !atMonitor) {
+          this.storyIntro = showStoryStillThen(this, midStill, () => {
+            this.storyIntro = showStoryLines(this, lines, afterMid)
+          }, 700)
+        } else {
+          this.storyIntro = showStoryLines(this, lines, afterMid)
+        }
         return
       }
     }
@@ -8358,7 +8392,7 @@ export class GameScene extends Phaser.Scene {
         }),
       ).setFlipX(true)
     }
-    // s8-2: real behaviours (tinted stand-ins until stage8 art).
+    // s8-2: LabDrone / TubeSoldier / FileCabinet (art-s8 Manus sheets when loaded).
     if (species === 's8drone') {
       return this.addS2Enemy(new LabDrone(this, x, this.s2Hooks())).setFlipX(true)
     }
@@ -9199,12 +9233,19 @@ export class GameScene extends Phaser.Scene {
       if (this.ended) return
       const afterCard = () => {
         const depth = kind === 'researcher' ? stage8BossDialogue() : bossDepthDialogue(kind)
-        if (depth?.preFight?.length) {
-          this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
-            monoDefault: kind === 'mall-scrubber',
-          })
+        const startLines = () => {
+          if (depth?.preFight?.length) {
+            this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
+              monoDefault: kind === 'mall-scrubber',
+            })
+          } else {
+            this.queenReveal(b)
+          }
+        }
+        if (kind === 'researcher' && this.textures.exists(`story-${STAGE8_BOSS_STILL}`)) {
+          this.storyIntro = showStoryStillThen(this, STAGE8_BOSS_STILL, startLines, 800)
         } else {
-          this.queenReveal(b)
+          startLines()
         }
       }
       if (hasBossCard(kind)) {

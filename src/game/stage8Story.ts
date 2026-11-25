@@ -167,12 +167,14 @@ export function playS8Open(scene: Phaser.Scene, onDone: () => void): OpenHandle 
           })
         }
         if (dead) return
-        // Cart skin: coffee-cart art behind the tilt board (ticket: props/cart → cs-cart override).
-        const cartKey = scene.textures.exists('cs-cart')
-          ? 'cs-cart'
-          : scene.textures.exists('props/cart')
-            ? 'props/cart'
-            : null
+        // Cart skin: prefer Manus stage8 cart, else coffee-cart override.
+        const cartKey = scene.textures.exists('s8-prop-cart')
+          ? 's8-prop-cart'
+          : scene.textures.exists('cs-cart')
+            ? 'cs-cart'
+            : scene.textures.exists('props/cart')
+              ? 'props/cart'
+              : null
         let cart: Phaser.GameObjects.Image | null = null
         if (cartKey) {
           cart = scene.add
@@ -261,9 +263,8 @@ export function playPupuMonitor(scene: Phaser.Scene, onDone: () => void): OpenHa
   const next = () => {
     if (i < stills.length) {
       const id = stills[i++]!
-      // Chinese still titles → story-<slug> when Manus art lands; missing → skip instantly.
-      const keyGuess = id.replace(/^S8_/, 's8-').replace(/[\u4e00-\u9fff]+/g, '').replace(/_+/g, '-') || 'cover'
-      handle = showStoryStillThen(scene, keyGuess, () => next(), 700)
+      // art-s8: stills load as story-<exact S8_* filename> (see stage8Art STAGE8_STORY_STILLS).
+      handle = showStoryStillThen(scene, id, () => next(), 700)
       return
     }
     handle = showStoryLines(scene, stage8LinesToRaw(mon.lines), onDone)

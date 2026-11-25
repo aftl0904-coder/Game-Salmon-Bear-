@@ -2,6 +2,7 @@
  * Stage 8 · fake-honey pipe sprays + smashable valves (s8-1).
  * Cycle: warn (shake + drip) → on (hurt column, hazardHit −1) → idle.
  * Breaking a valve permanently shuts every pipe that references its id.
+ * art-s8: uses Manus pipe/valve props when loaded.
  */
 import Phaser from 'phaser'
 import { LANE_FLOOR_Y } from './engine/lanes'
@@ -30,6 +31,7 @@ type PipeRuntime = {
   t: number
   column: Phaser.GameObjects.Rectangle
   drip: Phaser.GameObjects.Rectangle
+  pipeImg: Phaser.GameObjects.Image | null
   shut: boolean
 }
 
@@ -37,8 +39,9 @@ type ValveRuntime = {
   def: ValveDef
   hitsLeft: number
   broken: boolean
-  spr: Phaser.GameObjects.Rectangle
+  spr: Phaser.GameObjects.Rectangle | Phaser.GameObjects.Image
   label: Phaser.GameObjects.Text
+  useArt: boolean
 }
 
 export type Stage8PipeHooks = {
@@ -56,12 +59,21 @@ export class Stage8Pipes {
   constructor(hooks: Stage8PipeHooks, sprays: PipeSprayDef[], valves: ValveDef[]) {
     this.hooks = hooks
     const sc = hooks.scene
+    const hasValve = sc.textures.exists('s8-prop-valve-normal')
     for (const v of valves) {
-      const spr = sc.add
-        .rectangle(v.x, LANE_FLOOR_Y - 28, 22, 40, 0x6a8a9a, 1)
-        .setStrokeStyle(2, 0xc8e0f0)
-        .setDepth(DEPTH.BREAKABLE)
-        .setOrigin(0.5, 1)
+      let spr: Phaser.GameObjects.Rectangle | Phaser.GameObjects.Image
+      if (hasValve) {
+        spr = sc.add
+          .image(v.x, LANE_FLOOR_Y, 's8-prop-valve-normal')
+          .setOrigin(0.5, 1)
+          .setDepth(DEPTH.BREAKABLE)
+      } else {
+        spr = sc.add
+          .rectangle(v.x, LANE_FLOOR_Y - 28, 22, 40, 0x6a8a9a, 1)
+          .setStrokeStyle(2, 0xc8e0f0)
+          .setDepth(DEPTH.BREAKABLE)
+          .setOrigin(0.5, 1)
+      }
       const label = sc.add
         .text(v.x, LANE_FLOOR_Y - 72, '閥', {
           fontSize: '11px',
@@ -71,8 +83,9 @@ export class Stage8Pipes {
         })
         .setOrigin(0.5)
         .setDepth(DEPTH.BREAKABLE + 1)
-      this.valves.push({ def: v, hitsLeft: v.hits, broken: false, spr, label })
+      this.valves.push({ def: v, hitsLeft: v.hits, broken: false, spr, label, useArt: hasValve })
     }
+    const hasPipe = sc.textures.exists('s8-prop-pipe-normal')
     for (const p of sprays) {
       const column = sc.add
         .rectangle(p.x, LANE_FLOOR_Y, p.w, 8, 0xf0c040, 0.55)
@@ -84,11 +97,18 @@ export class Stage8Pipes {
         .setOrigin(0.5, 1)
         .setDepth(DEPTH.HAZARD + 1)
         .setVisible(false)
+      const pipeImg = hasPipe
+        ? sc.add
+            .image(p.x, LANE_FLOOR_Y - 8, 's8-prop-pipe-normal')
+            .setOrigin(0.5, 1)
+            .setDepth(DEPTH.PROP - 1)
+        : null
       this.pipes.push({
         def: p,
         t: ((p.phaseMs % p.periodMs) + p.periodMs) % p.periodMs,
         column,
         drip,
+        pipeImg,
         shut: false,
       })
     }
@@ -98,6 +118,7 @@ export class Stage8Pipes {
     for (const p of this.pipes) {
       p.column.destroy()
       p.drip.destroy()
+      p.pipeImg?.destroy()
     }
     for (const v of this.valves) {
       v.spr.destroy()
@@ -115,7 +136,9 @@ export class Stage8Pipes {
       v.hitsLeft -= 1
       burst(this.hooks.scene, v.def.x, LANE_FLOOR_Y - 36, 0xc8e8ff, 6)
       SFX.hit()
-      v.spr.setFillStyle(0x8ab0c0)
+      if (!v.useArt && v.spr instanceof Phaser.GameObjects.Rectangle) {
+        v.spr.setFillStyle(0x8ab0c0)
+      }
       if (v.hitsLeft <= 0) this.breakValve(v, dir)
       return true
     }
@@ -124,8 +147,16 @@ export class Stage8Pipes {
 
   private breakValve(v: ValveRuntime, dir: number) {
     v.broken = true
-    v.spr.setFillStyle(0x304048)
-    v.spr.setAlpha(0.45)
+    if (v.useArt && v.spr instanceof Phaser.GameObjects.Image) {
+      if (this.hooks.scene.textures.exists('s8-prop-valve-broken')) {
+        v.spr.setTexture('s8-prop-valve-broken')
+      } else {
+        v.spr.setAlpha(0.45)
+      }
+    } else if (v.spr instanceof Phaser.GameObjects.Rectangle) {
+      v.spr.setFillStyle(0x304048)
+      v.spr.setAlpha(0.45)
+    }
     v.label.setText('開')
     burst(this.hooks.scene, v.def.x, LANE_FLOOR_Y - 40, 0xffe08a, 14)
     burst(this.hooks.scene, v.def.x + dir * 8, LANE_FLOOR_Y - 24, 0xffaa44, 8)
@@ -136,8 +167,25 @@ export class Stage8Pipes {
         p.shut = true
         p.column.setVisible(false)
         p.drip.setVisible(false)
+        if (p.pipeImg) p.pipeImg.setAlpha(0.35)
       }
     }
+  }
+
+  private setPipeTex(p: PipeRuntime, mode: 'normal' | 'shake' | 'spray') {
+    if (!p.pipeImg) return
+    const sc = this.hooks.scene
+    const key =
+      mode === 'spray'
+        ? 's8-prop-pipe-spray'
+        : mode === 'shake'
+          ? sc.textures.exists('s8-prop-pipe-shake-left')
+            ? Math.floor(p.t / 40) % 2 === 0
+              ? 's8-prop-pipe-shake-left'
+              : 's8-prop-pipe-shake-right'
+            : 's8-prop-pipe-normal'
+          : 's8-prop-pipe-normal'
+    if (sc.textures.exists(key)) p.pipeImg.setTexture(key)
   }
 
   update(dt: number) {
@@ -153,11 +201,15 @@ export class Stage8Pipes {
         const shake = Math.floor(phase / 40) % 2 === 0 ? -1 : 1
         p.drip.setVisible(true).setPosition(cfg.x + shake, LANE_FLOOR_Y - 100 - (phase / warnEnd) * 16)
         p.column.setVisible(false)
+        this.setPipeTex(p, 'shake')
+        p.pipeImg?.setPosition(cfg.x + shake, LANE_FLOOR_Y - 8)
       } else if (phase < onEnd) {
         const k = (phase - warnEnd) / cfg.onMs
         const h = 16 + Math.min(1, k * 2) * (LANE_FLOOR_Y - 40)
         p.column.setVisible(true).setPosition(cfg.x, LANE_FLOOR_Y).setSize(cfg.w, h).setDisplaySize(cfg.w, h)
         p.drip.setVisible(false)
+        this.setPipeTex(p, 'spray')
+        p.pipeImg?.setPosition(cfg.x, LANE_FLOOR_Y - 8)
         const half = cfg.w * 0.55
         for (const hero of this.hooks.heroes()) {
           if (!hero.active) continue
@@ -172,6 +224,8 @@ export class Stage8Pipes {
       } else {
         p.column.setVisible(false)
         p.drip.setVisible(false)
+        this.setPipeTex(p, 'normal')
+        p.pipeImg?.setPosition(cfg.x, LANE_FLOOR_Y - 8)
       }
     }
   }
