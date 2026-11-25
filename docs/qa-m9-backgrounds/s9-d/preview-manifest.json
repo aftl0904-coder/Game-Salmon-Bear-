@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "s9-d",
+      "path": "public/art/stage9/bg-old-records.png",
+      "frameWidth": 640,
+      "frameHeight": 360,
+      "frames": 1,
+      "displayScale": 0.7
+    }
+  ],
+  "captures": [
+    0
+  ]
+}
