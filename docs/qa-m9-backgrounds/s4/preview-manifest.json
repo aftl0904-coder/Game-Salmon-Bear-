@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "s4",
+      "path": "public/art/stage4/bg-fog-site.png",
+      "frameWidth": 640,
+      "frameHeight": 360,
+      "frames": 1,
+      "displayScale": 0.7
+    }
+  ],
+  "captures": [
+    0
+  ]
+}

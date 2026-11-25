@@ -1,0 +1,15 @@
+{
+  "method": "Read-only observation of existing stage; dev registry selects stage 4, camera positioned for screenshots; no replacement image, no manual play.",
+  "state": {
+    "scene": "play",
+    "stageNo": 4,
+    "cameraX": 1700
+  },
+  "errors": [],
+  "worldPositions": [
+    0,
+    560,
+    1140,
+    1700
+  ]
+}
