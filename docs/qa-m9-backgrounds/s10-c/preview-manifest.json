@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "s10-c",
+      "path": "public/art/stage10/bg-elevator.png",
+      "frameWidth": 640,
+      "frameHeight": 360,
+      "frames": 1,
+      "displayScale": 0.7
+    }
+  ],
+  "captures": [
+    0
+  ]
+}
