@@ -99,7 +99,7 @@ import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { LabDrone, TubeSoldier, FileCabinet, ChiefResearcher, type ResearcherCfg } from './enemies/Stage8Enemies'
-import { JailGuard, LockBot, applyChainSlow, LOCK_CHAIN } from './enemies/Stage9Enemies'
+import { JailGuard, LockBot, ChiefWarden, applyChainSlow, LOCK_CHAIN, type WardenCfg } from './enemies/Stage9Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -509,7 +509,7 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
-  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | ChiefResearcher | null = null
+  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | ChiefResearcher | ChiefWarden | null = null
   /** 月影夜市 (stage 3). */
   private market = false
   private s3world: Stage3World | null = null
@@ -4438,28 +4438,136 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(1600, () => drop.active && drop.destroy())
   }
 
-  /** s9-1: Chief Warden stand-in (SecurityDirector + warden HP / phases) until s9-3. */
-  private wardenStandInHooks(): DirectorHooks {
+  /** s9-3: numbers from data/levels/stage9.json → warden (no local retune). */
+  private wardenCfg(): WardenCfg {
     const w = ST.warden!
     return {
-      floorY: () => LANE_FLOOR_Y,
-      sweep: () => 1200,
-      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs, true),
-      drone: () => undefined,
-      droneCount: () => 0,
-      bossEvent: (kind) => this.onQueenEvent(kind),
-      trainer: {
-        hp: w.hp,
-        phase2At: w.phase2At,
-        phase3Below: w.phase3Below,
-        phase3Rate: 1,
-        summon: () => {
-          // Placeholder: spawn tinted s9guard until real warden summons in s9-3.
-          const x = (ST.boss!.arenaX0 + ST.boss!.arenaX1) / 2
-          this.spawnS2('s9guard', x - 40)
-        },
-      },
+      hp: w.hp,
+      phase2At: w.phase2At,
+      phase3Below: w.phase3Below,
+      slamWarnMs: w.slamWarnMs ?? 1000,
+      keyThrowWarnMs: w.keyThrowWarnMs ?? 1000,
+      gateDropWarnMs: w.gateDropWarnMs ?? 1000,
+      keysDroppedMs: w.keysDroppedMs ?? 2000,
+      summonPerCycle: w.summonPerCycle ?? 1,
+      summonMaxAlive: w.summonMaxAlive ?? 2,
+      weakBase: w.weakBase ?? 3,
+      capWeak: w.capWeak ?? 5,
+      capNormal: w.capNormal ?? 2,
     }
+  }
+
+  private wardenHooks() {
+    const b = ST.boss!
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      throwKeys: (fx: number, fy: number, dir: 1 | -1) => this.throwWardenKeys(fx, fy, dir),
+      dropGate: (x: number) => this.dropWardenGate(x),
+      summonGuards: (per: number, maxAlive: number) => {
+        let n = 0
+        const alive = this.enemies.getChildren().filter((o) => {
+          const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string; getData: (k: string) => unknown }
+          return e.active && e.getData('warden-summon') && e.fsm !== 'DEAD'
+        }).length
+        const room = Math.max(0, maxAlive - alive)
+        for (let i = 0; i < Math.min(per, room); i++) {
+          const x = Phaser.Math.Clamp(
+            (b.arenaX0 + b.arenaX1) / 2 + (i === 0 ? -60 : 60),
+            b.arenaX0 + 40,
+            b.arenaX1 - 40,
+          )
+          const g = this.spawnS2('s9guard', x)
+          if (g) {
+            g.setData('warden-summon', true)
+            n++
+          }
+        }
+        return n
+      },
+      guardCount: () =>
+        this.enemies.getChildren().filter((o) => {
+          const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string; getData: (k: string) => unknown }
+          return e.active && e.getData('warden-summon') && e.fsm !== 'DEAD'
+        }).length,
+      bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => this.onQueenEvent(kind),
+    }
+  }
+
+  /** s9-3: key-ring projectile (HP damage). */
+  private throwWardenKeys(fromX: number, fromY: number, dir: 1 | -1) {
+    if (this.ended) return
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const shot = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    shot.setDepth(DEPTH.FX - 1)
+    enableActorSprite(shot)
+    shot.setTint(0xffe080)
+    shot.setDisplaySize(14, 14)
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(12, 12)
+    shot.setVelocity(dir * 280, 0)
+    shot.setData('lane', 0)
+    shot.setData('dmg', 1)
+    shot.setData('boss', true)
+    shot.setData('life', this.time.now + 1800)
+    this.markShot(shot, 0xffe080)
+    this.entities.add(shot, 'projectile')
+    this.time.delayedCall(1800, () => { if (shot.active) shot.destroy() })
+  }
+
+  /** s9-3: temporary falling gate blade in the arena (hazard). */
+  private dropWardenGate(x: number) {
+    if (this.ended) return
+    const h = LANE_FLOOR_Y - 28
+    const blade = this.add
+      .rectangle(x, 20, 22, 12, 0x8a9aaa, 1)
+      .setStrokeStyle(2, 0xff6060)
+      .setOrigin(0.5, 0)
+      .setDepth(DEPTH.HAZARD)
+    this.tweens.add({
+      targets: blade,
+      height: h,
+      y: 28,
+      duration: 220,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        blade.height = h
+        // Hurt window while closed.
+        const until = this.time.now + 900
+        const tick = () => {
+          if (!blade.active || this.ended || this.time.now > until) {
+            this.tweens.add({
+              targets: blade,
+              alpha: 0,
+              duration: 200,
+              onComplete: () => blade.destroy(),
+            })
+            return
+          }
+          for (const hero of [this.boy, this.girl]) {
+            if (!hero?.active || !hero.alive) continue
+            if (Math.abs(hero.x - x) < 26 && hero.y > LANE_FLOOR_Y - h) {
+              const dir = (Math.sign(hero.x - x) || 1) as 1 | -1
+              if (canTakeDamage(hero, this.time.now)) {
+                const dmg = this.incoming(hero, 1)
+                const hpLeft = applyDamage(hero, {
+                  amount: dmg,
+                  knockbackX: dir * 200,
+                  knockbackY: -140,
+                  now: this.time.now,
+                })
+                startIFrameBlink(hero as Phaser.GameObjects.Components.Alpha & Phaser.GameObjects.GameObject, this, this.iframes(hero))
+                SFX.hurt()
+                this.refreshHearts()
+                if (hpLeft <= 0) this.knockOut(hero)
+              }
+            }
+          }
+          this.time.delayedCall(80, tick)
+        }
+        tick()
+      },
+    })
   }
 
   private directorHooks(): DirectorHooks {
@@ -9126,12 +9234,7 @@ export class GameScene extends Phaser.Scene {
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
         : this.vault
-        ? (() => {
-            const d = new SecurityDirector(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.wardenStandInHooks())
-            d.species = 'warden'
-            d.setTint(0xa0b0c8)
-            return d
-          })()
+        ? new ChiefWarden(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.wardenCfg(), this.wardenHooks())
         : this.lab
         ? new ChiefResearcher(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.researcherCfg(), this.researcherHooks())
         : this.exhibit
