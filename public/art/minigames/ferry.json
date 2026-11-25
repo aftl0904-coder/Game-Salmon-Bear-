@@ -1,6 +1,6 @@
 {
-  "frameWidth": 26,
-  "frameHeight": 22,
+  "frameWidth": 24,
+  "frameHeight": 20,
   "columns": 2,
   "anims": {
     "bob": {

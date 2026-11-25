@@ -394,85 +394,85 @@ def wheel_frame(tilt: int) -> Image.Image:
 
 def ferry_frame(bob: int) -> Image.Image:
     """
-    Side-view double-deck harbour ferry (渡海小輪).
+    Side-view double-deck harbour ferry (渡海小輪), facing right.
     Width ≈ half of pier (pier=48 → ferry≈24). bob: 0/1 shifts hull up-down.
     No logos or lettering.
     """
-    W, H = 26, 22
+    W, H = 24, 20
     im = new(W, H)
     d = ImageDraw.Draw(im)
-    yb = 2 - bob  # bob up on frame 1
-    HULL = (70, 110, 160, 255)
-    HULL_D = (40, 70, 110, 255)
-    HULL_L = (120, 160, 200, 255)
-    DECK = (230, 220, 200, 255)
-    CABIN = (240, 244, 248, 255)
-    CABIN_D = (180, 190, 200, 255)
-    RAIL = (90, 90, 100, 255)
-    # hull (boat body)
+    y = 1 - bob  # bob up on frame 1
+    HULL = (55, 95, 145, 255)
+    HULL_D = (30, 55, 95, 255)
+    HULL_L = (100, 145, 185, 255)
+    GREEN = (50, 120, 70, 255)  # classic ferry upper band (no brand)
+    GREEN_L = (90, 160, 110, 255)
+    CREAM = (240, 232, 210, 255)
+    CREAM_D = (200, 185, 155, 255)
+    WIN = (40, 65, 100, 255)
+    WIN_L = (90, 140, 180, 255)
+    # hull side silhouette: flat stern left, pointed bow right
     d.polygon(
         [
-            (2, 14 + yb),
-            (4, 18 + yb),
-            (22, 18 + yb),
-            (24, 14 + yb),
-            (22, 12 + yb),
-            (4, 12 + yb),
+            (1, 12 + y),
+            (2, 16 + y),
+            (18, 16 + y),
+            (22, 13 + y),
+            (23, 11 + y),
+            (20, 10 + y),
+            (2, 10 + y),
         ],
         fill=HULL,
     )
     px = im.load()
-    for y in range(H):
-        for x in range(W):
-            if px[x, y] != HULL:
+    for yy in range(H):
+        for xx in range(W):
+            if px[xx, yy] != HULL:
                 continue
-            if y >= 16 + yb:
-                px[x, y] = HULL_D
-            elif y <= 13 + yb:
-                px[x, y] = HULL_L
-    # lower deck stripe (waterline accent, not text)
-    for x in range(4, 22):
-        if px[x, 15 + yb][3]:
-            px[x, 15 + yb] = (255, 200, 80, 255)
-    # main deck plate
-    d.rectangle((4, 10 + yb, 21, 12 + yb), fill=DECK)
-    for x in range(5, 21):
-        px[x, 10 + yb] = (255, 240, 210, 255)
-        px[x, 12 + yb] = (180, 160, 130, 255)
-    # lower cabin (deck 1)
-    d.rectangle((6, 6 + yb, 19, 10 + yb), fill=CABIN)
-    # upper cabin (deck 2)
-    d.rectangle((8, 2 + yb, 17, 6 + yb), fill=CABIN)
-    for y in range(2 + yb, 10 + yb):
-        for x in range(6, 20):
-            if px[x, y] == CABIN and x >= 16:
-                px[x, y] = CABIN_D
-            elif px[x, y] == CABIN and y >= 7 + yb:
-                px[x, y] = (220, 226, 232, 255)
-    # windows (dark panes only — no glyphs)
-    for wx in (7, 10, 13, 16):
-        if 0 <= wx < W:
-            px[wx, 8 + yb] = (40, 70, 110, 255)
-            px[wx + 1, 8 + yb] = (60, 100, 140, 255)
-    for wx in (9, 12, 15):
-        px[wx, 4 + yb] = (40, 70, 110, 255)
-        px[wx + 1, 4 + yb] = (60, 100, 140, 255)
-    # railings
-    for x in range(5, 21):
-        px[x, 9 + yb] = RAIL
-    for x in range(8, 18):
-        px[x, 5 + yb] = RAIL
-    # funnel (plain cylinder, no mark)
-    for y in range(0 + yb, 3 + yb):
-        for x in range(14, 17):
-            if 0 <= y < H:
-                px[x, y] = (90, 90, 100, 255) if x == 16 else (140, 140, 150, 255)
-    if 0 <= yb < H:
-        px[14, 0 + yb] = (200, 70, 60, 255)
-        px[15, 0 + yb] = (220, 90, 70, 255)
-    # bow tip highlight
-    if px[23, 13 + yb][3]:
-        px[23, 13 + yb] = (160, 190, 220, 255)
+            if yy >= 14 + y:
+                px[xx, yy] = HULL_D
+            elif yy <= 11 + y:
+                px[xx, yy] = HULL_L
+    # waterline stripe
+    for xx in range(2, 21):
+        if px[xx, 13 + y][3]:
+            px[xx, 13 + y] = (230, 190, 60, 255)
+    # lower promenade / green belt
+    d.rectangle((3, 7 + y, 19, 10 + y), fill=GREEN)
+    for xx in range(3, 20):
+        px[xx, 7 + y] = GREEN_L
+        px[xx, 10 + y] = (30, 80, 50, 255)
+    # lower cabin windows row
+    for wx in (4, 7, 10, 13, 16):
+        px[wx, 8 + y] = WIN
+        px[wx + 1, 8 + y] = WIN_L
+    # upper deck (cream cabin)
+    d.rectangle((5, 3 + y, 17, 7 + y), fill=CREAM)
+    for xx in range(5, 18):
+        px[xx, 3 + y] = (255, 248, 230, 255)
+        px[xx, 6 + y] = CREAM_D
+    # upper windows
+    for wx in (6, 9, 12, 15):
+        px[wx, 4 + y] = WIN
+        px[wx + 1, 4 + y] = WIN_L
+    # roof rail
+    for xx in range(5, 18):
+        px[xx, 2 + y] = (80, 80, 90, 255)
+    # funnel mid-aft (plain bands only)
+    for yy in range(0 + y, 3 + y):
+        if 0 <= yy < H:
+            px[14, yy] = (100, 100, 110, 255)
+            px[15, yy] = (150, 150, 160, 255)
+    if 0 <= y < H:
+        px[14, 0 + y] = (190, 60, 50, 255)
+        px[15, 0 + y] = (220, 80, 60, 255)
+    # bow stem highlight
+    if px[22, 11 + y][3]:
+        px[22, 11 + y] = (160, 195, 220, 255)
+    # small wake under bow
+    if 0 <= 17 + y < H:
+        px[21, 17 + y] = (160, 200, 230, 160)
+        px[22, 17 + y] = (200, 230, 245, 140)
     outline(im)
     return im
 
