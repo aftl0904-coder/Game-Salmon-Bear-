@@ -44,7 +44,12 @@ if (!Array.isArray(raw.stages) || raw.stages.length !== 10) {
     if (row.stage === 10) {
       if (!row.sunrise) fail(errors, 'stage 10 must have sunrise')
       else {
-        requireKeys(row.sunrise, ['atX', 'durationMs', 'sky', 'tint', 'light'], 'stage 10 sunrise', errors)
+        // tint may be null (= 原色) when Manus far plates already carry the wash (bg-wire-1).
+        requireKeys(row.sunrise, ['atX', 'durationMs', 'sky', 'light'], 'stage 10 sunrise', errors)
+        if (!('tint' in row.sunrise)) fail(errors, 'stage 10 sunrise: missing key "tint"')
+        if (row.sunrise.tint != null && !/^#[0-9a-fA-F]{6}$/.test(row.sunrise.tint)) {
+          fail(errors, 'stage 10 sunrise.tint invalid hex')
+        }
         if (row.sunrise.atX !== 4560) fail(errors, 'stage 10 sunrise.atX must be 4560')
         if (row.sunrise.durationMs !== 3000) fail(errors, 'stage 10 sunrise.durationMs must be 3000')
       }
