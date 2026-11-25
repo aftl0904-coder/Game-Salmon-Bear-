@@ -2,7 +2,7 @@
   "frameWidth": 172,
   "frameHeight": 204,
   "anchorX": 86,
-  "anchorY": 201,
+  "anchorY": 203,
   "res": 2,
   "columns": 10,
   "cell1x": [
@@ -70,5 +70,6 @@
       "fps": 6,
       "loop": false
     }
-  }
+  },
+  "note": "PARTIAL / NOT READY: feet baseline aligned to current stage 7 triboss placeholder; bottle throw body alignment improved. Board warning to sweep and return to idle remain visibly discontinuous. anchorY is handoff information only and is not automatically read by existing runtime. No runtime integration."
 }

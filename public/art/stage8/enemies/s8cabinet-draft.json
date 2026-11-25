@@ -41,5 +41,5 @@
       "loop": false
     }
   },
-  "note": "56px idle candidate; warning starts with idle, 3 open-door frames rescaled from 50px candidate. Attack frame 3 is shifted 3.44 logical px, warning-to-attack may jump. FPS proposals only; no runtime integration."
+  "note": "PARTIAL / NOT READY: warning frames 3-4 expose right arm; attack starts with door open and closes gradually. Arm attachment and warning-to-attack forward-lean transition still need art correction. Timing and format unchanged. No runtime integration."
 }

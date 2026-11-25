@@ -9,10 +9,11 @@
 - 五段遠景 `public/art/stage8/bg-{reception,pipes,machine,records,control}.png`：各 640×360，build、10 項資料驗證及桌面／模擬手機獨立素材預覽通過，見 `docs/qa-m8-art/backgrounds/`。由 2560×1440 等比例縮小，未接入遊戲或真機。
 - 管道正常／震／噴、閥門正常／破、機櫃平台、移動書架及手推車外觀已交 `public/art/stage8/props/`。尺寸係暫定素材畫布，並非碰撞規格；由大圖縮小，狀態轉換可能跳動，書架移動及手推車傾斜尚未接入。build、10 項資料檢查與桌面／模擬手機純 touch 獨立預覽通過，見 `docs/qa-m8-art/props/`；未遊戲或真機驗證。
 - 無人機、試管兵動畫初稿已交；各 24 格、12×2 atlas、二值透明與 ≤64 色。待機紅燈亦亮及縮圖輪廓未完整驗證，見 `docs/qa-m8-art/enemies-drone-tube/`；build、10 項資料驗證、桌面／模擬手機純 touch 的獨立預覽通過，未接入遊戲或真機。
-- 文件櫃怪 `s8cabinet-draft` 24 格候選已交，待機約 56px，預警整片櫃門打開；但右臂受遮擋、開門接攻擊可能跳動，須覆核重畫，不可當完全合格。build、10 項資料驗證及獨立預覽通過，詳見 `docs/qa-m8-art/cabinet/`；未遊戲／真機驗證。
-- 主任研究員 `s8researcher-draft` 已交十組動作候選；橫掃與補瓶可讀性、拋瓶跳位、停輸出／交接演出仍須覆核。第7關 172×204、res2 格 at scale 1 令本體只有 71 邏輯 px，未達 Boss 128px+；scale 2 理論約 142px，未遊戲驗證。build、10 項資料驗證、桌面／模擬手機獨立預覽通過，見 `docs/qa-m8-art/researcher/`；未接入或真機驗證。
+- 文件櫃怪 `s8cabinet-draft`：預警露出右臂，攻擊頭兩格由開門漸關，較舊版改善；但手臂根部仍有歧義，預警末格接攻擊首格仍急速前傾跳格。**未完成修復，不可當最終稿。** 新證據見 `docs/qa-m8-art/revision-20261125/`；舊紀錄保留在 `docs/qa-m8-art/cabinet/`。
+- 主任研究員 `s8researcher-draft`：腳底與第7關現用佔位圖基準對齊，拋瓶時人物水平跳位改善；舉板預警接橫掃、橫掃和補瓶後接 idle 仍有跳格。試畫中間格後人物與板漂移，不採用；**尚未完成修復**。scale 1 本體仍約 71 邏輯 px，低於 Boss 128px+；遊戲內比例、碰撞及真機未驗證。證據見 `docs/qa-m8-art/revision-20261125/`，舊紀錄在 `docs/qa-m8-art/researcher/`。
 - Claude 已確認劇情圖按故事檔畫足 8 張，不限制畫面顏色，見 `docs/bible/stage8-art-decisions.md`。8 張 1280×720 已交；噗噗離開原稿在監視器外、不合格，已修成在監視器內並保留失敗紀錄。build、10 項資料驗證及桌面／模擬手機獨立預覽通過，見 `docs/qa-m8-art/story-batch1/`、`story-final/`；尚未接入遊戲或真機。
 - 本分支只交美術，無遊戲程式改動；第8關不屬聖誕首版。
+- Claude 要求兩項修復完成後才將 #157 轉 ready；現有未完成項，維持 draft，未 merge 或 close。
 
 ## Polish-1（`cursor/polish-1-2610`；2026-11-24）
 - M6 壽司／榴槤／營地三件／蜜腳印已接入；榴槤原尺寸 18×22 場上可辨；蜜腳印用 sprite alpha 漸淡（strip 第 3 格空白）。

@@ -1,0 +1,223 @@
+{
+  "items": [
+    {
+      "name": "cabinet-idle",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 0,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-walk",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 4,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-warning",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 8,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-attack",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 12,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-hurt",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 16,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-defeat",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 4,
+      "start": 20,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-to-warning-to-attack",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "columns": 12,
+      "rows": 2,
+      "frames": 8,
+      "start": 8,
+      "displayScale": 0.6
+    },
+    {
+      "name": "researcher-idle",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 0,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-board_warning",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 4,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-board_sweep",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 8,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-bottle_warning",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 12,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-bottle_throw",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 16,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-bottle_reload",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 20,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-weakpoint_glow",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 24,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-hurt",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 28,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-defeat",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 32,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-stop_and_handover",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 4,
+      "start": 36,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-to-board_warning-to-board_sweep",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 8,
+      "start": 4,
+      "displayScale": 1.3
+    },
+    {
+      "name": "researcher-to-bottle_warning-to-bottle_throw-to-bottle_reload",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "columns": 10,
+      "rows": 4,
+      "frames": 12,
+      "start": 12,
+      "displayScale": 1.3
+    }
+  ],
+  "captures": [
+    2,
+    3,
+    6,
+    8,
+    9,
+    11,
+    17,
+    18
+  ]
+}
