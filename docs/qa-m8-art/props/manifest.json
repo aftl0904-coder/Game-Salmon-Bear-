@@ -1,0 +1,90 @@
+{
+  "items": [
+    {
+      "name": "pipe-normal",
+      "path": "public/art/stage8/props/pipe-normal.png",
+      "frameWidth": 48,
+      "frameHeight": 128,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "pipe-shake-left",
+      "path": "public/art/stage8/props/pipe-shake-left.png",
+      "frameWidth": 48,
+      "frameHeight": 128,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "pipe-shake-right",
+      "path": "public/art/stage8/props/pipe-shake-right.png",
+      "frameWidth": 48,
+      "frameHeight": 128,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "pipe-shake-4frames",
+      "path": "public/art/stage8/props/pipe-shake.png",
+      "frameWidth": 48,
+      "frameHeight": 128,
+      "frames": 4,
+      "displayScale": 2
+    },
+    {
+      "name": "pipe-spray",
+      "path": "public/art/stage8/props/pipe-spray.png",
+      "frameWidth": 48,
+      "frameHeight": 128,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "valve-normal",
+      "path": "public/art/stage8/props/valve-normal.png",
+      "frameWidth": 64,
+      "frameHeight": 80,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "valve-broken",
+      "path": "public/art/stage8/props/valve-broken.png",
+      "frameWidth": 64,
+      "frameHeight": 80,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "server-platform",
+      "path": "public/art/stage8/props/server-platform.png",
+      "frameWidth": 96,
+      "frameHeight": 48,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "bookshelf",
+      "path": "public/art/stage8/props/bookshelf.png",
+      "frameWidth": 80,
+      "frameHeight": 104,
+      "frames": 1,
+      "displayScale": 2
+    },
+    {
+      "name": "cart",
+      "path": "public/art/stage8/props/cart.png",
+      "frameWidth": 96,
+      "frameHeight": 80,
+      "frames": 1,
+      "displayScale": 2
+    }
+  ],
+  "captures": [
+    3,
+    4,
+    6,
+    9
+  ]
+}

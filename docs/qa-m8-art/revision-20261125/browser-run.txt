@@ -1,0 +1,2 @@
+desktop: PASS; 19 PNGs decoded, each selected by mouse, first frame visible, animated strips completed a cycle where present, no page errors. Standalone preview only; not game or real device.
+mobile-touch: PASS; 19 PNGs decoded, each selected by touch only, first frame visible, animated strips completed a cycle where present, no page errors. Standalone preview only; not game or real device.

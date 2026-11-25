@@ -1,0 +1,294 @@
+[
+  {
+    "name": "s8cabinet-draft",
+    "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+    "mode": "RGBA",
+    "size": [
+      3072,
+      704
+    ],
+    "expected": [
+      3072,
+      704
+    ],
+    "frames": 24,
+    "columns": 12,
+    "rows": 2,
+    "frame_size": [
+      256,
+      352
+    ],
+    "alpha_values": [
+      0,
+      255
+    ],
+    "opaque_colors": 63,
+    "cells": [
+      {
+        "frame": 0,
+        "opaque_pixels": 23120,
+        "bbox": [
+          44,
+          120,
+          212,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 1,
+        "opaque_pixels": 23456,
+        "bbox": [
+          44,
+          120,
+          212,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 2,
+        "opaque_pixels": 22960,
+        "bbox": [
+          40,
+          120,
+          216,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 3,
+        "opaque_pixels": 23312,
+        "bbox": [
+          44,
+          120,
+          216,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 4,
+        "opaque_pixels": 23200,
+        "bbox": [
+          40,
+          120,
+          224,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 5,
+        "opaque_pixels": 23504,
+        "bbox": [
+          48,
+          116,
+          228,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 6,
+        "opaque_pixels": 23808,
+        "bbox": [
+          36,
+          120,
+          232,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 7,
+        "opaque_pixels": 23808,
+        "bbox": [
+          28,
+          120,
+          232,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 8,
+        "opaque_pixels": 23120,
+        "bbox": [
+          44,
+          120,
+          212,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 9,
+        "opaque_pixels": 25600,
+        "bbox": [
+          44,
+          120,
+          228,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 10,
+        "opaque_pixels": 28368,
+        "bbox": [
+          44,
+          120,
+          228,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 11,
+        "opaque_pixels": 29584,
+        "bbox": [
+          44,
+          120,
+          224,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 12,
+        "opaque_pixels": 22880,
+        "bbox": [
+          48,
+          128,
+          228,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 13,
+        "opaque_pixels": 24288,
+        "bbox": [
+          12,
+          128,
+          240,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 14,
+        "opaque_pixels": 23920,
+        "bbox": [
+          4,
+          128,
+          248,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 15,
+        "opaque_pixels": 23952,
+        "bbox": [
+          12,
+          128,
+          244,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 16,
+        "opaque_pixels": 22416,
+        "bbox": [
+          60,
+          104,
+          220,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 17,
+        "opaque_pixels": 21824,
+        "bbox": [
+          52,
+          120,
+          220,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 18,
+        "opaque_pixels": 20896,
+        "bbox": [
+          52,
+          120,
+          228,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 19,
+        "opaque_pixels": 21328,
+        "bbox": [
+          48,
+          100,
+          224,
+          344
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 20,
+        "opaque_pixels": 19488,
+        "bbox": [
+          60,
+          132,
+          204,
+          340
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 21,
+        "opaque_pixels": 18560,
+        "bbox": [
+          28,
+          152,
+          200,
+          332
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 22,
+        "opaque_pixels": 17856,
+        "bbox": [
+          24,
+          180,
+          228,
+          336
+        ],
+        "edge_pixels": 0
+      },
+      {
+        "frame": 23,
+        "opaque_pixels": 14912,
+        "bbox": [
+          8,
+          236,
+          236,
+          344
+        ],
+        "edge_pixels": 0
+      }
+    ],
+    "pass": true
+  }
+]

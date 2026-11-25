@@ -1,0 +1,1690 @@
+{
+  "character": "tube",
+  "source": "/tmp/m8-art-work/tube-actions-raw.png",
+  "source_sha256": "5ac6f6cc23f162edb105ee202c877bff07d7731e73fb47ca90401f0ec8823794",
+  "source_size": [
+    1536,
+    2304
+  ],
+  "source_alpha_min_max": [
+    0,
+    254
+  ],
+  "source_alpha_unique_count": 255,
+  "alpha_binarization": {
+    "threshold_kept_greater_or_equal": 128,
+    "raw_nonzero_pixels": 1284652,
+    "discarded_partial_alpha_pixels": 369952,
+    "discarded_fraction_of_nonzero": 0.28798,
+    "note": "Partial-alpha pixels below threshold, including haze and noise, are removed before separators are measured."
+  },
+  "alternative_warning_source": null,
+  "geometry": {
+    "target_idle_height_logical_px": 40,
+    "idle_source_bbox_heights_px": [
+      319,
+      314,
+      315,
+      321
+    ],
+    "idle_source_median_height_px": 317.0,
+    "original_sheet_source_to_logical_scale": 0.12618296529968454,
+    "source_pixels_per_logical_pixel": 7.925000000000001,
+    "output_idle_height_logical_px": [
+      40,
+      40,
+      40,
+      40
+    ],
+    "output_idle_median_height_logical_px": 40.0,
+    "output_idle_median_error_px": 0.0,
+    "all_action_frame_logical": [
+      64,
+      88
+    ],
+    "resolution_multiplier": 4,
+    "frame_sheet_px": [
+      256,
+      352
+    ],
+    "atlas_sheet_px": [
+      3072,
+      704
+    ],
+    "atlas_columns": 12,
+    "atlas_rows": 2,
+    "source_registration": "original sheet: per-column idle bbox centre; row baseline at max alpha-thresholded source y; authored per-frame variation retained. Cabinet alternative warning has its own source scale and registration as recorded in alternative_warning_source and each frame.",
+    "logical_registration_xy": [
+      32,
+      86
+    ],
+    "phaser_origin_bottom_center_xy": [
+      32,
+      88
+    ],
+    "origin_caveat": "The reference row baseline is 2 logical pixels above the geometric origin at y=88; one fully transparent border row is mandatory. Relative pose motion is retained.",
+    "resampling": "nearest neighbour to 64x88, then nearest-neighbour x4; no aspect ratio changes"
+  },
+  "palette": {
+    "shared_across_entire_character_atlas": true,
+    "opaque_rgb_colors_total": 62,
+    "rgba_alpha_values": [
+      0,
+      255
+    ],
+    "quantization": "global Pillow median-cut 64, no dithering",
+    "mean_absolute_rgb_channel_error_at_sampled_opaque_pixels": 5.0902,
+    "contains_pure_black_opaque": false
+  },
+  "separators": {
+    "method": "alpha >=128 made fully opaque, alpha <128 made transparent; detect zero-alpha rows and columns",
+    "horizontal": [
+      {
+        "between": [
+          "idle",
+          "walk"
+        ],
+        "binary_transparent_y_inclusive": [
+          384,
+          421
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          392,
+          394,
+          398,
+          402,
+          410
+        ]
+      },
+      {
+        "between": [
+          "walk",
+          "warning"
+        ],
+        "binary_transparent_y_inclusive": [
+          766,
+          780
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "warning",
+          "attack"
+        ],
+        "binary_transparent_y_inclusive": [
+          1162,
+          1209
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "attack",
+          "hurt"
+        ],
+        "binary_transparent_y_inclusive": [
+          1535,
+          1574
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "hurt",
+          "defeat"
+        ],
+        "binary_transparent_y_inclusive": [
+          1879,
+          1949
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          1896,
+          1898,
+          1899,
+          1900,
+          1901,
+          1902,
+          1918
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "action": "idle",
+        "source_content_y_inclusive": [
+          63,
+          383
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            317,
+            480
+          ],
+          [
+            688,
+            859
+          ],
+          [
+            1072,
+            1237
+          ]
+        ],
+        "split_x": [
+          398,
+          773,
+          1154
+        ]
+      },
+      {
+        "action": "walk",
+        "source_content_y_inclusive": [
+          422,
+          765
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            335,
+            472
+          ],
+          [
+            715,
+            848
+          ],
+          [
+            1099,
+            1233
+          ]
+        ],
+        "split_x": [
+          403,
+          781,
+          1166
+        ]
+      },
+      {
+        "action": "warning",
+        "source_content_y_inclusive": [
+          781,
+          1161
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            343,
+            472
+          ],
+          [
+            721,
+            847
+          ],
+          [
+            1097,
+            1214
+          ]
+        ],
+        "split_x": [
+          407,
+          784,
+          1155
+        ]
+      },
+      {
+        "action": "attack",
+        "source_content_y_inclusive": [
+          1210,
+          1534
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            343,
+            480
+          ],
+          [
+            764,
+            855
+          ],
+          [
+            1203,
+            1223
+          ]
+        ],
+        "split_x": [
+          411,
+          809,
+          1213
+        ]
+      },
+      {
+        "action": "hurt",
+        "source_content_y_inclusive": [
+          1575,
+          1878
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            387,
+            463
+          ],
+          [
+            743,
+            870
+          ],
+          [
+            1067,
+            1232
+          ]
+        ],
+        "split_x": [
+          425,
+          806,
+          1149
+        ]
+      },
+      {
+        "action": "defeat",
+        "source_content_y_inclusive": [
+          1950,
+          2232
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            334,
+            458
+          ],
+          [
+            704,
+            810
+          ],
+          [
+            1100,
+            1188
+          ]
+        ],
+        "split_x": [
+          396,
+          757,
+          1144
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "frame_count": 24,
+    "all_frames_all_edges_transparent": true,
+    "all_frames_nonempty": true,
+    "cross_frame_boundary_verification": "Every binary cut column and inter-row separator consists entirely of alpha=0. Each frame extracted only from its own separated region. Does not establish semantic identity or validate low-alpha haze.",
+    "min_silhouette_iou_after_downsample_inverse_projection": 0.91485,
+    "mean_silhouette_iou_after_downsample_inverse_projection": 0.93125,
+    "atlas_sha256": "7dadee2d74e58ffc51f7b70b412262d477e8b19a21221657391b673cddff126d"
+  },
+  "frames": [
+    {
+      "row": 0,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        63,
+        398,
+        384
+      ],
+      "source_opaque_bbox_xyxy": [
+        106,
+        65,
+        317,
+        384
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "idle",
+      "frame_in_action": 0,
+      "atlas_index": 0,
+      "source_x_registration": 211.0,
+      "source_y_registration": 383,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 39164,
+      "logical_foreground_pixels": 624,
+      "logical_alpha_bbox_xyxy": [
+        19,
+        46,
+        45,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93531,
+      "output_png": "tube/frames/idle-01.png",
+      "output_sha256": "7d782ed5dfff35046ca3320cf9a0f413afcb0a7d89827e05011e1127689f1d4f",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "source_crop_xyxy": [
+        398,
+        63,
+        773,
+        384
+      ],
+      "source_opaque_bbox_xyxy": [
+        481,
+        69,
+        688,
+        383
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "idle",
+      "frame_in_action": 1,
+      "atlas_index": 1,
+      "source_x_registration": 584.0,
+      "source_y_registration": 383,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37837,
+      "logical_foreground_pixels": 606,
+      "logical_alpha_bbox_xyxy": [
+        19,
+        46,
+        45,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94311,
+      "output_png": "tube/frames/idle-02.png",
+      "output_sha256": "fd178ed20edcc3dfc867ca4b7f6b3bcee2dcfacc5773f21f203f7860628d7f44",
+      "output_opaque_rgb_color_count": 59,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "source_crop_xyxy": [
+        773,
+        63,
+        1154,
+        384
+      ],
+      "source_opaque_bbox_xyxy": [
+        860,
+        68,
+        1072,
+        383
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "idle",
+      "frame_in_action": 2,
+      "atlas_index": 2,
+      "source_x_registration": 965.5,
+      "source_y_registration": 383,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 38919,
+      "logical_foreground_pixels": 624,
+      "logical_alpha_bbox_xyxy": [
+        19,
+        46,
+        45,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93734,
+      "output_png": "tube/frames/idle-03.png",
+      "output_sha256": "daf3a0ea6ae2dd019a97fb825549d33f9c0fa4118b60d30b7cc4ea943c2968a2",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "source_crop_xyxy": [
+        1154,
+        63,
+        1536,
+        384
+      ],
+      "source_opaque_bbox_xyxy": [
+        1238,
+        63,
+        1453,
+        384
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "idle",
+      "frame_in_action": 3,
+      "atlas_index": 3,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 383,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 39501,
+      "logical_foreground_pixels": 634,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        46,
+        46,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9366,
+      "output_png": "tube/frames/idle-04.png",
+      "output_sha256": "a9b2b3990fd3cac141e8012b0bbc52cb138b6ba1ce76b184ab04cfe69fe27d9c",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        422,
+        403,
+        766
+      ],
+      "source_opaque_bbox_xyxy": [
+        87,
+        436,
+        335,
+        764
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "walk",
+      "frame_in_action": 0,
+      "atlas_index": 4,
+      "source_x_registration": 211.0,
+      "source_y_registration": 765,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 42709,
+      "logical_foreground_pixels": 688,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        44,
+        48,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92692,
+      "output_png": "tube/frames/walk-01.png",
+      "output_sha256": "50ce2144f73f7bddeeaded275685758bf7341beff855616fbaa062335fcf46df",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "source_crop_xyxy": [
+        403,
+        422,
+        781,
+        766
+      ],
+      "source_opaque_bbox_xyxy": [
+        473,
+        422,
+        715,
+        766
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "walk",
+      "frame_in_action": 1,
+      "atlas_index": 5,
+      "source_x_registration": 584.0,
+      "source_y_registration": 765,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 42829,
+      "logical_foreground_pixels": 676,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        43,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93867,
+      "output_png": "tube/frames/walk-02.png",
+      "output_sha256": "dc98054eed80ce71fb9f39acfa5c9e2d6649ad2bc1cadebde3605d2ff29a05c9",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "source_crop_xyxy": [
+        781,
+        422,
+        1166,
+        766
+      ],
+      "source_opaque_bbox_xyxy": [
+        849,
+        435,
+        1099,
+        762
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "walk",
+      "frame_in_action": 2,
+      "atlas_index": 6,
+      "source_x_registration": 965.5,
+      "source_y_registration": 765,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 43463,
+      "logical_foreground_pixels": 694,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        44,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92355,
+      "output_png": "tube/frames/walk-03.png",
+      "output_sha256": "4cec13ba7c0e062a51df4c1f30be546b83c841c90f65a467bb0e8637b7285cc7",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "source_crop_xyxy": [
+        1166,
+        422,
+        1536,
+        766
+      ],
+      "source_opaque_bbox_xyxy": [
+        1234,
+        437,
+        1476,
+        762
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "walk",
+      "frame_in_action": 3,
+      "atlas_index": 7,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 765,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 42088,
+      "logical_foreground_pixels": 684,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        45,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.926,
+      "output_png": "tube/frames/walk-04.png",
+      "output_sha256": "a48e7510aca2276a0841524c55b1fe1569c17312208ae25cf7b95332f3312f75",
+      "output_opaque_rgb_color_count": 58,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        781,
+        407,
+        1162
+      ],
+      "source_opaque_bbox_xyxy": [
+        95,
+        833,
+        343,
+        1155
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "warning",
+      "frame_in_action": 0,
+      "atlas_index": 8,
+      "source_x_registration": 211.0,
+      "source_y_registration": 1161,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 40923,
+      "logical_foreground_pixels": 657,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        45,
+        49,
+        85
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93529,
+      "output_png": "tube/frames/warning-01.png",
+      "output_sha256": "d262c9f90548ced1dcdcfedeb79864ce12e962eb023e8110419556d3f51fede0",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "source_crop_xyxy": [
+        407,
+        781,
+        784,
+        1162
+      ],
+      "source_opaque_bbox_xyxy": [
+        473,
+        850,
+        721,
+        1156
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "warning",
+      "frame_in_action": 1,
+      "atlas_index": 9,
+      "source_x_registration": 584.0,
+      "source_y_registration": 1161,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 40705,
+      "logical_foreground_pixels": 640,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        47,
+        49,
+        85
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92911,
+      "output_png": "tube/frames/warning-02.png",
+      "output_sha256": "4502246b7c9b12403b3e20eb1ee2dde8272de82c8768b0251bc0ed7cae91ac73",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "source_crop_xyxy": [
+        784,
+        781,
+        1155,
+        1162
+      ],
+      "source_opaque_bbox_xyxy": [
+        848,
+        812,
+        1097,
+        1161
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "warning",
+      "frame_in_action": 2,
+      "atlas_index": 10,
+      "source_x_registration": 965.5,
+      "source_y_registration": 1161,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 41139,
+      "logical_foreground_pixels": 648,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        42,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93197,
+      "output_png": "tube/frames/warning-03.png",
+      "output_sha256": "fa753c454e788e660ca5b42e6ae01ec3933a844ee79adb39e997a8f69950f84b",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "source_crop_xyxy": [
+        1155,
+        781,
+        1536,
+        1162
+      ],
+      "source_opaque_bbox_xyxy": [
+        1215,
+        781,
+        1473,
+        1162
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "warning",
+      "frame_in_action": 3,
+      "atlas_index": 11,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 1161,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 39947,
+      "logical_foreground_pixels": 636,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        38,
+        48,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.91485,
+      "output_png": "tube/frames/warning-04.png",
+      "output_sha256": "65ea5a5e0a9eb859b6a92a06d0a740c7471756a270ff665635df2af65b853291",
+      "output_opaque_rgb_color_count": 60,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1210,
+        411,
+        1535
+      ],
+      "source_opaque_bbox_xyxy": [
+        84,
+        1210,
+        343,
+        1535
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "attack",
+      "frame_in_action": 0,
+      "atlas_index": 12,
+      "source_x_registration": 211.0,
+      "source_y_registration": 1534,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 45328,
+      "logical_foreground_pixels": 723,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        45,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92843,
+      "output_png": "tube/frames/attack-01.png",
+      "output_sha256": "687b66a611c55862164507421c8163a442d6b264400e7b8f74d2e3c91fc0be30",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "source_crop_xyxy": [
+        411,
+        1210,
+        809,
+        1535
+      ],
+      "source_opaque_bbox_xyxy": [
+        481,
+        1217,
+        764,
+        1535
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "attack",
+      "frame_in_action": 1,
+      "atlas_index": 13,
+      "source_x_registration": 584.0,
+      "source_y_registration": 1534,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 41942,
+      "logical_foreground_pixels": 675,
+      "logical_alpha_bbox_xyxy": [
+        19,
+        46,
+        55,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93316,
+      "output_png": "tube/frames/attack-02.png",
+      "output_sha256": "aa9c99c2d8a000b7d82557ea6f95f2567401902c66ef96b54ec4ad121e919d2a",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "source_crop_xyxy": [
+        809,
+        1210,
+        1213,
+        1535
+      ],
+      "source_opaque_bbox_xyxy": [
+        856,
+        1224,
+        1203,
+        1535
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "attack",
+      "frame_in_action": 2,
+      "atlas_index": 14,
+      "source_x_registration": 965.5,
+      "source_y_registration": 1534,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 42190,
+      "logical_foreground_pixels": 668,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        47,
+        62,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.91649,
+      "output_png": "tube/frames/attack-03.png",
+      "output_sha256": "e1048a1f082eb8f154538b29b9c351d5c03b79375d8f558ec3f37bf959d023a5",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "source_crop_xyxy": [
+        1213,
+        1210,
+        1536,
+        1535
+      ],
+      "source_opaque_bbox_xyxy": [
+        1224,
+        1229,
+        1489,
+        1534
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "attack",
+      "frame_in_action": 3,
+      "atlas_index": 15,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 1534,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37695,
+      "logical_foreground_pixels": 595,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        48,
+        50,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93821,
+      "output_png": "tube/frames/attack-04.png",
+      "output_sha256": "5368449eeffef71e0ae38fe323aec5dfbfd586655b2cdb1447b076bff706f844",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1575,
+        425,
+        1879
+      ],
+      "source_opaque_bbox_xyxy": [
+        89,
+        1575,
+        387,
+        1878
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "hurt",
+      "frame_in_action": 0,
+      "atlas_index": 16,
+      "source_x_registration": 211.0,
+      "source_y_registration": 1878,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 39234,
+      "logical_foreground_pixels": 618,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        48,
+        54,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92438,
+      "output_png": "tube/frames/hurt-01.png",
+      "output_sha256": "6af86421fb642ff1baf58dd4e2648454f475d788bd008ed0678563769092cfe0",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "source_crop_xyxy": [
+        425,
+        1575,
+        806,
+        1879
+      ],
+      "source_opaque_bbox_xyxy": [
+        464,
+        1594,
+        743,
+        1879
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "hurt",
+      "frame_in_action": 1,
+      "atlas_index": 17,
+      "source_x_registration": 584.0,
+      "source_y_registration": 1878,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 37244,
+      "logical_foreground_pixels": 589,
+      "logical_alpha_bbox_xyxy": [
+        17,
+        50,
+        52,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92068,
+      "output_png": "tube/frames/hurt-02.png",
+      "output_sha256": "0cc2078c1da4584eb5b6f12ab6a19f97c85c381a21a947d89641a9782d3df48c",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "source_crop_xyxy": [
+        806,
+        1575,
+        1149,
+        1879
+      ],
+      "source_opaque_bbox_xyxy": [
+        871,
+        1620,
+        1067,
+        1874
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "hurt",
+      "frame_in_action": 2,
+      "atlas_index": 18,
+      "source_x_registration": 965.5,
+      "source_y_registration": 1878,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 29660,
+      "logical_foreground_pixels": 467,
+      "logical_alpha_bbox_xyxy": [
+        20,
+        53,
+        45,
+        85
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92565,
+      "output_png": "tube/frames/hurt-03.png",
+      "output_sha256": "d8fa7cb28dd8e66cf0020aedabf31af3b62181a8a46e1766156069925806531d",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "source_crop_xyxy": [
+        1149,
+        1575,
+        1536,
+        1879
+      ],
+      "source_opaque_bbox_xyxy": [
+        1233,
+        1637,
+        1462,
+        1878
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "hurt",
+      "frame_in_action": 3,
+      "atlas_index": 19,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 1878,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 30154,
+      "logical_foreground_pixels": 482,
+      "logical_alpha_bbox_xyxy": [
+        18,
+        56,
+        47,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93655,
+      "output_png": "tube/frames/hurt-04.png",
+      "output_sha256": "f7a5237c2e1432c2e3505e6baff3fdae0dc03e0d12069c04e8acb5755570bfeb",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1950,
+        396,
+        2233
+      ],
+      "source_opaque_bbox_xyxy": [
+        87,
+        1950,
+        334,
+        2233
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 211.0,
+      "action": "defeat",
+      "frame_in_action": 0,
+      "atlas_index": 20,
+      "source_x_registration": 211.0,
+      "source_y_registration": 2232,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 34875,
+      "logical_foreground_pixels": 559,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        50,
+        48,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.93424,
+      "output_png": "tube/frames/defeat-01.png",
+      "output_sha256": "c623283b190b3699454f86180e3ca467fe319af3fa11f8edbc07de5969e09db0",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "source_crop_xyxy": [
+        396,
+        1950,
+        757,
+        2233
+      ],
+      "source_opaque_bbox_xyxy": [
+        459,
+        2011,
+        704,
+        2228
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 584.0,
+      "action": "defeat",
+      "frame_in_action": 1,
+      "atlas_index": 21,
+      "source_x_registration": 584.0,
+      "source_y_registration": 2232,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 29907,
+      "logical_foreground_pixels": 469,
+      "logical_alpha_bbox_xyxy": [
+        16,
+        58,
+        47,
+        85
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.92573,
+      "output_png": "tube/frames/defeat-02.png",
+      "output_sha256": "45267e329b4b3b2f41f0d74738b8acb6bb5a84b5ac2bb9d14eed9dc4ead7b552",
+      "output_opaque_rgb_color_count": 61,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "source_crop_xyxy": [
+        757,
+        1950,
+        1144,
+        2233
+      ],
+      "source_opaque_bbox_xyxy": [
+        811,
+        2069,
+        1100,
+        2231
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 965.5,
+      "action": "defeat",
+      "frame_in_action": 2,
+      "atlas_index": 22,
+      "source_x_registration": 965.5,
+      "source_y_registration": 2232,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 29386,
+      "logical_foreground_pixels": 466,
+      "logical_alpha_bbox_xyxy": [
+        13,
+        65,
+        49,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94436,
+      "output_png": "tube/frames/defeat-03.png",
+      "output_sha256": "c816bdda2a3a4a6f2194395e7a21a18c37744e404754088508dfa27c59b02a3c",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "source_crop_xyxy": [
+        1144,
+        1950,
+        1536,
+        2233
+      ],
+      "source_opaque_bbox_xyxy": [
+        1189,
+        2107,
+        1495,
+        2233
+      ],
+      "source_path": "/tmp/m8-art-work/tube-actions-raw.png",
+      "source_to_logical_scale": 0.12618296529968454,
+      "source_x_anchor": 1345.0,
+      "action": "defeat",
+      "frame_in_action": 3,
+      "atlas_index": 23,
+      "source_x_registration": 1345.0,
+      "source_y_registration": 2232,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 27861,
+      "logical_foreground_pixels": 451,
+      "logical_alpha_bbox_xyxy": [
+        12,
+        70,
+        51,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94338,
+      "output_png": "tube/frames/defeat-04.png",
+      "output_sha256": "6d185e3b82953bf73a1dbde63ce151b66c8158ba8d02cb6da8ca9ddb3e79b7ad",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    }
+  ]
+}

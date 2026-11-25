@@ -1,0 +1,578 @@
+[
+  {
+    "mode": "desktop",
+    "id": "cabinet",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 572.4000000059605
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 823
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4,
+        "at": 1073.7999999970198
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 9,
+        "fps": 4,
+        "at": 1330.5
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8,
+        "at": 1586
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8,
+        "at": 1711.2999999970198
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8,
+        "at": 1839.7999999970198
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8,
+        "at": 1965.7999999970198
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.59999999403954,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 256.70000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 128.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 126,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "desktop",
+    "id": "researcher",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "board_warning",
+        "slot": 0,
+        "frame": 7,
+        "fps": 6,
+        "at": 2367.6000000089407
+      },
+      {
+        "phase": "board_warning",
+        "slot": 1,
+        "frame": 7,
+        "fps": 6,
+        "at": 2534
+      },
+      {
+        "phase": "board_warning",
+        "slot": 2,
+        "frame": 7,
+        "fps": 6,
+        "at": 2700.6000000089407
+      },
+      {
+        "phase": "board_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 6,
+        "at": 2873.5
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 3043.1000000089407
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 3168.6000000089407
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 3293.9000000059605
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 3419.1000000089407
+      }
+    ],
+    "expected": [
+      {
+        "phase": "board_warning",
+        "slot": 0,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 1,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 2,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.3999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.6000000089407,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.8999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 169.6000000089407,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 125.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.20000000298023,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "cabinet",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 419.80000001192093
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 671.7000000029802
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4,
+        "at": 928.2000000029802
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 9,
+        "fps": 4,
+        "at": 1185.5
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8,
+        "at": 1436.300000011921
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8,
+        "at": 1562.800000011921
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8,
+        "at": 1688.2000000029802
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8,
+        "at": 1813.4000000059605
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 251.8999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 256.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 257.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.80000001192093,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 126.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.3999999910593,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.20000000298023,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "researcher",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "board_warning",
+        "slot": 0,
+        "frame": 7,
+        "fps": 6,
+        "at": 2187.6000000089407
+      },
+      {
+        "phase": "board_warning",
+        "slot": 1,
+        "frame": 7,
+        "fps": 6,
+        "at": 2354.300000011921
+      },
+      {
+        "phase": "board_warning",
+        "slot": 2,
+        "frame": 7,
+        "fps": 6,
+        "at": 2527.4000000059605
+      },
+      {
+        "phase": "board_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 6,
+        "at": 2701.1000000089407
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 2874.5
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 2999.7000000029802
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 3127.300000011921
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 3252.6000000089407
+      }
+    ],
+    "expected": [
+      {
+        "phase": "board_warning",
+        "slot": 0,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 1,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 2,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 6
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "board_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.70000000298023,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.09999999403954,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.70000000298023,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.3999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 125.20000000298023,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 127.6000000089407,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  }
+]

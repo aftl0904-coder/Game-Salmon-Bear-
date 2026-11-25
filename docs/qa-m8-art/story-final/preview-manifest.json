@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "S8_C_監視器內噗噗離開",
+      "path": "public/art/story/S8_C_監視器內噗噗離開.png",
+      "frameWidth": 1280,
+      "frameHeight": 720,
+      "frames": 1,
+      "displayScale": 0.35
+    }
+  ],
+  "captures": [
+    0
+  ]
+}

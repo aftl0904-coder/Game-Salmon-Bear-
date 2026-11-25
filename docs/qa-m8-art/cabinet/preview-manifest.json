@@ -1,0 +1,74 @@
+{
+  "items": [
+    {
+      "name": "cabinet-idle",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 0,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-walk",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 4,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-warning",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 8,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-attack",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 12,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-hurt",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 16,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    },
+    {
+      "name": "cabinet-defeat",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 4,
+      "start": 20,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    }
+  ],
+  "captures": [
+    2,
+    3
+  ]
+}

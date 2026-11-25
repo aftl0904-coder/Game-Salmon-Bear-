@@ -1,0 +1,77 @@
+[
+  {
+    "file": "public/art/stage8/bg-reception.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGB",
+    "visible_colors": 64,
+    "source_size": [
+      2560,
+      1440
+    ],
+    "resize": "4:1 nearest, no crop",
+    "quantization": "median cut <=64 colors, no dithering"
+  },
+  {
+    "file": "public/art/stage8/bg-pipes.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGB",
+    "visible_colors": 64,
+    "source_size": [
+      2560,
+      1440
+    ],
+    "resize": "4:1 nearest, no crop",
+    "quantization": "median cut <=64 colors, no dithering"
+  },
+  {
+    "file": "public/art/stage8/bg-machine.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGB",
+    "visible_colors": 64,
+    "source_size": [
+      2560,
+      1440
+    ],
+    "resize": "4:1 nearest, no crop",
+    "quantization": "median cut <=64 colors, no dithering"
+  },
+  {
+    "file": "public/art/stage8/bg-records.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGB",
+    "visible_colors": 64,
+    "source_size": [
+      2560,
+      1440
+    ],
+    "resize": "4:1 nearest, no crop",
+    "quantization": "median cut <=64 colors, no dithering"
+  },
+  {
+    "file": "public/art/stage8/bg-control.png",
+    "size": [
+      640,
+      360
+    ],
+    "mode": "RGB",
+    "visible_colors": 64,
+    "source_size": [
+      2560,
+      1440
+    ],
+    "resize": "4:1 nearest, no crop",
+    "quantization": "median cut <=64 colors, no dithering"
+  }
+]

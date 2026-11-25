@@ -1,0 +1,2 @@
+desktop: PASS; 5 images decoded at 640x360; mouse selected each; zero page errors; standalone preview, not game
+mobile-touch: PASS; 5 images decoded at 640x360; touch only selected each; zero page errors; standalone preview, not game

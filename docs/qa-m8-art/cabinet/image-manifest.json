@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "name": "s8cabinet-draft",
+      "path": "public/art/stage8/enemies/s8cabinet-draft.png",
+      "frameWidth": 256,
+      "frameHeight": 352,
+      "frames": 24,
+      "columns": 12,
+      "rows": 2,
+      "displayScale": 0.6
+    }
+  ]
+}

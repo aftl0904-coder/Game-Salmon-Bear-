@@ -1,0 +1,11 @@
+{
+  "original_failed_sha256": "f40ae64ac80367f558cebbe4b46f658bf577d1a1e1709658858b50188faadf40",
+  "original_failure": "Pupu was outside the monitor; rejected",
+  "fixed_raw_sha256": "ae2e13a80a1ff87030e6bea5447415197d65da635f12dc665492f56a83d9fec6",
+  "fixed_raw_size": [
+    2560,
+    1440
+  ],
+  "final_sha256": "096d445bb042f673a8e590f5a11e324149292378631b495b7fc49354e79b6b3e",
+  "procedure": "1280x720 nearest 16:9, no crop, 128 colors RGB, no dithering"
+}

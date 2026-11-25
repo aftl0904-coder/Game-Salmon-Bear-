@@ -1,0 +1,6 @@
+e0889fc338bcf1a90978161ef90ff1042c66c3081ddc5a00d7c54315474d9725  /tmp/m8-repair-20261125/generated/cabinet-warning-final.png
+6f41326b07b3f46e5bae10a279dfe966e0e07aa60fbbd4cc44ebcbc00d6485b0  /tmp/m8-repair-20261125/generated/researcher-board-middle.png
+42008de667f80a3a5d3988065f9da681eb424e96ee33fc9fb8c84b1c96fb1fd2  /tmp/m8-repair-20261125/generated/researcher-reload-recover.png
+4a215f3789f4921654bec91b29e48ede38df53353263433faaa53e940ff9a308  /tmp/m8-repair-20261125/generated/researcher-sweep-recover.png
+70c9af51fb8fab45e93faec0cdcf08bc0ce907d4c63cd056a36c78ef354c1112  public/art/stage8/enemies/s8cabinet-draft.png
+5134c66e810b573943cf3a8faa363ac9b1639afc911ece3443a3c20c0390c2e8  public/art/stage8/enemies/s8researcher-draft.png

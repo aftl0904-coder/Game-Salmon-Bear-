@@ -1,0 +1,1734 @@
+{
+  "character": "cabinet",
+  "source": "/tmp/m8-art-work/cabinet-actions-raw.png",
+  "source_sha256": "36880c5f1be84b96adab02e5b052e09774b92a8258ad5e80a2a7a1c698776b5b",
+  "source_size": [
+    1536,
+    2304
+  ],
+  "source_alpha_min_max": [
+    0,
+    254
+  ],
+  "source_alpha_unique_count": 255,
+  "alpha_binarization": {
+    "threshold_kept_greater_or_equal": 128,
+    "raw_nonzero_pixels": 1440229,
+    "discarded_partial_alpha_pixels": 321636,
+    "discarded_fraction_of_nonzero": 0.22332,
+    "note": "Partial-alpha pixels below threshold, including haze and noise, are removed before separators are measured."
+  },
+  "alternative_warning_source": {
+    "source": "/tmp/m8-art-work/cabinet-warning-door-variation.png",
+    "source_sha256": "a93cafdc7e1766fb45eb8f85299810fd6341cfad34295c44ea45b2172c4862e1",
+    "source_size": [
+      2688,
+      1152
+    ],
+    "source_content_y_inclusive": [
+      258,
+      1010
+    ],
+    "binary_vertical_separator_intervals_inclusive": [
+      [
+        668,
+        739
+      ],
+      [
+        1340,
+        1411
+      ],
+      [
+        2027,
+        2083
+      ]
+    ],
+    "split_x": [
+      703,
+      1375,
+      2055
+    ],
+    "source_opaque_bbox_heights_px": [
+      753,
+      753,
+      753,
+      753
+    ],
+    "source_to_logical_scale": 0.07436918990703852,
+    "source_pixels_per_logical_pixel": 13.446428571428571,
+    "raw_nonzero_pixels": 1084683,
+    "discarded_partial_alpha_pixels": 105397,
+    "method": "newly generated hinged-door variation, separate 4-frame row; first frame registered by bbox centre, subsequent frames registered by left-edge displacement",
+    "note": "Original warning retained separately in cabinet-original; new warning is not part of supplied raw sheet."
+  },
+  "geometry": {
+    "target_idle_height_logical_px": 56,
+    "idle_source_bbox_heights_px": [
+      322,
+      324,
+      320,
+      321
+    ],
+    "idle_source_median_height_px": 321.5,
+    "original_sheet_source_to_logical_scale": 0.17418351477449456,
+    "source_pixels_per_logical_pixel": 5.741071428571428,
+    "output_idle_height_logical_px": [
+      56,
+      56,
+      56,
+      56
+    ],
+    "output_idle_median_height_logical_px": 56.0,
+    "output_idle_median_error_px": 0.0,
+    "all_action_frame_logical": [
+      64,
+      88
+    ],
+    "resolution_multiplier": 4,
+    "frame_sheet_px": [
+      256,
+      352
+    ],
+    "atlas_sheet_px": [
+      3072,
+      704
+    ],
+    "atlas_columns": 12,
+    "atlas_rows": 2,
+    "source_registration": "original sheet: per-column idle bbox centre; row baseline at max alpha-thresholded source y; authored per-frame variation retained. Cabinet alternative warning has its own source scale and registration as recorded in alternative_warning_source and each frame.",
+    "logical_registration_xy": [
+      32,
+      86
+    ],
+    "phaser_origin_bottom_center_xy": [
+      32,
+      88
+    ],
+    "origin_caveat": "The reference row baseline is 2 logical pixels above the geometric origin at y=88; one fully transparent border row is mandatory. Relative pose motion is retained.",
+    "resampling": "nearest neighbour to 64x88, then nearest-neighbour x4; no aspect ratio changes"
+  },
+  "palette": {
+    "shared_across_entire_character_atlas": true,
+    "opaque_rgb_colors_total": 63,
+    "rgba_alpha_values": [
+      0,
+      255
+    ],
+    "quantization": "global Pillow median-cut 64, no dithering",
+    "mean_absolute_rgb_channel_error_at_sampled_opaque_pixels": 3.55,
+    "contains_pure_black_opaque": false
+  },
+  "separators": {
+    "method": "alpha >=128 made fully opaque, alpha <128 made transparent; detect zero-alpha rows and columns",
+    "horizontal": [
+      {
+        "between": [
+          "idle",
+          "walk"
+        ],
+        "binary_transparent_y_inclusive": [
+          392,
+          437
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          414,
+          415,
+          416,
+          417,
+          418,
+          420
+        ]
+      },
+      {
+        "between": [
+          "walk",
+          "warning"
+        ],
+        "binary_transparent_y_inclusive": [
+          764,
+          805
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          772,
+          774,
+          786
+        ]
+      },
+      {
+        "between": [
+          "warning",
+          "attack"
+        ],
+        "binary_transparent_y_inclusive": [
+          1139,
+          1182
+        ],
+        "raw_fully_transparent_rows_in_gap": []
+      },
+      {
+        "between": [
+          "attack",
+          "hurt"
+        ],
+        "binary_transparent_y_inclusive": [
+          1494,
+          1540
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          1532
+        ]
+      },
+      {
+        "between": [
+          "hurt",
+          "defeat"
+        ],
+        "binary_transparent_y_inclusive": [
+          1894,
+          1955
+        ],
+        "raw_fully_transparent_rows_in_gap": [
+          1914
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "action": "idle",
+        "source_content_y_inclusive": [
+          68,
+          391
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            336,
+            473
+          ],
+          [
+            719,
+            835
+          ],
+          [
+            1085,
+            1219
+          ]
+        ],
+        "split_x": [
+          404,
+          777,
+          1152
+        ]
+      },
+      {
+        "action": "walk",
+        "source_content_y_inclusive": [
+          438,
+          763
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            356,
+            480
+          ],
+          [
+            737,
+            827
+          ],
+          [
+            1112,
+            1199
+          ]
+        ],
+        "split_x": [
+          418,
+          782,
+          1155
+        ]
+      },
+      {
+        "action": "warning",
+        "source_content_y_inclusive": [
+          806,
+          1138
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            352,
+            466
+          ],
+          [
+            737,
+            844
+          ],
+          [
+            1109,
+            1221
+          ]
+        ],
+        "split_x": [
+          409,
+          790,
+          1165
+        ],
+        "output_uses_alternative_source": true
+      },
+      {
+        "action": "attack",
+        "source_content_y_inclusive": [
+          1183,
+          1493
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            360,
+            430
+          ],
+          [
+            757,
+            803
+          ],
+          [
+            1153,
+            1174
+          ]
+        ],
+        "split_x": [
+          395,
+          780,
+          1163
+        ]
+      },
+      {
+        "action": "hurt",
+        "source_content_y_inclusive": [
+          1541,
+          1893
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            346,
+            485
+          ],
+          [
+            729,
+            848
+          ],
+          [
+            1102,
+            1226
+          ]
+        ],
+        "split_x": [
+          415,
+          788,
+          1164
+        ]
+      },
+      {
+        "action": "defeat",
+        "source_content_y_inclusive": [
+          1956,
+          2259
+        ],
+        "binary_vertical_separator_intervals_inclusive": [
+          [
+            324,
+            450
+          ],
+          [
+            701,
+            809
+          ],
+          [
+            1105,
+            1172
+          ]
+        ],
+        "split_x": [
+          387,
+          755,
+          1138
+        ]
+      }
+    ]
+  },
+  "verification": {
+    "frame_count": 24,
+    "all_frames_all_edges_transparent": true,
+    "all_frames_nonempty": true,
+    "cross_frame_boundary_verification": "Every binary cut column and inter-row separator consists entirely of alpha=0. Each frame extracted only from its own separated region. Does not establish semantic identity or validate low-alpha haze.",
+    "min_silhouette_iou_after_downsample_inverse_projection": 0.94216,
+    "mean_silhouette_iou_after_downsample_inverse_projection": 0.95497,
+    "atlas_sha256": "782c0ae4452ac9a0f9111e5938c0fe793afa7565d6cbd2bbc97316a00ea616f3"
+  },
+  "frames": [
+    {
+      "row": 0,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        68,
+        404,
+        392
+      ],
+      "source_opaque_bbox_xyxy": [
+        96,
+        69,
+        336,
+        391
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 215.5,
+      "action": "idle",
+      "frame_in_action": 0,
+      "atlas_index": 0,
+      "source_x_registration": 215.5,
+      "source_y_registration": 391,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 47646,
+      "logical_foreground_pixels": 1445,
+      "logical_alpha_bbox_xyxy": [
+        11,
+        30,
+        53,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95849,
+      "output_png": "cabinet/frames/idle-01.png",
+      "output_sha256": "29a992701d1cd26901b7732feacc9fa37996d8a837a073516c39ea111eb90bf3",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 1,
+      "source_crop_xyxy": [
+        404,
+        68,
+        777,
+        392
+      ],
+      "source_opaque_bbox_xyxy": [
+        474,
+        68,
+        719,
+        392
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 596.0,
+      "action": "idle",
+      "frame_in_action": 1,
+      "atlas_index": 1,
+      "source_x_registration": 596.0,
+      "source_y_registration": 391,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 48344,
+      "logical_foreground_pixels": 1466,
+      "logical_alpha_bbox_xyxy": [
+        11,
+        30,
+        53,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95941,
+      "output_png": "cabinet/frames/idle-02.png",
+      "output_sha256": "4419725b5d04003dfad7e03108759226fed882330bd6b0175899c69da4932f3f",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 2,
+      "source_crop_xyxy": [
+        777,
+        68,
+        1152,
+        392
+      ],
+      "source_opaque_bbox_xyxy": [
+        836,
+        71,
+        1085,
+        391
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 960.0,
+      "action": "idle",
+      "frame_in_action": 2,
+      "atlas_index": 2,
+      "source_x_registration": 960.0,
+      "source_y_registration": 391,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 47651,
+      "logical_foreground_pixels": 1435,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        54,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95346,
+      "output_png": "cabinet/frames/idle-03.png",
+      "output_sha256": "8b759d18c7d06c5f03f08d1c19709fc2a6dec3197b2dc96c032c720d3b9eb454",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 0,
+      "col": 3,
+      "source_crop_xyxy": [
+        1152,
+        68,
+        1536,
+        392
+      ],
+      "source_opaque_bbox_xyxy": [
+        1220,
+        70,
+        1466,
+        391
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 1342.5,
+      "action": "idle",
+      "frame_in_action": 3,
+      "atlas_index": 3,
+      "source_x_registration": 1342.5,
+      "source_y_registration": 391,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 47927,
+      "logical_foreground_pixels": 1457,
+      "logical_alpha_bbox_xyxy": [
+        11,
+        30,
+        54,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.96361,
+      "output_png": "cabinet/frames/idle-04.png",
+      "output_sha256": "bab31c412443ebfdb58a6e8a28cae91b6baca33e9b109a37a2c2c83fd428647d",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        438,
+        418,
+        764
+      ],
+      "source_opaque_bbox_xyxy": [
+        89,
+        442,
+        356,
+        763
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 215.5,
+      "action": "walk",
+      "frame_in_action": 0,
+      "atlas_index": 4,
+      "source_x_registration": 215.5,
+      "source_y_registration": 763,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 48106,
+      "logical_foreground_pixels": 1450,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        56,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.96028,
+      "output_png": "cabinet/frames/walk-01.png",
+      "output_sha256": "b4bd43aaf9b658b67367e86aac6db3a4b835b7b7cc1dc9742774b40f10ac38a5",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 1,
+      "source_crop_xyxy": [
+        418,
+        438,
+        782,
+        764
+      ],
+      "source_opaque_bbox_xyxy": [
+        481,
+        438,
+        737,
+        764
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 596.0,
+      "action": "walk",
+      "frame_in_action": 1,
+      "atlas_index": 5,
+      "source_x_registration": 596.0,
+      "source_y_registration": 763,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 48649,
+      "logical_foreground_pixels": 1469,
+      "logical_alpha_bbox_xyxy": [
+        12,
+        29,
+        57,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9533,
+      "output_png": "cabinet/frames/walk-02.png",
+      "output_sha256": "e48afa1e2270355586fa4453cde565e416e96d03bd743aea6fa7469d7ffec0cc",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 2,
+      "source_crop_xyxy": [
+        782,
+        438,
+        1155,
+        764
+      ],
+      "source_opaque_bbox_xyxy": [
+        828,
+        441,
+        1112,
+        764
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 960.0,
+      "action": "walk",
+      "frame_in_action": 2,
+      "atlas_index": 6,
+      "source_x_registration": 960.0,
+      "source_y_registration": 763,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 49433,
+      "logical_foreground_pixels": 1488,
+      "logical_alpha_bbox_xyxy": [
+        9,
+        30,
+        58,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95509,
+      "output_png": "cabinet/frames/walk-03.png",
+      "output_sha256": "2ed0b63fd214891c3c4758aa4fd7381d692304bf406e477a7ae070496f350009",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 1,
+      "col": 3,
+      "source_crop_xyxy": [
+        1155,
+        438,
+        1536,
+        764
+      ],
+      "source_opaque_bbox_xyxy": [
+        1200,
+        441,
+        1490,
+        764
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 1342.5,
+      "action": "walk",
+      "frame_in_action": 3,
+      "atlas_index": 7,
+      "source_x_registration": 1342.5,
+      "source_y_registration": 763,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 49111,
+      "logical_foreground_pixels": 1488,
+      "logical_alpha_bbox_xyxy": [
+        7,
+        30,
+        58,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95874,
+      "output_png": "cabinet/frames/walk-04.png",
+      "output_sha256": "d1789d7a49309314fdc4014520e6ecd0433388b265703995b0225fffd3498468",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        258,
+        703,
+        1011
+      ],
+      "source_opaque_bbox_xyxy": [
+        68,
+        258,
+        668,
+        1011
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-warning-door-variation.png",
+      "source_to_logical_scale": 0.07436918990703852,
+      "source_x_anchor": 367.5,
+      "action": "warning",
+      "frame_in_action": 0,
+      "atlas_index": 8,
+      "source_x_registration": 367.5,
+      "source_y_registration": 1010,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 229678,
+      "logical_foreground_pixels": 1260,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        54,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94453,
+      "output_png": "cabinet/frames/warning-01.png",
+      "output_sha256": "5efa0f8fa1564abe621315ac633319d3075813597d97c00eff6948089feee096",
+      "output_opaque_rgb_color_count": 48,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 1,
+      "source_crop_xyxy": [
+        703,
+        258,
+        1375,
+        1011
+      ],
+      "source_opaque_bbox_xyxy": [
+        740,
+        258,
+        1340,
+        1011
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-warning-door-variation.png",
+      "source_to_logical_scale": 0.07436918990703852,
+      "source_x_anchor": 1039.5,
+      "action": "warning",
+      "frame_in_action": 1,
+      "atlas_index": 9,
+      "source_x_registration": 1039.5,
+      "source_y_registration": 1010,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 230981,
+      "logical_foreground_pixels": 1277,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        54,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94477,
+      "output_png": "cabinet/frames/warning-02.png",
+      "output_sha256": "7c73c2d688de93ebe786a74cbc79f82bfd6130d02e18f7b9769c79d5554c7cb4",
+      "output_opaque_rgb_color_count": 49,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 2,
+      "source_crop_xyxy": [
+        1375,
+        258,
+        2055,
+        1011
+      ],
+      "source_opaque_bbox_xyxy": [
+        1412,
+        258,
+        2027,
+        1011
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-warning-door-variation.png",
+      "source_to_logical_scale": 0.07436918990703852,
+      "source_x_anchor": 1711.5,
+      "action": "warning",
+      "frame_in_action": 2,
+      "atlas_index": 10,
+      "source_x_registration": 1711.5,
+      "source_y_registration": 1010,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 251989,
+      "logical_foreground_pixels": 1388,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        55,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95369,
+      "output_png": "cabinet/frames/warning-03.png",
+      "output_sha256": "77a64db7543d8658eed46b1b35d9dd630189f3aea997b715dea76b12343c10a9",
+      "output_opaque_rgb_color_count": 47,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 2,
+      "col": 3,
+      "source_crop_xyxy": [
+        2055,
+        258,
+        2688,
+        1011
+      ],
+      "source_opaque_bbox_xyxy": [
+        2084,
+        258,
+        2633,
+        1011
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-warning-door-variation.png",
+      "source_to_logical_scale": 0.07436918990703852,
+      "source_x_anchor": 2383.5,
+      "action": "warning",
+      "frame_in_action": 3,
+      "atlas_index": 11,
+      "source_x_registration": 2383.5,
+      "source_y_registration": 1010,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 266638,
+      "logical_foreground_pixels": 1479,
+      "logical_alpha_bbox_xyxy": [
+        10,
+        30,
+        51,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95563,
+      "output_png": "cabinet/frames/warning-04.png",
+      "output_sha256": "faad422ebb8b437c12e70f83fd86e9a3b5d9bc4abd96334b8478fce44e258835",
+      "output_opaque_rgb_color_count": 48,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1183,
+        395,
+        1494
+      ],
+      "source_opaque_bbox_xyxy": [
+        101,
+        1183,
+        360,
+        1493
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 215.5,
+      "action": "attack",
+      "frame_in_action": 0,
+      "atlas_index": 12,
+      "source_x_registration": 215.5,
+      "source_y_registration": 1493,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 47655,
+      "logical_foreground_pixels": 1430,
+      "logical_alpha_bbox_xyxy": [
+        12,
+        32,
+        57,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.96102,
+      "output_png": "cabinet/frames/attack-01.png",
+      "output_sha256": "eef6c19b86d39b565b6dff2e54002bbca170476ec1558377e0275c9b263f48a8",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 1,
+      "source_crop_xyxy": [
+        395,
+        1183,
+        780,
+        1494
+      ],
+      "source_opaque_bbox_xyxy": [
+        431,
+        1183,
+        757,
+        1493
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 596.0,
+      "action": "attack",
+      "frame_in_action": 1,
+      "atlas_index": 13,
+      "source_x_registration": 596.0,
+      "source_y_registration": 1493,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 50193,
+      "logical_foreground_pixels": 1518,
+      "logical_alpha_bbox_xyxy": [
+        3,
+        32,
+        60,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9496,
+      "output_png": "cabinet/frames/attack-02.png",
+      "output_sha256": "75480b74956c437ccca297c688e7fd080586af8aff4a72de133bb1701078b547",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 2,
+      "source_crop_xyxy": [
+        780,
+        1183,
+        1163,
+        1494
+      ],
+      "source_opaque_bbox_xyxy": [
+        804,
+        1185,
+        1153,
+        1493
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 960.0,
+      "action": "attack",
+      "frame_in_action": 2,
+      "atlas_index": 14,
+      "source_x_registration": 960.0,
+      "source_y_registration": 1493,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": -3.4432,
+      "source_foreground_pixels": 49137,
+      "logical_foreground_pixels": 1495,
+      "logical_alpha_bbox_xyxy": [
+        1,
+        32,
+        62,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95442,
+      "output_png": "cabinet/frames/attack-03.png",
+      "output_sha256": "692a7cff4a3e7ae38f1fa64165f76884d2ed4eec045f9f3f2eefeab0de82490e",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 3,
+      "col": 3,
+      "source_crop_xyxy": [
+        1163,
+        1183,
+        1536,
+        1494
+      ],
+      "source_opaque_bbox_xyxy": [
+        1175,
+        1185,
+        1509,
+        1494
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 1342.5,
+      "action": "attack",
+      "frame_in_action": 3,
+      "atlas_index": 15,
+      "source_x_registration": 1342.5,
+      "source_y_registration": 1493,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 49668,
+      "logical_foreground_pixels": 1497,
+      "logical_alpha_bbox_xyxy": [
+        3,
+        32,
+        61,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94216,
+      "output_png": "cabinet/frames/attack-04.png",
+      "output_sha256": "eca734adad31a42af2024eea783108b72844b0af19503293c509b844369202cb",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1541,
+        415,
+        1894
+      ],
+      "source_opaque_bbox_xyxy": [
+        118,
+        1546,
+        346,
+        1894
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 215.5,
+      "action": "hurt",
+      "frame_in_action": 0,
+      "atlas_index": 16,
+      "source_x_registration": 215.5,
+      "source_y_registration": 1893,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 46432,
+      "logical_foreground_pixels": 1401,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        26,
+        55,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94869,
+      "output_png": "cabinet/frames/hurt-01.png",
+      "output_sha256": "643681f1fa1484244fc8c46dd54f570c1ce59c228eddd168c2bf7447a7682080",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 1,
+      "source_crop_xyxy": [
+        415,
+        1541,
+        788,
+        1894
+      ],
+      "source_opaque_bbox_xyxy": [
+        486,
+        1572,
+        729,
+        1894
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 596.0,
+      "action": "hurt",
+      "frame_in_action": 1,
+      "atlas_index": 17,
+      "source_x_registration": 596.0,
+      "source_y_registration": 1893,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 44994,
+      "logical_foreground_pixels": 1364,
+      "logical_alpha_bbox_xyxy": [
+        13,
+        30,
+        55,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95838,
+      "output_png": "cabinet/frames/hurt-02.png",
+      "output_sha256": "7d76eae8edef0e922a2750912a70f91d6bbdd4385de689444fc1031775a2c44d",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 2,
+      "source_crop_xyxy": [
+        788,
+        1541,
+        1164,
+        1894
+      ],
+      "source_opaque_bbox_xyxy": [
+        849,
+        1570,
+        1102,
+        1893
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 960.0,
+      "action": "hurt",
+      "frame_in_action": 2,
+      "atlas_index": 18,
+      "source_x_registration": 960.0,
+      "source_y_registration": 1893,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 43104,
+      "logical_foreground_pixels": 1306,
+      "logical_alpha_bbox_xyxy": [
+        13,
+        30,
+        57,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95505,
+      "output_png": "cabinet/frames/hurt-03.png",
+      "output_sha256": "1afad91477ba78ce720b101cc3a0ed4b20c51fc4a170bb1899cd2a8dcfbef1ee",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 4,
+      "col": 3,
+      "source_crop_xyxy": [
+        1164,
+        1541,
+        1536,
+        1894
+      ],
+      "source_opaque_bbox_xyxy": [
+        1227,
+        1541,
+        1482,
+        1894
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 1342.5,
+      "action": "hurt",
+      "frame_in_action": 3,
+      "atlas_index": 19,
+      "source_x_registration": 1342.5,
+      "source_y_registration": 1893,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 44106,
+      "logical_foreground_pixels": 1333,
+      "logical_alpha_bbox_xyxy": [
+        12,
+        25,
+        56,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.94818,
+      "output_png": "cabinet/frames/hurt-04.png",
+      "output_sha256": "2db8d3792086837fe2f382c93e8480d85ebfb4922418bfe33a62637ad442e123",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 0,
+      "source_crop_xyxy": [
+        0,
+        1956,
+        387,
+        2260
+      ],
+      "source_opaque_bbox_xyxy": [
+        117,
+        1956,
+        324,
+        2252
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 215.5,
+      "action": "defeat",
+      "frame_in_action": 0,
+      "atlas_index": 20,
+      "source_x_registration": 215.5,
+      "source_y_registration": 2259,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 40502,
+      "logical_foreground_pixels": 1218,
+      "logical_alpha_bbox_xyxy": [
+        15,
+        33,
+        51,
+        85
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.96117,
+      "output_png": "cabinet/frames/defeat-01.png",
+      "output_sha256": "5bdd43048e703091aed7732bf05b0500fe608210e288393512a2b762f88ff491",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 1,
+      "source_crop_xyxy": [
+        387,
+        1956,
+        755,
+        2260
+      ],
+      "source_opaque_bbox_xyxy": [
+        451,
+        1986,
+        701,
+        2243
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 596.0,
+      "action": "defeat",
+      "frame_in_action": 1,
+      "atlas_index": 21,
+      "source_x_registration": 596.0,
+      "source_y_registration": 2259,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 38310,
+      "logical_foreground_pixels": 1160,
+      "logical_alpha_bbox_xyxy": [
+        7,
+        38,
+        50,
+        83
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.9582,
+      "output_png": "cabinet/frames/defeat-02.png",
+      "output_sha256": "584d694b29c2d170a96c77d1542fec2a3670b919796e0d3480a6da80500639eb",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 2,
+      "source_crop_xyxy": [
+        755,
+        1956,
+        1138,
+        2260
+      ],
+      "source_opaque_bbox_xyxy": [
+        810,
+        2026,
+        1105,
+        2249
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 960.0,
+      "action": "defeat",
+      "frame_in_action": 2,
+      "atlas_index": 22,
+      "source_x_registration": 960.0,
+      "source_y_registration": 2259,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 36734,
+      "logical_foreground_pixels": 1116,
+      "logical_alpha_bbox_xyxy": [
+        6,
+        45,
+        57,
+        84
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.96186,
+      "output_png": "cabinet/frames/defeat-03.png",
+      "output_sha256": "51f8bc751fefcefab17cbc4d43acfb5cbd74ec803fc0231de0e753f4ac2f66d2",
+      "output_opaque_rgb_color_count": 63,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    },
+    {
+      "row": 5,
+      "col": 3,
+      "source_crop_xyxy": [
+        1138,
+        1956,
+        1536,
+        2260
+      ],
+      "source_opaque_bbox_xyxy": [
+        1173,
+        2102,
+        1499,
+        2260
+      ],
+      "source_path": "/tmp/m8-art-work/cabinet-actions-raw.png",
+      "source_to_logical_scale": 0.17418351477449456,
+      "source_x_anchor": 1342.5,
+      "action": "defeat",
+      "frame_in_action": 3,
+      "atlas_index": 23,
+      "source_x_registration": 1342.5,
+      "source_y_registration": 2259,
+      "requested_logical_origin_xy": [
+        32,
+        86
+      ],
+      "horizontal_safety_adjust_logical_px": 0.0,
+      "source_foreground_pixels": 30643,
+      "logical_foreground_pixels": 932,
+      "logical_alpha_bbox_xyxy": [
+        2,
+        59,
+        59,
+        86
+      ],
+      "logical_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      },
+      "silhouette_iou_after_downsample_inverse_projection": 0.95958,
+      "output_png": "cabinet/frames/defeat-04.png",
+      "output_sha256": "63216b5615cf14b234fd54dc165af178fc91c3eb4550184e48b056602f776fcb",
+      "output_opaque_rgb_color_count": 62,
+      "output_alpha_values": [
+        0,
+        255
+      ],
+      "output_edge_transparent": {
+        "top": true,
+        "bottom": true,
+        "left": true,
+        "right": true
+      }
+    }
+  ]
+}

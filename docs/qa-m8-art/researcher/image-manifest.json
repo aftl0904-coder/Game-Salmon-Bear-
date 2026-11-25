@@ -1,0 +1,14 @@
+{
+  "items": [
+    {
+      "name": "s8researcher-draft",
+      "path": "public/art/stage8/enemies/s8researcher-draft.png",
+      "frameWidth": 172,
+      "frameHeight": 204,
+      "frames": 40,
+      "columns": 10,
+      "rows": 4,
+      "displayScale": 1.3
+    }
+  ]
+}
