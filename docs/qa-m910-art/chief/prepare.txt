@@ -1,0 +1,5 @@
+Final source images: /tmp/salmon-m910-generation/chief-actions-a-fix-crop.png, chief-actions-b-fix.png, chief-actions-c-fix.png (temporary AI sources, not committed). The top 35 px of corrected A were cropped to exclude a detached stray speck before packing.
+Command: python3 docs/qa-m910-art/prepare-boss.py <A> <B> <C> public/art/stage9/enemies/s9chief.png docs/qa-m910-art/chief/source-report.json
+Output: 3072x896 RGBA; cell 256x224; 12 columns x 4 rows; res 2; 48 frames; source scale 0.1702127659574468; idle logical sizes [[53,72],[49,72],[50,72],[53,72]].
+Output SHA-256: 9e9eee044af362fb5c97c883ef4276a4d5b944db848dc8642413f0c7c9407828
+NOTE: Frames 16, 17 and 27 remain in the atlas but are not used by JSON. Frame 17 still has duplicate keyrings; frame 27 lost the belt keyring during AI correction. Direct cuts and weakpoint visibility remain integration risks.

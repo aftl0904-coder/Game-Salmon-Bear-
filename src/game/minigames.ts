@@ -366,14 +366,19 @@ export type RoundResult = { good: number; total: number }
  * Hold to pour, let go when the mould is just full (第 2 關・夾餅叔叔).
  * Overflow is the punishment, so letting go early is safe but scores less.
  */
-export function pourGame(scene: Phaser.Scene, rounds = 3): Mini<RoundResult> {
-  const ui = frame(scene, '夾餅叔叔：倒啱啱滿')
+export function pourGame(
+  scene: Phaser.Scene,
+  rounds = 3,
+  opts?: { title?: string; liquid?: number },
+): Mini<RoundResult> {
+  const ui = frame(scene, opts?.title ?? '夾餅叔叔：倒啱啱滿')
   const touch = isTouchDevice()
   ui.hint.setText(touch ? '撳住畫面倒漿，啱啱滿就放手' : '撳住 攻擊鍵／空白鍵 倒漿，啱啱滿就放手')
   const cx = GAME_W / 2
   const cy = GAME_H / 2 + 20
   const W = 150
   const H = 54
+  const liquid = opts?.liquid ?? 0xe8c060
   const g = scene.add.graphics()
   const jug = scene.add.graphics()
   const label = scene.add.text(cx, cy - 72, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
@@ -396,14 +401,14 @@ export function pourGame(scene: Phaser.Scene, rounds = 3): Mini<RoundResult> {
     // The target band: stop anywhere inside it.
     g.fillStyle(0x3a8a40, 0.5).fillRect(cx - W / 2, cy + H / 2 - H * 1.0, W, H * 0.12)
     const h = Math.min(1.12, fill) * H
-    g.fillStyle(spilled ? 0x8a5a2a : 0xe8c060, 1).fillRect(cx - W / 2 + 2, cy + H / 2 - h, W - 4, Math.min(h, H - 2))
+    g.fillStyle(spilled ? 0x8a5a2a : liquid, 1).fillRect(cx - W / 2 + 2, cy + H / 2 - h, W - 4, Math.min(h, H - 2))
     if (fill > 1) {
-      g.fillStyle(0xe8c060, 0.8).fillRect(cx - W / 2 - 10, cy + H / 2, 8, (fill - 1) * 80)
-      g.fillStyle(0xe8c060, 0.8).fillRect(cx + W / 2 + 2, cy + H / 2, 8, (fill - 1) * 80)
+      g.fillStyle(liquid, 0.8).fillRect(cx - W / 2 - 10, cy + H / 2, 8, (fill - 1) * 80)
+      g.fillStyle(liquid, 0.8).fillRect(cx + W / 2 + 2, cy + H / 2, 8, (fill - 1) * 80)
     }
     jug.clear()
     if (held) {
-      jug.fillStyle(0xe8c060, 1).fillRect(cx - 4, cy - H / 2 - 44, 8, 40)
+      jug.fillStyle(liquid, 1).fillRect(cx - 4, cy - H / 2 - 44, 8, 40)
       jug.fillStyle(0xfff0c0, 0.7).fillRect(cx - 2, cy - H / 2 - 44, 3, 40)
     }
     jug.fillStyle(0x1a1210, 1).fillRoundedRect(cx - 34, cy - H / 2 - 74, 60, 30, 6)

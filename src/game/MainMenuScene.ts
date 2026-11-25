@@ -17,6 +17,7 @@ function pickableStages(): number[] {
   if (c2Enabled() && (maxStage() >= 7 || (getRun()?.nextStage ?? 0) >= 7)) stages.push(7)
   if (c3Enabled() && (maxStage() >= 8 || (getRun()?.nextStage ?? 0) >= 8)) stages.push(8)
   if (c3Enabled() && (maxStage() >= 9 || (getRun()?.nextStage ?? 0) >= 9)) stages.push(9)
+  if (c3Enabled() && (maxStage() >= 10 || (getRun()?.nextStage ?? 0) >= 10)) stages.push(10)
   return stages
 }
 function pickable(): number { return Math.max(...pickableStages()) }
@@ -81,7 +82,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
     const savedStage = getRun()?.nextStage
-    this.stageSel = savedStage && pickableStages().includes(savedStage) ? savedStage : savedStage && savedStage > 7 && !c3Enabled() ? 7 : savedStage && savedStage > 9 && c3Enabled() ? 9 : savedStage && savedStage > 8 && c3Enabled() ? 8 : Math.min(maxStage(), LAST_STAGE)
+    this.stageSel = savedStage && pickableStages().includes(savedStage) ? savedStage : savedStage && savedStage > 7 && !c3Enabled() ? 7 : savedStage && savedStage > 10 && c3Enabled() ? 10 : savedStage && savedStage > 9 && c3Enabled() ? 9 : savedStage && savedStage > 8 && c3Enabled() ? 8 : Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
     this.stageRedrawBox = null
     this.continentButtons = []
@@ -273,13 +274,15 @@ export class MainMenuScene extends Phaser.Scene {
     if (stage === 6) {
       const next = getRun()?.nextStage ?? 0
       this.stageSel =
-        next >= 9 && pickableStages().includes(9)
-          ? 9
-          : next >= 8 && pickableStages().includes(8)
-            ? 8
-            : next >= 7 && pickableStages().includes(7)
-              ? 7
-              : 6
+        next >= 10 && pickableStages().includes(10)
+          ? 10
+          : next >= 9 && pickableStages().includes(9)
+            ? 9
+            : next >= 8 && pickableStages().includes(8)
+              ? 8
+              : next >= 7 && pickableStages().includes(7)
+                ? 7
+                : 6
     } else {
       this.stageSel = stage
     }

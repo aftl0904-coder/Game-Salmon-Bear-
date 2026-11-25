@@ -35,6 +35,7 @@ export default defineConfig({
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/bible' || req.url === '/bible/') req.url = '/bible.html'
           if (req.url === '/guide' || req.url === '/guide/') req.url = '/guide/index.html'
+          if (req.url === '/gallery' || req.url === '/gallery/') req.url = '/gallery/index.html'
           if (req.url === '/sticker' || req.url === '/sticker/') req.url = '/sticker/index.html'
           next()
         })
@@ -43,6 +44,7 @@ export default defineConfig({
         server.middlewares.use((req, _res, next) => {
           if (req.url === '/bible' || req.url === '/bible/') req.url = '/bible.html'
           if (req.url === '/guide' || req.url === '/guide/') req.url = '/guide/index.html'
+          if (req.url === '/gallery' || req.url === '/gallery/') req.url = '/gallery/index.html'
           if (req.url === '/sticker' || req.url === '/sticker/') req.url = '/sticker/index.html'
           next()
         })

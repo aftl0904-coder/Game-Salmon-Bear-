@@ -1,0 +1,304 @@
+@font-face {
+  font-family: 'FP';
+  src: url('/fonts/fusion-pixel-12-zh-hant.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  --red: #e60012;
+  --yel: #ffd400;
+  --ink: #111;
+  --paper: #fff6dc;
+  --panel: #fff8e8;
+  --muted: #5a4630;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: 'FP', 'Noto Sans CJK HK', 'Noto Sans CJK TC', sans-serif;
+  color: var(--ink);
+  background: var(--paper) radial-gradient(circle, rgba(230, 0, 18, 0.07) 1.2px, transparent 1.6px) 0 0 / 9px 9px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.page {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 10px 18px 72px;
+}
+
+.page::before {
+  content: "鮭鮭熊 GALLERY　★　角色場景圖集　★　邊打邊解鎖";
+  display: block;
+  background: var(--ink);
+  color: var(--yel);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-align: center;
+  padding: 5px 10px;
+  margin: 0 -18px;
+  border-bottom: 4px solid var(--red);
+}
+
+nav.top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 8px;
+}
+nav.top a {
+  display: inline-block;
+  padding: 10px 14px;
+  min-height: 44px;
+  line-height: 24px;
+  background: #4a2a14;
+  color: #ffe9a8;
+  border: 2px solid #c8902a;
+  border-radius: 7px;
+  font-weight: 700;
+  text-decoration: none;
+}
+nav.top a[aria-current="page"] {
+  background: var(--red);
+  color: var(--yel);
+  border-color: var(--ink);
+}
+
+.cover {
+  position: relative;
+  margin: 18px 0 22px;
+  padding: 36px 18px 28px;
+  border: 5px solid var(--ink);
+  box-shadow: 9px 9px 0 var(--ink);
+  background: repeating-conic-gradient(from 0deg at 50% 30%, var(--yel) 0 6deg, #ff9a1a 6deg 12deg);
+  text-align: center;
+}
+.cover h1 {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 7vw, 52px);
+  color: var(--red);
+  -webkit-text-stroke: 8px #fff;
+  paint-order: stroke fill;
+  filter: drop-shadow(4px 5px 0 var(--ink));
+  transform: rotate(-1.8deg);
+}
+.cover .sub {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 16px;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  border: 3px solid #fff;
+  outline: 3px solid var(--ink);
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 16px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgba(255, 246, 220, 0.94);
+  padding: 8px 0;
+  border-bottom: 3px solid var(--ink);
+}
+.tab {
+  appearance: none;
+  border: 3px solid var(--ink);
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  padding: 10px 12px;
+  min-height: 44px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.tab[aria-selected="true"] {
+  background: var(--red);
+  color: var(--yel);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.tab .count { font-size: 11px; opacity: 0.9; margin-left: 4px; }
+
+.group-title {
+  margin: 22px 0 10px;
+  padding: 6px 14px 6px 18px;
+  font-size: 18px;
+  color: var(--yel);
+  background: var(--red);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transform: skewX(-4deg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 720px) {
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .page { padding: 6px 10px 80px; }
+  .page::before { margin: 0 -10px; font-size: 10px; letter-spacing: 0.08em; }
+}
+
+.card {
+  position: relative;
+  background: var(--panel);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  padding: 8px 8px 10px;
+  cursor: pointer;
+  text-align: center;
+  min-height: 132px;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.card:focus-visible,
+.card.is-focus {
+  outline: 3px solid var(--red);
+  outline-offset: 2px;
+  transform: scale(1.04);
+  box-shadow: 6px 6px 0 var(--ink);
+  z-index: 1;
+}
+.card canvas,
+.card .still {
+  width: 100%;
+  height: 84px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  background: #1a1420;
+  border: 2px solid #5a3a14;
+}
+/* Locked hero/enemy: JS paints a transparent silhouette — no CSS black box. */
+.card.locked canvas,
+.card.locked .still {
+  background: transparent;
+  filter: none;
+}
+.card .name {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.card .blurb {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 2px;
+  min-height: 1.4em;
+}
+.card.locked .name { letter-spacing: 0.2em; }
+.card.locked.boss-like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card.locked.boss-like .qmark {
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.hint {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+.modal.open { display: flex; }
+.modal-panel {
+  width: min(640px, 100%);
+  background: var(--paper);
+  border: 5px solid var(--ink);
+  box-shadow: 10px 10px 0 var(--ink);
+  padding: 14px 14px 18px;
+  position: relative;
+}
+.modal-panel h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+  color: var(--red);
+}
+.modal-panel .desc {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+.stage {
+  display: grid;
+  place-items: center;
+  background: #1a1420;
+  border: 3px solid var(--ink);
+  min-height: 220px;
+  margin-bottom: 10px;
+}
+.stage canvas {
+  max-width: 100%;
+  max-height: 280px;
+  image-rendering: pixelated;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.actions .chip {
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  min-height: 40px;
+}
+.actions .chip[aria-current="true"] {
+  background: var(--yel);
+}
+.nav-row {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+.nav-row button,
+.back-btn {
+  appearance: none;
+  border: 3px solid var(--ink);
+  background: var(--red);
+  color: var(--yel);
+  font: inherit;
+  font-weight: 700;
+  padding: 12px 16px;
+  min-height: 48px;
+  min-width: 48px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.lock-msg {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 28px 12px;
+}

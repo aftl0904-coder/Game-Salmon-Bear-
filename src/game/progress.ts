@@ -1,3 +1,5 @@
+import { galleryMarkFriend, galleryMarkStageClear, galleryMarkStageEnter, galleryMarkC2Ending } from './galleryUnlock'
+
 /** Battery-save style progress: the furthest stage reached (stored in this browser). */
 const KEY = 'sake-kuma-progress-v1'
 
@@ -12,7 +14,11 @@ export function maxStage(): number {
 
 export function unlockStage(n: number) {
   try {
-    if (n > maxStage()) localStorage.setItem(KEY, JSON.stringify({ maxStage: n }))
+    const prev = maxStage()
+    if (n > prev) localStorage.setItem(KEY, JSON.stringify({ maxStage: n }))
+    // Gallery: entering `n` + clearing `n-1` (durable; survives 重新開始).
+    galleryMarkStageEnter(n)
+    if (n > 1) galleryMarkStageClear(n - 1)
   } catch {
     /* private mode — progress just isn't kept */
   }
@@ -35,6 +41,7 @@ export function markFriendSaved(id: string) {
     const s = new Set(savedFriends())
     s.add(id)
     localStorage.setItem(FKEY, JSON.stringify([...s]))
+    galleryMarkFriend(id)
   } catch {
     /* private mode */
   }
@@ -54,6 +61,8 @@ export function c2Cleared(): boolean {
 export function markC2Cleared() {
   try {
     localStorage.setItem(C2KEY, '1')
+    galleryMarkC2Ending()
+    galleryMarkStageClear(10)
   } catch {
     /* private mode */
   }

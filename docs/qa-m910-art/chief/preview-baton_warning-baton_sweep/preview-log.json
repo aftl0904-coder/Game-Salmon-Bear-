@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "chief",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "baton_warning",
+        "slot": 0,
+        "frame": 4,
+        "fps": 4,
+        "at": 277
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 1,
+        "frame": 5,
+        "fps": 4,
+        "at": 527.4000000059605
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 2,
+        "frame": 6,
+        "fps": 4,
+        "at": 777.7000000029802
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 4,
+        "at": 1029.7000000029802
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 1282.9000000059605
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 1414.4000000059605
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 1539.5999999940395
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 1664.9000000059605
+      }
+    ],
+    "expected": [
+      {
+        "phase": "baton_warning",
+        "slot": 0,
+        "frame": 4,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 1,
+        "frame": 5,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 2,
+        "frame": 6,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 4
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 252,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 131.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.19999998807907,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.30000001192093,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "chief",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "baton_warning",
+        "slot": 0,
+        "frame": 4,
+        "fps": 4,
+        "at": 202.70000000298023
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 1,
+        "frame": 5,
+        "fps": 4,
+        "at": 453.09999999403954
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 2,
+        "frame": 6,
+        "fps": 4,
+        "at": 703.3999999910593
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 4,
+        "at": 956.5999999940395
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 1211
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 1343.5
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 1468.7999999970198
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 1594.0999999940395
+      }
+    ],
+    "expected": [
+      {
+        "phase": "baton_warning",
+        "slot": 0,
+        "frame": 4,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 1,
+        "frame": 5,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 2,
+        "frame": 6,
+        "fps": 4
+      },
+      {
+        "phase": "baton_warning",
+        "slot": 3,
+        "frame": 7,
+        "fps": 4
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "baton_sweep",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.3999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 254.40000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 132.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  }
+]
