@@ -109,6 +109,8 @@ import stage6Raw from '../../data/levels/stage6.json'
 import stage7Raw from '../../data/levels/stage7.json'
 import stage8Raw from '../../data/levels/stage8.json'
 import stage9Raw from '../../data/levels/stage9.json'
+import stage10Raw from '../../data/levels/stage10.json'
+import { Stage10World, type ElevatorArenaDef, type FloodZoneDef } from './stage10World'
 import { Stage3World, type Stage3Data } from './stage3World'
 import { Stage4World, type Stage4Data } from './stage4World'
 import { Stage5World, type Stage5Data } from './stage5World'
@@ -266,7 +268,11 @@ type Stage1 = {
   /** Hidden rewards on hard-to-reach perches. */
   secrets?: Array<{ x: number; h: number; kind: 'sushi' | 'coins' }>
   /** Stage 2 (蜜樹丘) extras. */
-  theme?: 'forest' | 'tree' | 'market' | 'depot' | 'tower' | 'mall' | 'lab-night' | 'vault-night'
+  theme?: 'forest' | 'tree' | 'market' | 'depot' | 'tower' | 'mall' | 'lab-night' | 'vault-night' | 'rain-tower'
+  /** Stage 10 · 倒灌水. */
+  floodZones?: FloodZoneDef[]
+  /** Stage 10 · 升降機兩波. */
+  elevatorArena?: ElevatorArenaDef
   name?: string
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
@@ -392,6 +398,7 @@ const STAGES: Record<number, Stage1> = {
   7: stage7Raw as unknown as Stage1,
   8: stage8Raw as unknown as Stage1,
   9: stage9Raw as unknown as Stage1,
+  10: { ...(stage10Raw as object), steps: (stage10Raw as { steps?: unknown }).steps ?? [] } as unknown as Stage1,
 }
 /** Current stage layout — picked in create() from registry `stageNo`. */
 let ST: Stage1 = STAGES[1]!
@@ -549,6 +556,9 @@ export class GameScene extends Phaser.Scene {
   /** Stage 9 · 地底監禁層 (gated by c3Enabled). */
   private vault = false
   private s9gates: Stage9Gates | null = null
+  /** Stage 10 · 暴雨大廈 (gated by c3Enabled). */
+  private rainTower = false
+  private s10world: Stage10World | null = null
   /** s8-2: temporary sticky puddles from tube flasks (w=40, 1500ms). */
   private s8puddles: Array<{ x: number; w: number; until: number; spr: Phaser.GameObjects.Rectangle }> = []
   private puffDeparturePending = false
@@ -616,8 +626,12 @@ export class GameScene extends Phaser.Scene {
 
   create() {
     this.mode = (this.registry.get('playMode') as '1p' | '2p') || '2p'
-    const sn = (this.registry.get('stageNo') as number) || 1
+    // Coerce — registry may hold a string after scene restarts / QA injects.
+    const snRaw = Number(this.registry.get('stageNo'))
+    const sn = Number.isFinite(snRaw) && snRaw >= 1 ? Math.floor(snRaw) : 1
     this.stageNo = STAGES[sn] ? sn : 1
+    // Keep registry in sync so HUD / goNext / restart read the same stage.
+    this.registry.set('stageNo', this.stageNo)
     ST = STAGES[this.stageNo]!
     setWorldW((ST as unknown as { worldW?: number }).worldW ?? BASE_WORLD_W)
     this.tree = ST.theme === 'tree'
@@ -628,11 +642,15 @@ export class GameScene extends Phaser.Scene {
     this.exhibit = this.stageNo === 7
     this.lab = this.stageNo === 8
     this.vault = this.stageNo === 9
+    this.rainTower = this.stageNo === 10
     this.labFar = { A: null, B: null, C: null, D: null, E: null }
     this.s8pipes?.destroy()
     this.s8pipes = null
     this.s9gates?.destroy()
     this.s9gates = null
+    // Soft teardown: enemies group may already be gone on scene.start('play') restart.
+    this.s10world?.destroy({ skipTagged: true })
+    this.s10world = null
     for (const p of this.s8puddles) p.spr.destroy()
     this.s8puddles = []
     // quiz-home-1: each stage-6 play entry may pin first quiz open once.
@@ -933,6 +951,19 @@ export class GameScene extends Phaser.Scene {
     )
     this.time.removeAllEvents()
     this.tweens.killAll()
+    // Tear down stage helpers while groups still exist (before entities.destroy).
+    try {
+      this.s10world?.destroy()
+    } catch {
+      /* group already gone */
+    }
+    this.s10world = null
+    try {
+      this.s9gates?.destroy()
+    } catch {
+      /* gone */
+    }
+    this.s9gates = null
     // Do NOT keyboard.removeAllListeners() — KeyboardPlugin is shared across
     // scenes; nuking it mid-transition can drop the menu's fresh key binds
     // (Enter on clear screen then never reaches cast select).
@@ -1287,6 +1318,7 @@ export class GameScene extends Phaser.Scene {
     if (this.exhibit) this.tickStage7(dt)
     if (this.lab) this.tickStage8(dt)
     if (this.vault) this.tickStage9(dt)
+    if (this.rainTower) this.tickStage10(dt)
     this.tickFun1Moments(dt)
     this.checkFall()
     this.updateCheckpoint()
@@ -1341,7 +1373,14 @@ export class GameScene extends Phaser.Scene {
   /** flat → platforms → ambush → altar — one readable story beat each. */
   private tickStageBeats() {
     const lead = this.leadX()
-    const beats: Array<{ x: number; title: string }> = this.vault
+    const beats: Array<{ x: number; title: string }> = this.rainTower
+      ? [
+          { x: 60, title: '後巷暴雨' },
+          { x: 880, title: '大堂積水' },
+          { x: 2000, title: '升降機' },
+          { x: 3160, title: '上層終端' },
+        ]
+      : this.vault
       ? stage9Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.lab
       ? stage8Beats().map((b) => ({ x: b.x, title: b.title }))
@@ -1741,6 +1780,7 @@ export class GameScene extends Phaser.Scene {
     const spd =
       (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) *
       (this.s2world?.speedMul(this.boy) ?? this.stickyFeetMul(this.boy)) *
+      (this.s10world?.speedMul(this.boy.x) ?? 1) *
       speedMul()
     this.steerHero(
       this.boy, dt, left, right,
@@ -1762,7 +1802,7 @@ export class GameScene extends Phaser.Scene {
     const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
       g, dt, left, right,
-      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? this.stickyFeetMul(g)) * speedMul(),
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? this.stickyFeetMul(g)) * (this.s10world?.speedMul(g.x) ?? 1) * speedMul(),
       this.p2AttackJust() && !g.comboCasting, () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
@@ -3187,7 +3227,11 @@ export class GameScene extends Phaser.Scene {
       this.drawTowerWorld()
       return
     }
-    if (this.mall || this.exhibit || this.lab || this.vault) {
+    if (this.rainTower) {
+      this.drawRainTowerWorld()
+      return
+    }
+    if (this.mall || this.exhibit || this.lab || this.vault || this.rainTower) {
       this.drawMallWorld()
       return
     }
@@ -3956,6 +4000,43 @@ export class GameScene extends Phaser.Scene {
       this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.7).setTint(0x8090a8)
     }
     this.buildGroundTiles()
+  }
+
+  /** Stage 10 rain-tower stand-in sky until bg-wire Manus plates. */
+  private drawRainTowerWorld() {
+    const g = this.add.graphics().setDepth(DEPTH.SKY)
+    g.fillStyle(0x1a222c, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    g.fillStyle(0x3a4a5a, 0.5).fillRect(0, 48, WORLD_W, 220)
+    this.bgClouds = []
+    this.bgMounts = []
+    const farKey = this.textures.exists('entrance-far') ? 'entrance-far' : null
+    if (farKey) {
+      this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.65).setTint(0x8098b0)
+    }
+    this.buildGroundTiles()
+  }
+
+  /** Stage 10: floodZones + elevatorArena. */
+  private tickStage10(dt: number) {
+    this.s10world?.update(dt)
+    this.tickStage2(dt)
+  }
+
+  /** Safe elev-tagged enemy list — never throw if the group is mid-teardown. */
+  private s10ElevChildren(): Array<Phaser.Physics.Arcade.Sprite & { active: boolean; fsm?: string }> {
+    const group = this.enemies
+    if (!group || typeof group.getChildren !== 'function') return []
+    let kids: Phaser.GameObjects.GameObject[]
+    try {
+      kids = group.getChildren() ?? []
+    } catch {
+      return []
+    }
+    if (!Array.isArray(kids)) return []
+    return kids.filter((o) => {
+      const e = o as Phaser.Physics.Arcade.Sprite & { active: boolean; fsm?: string }
+      return !!e && e.getData?.('s10elev') === true
+    }) as Array<Phaser.Physics.Arcade.Sprite & { active: boolean; fsm?: string }>
   }
 
   /** Stage 9 systems: sliding gates + switches; reuse stage2 unlocks for shared enemies. */
@@ -5227,7 +5308,37 @@ export class GameScene extends Phaser.Scene {
       )
     }
 
-    if (this.tree || this.market || this.depot || this.tower || this.mall || this.lab || this.vault) {
+    if (this.rainTower) {
+      this.s10world = new Stage10World(
+        {
+          scene: this,
+          leadX: () => this.leadX(),
+          heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
+          spawn: (species, enterX) => this.spawnS2(species === 's10guard' ? 's9guard' : species, enterX),
+          liveTagged: () => this.s10ElevChildren().filter((e) => e.active && e.fsm !== 'DEAD'),
+          destroyTagged: () => {
+            for (const e of this.s10ElevChildren()) {
+              try {
+                e.disableBody(true, true)
+                e.destroy()
+              } catch {
+                /* gone */
+              }
+            }
+          },
+          setCameraBounds: (x0, x1) => {
+            this.cameras.main.setBounds(x0, 0, x1 - x0, WORLD_H)
+          },
+          clearCameraBounds: () => {
+            this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
+          },
+        },
+        ST.floodZones ?? [],
+        ST.elevatorArena ?? null,
+      )
+    }
+
+    if (this.tree || this.market || this.depot || this.tower || this.mall || this.lab || this.vault || this.rainTower) {
       // Stages 2+ end when the boss falls — keep an inert goal far off-world so overlap checks stay valid.
       this.goal = this.physics.add.sprite(WORLD_W + 400, GROUND_Y - 10, 'goal3d').setVisible(false)
       ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -5299,7 +5410,7 @@ export class GameScene extends Phaser.Scene {
       : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
       : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
       : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
-      : this.exhibit || this.lab || this.vault ? { hole: 0x141820, edge: 0xf28c28, top: 0xb9bdb8 }
+      : this.exhibit || this.lab || this.vault || this.rainTower ? { hole: 0x141820, edge: 0xf28c28, top: 0xb9bdb8 }
       : this.mall ? { hole: 0x1a1420, edge: 0xf2c230, top: 0xf4eee4 }
       : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
     for (const p of pits) {
@@ -5307,7 +5418,7 @@ export class GameScene extends Phaser.Scene {
       g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
       // B6: mall pits get yellow/black hazard stripes (6px) + subtle upward dark-red glow.
       // D1: exhibit pits reuse hazard stripes with warehouse orange edge.
-      if (this.mall || this.exhibit || this.lab || this.vault) {
+      if (this.mall || this.exhibit || this.lab || this.vault || this.rainTower) {
         const pitH = GAME_H - floor
         // Subtle upward dark-red glow from pit mouth (layered alpha fills).
         const redGlow = this.add.graphics().setDepth(DEPTH.GROUND + 2.2)
@@ -5338,7 +5449,7 @@ export class GameScene extends Phaser.Scene {
       // Earth body + grass lip (same tile as the ground ribbon); 1px dark outline.
       const stepTex = this.tree && this.textures.exists('s2-bark-ground')
         ? 's2-bark-ground'
-        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.exhibit || this.lab || this.vault ? this.warehouseFloorKey(st.x) : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
+        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.exhibit || this.lab || this.vault || this.rainTower ? this.warehouseFloorKey(st.x) : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
       if (this.textures.exists(stepTex)) {
         const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
@@ -5536,8 +5647,13 @@ export class GameScene extends Phaser.Scene {
     for (const x of this.checkpointXs) {
       const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
       // Mall: first CP is plain save (teach slip first); membership stall = 2nd CP.
-      // Lab: membership stall is at ST.stallX (placeLabMembershipStall) — all CPs are plain saves.
-      const isStall = this.lab ? false : this.mall ? x === this.checkpointXs[1] : x === this.checkpointXs[0]
+      // Lab / vault / rain-tower: stall is elsewhere (stallX) — CPs only save + heal.
+      const isStall =
+        this.lab || this.vault || this.rainTower
+          ? false
+          : this.mall
+            ? x === this.checkpointXs[1]
+            : x === this.checkpointXs[0]
       const st = this.stall()
       if (isStall) {
         if (this.textures.exists('cs-cart')) {
@@ -5596,7 +5712,7 @@ export class GameScene extends Phaser.Scene {
         // Only the first checkpoint is the stall; later ones just save and heal.
         // s8-1: stage 8 stall/quiz lands in s8-2 — checkpoints only save + heal.
         const stallX = this.mall ? this.checkpointXs[1] : this.checkpointXs[0]
-        if (this.lab || this.vault || this.coffeeDone || x !== stallX) {
+        if (this.lab || this.vault || this.rainTower || this.coffeeDone || x !== stallX) {
           this.drinkCoffee()
           return
         }
@@ -6566,6 +6682,31 @@ export class GameScene extends Phaser.Scene {
       })
       this.storyIntro = handle
       this.events.once('shutdown', () => handle.destroy())
+      return
+    }
+
+    // s10-1: story in s10-4 — tip only for flood + elevator.
+    if (this.rainTower) {
+      this.time.delayedCall(0, () => {
+        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+        if (this.started) return
+        this.started = true
+        this.startedAt = this.time.now
+        this.pauseReadyAt = this.time.now + 1200
+        this.resetPauseKeys()
+        this.storyIntro = null
+        playSong('exhibit')
+        floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '水位升高會拖慢腳步——升降機入面打兩波！', '#c8e8ff', {
+          size: 12,
+          rise: 10,
+          dur: 3200,
+        })
+        this.emitScore(
+          this.mode === '1p'
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招　Ｈ切換｜Enter暫停'
+            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
+        )
+      })
       return
     }
 
@@ -7870,7 +8011,7 @@ export class GameScene extends Phaser.Scene {
     if (!isSideTrip()) {
       // C2 ST-06 clear must always unlock ST-07 even if the run was bootstrapped oddly.
       if (this.stageNo >= 6) ensureMainRun(this.stageNo, this.registry)
-      unlockStage(Math.min(this.stageNo + 1, c3Enabled() ? 9 : 7))
+      unlockStage(Math.min(this.stageNo + 1, c3Enabled() ? 10 : 7))
     }
     this.saveCurrentClear()
     this.ended = true
@@ -8091,7 +8232,7 @@ export class GameScene extends Phaser.Scene {
         : this.textures.exists('tile-ground-top')
         ? 'tile-ground-top'
         : this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    const stride = this.mall || this.exhibit || this.lab || this.vault ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    const stride = this.mall || this.exhibit || this.lab || this.vault || this.rainTower ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
     const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
       const texX = this.exhibit ? this.warehouseFloorKey(x) : this.mall ? this.mallFloorKey(x) : tex
@@ -8250,8 +8391,9 @@ export class GameScene extends Phaser.Scene {
       if (dx === 0 && this.encounterClaimedXs.has(en.x)) return
       // s9-1: never schedule enemies inside safeZones (C reunion wait).
       if ((ST.safeZones ?? []).some((z) => en.x + dx >= z.x0 && en.x + dx <= z.x1)) return
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(en.species)) {
-        this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
+      const species = en.species === 's10guard' ? 's9guard' : en.species
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(species)) {
+        this.s2Pending.push({ x: en.x + dx, species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
       const kind = (en.kind ?? 'chaser') as EnemyKind
@@ -8268,7 +8410,7 @@ export class GameScene extends Phaser.Scene {
     for (const en of ST.enemies) {
       n++
       // Stage 7 uses the confirmed exact composition in either player mode.
-      if (this.exhibit || this.lab || this.vault) { place(en); continue }
+      if (this.exhibit || this.lab || this.vault || this.rainTower) { place(en); continue }
       // Robot arms are fixed hazards placed by hand: never thinned or doubled.
       if (en.species === 'robotarm') {
         place(en)
@@ -9277,7 +9419,7 @@ export class GameScene extends Phaser.Scene {
     // T4_DEATH_FADE: C2 trash only (stages 6–7); bosses keep their own death.
     {
       const tagged = e as unknown as { boss?: boolean; c2DeathFade?: boolean }
-      if ((this.mall || this.exhibit || this.lab || this.vault) && !tagged.boss) tagged.c2DeathFade = true
+      if ((this.mall || this.exhibit || this.lab || this.vault || this.rainTower) && !tagged.boss) tagged.c2DeathFade = true
     }
     // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
     // after its constructor sets hp = maxHp = N, so this is the single injection
@@ -9767,7 +9909,7 @@ export class GameScene extends Phaser.Scene {
     if (isSideTrip()) {
       const run = resumeMain(this.registry)
       if (!run) { this.goMenu(); return }
-      if (run.nextStage > (c3Enabled() ? 9 : 7)) { this.returnToPublishedMap(); return }
+      if (run.nextStage > (c3Enabled() ? 10 : 7)) { this.returnToPublishedMap(); return }
       if (!STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled()) || (run.nextStage >= 8 && !c3Enabled())) { this.goMenu(); return }
       this.registry.set('leavingToMenu', true)
       this.registry.set('winScreenShown', false)
@@ -9786,8 +9928,8 @@ export class GameScene extends Phaser.Scene {
       this.showFirstReleaseContinued()
       return
     }
-    // s9-1: stage 10 data exists but runtime opens in a later ticket.
-    if (toStage >= 10) {
+    // s10-1: stage 10 runtime open; later tickets fill enemies/boss/story.
+    if (toStage >= 11) {
       this.showFirstReleaseContinued()
       return
     }
@@ -9804,6 +9946,7 @@ export class GameScene extends Phaser.Scene {
     }
     if (fromStage === 7 && c3Enabled()) unlockStage(8)
     if (fromStage === 8 && c3Enabled()) unlockStage(9)
+    if (fromStage === 9 && c3Enabled()) unlockStage(10)
     this.registry.set('leavingToMenu', true)
     this.registry.set('stageNo', toStage)
     this.registry.set('carryCoins', this.coinStock)

@@ -113,7 +113,8 @@ export function markHd(tex: Phaser.Textures.Texture, res: number) {
     f.halfHeight = Math.floor(h / 2)
     f.centerX = Math.floor(w / 2)
     f.centerY = Math.floor(h / 2)
-    const d = (f as unknown as { data: { sourceSize: { w: number; h: number }; spriteSourceSize: { w: number; h: number } } }).data
+    const d = (f as unknown as { data?: { sourceSize?: { w: number; h: number }; spriteSourceSize?: { w: number; h: number } } | null }).data
+    if (!d?.sourceSize || !d?.spriteSourceSize) continue
     d.sourceSize.w = d.spriteSourceSize.w = w
     d.sourceSize.h = d.spriteSourceSize.h = h
   }
