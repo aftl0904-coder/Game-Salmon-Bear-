@@ -39,7 +39,7 @@ import { inCombatView } from './engine/cameraView'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
-import { flagRace, memoryGame, pourGame, showTutorial, tiltGame, timingGame } from './minigames'
+import { clawGame, flagRace, memoryGame, pourGame, showTutorial, tiltGame, timingGame } from './minigames'
 import { goldfishQuiz } from './membershipQuiz'
 import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
@@ -69,6 +69,17 @@ import {
   stage8PupuMonitor,
   stage8Sections,
 } from './stage8Story'
+import {
+  playS9Clear,
+  playS9Open,
+  playStage9Action,
+  playStage9ReunionChain,
+  stage9Beats,
+  stage9BossDialogue,
+  stage9Fragments,
+  stage9LinesToRaw,
+  stage9Sections,
+} from './stage9Story'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
 import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
@@ -357,7 +368,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory' | 'claw'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -578,6 +589,12 @@ export class GameScene extends Phaser.Scene {
   private s8EnterDone = new Set<string>()
   private s8MidDone = new Set<string>()
   private s8PupuDone = false
+  private s9EnterDone = new Set<string>()
+  private s9MidDone = new Set<string>()
+  private s9ReunionDone = false
+  /** s9-4: 噗噗 parked in C safe zone until S9_CLEAR. */
+  private petHoldX: number | null = null
+  private petAssistOff = false
   /** Stage 7・記貨單 stall before boss (once). */
   private memoryStallX = 4580
   private memoryDone = false
@@ -652,6 +669,14 @@ export class GameScene extends Phaser.Scene {
     this.encounterClaimedXs = new Set()
     this.friendsSaved = []
     this.coffeeDone = false
+    this.s8EnterDone = new Set()
+    this.s8MidDone = new Set()
+    this.s8PupuDone = false
+    this.s9EnterDone = new Set()
+    this.s9MidDone = new Set()
+    this.s9ReunionDone = false
+    this.petHoldX = null
+    this.petAssistOff = false
     this.memoryDone = false
     this.floorRoomDone = false
     this.floorPrompt?.destroy()
@@ -1317,12 +1342,7 @@ export class GameScene extends Phaser.Scene {
   private tickStageBeats() {
     const lead = this.leadX()
     const beats: Array<{ x: number; title: string }> = this.vault
-      ? [
-          { x: 60, title: '籠車向上' },
-          { x: 880, title: '籠舍通道' },
-          { x: 2000, title: '物資架' },
-          { x: 3160, title: '舊巡護紀錄' },
-        ]
+      ? stage9Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.lab
       ? stage8Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.exhibit
@@ -2096,6 +2116,7 @@ export class GameScene extends Phaser.Scene {
 
   /** 噗噗：可愛 pose hold 1s，再短衝半傷. */
   private summonBearAssist() {
+    if (this.petAssistOff || this.petHoldX != null) return
     const g = this.petOwner()
     if (!g || !this.pet || this.petJetting || g.hp <= 0) return
     const pet = this.pet
@@ -2856,6 +2877,29 @@ export class GameScene extends Phaser.Scene {
     const g = this.petOwner()
     const pet = this.pet
     if (!g || !pet) return
+    // s9-4: after safe_wait, 噗噗 stays in the C recess until S9_CLEAR.
+    if (this.petHoldX != null) {
+      const holdX = this.petHoldX
+      const holdY = LANE_FLOOR_Y
+      const dx = holdX - pet.x
+      const dy = holdY - pet.y
+      const dist = Math.hypot(dx, dy)
+      if (dist > 4) {
+        const step = Math.min(dist, (180 * this.game.loop.delta) / 1000)
+        pet.setPosition(pet.x + (dx / dist) * step, pet.y + (dy / dist) * step)
+      } else {
+        pet.setPosition(holdX, holdY)
+      }
+      pet.setVelocity(0, 0)
+      if (pet.texture.key === animTex('pupu') && !this.petJetting) {
+        if (pet.anims.currentAnim?.key !== 'pupu-idle') pet.anims.play('pupu-idle')
+      }
+      pet.setAlpha(0.9)
+      pet.setVisible(true)
+      pet.setActive(true)
+      pet.setDepth(actorDepth('pet', 0, pet.y))
+      return
+    }
     let followX = g.x - g.facing * PET_FOLLOW_BEHIND
     if (this.mode === '2p' && this.girl && Math.abs(followX - this.boy.x) < 56) {
       followX = g.x - g.facing * (PET_FOLLOW_BEHIND + 40)
@@ -3915,7 +3959,110 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Stage 9 systems: sliding gates + switches; reuse stage2 unlocks for shared enemies. */
+
+  /** s9-4: claw rest stall at stallX 1500 (data/levels/stage9.json). */
+  private placeVaultClawStall() {
+    const x = ST.stallX
+    if (x == null) return
+    const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+    const st = this.stall()
+    if (this.textures.exists('cs-cart')) {
+      const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setTint(0xc8d0e8)
+      enablePixelSprite(cart)
+    } else {
+      this.add.rectangle(x + 30, top, 56, 28, 0x4a5a70, 1).setOrigin(0.5, 1).setDepth(DEPTH.PROP).setStrokeStyle(2, 0xa0b0c8)
+    }
+    this.add
+      .text(x + 30, top - 74, st.sign, {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#2a1a10',
+        backgroundColor: '#f7e7c0',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+  }
+
+  private tickVaultClawStall() {
+    if (!this.vault || this.coffeeDone || this.storyIntro || !this.started || this.ended || this.bossFight) return
+    const x = ST.stallX
+    if (x == null || this.leadX() < x) return
+    this.coffeeDone = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2500 })
+    SFX.coin()
+    void this.runCoffeeStall()
+  }
+
+  /** s9-4: section enter/mid + C reunion→goggles→safe_wait (park 噗噗). */
+  private tickStage9Story() {
+    if (!this.vault || !this.started || this.ended || this.storyIntro || this.bossFight) return
+    const lead = this.leadX()
+    for (const sec of stage9Sections()) {
+      if (!this.s9EnterDone.has(sec.seg) && lead >= sec.enterX) {
+        this.s9EnterDone.add(sec.seg)
+        const lines = stage9LinesToRaw(sec.enter ?? [])
+        playStage9Action(this, sec.actions?.enter, { boy: this.boy, girl: this.girl })
+        const afterEnter = () => {
+          if (sec.seg === 'C' && !this.s9ReunionDone) {
+            this.s9ReunionDone = true
+            this.s9MidDone.add('C')
+            this.storyIntro = playStage9ReunionChain(
+              this,
+              { boy: this.boy, girl: this.girl },
+              () => {
+                this.storyIntro = null
+                // Park 噗噗 in C safe recess; no assist until S9_CLEAR.
+                const zone = (ST.safeZones ?? [])[0]
+                this.petHoldX = zone ? (zone.x0 + zone.x1) / 2 : 2750
+                this.petAssistOff = true
+                if (!this.ended) {
+                  this.physics.resume()
+                  this.resetPauseKeys()
+                }
+              },
+            )
+            return
+          }
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        }
+        if (!lines.length) {
+          afterEnter()
+          return
+        }
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, afterEnter)
+        return
+      }
+      if (!this.s9MidDone.has(sec.seg) && lead >= sec.midX) {
+        this.s9MidDone.add(sec.seg)
+        const lines = stage9LinesToRaw(sec.mid ?? [])
+        playStage9Action(this, sec.actions?.mid, { boy: this.boy, girl: this.girl })
+        if (!lines.length) continue
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, () => {
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        })
+        return
+      }
+    }
+  }
+
   private tickStage9(dt: number) {
+    this.tickStage9Story()
+    this.tickVaultClawStall()
     this.s9gates?.update(dt)
     if (this.s9gates) {
       for (const hero of [this.boy, this.girl]) {
@@ -5063,6 +5210,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.vault) {
+      this.placeVaultClawStall()
       this.s9gates = new Stage9Gates(
         {
           scene: this,
@@ -5448,7 +5596,7 @@ export class GameScene extends Phaser.Scene {
         // Only the first checkpoint is the stall; later ones just save and heal.
         // s8-1: stage 8 stall/quiz lands in s8-2 — checkpoints only save + heal.
         const stallX = this.mall ? this.checkpointXs[1] : this.checkpointXs[0]
-        if (this.lab || this.coffeeDone || x !== stallX) {
+        if (this.lab || this.vault || this.coffeeDone || x !== stallX) {
           this.drinkCoffee()
           return
         }
@@ -5533,7 +5681,14 @@ export class GameScene extends Phaser.Scene {
                     { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
                     { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
                   ]
-    const choice = await showTutorial(this, `stall-${st.game}`, pages)
+    const pagesFinal =
+      st.game === 'claw'
+        ? [
+            { title: `${st.keeper}：夾公仔`, lines: ['左右郁爪，撳攻擊落爪。', '夾中有價公仔換金幣。'], tip: '時間到就結束；Skip 都有咖啡回血。' },
+            { title: '休息室', lines: ['夾完歇一歇再行。'], tip: '金幣用嚟買裝備。' },
+          ]
+        : pages
+    const choice = await showTutorial(this, `stall-${st.game}`, pagesFinal)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
       if (this.storyIntro === activeGate) this.storyIntro = null
@@ -5587,6 +5742,12 @@ export class GameScene extends Phaser.Scene {
       const mini = memoryGame(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      return
+    }
+    if (st.game === 'claw') {
+      const mini = clawGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => after(r.coins, r.caught * 80))
       return
     }
     // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
@@ -6150,7 +6311,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeTruthFragments() {
-    const list = this.lab ? stage8Fragments() : fragmentsForStage(this.stageNo)
+    const list = this.lab ? stage8Fragments() : this.vault ? stage9Fragments() : fragmentsForStage(this.stageNo)
     for (const f of list) {
       const spr = this.truthPickups.create(f.x, LANE_FLOOR_Y - 18, 'c2-truth-scrap') as Phaser.Physics.Arcade.Sprite
       spr.setOrigin(0.5, 1).setDepth(DEPTH.PROP + 3)
@@ -6382,9 +6543,13 @@ export class GameScene extends Phaser.Scene {
     this.girl?.setVelocity(0, 0)
     this.pet?.setVelocity(0, 0)
 
-    // s9-1: stage 9 story lands in s9-4 — skip C1 picnic; tip only.
+    // s9-4: S9_OPEN (coffee pour + stage card), then play.
     if (this.vault) {
       this.time.delayedCall(0, () => {
+        if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
+      })
+      const handle = playS9Open(this, () => {
+        playSong('exhibit')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -6392,7 +6557,6 @@ export class GameScene extends Phaser.Scene {
         this.pauseReadyAt = this.time.now + 1200
         this.resetPauseKeys()
         this.storyIntro = null
-        playSong('exhibit')
         floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '閘門閃燈就快落——打紅掣可長開！', '#dff6ff', { size: 12, rise: 10, dur: 3200 })
         this.emitScore(
           this.mode === '1p'
@@ -6400,6 +6564,8 @@ export class GameScene extends Phaser.Scene {
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
         )
       })
+      this.storyIntro = handle
+      this.events.once('shutdown', () => handle.destroy())
       return
     }
 
@@ -7235,9 +7401,18 @@ export class GameScene extends Phaser.Scene {
         return
       }
       if (this.vault) {
-        this.storyIntro = null
-        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
-        this.win()
+        this.storyIntro = playS9Clear(
+          this,
+          () => {
+            this.storyIntro = null
+            if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+            this.win()
+          },
+          () => {
+            this.petHoldX = null
+            this.petAssistOff = false
+          },
+        )
         return
       }
       this.storyIntro = playCutscene(this, this.tower ? (this.perfectEnding() ? 'C11_PERFECT' : 'C11') : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
@@ -9232,7 +9407,12 @@ export class GameScene extends Phaser.Scene {
     this.showWarning(() => {
       if (this.ended) return
       const afterCard = () => {
-        const depth = kind === 'researcher' ? stage8BossDialogue() : bossDepthDialogue(kind)
+        const depth =
+          kind === 'researcher'
+            ? stage8BossDialogue()
+            : kind === 'warden'
+              ? stage9BossDialogue()
+              : bossDepthDialogue(kind)
         const startLines = () => {
           if (depth?.preFight?.length) {
             this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
@@ -9309,7 +9489,7 @@ export class GameScene extends Phaser.Scene {
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => (this.lab ? this.researcherDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
+      q.onDefeated = () => (this.lab ? this.researcherDefeated() : this.vault ? this.wardenDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
       // systems-2: 2P both heroes present → boss HP ×1.5 (phase % thresholds unchanged).
@@ -9498,6 +9678,23 @@ export class GameScene extends Phaser.Scene {
       this.storyIntro = showStoryLines(this, depth.postFight, afterTalk, { monoDefault: true })
     } else {
       afterTalk()
+    }
+  }
+
+  /** Stage 9 chief warden: postFight then clear (S9_CLEAR in playOutro). */
+  private wardenDefeated() {
+    if (this.ended) return
+    const depth = stage9BossDialogue()
+    const go = () => {
+      this.storyIntro = null
+      this.queenDefeated()
+    }
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    if (depth?.postFight?.length) {
+      this.storyIntro = showStoryLines(this, depth.postFight, go)
+    } else {
+      go()
     }
   }
 
