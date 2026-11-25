@@ -9,6 +9,7 @@ import { animTex, hasAnimSet, portraitTex, stillTex, type AnimSetId } from './he
 import { isPicnicStill, overlayPicnicPaws } from './honeyPaw'
 import { buzz, HAPTIC } from './phone'
 import { shakeHoney, type Mini } from './minigames'
+import { galleryMarkStory } from './galleryUnlock'
 
 /**
  * In-engine cutscene player (SNES style): a small stage in the top two thirds,
@@ -441,6 +442,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
         }
         stillLayer.add(c)
         still = c
+        if (s.still) galleryMarkStory(s.still)
         await tween({ targets: c, alpha: 1, duration: 450 })
         // The optional hold begins only after the image is completely opaque;
         // the next still step owns its separate 350 ms fade-out. Skip remains live.

@@ -247,12 +247,13 @@ export class LogoScene extends Phaser.Scene {
     const items = [
       { label: '開始遊戲', href: null as string | null },
       { label: '攻略', href: '/guide/' },
+      { label: '圖集', href: '/gallery/' },
       { label: '貼紙', href: '/sticker/' },
     ]
-    const gap = 124
+    const gap = 100
     const buttons = items.map((item, i) => {
-      const x = width / 2 + (i - 1) * gap
-      const bg = this.add.rectangle(x, height - 30, 112, 30, 0x241810, 0.94)
+      const x = width / 2 + (i - (items.length - 1) / 2) * gap
+      const bg = this.add.rectangle(x, height - 30, 92, 30, 0x241810, 0.94)
         .setStrokeStyle(2, 0xc8902a).setInteractive({ useHandCursor: true })
       const text = this.add.text(x, height - 30, item.label, {
         fontFamily: FONT_UI, fontSize: '13px', color: '#ffe9a8', stroke: '#1a0e06', strokeThickness: 2,

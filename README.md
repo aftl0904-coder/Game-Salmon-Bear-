@@ -64,12 +64,16 @@ npm run play
 npm run dev -- --host 0.0.0.0 --port 4637
 ```
 
+
+圖集頁：`/gallery/`（角色／敵人／Boss／場景／故事插圖；解鎖跟存檔，重新開始唔清）。貼紙頁「製作過程」相喺 `/sticker/`。
+
 ## 特典（遊戲以外）
 
 | | 位置 |
 |---|---|
 | **遊戲** | [https://sake-kuma.vercel.app](https://sake-kuma.vercel.app) |
 | **攻略** | `/guide/`（封面「攻略」掣；`public/guide/index.html`） |
+| **圖集** | `/gallery/`（封面「圖集」掣；角色／敵人／Boss／場景／故事） |
 | **預告／trailer** | `art-src/trailer/c2/`（Ken／Leon／第 2 大陸氣氛圖；未接遊戲流程） |
 | **盒帶貼紙** | `/sticker/` · 原稿 `art-src/print/`（日版 SFC 105 × 37.5 mm） |
 

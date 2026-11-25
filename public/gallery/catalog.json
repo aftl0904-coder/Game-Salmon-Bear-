@@ -1,0 +1,3673 @@
+{
+  "version": 1,
+  "tabs": [
+    {
+      "id": "heroes",
+      "label": "主角",
+      "items": [
+        {
+          "id": "lunbo",
+          "name": "倫寶",
+          "blurb": "用槍，遠距離慢慢瞄準。",
+          "kind": "hero",
+          "unlock": {
+            "type": "always"
+          },
+          "sheet": "/art/anim/lunbo.png",
+          "frameWidth": 168,
+          "frameHeight": 162,
+          "columns": 24,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "walk": {
+              "label": "行走",
+              "start": 3,
+              "count": 4,
+              "fps": 10,
+              "loop": true
+            },
+            "jump": {
+              "label": "跳躍",
+              "start": 7,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "crouch": {
+              "label": "蹲下",
+              "start": 10,
+              "count": 3,
+              "fps": 14,
+              "loop": false
+            },
+            "shoot": {
+              "label": "射擊",
+              "start": 13,
+              "count": 4,
+              "fps": 16,
+              "loop": false
+            },
+            "shoot-crouch": {
+              "label": "蹲射",
+              "start": 17,
+              "count": 3,
+              "fps": 16,
+              "loop": false
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 20,
+              "count": 3,
+              "fps": 10,
+              "loop": false
+            },
+            "ko": {
+              "label": "倒地",
+              "start": 23,
+              "count": 5,
+              "fps": 8,
+              "loop": false
+            },
+            "win": {
+              "label": "勝利",
+              "start": 28,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "bike-ride": {
+              "label": "單車",
+              "start": 31,
+              "count": 4,
+              "fps": 12,
+              "loop": true
+            },
+            "bike-jump": {
+              "label": "單車跳",
+              "start": 35,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "kibobo",
+          "name": "琪寶寶",
+          "blurb": "用劍，埋身快攻，背住風扇。",
+          "kind": "hero",
+          "unlock": {
+            "type": "always"
+          },
+          "sheet": "/art/anim/kibobo.png",
+          "frameWidth": 180,
+          "frameHeight": 180,
+          "columns": 22,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "run": {
+              "label": "run",
+              "start": 3,
+              "count": 5,
+              "fps": 12,
+              "loop": true
+            },
+            "jump": {
+              "label": "跳躍",
+              "start": 8,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "crouch": {
+              "label": "蹲下",
+              "start": 11,
+              "count": 3,
+              "fps": 14,
+              "loop": false
+            },
+            "slash1": {
+              "label": "slash1",
+              "start": 14,
+              "count": 4,
+              "fps": 18,
+              "loop": false
+            },
+            "slash2": {
+              "label": "slash2",
+              "start": 18,
+              "count": 4,
+              "fps": 18,
+              "loop": false
+            },
+            "slash3": {
+              "label": "slash3",
+              "start": 22,
+              "count": 5,
+              "fps": 18,
+              "loop": false
+            },
+            "fan-glide": {
+              "label": "fan-glide",
+              "start": 27,
+              "count": 3,
+              "fps": 8,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 30,
+              "count": 3,
+              "fps": 10,
+              "loop": false
+            },
+            "ko": {
+              "label": "倒地",
+              "start": 33,
+              "count": 5,
+              "fps": 8,
+              "loop": false
+            },
+            "win": {
+              "label": "勝利",
+              "start": 38,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "bike-ride": {
+              "label": "單車",
+              "start": 41,
+              "count": 4,
+              "fps": 12,
+              "loop": true
+            },
+            "bike-jump": {
+              "label": "單車跳",
+              "start": 45,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "fan-float": {
+              "label": "fan-float",
+              "start": 48,
+              "count": 3,
+              "fps": 8,
+              "loop": true
+            }
+          }
+        },
+        {
+          "id": "pupu",
+          "name": "噗噗",
+          "blurb": "最鍾意蜂蜜，同大家一齊玩。",
+          "kind": "hero",
+          "unlock": {
+            "type": "always"
+          },
+          "sheet": "/art/anim/pupu.png",
+          "frameWidth": 116,
+          "frameHeight": 126,
+          "columns": 22,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "walk": {
+              "label": "行走",
+              "start": 3,
+              "count": 4,
+              "fps": 10,
+              "loop": true
+            },
+            "cute-pose": {
+              "label": "cute-pose",
+              "start": 7,
+              "count": 3,
+              "fps": 6,
+              "loop": false
+            },
+            "tackle": {
+              "label": "tackle",
+              "start": 10,
+              "count": 4,
+              "fps": 14,
+              "loop": false
+            },
+            "hollow-idle": {
+              "label": "hollow-idle",
+              "start": 14,
+              "count": 3,
+              "fps": 4,
+              "loop": true
+            },
+            "wake-up": {
+              "label": "wake-up",
+              "start": 17,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "huihui",
+          "name": "熊仔",
+          "blurb": "貼心，成日幫大家留位。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "huihui"
+          },
+          "sheet": "/art/friends/huihui.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "guard",
+          "name": "英國熊",
+          "blurb": "守規矩，講嘢似軍人。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "guard"
+          },
+          "sheet": "/art/friends/guard.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "denim",
+          "name": "小熊仔",
+          "blurb": "大頭蝦，成日勾住嘢。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "denim"
+          },
+          "sheet": "/art/friends/denim.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "brownie",
+          "name": "招積熊",
+          "blurb": "口硬心軟，嘴硬但幫手。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "brownie"
+          },
+          "sheet": "/art/friends/brownie.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "shiba",
+          "name": "柴柴",
+          "blurb": "忠心，但有少少怕黑。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "shiba"
+          },
+          "sheet": "/art/friends/shiba.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "snowcat",
+          "name": "北極熊",
+          "blurb": "怕熱，最鍾意浸溫泉。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "snowcat"
+          },
+          "sheet": "/art/friends/snowcat.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ginger",
+          "name": "薑餅",
+          "blurb": "緊張大師，驚被人食。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "ginger"
+          },
+          "sheet": "/art/friends/ginger.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "fleecy",
+          "name": "大pat熊",
+          "blurb": "話唔多，一講就令人安心。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "fleecy"
+          },
+          "sheet": "/art/friends/fleecy.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "kuro",
+          "name": "喵仔",
+          "blurb": "傲嬌貓，但係熊群一份子。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "kuro"
+          },
+          "sheet": "/art/friends/kuro.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "gnome",
+          "name": "聖誕伯伯",
+          "blurb": "搞笑，自稱係份禮物。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "gnome"
+          },
+          "sheet": "/art/friends/gnome.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "tigercub",
+          "name": "虎仔",
+          "blurb": "細膽扮勇，其實好乖。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "tigercub"
+          },
+          "sheet": "/art/friends/tigercub.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        }
+      ]
+    },
+    {
+      "id": "enemies",
+      "label": "敵人",
+      "groups": [
+        {
+          "stage": 1,
+          "label": "第1關",
+          "items": [
+            {
+              "id": "fish",
+              "name": "刺刺魚",
+              "blurb": "見到「！」就準備避。",
+              "stage": 1,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 1
+              },
+              "sheet": "/art/anim/fish.png",
+              "frameWidth": 160,
+              "frameHeight": 114,
+              "columns": 19,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": true
+                },
+                "charge": {
+                  "label": "衝刺",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 10,
+                  "loop": false
+                },
+                "dash": {
+                  "label": "衝刺",
+                  "start": 7,
+                  "count": 3,
+                  "fps": 14,
+                  "loop": true
+                },
+                "dizzy": {
+                  "label": "暈眩",
+                  "start": 10,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": true
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 13,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 15,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "barrel",
+              "name": "疾風桶",
+              "blurb": "會跳，出手好快。",
+              "stage": 1,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 1
+              },
+              "sheet": "/art/anim/hatsoldier.png",
+              "frameWidth": 124,
+              "frameHeight": 130,
+              "columns": 18,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": true
+                },
+                "throw-low": {
+                  "label": "低拋",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "throw-high": {
+                  "label": "高拋",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 12,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 14,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "elephant",
+              "name": "霸鼻象",
+              "blurb": "大隻耐打，撞完會硬一陣。",
+              "stage": 1,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 1
+              },
+              "sheet": "/art/anim/mechpig.png",
+              "frameWidth": 172,
+              "frameHeight": 132,
+              "columns": 20,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": true
+                },
+                "windup": {
+                  "label": "windup",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": false
+                },
+                "lunge": {
+                  "label": "lunge",
+                  "start": 7,
+                  "count": 3,
+                  "fps": 14,
+                  "loop": true
+                },
+                "opening": {
+                  "label": "opening",
+                  "start": 10,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": true
+                },
+                "block": {
+                  "label": "block",
+                  "start": 13,
+                  "count": 2,
+                  "fps": 14,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 15,
+                  "count": 5,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "label": "第2關",
+          "items": [
+            {
+              "id": "bee",
+              "name": "蜂兵",
+              "blurb": "喺天上飛，等佢落嚟打。",
+              "stage": 2,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 2
+              },
+              "sheet": "/art/anim/beesoldier.png",
+              "frameWidth": 108,
+              "frameHeight": 98,
+              "columns": 19,
+              "anims": {
+                "fly": {
+                  "label": "飛行",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": true
+                },
+                "aim": {
+                  "label": "aim",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 10,
+                  "loop": false
+                },
+                "dive": {
+                  "label": "dive",
+                  "start": 7,
+                  "count": 3,
+                  "fps": 14,
+                  "loop": true
+                },
+                "stuck": {
+                  "label": "stuck",
+                  "start": 10,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": true
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 13,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 15,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "squirrel",
+              "name": "蜜松鼠",
+              "blurb": "成群撲埋嚟，退後打。",
+              "stage": 2,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 2
+              },
+              "sheet": "/art/anim/squirrel.png",
+              "frameWidth": 104,
+              "frameHeight": 92,
+              "columns": 13,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 5,
+                  "loop": true
+                },
+                "lunge": {
+                  "label": "lunge",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 12,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 3,
+          "label": "第3關",
+          "items": [
+            {
+              "id": "mirrorshade",
+              "name": "鏡影",
+              "blurb": "有倒影嗰隻先係真身。",
+              "stage": 3,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 3
+              },
+              "sheet": "/art/anim/mirrorshade.png",
+              "frameWidth": 132,
+              "frameHeight": 112,
+              "columns": 17,
+              "anims": {
+                "float": {
+                  "label": "float",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": true
+                },
+                "dash": {
+                  "label": "衝刺",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 12,
+                  "loop": true
+                },
+                "split": {
+                  "label": "split",
+                  "start": 7,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 11,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 13,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "lobster",
+              "name": "龍蝦守衛",
+              "blurb": "跳過頭打背脊。",
+              "stage": 3,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 3
+              },
+              "sheet": "/art/anim/lobster.png",
+              "frameWidth": 284,
+              "frameHeight": 142,
+              "columns": 14,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true
+                },
+                "block": {
+                  "label": "block",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": false
+                },
+                "turn": {
+                  "label": "turn",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 8,
+                  "loop": true
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 9,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 11,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "stallkeeper",
+              "name": "攤主",
+              "blurb": "飛刀分高低，跳或者蹲。",
+              "stage": 3,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 3
+              },
+              "sheet": "/art/anim/stallkeeper.png",
+              "frameWidth": 180,
+              "frameHeight": 124,
+              "columns": 15,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": true
+                },
+                "throw": {
+                  "label": "投擲",
+                  "start": 3,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "duck": {
+                  "label": "duck",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 8,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 9,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 11,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 4,
+          "label": "第4關",
+          "items": [
+            {
+              "id": "honeyzombie",
+              "name": "蜜殭",
+              "blurb": "慢慢行，但成群出現。",
+              "stage": 4,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 4
+              },
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 5,
+                  "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "taximonster",
+              "name": "的士怪",
+              "blurb": "車頭燈一閃就衝過嚟。",
+              "stage": 4,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 4
+              },
+              "sheet": "/art/anim/taximonster.png",
+              "frameWidth": 214,
+              "frameHeight": 138,
+              "columns": 15,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 2,
+                  "fps": 3,
+                  "loop": true
+                },
+                "flash": {
+                  "label": "flash",
+                  "start": 2,
+                  "count": 2,
+                  "fps": 8,
+                  "loop": true
+                },
+                "dash": {
+                  "label": "衝刺",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 14,
+                  "loop": true
+                },
+                "crash": {
+                  "label": "crash",
+                  "start": 8,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 11,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "clockpunch",
+              "name": "打卡鐘",
+              "blurb": "準時開工，準時打人。",
+              "stage": 4,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 4
+              },
+              "sheet": "/art/anim/clockpunch.png",
+              "frameWidth": 120,
+              "frameHeight": 126,
+              "columns": 19,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true
+                },
+                "tick": {
+                  "label": "tick",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 5,
+                  "loop": true
+                },
+                "burst": {
+                  "label": "burst",
+                  "start": 7,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 11,
+                  "count": 4,
+                  "fps": 14,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 15,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 6,
+          "label": "第6關",
+          "items": [
+            {
+              "id": "c2guard",
+              "name": "保安蜜殭",
+              "blurb": "商場巡邏，見人就追。",
+              "stage": 6,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 6
+              },
+              "sheet": "/art/anim/c2guard.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 13,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 5,
+                  "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "robotarm",
+              "stage": 6,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 6
+              },
+              "sheet": "/art/props/s6-robotarm.png",
+              "frameWidth": 64,
+              "frameHeight": 64,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true,
+              "name": "機械臂",
+              "blurb": "瞄準之後先出手。"
+            }
+          ]
+        },
+        {
+          "stage": 7,
+          "label": "第7關",
+          "items": [
+            {
+              "id": "s7charge",
+              "name": "衝刺蜜殭",
+              "blurb": "預警之後直衝過嚟。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
+              },
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 5,
+                  "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "s7hop",
+              "name": "跳籠",
+              "blurb": "蹲低就係要跳。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
+              },
+              "sheet": "/art/stage7/enemy-cagecart.png",
+              "frameWidth": 64,
+              "frameHeight": 64,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true
+            },
+            {
+              "id": "s7shield",
+              "name": "盾兵",
+              "blurb": "正面擋，要繞到後面。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
+              },
+              "sheet": "/art/stage7/enemy-gate.png",
+              "frameWidth": 64,
+              "frameHeight": 64,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true
+            },
+            {
+              "id": "s7can",
+              "name": "罐頭兵",
+              "blurb": "喺後面擲罐頭。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
+              },
+              "sheet": "/art/stage7/enemy-feeder.png",
+              "frameWidth": 64,
+              "frameHeight": 64,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true
+            }
+          ]
+        },
+        {
+          "stage": 8,
+          "label": "第8關",
+          "items": [
+            {
+              "id": "s8drone",
+              "name": "無人機",
+              "blurb": "燈一亮就斜衝落嚟。",
+              "stage": 8,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 8
+              },
+              "sheet": "/art/stage8/enemies/s8drone.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 12,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "s8tube",
+              "name": "試管兵",
+              "blurb": "拋試管，地上會黐腳。",
+              "stage": 8,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 8
+              },
+              "sheet": "/art/stage8/enemies/s8tube.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 12,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false
+                }
+              }
+            },
+            {
+              "id": "s8cabinet",
+              "name": "文件櫃",
+              "blurb": "正面擋，開門就撞前。",
+              "stage": 8,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 8
+              },
+              "sheet": "/art/stage8/enemies/s8cabinet-draft.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true,
+                  "frames": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true,
+                  "frames": [
+                    4,
+                    5,
+                    6,
+                    7
+                  ]
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false,
+                  "frames": [
+                    8,
+                    9,
+                    9,
+                    9
+                  ]
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 14,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    14,
+                    15,
+                    15,
+                    15
+                  ]
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false,
+                  "frames": [
+                    20,
+                    21,
+                    22,
+                    23
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 9,
+          "label": "第9關",
+          "items": [
+            {
+              "id": "s9guard",
+              "name": "獄卒兵",
+              "blurb": "舉棍就要退後。",
+              "stage": 9,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 9
+              },
+              "sheet": "/art/stage9/enemies/s9jailguard.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true,
+                  "frames": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true,
+                  "frames": [
+                    4,
+                    5,
+                    6,
+                    7
+                  ]
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false,
+                  "frames": [
+                    8,
+                    9,
+                    10,
+                    11
+                  ]
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 12,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false,
+                  "frames": [
+                    20,
+                    21,
+                    22,
+                    23
+                  ]
+                }
+              }
+            },
+            {
+              "id": "s9lockbot",
+              "name": "鎖匠機械人",
+              "blurb": "鎖鏈甩出嚟，跳過佢。",
+              "stage": 9,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 9
+              },
+              "sheet": "/art/stage9/enemies/s9lockbot.png",
+              "frameWidth": 352,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true,
+                  "frames": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true,
+                  "frames": [
+                    4,
+                    5,
+                    6,
+                    7
+                  ]
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false,
+                  "frames": [
+                    8,
+                    9,
+                    10,
+                    11
+                  ]
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 12,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    12,
+                    13,
+                    14,
+                    15
+                  ]
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false,
+                  "frames": [
+                    20,
+                    21,
+                    22,
+                    23
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "stage": 10,
+          "label": "第10關",
+          "items": [
+            {
+              "id": "s10guard",
+              "name": "大廈保安",
+              "blurb": "舉盾衝前，撞完會喘氣。",
+              "stage": 10,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 10
+              },
+              "sheet": "/art/stage10/enemies/s10buildingguard.png",
+              "frameWidth": 256,
+              "frameHeight": 352,
+              "columns": 12,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": true,
+                  "frames": [
+                    0,
+                    1,
+                    2,
+                    3
+                  ]
+                },
+                "walk": {
+                  "label": "行走",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true,
+                  "frames": [
+                    4,
+                    5,
+                    6,
+                    7
+                  ]
+                },
+                "warning": {
+                  "label": "預警",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 4,
+                  "loop": false,
+                  "frames": [
+                    8,
+                    9,
+                    9,
+                    11
+                  ]
+                },
+                "attack": {
+                  "label": "攻擊",
+                  "start": 14,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    14,
+                    15,
+                    15
+                  ]
+                },
+                "hurt": {
+                  "label": "受傷",
+                  "start": 16,
+                  "count": 4,
+                  "fps": 8,
+                  "loop": false,
+                  "frames": [
+                    16,
+                    17,
+                    18,
+                    19
+                  ]
+                },
+                "defeat": {
+                  "label": "倒地",
+                  "start": 20,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": false,
+                  "frames": [
+                    20,
+                    21,
+                    22,
+                    23
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bosses",
+      "label": "Boss",
+      "items": [
+        {
+          "id": "warriorking",
+          "name": "武者王",
+          "blurb": "守住蜂巢，等破綻先打。",
+          "stage": 1,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 1
+          },
+          "sheet": "/art/anim/hatsoldier.png",
+          "frameWidth": 124,
+          "frameHeight": 130,
+          "columns": 18,
+          "anims": {
+            "walk": {
+              "label": "行走",
+              "start": 0,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "throw-low": {
+              "label": "throw-low",
+              "start": 4,
+              "count": 4,
+              "fps": 12,
+              "loop": false
+            },
+            "throw-high": {
+              "label": "throw-high",
+              "start": 8,
+              "count": 4,
+              "fps": 12,
+              "loop": false
+            },
+            "hit": {
+              "label": "受傷",
+              "start": 12,
+              "count": 2,
+              "fps": 12,
+              "loop": false
+            },
+            "die": {
+              "label": "倒地",
+              "start": 14,
+              "count": 4,
+              "fps": 10,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "queen",
+          "name": "蜜冠女王蜂",
+          "blurb": "皇冠一跌，佢就醒返。",
+          "stage": 2,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 2
+          },
+          "sheet": "/art/anim/queen.png",
+          "frameWidth": 344,
+          "frameHeight": 314,
+          "columns": 11,
+          "anims": {
+            "hover": {
+              "label": "hover",
+              "start": 0,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "summon": {
+              "label": "summon",
+              "start": 4,
+              "count": 4,
+              "fps": 8,
+              "loop": false
+            },
+            "land": {
+              "label": "land",
+              "start": 8,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "lay-eggs": {
+              "label": "lay-eggs",
+              "start": 11,
+              "count": 4,
+              "fps": 8,
+              "loop": false
+            },
+            "spray": {
+              "label": "spray",
+              "start": 15,
+              "count": 4,
+              "fps": 10,
+              "loop": true
+            },
+            "weak": {
+              "label": "weak",
+              "start": 19,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 22,
+              "count": 2,
+              "fps": 12,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 24,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "mirrorowl",
+          "name": "月橋鏡鴞",
+          "blurb": "睇水面，倒影唔會呃人。",
+          "stage": 3,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 3
+          },
+          "sheet": "/art/anim/mirrorowl.png",
+          "frameWidth": 368,
+          "frameHeight": 250,
+          "columns": 11,
+          "anims": {
+            "perch": {
+              "label": "perch",
+              "start": 0,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "fly": {
+              "label": "飛行",
+              "start": 4,
+              "count": 4,
+              "fps": 10,
+              "loop": true
+            },
+            "feather-curtain": {
+              "label": "feather-curtain",
+              "start": 8,
+              "count": 4,
+              "fps": 8,
+              "loop": false
+            },
+            "split": {
+              "label": "split",
+              "start": 12,
+              "count": 4,
+              "fps": 8,
+              "loop": false
+            },
+            "guard": {
+              "label": "guard",
+              "start": 16,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 19,
+              "count": 2,
+              "fps": 12,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 21,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "mudmane",
+          "name": "泥鬃",
+          "blurb": "工地老工頭，蜜印甩咗先醒。",
+          "stage": 4,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 4
+          },
+          "sheet": "/art/anim/mudmane.png",
+          "frameWidth": 226,
+          "frameHeight": 242,
+          "columns": 18,
+          "anims": {
+            "ride": {
+              "label": "ride",
+              "start": 0,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "charge": {
+              "label": "衝刺",
+              "start": 4,
+              "count": 4,
+              "fps": 12,
+              "loop": true
+            },
+            "walk": {
+              "label": "行走",
+              "start": 8,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "summon": {
+              "label": "summon",
+              "start": 12,
+              "count": 3,
+              "fps": 6,
+              "loop": true
+            },
+            "nailgun": {
+              "label": "nailgun",
+              "start": 15,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "punch": {
+              "label": "punch",
+              "start": 19,
+              "count": 4,
+              "fps": 8,
+              "loop": false
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 23,
+              "count": 2,
+              "fps": 10,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 25,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            },
+            "windup": {
+              "label": "windup",
+              "start": 19,
+              "count": 2,
+              "fps": 5,
+              "loop": false
+            },
+            "strike": {
+              "label": "strike",
+              "start": 21,
+              "count": 2,
+              "fps": 8,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "triboss",
+          "name": "△畝大佬",
+          "blurb": "最後一罐真蜜喺佢度。",
+          "stage": 5,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/anim/triboss.png",
+          "frameWidth": 172,
+          "frameHeight": 204,
+          "columns": 23,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "point": {
+              "label": "point",
+              "start": 4,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "rain": {
+              "label": "rain",
+              "start": 7,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "shield": {
+              "label": "shield",
+              "start": 11,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 15,
+              "count": 2,
+              "fps": 10,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 17,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            },
+            "unmask": {
+              "label": "unmask",
+              "start": 22,
+              "count": 5,
+              "fps": 7,
+              "loop": false
+            }
+          }
+        },
+        {
+          "id": "mall-scrubber",
+          "name": "深層潔淨X-9",
+          "blurb": "原本係洗飲水池嘅。",
+          "stage": 6,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 6
+          },
+          "sheet": "/art/c2/scrubber-sheet.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "trainer",
+          "name": "馴獸師",
+          "blurb": "本來係照顧動物嘅人。",
+          "stage": 7,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 7
+          },
+          "sheet": "/art/stage7/enemy-whip.png",
+          "frameWidth": 64,
+          "frameHeight": 64,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "researcher",
+          "name": "主任研究員",
+          "blurb": "反對過，最後都簽咗字。",
+          "stage": 8,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 8
+          },
+          "sheet": "/art/stage8/enemies/s8researcher-draft.png",
+          "frameWidth": 172,
+          "frameHeight": 204,
+          "columns": 10,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 4,
+              "fps": 6,
+              "loop": true,
+              "frames": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "board_warning": {
+              "label": "預警",
+              "start": 7,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                7,
+                7,
+                7,
+                7
+              ]
+            },
+            "board_sweep": {
+              "label": "橫掃",
+              "start": 8,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                8,
+                9,
+                10,
+                11
+              ]
+            },
+            "bottle_warning": {
+              "label": "bottle_warning",
+              "start": 12,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            "bottle_throw": {
+              "label": "bottle_throw",
+              "start": 16,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                16,
+                17,
+                18,
+                19
+              ]
+            },
+            "bottle_reload": {
+              "label": "bottle_reload",
+              "start": 20,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                20,
+                21,
+                22,
+                23
+              ]
+            },
+            "weakpoint_glow": {
+              "label": "weakpoint_glow",
+              "start": 24,
+              "count": 4,
+              "fps": 6,
+              "loop": true,
+              "frames": [
+                24,
+                25,
+                26,
+                27
+              ]
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 28,
+              "count": 4,
+              "fps": 10,
+              "loop": false,
+              "frames": [
+                28,
+                29,
+                30,
+                31
+              ]
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 32,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                32,
+                33,
+                34,
+                35
+              ]
+            },
+            "stop_and_handover": {
+              "label": "stop_and_handover",
+              "start": 36,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                36,
+                37,
+                38,
+                39
+              ]
+            }
+          }
+        },
+        {
+          "id": "warden",
+          "name": "首席獄卒",
+          "blurb": "怕出事，所以鎖住一切。",
+          "stage": 9,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 9
+          },
+          "sheet": "/art/stage9/enemies/s9chief.png",
+          "frameWidth": 256,
+          "frameHeight": 224,
+          "columns": 12,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 4,
+              "fps": 4,
+              "loop": true,
+              "frames": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "baton_warning": {
+              "label": "baton_warning",
+              "start": 4,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "baton_sweep": {
+              "label": "baton_sweep",
+              "start": 8,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                8,
+                9,
+                10,
+                11
+              ]
+            },
+            "key_warning": {
+              "label": "key_warning",
+              "start": 12,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            "key_throw": {
+              "label": "key_throw",
+              "start": 18,
+              "count": 3,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                18,
+                19,
+                19
+              ]
+            },
+            "gate_warning": {
+              "label": "gate_warning",
+              "start": 20,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                20,
+                21,
+                22,
+                23
+              ]
+            },
+            "gate_action": {
+              "label": "gate_action",
+              "start": 24,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                24,
+                25,
+                26,
+                26
+              ]
+            },
+            "key_drop": {
+              "label": "key_drop",
+              "start": 28,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                28,
+                29,
+                30,
+                31
+              ]
+            },
+            "weakpoint_glow": {
+              "label": "weakpoint_glow",
+              "start": 32,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                32,
+                33,
+                34,
+                35
+              ]
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 36,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                36,
+                37,
+                38,
+                39
+              ]
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 40,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                40,
+                41,
+                42,
+                43
+              ]
+            },
+            "open_cage": {
+              "label": "open_cage",
+              "start": 44,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                44,
+                45,
+                46,
+                47
+              ]
+            }
+          }
+        },
+        {
+          "id": "leon",
+          "name": "Leon",
+          "blurb": "守住道門，以為咁就安全。",
+          "stage": 10,
+          "unlock": {
+            "type": "stageClear",
+            "stage": 10
+          },
+          "sheet": "/art/stage10/enemies/s10leon.png",
+          "frameWidth": 256,
+          "frameHeight": 224,
+          "columns": 12,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 4,
+              "fps": 4,
+              "loop": true,
+              "frames": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "charge_warning": {
+              "label": "衝刺預警",
+              "start": 4,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                4,
+                5,
+                6,
+                7
+              ]
+            },
+            "charge": {
+              "label": "衝刺",
+              "start": 8,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                8,
+                9,
+                10,
+                11
+              ]
+            },
+            "exhausted_glow": {
+              "label": "弱點",
+              "start": 12,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                12,
+                13,
+                14,
+                15
+              ]
+            },
+            "shield_warning": {
+              "label": "盾撞預警",
+              "start": 16,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                16,
+                17,
+                18,
+                19
+              ]
+            },
+            "shield_bash": {
+              "label": "盾撞",
+              "start": 20,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                20,
+                21,
+                22,
+                23
+              ]
+            },
+            "call_warning": {
+              "label": "召集預警",
+              "start": 24,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                24,
+                25,
+                26,
+                26
+              ]
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 28,
+              "count": 4,
+              "fps": 8,
+              "loop": false,
+              "frames": [
+                28,
+                29,
+                30,
+                31
+              ]
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 32,
+              "count": 4,
+              "fps": 6,
+              "loop": false,
+              "frames": [
+                32,
+                33,
+                34,
+                35
+              ]
+            },
+            "unlock": {
+              "label": "unlock",
+              "start": 36,
+              "count": 4,
+              "fps": 4,
+              "loop": false,
+              "frames": [
+                36,
+                37,
+                38,
+                39
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "scenes",
+      "label": "場景",
+      "items": [
+        {
+          "id": "scene-1",
+          "name": "百畝樹林",
+          "blurb": "一切由一次野餐開始。",
+          "stage": 1,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 1
+          },
+          "sheet": "/art/story/canopy-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-2",
+          "name": "蜜樹丘",
+          "blurb": "風口一吹，飄上高處。",
+          "stage": 2,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 2
+          },
+          "sheet": "/art/story/hotspring-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-3",
+          "name": "月影夜市",
+          "blurb": "燈籠熄咗，記得打著佢。",
+          "stage": 3,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 3
+          },
+          "sheet": "/art/story/market-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-4",
+          "name": "鹽霧工地",
+          "blurb": "霧裡有推土機。",
+          "stage": 4,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 4
+          },
+          "sheet": "/art/story/factory-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-5",
+          "name": "△畝大廈",
+          "blurb": "前面幾關嘅機關都喺度。",
+          "stage": 5,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 5
+          },
+          "sheet": "/art/story/hq-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-6",
+          "name": "購物中心",
+          "blurb": "光鮮商場，背後有秘密。",
+          "stage": 6,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 6
+          },
+          "sheet": "/art/story/mall-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-7",
+          "name": "森友展銷中心",
+          "blurb": "夜晚嘅倉庫，好多籠。",
+          "stage": 7,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 7
+          },
+          "sheet": "/art/stage7/entrance-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-8",
+          "name": "研發中心",
+          "blurb": "燈號全亮，畫面卻唔對。",
+          "stage": 8,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 8
+          },
+          "sheet": "/art/stage8/bg-reception.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-9",
+          "name": "總部地底",
+          "blurb": "愈落愈凍，蜜印仲喺度。",
+          "stage": 9,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 9
+          },
+          "sheet": "/art/story/rooftop-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "scene-10",
+          "name": "頂層",
+          "blurb": "由後巷一路追上去。",
+          "stage": 10,
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 10
+          },
+          "sheet": "/art/stage7/arena-far.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "場景",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        }
+      ]
+    },
+    {
+      "id": "stories",
+      "label": "故事插圖",
+      "items": [
+        {
+          "id": "c1-picnic",
+          "name": "野餐日",
+          "blurb": "野餐日。百畝樹林，天氣好好。",
+          "unlock": {
+            "type": "always"
+          },
+          "sheet": "/art/story/c1-picnic.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c1-hollow",
+          "name": "假蜜",
+          "blurb": "噗噗食咗假蜜，變咗灰色。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 1
+          },
+          "sheet": "/art/story/c1-hollow.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c1-mama",
+          "name": "咖啡媽媽",
+          "blurb": "咖啡媽媽講出真相。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 1
+          },
+          "sheet": "/art/story/c1-mama.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c2-note",
+          "name": "第一罐蜜",
+          "blurb": "第一罐真蜂蜜，攞返嚟喇！",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 1
+          },
+          "sheet": "/art/story/c2-note.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c2-bike",
+          "name": "單車上斜",
+          "blurb": "越近蜜樹丘，空氣越甜。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 2
+          },
+          "sheet": "/art/story/c2-bike.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s2-boss-intro",
+          "name": "蜂巢門前",
+          "blurb": "邊個夠膽入嚟我個蜂巢？",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 2
+          },
+          "sheet": "/art/story/s2-boss-intro.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c3-queen",
+          "name": "皇冠落地",
+          "blurb": "皇冠一跌，女王蜂醒返。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 2
+          },
+          "sheet": "/art/story/c3-queen.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c3-market",
+          "name": "無人夜市",
+          "blurb": "攤檔一個人都冇。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 3
+          },
+          "sheet": "/art/story/c3-market.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s3-boss-intro",
+          "name": "月橋",
+          "blurb": "月光照到嘅，都係我嘅。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 3
+          },
+          "sheet": "/art/story/s3-boss-intro.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c4-taxi",
+          "name": "鏡面裂開",
+          "blurb": "貓頭鷹眼入面黃光褪咗。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 3
+          },
+          "sheet": "/art/story/c4-taxi.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c5-bus",
+          "name": "工地霧雨",
+          "blurb": "呢度……本來係森林嚟。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 4
+          },
+          "sheet": "/art/story/c5-bus.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s4-boss-intro",
+          "name": "工頭",
+          "blurb": "清拆指令寫滿螢幕。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 4
+          },
+          "sheet": "/art/story/s4-boss-intro.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c6-screen",
+          "name": "蜜印甩脫",
+          "blurb": "個蜜印甩咗，我先醒返。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 4
+          },
+          "sheet": "/art/story/c6-screen.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c7-site",
+          "name": "△畝總部",
+          "blurb": "亮晶晶嘅商廈大門。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 5
+          },
+          "sheet": "/art/story/c7-site.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c7-boss",
+          "name": "總部對峙",
+          "blurb": "面具之下只係普通人。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/story/c7-boss.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "c10-unmask",
+          "name": "除下面具",
+          "blurb": "森林？邊個會記得森林。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/story/c10-unmask.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-1",
+          "name": "朋友齊集",
+          "blurb": "十一個朋友，終於齊晒。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/story/ending-1.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-2",
+          "name": "最後一罐",
+          "blurb": "最後一罐真蜂蜜喺度。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/story/ending-2.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-3",
+          "name": "大野餐",
+          "blurb": "大家終於一齊野餐。",
+          "unlock": {
+            "type": "stageClear",
+            "stage": 5
+          },
+          "sheet": "/art/story/ending-3.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s8-recv",
+          "name": "無人接待",
+          "blurb": "接待處一個人都冇。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 8
+          },
+          "sheet": "/art/story/S8_A_無人接待全景.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s8-pipe",
+          "name": "真假蜜",
+          "blurb": "真蜜腳印同假蜜管道。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 8
+          },
+          "sheet": "/art/story/S8_B_真蜜腳印與假蜜管道對照.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "s8-mon",
+          "name": "監視器",
+          "blurb": "監視器入面有熟悉身影。",
+          "unlock": {
+            "type": "stageEnter",
+            "stage": 8
+          },
+          "sheet": "/art/story/S8_C_監視器內噗噗舔掌.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-01",
+          "name": "紀錄留下",
+          "blurb": "門開咗，簽過嘅紀錄亦留低。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-01.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-02",
+          "name": "公開修復",
+          "blurb": "記者會公開修復安排。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-02.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-03",
+          "name": "動工重建",
+          "blurb": "逐項起返被拆嘅地方。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-03.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-04",
+          "name": "水道接通",
+          "blurb": "工人分段修通水道。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-04.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-05",
+          "name": "天台綠化",
+          "blurb": "天台重新種返植物。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-05.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-06",
+          "name": "守護者",
+          "blurb": "以前嘅對手一齊幫手。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-06.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-07",
+          "name": "森林回來",
+          "blurb": "樹影重新覆蓋馬路。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-07.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-08",
+          "name": "野餐再開",
+          "blurb": "墊布再舖開喺草地。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-08.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-09",
+          "name": "約定",
+          "blurb": "講過嘅承諾要逐項做返。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-09.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
+          "id": "ending-c2-10",
+          "name": "結局",
+          "blurb": "故事喺笑聲入面完結。",
+          "unlock": {
+            "type": "c2Clear"
+          },
+          "sheet": "/art/story/ending-c2-10.png",
+          "frameWidth": 640,
+          "frameHeight": 360,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "插圖",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        }
+      ]
+    }
+  ]
+}
