@@ -7,7 +7,9 @@
 - 鎖匠機械人 `s9lockbot.{png,json}` 已完成：24 格，待機可見高度約 55–56 邏輯 px，擲鏈預警及攻擊圖完整。圖格為 88×88 邏輯 px（闊於小兵格）；build、13 項資料、獨立素材預覽及桌面遊戲 smoke 通過。手機首次細 Android 雙指跳躍未通過，獨立重試三款橫向模擬器通過；首次原因未查明，紀錄均保留 `docs/qa-m910-art/lockbot/`，不能當已修好。素材未接入、未真機。
 - 首席獄卒 `s9chief.{png,json}`：48 格，三組獨立預警、甩匙弱點及開籠手勢；build、13 項資料、逐格、桌面／模擬手機純 touch 素材預覽及現有遊戲 smoke 通過。動作直接切格，弱點黃光較細、開籠無籠圖，實際遊戲內識別度和接線未驗證；詳見 `docs/qa-m910-art/chief/`。未真機。
 - 第10關大廈保安 `s10buildingguard.{png,json}`：24 格，藍制服及膠盾，有衝撞預警；build、13 項資料、逐格、桌面／模擬手機純 touch 預覽及既有遊戲 smoke 通過。行走有跨步／收腳變化，但左右腳交替未能確定；預警／衝撞直接切格，未接入及真機，見 `docs/qa-m910-art/buildingguard/`。
-- 最後按順序為 Leon；五隻已確認內容見 `docs/bible/stage9-10-enemy-art-decisions.md`。本分支只交美術及資料，不改遊戲玩法。
+- Leon `s10leon.{png,json}`：48 格，包括三組預警、衝後喘氣弱點發光及開鎖手勢；build、13 項資料、逐格、桌面／模擬手機素材預覽及桌面遊戲 smoke 通過。手機遊戲首測 Pixel 7 雙指跳躍失敗（`dx=38`、`jumpMinVy=0`），三機獨立重試通過；原因未明，見 `docs/qa-m910-art/leon/`。未接入、未真機。
+- **手機首版優先跟進：**鎖匠批次細 Android 與 Leon 批次 Pixel 7 的現有第1關注入式雙指 smoke 各出現一次未跳起；雖後續重試通過，仍未定位是遊戲、場景狀態或自動化問題，不可當已修好。
+- 五隻已按次序提交；確認 brief 見 `docs/bible/stage9-10-enemy-art-decisions.md`。本分支只交美術及資料，不改遊戲玩法；PR 維持 draft。
 
 ## Quiz-home-1（`cursor/quiz-home-1-2610`；2026-11-24）
 - 第6關會員中心搶答：每次玩第一次開搶答，Q1 固定由 `developer`（地產發展）`normal` 簡單題池抽取；排除按揭／買樓／睇樓／供樓；之後開搶答照舊隨機。

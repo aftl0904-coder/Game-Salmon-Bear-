@@ -1,0 +1,1551 @@
+{
+  "sources": [
+    {
+      "path": "/tmp/salmon-m910-generation/leon-actions-a-fix.png",
+      "sha256": "91cb51262cc27668263654bceb51240f5169f067d7265e897e96219a18a9d63a",
+      "size": [
+        1920,
+        1920
+      ],
+      "rows": [
+        [
+          19,
+          526
+        ],
+        [
+          542,
+          986
+        ],
+        [
+          1016,
+          1434
+        ],
+        [
+          1456,
+          1870
+        ]
+      ],
+      "global_columns": [
+        [
+          55,
+          486
+        ],
+        [
+          541,
+          991
+        ],
+        [
+          1004,
+          1909
+        ]
+      ],
+      "frames": [
+        {
+          "bbox": [
+            111,
+            19,
+            453,
+            525
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            114563
+          ]
+        },
+        {
+          "bbox": [
+            570,
+            22,
+            910,
+            525
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            113250
+          ]
+        },
+        {
+          "bbox": [
+            1048,
+            19,
+            1399,
+            526
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            116809
+          ]
+        },
+        {
+          "bbox": [
+            1537,
+            21,
+            1881,
+            525
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            114549
+          ]
+        },
+        {
+          "bbox": [
+            121,
+            542,
+            479,
+            986
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            104208
+          ]
+        },
+        {
+          "bbox": [
+            541,
+            560,
+            931,
+            986
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            104709,
+            1
+          ]
+        },
+        {
+          "bbox": [
+            1004,
+            589,
+            1428,
+            986
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            100664
+          ]
+        },
+        {
+          "bbox": [
+            1461,
+            609,
+            1901,
+            986
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            101994
+          ]
+        },
+        {
+          "bbox": [
+            55,
+            1022,
+            486,
+            1434
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            100344
+          ]
+        },
+        {
+          "bbox": [
+            560,
+            1019,
+            991,
+            1422
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            99009
+          ]
+        },
+        {
+          "bbox": [
+            1033,
+            1016,
+            1483,
+            1430
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            95984
+          ]
+        },
+        {
+          "bbox": [
+            1509,
+            1032,
+            1907,
+            1432
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            93817
+          ]
+        },
+        {
+          "bbox": [
+            76,
+            1460,
+            468,
+            1866
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            105157
+          ]
+        },
+        {
+          "bbox": [
+            567,
+            1456,
+            930,
+            1867
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            103883
+          ]
+        },
+        {
+          "bbox": [
+            1034,
+            1471,
+            1426,
+            1869
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            109061
+          ]
+        },
+        {
+          "bbox": [
+            1509,
+            1464,
+            1909,
+            1870
+          ],
+          "method": "connected figures and nearest detached components",
+          "component_sizes": [
+            110601
+          ]
+        }
+      ]
+    },
+    {
+      "path": "/tmp/salmon-m910-generation/leon-actions-b.png",
+      "sha256": "38cba49c907bf04e3976bd90add17b5b71a24886ae24aece894e9175dc617585",
+      "size": [
+        1920,
+        1920
+      ],
+      "rows": [
+        [
+          39,
+          453
+        ],
+        [
+          516,
+          910
+        ],
+        [
+          941,
+          1426
+        ],
+        [
+          1466,
+          1861
+        ]
+      ],
+      "global_columns": [
+        [
+          74,
+          467
+        ],
+        [
+          531,
+          981
+        ],
+        [
+          991,
+          1404
+        ],
+        [
+          1455,
+          1896
+        ]
+      ],
+      "frames": [
+        {
+          "bbox": [
+            100,
+            39,
+            420,
+            453
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            541,
+            50,
+            906,
+            453
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1018,
+            75,
+            1404,
+            453
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1498,
+            75,
+            1854,
+            453
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            74,
+            516,
+            467,
+            910
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            531,
+            523,
+            981,
+            910
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            991,
+            527,
+            1401,
+            910
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1455,
+            532,
+            1896,
+            910
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            105,
+            992,
+            420,
+            1426
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            586,
+            947,
+            917,
+            1426
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1059,
+            941,
+            1392,
+            1425
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1502,
+            999,
+            1856,
+            1425
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            99,
+            1466,
+            459,
+            1861
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            569,
+            1470,
+            937,
+            1861
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1034,
+            1484,
+            1390,
+            1857
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1502,
+            1483,
+            1858,
+            1857
+          ],
+          "method": "transparent column gap"
+        }
+      ]
+    },
+    {
+      "path": "/tmp/salmon-m910-generation/leon-actions-c.png",
+      "sha256": "34c3a31ad62531b2840f1255d45ae3092dff44ea80ff05ab96e00ae7103a2bf1",
+      "size": [
+        1920,
+        1920
+      ],
+      "rows": [
+        [
+          37,
+          458
+        ],
+        [
+          483,
+          936
+        ],
+        [
+          951,
+          1423
+        ],
+        [
+          1436,
+          1888
+        ]
+      ],
+      "global_columns": [
+        [
+          68,
+          443
+        ],
+        [
+          553,
+          908
+        ],
+        [
+          970,
+          1397
+        ],
+        [
+          1413,
+          1904
+        ]
+      ],
+      "frames": [
+        {
+          "bbox": [
+            68,
+            37,
+            443,
+            457
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            553,
+            63,
+            880,
+            456
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            970,
+            164,
+            1356,
+            457
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1413,
+            313,
+            1904,
+            458
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            98,
+            483,
+            402,
+            936
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            582,
+            483,
+            871,
+            936
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1058,
+            484,
+            1373,
+            936
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1537,
+            488,
+            1832,
+            936
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            104,
+            955,
+            415,
+            1423
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            594,
+            951,
+            908,
+            1423
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1079,
+            960,
+            1375,
+            1423
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1565,
+            960,
+            1857,
+            1423
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            103,
+            1436,
+            420,
+            1888
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            592,
+            1437,
+            898,
+            1888
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1083,
+            1439,
+            1397,
+            1888
+          ],
+          "method": "transparent column gap"
+        },
+        {
+          "bbox": [
+            1562,
+            1443,
+            1862,
+            1888
+          ],
+          "method": "transparent column gap"
+        }
+      ]
+    }
+  ],
+  "source_scale_all_frames": 0.14201183431952663,
+  "output_sha256": "c4fcd43c4efd02788d91d2e45c8759425844eb1babfca4fd10685538b9ce7521",
+  "output_size": [
+    3072,
+    896
+  ],
+  "cell_size": [
+    256,
+    224
+  ],
+  "logical_cell": [
+    128,
+    112
+  ],
+  "res": 2,
+  "alpha_threshold": 128,
+  "palette_limit": 63,
+  "frames": [
+    {
+      "frame": 0,
+      "source_bbox": [
+        111,
+        19,
+        453,
+        525
+      ],
+      "logical_size": [
+        49,
+        72
+      ],
+      "logical_bbox": [
+        39,
+        36,
+        88,
+        108
+      ]
+    },
+    {
+      "frame": 1,
+      "source_bbox": [
+        570,
+        22,
+        910,
+        525
+      ],
+      "logical_size": [
+        48,
+        71
+      ],
+      "logical_bbox": [
+        40,
+        37,
+        88,
+        108
+      ]
+    },
+    {
+      "frame": 2,
+      "source_bbox": [
+        1048,
+        19,
+        1399,
+        526
+      ],
+      "logical_size": [
+        50,
+        72
+      ],
+      "logical_bbox": [
+        39,
+        36,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 3,
+      "source_bbox": [
+        1537,
+        21,
+        1881,
+        525
+      ],
+      "logical_size": [
+        49,
+        72
+      ],
+      "logical_bbox": [
+        39,
+        36,
+        88,
+        108
+      ]
+    },
+    {
+      "frame": 4,
+      "source_bbox": [
+        121,
+        542,
+        479,
+        986
+      ],
+      "logical_size": [
+        51,
+        63
+      ],
+      "logical_bbox": [
+        38,
+        45,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 5,
+      "source_bbox": [
+        541,
+        560,
+        931,
+        986
+      ],
+      "logical_size": [
+        55,
+        60
+      ],
+      "logical_bbox": [
+        36,
+        48,
+        91,
+        108
+      ]
+    },
+    {
+      "frame": 6,
+      "source_bbox": [
+        1004,
+        589,
+        1428,
+        986
+      ],
+      "logical_size": [
+        60,
+        56
+      ],
+      "logical_bbox": [
+        34,
+        52,
+        94,
+        108
+      ]
+    },
+    {
+      "frame": 7,
+      "source_bbox": [
+        1461,
+        609,
+        1901,
+        986
+      ],
+      "logical_size": [
+        62,
+        54
+      ],
+      "logical_bbox": [
+        33,
+        54,
+        95,
+        108
+      ]
+    },
+    {
+      "frame": 8,
+      "source_bbox": [
+        55,
+        1022,
+        486,
+        1434
+      ],
+      "logical_size": [
+        61,
+        59
+      ],
+      "logical_bbox": [
+        33,
+        49,
+        94,
+        108
+      ]
+    },
+    {
+      "frame": 9,
+      "source_bbox": [
+        560,
+        1019,
+        991,
+        1422
+      ],
+      "logical_size": [
+        61,
+        57
+      ],
+      "logical_bbox": [
+        33,
+        51,
+        94,
+        108
+      ]
+    },
+    {
+      "frame": 10,
+      "source_bbox": [
+        1033,
+        1016,
+        1483,
+        1430
+      ],
+      "logical_size": [
+        64,
+        59
+      ],
+      "logical_bbox": [
+        32,
+        49,
+        96,
+        108
+      ]
+    },
+    {
+      "frame": 11,
+      "source_bbox": [
+        1509,
+        1032,
+        1907,
+        1432
+      ],
+      "logical_size": [
+        57,
+        57
+      ],
+      "logical_bbox": [
+        35,
+        51,
+        92,
+        108
+      ]
+    },
+    {
+      "frame": 12,
+      "source_bbox": [
+        76,
+        1460,
+        468,
+        1866
+      ],
+      "logical_size": [
+        56,
+        58
+      ],
+      "logical_bbox": [
+        36,
+        50,
+        92,
+        108
+      ]
+    },
+    {
+      "frame": 13,
+      "source_bbox": [
+        567,
+        1456,
+        930,
+        1867
+      ],
+      "logical_size": [
+        52,
+        58
+      ],
+      "logical_bbox": [
+        38,
+        50,
+        90,
+        108
+      ]
+    },
+    {
+      "frame": 14,
+      "source_bbox": [
+        1034,
+        1471,
+        1426,
+        1869
+      ],
+      "logical_size": [
+        56,
+        57
+      ],
+      "logical_bbox": [
+        36,
+        51,
+        92,
+        108
+      ]
+    },
+    {
+      "frame": 15,
+      "source_bbox": [
+        1509,
+        1464,
+        1909,
+        1870
+      ],
+      "logical_size": [
+        57,
+        58
+      ],
+      "logical_bbox": [
+        35,
+        50,
+        92,
+        108
+      ]
+    },
+    {
+      "frame": 16,
+      "source_bbox": [
+        100,
+        39,
+        420,
+        453
+      ],
+      "logical_size": [
+        45,
+        59
+      ],
+      "logical_bbox": [
+        41,
+        49,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 17,
+      "source_bbox": [
+        541,
+        50,
+        906,
+        453
+      ],
+      "logical_size": [
+        52,
+        57
+      ],
+      "logical_bbox": [
+        38,
+        51,
+        90,
+        108
+      ]
+    },
+    {
+      "frame": 18,
+      "source_bbox": [
+        1018,
+        75,
+        1404,
+        453
+      ],
+      "logical_size": [
+        55,
+        54
+      ],
+      "logical_bbox": [
+        36,
+        54,
+        91,
+        108
+      ]
+    },
+    {
+      "frame": 19,
+      "source_bbox": [
+        1498,
+        75,
+        1854,
+        453
+      ],
+      "logical_size": [
+        51,
+        54
+      ],
+      "logical_bbox": [
+        38,
+        54,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 20,
+      "source_bbox": [
+        74,
+        516,
+        467,
+        910
+      ],
+      "logical_size": [
+        56,
+        56
+      ],
+      "logical_bbox": [
+        36,
+        52,
+        92,
+        108
+      ]
+    },
+    {
+      "frame": 21,
+      "source_bbox": [
+        531,
+        523,
+        981,
+        910
+      ],
+      "logical_size": [
+        64,
+        55
+      ],
+      "logical_bbox": [
+        32,
+        53,
+        96,
+        108
+      ]
+    },
+    {
+      "frame": 22,
+      "source_bbox": [
+        991,
+        527,
+        1401,
+        910
+      ],
+      "logical_size": [
+        58,
+        54
+      ],
+      "logical_bbox": [
+        35,
+        54,
+        93,
+        108
+      ]
+    },
+    {
+      "frame": 23,
+      "source_bbox": [
+        1455,
+        532,
+        1896,
+        910
+      ],
+      "logical_size": [
+        63,
+        54
+      ],
+      "logical_bbox": [
+        32,
+        54,
+        95,
+        108
+      ]
+    },
+    {
+      "frame": 24,
+      "source_bbox": [
+        105,
+        992,
+        420,
+        1426
+      ],
+      "logical_size": [
+        45,
+        62
+      ],
+      "logical_bbox": [
+        41,
+        46,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 25,
+      "source_bbox": [
+        586,
+        947,
+        917,
+        1426
+      ],
+      "logical_size": [
+        47,
+        68
+      ],
+      "logical_bbox": [
+        40,
+        40,
+        87,
+        108
+      ]
+    },
+    {
+      "frame": 26,
+      "source_bbox": [
+        1059,
+        941,
+        1392,
+        1425
+      ],
+      "logical_size": [
+        47,
+        69
+      ],
+      "logical_bbox": [
+        40,
+        39,
+        87,
+        108
+      ]
+    },
+    {
+      "frame": 27,
+      "source_bbox": [
+        1502,
+        999,
+        1856,
+        1425
+      ],
+      "logical_size": [
+        50,
+        60
+      ],
+      "logical_bbox": [
+        39,
+        48,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 28,
+      "source_bbox": [
+        99,
+        1466,
+        459,
+        1861
+      ],
+      "logical_size": [
+        51,
+        56
+      ],
+      "logical_bbox": [
+        38,
+        52,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 29,
+      "source_bbox": [
+        569,
+        1470,
+        937,
+        1861
+      ],
+      "logical_size": [
+        52,
+        56
+      ],
+      "logical_bbox": [
+        38,
+        52,
+        90,
+        108
+      ]
+    },
+    {
+      "frame": 30,
+      "source_bbox": [
+        1034,
+        1484,
+        1390,
+        1857
+      ],
+      "logical_size": [
+        51,
+        53
+      ],
+      "logical_bbox": [
+        38,
+        55,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 31,
+      "source_bbox": [
+        1502,
+        1483,
+        1858,
+        1857
+      ],
+      "logical_size": [
+        51,
+        53
+      ],
+      "logical_bbox": [
+        38,
+        55,
+        89,
+        108
+      ]
+    },
+    {
+      "frame": 32,
+      "source_bbox": [
+        68,
+        37,
+        443,
+        457
+      ],
+      "logical_size": [
+        53,
+        60
+      ],
+      "logical_bbox": [
+        37,
+        48,
+        90,
+        108
+      ]
+    },
+    {
+      "frame": 33,
+      "source_bbox": [
+        553,
+        63,
+        880,
+        456
+      ],
+      "logical_size": [
+        46,
+        56
+      ],
+      "logical_bbox": [
+        41,
+        52,
+        87,
+        108
+      ]
+    },
+    {
+      "frame": 34,
+      "source_bbox": [
+        970,
+        164,
+        1356,
+        457
+      ],
+      "logical_size": [
+        55,
+        42
+      ],
+      "logical_bbox": [
+        36,
+        66,
+        91,
+        108
+      ]
+    },
+    {
+      "frame": 35,
+      "source_bbox": [
+        1413,
+        313,
+        1904,
+        458
+      ],
+      "logical_size": [
+        70,
+        21
+      ],
+      "logical_bbox": [
+        29,
+        87,
+        99,
+        108
+      ]
+    },
+    {
+      "frame": 36,
+      "source_bbox": [
+        98,
+        483,
+        402,
+        936
+      ],
+      "logical_size": [
+        43,
+        64
+      ],
+      "logical_bbox": [
+        42,
+        44,
+        85,
+        108
+      ]
+    },
+    {
+      "frame": 37,
+      "source_bbox": [
+        582,
+        483,
+        871,
+        936
+      ],
+      "logical_size": [
+        41,
+        64
+      ],
+      "logical_bbox": [
+        43,
+        44,
+        84,
+        108
+      ]
+    },
+    {
+      "frame": 38,
+      "source_bbox": [
+        1058,
+        484,
+        1373,
+        936
+      ],
+      "logical_size": [
+        45,
+        64
+      ],
+      "logical_bbox": [
+        41,
+        44,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 39,
+      "source_bbox": [
+        1537,
+        488,
+        1832,
+        936
+      ],
+      "logical_size": [
+        42,
+        64
+      ],
+      "logical_bbox": [
+        43,
+        44,
+        85,
+        108
+      ]
+    },
+    {
+      "frame": 40,
+      "source_bbox": [
+        104,
+        955,
+        415,
+        1423
+      ],
+      "logical_size": [
+        44,
+        66
+      ],
+      "logical_bbox": [
+        42,
+        42,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 41,
+      "source_bbox": [
+        594,
+        951,
+        908,
+        1423
+      ],
+      "logical_size": [
+        45,
+        67
+      ],
+      "logical_bbox": [
+        41,
+        41,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 42,
+      "source_bbox": [
+        1079,
+        960,
+        1375,
+        1423
+      ],
+      "logical_size": [
+        42,
+        66
+      ],
+      "logical_bbox": [
+        43,
+        42,
+        85,
+        108
+      ]
+    },
+    {
+      "frame": 43,
+      "source_bbox": [
+        1565,
+        960,
+        1857,
+        1423
+      ],
+      "logical_size": [
+        41,
+        66
+      ],
+      "logical_bbox": [
+        43,
+        42,
+        84,
+        108
+      ]
+    },
+    {
+      "frame": 44,
+      "source_bbox": [
+        103,
+        1436,
+        420,
+        1888
+      ],
+      "logical_size": [
+        45,
+        64
+      ],
+      "logical_bbox": [
+        41,
+        44,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 45,
+      "source_bbox": [
+        592,
+        1437,
+        898,
+        1888
+      ],
+      "logical_size": [
+        43,
+        64
+      ],
+      "logical_bbox": [
+        42,
+        44,
+        85,
+        108
+      ]
+    },
+    {
+      "frame": 46,
+      "source_bbox": [
+        1083,
+        1439,
+        1397,
+        1888
+      ],
+      "logical_size": [
+        45,
+        64
+      ],
+      "logical_bbox": [
+        41,
+        44,
+        86,
+        108
+      ]
+    },
+    {
+      "frame": 47,
+      "source_bbox": [
+        1562,
+        1443,
+        1862,
+        1888
+      ],
+      "logical_size": [
+        43,
+        63
+      ],
+      "logical_bbox": [
+        42,
+        45,
+        85,
+        108
+      ]
+    }
+  ],
+  "note": "Common scaling and aligned visible bottoms are asset-space only; runtime anchor, projectile and hitbox require integration testing."
+}

@@ -1,0 +1,1 @@
+PASS: 48 non-empty frames, transparent edges, binary alpha, <=64 colors, valid animation indices and varied warning poses

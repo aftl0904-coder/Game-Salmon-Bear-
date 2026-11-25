@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "leon",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "charge",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 269.90000000596046
+      },
+      {
+        "phase": "charge",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 395.5
+      },
+      {
+        "phase": "charge",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 521.2000000029802
+      },
+      {
+        "phase": "charge",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 653.4000000059605
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 0,
+        "frame": 12,
+        "fps": 4,
+        "at": 786.1000000089407
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 1,
+        "frame": 13,
+        "fps": 4,
+        "at": 1041.9000000059605
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 2,
+        "frame": 14,
+        "fps": 4,
+        "at": 1292.7000000029802
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 3,
+        "frame": 15,
+        "fps": 4,
+        "at": 1543.1000000089407
+      }
+    ],
+    "expected": [
+      {
+        "phase": "charge",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 0,
+        "frame": 12,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 1,
+        "frame": 13,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 2,
+        "frame": 14,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 3,
+        "frame": 15,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 125.59999999403954,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.70000000298023,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 132.20000000298023,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 132.70000000298023,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 255.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "leon",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "charge",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8,
+        "at": 203.29999999701977
+      },
+      {
+        "phase": "charge",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8,
+        "at": 328.79999999701977
+      },
+      {
+        "phase": "charge",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8,
+        "at": 458.40000000596046
+      },
+      {
+        "phase": "charge",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8,
+        "at": 590.5
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 0,
+        "frame": 12,
+        "fps": 4,
+        "at": 723
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 1,
+        "frame": 13,
+        "fps": 4,
+        "at": 978.6000000089407
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 2,
+        "frame": 14,
+        "fps": 4,
+        "at": 1228.9000000059605
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 3,
+        "frame": 15,
+        "fps": 4,
+        "at": 1479.2000000029802
+      }
+    ],
+    "expected": [
+      {
+        "phase": "charge",
+        "slot": 0,
+        "frame": 8,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 1,
+        "frame": 9,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 2,
+        "frame": 10,
+        "fps": 8
+      },
+      {
+        "phase": "charge",
+        "slot": 3,
+        "frame": 11,
+        "fps": 8
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 0,
+        "frame": 12,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 1,
+        "frame": 13,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 2,
+        "frame": 14,
+        "fps": 4
+      },
+      {
+        "phase": "exhausted_glow",
+        "slot": 3,
+        "frame": 15,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 125.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 129.6000000089407,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 132.09999999403954,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 132.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 255.6000000089407,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  }
+]

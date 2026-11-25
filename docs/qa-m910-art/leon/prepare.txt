@@ -1,0 +1,1 @@
+{"size": [3072, 896], "cell": [256, 224], "frames": 48, "common_scale": 0.14201183431952663, "idle_logical_sizes": [[49, 72], [48, 71], [50, 72], [49, 72]], "output_sha256": "c4fcd43c4efd02788d91d2e45c8759425844eb1babfca4fd10685538b9ce7521"}
