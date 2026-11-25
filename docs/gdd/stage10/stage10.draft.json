@@ -1,0 +1,452 @@
+{
+ "_draft": "第10關設計稿 r1（Claude 2026-11-25）。新欄位：floodZones、elevatorArena、leon、stallX、transition、midCutscene。",
+ "id": "ST-10",
+ "name": "由後巷到頂層",
+ "theme": "rain-tower",
+ "worldW": 5700,
+ "segments": [
+  {
+   "id": "A",
+   "x0": 0,
+   "x1": 855,
+   "note": "後巷暴雨：教倒灌水"
+  },
+  {
+   "id": "B",
+   "x0": 855,
+   "x1": 1995,
+   "note": "大堂積水；搖蜜休息室"
+  },
+  {
+   "id": "C",
+   "x0": 1995,
+   "x1": 3135,
+   "note": "升降機短戰（固定場地兩波）"
+  },
+  {
+   "id": "D",
+   "x0": 3135,
+   "x1": 4560,
+   "note": "上層終端：原始紀錄重現"
+  },
+  {
+   "id": "E",
+   "x0": 4560,
+   "x1": 5700,
+   "note": "頂層：Leon"
+  }
+ ],
+ "signs": [
+  {
+   "x": 100,
+   "text": "水位一震就漲，企高啲。"
+  },
+  {
+   "x": 2010,
+   "text": "升降機門開前，守住中間。"
+  },
+  {
+   "x": 4560,
+   "text": "佢衝完會喘氣，嗰陣先打。"
+  }
+ ],
+ "checkpoints": [
+  840,
+  1980,
+  3140,
+  4520
+ ],
+ "pits": [
+  {
+   "x": 1500,
+   "w": 64
+  },
+  {
+   "x": 3600,
+   "w": 72
+  },
+  {
+   "x": 4100,
+   "w": 104
+  }
+ ],
+ "movingPlatforms": [
+  {
+   "x": 4124,
+   "w": 64,
+   "h": 16,
+   "range": 24,
+   "periodMs": 3000,
+   "note": "D・維修吊台"
+  }
+ ],
+ "platforms": [
+  {
+   "x": 420,
+   "w": 90,
+   "h": 36,
+   "note": "A・後巷箱頂（避水）"
+  },
+  {
+   "x": 1150,
+   "w": 96,
+   "h": 36,
+   "note": "B・接待枱（避水）"
+  },
+  {
+   "x": 1720,
+   "w": 96,
+   "h": 36,
+   "note": "B・長櫈（避水）"
+  },
+  {
+   "x": 3400,
+   "w": 90,
+   "h": 44
+  }
+ ],
+ "floodZones": [
+  {
+   "x0": 300,
+   "x1": 700,
+   "periodMs": 5000,
+   "phaseMs": 0,
+   "warnMs": 1000,
+   "highMs": 1800,
+   "slow": 0.55,
+   "dmg": 0
+  },
+  {
+   "x0": 1050,
+   "x1": 1350,
+   "periodMs": 5000,
+   "phaseMs": 1600,
+   "warnMs": 1000,
+   "highMs": 1800,
+   "slow": 0.55,
+   "dmg": 0
+  },
+  {
+   "x0": 1620,
+   "x1": 1900,
+   "periodMs": 5000,
+   "phaseMs": 3200,
+   "warnMs": 1000,
+   "highMs": 1800,
+   "slow": 0.55,
+   "dmg": 0
+  }
+ ],
+ "elevatorArena": {
+  "x0": 2300,
+  "x1": 2900,
+  "waves": [
+   {
+    "side": "R",
+    "from": [
+     "s10guard",
+     "s8drone"
+    ]
+   },
+   {
+    "side": "L",
+    "from": [
+     "s9guard",
+     "s8tube"
+    ]
+   }
+  ],
+  "note": "兩波，每波 2 隻；同第6關 encounters 一樣鎖鏡頭"
+ },
+ "honey": [
+  {
+   "x": 560,
+   "h": 60
+  },
+  {
+   "x": 1800,
+   "h": 40
+  },
+  {
+   "x": 3000,
+   "h": 40
+  },
+  {
+   "x": 4300,
+   "h": 40
+  }
+ ],
+ "coins": [
+  {
+   "x": 200,
+   "h": 22
+  },
+  {
+   "x": 460,
+   "h": 60
+  },
+  {
+   "x": 760,
+   "h": 22
+  },
+  {
+   "x": 960,
+   "h": 22
+  },
+  {
+   "x": 1190,
+   "h": 58
+  },
+  {
+   "x": 1450,
+   "h": 22
+  },
+  {
+   "x": 1760,
+   "h": 58
+  },
+  {
+   "x": 2050,
+   "h": 22
+  },
+  {
+   "x": 2400,
+   "h": 36
+  },
+  {
+   "x": 2700,
+   "h": 22
+  },
+  {
+   "x": 3000,
+   "h": 36
+  },
+  {
+   "x": 3200,
+   "h": 22
+  },
+  {
+   "x": 3440,
+   "h": 66
+  },
+  {
+   "x": 3700,
+   "h": 22
+  },
+  {
+   "x": 3950,
+   "h": 46
+  },
+  {
+   "x": 4250,
+   "h": 22
+  },
+  {
+   "x": 4420,
+   "h": 36
+  },
+  {
+   "x": 4800,
+   "h": 22
+  },
+  {
+   "x": 5000,
+   "h": 40
+  },
+  {
+   "x": 5200,
+   "h": 22
+  }
+ ],
+ "secrets": [
+  {
+   "x": 3430,
+   "h": 110,
+   "kind": "sushi",
+   "note": "D・終端機頂"
+  }
+ ],
+ "breakables": [
+  {
+   "x": 620,
+   "kind": "pot",
+   "loot": "coin"
+  },
+  {
+   "x": 1400,
+   "kind": "pot",
+   "loot": "food"
+  },
+  {
+   "x": 2100,
+   "kind": "pot",
+   "loot": "power"
+  },
+  {
+   "x": 3000,
+   "kind": "pot",
+   "loot": "coin"
+  },
+  {
+   "x": 3260,
+   "kind": "pot",
+   "loot": "power"
+  },
+  {
+   "x": 3800,
+   "kind": "pot",
+   "loot": "food"
+  },
+  {
+   "x": 4460,
+   "kind": "pot",
+   "loot": "food"
+  }
+ ],
+ "enemies": [
+  {
+   "x": 300,
+   "species": "s10guard",
+   "unlockX": 80,
+   "note": "A・新敵：大廈保安（單獨教）"
+  },
+  {
+   "x": 560,
+   "species": "s8drone",
+   "unlockX": 280,
+   "note": "A・箱頂上空"
+  },
+  {
+   "x": 620,
+   "species": "s8tube",
+   "unlockX": 340,
+   "note": "A・水邊"
+  },
+  {
+   "x": 800,
+   "species": "s9guard",
+   "unlockX": 520,
+   "note": "A"
+  },
+  {
+   "x": 1000,
+   "species": "s10guard",
+   "unlockX": 720,
+   "note": "B・入口"
+  },
+  {
+   "x": 1250,
+   "species": "s8drone",
+   "unlockX": 960,
+   "note": "B・水上"
+  },
+  {
+   "x": 1440,
+   "species": "s9lockbot",
+   "unlockX": 1200,
+   "note": "B・中型 1",
+   "mid": true
+  },
+  {
+   "x": 1700,
+   "species": "s8tube",
+   "unlockX": 1400,
+   "note": "B"
+  },
+  {
+   "x": 1900,
+   "species": "s10guard",
+   "unlockX": 1620,
+   "note": "B・升降機前"
+  },
+  {
+   "x": 2100,
+   "species": "s7charge",
+   "unlockX": 1820,
+   "note": "C・入口"
+  },
+  {
+   "x": 3060,
+   "species": "s8drone",
+   "unlockX": 2780,
+   "note": "C・出口"
+  },
+  {
+   "x": 3150,
+   "species": "s8tube",
+   "unlockX": 2860,
+   "note": "C/D 交界"
+  },
+  {
+   "x": 3260,
+   "species": "s10guard",
+   "unlockX": 2980,
+   "note": "D・入口"
+  },
+  {
+   "x": 3480,
+   "species": "robotarm",
+   "unlockX": 3100,
+   "note": "D・終端（unlock ≤ x−380）"
+  },
+  {
+   "x": 3740,
+   "species": "s9guard",
+   "unlockX": 3420,
+   "note": "D・坑後"
+  },
+  {
+   "x": 3880,
+   "species": "s8cabinet",
+   "unlockX": 3580,
+   "note": "D・中型 2",
+   "mid": true
+  },
+  {
+   "x": 4000,
+   "species": "s8drone",
+   "unlockX": 3720,
+   "note": "D"
+  },
+  {
+   "x": 4320,
+   "species": "s10guard",
+   "unlockX": 3960,
+   "note": "D"
+  },
+  {
+   "x": 4420,
+   "species": "s7shield",
+   "unlockX": 4140,
+   "note": "D・Boss 前"
+  }
+ ],
+ "boss": {
+  "kind": "leon",
+  "triggerX": 4680,
+  "arenaX0": 4640,
+  "arenaX1": 5280
+ },
+ "leon": {
+  "hp": 60,
+  "phase2At": 0.6,
+  "phase3Below": 0.3,
+  "chargeWarnMs": 1000,
+  "shieldBashWarnMs": 1000,
+  "callGuardsWarnMs": 1000,
+  "chargeTiredMs": 2000,
+  "summonPerCycle": 1,
+  "summonMaxAlive": 2,
+  "weakBase": 3,
+  "capWeak": 5,
+  "capNormal": 2,
+  "midCutsceneMs": 6000
+ },
+ "stallX": 1350,
+ "stall": "shake",
+ "transition": {
+  "from": 9,
+  "kind": "timing",
+  "skin": "gate-light"
+ }
+}
