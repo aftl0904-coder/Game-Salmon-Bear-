@@ -1,5 +1,12 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+<!-- M9-BACKGROUNDS-START -->
+## M9 新／重畫背景（`manus/m9-backgrounds-2611`；2026-11-25）
+- 已交：9A 籠車升降井 `public/art/stage9/bg-cage-lift.png`。
+- 待交：9B 籠舍通道、9C 物資架及凹位、9D 舊紀錄室、9E 獄卒大廳、10A 暴雨後巷、10B 大堂積水、10C 升降機、10D 上層終端、10E 日出天台、第4關日頭鹽霧工地、第5關紫粉黃昏大廈。
+- 逐段 tsc + Vite、資料驗證、桌面滑鼠及模擬手機 touch **獨立素材預覽**見 `docs/qa-m9-backgrounds/`；非遊戲內、真人或真機測試，尚未接入。圖片由較大原圖等比例縮小並量化，非原生尺寸。無 TypeScript 改動；第8關 #157 保持 draft。
+<!-- M9-BACKGROUNDS-END -->
+
 ## Quiz-home-1（`cursor/quiz-home-1-2610`；2026-11-24）
 - 第6關會員中心搶答：每次玩第一次開搶答，Q1 固定由 `developer`（地產發展）`normal` 簡單題池抽取；排除按揭／買樓／睇樓／供樓；之後開搶答照舊隨機。
 - 第7／8關唔受影響（pin 只在 `stageNo === 6`）。
