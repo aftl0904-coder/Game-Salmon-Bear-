@@ -7,7 +7,7 @@ fs.mkdirSync(out,{recursive:true});
 const src = path.join(root, process.env.M910_SRC || 'public/art/stage9/enemies');
 const id = process.env.M910_ID || 'jailguard', stem = process.env.M910_STEM || 's9jailguard';
 const items = [
-  { id, stem, phases:['warning','attack'] }
+  { id, stem, phases:[process.env.M910_WARN || 'warning',process.env.M910_ATTACK || 'attack'] }
 ].map(it => ({...it, meta:JSON.parse(fs.readFileSync(path.join(src,it.stem+'.json'),'utf8')),
   png:'data:image/png;base64,'+fs.readFileSync(path.join(src,it.stem+'.png')).toString('base64')}));
 const serial = JSON.stringify(items).replace(/</g,'\\u003c');
