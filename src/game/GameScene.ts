@@ -21,6 +21,7 @@ import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
 import { c2Enabled, c3Enabled } from './c2Gate'
 import { Stage8Pipes } from './stage8Pipes'
+import { Stage9Gates } from './stage9Gates'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
 import { attachGearFx, type GearFx } from './gearFx'
@@ -87,6 +88,7 @@ import stage5Raw from '../../data/levels/stage5.json'
 import stage6Raw from '../../data/levels/stage6.json'
 import stage7Raw from '../../data/levels/stage7.json'
 import stage8Raw from '../../data/levels/stage8.json'
+import stage9Raw from '../../data/levels/stage9.json'
 import { Stage3World, type Stage3Data } from './stage3World'
 import { Stage4World, type Stage4Data } from './stage4World'
 import { Stage5World, type Stage5Data } from './stage5World'
@@ -242,16 +244,22 @@ type Stage1 = {
   /** Hidden rewards on hard-to-reach perches. */
   secrets?: Array<{ x: number; h: number; kind: 'sushi' | 'coins' }>
   /** Stage 2 (蜜樹丘) extras. */
-  theme?: 'forest' | 'tree' | 'market' | 'depot' | 'tower' | 'mall' | 'lab-night'
+  theme?: 'forest' | 'tree' | 'market' | 'depot' | 'tower' | 'mall' | 'lab-night' | 'vault-night'
   name?: string
   shelves?: Array<{ x: number; w: number; h: number }>
   windVents?: Array<{ x: number; lift: number }>
   drips?: Array<{ x: number; periodMs: number }>
-  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'mall-scrubber' | 'trainer' | 'researcher'; triggerX: number; arenaX0: number; arenaX1: number }
+  boss?: { kind: 'warriorking' | 'queen' | 'mirrorowl' | 'mudmane' | 'triboss' | 'securitydirector' | 'mall-scrubber' | 'trainer' | 'researcher' | 'warden'; triggerX: number; arenaX0: number; arenaX1: number }
   /** Stage 8 researcher boss tuning (HP / phases). */
   researcher?: { hp: number; phase2At: number; phase3Below: number; swipeWarnMs?: number; flaskWarnMs?: number; flaskCount?: number; puddleMs?: number; refillExposedMs?: number; summonPerCycle?: number; summonMaxAlive?: number; weakBase?: number; capWeak?: number; capNormal?: number }
   pipeSprays?: Array<{ x: number; w: number; periodMs: number; phaseMs: number; warnMs: number; onMs: number; valve?: string }>
   valves?: Array<{ id: string; x: number; hits: number }>
+  /** Stage 9 · 押送閘. */
+  slidingGates?: Array<{ id: string; x: number; periodMs: number; phaseMs: number; warnMs: number; closedMs: number; switch?: string }>
+  gateSwitches?: Array<{ id: string; x: number; hits: number }>
+  safeZones?: Array<{ x0: number; x1: number }>
+  /** Stage 9 warden boss tuning (full AI in s9-3). */
+  warden?: { hp: number; phase2At: number; phase3Below: number; slamWarnMs?: number; keyThrowWarnMs?: number; gateDropWarnMs?: number; keysDroppedMs?: number; summonPerCycle?: number; summonMaxAlive?: number; weakBase?: number; capWeak?: number; capNormal?: number }
   /** Stage 3 (月影夜市) extras — see stage3World.ts. */
   darkZones?: Stage3Data['darkZones']
   lanterns?: Stage3Data['lanterns']
@@ -361,6 +369,7 @@ const STAGES: Record<number, Stage1> = {
   6: stage6Raw as unknown as Stage1,
   7: stage7Raw as unknown as Stage1,
   8: stage8Raw as unknown as Stage1,
+  9: stage9Raw as unknown as Stage1,
 }
 /** Current stage layout — picked in create() from registry `stageNo`. */
 let ST: Stage1 = STAGES[1]!
@@ -513,6 +522,9 @@ export class GameScene extends Phaser.Scene {
   /** Stage 8 · 配方控制中心 (gated by c3Enabled). */
   private lab = false
   private s8pipes: Stage8Pipes | null = null
+  /** Stage 9 · 地底監禁層 (gated by c3Enabled). */
+  private vault = false
+  private s9gates: Stage9Gates | null = null
   /** s8-2: temporary sticky puddles from tube flasks (w=40, 1500ms). */
   private s8puddles: Array<{ x: number; w: number; until: number; spr: Phaser.GameObjects.Rectangle }> = []
   private puffDeparturePending = false
@@ -584,8 +596,11 @@ export class GameScene extends Phaser.Scene {
     this.mall = ST.theme === 'mall'
     this.exhibit = this.stageNo === 7
     this.lab = this.stageNo === 8
+    this.vault = this.stageNo === 9
     this.s8pipes?.destroy()
     this.s8pipes = null
+    this.s9gates?.destroy()
+    this.s9gates = null
     for (const p of this.s8puddles) p.spr.destroy()
     this.s8puddles = []
     // quiz-home-1: each stage-6 play entry may pin first quiz open once.
@@ -676,7 +691,7 @@ export class GameScene extends Phaser.Scene {
 
     unlockAudio()
     playSong(
-      this.lab || this.exhibit
+      this.lab || this.vault || this.exhibit
         ? 'exhibit'
         : this.mall
           ? 'mall'
@@ -1226,6 +1241,7 @@ export class GameScene extends Phaser.Scene {
     if (this.mall) this.tickStage6(dt)
     if (this.exhibit) this.tickStage7(dt)
     if (this.lab) this.tickStage8(dt)
+    if (this.vault) this.tickStage9(dt)
     this.tickFun1Moments(dt)
     this.checkFall()
     this.updateCheckpoint()
@@ -1280,7 +1296,14 @@ export class GameScene extends Phaser.Scene {
   /** flat → platforms → ambush → altar — one readable story beat each. */
   private tickStageBeats() {
     const lead = this.leadX()
-    const beats: Array<{ x: number; title: string }> = this.lab
+    const beats: Array<{ x: number; title: string }> = this.vault
+      ? [
+          { x: 60, title: '籠車向上' },
+          { x: 880, title: '籠舍通道' },
+          { x: 2000, title: '物資架' },
+          { x: 3160, title: '舊巡護紀錄' },
+        ]
+      : this.lab
       ? stage8Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.exhibit
       ? [{ x: 60, title: '迎賓展示廳' }, { x: 880, title: '分類走廊' }, { x: 2000, title: '訓練表演場' }, { x: 3160, title: '後臺籠舍區' }]
@@ -3066,7 +3089,7 @@ export class GameScene extends Phaser.Scene {
       this.drawTowerWorld()
       return
     }
-    if (this.mall || this.exhibit || this.lab) {
+    if (this.mall || this.exhibit || this.lab || this.vault) {
       this.drawMallWorld()
       return
     }
@@ -3450,6 +3473,7 @@ export class GameScene extends Phaser.Scene {
   private drawMallWorld() {
     if (this.exhibit) { this.drawExhibitWorld(); return }
     if (this.lab) { this.drawLabWorld(); return }
+    if (this.vault) { this.drawVaultWorld(); return }
     this.makeMallFloors()
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x1c1a26, 1).fillRect(0, 0, WORLD_W, WORLD_H)
@@ -3806,6 +3830,52 @@ export class GameScene extends Phaser.Scene {
       this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.85)
     }
     this.buildGroundTiles()
+  }
+
+  /** Vault-night backdrop — tinted stand-in until Manus stage9 art. */
+  private drawVaultWorld() {
+    const g = this.add.graphics().setDepth(DEPTH.SKY)
+    g.fillStyle(0x0a0e14, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    g.fillStyle(0x1a222c, 0.6).fillRect(0, 40, WORLD_W, 230)
+    // Cool steel wash — distinct from lab teal.
+    g.fillStyle(0x2a3848, 0.25).fillRect(0, 80, WORLD_W, 160)
+    this.bgClouds = []
+    this.bgMounts = []
+    const farKey = this.textures.exists('stage9-bg-far')
+      ? 'stage9-bg-far'
+      : this.textures.exists('entrance-far')
+        ? 'entrance-far'
+        : null
+    if (farKey) {
+      this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.7).setTint(0x8090a8)
+    }
+    this.buildGroundTiles()
+  }
+
+  /** Stage 9 systems: sliding gates + switches; reuse stage2 unlocks for shared enemies. */
+  private tickStage9(dt: number) {
+    this.s9gates?.update(dt)
+    if (this.s9gates) {
+      for (const hero of [this.boy, this.girl]) {
+        if (!hero?.alive || !hero.isMeleeActive()) continue
+        const box = hero.attackHitbox
+        const hitSet = (box.getData('hitSet') as Set<string> | undefined) ?? new Set<string>()
+        box.setData('hitSet', hitSet)
+        const key = 'gateSwitch'
+        if (hitSet.has(key)) continue
+        if (this.s9gates.tryHitSwitch(hero.x + hero.facing * 28, hero.facing)) hitSet.add(key)
+      }
+      for (const o of this.shots?.getChildren() ?? []) {
+        const s = o as Phaser.Physics.Arcade.Sprite
+        if (!s.active) continue
+        if (s.getData('switchHit')) continue
+        if (this.s9gates.tryHitSwitch(s.x, (s.body as Phaser.Physics.Arcade.Body)?.velocity.x >= 0 ? 1 : -1)) {
+          s.setData('switchHit', true)
+          s.destroy()
+        }
+      }
+    }
+    this.tickStage2(dt)
   }
 
   /** Stage 7 systems: conveyors, spotlights, rescue cages, drones, ambient. */
@@ -4342,6 +4412,30 @@ export class GameScene extends Phaser.Scene {
     this.time.delayedCall(1600, () => drop.active && drop.destroy())
   }
 
+  /** s9-1: Chief Warden stand-in (SecurityDirector + warden HP / phases) until s9-3. */
+  private wardenStandInHooks(): DirectorHooks {
+    const w = ST.warden!
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      sweep: () => 1200,
+      bolt: (x, feet, dir, high, speed, lifeMs) => this.throwKnife(x, feet, dir, high, speed, lifeMs, true),
+      drone: () => undefined,
+      droneCount: () => 0,
+      bossEvent: (kind) => this.onQueenEvent(kind),
+      trainer: {
+        hp: w.hp,
+        phase2At: w.phase2At,
+        phase3Below: w.phase3Below,
+        phase3Rate: 1,
+        summon: () => {
+          // Placeholder: spawn tinted s9guard until real warden summons in s9-3.
+          const x = (ST.boss!.arenaX0 + ST.boss!.arenaX1) / 2
+          this.spawnS2('s9guard', x - 40)
+        },
+      },
+    }
+  }
+
   private directorHooks(): DirectorHooks {
     const b = ST.boss!
     return {
@@ -4798,7 +4892,24 @@ export class GameScene extends Phaser.Scene {
       )
     }
 
-    if (this.tree || this.market || this.depot || this.tower || this.mall || this.lab) {
+    if (this.vault) {
+      this.s9gates = new Stage9Gates(
+        {
+          scene: this,
+          heroes: () => [this.boy, this.girl].filter((h): h is Hero => !!h && h.alive),
+          hurt: (h, dir) =>
+            this.hazardHit(h as Hero, {
+              knockX: dir * 200,
+              knockY: -380,
+              label: '押送閘',
+            }),
+        },
+        ST.slidingGates ?? [],
+        ST.gateSwitches ?? [],
+      )
+    }
+
+    if (this.tree || this.market || this.depot || this.tower || this.mall || this.lab || this.vault) {
       // Stages 2+ end when the boss falls — keep an inert goal far off-world so overlap checks stay valid.
       this.goal = this.physics.add.sprite(WORLD_W + 400, GROUND_Y - 10, 'goal3d').setVisible(false)
       ;(this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false
@@ -4870,7 +4981,7 @@ export class GameScene extends Phaser.Scene {
       : this.market ? { hole: 0x080b15, edge: 0xa6b5ca, top: 0xc5c5d5 }
       : this.depot ? { hole: 0x090d10, edge: 0xb7a687, top: 0xd0bd95 }
       : this.tower ? { hole: 0x0d0910, edge: 0xb9a5a3, top: 0xd0b6aa }
-      : this.exhibit || this.lab ? { hole: 0x141820, edge: 0xf28c28, top: 0xb9bdb8 }
+      : this.exhibit || this.lab || this.vault ? { hole: 0x141820, edge: 0xf28c28, top: 0xb9bdb8 }
       : this.mall ? { hole: 0x1a1420, edge: 0xf2c230, top: 0xf4eee4 }
       : { hole: 0x090d0b, edge: 0x9bb47e, top: 0xc0d59a }
     for (const p of pits) {
@@ -4878,7 +4989,7 @@ export class GameScene extends Phaser.Scene {
       g.fillStyle(colors.hole, 1).fillRect(p.x0, floor, p.x1 - p.x0, GAME_H - floor)
       // B6: mall pits get yellow/black hazard stripes (6px) + subtle upward dark-red glow.
       // D1: exhibit pits reuse hazard stripes with warehouse orange edge.
-      if (this.mall || this.exhibit || this.lab) {
+      if (this.mall || this.exhibit || this.lab || this.vault) {
         const pitH = GAME_H - floor
         // Subtle upward dark-red glow from pit mouth (layered alpha fills).
         const redGlow = this.add.graphics().setDepth(DEPTH.GROUND + 2.2)
@@ -4909,7 +5020,7 @@ export class GameScene extends Phaser.Scene {
       // Earth body + grass lip (same tile as the ground ribbon); 1px dark outline.
       const stepTex = this.tree && this.textures.exists('s2-bark-ground')
         ? 's2-bark-ground'
-        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.exhibit || this.lab ? this.warehouseFloorKey(st.x) : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
+        : this.market && this.textures.exists('s3-market-ground') ? 's3-market-ground' : this.exhibit || this.lab || this.vault ? this.warehouseFloorKey(st.x) : this.mall ? this.mallFloorKey(st.x) : 'tile-ground-top'
       if (this.textures.exists(stepTex)) {
         const body = this.add.tileSprite(st.x, top, st.w, st.h + 8, stepTex).setOrigin(0, 0).setDepth(DEPTH.SHADOW + 4)
         enablePixelSprite(body as unknown as Phaser.GameObjects.Image)
@@ -6080,6 +6191,27 @@ export class GameScene extends Phaser.Scene {
     this.girl?.setVelocity(0, 0)
     this.pet?.setVelocity(0, 0)
 
+    // s9-1: stage 9 story lands in s9-4 — skip C1 picnic; tip only.
+    if (this.vault) {
+      this.time.delayedCall(0, () => {
+        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+        if (this.started) return
+        this.started = true
+        this.startedAt = this.time.now
+        this.pauseReadyAt = this.time.now + 1200
+        this.resetPauseKeys()
+        this.storyIntro = null
+        playSong('exhibit')
+        floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '閘門閃燈就快落——打紅掣可長開！', '#dff6ff', { size: 12, rise: 10, dur: 3200 })
+        this.emitScore(
+          this.mode === '1p'
+            ? '單人：ＡＤ左右　Ｓ蹲　Ｇ跳　Ｆ攻　Ｔ絕招　Ｈ切換｜Enter暫停'
+            : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
+        )
+      })
+      return
+    }
+
     // s8-4: S8_OPEN (dialogue + cart tilt + stage card), then play.
     if (this.lab) {
       this.time.delayedCall(0, () => {
@@ -6911,6 +7043,12 @@ export class GameScene extends Phaser.Scene {
         })
         return
       }
+      if (this.vault) {
+        this.storyIntro = null
+        if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+        this.win()
+        return
+      }
       this.storyIntro = playCutscene(this, this.tower ? (this.perfectEnding() ? 'C11_PERFECT' : 'C11') : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
         this.storyIntro = null
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
@@ -7259,6 +7397,8 @@ export class GameScene extends Phaser.Scene {
         : this.stageNo === 7
           ? { id: 'next', label: c3Enabled() ? '第8關・配方控制中心 ▶' : '待續 ▶', on: true }
         : this.stageNo === 8
+          ? { id: 'next', label: '第9關・地底監禁層 ▶', on: true }
+        : this.stageNo === 9
           ? { id: 'next', label: '待續 ▶', on: true }
         : this.stageNo > FINAL_STAGE
           ? { id: 'next', label: '第二大陸・下一關　製作中', on: false }
@@ -7364,7 +7504,7 @@ export class GameScene extends Phaser.Scene {
     if (!isSideTrip()) {
       // C2 ST-06 clear must always unlock ST-07 even if the run was bootstrapped oddly.
       if (this.stageNo >= 6) ensureMainRun(this.stageNo, this.registry)
-      unlockStage(Math.min(this.stageNo + 1, c3Enabled() ? 8 : 7))
+      unlockStage(Math.min(this.stageNo + 1, c3Enabled() ? 9 : 7))
     }
     this.saveCurrentClear()
     this.ended = true
@@ -7585,7 +7725,7 @@ export class GameScene extends Phaser.Scene {
         : this.textures.exists('tile-ground-top')
         ? 'tile-ground-top'
         : this.textures.exists('blk-grass') ? 'blk-grass' : 'til-grass'
-    const stride = this.mall || this.exhibit || this.lab ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
+    const stride = this.mall || this.exhibit || this.lab || this.vault ? 64 : this.textures.exists(tex) ? this.textures.get(tex).get().width : 32
     const pits = terrainPits()
     for (let x = 0; x < WORLD_W + stride; x += stride) {
       const texX = this.exhibit ? this.warehouseFloorKey(x) : this.mall ? this.mallFloorKey(x) : tex
@@ -7742,7 +7882,9 @@ export class GameScene extends Phaser.Scene {
     const place = (en: Stage1['enemies'][number], dx = 0) => {
       // Encounter-1: claimed X stay out of normal unlock — controller spawns them.
       if (dx === 0 && this.encounterClaimedXs.has(en.x)) return
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet'].includes(en.species)) {
+      // s9-1: never schedule enemies inside safeZones (C reunion wait).
+      if ((ST.safeZones ?? []).some((z) => en.x + dx >= z.x0 && en.x + dx <= z.x1)) return
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(en.species)) {
         this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
@@ -7760,7 +7902,7 @@ export class GameScene extends Phaser.Scene {
     for (const en of ST.enemies) {
       n++
       // Stage 7 uses the confirmed exact composition in either player mode.
-      if (this.exhibit || this.lab) { place(en); continue }
+      if (this.exhibit || this.lab || this.vault) { place(en); continue }
       // Robot arms are fixed hazards placed by hand: never thinned or doubled.
       if (en.species === 'robotarm') {
         place(en)
@@ -8073,6 +8215,21 @@ export class GameScene extends Phaser.Scene {
     }
     if (species === 's8cabinet') {
       return this.addS2Enemy(new FileCabinet(this, x, this.s2Hooks())).setFlipX(true)
+    }
+    // s9-1: tinted stand-ins until s9-2 behaviours (Manus art later).
+    if (species === 's9guard') {
+      const z = new HoneyZombie(this, x, this.s2Hooks())
+      z.species = 's9guard'
+      z.hp = z.maxHp = 6
+      z.setTint(0x90b878)
+      return this.addS2Enemy(z).setFlipX(true)
+    }
+    if (species === 's9lockbot') {
+      const z = new ShieldKeeper(this, x, this.s2Hooks())
+      z.species = 's9lockbot'
+      z.hp = z.maxHp = 15
+      z.setTint(0xd08060)
+      return this.addS2Enemy(z).setFlipX(true)
     }
     if (species === 'honeyzombie') {
       const z = product ? new ProductZombie(this, x, this.s2Hooks()) : new HoneyZombie(this, x, this.s2Hooks())
@@ -8757,7 +8914,7 @@ export class GameScene extends Phaser.Scene {
     // T4_DEATH_FADE: C2 trash only (stages 6–7); bosses keep their own death.
     {
       const tagged = e as unknown as { boss?: boolean; c2DeathFade?: boolean }
-      if ((this.mall || this.exhibit || this.lab) && !tagged.boss) tagged.c2DeathFade = true
+      if ((this.mall || this.exhibit || this.lab || this.vault) && !tagged.boss) tagged.c2DeathFade = true
     }
     // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
     // after its constructor sets hp = maxHp = N, so this is the single injection
@@ -8907,7 +9064,23 @@ export class GameScene extends Phaser.Scene {
 
   /** 月橋鏡鴞 / 蜜冠女王蜂 / 泥鬃 — shared across the boss-reveal UI. */
   private bossName(): string {
-    return this.lab ? '主任研究員' : this.exhibit ? '馴獸師' : this.stageNo === 1 ? '武者王' : this.mall ? '深層潔淨 X-9' : this.tower ? '△畝大佬' : this.depot ? '泥鬃' : this.market ? '月橋鏡鴞' : '蜜冠女王蜂'
+    return this.vault
+      ? '首席獄卒'
+      : this.lab
+        ? '主任研究員'
+        : this.exhibit
+          ? '馴獸師'
+          : this.stageNo === 1
+            ? '武者王'
+            : this.mall
+              ? '深層潔淨 X-9'
+              : this.tower
+                ? '△畝大佬'
+                : this.depot
+                  ? '泥鬃'
+                  : this.market
+                    ? '月橋鏡鴞'
+                    : '蜜冠女王蜂'
   }
 
   private queenReveal(b: NonNullable<Stage1['boss']>) {
@@ -8923,6 +9096,13 @@ export class GameScene extends Phaser.Scene {
       SFX.boss()
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
+        : this.vault
+        ? (() => {
+            const d = new SecurityDirector(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.wardenStandInHooks())
+            d.species = 'warden'
+            d.setTint(0xa0b0c8)
+            return d
+          })()
         : this.lab
         ? new ChiefResearcher(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.researcherCfg(), this.researcherHooks())
         : this.exhibit
@@ -8953,7 +9133,7 @@ export class GameScene extends Phaser.Scene {
         this.spawnSushi(b.arenaX0 + 40, LANE_FLOOR_Y, this.stageNo === 1 ? 'salmon' : 'deluxe')
       }
     }
-    if (this.depot || this.mall || this.lab || this.stageNo === 1) {
+    if (this.depot || this.mall || this.lab || this.vault || this.stageNo === 1) {
       // No dedicated reveal cutscene for 泥鬃 / 武者王 / scrubber — boss card already told the story.
       // Do NOT park on storyIntro while waiting: update() returns early when storyIntro is set,
       // which freezes enemy ticks if the delay ever races. Brief wait uses a non-blocking timer.
@@ -9200,7 +9380,7 @@ export class GameScene extends Phaser.Scene {
     if (isSideTrip()) {
       const run = resumeMain(this.registry)
       if (!run) { this.goMenu(); return }
-      if (run.nextStage > (c3Enabled() ? 8 : 7)) { this.returnToPublishedMap(); return }
+      if (run.nextStage > (c3Enabled() ? 9 : 7)) { this.returnToPublishedMap(); return }
       if (!STAGES[run.nextStage] || (run.nextStage >= 6 && !c2Enabled()) || (run.nextStage >= 8 && !c3Enabled())) { this.goMenu(); return }
       this.registry.set('leavingToMenu', true)
       this.registry.set('winScreenShown', false)
@@ -9219,6 +9399,11 @@ export class GameScene extends Phaser.Scene {
       this.showFirstReleaseContinued()
       return
     }
+    // s9-1: stage 10 data exists but runtime opens in a later ticket.
+    if (toStage >= 10) {
+      this.showFirstReleaseContinued()
+      return
+    }
     if (!STAGES[toStage]) {
       floatText(this, GAME_W / 2, 100, `第${toStage}關資料未載入`, '#ff8080', { size: 14, dur: 2400 })
       return
@@ -9231,6 +9416,7 @@ export class GameScene extends Phaser.Scene {
       guaranteeC2Stage7Unlock()
     }
     if (fromStage === 7 && c3Enabled()) unlockStage(8)
+    if (fromStage === 8 && c3Enabled()) unlockStage(9)
     this.registry.set('leavingToMenu', true)
     this.registry.set('stageNo', toStage)
     this.registry.set('carryCoins', this.coinStock)
