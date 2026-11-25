@@ -56,13 +56,12 @@ function syncUnlocks() {
   ;['lunbo', 'kibobo', 'pupu'].forEach((id) => add(g.heroes, id))
   for (const id of friends) add(g.friends, id)
 
-  // Stages 1–10: entered / cleared
+  // Stages 1–10: entered / cleared.
+  // Stage 10 has no "max > 10" (progress caps at 10) — treat c2 clear as stage-10 clear.
   for (let st = 1; st <= 10; st++) {
     if (max >= st) add(g.scenes, `scene-${st}`)
-    if (max > st || (st === 10 && max >= 10 && c2) || max > st) {
-      /* cleared when furthest progress passed this stage */
-    }
-    if (max > st) {
+    const cleared = max > st || (st === 10 && c2)
+    if (cleared) {
       add(g.bosses, bossIdForStage(st))
       for (const e of enemiesForStage(st)) add(g.enemies, e.id)
     }
@@ -144,10 +143,13 @@ function isUnlocked(item, unlocks) {
   if (u.type === 'always') return true
   if (u.type === 'friend') return unlocks.friends.includes(u.friendId)
   if (u.type === 'stageClear') {
+    const c2 = localStorage.getItem(C2_KEY) === '1'
     return (
       unlocks.bosses.includes(item.id) ||
       unlocks.enemies.includes(item.id) ||
-      maxStageNow() > u.stage
+      maxStageNow() > u.stage ||
+      // Stage 10 clear is recorded via c2 flag (maxStage never exceeds 10).
+      (u.stage === 10 && c2)
     )
   }
   if (u.type === 'stageEnter') {
