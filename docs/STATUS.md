@@ -2,8 +2,8 @@
 
 <!-- M9-BACKGROUNDS-START -->
 ## M9 新／重畫背景（`manus/m9-backgrounds-2611`；2026-11-25）
-- 已交：9A 籠車升降井 `public/art/stage9/bg-cage-lift.png`；9B 籠舍通道 `public/art/stage9/bg-cage-corridor.png`。
-- 待交：9C 物資架及凹位、9D 舊紀錄室、9E 獄卒大廳、10A 暴雨後巷、10B 大堂積水、10C 升降機、10D 上層終端、10E 日出天台、第4關日頭鹽霧工地、第5關紫粉黃昏大廈。
+- 已交：9A 籠車升降井 `public/art/stage9/bg-cage-lift.png`；9B 籠舍通道 `public/art/stage9/bg-cage-corridor.png`；9C 物資架及凹位 `public/art/stage9/bg-supplies.png`。
+- 待交：9D 舊紀錄室、9E 獄卒大廳、10A 暴雨後巷、10B 大堂積水、10C 升降機、10D 上層終端、10E 日出天台、第4關日頭鹽霧工地、第5關紫粉黃昏大廈。
 - 逐段 tsc + Vite、資料驗證、桌面滑鼠及模擬手機 touch **獨立素材預覽**見 `docs/qa-m9-backgrounds/`；非遊戲內、真人或真機測試，尚未接入。圖片由較大原圖等比例縮小並量化，非原生尺寸。無 TypeScript 改動；第8關 #157 保持 draft。
 <!-- M9-BACKGROUNDS-END -->
 
