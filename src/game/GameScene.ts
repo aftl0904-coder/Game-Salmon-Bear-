@@ -84,6 +84,7 @@ import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
+import { LabDrone, TubeSoldier, FileCabinet } from './enemies/Stage8Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -498,6 +499,8 @@ export class GameScene extends Phaser.Scene {
   /** Stage 8 · 配方控制中心 (gated by c3Enabled). */
   private lab = false
   private s8pipes: Stage8Pipes | null = null
+  /** s8-2: temporary sticky puddles from tube flasks (w=40, 1500ms). */
+  private s8puddles: Array<{ x: number; w: number; until: number; spr: Phaser.GameObjects.Rectangle }> = []
   private puffDeparturePending = false
   private stage7Events: Array<{ kind: string; at: number }> = []
   private s6world: Stage6World | null = null
@@ -565,6 +568,8 @@ export class GameScene extends Phaser.Scene {
     this.lab = this.stageNo === 8
     this.s8pipes?.destroy()
     this.s8pipes = null
+    for (const p of this.s8puddles) p.spr.destroy()
+    this.s8puddles = []
     // quiz-home-1: each stage-6 play entry may pin first quiz open once.
     if (this.stageNo === 6) this.registry.set('quizHomeFirstDone', false)
     this.puffDeparturePending = false
@@ -1615,13 +1620,19 @@ export class GameScene extends Phaser.Scene {
     return GROUND_Y
   }
 
+  /** Sticky feet without Stage2World (stage 8 tube puddles). Same 0.5 mul as queen honey. */
+  private stickyFeetMul(h: Hero): number {
+    const until = (h.getData('stickyUntil') as number | undefined) ?? 0
+    return this.time.now < until ? 0.5 : 1
+  }
+
   private moveBoy(dt: number) {
     const ax = this.padAxis(this.pad1, true)
     const left = this.keyA.isDown || ax < -0.45 || TouchInput.isDown('left')
     const right = this.keyD.isDown || ax > 0.45 || TouchInput.isDown('right')
     const spd =
       (this.boy.role === 'girl' ? GIRL_SPEED : PLAYER.moveSpeed) *
-      (this.s2world?.speedMul(this.boy) ?? 1) *
+      (this.s2world?.speedMul(this.boy) ?? this.stickyFeetMul(this.boy)) *
       speedMul()
     this.steerHero(
       this.boy, dt, left, right,
@@ -1643,7 +1654,7 @@ export class GameScene extends Phaser.Scene {
     const right = !!this.cursors.right?.isDown || ax > 0.45
     this.steerHero(
       g, dt, left, right,
-      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? 1) * speedMul(),
+      this.p2JumpJust(), this.p2JumpHeld(), GIRL_SPEED * (this.s2world?.speedMul(g) ?? this.stickyFeetMul(g)) * speedMul(),
       this.p2AttackJust() && !g.comboCasting, () => this.swordSlash(g),
       this.p2CrouchHeld(),
     )
@@ -3729,6 +3740,7 @@ export class GameScene extends Phaser.Scene {
   /** Stage 8 skeleton: pipes + pending enemies + researcher stand-in via tickStage2. */
   private tickStage8(dt: number) {
     this.s8pipes?.update(dt)
+    this.tickLabStickyPuddles(dt)
     // Valve smash: one hit per melee swing (reuse attackHitbox hitSet).
     if (this.s8pipes) {
       for (const hero of [this.boy, this.girl]) {
@@ -7910,33 +7922,20 @@ export class GameScene extends Phaser.Scene {
         }),
       ).setFlipX(true)
     }
-    // s8-1 placeholders — real behaviours land in s8-2.
+    // s8-2: real behaviours (tinted stand-ins until stage8 art).
     if (species === 's8drone') {
-      const e = new BeeSoldier(this, x, this.s2Hooks())
-      e.species = 's8drone'
-      e.hp = e.maxHp = 6
-      e.setTint(0x6ad0ff)
-      this.addS2Enemy(e).setFlipX(true)
-      return e
+      return this.addS2Enemy(new LabDrone(this, x, this.s2Hooks())).setFlipX(true)
     }
     if (species === 's8tube') {
-      const e = new CanThrower(this, x, this.s2Hooks(), {
-        floorY: () => LANE_FLOOR_Y,
-        throwCan: (cx, cy, tx) => this.throwExhibitCan(cx, cy, tx),
-      })
-      e.species = 's8tube'
-      e.hp = e.maxHp = 6
-      e.setTint(0xc8a0ff)
-      this.addS2Enemy(e).setFlipX(true)
-      return e
+      return this.addS2Enemy(
+        new TubeSoldier(this, x, this.s2Hooks(), {
+          floorY: () => LANE_FLOOR_Y,
+          throwTube: (cx, cy, tx) => this.throwLabTube(cx, cy, tx),
+        }),
+      ).setFlipX(true)
     }
     if (species === 's8cabinet') {
-      const e = new ShieldKeeper(this, x, this.s2Hooks())
-      e.species = 's8cabinet'
-      e.hp = e.maxHp = 15
-      e.setTint(0xd0b070)
-      this.addS2Enemy(e).setFlipX(true)
-      return e
+      return this.addS2Enemy(new FileCabinet(this, x, this.s2Hooks())).setFlipX(true)
     }
     if (species === 'honeyzombie') {
       const z = product ? new ProductZombie(this, x, this.s2Hooks()) : new HoneyZombie(this, x, this.s2Hooks())
@@ -8317,7 +8316,94 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
-  /** Stalls from stage3.json: breakable cover in front of each keeper. */
+  /** s8-2: tube flask — parabolic, max range 180, dmg 1 + sticky puddle w40 / 1500ms. */
+  private throwLabTube(fromX: number, fromY: number, targetX: number) {
+    if (this.ended) return
+    const landX = Phaser.Math.Clamp(targetX, fromX - 180, fromX + 180)
+    const floor = LANE_FLOOR_Y
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const tube = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    tube.setDepth(DEPTH.FX - 1)
+    enableActorSprite(tube)
+    const body = tube.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(10, 14)
+    tube.setData('lane', 0)
+    tube.setData('dmg', 1)
+    tube.setData('labTube', true)
+    tube.setTint(0xc8a0ff)
+    this.markShot(tube, 0xe0b0ff)
+    this.tweens.add({ targets: tube, angle: 420, duration: 650, ease: 'Linear' })
+    floatText(this, fromX, fromY - 24, '試管！', '#e0b0ff', { size: 11, dur: 500 })
+    this.entities.add(tube, 'projectile')
+    const dur = 650
+    this.tweens.add({
+      targets: tube,
+      x: landX,
+      duration: dur,
+      ease: 'Linear',
+      onUpdate: (tw) => {
+        if (!tube.active) return
+        const p = tw.progress
+        tube.y = fromY + (floor - 8 - fromY) * p - Math.sin(p * Math.PI) * 90
+        body.reset(tube.x, tube.y)
+      },
+      onComplete: () => {
+        if (!tube.active) return
+        const hx = tube.x
+        tube.destroy()
+        burst(this, hx, floor - 10, 0xc8a0ff, 12)
+        SFX.potShatter()
+        floatText(this, hx, floor - 48, '啪！', '#e0b0ff', { size: 12, dur: 500 })
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (Math.abs(h.x - hx) < 36 && Math.abs(h.y - floor) < 40) {
+            this.hazardHit(h, { knockX: (Math.sign(h.x - hx) || 1) * 200, knockY: -340, label: '試管 -1' })
+          }
+        }
+        this.spawnLabSticky(hx, 40, 1500)
+      },
+    })
+  }
+
+  private spawnLabSticky(x: number, w: number, ms: number) {
+    const floor = LANE_FLOOR_Y
+    const spr = this.add
+      .rectangle(x, floor + 2, w, 8, 0xd8a040, 0.55)
+      .setOrigin(0.5, 1)
+      .setDepth(DEPTH.GROUND + 5)
+    this.s8puddles.push({ x, w, until: this.time.now + ms, spr })
+  }
+
+  private tickLabStickyPuddles(_dt: number) {
+    const now = this.time.now
+    const floor = LANE_FLOOR_Y
+    this.s8puddles = this.s8puddles.filter((p) => {
+      if (now > p.until) {
+        this.tweens.add({ targets: p.spr, alpha: 0, duration: 280, onComplete: () => p.spr.destroy() })
+        return false
+      }
+      const half = p.w * 0.5
+      for (const h of [this.boy, this.girl]) {
+        if (!h?.alive || h.laneJumping) continue
+        if (Math.abs(h.x - p.x) > half) continue
+        if (h.y > floor - 36) this.applyStickyFeet(h)
+      }
+      return true
+    })
+  }
+
+  private applyStickyFeet(h: Hero) {
+    const now = this.time.now
+    const was = ((h.getData('stickyUntil') as number | undefined) ?? 0) > now
+    h.setData('stickyUntil', now + 900)
+    if (!was) {
+      floatText(this, h.x, h.y - 52, '黐腳！', '#ffcc44', { size: 12, dur: 800 })
+      SFX.gulp()
+    }
+  }
+
+    /** Stalls from stage3.json: breakable cover in front of each keeper. */
   private placeStalls() {
     this.stalls = []
     for (const st of ST.stalls ?? []) {
@@ -8422,7 +8508,7 @@ export class GameScene extends Phaser.Scene {
     // T4_DEATH_FADE: C2 trash only (stages 6–7); bosses keep their own death.
     {
       const tagged = e as unknown as { boss?: boolean; c2DeathFade?: boolean }
-      if ((this.mall || this.exhibit) && !tagged.boss) tagged.c2DeathFade = true
+      if ((this.mall || this.exhibit || this.lab) && !tagged.boss) tagged.c2DeathFade = true
     }
     // Difficulty HP scaling — every stage2-5 FSM enemy funnels through here right
     // after its constructor sets hp = maxHp = N, so this is the single injection
