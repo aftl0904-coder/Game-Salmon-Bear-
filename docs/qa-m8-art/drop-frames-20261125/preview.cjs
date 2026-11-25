@@ -2,7 +2,8 @@
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const { chromium } = require('playwright');
 const root = path.resolve(__dirname, '../../..');
-const out = __dirname;
+const out = process.env.M8_QA_OUT ? path.resolve(root, process.env.M8_QA_OUT) : __dirname;
+fs.mkdirSync(out,{recursive:true});
 const src = path.join(root, 'public/art/stage8/enemies');
 const items = [
   { id:'cabinet', stem:'s8cabinet-draft', phases:['warning','attack'] },
