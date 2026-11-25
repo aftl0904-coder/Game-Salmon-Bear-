@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "leon",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "call_warning",
+        "slot": 0,
+        "frame": 24,
+        "fps": 4,
+        "at": 259.59999999403954
+      },
+      {
+        "phase": "call_warning",
+        "slot": 1,
+        "frame": 25,
+        "fps": 4,
+        "at": 511
+      },
+      {
+        "phase": "call_warning",
+        "slot": 2,
+        "frame": 26,
+        "fps": 4,
+        "at": 762.2999999970198
+      },
+      {
+        "phase": "call_warning",
+        "slot": 3,
+        "frame": 26,
+        "fps": 4,
+        "at": 1017.5999999940395
+      },
+      {
+        "phase": "idle",
+        "slot": 0,
+        "frame": 0,
+        "fps": 4,
+        "at": 1274.0999999940395
+      },
+      {
+        "phase": "idle",
+        "slot": 1,
+        "frame": 1,
+        "fps": 4,
+        "at": 1527.8999999910593
+      },
+      {
+        "phase": "idle",
+        "slot": 2,
+        "frame": 2,
+        "fps": 4,
+        "at": 1778.2999999970198
+      },
+      {
+        "phase": "idle",
+        "slot": 3,
+        "frame": 3,
+        "fps": 4,
+        "at": 2028.7000000029802
+      }
+    ],
+    "expected": [
+      {
+        "phase": "call_warning",
+        "slot": 0,
+        "frame": 24,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 1,
+        "frame": 25,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 2,
+        "frame": 26,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 3,
+        "frame": 26,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 0,
+        "frame": 0,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 1,
+        "frame": 1,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 2,
+        "frame": 2,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 3,
+        "frame": 3,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 251.40000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 251.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 256.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "leon",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "call_warning",
+        "slot": 0,
+        "frame": 24,
+        "fps": 4,
+        "at": 217.59999999403954
+      },
+      {
+        "phase": "call_warning",
+        "slot": 1,
+        "frame": 25,
+        "fps": 4,
+        "at": 468
+      },
+      {
+        "phase": "call_warning",
+        "slot": 2,
+        "frame": 26,
+        "fps": 4,
+        "at": 723.5
+      },
+      {
+        "phase": "call_warning",
+        "slot": 3,
+        "frame": 26,
+        "fps": 4,
+        "at": 977.0999999940395
+      },
+      {
+        "phase": "idle",
+        "slot": 0,
+        "frame": 0,
+        "fps": 4,
+        "at": 1230.5999999940395
+      },
+      {
+        "phase": "idle",
+        "slot": 1,
+        "frame": 1,
+        "fps": 4,
+        "at": 1484.2999999970198
+      },
+      {
+        "phase": "idle",
+        "slot": 2,
+        "frame": 2,
+        "fps": 4,
+        "at": 1734.5
+      },
+      {
+        "phase": "idle",
+        "slot": 3,
+        "frame": 3,
+        "fps": 4,
+        "at": 1984.7999999970198
+      }
+    ],
+    "expected": [
+      {
+        "phase": "call_warning",
+        "slot": 0,
+        "frame": 24,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 1,
+        "frame": 25,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 2,
+        "frame": 26,
+        "fps": 4
+      },
+      {
+        "phase": "call_warning",
+        "slot": 3,
+        "frame": 26,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 0,
+        "frame": 0,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 1,
+        "frame": 1,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 2,
+        "frame": 2,
+        "fps": 4
+      },
+      {
+        "phase": "idle",
+        "slot": 3,
+        "frame": 3,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.59999999403954,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.70000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  }
+]

@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "chief",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "key_drop",
+        "slot": 0,
+        "frame": 28,
+        "fps": 6,
+        "at": 275.80000001192093
+      },
+      {
+        "phase": "key_drop",
+        "slot": 1,
+        "frame": 29,
+        "fps": 6,
+        "at": 442.30000001192093
+      },
+      {
+        "phase": "key_drop",
+        "slot": 2,
+        "frame": 30,
+        "fps": 6,
+        "at": 613.3000000119209
+      },
+      {
+        "phase": "key_drop",
+        "slot": 3,
+        "frame": 31,
+        "fps": 6,
+        "at": 786.5
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 0,
+        "frame": 32,
+        "fps": 4,
+        "at": 959.2000000029802
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 1,
+        "frame": 33,
+        "fps": 4,
+        "at": 1214
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 2,
+        "frame": 34,
+        "fps": 4,
+        "at": 1464.300000011921
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 3,
+        "frame": 35,
+        "fps": 4,
+        "at": 1714.7000000029802
+      }
+    ],
+    "expected": [
+      {
+        "phase": "key_drop",
+        "slot": 0,
+        "frame": 28,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 1,
+        "frame": 29,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 2,
+        "frame": 30,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 3,
+        "frame": 31,
+        "fps": 6
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 0,
+        "frame": 32,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 1,
+        "frame": 33,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 2,
+        "frame": 34,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 3,
+        "frame": 35,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.5,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 171,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.19999998807907,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.70000000298023,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 254.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.30000001192093,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.3999999910593,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "chief",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "key_drop",
+        "slot": 0,
+        "frame": 28,
+        "fps": 6,
+        "at": 204.6000000089407
+      },
+      {
+        "phase": "key_drop",
+        "slot": 1,
+        "frame": 29,
+        "fps": 6,
+        "at": 371
+      },
+      {
+        "phase": "key_drop",
+        "slot": 2,
+        "frame": 30,
+        "fps": 6,
+        "at": 541.5
+      },
+      {
+        "phase": "key_drop",
+        "slot": 3,
+        "frame": 31,
+        "fps": 6,
+        "at": 714.5
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 0,
+        "frame": 32,
+        "fps": 4,
+        "at": 887.7999999970198
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 1,
+        "frame": 33,
+        "fps": 4,
+        "at": 1142.7000000029802
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 2,
+        "frame": 34,
+        "fps": 4,
+        "at": 1393
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 3,
+        "frame": 35,
+        "fps": 4,
+        "at": 1643.4000000059605
+      }
+    ],
+    "expected": [
+      {
+        "phase": "key_drop",
+        "slot": 0,
+        "frame": 28,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 1,
+        "frame": 29,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 2,
+        "frame": 30,
+        "fps": 6
+      },
+      {
+        "phase": "key_drop",
+        "slot": 3,
+        "frame": 31,
+        "fps": 6
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 0,
+        "frame": 32,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 1,
+        "frame": 33,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 2,
+        "frame": 34,
+        "fps": 4
+      },
+      {
+        "phase": "weakpoint_glow",
+        "slot": 3,
+        "frame": 35,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.3999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 170.5,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.29999999701977,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 254.90000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  }
+]

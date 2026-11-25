@@ -1,0 +1,637 @@
+{
+  "base_atlas_sha256": "170e2edd381f1426cb7baa0d0474bdd0b4edd4977657d85050815baef0c57c4e",
+  "base_source_report": {
+    "source_sha256": "e4d86929cd02dc11a8b7072bed0a9ee83bfcc255a865e918263cdbcb011f9b93",
+    "output_sha256": "170e2edd381f1426cb7baa0d0474bdd0b4edd4977657d85050815baef0c57c4e",
+    "source_size": [
+      1536,
+      2304
+    ],
+    "rows": [
+      [
+        107,
+        415
+      ],
+      [
+        497,
+        813
+      ],
+      [
+        898,
+        1191
+      ],
+      [
+        1297,
+        1595
+      ],
+      [
+        1662,
+        1943
+      ],
+      [
+        2040,
+        2225
+      ]
+    ],
+    "columns": [
+      [
+        89,
+        387
+      ],
+      [
+        469,
+        746
+      ],
+      [
+        796,
+        1126
+      ],
+      [
+        1159,
+        1491
+      ]
+    ],
+    "cut_method": "global transparent row and column gaps",
+    "discarded_small_component_pixels": 0,
+    "scale_all_frames": 0.1566265060240964,
+    "target_idle_height": null,
+    "output_size": [
+      3072,
+      704
+    ],
+    "cell_size": [
+      256,
+      352
+    ],
+    "resolution": 4,
+    "logical_cell": [
+      64,
+      88
+    ],
+    "alpha_threshold": 128,
+    "palette_limit": 63,
+    "frames": [
+      {
+        "frame": 0,
+        "source_bbox": [
+          122,
+          107,
+          305,
+          415
+        ],
+        "logical_size": [
+          29,
+          48
+        ],
+        "logical_bbox": [
+          17,
+          36,
+          46,
+          84
+        ]
+      },
+      {
+        "frame": 1,
+        "source_bbox": [
+          495,
+          107,
+          682,
+          415
+        ],
+        "logical_size": [
+          29,
+          48
+        ],
+        "logical_bbox": [
+          17,
+          36,
+          46,
+          84
+        ]
+      },
+      {
+        "frame": 2,
+        "source_bbox": [
+          874,
+          107,
+          1057,
+          415
+        ],
+        "logical_size": [
+          29,
+          48
+        ],
+        "logical_bbox": [
+          17,
+          36,
+          46,
+          84
+        ]
+      },
+      {
+        "frame": 3,
+        "source_bbox": [
+          1250,
+          107,
+          1430,
+          415
+        ],
+        "logical_size": [
+          28,
+          48
+        ],
+        "logical_bbox": [
+          18,
+          36,
+          46,
+          84
+        ]
+      },
+      {
+        "frame": 4,
+        "source_bbox": [
+          99,
+          499,
+          305,
+          813
+        ],
+        "logical_size": [
+          32,
+          49
+        ],
+        "logical_bbox": [
+          16,
+          35,
+          48,
+          84
+        ]
+      },
+      {
+        "frame": 5,
+        "source_bbox": [
+          471,
+          499,
+          688,
+          812
+        ],
+        "logical_size": [
+          34,
+          49
+        ],
+        "logical_bbox": [
+          15,
+          35,
+          49,
+          84
+        ]
+      },
+      {
+        "frame": 6,
+        "source_bbox": [
+          868,
+          498,
+          1076,
+          811
+        ],
+        "logical_size": [
+          33,
+          49
+        ],
+        "logical_bbox": [
+          15,
+          35,
+          48,
+          84
+        ]
+      },
+      {
+        "frame": 7,
+        "source_bbox": [
+          1240,
+          497,
+          1444,
+          810
+        ],
+        "logical_size": [
+          32,
+          49
+        ],
+        "logical_bbox": [
+          16,
+          35,
+          48,
+          84
+        ]
+      },
+      {
+        "frame": 8,
+        "source_bbox": [
+          89,
+          929,
+          334,
+          1191
+        ],
+        "logical_size": [
+          38,
+          41
+        ],
+        "logical_bbox": [
+          13,
+          43,
+          51,
+          84
+        ]
+      },
+      {
+        "frame": 9,
+        "source_bbox": [
+          469,
+          930,
+          718,
+          1191
+        ],
+        "logical_size": [
+          39,
+          41
+        ],
+        "logical_bbox": [
+          12,
+          43,
+          51,
+          84
+        ]
+      },
+      {
+        "frame": 10,
+        "source_bbox": [
+          831,
+          898,
+          1072,
+          1190
+        ],
+        "logical_size": [
+          38,
+          46
+        ],
+        "logical_bbox": [
+          13,
+          38,
+          51,
+          84
+        ]
+      },
+      {
+        "frame": 11,
+        "source_bbox": [
+          1205,
+          932,
+          1475,
+          1190
+        ],
+        "logical_size": [
+          42,
+          40
+        ],
+        "logical_bbox": [
+          11,
+          44,
+          53,
+          84
+        ]
+      },
+      {
+        "frame": 12,
+        "source_bbox": [
+          96,
+          1297,
+          333,
+          1595
+        ],
+        "logical_size": [
+          37,
+          47
+        ],
+        "logical_bbox": [
+          13,
+          37,
+          50,
+          84
+        ]
+      },
+      {
+        "frame": 13,
+        "source_bbox": [
+          482,
+          1303,
+          746,
+          1595
+        ],
+        "logical_size": [
+          41,
+          46
+        ],
+        "logical_bbox": [
+          11,
+          38,
+          52,
+          84
+        ]
+      },
+      {
+        "frame": 14,
+        "source_bbox": [
+          832,
+          1330,
+          1126,
+          1595
+        ],
+        "logical_size": [
+          46,
+          42
+        ],
+        "logical_bbox": [
+          9,
+          42,
+          55,
+          84
+        ]
+      },
+      {
+        "frame": 15,
+        "source_bbox": [
+          1217,
+          1334,
+          1487,
+          1595
+        ],
+        "logical_size": [
+          42,
+          41
+        ],
+        "logical_bbox": [
+          11,
+          43,
+          53,
+          84
+        ]
+      },
+      {
+        "frame": 16,
+        "source_bbox": [
+          102,
+          1662,
+          358,
+          1943
+        ],
+        "logical_size": [
+          40,
+          44
+        ],
+        "logical_bbox": [
+          12,
+          40,
+          52,
+          84
+        ]
+      },
+      {
+        "frame": 17,
+        "source_bbox": [
+          494,
+          1675,
+          726,
+          1942
+        ],
+        "logical_size": [
+          36,
+          42
+        ],
+        "logical_bbox": [
+          14,
+          42,
+          50,
+          84
+        ]
+      },
+      {
+        "frame": 18,
+        "source_bbox": [
+          846,
+          1707,
+          1096,
+          1941
+        ],
+        "logical_size": [
+          39,
+          37
+        ],
+        "logical_bbox": [
+          12,
+          47,
+          51,
+          84
+        ]
+      },
+      {
+        "frame": 19,
+        "source_bbox": [
+          1225,
+          1716,
+          1471,
+          1940
+        ],
+        "logical_size": [
+          39,
+          35
+        ],
+        "logical_bbox": [
+          12,
+          49,
+          51,
+          84
+        ]
+      },
+      {
+        "frame": 20,
+        "source_bbox": [
+          114,
+          2040,
+          387,
+          2225
+        ],
+        "logical_size": [
+          43,
+          29
+        ],
+        "logical_bbox": [
+          10,
+          55,
+          53,
+          84
+        ]
+      },
+      {
+        "frame": 21,
+        "source_bbox": [
+          477,
+          2057,
+          742,
+          2224
+        ],
+        "logical_size": [
+          42,
+          26
+        ],
+        "logical_bbox": [
+          11,
+          58,
+          53,
+          84
+        ]
+      },
+      {
+        "frame": 22,
+        "source_bbox": [
+          796,
+          2100,
+          1119,
+          2225
+        ],
+        "logical_size": [
+          51,
+          20
+        ],
+        "logical_bbox": [
+          6,
+          64,
+          57,
+          84
+        ]
+      },
+      {
+        "frame": 23,
+        "source_bbox": [
+          1159,
+          2117,
+          1491,
+          2224
+        ],
+        "logical_size": [
+          52,
+          17
+        ],
+        "logical_bbox": [
+          6,
+          67,
+          58,
+          84
+        ]
+      }
+    ],
+    "note": "Source is a generated image; all transformations use the same scale. Aligned visible bottoms are image-space only, not world-space or collision proof."
+  },
+  "walk_source": "/tmp/salmon-m910-generation/buildingguard-walk-cycle.png",
+  "walk_source_sha256": "785b04bc8a4dfbe826ab1c82d0b28337865a08da6b23eed898463b7bedf43360",
+  "walk_rows": [
+    [
+      187,
+      893
+    ],
+    [
+      1056,
+      1752
+    ]
+  ],
+  "walk_columns": [
+    [
+      309,
+      846
+    ],
+    [
+      1200,
+      1602
+    ]
+  ],
+  "walk_scale_all_frames": 0.0679886685552408,
+  "walk_target_idle_height": 48,
+  "walk_frames": [
+    {
+      "atlas_frame": 4,
+      "source_bbox": [
+        321,
+        187,
+        829,
+        889
+      ],
+      "logical_size": [
+        35,
+        48
+      ],
+      "logical_bbox": [
+        14,
+        36,
+        49,
+        84
+      ]
+    },
+    {
+      "atlas_frame": 5,
+      "source_bbox": [
+        1200,
+        187,
+        1602,
+        893
+      ],
+      "logical_size": [
+        27,
+        48
+      ],
+      "logical_bbox": [
+        18,
+        36,
+        45,
+        84
+      ]
+    },
+    {
+      "atlas_frame": 6,
+      "source_bbox": [
+        309,
+        1056,
+        846,
+        1752
+      ],
+      "logical_size": [
+        37,
+        47
+      ],
+      "logical_bbox": [
+        13,
+        37,
+        50,
+        84
+      ]
+    },
+    {
+      "atlas_frame": 7,
+      "source_bbox": [
+        1202,
+        1056,
+        1600,
+        1752
+      ],
+      "logical_size": [
+        27,
+        47
+      ],
+      "logical_bbox": [
+        18,
+        37,
+        45,
+        84
+      ]
+    }
+  ],
+  "output_sha256": "9ab4a33cbd2ceb4561fc0ddb2d234e4e95b39c37385607d75cde597c31ccb2ef",
+  "note": "Walk and base sources use separate common scales to match idle height; visible baseline is not a runtime anchor. Two stride and two passing poses are not proof of anatomically alternating feet."
+}

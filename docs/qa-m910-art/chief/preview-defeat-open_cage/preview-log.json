@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "chief",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 40,
+        "fps": 6,
+        "at": 273.1000000089407
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 41,
+        "fps": 6,
+        "at": 439.40000000596046
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 42,
+        "fps": 6,
+        "at": 611
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 43,
+        "fps": 6,
+        "at": 784.3000000119209
+      },
+      {
+        "phase": "open_cage",
+        "slot": 0,
+        "frame": 44,
+        "fps": 4,
+        "at": 957.3000000119209
+      },
+      {
+        "phase": "open_cage",
+        "slot": 1,
+        "frame": 45,
+        "fps": 4,
+        "at": 1212.2000000029802
+      },
+      {
+        "phase": "open_cage",
+        "slot": 2,
+        "frame": 46,
+        "fps": 4,
+        "at": 1462.5
+      },
+      {
+        "phase": "open_cage",
+        "slot": 3,
+        "frame": 47,
+        "fps": 4,
+        "at": 1712.9000000059605
+      }
+    ],
+    "expected": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 40,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 41,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 42,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 43,
+        "fps": 6
+      },
+      {
+        "phase": "open_cage",
+        "slot": 0,
+        "frame": 44,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 1,
+        "frame": 45,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 2,
+        "frame": 46,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 3,
+        "frame": 47,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.29999999701977,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 171.59999999403954,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.30000001192093,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 254.8999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "chief",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 40,
+        "fps": 6,
+        "at": 198.09999999403954
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 41,
+        "fps": 6,
+        "at": 364.5
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 42,
+        "fps": 6,
+        "at": 537.2000000029802
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 43,
+        "fps": 6,
+        "at": 710.0999999940395
+      },
+      {
+        "phase": "open_cage",
+        "slot": 0,
+        "frame": 44,
+        "fps": 4,
+        "at": 883.5999999940395
+      },
+      {
+        "phase": "open_cage",
+        "slot": 1,
+        "frame": 45,
+        "fps": 4,
+        "at": 1138.5999999940395
+      },
+      {
+        "phase": "open_cage",
+        "slot": 2,
+        "frame": 46,
+        "fps": 4,
+        "at": 1388.8999999910593
+      },
+      {
+        "phase": "open_cage",
+        "slot": 3,
+        "frame": 47,
+        "fps": 4,
+        "at": 1639.2000000029802
+      }
+    ],
+    "expected": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 40,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 41,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 42,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 43,
+        "fps": 6
+      },
+      {
+        "phase": "open_cage",
+        "slot": 0,
+        "frame": 44,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 1,
+        "frame": 45,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 2,
+        "frame": 46,
+        "fps": 4
+      },
+      {
+        "phase": "open_cage",
+        "slot": 3,
+        "frame": 47,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.40000000596046,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.70000000298023,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.8999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.5,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 255,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.30000001192093,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  }
+]

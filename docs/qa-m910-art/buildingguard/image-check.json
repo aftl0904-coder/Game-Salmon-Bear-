@@ -1,0 +1,265 @@
+{
+  "passed": true,
+  "size": [
+    3072,
+    704
+  ],
+  "cell": [
+    256,
+    352
+  ],
+  "count": 24,
+  "visible_colors": 63,
+  "binary_alpha": true,
+  "all_frame_edges_transparent": true,
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        68,
+        144,
+        184,
+        336
+      ],
+      "sha256": "cae4f8040fb56e827cb90189927f6def5b7af93eeb1112596f46722832725668"
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        68,
+        144,
+        184,
+        336
+      ],
+      "sha256": "72866f882392c2f6f62ef02ebd95aef88f2dd11bdde086ea433440b614c33402"
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        68,
+        144,
+        184,
+        336
+      ],
+      "sha256": "5c0140cc32c5f9698552de8212f4a5498eb0802bb8f32b4f2db9aed295af3cca"
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        72,
+        144,
+        184,
+        336
+      ],
+      "sha256": "661a0a118213e2b85b64b78571661979e2ee9f9c84fdb383ad9fce60aa676310"
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        56,
+        144,
+        196,
+        336
+      ],
+      "sha256": "e24ef4918bfa34bec5be0ed151dd92629e53e5432cb1d1261ec94b9ca1c2b779"
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        72,
+        144,
+        180,
+        336
+      ],
+      "sha256": "e159a3bafb44f9d9f6b910bc330933beb8b11b0d28ae6a2e5afc844847ec4e17"
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        52,
+        148,
+        200,
+        336
+      ],
+      "sha256": "4b82a8bf3ec6ff26c10c75d001f3f9900984b1c92b6caf642d30cdb38c4401ec"
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        72,
+        148,
+        180,
+        336
+      ],
+      "sha256": "1c0641dce701860ea512688f6017aa46330461282ad802a475ab2f330189f252"
+    },
+    {
+      "frame": 8,
+      "bbox": [
+        52,
+        172,
+        204,
+        336
+      ],
+      "sha256": "f9a96a3adc938eb1c6038a4c709af7924edc1bb11887250f43edc610d26acbc1"
+    },
+    {
+      "frame": 9,
+      "bbox": [
+        48,
+        172,
+        204,
+        336
+      ],
+      "sha256": "183f07dff1a58ea7c6a63bb17695cb74f61f184f728444a2befba027c8d9c80d"
+    },
+    {
+      "frame": 10,
+      "bbox": [
+        52,
+        152,
+        204,
+        336
+      ],
+      "sha256": "37e8e716370c85b15e32d198f47bc90e00de52fb4836bd98f8b022ab20bb5534"
+    },
+    {
+      "frame": 11,
+      "bbox": [
+        44,
+        176,
+        212,
+        336
+      ],
+      "sha256": "0618602355b4504d0fbd11a1e055c6cf0ce4eb548fd15cf182bfbca54e1ecf0b"
+    },
+    {
+      "frame": 12,
+      "bbox": [
+        52,
+        148,
+        200,
+        336
+      ],
+      "sha256": "9ccbcb20d2cb904080608a5058b2146057150c1a6a11101147abe28109c88b8a"
+    },
+    {
+      "frame": 13,
+      "bbox": [
+        44,
+        152,
+        208,
+        336
+      ],
+      "sha256": "6a8d331c1e4c1f153e1a87fe422b35ae3d86703e30a968f41970aba5df97e279"
+    },
+    {
+      "frame": 14,
+      "bbox": [
+        36,
+        168,
+        220,
+        336
+      ],
+      "sha256": "12de2de6798cfc016e0fcaf9a2df77d3869bb90f375c5cc5eee38c622d1beac8"
+    },
+    {
+      "frame": 15,
+      "bbox": [
+        44,
+        172,
+        212,
+        336
+      ],
+      "sha256": "c9ac90d3179f8669cafea74fccd5e0c7db28391542a074cba0dc502224e778cd"
+    },
+    {
+      "frame": 16,
+      "bbox": [
+        48,
+        160,
+        208,
+        336
+      ],
+      "sha256": "2a3f81cadfc52dda298ccec77d45ccd00071ace753abc3bc421ed480a1600af7"
+    },
+    {
+      "frame": 17,
+      "bbox": [
+        56,
+        168,
+        200,
+        336
+      ],
+      "sha256": "c1e6bb1a27b2e2cb2c67f3e543d9cb6a688cad30e0e0660131e6351b2054ab86"
+    },
+    {
+      "frame": 18,
+      "bbox": [
+        48,
+        188,
+        204,
+        336
+      ],
+      "sha256": "15855ac968a187c4decb84f9de47d8e9dd16fae625a847054c4aa0c05c137426"
+    },
+    {
+      "frame": 19,
+      "bbox": [
+        48,
+        196,
+        204,
+        336
+      ],
+      "sha256": "105f04b05e38ef85ac3182e8e5f5c10860b1410dd27a6cd5a957b6b048467184"
+    },
+    {
+      "frame": 20,
+      "bbox": [
+        40,
+        220,
+        212,
+        336
+      ],
+      "sha256": "07646d1eeaab04b4037bc7bbc619e3e61f46bd16fe54bbcf307d3c9bb15f2b34"
+    },
+    {
+      "frame": 21,
+      "bbox": [
+        44,
+        232,
+        212,
+        336
+      ],
+      "sha256": "cfe754ba77c05a1b3dffde602ec7108b069d9fde8fecea423f83573800937340"
+    },
+    {
+      "frame": 22,
+      "bbox": [
+        24,
+        256,
+        228,
+        336
+      ],
+      "sha256": "2ef765f24176a53abfb17168976a3ab88239377e342115e12d5d8161cdb0f699"
+    },
+    {
+      "frame": 23,
+      "bbox": [
+        24,
+        268,
+        232,
+        336
+      ],
+      "sha256": "d94491ffa884b42c276bf2005a880470d34b178fc066137159c50259a10d7531"
+    }
+  ],
+  "animations": [
+    "idle",
+    "walk",
+    "warning",
+    "attack",
+    "hurt",
+    "defeat"
+  ]
+}

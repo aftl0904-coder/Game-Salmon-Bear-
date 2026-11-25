@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "chief",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "gate_warning",
+        "slot": 0,
+        "frame": 20,
+        "fps": 4,
+        "at": 261.40000000596046
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 1,
+        "frame": 21,
+        "fps": 4,
+        "at": 511.79999999701977
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 2,
+        "frame": 22,
+        "fps": 4,
+        "at": 762
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 3,
+        "frame": 23,
+        "fps": 4,
+        "at": 1013.6000000089407
+      },
+      {
+        "phase": "gate_action",
+        "slot": 0,
+        "frame": 24,
+        "fps": 6,
+        "at": 1267.5
+      },
+      {
+        "phase": "gate_action",
+        "slot": 1,
+        "frame": 25,
+        "fps": 6,
+        "at": 1439.7999999970198
+      },
+      {
+        "phase": "gate_action",
+        "slot": 2,
+        "frame": 26,
+        "fps": 6,
+        "at": 1606.2000000029802
+      },
+      {
+        "phase": "gate_action",
+        "slot": 3,
+        "frame": 26,
+        "fps": 6,
+        "at": 1772.5
+      }
+    ],
+    "expected": [
+      {
+        "phase": "gate_warning",
+        "slot": 0,
+        "frame": 20,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 1,
+        "frame": 21,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 2,
+        "frame": 22,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 3,
+        "frame": 23,
+        "fps": 4
+      },
+      {
+        "phase": "gate_action",
+        "slot": 0,
+        "frame": 24,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 1,
+        "frame": 25,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 2,
+        "frame": 26,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 3,
+        "frame": 26,
+        "fps": 6
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.3999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 251.6000000089407,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.8999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 172.29999999701977,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.40000000596046,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.29999999701977,
+        "targetMs": 166.66666666666666
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "chief",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "gate_warning",
+        "slot": 0,
+        "frame": 20,
+        "fps": 4,
+        "at": 202.30000001192093
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 1,
+        "frame": 21,
+        "fps": 4,
+        "at": 452.80000001192093
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 2,
+        "frame": 22,
+        "fps": 4,
+        "at": 703.9000000059605
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 3,
+        "frame": 23,
+        "fps": 4,
+        "at": 958.9000000059605
+      },
+      {
+        "phase": "gate_action",
+        "slot": 0,
+        "frame": 24,
+        "fps": 6,
+        "at": 1213.7000000029802
+      },
+      {
+        "phase": "gate_action",
+        "slot": 1,
+        "frame": 25,
+        "fps": 6,
+        "at": 1386.7000000029802
+      },
+      {
+        "phase": "gate_action",
+        "slot": 2,
+        "frame": 26,
+        "fps": 6,
+        "at": 1553
+      },
+      {
+        "phase": "gate_action",
+        "slot": 3,
+        "frame": 26,
+        "fps": 6,
+        "at": 1719.300000011921
+      }
+    ],
+    "expected": [
+      {
+        "phase": "gate_warning",
+        "slot": 0,
+        "frame": 20,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 1,
+        "frame": 21,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 2,
+        "frame": 22,
+        "fps": 4
+      },
+      {
+        "phase": "gate_warning",
+        "slot": 3,
+        "frame": 23,
+        "fps": 4
+      },
+      {
+        "phase": "gate_action",
+        "slot": 0,
+        "frame": 24,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 1,
+        "frame": 25,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 2,
+        "frame": 26,
+        "fps": 6
+      },
+      {
+        "phase": "gate_action",
+        "slot": 3,
+        "frame": 26,
+        "fps": 6
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 251.09999999403954,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 254.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 173,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.29999999701977,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.30000001192093,
+        "targetMs": 166.66666666666666
+      }
+    ],
+    "passed": true
+  }
+]

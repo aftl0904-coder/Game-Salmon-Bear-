@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "leon",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 32,
+        "fps": 6,
+        "at": 256.59999999403954
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 33,
+        "fps": 6,
+        "at": 423
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 34,
+        "fps": 6,
+        "at": 589.8999999910593
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 35,
+        "fps": 6,
+        "at": 762.5
+      },
+      {
+        "phase": "unlock",
+        "slot": 0,
+        "frame": 36,
+        "fps": 4,
+        "at": 934.7000000029802
+      },
+      {
+        "phase": "unlock",
+        "slot": 1,
+        "frame": 37,
+        "fps": 4,
+        "at": 1188.7000000029802
+      },
+      {
+        "phase": "unlock",
+        "slot": 2,
+        "frame": 38,
+        "fps": 4,
+        "at": 1439
+      },
+      {
+        "phase": "unlock",
+        "slot": 3,
+        "frame": 39,
+        "fps": 4,
+        "at": 1689.3999999910593
+      }
+    ],
+    "expected": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 32,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 33,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 34,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 35,
+        "fps": 6
+      },
+      {
+        "phase": "unlock",
+        "slot": 0,
+        "frame": 36,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 1,
+        "frame": 37,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 2,
+        "frame": 38,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 3,
+        "frame": 39,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.40000000596046,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 166.8999999910593,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.6000000089407,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.20000000298023,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 254,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.3999999910593,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "leon",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 32,
+        "fps": 6,
+        "at": 224.09999999403954
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 33,
+        "fps": 6,
+        "at": 390.59999999403954
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 34,
+        "fps": 6,
+        "at": 563.1999999880791
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 35,
+        "fps": 6,
+        "at": 736.5
+      },
+      {
+        "phase": "unlock",
+        "slot": 0,
+        "frame": 36,
+        "fps": 4,
+        "at": 909.7999999970198
+      },
+      {
+        "phase": "unlock",
+        "slot": 1,
+        "frame": 37,
+        "fps": 4,
+        "at": 1164.5999999940395
+      },
+      {
+        "phase": "unlock",
+        "slot": 2,
+        "frame": 38,
+        "fps": 4,
+        "at": 1414.8999999910593
+      },
+      {
+        "phase": "unlock",
+        "slot": 3,
+        "frame": 39,
+        "fps": 4,
+        "at": 1665.2999999970198
+      }
+    ],
+    "expected": [
+      {
+        "phase": "defeat",
+        "slot": 0,
+        "frame": 32,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 1,
+        "frame": 33,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 2,
+        "frame": 34,
+        "fps": 6
+      },
+      {
+        "phase": "defeat",
+        "slot": 3,
+        "frame": 35,
+        "fps": 6
+      },
+      {
+        "phase": "unlock",
+        "slot": 0,
+        "frame": 36,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 1,
+        "frame": 37,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 2,
+        "frame": 38,
+        "fps": 4
+      },
+      {
+        "phase": "unlock",
+        "slot": 3,
+        "frame": 39,
+        "fps": 4
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 166.5,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 172.59999999403954,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.30000001192093,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 173.29999999701977,
+        "targetMs": 166.66666666666666
+      },
+      {
+        "actualMs": 254.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.40000000596046,
+        "targetMs": 250
+      }
+    ],
+    "passed": true
+  }
+]

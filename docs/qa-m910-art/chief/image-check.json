@@ -1,0 +1,511 @@
+{
+  "passed": true,
+  "size": [
+    3072,
+    896
+  ],
+  "cell": [
+    256,
+    224
+  ],
+  "count": 48,
+  "visible_colors": 63,
+  "binary_alpha": true,
+  "all_frame_edges_transparent": true,
+  "frames": [
+    {
+      "frame": 0,
+      "bbox": [
+        74,
+        72,
+        180,
+        216
+      ],
+      "sha256": "ef2cdaf8f1e62fc9f3d78261800ce7f2cc1e88a56666731686b7829d64560d5c"
+    },
+    {
+      "frame": 1,
+      "bbox": [
+        78,
+        72,
+        176,
+        216
+      ],
+      "sha256": "37f27019607455089545415e76598c4f118060532aa6917543fc5999e8f6338a"
+    },
+    {
+      "frame": 2,
+      "bbox": [
+        78,
+        72,
+        178,
+        216
+      ],
+      "sha256": "dd3b779c9608a78fadf8e42a9aa0fad58c4e9033f82ec8294bcb5e50ad841c06"
+    },
+    {
+      "frame": 3,
+      "bbox": [
+        74,
+        72,
+        180,
+        216
+      ],
+      "sha256": "09b515e6417bbe32207736b1075a7cf2c6998cac8bd1f8ccbde5c64e5a1c5fe0"
+    },
+    {
+      "frame": 4,
+      "bbox": [
+        74,
+        82,
+        182,
+        216
+      ],
+      "sha256": "1d4189bbcc114a5305782b72993b323dcde9fdb8446e06299f4114efff3be61e"
+    },
+    {
+      "frame": 5,
+      "bbox": [
+        74,
+        60,
+        180,
+        216
+      ],
+      "sha256": "03ae3dabb5cea3d5205db54014ae2156d9b0b793759d8d8333550eba96e6fdb7"
+    },
+    {
+      "frame": 6,
+      "bbox": [
+        74,
+        64,
+        182,
+        216
+      ],
+      "sha256": "3644843f81e799299476f39f6eb4f40e949ba18dc91f93d1695110bb65b9076a"
+    },
+    {
+      "frame": 7,
+      "bbox": [
+        74,
+        48,
+        180,
+        216
+      ],
+      "sha256": "23ede658dbab4c4b3989001bb9f946b425f3d1022dc48b61a44b5f289e5db1aa"
+    },
+    {
+      "frame": 8,
+      "bbox": [
+        66,
+        80,
+        188,
+        216
+      ],
+      "sha256": "85f77bc455f66b5fff31370c19baff99ce27b37fb506de0f69d0804734ba0faa"
+    },
+    {
+      "frame": 9,
+      "bbox": [
+        70,
+        80,
+        184,
+        216
+      ],
+      "sha256": "9622417f89342c29c50b23654e224462e7cdc8b2df09c97514d9750620e67e58"
+    },
+    {
+      "frame": 10,
+      "bbox": [
+        54,
+        80,
+        202,
+        216
+      ],
+      "sha256": "f28f95ae4fea5961d99061b0392073c5bf1b13fb1e68eed8f7fc7a20ba14a9db"
+    },
+    {
+      "frame": 11,
+      "bbox": [
+        64,
+        80,
+        190,
+        216
+      ],
+      "sha256": "49e9bdafb32beaec2ec49e7fb12c30b35da0f6fa596fb17d368f219cc8c632fe"
+    },
+    {
+      "frame": 12,
+      "bbox": [
+        72,
+        76,
+        184,
+        216
+      ],
+      "sha256": "87f288fdf81199033079cd1a62543f18862394cc02457e6d63684c61b0b4f2a3"
+    },
+    {
+      "frame": 13,
+      "bbox": [
+        76,
+        80,
+        180,
+        216
+      ],
+      "sha256": "3059bd5dcd394adfb5e5fa11c6fae57bbba746b04135fe1642b28eb76b98d5cb"
+    },
+    {
+      "frame": 14,
+      "bbox": [
+        70,
+        68,
+        186,
+        216
+      ],
+      "sha256": "486e9e5b0f1f8bb58dfc08feb896a1cb4a9d1a6db79694ee096da2726fece166"
+    },
+    {
+      "frame": 15,
+      "bbox": [
+        62,
+        86,
+        192,
+        216
+      ],
+      "sha256": "52187a59ae3444822bc002fd31b5a2336190530db8cba49ba8982cb461f91547"
+    },
+    {
+      "frame": 16,
+      "bbox": [
+        74,
+        70,
+        180,
+        216
+      ],
+      "sha256": "0ff233e1a6d9eee58e7c2fde43d5f66fca3c363c9f5e549e1e26d1a95f1b2a12"
+    },
+    {
+      "frame": 17,
+      "bbox": [
+        60,
+        76,
+        196,
+        216
+      ],
+      "sha256": "ddd9e27df7ddfe371b84f50b60146ad5ab00e84f86b80c3b35fbfa789ecf3489"
+    },
+    {
+      "frame": 18,
+      "bbox": [
+        50,
+        76,
+        204,
+        216
+      ],
+      "sha256": "20d0cdd4d4e25e71c7f315732b7bb073c7b11289d71bbf153dc29eb3d5617eb7"
+    },
+    {
+      "frame": 19,
+      "bbox": [
+        50,
+        76,
+        206,
+        216
+      ],
+      "sha256": "a6c5e259ec4c527cbc9861322f7f2a6716f0b6b22b0b3a931788fabada8c3c5c"
+    },
+    {
+      "frame": 20,
+      "bbox": [
+        72,
+        66,
+        182,
+        216
+      ],
+      "sha256": "419df047397deabef3f11c947c2acee510120de8005a84706cf9d440adba984f"
+    },
+    {
+      "frame": 21,
+      "bbox": [
+        72,
+        68,
+        184,
+        216
+      ],
+      "sha256": "47d3536c32ef97166bdba2381a3c41ad026517ac4d1a806b8c97f4ddd3d71a6f"
+    },
+    {
+      "frame": 22,
+      "bbox": [
+        70,
+        64,
+        184,
+        216
+      ],
+      "sha256": "198cab45b6ca5046c243def15193a4dea91acf650e790c7a0b1ccb74994d4137"
+    },
+    {
+      "frame": 23,
+      "bbox": [
+        72,
+        66,
+        182,
+        216
+      ],
+      "sha256": "2e4a26f8d2c14790ecab2efbf2e08bd97c43603722e425765d425cb51815c9a3"
+    },
+    {
+      "frame": 24,
+      "bbox": [
+        70,
+        64,
+        184,
+        216
+      ],
+      "sha256": "56e9e8c009ba7a62f46a82f5a1a1de84db2a07eff62792a563ce8c37531b0c27"
+    },
+    {
+      "frame": 25,
+      "bbox": [
+        66,
+        70,
+        190,
+        216
+      ],
+      "sha256": "dfc96b144f66cc4bb48299577ed45a55b56af729daabdd47401e9ca3a74ba7d6"
+    },
+    {
+      "frame": 26,
+      "bbox": [
+        68,
+        72,
+        186,
+        216
+      ],
+      "sha256": "9fddb3b7c098ec8f4b678f2abf51022f603d733ec12d9708fc0f7a587ad27dd4"
+    },
+    {
+      "frame": 27,
+      "bbox": [
+        70,
+        70,
+        184,
+        216
+      ],
+      "sha256": "26f23e44cc964d94b312fc4733389307d53ec913e0514959216346de08095904"
+    },
+    {
+      "frame": 28,
+      "bbox": [
+        72,
+        68,
+        184,
+        216
+      ],
+      "sha256": "0e23dbf38708c0b8872bf9b17ce5794e422db4dfbac48a56b2a375fc6fb6d462"
+    },
+    {
+      "frame": 29,
+      "bbox": [
+        62,
+        92,
+        194,
+        216
+      ],
+      "sha256": "b4f5955c6743348b1071d46a591fdbd31f43fa4ddc23ff8ab3740af951ab15cd"
+    },
+    {
+      "frame": 30,
+      "bbox": [
+        62,
+        76,
+        192,
+        216
+      ],
+      "sha256": "53332e1157866b6b63bf000edd91832ecc0ed8ccdd96d7b2fff3dc406ce33536"
+    },
+    {
+      "frame": 31,
+      "bbox": [
+        70,
+        70,
+        186,
+        216
+      ],
+      "sha256": "d5c8e704534b70c23fd4ec65ce161363efb8df872040f017b4bcb0f5c14d436a"
+    },
+    {
+      "frame": 32,
+      "bbox": [
+        62,
+        74,
+        192,
+        216
+      ],
+      "sha256": "b127148cf5d71f533407cfc76610b36d1eff0eef6ccc333b70cb78ec7a532b54"
+    },
+    {
+      "frame": 33,
+      "bbox": [
+        62,
+        94,
+        194,
+        216
+      ],
+      "sha256": "dd8d3d470e82d817e078da9f7cf0014fde9076febd0bc5b85ba10faa3fb686e1"
+    },
+    {
+      "frame": 34,
+      "bbox": [
+        60,
+        114,
+        194,
+        216
+      ],
+      "sha256": "5771698f7cb586adb4387a1a209c041b09cd5a24b1b0a8ed6daacc12031f2cb3"
+    },
+    {
+      "frame": 35,
+      "bbox": [
+        66,
+        124,
+        188,
+        216
+      ],
+      "sha256": "f0dd64c92d6f9b774198b9f7d00d8d1c26c191c0e8d2497f43dd82d18b59767c"
+    },
+    {
+      "frame": 36,
+      "bbox": [
+        74,
+        72,
+        182,
+        216
+      ],
+      "sha256": "74ab8dec0f8a90214c1f426b82d4433c040be278b81a4a93837a9a552f0ed73a"
+    },
+    {
+      "frame": 37,
+      "bbox": [
+        84,
+        82,
+        170,
+        216
+      ],
+      "sha256": "5b14be1fdeaf66fa8210e2279486edc72a90520806f307d1e54d8aed5dff4b5e"
+    },
+    {
+      "frame": 38,
+      "bbox": [
+        68,
+        76,
+        186,
+        216
+      ],
+      "sha256": "bb65523684caf6d278ce59b55f7a46afccb0f8e7ff2d4917d8f0eba6fffb1dd2"
+    },
+    {
+      "frame": 39,
+      "bbox": [
+        80,
+        90,
+        174,
+        216
+      ],
+      "sha256": "0d01abdeea1dec678be4801177d5cf4db1ad5347af72b0af12a8de95b34f10c6"
+    },
+    {
+      "frame": 40,
+      "bbox": [
+        64,
+        126,
+        190,
+        216
+      ],
+      "sha256": "f11a723b6b27af1759b7e1718d337cd3f4eb307a1337b9c069e82f581d2c3edc"
+    },
+    {
+      "frame": 41,
+      "bbox": [
+        56,
+        144,
+        198,
+        216
+      ],
+      "sha256": "3ebc92712f5c1ab89366e4e72017e5d6c15209318aca6cf6c0b6df5c1b6e5bf2"
+    },
+    {
+      "frame": 42,
+      "bbox": [
+        44,
+        160,
+        212,
+        216
+      ],
+      "sha256": "7934c552e142c51bb36494e89750ef797a3c3c74ac95d45191234eb8194c4e7b"
+    },
+    {
+      "frame": 43,
+      "bbox": [
+        52,
+        170,
+        204,
+        216
+      ],
+      "sha256": "8445dbc404d4375c91f3876ff1040caaac09a4382ca4205f0ebd19af44c7dd7d"
+    },
+    {
+      "frame": 44,
+      "bbox": [
+        74,
+        68,
+        180,
+        216
+      ],
+      "sha256": "41ca97912395c5ac11eb45227561c494929d143d23c69153b4c110e5056ad31e"
+    },
+    {
+      "frame": 45,
+      "bbox": [
+        74,
+        70,
+        182,
+        216
+      ],
+      "sha256": "751c7fe67814995c6fe32c8643e9d6b38e34720be08e813991823078c90e29a2"
+    },
+    {
+      "frame": 46,
+      "bbox": [
+        74,
+        70,
+        182,
+        216
+      ],
+      "sha256": "86783b48e8deef0621c89b121f5000b4d60292423af52cf96f2a2bda1f74d0b5"
+    },
+    {
+      "frame": 47,
+      "bbox": [
+        80,
+        66,
+        176,
+        216
+      ],
+      "sha256": "4c8d6616cdfdaa91b381dca9f453e9766161e0e300cc521c7ad5048b8f87e53d"
+    }
+  ],
+  "animations": [
+    "idle",
+    "baton_warning",
+    "baton_sweep",
+    "key_warning",
+    "key_throw",
+    "gate_warning",
+    "gate_action",
+    "key_drop",
+    "weakpoint_glow",
+    "hurt",
+    "defeat",
+    "open_cage"
+  ]
+}
