@@ -1,5 +1,9 @@
 # 鮭鮭熊項目狀態（2026-11-03）
 
+## M9／M10 五隻新敵人美術（`manus/m9-m10-enemies-2611`；2026-11-25）
+- 已按新確認 brief 從頭畫獄卒兵：`public/art/stage9/enemies/s9jailguard.{png,json}`，24 格包括舉棍預警；build、13 項資料檢查、逐格驗證、桌面及模擬手機純 touch 預覽及現有遊戲 smoke 通過，見 `docs/qa-m910-art/jailguard/`。未接入遊戲、未真機；現行程式有另畫嘅警棍佔位，接入時避免雙棍。
+- 下一隻按順序為鎖匠機械人，其後首席獄卒、大廈保安、Leon；五隻已確認內容見 `docs/bible/stage9-10-enemy-art-decisions.md`。本分支只交美術及資料，不改遊戲玩法。
+
 ## Quiz-home-1（`cursor/quiz-home-1-2610`；2026-11-24）
 - 第6關會員中心搶答：每次玩第一次開搶答，Q1 固定由 `developer`（地產發展）`normal` 簡單題池抽取；排除按揭／買樓／睇樓／供樓；之後開搶答照舊隨機。
 - 第7／8關唔受影響（pin 只在 `stageNo === 6`）。
