@@ -270,7 +270,7 @@
         {
           "id": "huihui",
           "name": "熊仔",
-          "blurb": "最老嘅野餐夥伴。",
+          "blurb": "你哋坐，我幫大家斟水。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -294,7 +294,7 @@
         {
           "id": "guard",
           "name": "英國熊",
-          "blurb": "紅衣衛兵裝小熊。",
+          "blurb": "今日任務：陪大家食飽！",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -318,7 +318,7 @@
         {
           "id": "denim",
           "name": "小熊仔",
-          "blurb": "著牛仔吊帶褲。",
+          "blurb": "帶漏咗叉，好彩冇漏咗你哋。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -342,7 +342,7 @@
         {
           "id": "brownie",
           "name": "招積熊",
-          "blurb": "細隻啡熊白口鼻。",
+          "blurb": "多整咗份啫，你食啦。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -366,7 +366,7 @@
         {
           "id": "snowcat",
           "name": "北極熊",
-          "blurb": "白毛帶少少粉紅。",
+          "blurb": "凍飲留俾我，暖位留俾你。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -390,7 +390,7 @@
         {
           "id": "shiba",
           "name": "柴柴",
-          "blurb": "笑口圓面柴犬。",
+          "blurb": "天黑都唔驚，你哋喺度嘛。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -414,7 +414,7 @@
         {
           "id": "ginger",
           "name": "薑餅",
-          "blurb": "聖誕帽薑餅熊。",
+          "blurb": "大家慢慢食，唔好食埋我呀。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -438,7 +438,7 @@
         {
           "id": "fleecy",
           "name": "大pat熊",
-          "blurb": "灰熊白毛連身衫。",
+          "blurb": "齊人就好，坐耐啲啦。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -462,7 +462,7 @@
         {
           "id": "gnome",
           "name": "聖誕伯伯",
-          "blurb": "紅白帽小矮人。",
+          "blurb": "今年願望？下次又齊人囉！",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -486,7 +486,7 @@
         {
           "id": "tigercub",
           "name": "虎仔",
-          "blurb": "戴藍冷帽老虎BB。",
+          "blurb": "我守住啲餅，你哋放心食。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -510,7 +510,7 @@
         {
           "id": "kuro",
           "name": "喵仔",
-          "blurb": "黑貓掛金色鈴鐺。",
+          "blurb": "隔籬冇人？咁我坐啦。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -608,20 +608,47 @@
                 "type": "stageClear",
                 "stage": 1
               },
-              "sheet": "/art/enemies/E-03.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/hatsoldier.png",
+              "frameWidth": 124,
+              "frameHeight": 130,
+              "columns": 18,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 8,
                   "loop": true
+                },
+                "throw-low": {
+                  "label": "低拋",
+                  "start": 4,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "throw-high": {
+                  "label": "高拋",
+                  "start": 8,
+                  "count": 4,
+                  "fps": 12,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 12,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 14,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
                 }
-              },
-              "still": true
+              }
             },
             {
               "id": "elephant",
@@ -632,20 +659,54 @@
                 "type": "stageClear",
                 "stage": 1
               },
-              "sheet": "/art/enemies/E-02.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/mechpig.png",
+              "frameWidth": 172,
+              "frameHeight": 132,
+              "columns": 20,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 7,
                   "loop": true
+                },
+                "windup": {
+                  "label": "windup",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": false
+                },
+                "lunge": {
+                  "label": "lunge",
+                  "start": 7,
+                  "count": 3,
+                  "fps": 14,
+                  "loop": true
+                },
+                "opening": {
+                  "label": "opening",
+                  "start": 10,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": true
+                },
+                "block": {
+                  "label": "block",
+                  "start": 13,
+                  "count": 2,
+                  "fps": 14,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 15,
+                  "count": 5,
+                  "fps": 10,
+                  "loop": false
                 }
-              },
-              "still": true
+              }
             }
           ]
         },
@@ -1910,20 +1971,47 @@
             "type": "stageClear",
             "stage": 1
           },
-          "sheet": "/art/enemies/E-04.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "sheet": "/art/anim/hatsoldier.png",
+          "frameWidth": 124,
+          "frameHeight": 130,
+          "columns": 18,
           "anims": {
-            "idle": {
-              "label": "待機",
+            "walk": {
+              "label": "行走",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 8,
               "loop": true
+            },
+            "throw-low": {
+              "label": "throw-low",
+              "start": 4,
+              "count": 4,
+              "fps": 12,
+              "loop": false
+            },
+            "throw-high": {
+              "label": "throw-high",
+              "start": 8,
+              "count": 4,
+              "fps": 12,
+              "loop": false
+            },
+            "hit": {
+              "label": "受傷",
+              "start": 12,
+              "count": 2,
+              "fps": 12,
+              "loop": false
+            },
+            "die": {
+              "label": "倒地",
+              "start": 14,
+              "count": 4,
+              "fps": 10,
+              "loop": false
             }
-          },
-          "still": true
+          }
         },
         {
           "id": "queen",
