@@ -12,6 +12,7 @@ const files = [
   'signs.mjs',
   'environment.mjs',
   'palette.mjs',
+  'stage-palettes.mjs',
   'characters.mjs',
   'companion.mjs',
   'stage7.mjs',

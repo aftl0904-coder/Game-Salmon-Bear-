@@ -1,0 +1,56 @@
+{
+  "ok": true,
+  "shots": [
+    {
+      "stage": 1,
+      "name": "清晨綠",
+      "file": "docs/qa-palette-1/stage-01.png"
+    },
+    {
+      "stage": 2,
+      "name": "午後金黃",
+      "file": "docs/qa-palette-1/stage-02.png"
+    },
+    {
+      "stage": 3,
+      "name": "夜市暖紅",
+      "file": "docs/qa-palette-1/stage-03.png"
+    },
+    {
+      "stage": 4,
+      "name": "日頭濃霧",
+      "file": "docs/qa-palette-1/stage-04.png"
+    },
+    {
+      "stage": 5,
+      "name": "黃昏紫粉",
+      "file": "docs/qa-palette-1/stage-05.png"
+    },
+    {
+      "stage": 6,
+      "name": "暖米商場",
+      "file": "docs/qa-palette-1/stage-06.png"
+    },
+    {
+      "stage": 7,
+      "name": "深紫夜倉",
+      "file": "docs/qa-palette-1/stage-07.png"
+    },
+    {
+      "stage": 8,
+      "name": "白薄荷實驗室",
+      "file": "docs/qa-palette-1/stage-08.png"
+    },
+    {
+      "stage": 9,
+      "name": "深青鐵鏽",
+      "file": "docs/qa-palette-1/stage-09.png"
+    },
+    {
+      "stage": 10,
+      "name": "雨灰藍→頂層日出",
+      "file": "docs/qa-palette-1/stage-10.png"
+    }
+  ],
+  "errors": []
+}

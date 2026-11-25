@@ -204,6 +204,7 @@ import { assertIntegerScale, isDebugQuery, isHitboxQuery } from './assertInteger
 import { addGroundShadow, addContactShadowBand, type GroundShadow } from './shadow'
 import { addStageLighting, addPointLights } from './lighting'
 import { ENVIRONMENT, environmentById } from './config/gameData'
+import { installStagePalette, tickStagePalette, type PaletteHandles } from './stagePalette'
 import {
   createRound1Tilemap,
   hitBreakable,
@@ -505,6 +506,8 @@ export class GameScene extends Phaser.Scene {
   private enemyStaggerCd = 0
   /** 1 = 百畝樹林, 2 = 蜜樹丘. */
   stageNo = 1
+  /** palette-1: sky/tint/fog/light handles (null if no row). */
+  private palette: PaletteHandles | null = null
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
@@ -629,6 +632,7 @@ export class GameScene extends Phaser.Scene {
     this.s2world?.destroy()
     this.s2world = null
     this.duskWash = null
+    this.palette = null
     this.s2Pending = []
     this.queen = null
     this.bossFight = false
@@ -707,6 +711,7 @@ export class GameScene extends Phaser.Scene {
     )
 
     this.drawWorld()
+    this.palette = installStagePalette(this, this.stageNo)
     this.buildLevel()
     this.spawnCast()
     this.applyCarriedHp()
@@ -1187,6 +1192,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.storyIntro) return
+
+    // palette-1: stage 10 rain→sunrise when lead crosses E (4560).
+    tickStagePalette(this.palette, this, this.leadX(), dt)
 
     if (hasPrayCharge() && Phaser.Input.Keyboard.JustDown(this.keyO)) this.tryPray()
     this.prayIcon?.setVisible(hasPrayCharge())
@@ -3041,6 +3049,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Multiply veil + optional WebGL point lights from data/environment.json (ST-01 default). */
+
+  /** palette-1 QA: re-apply a palette row (e.g. stage 10) without swapping layout. */
+  applyPaletteForQa(stageNo: number) {
+    this.palette?.skyImg.destroy()
+    this.palette?.fog?.destroy()
+    this.palette?.light?.destroy()
+    this.palette = installStagePalette(this, stageNo)
+  }
+
   private applyStageLighting() {
     const stageId = (this.registry.get('stageId') as string) || 'ST-01'
     const env = environmentById(stageId) ?? environmentById('ST-01')
