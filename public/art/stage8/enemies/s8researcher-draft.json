@@ -18,5 +18,5 @@
     "defeat": { "frames": [32, 33, 34, 35], "fps": 6, "loop": false },
     "stop_and_handover": { "frames": [36, 37, 38, 39], "fps": 6, "loop": false }
   },
-  "note": "PARTIAL / NOT READY: 0-based frames are authoritative, including repetitions. Hold warning frame 7, then cut directly to sweep frame 8; no in-between frame is used. Remaining board-to-person proportions are not yet confirmed consistent. Visible bottoms are aligned to the current stage 7 triboss placeholder in the source sheet; anchorY is handoff only. No runtime integration; consumer must use frames and manage timing."
+  "note": "0-based frames are authoritative, including repetitions. Hold warning frame 7, then cut directly to sweep frame 8; no in-between frame is used. On 2026-11-25 Claude accepted the existing board-to-person proportion differences; the artwork was not resized or redrawn. Visible bottoms are aligned to the current stage 7 triboss placeholder in the source sheet; anchorY is handoff only. No runtime integration; consumer must use frames and manage timing."
 }
