@@ -1,0 +1,466 @@
+{
+  "id": "ST-09",
+  "name": "總部地底監禁層",
+  "theme": "vault-night",
+  "worldW": 5700,
+  "segments": [
+    {
+      "id": "A",
+      "x0": 0,
+      "x1": 855,
+      "note": "籠車向上：教兩隻新敵"
+    },
+    {
+      "id": "B",
+      "x0": 855,
+      "x1": 1995,
+      "note": "籠舍通道＋押送閘（新機制）；夾公仔休息室"
+    },
+    {
+      "id": "C",
+      "x0": 1995,
+      "x1": 3135,
+      "note": "物資架、護目鏡、重逢（安全區，冇敵）"
+    },
+    {
+      "id": "D",
+      "x0": 3135,
+      "x1": 4560,
+      "note": "舊巡護紀錄；閘門＋移動貨板"
+    },
+    {
+      "id": "E",
+      "x0": 4560,
+      "x1": 5700,
+      "note": "首席獄卒"
+    }
+  ],
+  "signs": [
+    {
+      "x": 100,
+      "text": "閘門閃燈就快落，等佢升。"
+    },
+    {
+      "x": 900,
+      "text": "打紅掣可以鎖住閘門。"
+    },
+    {
+      "x": 3150,
+      "text": "貨板會郁，睇準先跳。"
+    },
+    {
+      "x": 4560,
+      "text": "佢甩鎖匙嗰陣先打。"
+    }
+  ],
+  "checkpoints": [
+    840,
+    1980,
+    3120,
+    4520
+  ],
+  "pits": [
+    {
+      "x": 1560,
+      "w": 60
+    },
+    {
+      "x": 3480,
+      "w": 64
+    },
+    {
+      "x": 4000,
+      "w": 104
+    }
+  ],
+  "movingPlatforms": [
+    {
+      "x": 4024,
+      "w": 64,
+      "h": 16,
+      "range": 24,
+      "periodMs": 3200,
+      "note": "D・移動貨板"
+    }
+  ],
+  "platforms": [
+    {
+      "x": 2200,
+      "w": 96,
+      "h": 40,
+      "note": "C・物資架低層"
+    },
+    {
+      "x": 2330,
+      "w": 80,
+      "h": 76,
+      "note": "C・物資架高層（護目鏡）"
+    }
+  ],
+  "steps": [
+    {
+      "x": 600,
+      "w": 96,
+      "h": 20
+    },
+    {
+      "x": 3300,
+      "w": 100,
+      "h": 28
+    }
+  ],
+  "slidingGates": [
+    {
+      "id": "G1",
+      "x": 1120,
+      "periodMs": 4200,
+      "phaseMs": 0,
+      "warnMs": 1000,
+      "closedMs": 1400,
+      "switch": "S1"
+    },
+    {
+      "id": "G2",
+      "x": 1400,
+      "periodMs": 4200,
+      "phaseMs": 1400,
+      "warnMs": 1000,
+      "closedMs": 1400,
+      "switch": "S1"
+    },
+    {
+      "id": "G3",
+      "x": 1760,
+      "periodMs": 4200,
+      "phaseMs": 2800,
+      "warnMs": 1000,
+      "closedMs": 1400,
+      "switch": "S2"
+    },
+    {
+      "id": "G4",
+      "x": 3700,
+      "periodMs": 4600,
+      "phaseMs": 0,
+      "warnMs": 1000,
+      "closedMs": 1400
+    }
+  ],
+  "gateSwitches": [
+    {
+      "id": "S1",
+      "x": 1060,
+      "hits": 2,
+      "note": "打兩下：G1、G2 長開"
+    },
+    {
+      "id": "S2",
+      "x": 1680,
+      "hits": 2,
+      "note": "打兩下：G3 長開"
+    }
+  ],
+  "honey": [
+    {
+      "x": 500,
+      "h": 40
+    },
+    {
+      "x": 1900,
+      "h": 40
+    },
+    {
+      "x": 3000,
+      "h": 40
+    },
+    {
+      "x": 4300,
+      "h": 40
+    }
+  ],
+  "coins": [
+    {
+      "x": 220,
+      "h": 22
+    },
+    {
+      "x": 400,
+      "h": 36
+    },
+    {
+      "x": 700,
+      "h": 22
+    },
+    {
+      "x": 950,
+      "h": 22
+    },
+    {
+      "x": 1250,
+      "h": 40
+    },
+    {
+      "x": 1500,
+      "h": 22
+    },
+    {
+      "x": 1850,
+      "h": 36
+    },
+    {
+      "x": 2080,
+      "h": 22
+    },
+    {
+      "x": 2250,
+      "h": 62
+    },
+    {
+      "x": 2600,
+      "h": 22
+    },
+    {
+      "x": 2900,
+      "h": 36
+    },
+    {
+      "x": 3220,
+      "h": 22
+    },
+    {
+      "x": 3400,
+      "h": 50
+    },
+    {
+      "x": 3640,
+      "h": 22
+    },
+    {
+      "x": 3900,
+      "h": 46
+    },
+    {
+      "x": 4200,
+      "h": 22
+    },
+    {
+      "x": 4420,
+      "h": 36
+    },
+    {
+      "x": 4800,
+      "h": 22
+    },
+    {
+      "x": 5000,
+      "h": 40
+    },
+    {
+      "x": 5200,
+      "h": 22
+    }
+  ],
+  "secrets": [
+    {
+      "x": 2360,
+      "h": 112,
+      "kind": "sushi",
+      "note": "C・物資架頂"
+    }
+  ],
+  "breakables": [
+    {
+      "x": 640,
+      "kind": "pot",
+      "loot": "coin"
+    },
+    {
+      "x": 1300,
+      "kind": "pot",
+      "loot": "food"
+    },
+    {
+      "x": 2100,
+      "kind": "pot",
+      "loot": "power"
+    },
+    {
+      "x": 2700,
+      "kind": "pot",
+      "loot": "coin"
+    },
+    {
+      "x": 3240,
+      "kind": "pot",
+      "loot": "power"
+    },
+    {
+      "x": 3600,
+      "kind": "pot",
+      "loot": "food"
+    },
+    {
+      "x": 4460,
+      "kind": "pot",
+      "loot": "food"
+    }
+  ],
+  "safeZones": [
+    {
+      "x0": 2400,
+      "x1": 3100,
+      "note": "C・重逢＋送鏡＋等待，冇敵"
+    }
+  ],
+  "enemies": [
+    {
+      "x": 280,
+      "species": "s9guard",
+      "unlockX": 80,
+      "note": "A・新敵：獄卒兵（單獨教）"
+    },
+    {
+      "x": 560,
+      "species": "s8drone",
+      "unlockX": 300,
+      "note": "A・熟敵"
+    },
+    {
+      "x": 780,
+      "species": "s9lockbot",
+      "unlockX": 500,
+      "note": "A・新敵：鎖匠機械人",
+      "mid": true
+    },
+    {
+      "x": 1000,
+      "species": "s9guard",
+      "unlockX": 720,
+      "note": "B・閘前"
+    },
+    {
+      "x": 1260,
+      "species": "s8tube",
+      "unlockX": 980,
+      "note": "B・閘之間"
+    },
+    {
+      "x": 1500,
+      "species": "s7shield",
+      "unlockX": 1200,
+      "note": "B"
+    },
+    {
+      "x": 1700,
+      "species": "s9guard",
+      "unlockX": 1420,
+      "note": "B・掣旁"
+    },
+    {
+      "x": 1820,
+      "species": "robotarm",
+      "unlockX": 1440,
+      "note": "B・掣後（unlock ≤ x−380）"
+    },
+    {
+      "x": 1900,
+      "species": "s8drone",
+      "unlockX": 1600,
+      "note": "B・出口"
+    },
+    {
+      "x": 2050,
+      "species": "s9guard",
+      "unlockX": 1760,
+      "note": "C・入口"
+    },
+    {
+      "x": 2150,
+      "species": "s8tube",
+      "unlockX": 1850,
+      "note": "C"
+    },
+    {
+      "x": 2240,
+      "species": "s8drone",
+      "unlockX": 1960,
+      "note": "C・物資架"
+    },
+    {
+      "x": 3300,
+      "species": "s9guard",
+      "unlockX": 3000,
+      "note": "D・入口"
+    },
+    {
+      "x": 3420,
+      "species": "s8tube",
+      "unlockX": 3160,
+      "note": "D"
+    },
+    {
+      "x": 3620,
+      "species": "s9lockbot",
+      "unlockX": 3320,
+      "note": "D・中型 2",
+      "mid": true
+    },
+    {
+      "x": 3820,
+      "species": "s7charge",
+      "unlockX": 3540,
+      "note": "D・閘後"
+    },
+    {
+      "x": 3920,
+      "species": "s7shield",
+      "unlockX": 3660,
+      "note": "D・坑前"
+    },
+    {
+      "x": 4160,
+      "species": "s8drone",
+      "unlockX": 3800,
+      "note": "D・貨板上空"
+    },
+    {
+      "x": 4260,
+      "species": "s9guard",
+      "unlockX": 3980,
+      "note": "D"
+    },
+    {
+      "x": 4400,
+      "species": "s8tube",
+      "unlockX": 4100,
+      "note": "D・Boss 前"
+    }
+  ],
+  "boss": {
+    "kind": "warden",
+    "triggerX": 4680,
+    "arenaX0": 4640,
+    "arenaX1": 5280
+  },
+  "warden": {
+    "hp": 57,
+    "phase2At": 0.66,
+    "phase3Below": 0.33,
+    "slamWarnMs": 1000,
+    "keyThrowWarnMs": 1000,
+    "gateDropWarnMs": 1000,
+    "keysDroppedMs": 2000,
+    "summonPerCycle": 1,
+    "summonMaxAlive": 2,
+    "weakBase": 3,
+    "capWeak": 5,
+    "capNormal": 2
+  },
+  "stallX": 1500,
+  "stall": "claw",
+  "transition": {
+    "from": 8,
+    "kind": "pour",
+    "skin": "coffee"
+  }
+}

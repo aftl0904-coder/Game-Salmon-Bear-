@@ -1,12 +1,162 @@
 [
-  { "id": 1, "title": "大佬醒覺", "description": "枯咗嘅綠化牆前望住窗外商場，眼神動搖", "image": "/art/story/ending-c2-01.png" },
-  { "id": 2, "title": "宣佈改變", "description": "記者會，宣佈「森林共生式發展」計劃取代拆遷", "image": "/art/story/ending-c2-02.png" },
-  { "id": 3, "title": "動工重建", "description": "低碳建材重建，天台裝太陽能板", "image": "/art/story/ending-c2-03.png" },
-  { "id": 4, "title": "森林回復", "description": "幼苗種返，蜜蜂傳粉，畫面由枯轉青", "image": "/art/story/ending-c2-04.png" },
-  { "id": 5, "title": "動物回歸", "description": "各種森林動物包括獲釋守護者返嚟", "image": "/art/story/ending-c2-05.png" },
-  { "id": 6, "title": "社區共融", "description": "商場同森林並存，社區市集", "image": "/art/story/ending-c2-06.png" },
-  { "id": 7, "title": "朋友大重聚", "description": "救返嘅朋友大合照／大野餐", "image": "/art/story/ending-c2-07.png" },
-  { "id": 8, "title": "噗噗與守護者", "description": "親人同噗噗安定落嚟", "image": "/art/story/ending-c2-08.png" },
-  { "id": 9, "title": "主角靜態一刻", "description": "倫寶／琪寶寶望夕陽下森林", "image": "/art/story/ending-c2-09.png" },
-  { "id": 10, "title": "全景大合照", "description": "主角、朋友、噗噗、守護者，甚至大佬同框", "image": "/art/story/ending-c2-10.png" }
+  {
+    "id": 1,
+    "title": "大佬醒覺",
+    "description": "Ken喺枯咗嘅植物牆前，手揸未刪改嘅紀錄；後面Leon帶大家撤離。",
+    "image": "/art/story/ending-c2-01.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "門開咗，簽過嘅紀錄亦留低。"
+      },
+      {
+        "say": "narr",
+        "text": "講過嘅承諾，要逐項做返。"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "宣佈改變",
+    "description": "記者會公開「森林共生式發展」，取代拆遷；原始紀錄一併公開。Ken冇台詞。",
+    "image": "/art/story/ending-c2-02.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "記者會公開修復安排。"
+      },
+      {
+        "say": "narr",
+        "text": "新計劃，先畫低要留住嘅森林。"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "動工重建",
+    "description": "低碳建材重建，天台裝太陽能板；工人分段修通水道；研究員喺現場核對原稿。",
+    "image": "/art/story/ending-c2-03.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "用得返嘅材料，留返用。"
+      },
+      {
+        "say": "narr",
+        "text": "水道先修通，工程再分段做。"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "森林回復",
+    "description": "幼苗種返，蜜蜂傳粉，溪水流返；仍有修復圍欄，唔係一夜回復。",
+    "image": "/art/story/ending-c2-04.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "隔咗一段日子，溪水清返。"
+      },
+      {
+        "say": "narr",
+        "text": "新芽慢慢長，圍欄仲未拆晒。"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "動物回歸",
+    "description": "籠門開住，照顧者退後；大熊同各種動物按自己步伐返林邊；獄卒、馴獸師喺遠處照顧。",
+    "image": "/art/story/ending-c2-05.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "籠門開住，照顧者退後等。"
+      },
+      {
+        "say": "narr",
+        "text": "行快行慢，由佢哋自己揀。"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "社區共融",
+    "description": "商場照常營業，旁邊有社區市集；步道繞過樹根同溪流。",
+    "image": "/art/story/ending-c2-06.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "步道繞過樹根，商場照常開門。"
+      },
+      {
+        "say": "narr",
+        "text": "人同動物，各有地方行。"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "朋友大重聚",
+    "description": "十一個朋友大野餐；噗噗抱住蜜罐行過野餐布，留低幾個蜜腳印；大pat熊安穩坐低。",
+    "image": "/art/story/ending-c2-07.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "大pat熊：「齊人就好，坐耐啲啦。」"
+      },
+      {
+        "say": "narr",
+        "text": "野餐布上，又多咗幾個蜜腳印。"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "噗噗與守護者",
+    "description": "大熊坐近朋友；噗噗戴住護目鏡，將蜜罐推近大熊攤開嘅掌。",
+    "image": "/art/story/ending-c2-08.png",
+    "lines": [
+      {
+        "say": "pupu",
+        "text": "噗！"
+      },
+      {
+        "say": "narr",
+        "text": "大熊攤開掌，噗噗將蜜罐推近。"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "主角靜態一刻",
+    "description": "倫寶同琪寶寶坐喺野餐旁矮坡，望住夕陽下嘅森林；朋友喺唔遠處。",
+    "image": "/art/story/ending-c2-09.png",
+    "lines": [
+      {
+        "say": "kibobo",
+        "text": "返去唔使趕，陪我坐多陣。"
+      },
+      {
+        "say": "lunbo",
+        "text": "嗯，坐到你想走。"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "title": "全景大合照",
+    "description": "主角、十一個朋友、噗噗同大熊同框；Ken同參與修復嘅人企喺後面，唔搶位。",
+    "image": "/art/story/ending-c2-10.png",
+    "lines": [
+      {
+        "say": "narr",
+        "text": "影相前，噗噗終於放低蜜罐。"
+      },
+      {
+        "say": "narr",
+        "text": "影完，佢第一個伸手攞返。"
+      }
+    ]
+  }
 ]
