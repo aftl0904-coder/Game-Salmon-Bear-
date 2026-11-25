@@ -1,0 +1,14 @@
+{
+  "frameWidth": 24,
+  "frameHeight": 24,
+  "columns": 2,
+  "anims": {
+    "wobble": {
+      "label": "搖晃",
+      "start": 0,
+      "count": 2,
+      "fps": 5,
+      "loop": true
+    }
+  }
+}

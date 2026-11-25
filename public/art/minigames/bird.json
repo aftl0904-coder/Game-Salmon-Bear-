@@ -1,0 +1,14 @@
+{
+  "frameWidth": 24,
+  "frameHeight": 20,
+  "columns": 2,
+  "anims": {
+    "flap": {
+      "label": "拍翼",
+      "start": 0,
+      "count": 2,
+      "fps": 6,
+      "loop": true
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "frameWidth": 28,
+  "frameHeight": 28,
+  "columns": 3,
+  "anims": {
+    "puff": {
+      "label": "冒煙",
+      "start": 0,
+      "count": 3,
+      "fps": 6,
+      "loop": true
+    }
+  }
+}

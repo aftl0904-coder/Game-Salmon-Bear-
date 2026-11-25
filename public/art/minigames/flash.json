@@ -1,0 +1,14 @@
+{
+  "frameWidth": 32,
+  "frameHeight": 32,
+  "columns": 2,
+  "anims": {
+    "burst": {
+      "label": "閃光",
+      "start": 0,
+      "count": 2,
+      "fps": 8,
+      "loop": false
+    }
+  }
+}

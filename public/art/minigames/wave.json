@@ -1,0 +1,14 @@
+{
+  "frameWidth": 48,
+  "frameHeight": 24,
+  "columns": 3,
+  "anims": {
+    "crash": {
+      "label": "大浪",
+      "start": 0,
+      "count": 3,
+      "fps": 5,
+      "loop": true
+    }
+  }
+}
