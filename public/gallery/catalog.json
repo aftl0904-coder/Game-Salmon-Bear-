@@ -1176,7 +1176,8 @@
                   "loop": false
                 }
               },
-              "zoom": 2.9
+              "fitContent": true,
+              "fitPad": 0.18
             },
             {
               "id": "robotarm",
@@ -1250,7 +1251,8 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "badge": "/art/stage7/enemy-whip.png"
             },
             {
               "id": "s7hop",
@@ -1294,7 +1296,8 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "badge": "/art/stage7/enemy-cagecart.png"
             },
             {
               "id": "s7shield",
@@ -1338,7 +1341,8 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "badge": "/art/stage7/enemy-gate.png"
             },
             {
               "id": "s7can",
@@ -1382,7 +1386,8 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "badge": "/art/stage7/enemy-feeder.png"
             }
           ]
         },
@@ -1447,7 +1452,8 @@
                   "loop": false
                 }
               },
-              "zoom": 3.1
+              "fitContent": true,
+              "fitPad": 0.18
             },
             {
               "id": "s8tube",
@@ -1506,7 +1512,8 @@
                   "loop": false
                 }
               },
-              "zoom": 3.3
+              "fitContent": true,
+              "fitPad": 0.18
             },
             {
               "id": "s8cabinet",
@@ -1601,7 +1608,8 @@
                   ]
                 }
               },
-              "zoom": 2.5
+              "fitContent": true,
+              "fitPad": 0.18
             }
           ]
         },
@@ -1702,7 +1710,8 @@
                   ]
                 }
               },
-              "zoom": 3.3
+              "fitContent": true,
+              "fitPad": 0.18
             },
             {
               "id": "s9lockbot",
@@ -1797,7 +1806,8 @@
                   ]
                 }
               },
-              "zoom": 2.2
+              "fitContent": true,
+              "fitPad": 0.18
             }
           ]
         },
@@ -1897,7 +1907,8 @@
                   ]
                 }
               },
-              "zoom": 3.1
+              "fitContent": true,
+              "fitPad": 0.18
             }
           ]
         }
@@ -2367,7 +2378,8 @@
               "fps": 7,
               "loop": false
             }
-          }
+          },
+          "badge": "/art/stage7/enemy-whip.png"
         },
         {
           "id": "researcher",

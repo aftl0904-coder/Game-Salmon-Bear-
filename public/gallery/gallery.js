@@ -202,26 +202,95 @@ function frameIndex(anim, tick) {
   return frames ? frames[i] : anim.start + i
 }
 
+/** Opaque pixel bbox inside one sheet frame (for fitContent). */
+function frameContentBox(img, sx, sy, fw, fh) {
+  const c = document.createElement('canvas')
+  c.width = fw
+  c.height = fh
+  const x = c.getContext('2d')
+  x.drawImage(img, sx, sy, fw, fh, 0, 0, fw, fh)
+  const d = x.getImageData(0, 0, fw, fh).data
+  let minX = fw
+  let minY = fh
+  let maxX = 0
+  let maxY = 0
+  let found = false
+  for (let y = 0; y < fh; y++) {
+    for (let px = 0; px < fw; px++) {
+      if (d[(y * fw + px) * 4 + 3] > 8) {
+        found = true
+        if (px < minX) minX = px
+        if (y < minY) minY = y
+        if (px > maxX) maxX = px
+        if (y > maxY) maxY = y
+      }
+    }
+  }
+  return found ? { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 } : { x: 0, y: 0, w: fw, h: fh }
+}
+
 function drawFrame(ctx, img, item, frame, fitW, fitH) {
   const fw = item.frameWidth
   const fh = item.frameHeight
   const cols = item.columns || Math.max(1, Math.floor(img.width / fw))
   const sx = (frame % cols) * fw
   const sy = Math.floor(frame / cols) * fh
-  // Optional zoom: large-pad Manus sheets (c2 / s8–s10) need a boost so the
-  // character fills the card closer to stage 1–4 enemies.
-  const zoom = typeof item.zoom === 'number' && item.zoom > 0 ? item.zoom : 1
-  const scale = Math.min(fitW / fw, fitH / fh) * zoom
-  const dw = Math.max(1, Math.floor(fw * scale))
-  const dh = Math.max(1, Math.floor(fh * scale))
   ctx.clearRect(0, 0, fitW, fitH)
   ctx.imageSmoothingEnabled = false
   ctx.save()
   ctx.beginPath()
   ctx.rect(0, 0, fitW, fitH)
   ctx.clip()
-  ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+
+  if (item.fitContent) {
+    // Scale by opaque content so large-pad sheets fill the card without cropping limbs.
+    const box = frameContentBox(img, sx, sy, fw, fh)
+    const pad = typeof item.fitPad === 'number' ? item.fitPad : 0.1
+    const availW = fitW * (1 - 2 * pad)
+    const availH = fitH * (1 - 2 * pad)
+    const scale = Math.min(availW / box.w, availH / box.h)
+    const dw = Math.max(1, Math.floor(box.w * scale))
+    const dh = Math.max(1, Math.floor(box.h * scale))
+    ctx.drawImage(
+      img,
+      sx + box.x,
+      sy + box.y,
+      box.w,
+      box.h,
+      Math.floor((fitW - dw) / 2),
+      Math.floor((fitH - dh) / 2),
+      dw,
+      dh,
+    )
+  } else {
+    // Optional zoom (keep ≤1 unless you accept clipping). Prefer fitContent for Manus pads.
+    const zoom = typeof item.zoom === 'number' && item.zoom > 0 ? item.zoom : 1
+    const scale = Math.min(fitW / fw, fitH / fh) * zoom
+    const dw = Math.max(1, Math.floor(fw * scale))
+    const dh = Math.max(1, Math.floor(fh * scale))
+    ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+  }
   ctx.restore()
+}
+
+/** In-game stage-7 / trainer badges drawn on top so lookalikes stay distinct. */
+async function paintBadge(ctx, item, fitW, fitH) {
+  if (!item.badge) return
+  const badge = await loadSheet(item.badge)
+  if (!badge) return
+  ctx.imageSmoothingEnabled = false
+  // Large enough to read; dark plate so yellow body art does not wash out the badge.
+  const bw = Math.max(28, Math.floor(fitW * 0.42))
+  const bh = Math.max(28, Math.floor((bw * badge.height) / badge.width))
+  const pad = 3
+  const bx = fitW - bw - pad
+  const by = pad
+  ctx.fillStyle = 'rgba(12, 10, 18, 0.72)'
+  ctx.fillRect(bx - 2, by - 2, bw + 4, bh + 4)
+  ctx.strokeStyle = 'rgba(200, 144, 42, 0.9)'
+  ctx.lineWidth = 1
+  ctx.strokeRect(bx - 2.5, by - 2.5, bw + 5, bh + 5)
+  ctx.drawImage(badge, bx, by, bw, bh)
 }
 
 function firstFrame(item) {
@@ -259,6 +328,7 @@ async function paintCardCanvas(canvas, item, unlocked) {
   } else {
     drawFrame(ctx, img, item, frame, w, h)
   }
+  await paintBadge(ctx, item, w, h)
   if (!unlocked) {
     // Keep alpha so the sprite outline reads as a silhouette against the card.
     const id = ctx.getImageData(0, 0, w, h)
@@ -471,12 +541,14 @@ async function paintModalFrame() {
     const dw = img.width * scale
     const dh = img.height * scale
     ctx.drawImage(img, (canvas.width - dw) / 2, (canvas.height - dh) / 2, dw, dh)
+    await paintBadge(ctx, item, canvas.width, canvas.height)
     return
   }
   const name = state.modalAnimNames[state.modalAnim]
   const anim = item.anims[name]
   const frame = frameIndex(anim, performance.now() - (state.modalT0 || 0))
   drawFrame(ctx, img, item, frame, canvas.width, canvas.height)
+  await paintBadge(ctx, item, canvas.width, canvas.height)
 }
 
 function closeModal() {
