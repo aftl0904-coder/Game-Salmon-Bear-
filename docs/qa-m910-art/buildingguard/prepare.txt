@@ -1,0 +1,1 @@
+{"walk_target_height": 48, "walk_scale": 0.0679886685552408, "walk_logical_sizes": [[35, 48], [27, 48], [37, 47], [27, 47]], "output_sha256": "9ab4a33cbd2ceb4561fc0ddb2d234e4e95b39c37385607d75cde597c31ccb2ef"}
