@@ -1,7 +1,10 @@
 import { galleryMarkFriend, galleryMarkStageClear, galleryMarkStageEnter, galleryMarkC2Ending } from './galleryUnlock'
+import { c3Enabled } from './c2Gate'
 
 /** Battery-save style progress: the furthest stage reached (stored in this browser). */
 const KEY = 'sake-kuma-progress-v1'
+const RUN_KEY = 'sake-kuma-run-v1'
+const C3_MIGRATE_KEY = 'sake-kuma-c3-migrate-v1'
 
 export function maxStage(): number {
   try {
@@ -21,6 +24,43 @@ export function unlockStage(n: number) {
     if (n > 1) galleryMarkStageClear(n - 1)
   } catch {
     /* private mode — progress just isn't kept */
+  }
+}
+
+/**
+ * release-1: old saves that stopped at stage-7「待續」can continue into stage 8
+ * once c3 is on. Safe to call every boot; runs once per browser when eligible.
+ */
+export function migrateC3Progress() {
+  if (!c3Enabled()) return
+  try {
+    if (localStorage.getItem(C3_MIGRATE_KEY) === '1') {
+      // Still ensure unlock if they somehow regressed.
+      if (maxStage() >= 7) unlockStage(8)
+      return
+    }
+    let eligible = maxStage() >= 7
+    try {
+      const raw = JSON.parse(localStorage.getItem(RUN_KEY) ?? 'null')
+      if (raw && typeof raw === 'object') {
+        const next = Number((raw as { nextStage?: number }).nextStage)
+        const last = Number((raw as { lastCleared?: number }).lastCleared)
+        if (next >= 8 || last >= 7) eligible = true
+        // Bump run pointer so menu lands on stage 8 when they were parked at 待續.
+        if (last >= 7 && (!Number.isFinite(next) || next < 8)) {
+          ;(raw as { nextStage: number }).nextStage = 8
+          localStorage.setItem(RUN_KEY, JSON.stringify(raw))
+        }
+      }
+    } catch {
+      /* ignore run parse */
+    }
+    if (eligible) {
+      unlockStage(8)
+      localStorage.setItem(C3_MIGRATE_KEY, '1')
+    }
+  } catch {
+    /* private mode */
   }
 }
 
