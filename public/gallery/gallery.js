@@ -216,23 +216,33 @@ function drawFrame(ctx, img, item, frame, fitW, fitH) {
   ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
 }
 
+function firstFrame(item) {
+  const anim = (item.anims && (item.anims.idle || Object.values(item.anims)[0])) || null
+  if (!anim) return 0
+  if (anim.frames && anim.frames.length) return anim.frames[0]
+  return anim.start ?? 0
+}
+
+/** Paint card art; locked heroes/enemies use frame-0 silhouette (not a black box). */
 async function paintCardCanvas(canvas, item, unlocked) {
   const img = await loadSheet(item.sheet)
   const ctx = canvas.getContext('2d')
   const w = (canvas.width = 160)
   const h = (canvas.height = 120)
+  ctx.clearRect(0, 0, w, h)
   if (!img) {
-    ctx.fillStyle = '#1a1420'
-    ctx.fillRect(0, 0, w, h)
-    ctx.fillStyle = '#ffe9a8'
-    ctx.font = '14px sans-serif'
-    ctx.fillText('?', 72, 66)
+    if (unlocked) {
+      ctx.fillStyle = '#1a1420'
+      ctx.fillRect(0, 0, w, h)
+      ctx.fillStyle = '#ffe9a8'
+      ctx.font = '14px sans-serif'
+      ctx.fillText('?', 72, 66)
+    }
     return
   }
-  const anim = item.anims.idle || Object.values(item.anims)[0]
-  const frame = frameIndex(anim, performance.now())
+  const anim = item.anims.idle || Object.values(item.anims || {})[0]
+  const frame = unlocked ? frameIndex(anim, performance.now()) : firstFrame(item)
   if (item.still) {
-    ctx.clearRect(0, 0, w, h)
     ctx.imageSmoothingEnabled = false
     const scale = Math.min(w / img.width, h / img.height)
     const dw = img.width * scale
@@ -242,14 +252,17 @@ async function paintCardCanvas(canvas, item, unlocked) {
     drawFrame(ctx, img, item, frame, w, h)
   }
   if (!unlocked) {
+    // Keep alpha so the sprite outline reads as a silhouette against the card.
     const id = ctx.getImageData(0, 0, w, h)
     const d = id.data
     for (let i = 0; i < d.length; i += 4) {
-      if (d[i + 3] < 8) continue
-      const v = 0
-      d[i] = v
-      d[i + 1] = v
-      d[i + 2] = v
+      if (d[i + 3] < 8) {
+        d[i + 3] = 0
+        continue
+      }
+      d[i] = 0
+      d[i + 1] = 0
+      d[i + 2] = 0
       d[i + 3] = 255
     }
     ctx.putImageData(id, 0, 0)

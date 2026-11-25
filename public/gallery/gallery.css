@@ -179,6 +179,12 @@ nav.top a[aria-current="page"] {
   background: #1a1420;
   border: 2px solid #5a3a14;
 }
+/* Locked hero/enemy: JS paints a transparent silhouette — no CSS black box. */
+.card.locked canvas,
+.card.locked .still {
+  background: transparent;
+  filter: none;
+}
 .card .name {
   margin-top: 6px;
   font-size: 13px;
@@ -189,10 +195,6 @@ nav.top a[aria-current="page"] {
   color: var(--muted);
   margin-top: 2px;
   min-height: 1.4em;
-}
-.card.locked canvas,
-.card.locked .still {
-  filter: brightness(0);
 }
 .card.locked .name { letter-spacing: 0.2em; }
 .card.locked.boss-like {
