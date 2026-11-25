@@ -26,6 +26,24 @@
       .making-card img { display:block; width:100%; height:auto; }
       .making-card figcaption { padding:10px 12px 14px; font-size:14px; color:#3a4436; }
       .making-slot { min-height:48px; border:2px dashed #c5bda8; border-radius:12px; display:grid; place-items:center; color:#8a8374; font-size:13px; margin-top:12px; }
+      .credits {
+        margin-top: 20px;
+        padding: 14px 16px 16px;
+        background: #fff;
+        border: 1px solid #d9d2c4;
+        border-radius: 12px;
+        font-size: 14px;
+        color: #3a4436;
+      }
+      .credits h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+        color: var(--green);
+        letter-spacing: 0.04em;
+      }
+      .credits .tagline { margin: 0 0 10px; color: #5a6456; }
+      .credits ul { margin: 0; padding-left: 1.15em; }
+      .credits li { margin: 4px 0; }
     </style>
   </head>
   <body>
@@ -65,6 +83,17 @@
         </div>
         <!-- Extra making photos can be appended inside #making-photos -->
         <div class="making-slot" aria-hidden="true">之後仲可以再加相</div>
+        <aside class="credits" aria-labelledby="credits-title">
+          <h3 id="credits-title">幕後團隊</h3>
+          <p class="tagline">一個人，四個AI，一份禮物。</p>
+          <ul>
+            <li>Claude：負責諗、核對、催交貨。</li>
+            <li>Cursor：一晚寫十個PR。</li>
+            <li>Manus：熊仔畫咗好多版。</li>
+            <li>Copilot：成日估錯，俾人捉返。</li>
+            <li>老闆Alan：負責拍板同買飯。</li>
+          </ul>
+        </aside>
       </section>
     </main>
   </body>

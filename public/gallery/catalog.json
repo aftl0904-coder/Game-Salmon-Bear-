@@ -8,7 +8,7 @@
         {
           "id": "lunbo",
           "name": "倫寶",
-          "blurb": "鮭魚槍遠攻，動作偏慢。",
+          "blurb": "用槍，遠距離慢慢瞄準。",
           "kind": "hero",
           "unlock": {
             "type": "always"
@@ -100,7 +100,7 @@
         {
           "id": "kibobo",
           "name": "琪寶寶",
-          "blurb": "近身劍擊，移動較快。",
+          "blurb": "用劍，埋身快攻，背住風扇。",
           "kind": "hero",
           "unlock": {
             "type": "always"
@@ -213,7 +213,7 @@
         {
           "id": "pupu",
           "name": "噗噗",
-          "blurb": "跟住琪寶寶，受傷先反擊。",
+          "blurb": "最鍾意蜂蜜，同大家一齊玩。",
           "kind": "hero",
           "unlock": {
             "type": "always"
@@ -270,7 +270,7 @@
         {
           "id": "huihui",
           "name": "熊仔",
-          "blurb": "你哋坐，我幫大家斟水。",
+          "blurb": "貼心，成日幫大家留位。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -294,7 +294,7 @@
         {
           "id": "guard",
           "name": "英國熊",
-          "blurb": "今日任務：陪大家食飽！",
+          "blurb": "守規矩，講嘢似軍人。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -318,7 +318,7 @@
         {
           "id": "denim",
           "name": "小熊仔",
-          "blurb": "帶漏咗叉，好彩冇漏咗你哋。",
+          "blurb": "大頭蝦，成日勾住嘢。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -342,7 +342,7 @@
         {
           "id": "brownie",
           "name": "招積熊",
-          "blurb": "多整咗份啫，你食啦。",
+          "blurb": "口硬心軟，嘴硬但幫手。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -364,33 +364,9 @@
           "still": true
         },
         {
-          "id": "snowcat",
-          "name": "北極熊",
-          "blurb": "凍飲留俾我，暖位留俾你。",
-          "kind": "friend",
-          "unlock": {
-            "type": "friend",
-            "friendId": "snowcat"
-          },
-          "sheet": "/art/friends/snowcat.png",
-          "frameWidth": 72,
-          "frameHeight": 72,
-          "columns": 1,
-          "anims": {
-            "idle": {
-              "label": "待機",
-              "start": 0,
-              "count": 1,
-              "fps": 1,
-              "loop": true
-            }
-          },
-          "still": true
-        },
-        {
           "id": "shiba",
           "name": "柴柴",
-          "blurb": "天黑都唔驚，你哋喺度嘛。",
+          "blurb": "忠心，但有少少怕黑。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -412,9 +388,33 @@
           "still": true
         },
         {
+          "id": "snowcat",
+          "name": "北極熊",
+          "blurb": "怕熱，最鍾意浸溫泉。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "snowcat"
+          },
+          "sheet": "/art/friends/snowcat.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
           "id": "ginger",
           "name": "薑餅",
-          "blurb": "大家慢慢食，唔好食埋我呀。",
+          "blurb": "緊張大師，驚被人食。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -438,7 +438,7 @@
         {
           "id": "fleecy",
           "name": "大pat熊",
-          "blurb": "齊人就好，坐耐啲啦。",
+          "blurb": "話唔多，一講就令人安心。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -460,9 +460,33 @@
           "still": true
         },
         {
+          "id": "kuro",
+          "name": "喵仔",
+          "blurb": "傲嬌貓，但係熊群一份子。",
+          "kind": "friend",
+          "unlock": {
+            "type": "friend",
+            "friendId": "kuro"
+          },
+          "sheet": "/art/friends/kuro.png",
+          "frameWidth": 72,
+          "frameHeight": 72,
+          "columns": 1,
+          "anims": {
+            "idle": {
+              "label": "待機",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "still": true
+        },
+        {
           "id": "gnome",
           "name": "聖誕伯伯",
-          "blurb": "今年願望？下次又齊人囉！",
+          "blurb": "搞笑，自稱係份禮物。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
@@ -486,37 +510,13 @@
         {
           "id": "tigercub",
           "name": "虎仔",
-          "blurb": "我守住啲餅，你哋放心食。",
+          "blurb": "細膽扮勇，其實好乖。",
           "kind": "friend",
           "unlock": {
             "type": "friend",
             "friendId": "tigercub"
           },
           "sheet": "/art/friends/tigercub.png",
-          "frameWidth": 72,
-          "frameHeight": 72,
-          "columns": 1,
-          "anims": {
-            "idle": {
-              "label": "待機",
-              "start": 0,
-              "count": 1,
-              "fps": 1,
-              "loop": true
-            }
-          },
-          "still": true
-        },
-        {
-          "id": "kuro",
-          "name": "喵仔",
-          "blurb": "隔籬冇人？咁我坐啦。",
-          "kind": "friend",
-          "unlock": {
-            "type": "friend",
-            "friendId": "kuro"
-          },
-          "sheet": "/art/friends/kuro.png",
           "frameWidth": 72,
           "frameHeight": 72,
           "columns": 1,
@@ -543,8 +543,8 @@
           "items": [
             {
               "id": "fish",
-              "name": "醃魚雜兵",
-              "blurb": "巡邏追擊嘅魚傀儡。",
+              "name": "刺刺魚",
+              "blurb": "見到「！」就準備避。",
               "stage": 1,
               "unlock": {
                 "type": "stageClear",
@@ -601,8 +601,8 @@
             },
             {
               "id": "barrel",
-              "name": "木桶武者",
-              "blurb": "Hop 同 Lunge 攻擊。",
+              "name": "疾風桶",
+              "blurb": "會跳，出手好快。",
               "stage": 1,
               "unlock": {
                 "type": "stageClear",
@@ -652,8 +652,8 @@
             },
             {
               "id": "elephant",
-              "name": "大象傀儡",
-              "blurb": "體型大、衝撞力強。",
+              "name": "霸鼻象",
+              "blurb": "大隻耐打，撞完會硬一陣。",
               "stage": 1,
               "unlock": {
                 "type": "stageClear",
@@ -717,7 +717,7 @@
             {
               "id": "bee",
               "name": "蜂兵",
-              "blurb": "飛近再螫人。",
+              "blurb": "喺天上飛，等佢落嚟打。",
               "stage": 2,
               "unlock": {
                 "type": "stageClear",
@@ -774,8 +774,8 @@
             },
             {
               "id": "squirrel",
-              "name": "松鼠投手",
-              "blurb": "拋橡果遠攻。",
+              "name": "蜜松鼠",
+              "blurb": "成群撲埋嚟，退後打。",
               "stage": 2,
               "unlock": {
                 "type": "stageClear",
@@ -815,36 +815,6 @@
                   "loop": false
                 }
               }
-            },
-            {
-              "id": "minibee",
-              "name": "小蜂",
-              "blurb": "小型飛行雜兵。",
-              "stage": 2,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 2
-              },
-              "sheet": "/art/anim/minibee.png",
-              "frameWidth": 76,
-              "frameHeight": 50,
-              "columns": 6,
-              "anims": {
-                "fly": {
-                  "label": "飛行",
-                  "start": 0,
-                  "count": 3,
-                  "fps": 14,
-                  "loop": true
-                },
-                "die": {
-                  "label": "倒地",
-                  "start": 3,
-                  "count": 3,
-                  "fps": 10,
-                  "loop": false
-                }
-              }
             }
           ]
         },
@@ -853,60 +823,9 @@
           "label": "第3關",
           "items": [
             {
-              "id": "lobster",
-              "name": "龍蝦守衛",
-              "blurb": "鉗擊近身防守。",
-              "stage": 3,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 3
-              },
-              "sheet": "/art/anim/lobster.png",
-              "frameWidth": 284,
-              "frameHeight": 142,
-              "columns": 14,
-              "anims": {
-                "walk": {
-                  "label": "行走",
-                  "start": 0,
-                  "count": 4,
-                  "fps": 6,
-                  "loop": true
-                },
-                "block": {
-                  "label": "block",
-                  "start": 4,
-                  "count": 3,
-                  "fps": 8,
-                  "loop": false
-                },
-                "turn": {
-                  "label": "turn",
-                  "start": 7,
-                  "count": 2,
-                  "fps": 8,
-                  "loop": true
-                },
-                "hit": {
-                  "label": "受傷",
-                  "start": 9,
-                  "count": 2,
-                  "fps": 12,
-                  "loop": false
-                },
-                "die": {
-                  "label": "倒地",
-                  "start": 11,
-                  "count": 4,
-                  "fps": 10,
-                  "loop": false
-                }
-              }
-            },
-            {
               "id": "mirrorshade",
               "name": "鏡影",
-              "blurb": "分身擾亂視線。",
+              "blurb": "有倒影嗰隻先係真身。",
               "stage": 3,
               "unlock": {
                 "type": "stageClear",
@@ -955,9 +874,60 @@
               }
             },
             {
+              "id": "lobster",
+              "name": "龍蝦守衛",
+              "blurb": "跳過頭打背脊。",
+              "stage": 3,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 3
+              },
+              "sheet": "/art/anim/lobster.png",
+              "frameWidth": 284,
+              "frameHeight": 142,
+              "columns": 14,
+              "anims": {
+                "walk": {
+                  "label": "行走",
+                  "start": 0,
+                  "count": 4,
+                  "fps": 6,
+                  "loop": true
+                },
+                "block": {
+                  "label": "block",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 8,
+                  "loop": false
+                },
+                "turn": {
+                  "label": "turn",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 8,
+                  "loop": true
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 9,
+                  "count": 2,
+                  "fps": 12,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 11,
+                  "count": 4,
+                  "fps": 10,
+                  "loop": false
+                }
+              }
+            },
+            {
               "id": "stallkeeper",
-              "name": "檔主",
-              "blurb": "攤檔出刀遠攻。",
+              "name": "攤主",
+              "blurb": "飛刀分高低，跳或者蹲。",
               "stage": 3,
               "unlock": {
                 "type": "stageClear",
@@ -1013,8 +983,8 @@
           "items": [
             {
               "id": "honeyzombie",
-              "name": "蜜僵",
-              "blurb": "慢行近身抓人。",
+              "name": "蜜殭",
+              "blurb": "慢慢行，但成群出現。",
               "stage": 4,
               "unlock": {
                 "type": "stageClear",
@@ -1058,7 +1028,7 @@
             {
               "id": "taximonster",
               "name": "的士怪",
-              "blurb": "衝撞過馬路。",
+              "blurb": "車頭燈一閃就衝過嚟。",
               "stage": 4,
               "unlock": {
                 "type": "stageClear",
@@ -1108,8 +1078,8 @@
             },
             {
               "id": "clockpunch",
-              "name": "時鐘拳",
-              "blurb": "定時揮拳砸地。",
+              "name": "打卡鐘",
+              "blurb": "準時開工，準時打人。",
               "stage": 4,
               "unlock": {
                 "type": "stageClear",
@@ -1165,8 +1135,8 @@
           "items": [
             {
               "id": "c2guard",
-              "name": "保安蜜僵",
-              "blurb": "商場巡邏保安。",
+              "name": "保安蜜殭",
+              "blurb": "商場巡邏，見人就追。",
               "stage": 6,
               "unlock": {
                 "type": "stageClear",
@@ -1208,13 +1178,43 @@
               }
             },
             {
-              "id": "s7charge",
-              "name": "衝鋒蜜僵",
-              "blurb": "預警後直線衝刺。",
+              "id": "robotarm",
               "stage": 6,
               "unlock": {
                 "type": "stageClear",
                 "stage": 6
+              },
+              "sheet": "/art/props/s6-robotarm.png",
+              "frameWidth": 64,
+              "frameHeight": 64,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true,
+              "name": "機械臂",
+              "blurb": "瞄準之後先出手。"
+            }
+          ]
+        },
+        {
+          "stage": 7,
+          "label": "第7關",
+          "items": [
+            {
+              "id": "s7charge",
+              "name": "衝刺蜜殭",
+              "blurb": "預警之後直衝過嚟。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
               },
               "sheet": "/art/anim/honeyzombie.png",
               "frameWidth": 232,
@@ -1253,12 +1253,12 @@
             },
             {
               "id": "s7hop",
-              "name": "籠車",
-              "blurb": "彈跳時先打得到。",
-              "stage": 6,
+              "name": "跳籠",
+              "blurb": "蹲低就係要跳。",
+              "stage": 7,
               "unlock": {
                 "type": "stageClear",
-                "stage": 6
+                "stage": 7
               },
               "sheet": "/art/stage7/enemy-cagecart.png",
               "frameWidth": 64,
@@ -1277,12 +1277,12 @@
             },
             {
               "id": "s7shield",
-              "name": "鐵閘看守",
-              "blurb": "正面擋攻擊。",
-              "stage": 6,
+              "name": "盾兵",
+              "blurb": "正面擋，要繞到後面。",
+              "stage": 7,
               "unlock": {
                 "type": "stageClear",
-                "stage": 6
+                "stage": 7
               },
               "sheet": "/art/stage7/enemy-gate.png",
               "frameWidth": 64,
@@ -1301,130 +1301,8 @@
             },
             {
               "id": "s7can",
-              "name": "拋桶員",
-              "blurb": "定點拋飼料桶。",
-              "stage": 6,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 6
-              },
-              "sheet": "/art/stage7/enemy-feeder.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
-              "anims": {
-                "idle": {
-                  "label": "待機",
-                  "start": 0,
-                  "count": 1,
-                  "fps": 1,
-                  "loop": true
-                }
-              },
-              "still": true
-            }
-          ]
-        },
-        {
-          "stage": 7,
-          "label": "第7關",
-          "items": [
-            {
-              "id": "s7charge7",
-              "name": "鞭手飼養員",
-              "blurb": "預警後長距衝刺。",
-              "stage": 7,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 7
-              },
-              "sheet": "/art/anim/honeyzombie.png",
-              "frameWidth": 232,
-              "frameHeight": 114,
-              "columns": 13,
-              "anims": {
-                "walk": {
-                  "label": "行走",
-                  "start": 0,
-                  "count": 4,
-                  "fps": 5,
-                  "loop": true
-                },
-                "reach": {
-                  "label": "reach",
-                  "start": 4,
-                  "count": 3,
-                  "fps": 6,
-                  "loop": false
-                },
-                "hit": {
-                  "label": "受傷",
-                  "start": 7,
-                  "count": 2,
-                  "fps": 10,
-                  "loop": false
-                },
-                "die": {
-                  "label": "倒地",
-                  "start": 9,
-                  "count": 4,
-                  "fps": 7,
-                  "loop": false
-                }
-              }
-            },
-            {
-              "id": "s7hop7",
-              "name": "展銷籠車",
-              "blurb": "彈跳籠車雜兵。",
-              "stage": 7,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 7
-              },
-              "sheet": "/art/stage7/enemy-cagecart.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
-              "anims": {
-                "idle": {
-                  "label": "待機",
-                  "start": 0,
-                  "count": 1,
-                  "fps": 1,
-                  "loop": true
-                }
-              },
-              "still": true
-            },
-            {
-              "id": "s7shield7",
-              "name": "鐵閘板",
-              "blurb": "背後先有破綻。",
-              "stage": 7,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 7
-              },
-              "sheet": "/art/stage7/enemy-gate.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
-              "anims": {
-                "idle": {
-                  "label": "待機",
-                  "start": 0,
-                  "count": 1,
-                  "fps": 1,
-                  "loop": true
-                }
-              },
-              "still": true
-            },
-            {
-              "id": "s7can7",
-              "name": "拋飼料桶",
-              "blurb": "定時拋桶壓場。",
+              "name": "罐頭兵",
+              "blurb": "喺後面擲罐頭。",
               "stage": 7,
               "unlock": {
                 "type": "stageClear",
@@ -1453,8 +1331,8 @@
           "items": [
             {
               "id": "s8drone",
-              "name": "實驗室無人機",
-              "blurb": "飛近放電。",
+              "name": "無人機",
+              "blurb": "燈一亮就斜衝落嚟。",
               "stage": 8,
               "unlock": {
                 "type": "stageClear",
@@ -1511,8 +1389,8 @@
             },
             {
               "id": "s8tube",
-              "name": "黏液管",
-              "blurb": "噴黏液減速。",
+              "name": "試管兵",
+              "blurb": "拋試管，地上會黐腳。",
               "stage": 8,
               "unlock": {
                 "type": "stageClear",
@@ -1569,8 +1447,8 @@
             },
             {
               "id": "s8cabinet",
-              "name": "活動櫃",
-              "blurb": "衝撞擠位。",
+              "name": "文件櫃",
+              "blurb": "正面擋，開門就撞前。",
               "stage": 8,
               "unlock": {
                 "type": "stageClear",
@@ -1670,7 +1548,7 @@
             {
               "id": "s9guard",
               "name": "獄卒兵",
-              "blurb": "近身揮警棍。",
+              "blurb": "舉棍就要退後。",
               "stage": 9,
               "unlock": {
                 "type": "stageClear",
@@ -1763,8 +1641,8 @@
             },
             {
               "id": "s9lockbot",
-              "name": "鎖匠機械",
-              "blurb": "鎖人控場。",
+              "name": "鎖匠機械人",
+              "blurb": "鎖鏈甩出嚟，跳過佢。",
               "stage": 9,
               "unlock": {
                 "type": "stageClear",
@@ -1863,8 +1741,8 @@
           "items": [
             {
               "id": "s10guard",
-              "name": "大廈護衛",
-              "blurb": "預警後向前衝。",
+              "name": "大廈保安",
+              "blurb": "舉盾衝前，撞完會喘氣。",
               "stage": 10,
               "unlock": {
                 "type": "stageClear",
@@ -1965,7 +1843,7 @@
         {
           "id": "warriorking",
           "name": "武者王",
-          "blurb": "戴面罩嘅守蜜人。",
+          "blurb": "守住蜂巢，等破綻先打。",
           "stage": 1,
           "unlock": {
             "type": "stageClear",
@@ -2016,7 +1894,7 @@
         {
           "id": "queen",
           "name": "蜜冠女王蜂",
-          "blurb": "戴皇冠就認唔得蜂。",
+          "blurb": "皇冠一跌，佢就醒返。",
           "stage": 2,
           "unlock": {
             "type": "stageClear",
@@ -2088,7 +1966,7 @@
         {
           "id": "mirrorowl",
           "name": "月橋鏡鴞",
-          "blurb": "鏡照出三重幻影。",
+          "blurb": "睇水面，倒影唔會呃人。",
           "stage": 3,
           "unlock": {
             "type": "stageClear",
@@ -2153,7 +2031,7 @@
         {
           "id": "mudmane",
           "name": "泥鬃",
-          "blurb": "披風蜜印控住工頭。",
+          "blurb": "工地老工頭，蜜印甩咗先醒。",
           "stage": 4,
           "unlock": {
             "type": "stageClear",
@@ -2239,7 +2117,7 @@
         {
           "id": "triboss",
           "name": "△畝大佬",
-          "blurb": "派面具嘅普通人。",
+          "blurb": "最後一罐真蜜喺佢度。",
           "stage": 5,
           "unlock": {
             "type": "stageClear",
@@ -2303,8 +2181,8 @@
         },
         {
           "id": "mall-scrubber",
-          "name": "深層潔淨 X-9",
-          "blurb": "外加指令嘅洗地機。",
+          "name": "深層潔淨X-9",
+          "blurb": "原本係洗飲水池嘅。",
           "stage": 6,
           "unlock": {
             "type": "stageClear",
@@ -2328,7 +2206,7 @@
         {
           "id": "trainer",
           "name": "馴獸師",
-          "blurb": "鞭下認唔到動物。",
+          "blurb": "本來係照顧動物嘅人。",
           "stage": 7,
           "unlock": {
             "type": "stageClear",
@@ -2352,7 +2230,7 @@
         {
           "id": "researcher",
           "name": "主任研究員",
-          "blurb": "夾板橫掃同補瓶。",
+          "blurb": "反對過，最後都簽咗字。",
           "stage": 8,
           "unlock": {
             "type": "stageClear",
@@ -2497,8 +2375,8 @@
         },
         {
           "id": "warden",
-          "name": "典獄長",
-          "blurb": "地底層嘅看守頭目。",
+          "name": "首席獄卒",
+          "blurb": "怕出事，所以鎖住一切。",
           "stage": 9,
           "unlock": {
             "type": "stageClear",
@@ -2669,7 +2547,7 @@
         {
           "id": "leon",
           "name": "Leon",
-          "blurb": "頂層最後對決。",
+          "blurb": "守住道門，以為咁就安全。",
           "stage": 10,
           "unlock": {
             "type": "stageClear",
@@ -2821,7 +2699,7 @@
         {
           "id": "scene-1",
           "name": "百畝樹林",
-          "blurb": "溪流小路開場。",
+          "blurb": "一切由一次野餐開始。",
           "stage": 1,
           "unlock": {
             "type": "stageEnter",
@@ -2845,7 +2723,7 @@
         {
           "id": "scene-2",
           "name": "蜜樹丘",
-          "blurb": "蜂巢山坡。",
+          "blurb": "風口一吹，飄上高處。",
           "stage": 2,
           "unlock": {
             "type": "stageEnter",
@@ -2869,7 +2747,7 @@
         {
           "id": "scene-3",
           "name": "月影夜市",
-          "blurb": "無人夜市橋。",
+          "blurb": "燈籠熄咗，記得打著佢。",
           "stage": 3,
           "unlock": {
             "type": "stageEnter",
@@ -2893,7 +2771,7 @@
         {
           "id": "scene-4",
           "name": "鹽霧工地",
-          "blurb": "鐵皮圍住嘅工地。",
+          "blurb": "霧裡有推土機。",
           "stage": 4,
           "unlock": {
             "type": "stageEnter",
@@ -2917,7 +2795,7 @@
         {
           "id": "scene-5",
           "name": "△畝大廈",
-          "blurb": "總部大堂。",
+          "blurb": "前面幾關嘅機關都喺度。",
           "stage": 5,
           "unlock": {
             "type": "stageEnter",
@@ -2941,7 +2819,7 @@
         {
           "id": "scene-6",
           "name": "購物中心",
-          "blurb": "大陸2商場。",
+          "blurb": "光鮮商場，背後有秘密。",
           "stage": 6,
           "unlock": {
             "type": "stageEnter",
@@ -2964,8 +2842,8 @@
         },
         {
           "id": "scene-7",
-          "name": "森友展銷",
-          "blurb": "展銷中心入口。",
+          "name": "森友展銷中心",
+          "blurb": "夜晚嘅倉庫，好多籠。",
           "stage": 7,
           "unlock": {
             "type": "stageEnter",
@@ -2988,8 +2866,8 @@
         },
         {
           "id": "scene-8",
-          "name": "配方中心",
-          "blurb": "夜間實驗室。",
+          "name": "研發中心",
+          "blurb": "燈號全亮，畫面卻唔對。",
           "stage": 8,
           "unlock": {
             "type": "stageEnter",
@@ -3012,8 +2890,8 @@
         },
         {
           "id": "scene-9",
-          "name": "地底監禁",
-          "blurb": "籠舍通道。",
+          "name": "總部地底",
+          "blurb": "愈落愈凍，蜜印仲喺度。",
           "stage": 9,
           "unlock": {
             "type": "stageEnter",
@@ -3036,8 +2914,8 @@
         },
         {
           "id": "scene-10",
-          "name": "暴雨大廈",
-          "blurb": "由後巷到頂層。",
+          "name": "頂層",
+          "blurb": "由後巷一路追上去。",
           "stage": 10,
           "unlock": {
             "type": "stageEnter",
