@@ -30,6 +30,13 @@ import {
   updateLabBackdrops,
   type LabFarPlates,
 } from './stage8Art'
+import {
+  mountRainFarPlates,
+  mountVaultFarPlates,
+  updateRainBackdrops,
+  updateVaultBackdrops,
+  type SegFarPlates,
+} from './stageBgWire'
 import { Stage9Gates } from './stage9Gates'
 import { ensureFriendArt, friendTex, FRIENDS, isFriendId, pickFriendChatter } from './friends'
 import { openConfirm, openGamble } from './clearMenus'
@@ -98,6 +105,7 @@ import stage6Raw from '../../data/levels/stage6.json'
 import stage7Raw from '../../data/levels/stage7.json'
 import stage8Raw from '../../data/levels/stage8.json'
 import stage9Raw from '../../data/levels/stage9.json'
+import stage10Raw from '../../data/levels/stage10.json'
 import { Stage3World, type Stage3Data } from './stage3World'
 import { Stage4World, type Stage4Data } from './stage4World'
 import { Stage5World, type Stage5Data } from './stage5World'
@@ -381,6 +389,8 @@ const STAGES: Record<number, Stage1> = {
   7: stage7Raw as unknown as Stage1,
   8: stage8Raw as unknown as Stage1,
   9: stage9Raw as unknown as Stage1,
+  // bg-wire-1: allow stage 10 boot for segment far plates / palette sunrise.
+  10: { ...(stage10Raw as object), steps: (stage10Raw as { steps?: unknown }).steps ?? [] } as unknown as Stage1,
 }
 /** Current stage layout — picked in create() from registry `stageNo`. */
 let ST: Stage1 = STAGES[1]!
@@ -564,6 +574,9 @@ export class GameScene extends Phaser.Scene {
   private exhibitFar: { A: Phaser.GameObjects.Image | null; D: Phaser.GameObjects.Image | null; E: Phaser.GameObjects.Image | null } = { A: null, D: null, E: null }
   private exhibitMid: { B: Phaser.GameObjects.TileSprite | null; C: Phaser.GameObjects.TileSprite | null } = { B: null, C: null }
   private labFar: LabFarPlates = { A: null, B: null, C: null, D: null, E: null }
+  private vaultFar: SegFarPlates = { A: null, B: null, C: null, D: null, E: null }
+  private rainFar: SegFarPlates = { A: null, B: null, C: null, D: null, E: null }
+  private rainTower = false
   private bossFight = false
   /** Encounter-1 controllers (stage 6 construction lock). */
   private encounters: EncounterController[] = []
@@ -611,7 +624,10 @@ export class GameScene extends Phaser.Scene {
     this.exhibit = this.stageNo === 7
     this.lab = this.stageNo === 8
     this.vault = this.stageNo === 9
+    this.rainTower = this.stageNo === 10
     this.labFar = { A: null, B: null, C: null, D: null, E: null }
+    this.vaultFar = { A: null, B: null, C: null, D: null, E: null }
+    this.rainFar = { A: null, B: null, C: null, D: null, E: null }
     this.s8pipes?.destroy()
     this.s8pipes = null
     this.s9gates?.destroy()
@@ -1262,6 +1278,7 @@ export class GameScene extends Phaser.Scene {
     if (this.exhibit) this.tickStage7(dt)
     if (this.lab) this.tickStage8(dt)
     if (this.vault) this.tickStage9(dt)
+    if (this.rainTower) updateRainBackdrops(this.rainFar, this.cameras.main.scrollX)
     this.tickFun1Moments(dt)
     this.checkFall()
     this.updateCheckpoint()
@@ -3143,6 +3160,10 @@ export class GameScene extends Phaser.Scene {
       this.drawTowerWorld()
       return
     }
+    if (this.rainTower) {
+      this.drawRainTowerWorld()
+      return
+    }
     if (this.mall || this.exhibit || this.lab || this.vault) {
       this.drawMallWorld()
       return
@@ -3325,16 +3346,26 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(0x2c363e, 0.5).fillRect(0, 90, WORLD_W, 230)
     this.bgClouds = []
     this.bgMounts = []
-    for (let i = 0; i < 9; i++) {
-      const x = 160 + i * 460
-      const cg = this.add.graphics().setScrollFactor(0.35, 0).setDepth(DEPTH.SKY_BAND).setAlpha(0.55)
-      cg.fillStyle(0x10141a, 1)
-      cg.fillRect(x, 50, 6, 180)
-      cg.fillRect(x - 76, 48, 160, 5)
-      cg.fillRect(x + 66, 48, 5, 42)
-      cg.lineStyle(2, 0x10141a, 1)
-      cg.lineBetween(x - 70, 48, x, 150)
-      cg.lineBetween(x + 70, 48, x, 150)
+    // bg-wire-1: Manus fog-site far plate replaces old night-sky silhouettes.
+    if (this.textures.exists('s4-bg-fog-site')) {
+      this.add
+        .image(GAME_W / 2, GAME_H / 2, 's4-bg-fog-site')
+        .setScrollFactor(0)
+        .setDepth(DEPTH.SKY_BAND)
+        .setDisplaySize(GAME_W, GAME_H)
+        .setName('stage4-bg-fog-site')
+    } else {
+      for (let i = 0; i < 9; i++) {
+        const x = 160 + i * 460
+        const cg = this.add.graphics().setScrollFactor(0.35, 0).setDepth(DEPTH.SKY_BAND).setAlpha(0.55)
+        cg.fillStyle(0x10141a, 1)
+        cg.fillRect(x, 50, 6, 180)
+        cg.fillRect(x - 76, 48, 160, 5)
+        cg.fillRect(x + 66, 48, 5, 42)
+        cg.lineStyle(2, 0x10141a, 1)
+        cg.lineBetween(x - 70, 48, x, 150)
+        cg.lineBetween(x + 70, 48, x, 150)
+      }
     }
     // Amber warning lights dotted along the skyline — mood only, bulldozer warnings are separate.
     for (let i = 0; i < 7; i++) {
@@ -3362,8 +3393,15 @@ export class GameScene extends Phaser.Scene {
     g.fillStyle(0x262c36, 0.5).fillRect(0, 80, WORLD_W, 240)
     this.bgClouds = []
     this.bgMounts = []
-    const far = (key: string) => (this.textures.exists(key) ? this.add.image(GAME_W / 2, GAME_H / 2, key).setScrollFactor(0).setDepth(DEPTH.SKY_BAND) : null)
-    this.towerFar = { hq: far('story-hq-far'), roof: far('story-rooftop-far') }
+    const far = (key: string) =>
+      this.textures.exists(key)
+        ? this.add.image(GAME_W / 2, GAME_H / 2, key).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setDisplaySize(GAME_W, GAME_H)
+        : null
+    // bg-wire-1: sunset-tower replaces old indoor hq-far; rooftop crossfade kept.
+    this.towerFar = {
+      hq: far('s5-bg-sunset-tower') ?? far('story-hq-far'),
+      roof: far('story-rooftop-far'),
+    }
     this.towerFar.roof?.setAlpha(0)
     for (let i = 0; i < 10; i++) {
       const x = 120 + i * 420
@@ -3894,28 +3932,45 @@ export class GameScene extends Phaser.Scene {
     this.buildGroundTiles()
   }
 
-  /** Vault-night backdrop — tinted stand-in until Manus stage9 art. */
+  /** Vault — Manus stage9 A–E far plates by segments. */
   private drawVaultWorld() {
     const g = this.add.graphics().setDepth(DEPTH.SKY)
     g.fillStyle(0x0a0e14, 1).fillRect(0, 0, WORLD_W, WORLD_H)
     g.fillStyle(0x1a222c, 0.6).fillRect(0, 40, WORLD_W, 230)
-    // Cool steel wash — distinct from lab teal.
     g.fillStyle(0x2a3848, 0.25).fillRect(0, 80, WORLD_W, 160)
     this.bgClouds = []
     this.bgMounts = []
-    const farKey = this.textures.exists('stage9-bg-far')
-      ? 'stage9-bg-far'
-      : this.textures.exists('entrance-far')
-        ? 'entrance-far'
-        : null
-    if (farKey) {
-      this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.7).setTint(0x8090a8)
+    this.vaultFar = mountVaultFarPlates(this)
+    if (this.vaultFar.A || this.vaultFar.B) {
+      updateVaultBackdrops(this.vaultFar, this.cameras.main.scrollX)
+    } else {
+      const farKey = this.textures.exists('stage9-bg-far')
+        ? 'stage9-bg-far'
+        : this.textures.exists('entrance-far')
+          ? 'entrance-far'
+          : null
+      if (farKey) {
+        this.add.image(GAME_W / 2, GAME_H / 2, farKey).setScrollFactor(0).setDepth(DEPTH.SKY_BAND).setAlpha(0.7)
+      }
     }
+    this.buildGroundTiles()
+  }
+
+  /** Stage 10 rain-tower — Manus A–E far plates by segments. */
+  private drawRainTowerWorld() {
+    const g = this.add.graphics().setDepth(DEPTH.SKY)
+    g.fillStyle(0x1a222c, 1).fillRect(0, 0, WORLD_W, WORLD_H)
+    g.fillStyle(0x2a3848, 0.45).fillRect(0, 48, WORLD_W, 220)
+    this.bgClouds = []
+    this.bgMounts = []
+    this.rainFar = mountRainFarPlates(this)
+    updateRainBackdrops(this.rainFar, this.cameras.main.scrollX)
     this.buildGroundTiles()
   }
 
   /** Stage 9 systems: sliding gates + switches; reuse stage2 unlocks for shared enemies. */
   private tickStage9(dt: number) {
+    updateVaultBackdrops(this.vaultFar, this.cameras.main.scrollX)
     this.s9gates?.update(dt)
     if (this.s9gates) {
       for (const hero of [this.boy, this.girl]) {
@@ -8075,8 +8130,10 @@ export class GameScene extends Phaser.Scene {
       if (dx === 0 && this.encounterClaimedXs.has(en.x)) return
       // s9-1: never schedule enemies inside safeZones (C reunion wait).
       if ((ST.safeZones ?? []).some((z) => en.x + dx >= z.x0 && en.x + dx <= z.x1)) return
-      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(en.species)) {
-        this.s2Pending.push({ x: en.x + dx, species: en.species, unlockX: en.unlockX, elite: en.elite, product: en.product })
+      // s10guard stand-in until s10-2 ticket.
+      const species = en.species === 's10guard' ? 's9guard' : en.species
+      if (['bee', 'squirrel', 'lobster', 'stallkeeper', 'mirrorshade', 'honeyzombie', 'taximonster', 'clockpunch', 'guard', 'robotarm', 's7charge', 's7hop', 's7shield', 's7can', 's8drone', 's8tube', 's8cabinet', 's9guard', 's9lockbot'].includes(species)) {
+        this.s2Pending.push({ x: en.x + dx, species, unlockX: en.unlockX, elite: en.elite, product: en.product })
         return
       }
       const kind = (en.kind ?? 'chaser') as EnemyKind
@@ -8093,7 +8150,7 @@ export class GameScene extends Phaser.Scene {
     for (const en of ST.enemies) {
       n++
       // Stage 7 uses the confirmed exact composition in either player mode.
-      if (this.exhibit || this.lab || this.vault) { place(en); continue }
+      if (this.exhibit || this.lab || this.vault || this.rainTower) { place(en); continue }
       // Robot arms are fixed hazards placed by hand: never thinned or doubled.
       if (en.species === 'robotarm') {
         place(en)

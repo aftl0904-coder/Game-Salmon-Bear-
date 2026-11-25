@@ -14,7 +14,7 @@ export type SunriseDef = {
   atX: number
   durationMs: number
   sky: SkyPair
-  tint: string
+  tint: string | null
   light: number
 }
 export type StagePaletteRow = {
@@ -205,7 +205,10 @@ export function tickStagePalette(
   ensureSkyTexture(scene, handles.skyKey, sky)
   handles.skyImg.setTexture(handles.skyKey)
 
-  const tintHex = handles.baseTint ? lerpHex(handles.baseTint, sun.tint, t) : sun.tint
+  const tintHex =
+    handles.baseTint && sun.tint
+      ? lerpHex(handles.baseTint, sun.tint, t)
+      : sun.tint ?? handles.baseTint
   applyTint(handles.tintTargets, tintHex)
 
   const light = handles.row.light + (sun.light - handles.row.light) * t
