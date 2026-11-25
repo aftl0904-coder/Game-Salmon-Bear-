@@ -84,7 +84,7 @@ import { HoneyZombie, TaxiMonster, ClockPunch, MudMane, type MudHooks } from './
 import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL_MS, type TriHooks } from './enemies/Stage5Enemies'
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
-import { LabDrone, TubeSoldier, FileCabinet } from './enemies/Stage8Enemies'
+import { LabDrone, TubeSoldier, FileCabinet, ChiefResearcher, type ResearcherCfg } from './enemies/Stage8Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -485,7 +485,7 @@ export class GameScene extends Phaser.Scene {
   private tree = false
   private s2world: Stage2World | null = null
   private s2Pending: Array<{ x: number; species: string; unlockX: number; elite?: boolean; product?: boolean }> = []
-  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | null = null
+  private queen: WarriorKing | QueenBee | MirrorOwl | MudMane | TriBoss | SecurityDirector | MallScrubber | ChiefResearcher | null = null
   /** 月影夜市 (stage 3). */
   private market = false
   private s3world: Stage3World | null = null
@@ -3737,7 +3737,7 @@ export class GameScene extends Phaser.Scene {
     this.buildGroundTiles()
   }
 
-  /** Stage 8 skeleton: pipes + pending enemies + researcher stand-in via tickStage2. */
+  /** Stage 8: pipes + enemies + ChiefResearcher (s8-3). */
   private tickStage8(dt: number) {
     this.s8pipes?.update(dt)
     this.tickLabStickyPuddles(dt)
@@ -4333,20 +4333,7 @@ export class GameScene extends Phaser.Scene {
       drone: (x0, x1, dir, speed) => this.s6world?.drone(x0 ?? b.arenaX0, x1 ?? b.arenaX1, dir, speed),
       droneCount: () => this.s6world?.droneCount() ?? 0,
       bossEvent: (kind) => { if (this.exhibit || this.lab) this.stage7Events.push({ kind, at: this.time.now }); this.onQueenEvent(kind) },
-      ...(this.exhibit
-        ? { trainer: { ...ST.trainer!, summon: () => this.summonProduct() } }
-        : this.lab && ST.researcher
-          ? {
-              // s8-1: SecurityDirector stand-in; HP from researcher.hp (2P ×1.5 via scaleBossHpFor2P).
-              trainer: {
-                hp: ST.researcher.hp,
-                phase2At: ST.researcher.phase2At,
-                phase3Below: ST.researcher.phase3Below,
-                phase3Rate: 1.3,
-                summon: () => this.summonProduct(),
-              },
-            }
-          : {}),
+      ...(this.exhibit ? { trainer: { ...ST.trainer!, summon: () => this.summonProduct() } } : {}),
     }
   }
 
@@ -8316,6 +8303,118 @@ export class GameScene extends Phaser.Scene {
     })
   }
 
+  /** s8-3: numbers from data/levels/stage8.json → researcher (no local retune). */
+  private researcherCfg(): ResearcherCfg {
+    const r = ST.researcher!
+    return {
+      hp: r.hp,
+      phase2At: r.phase2At,
+      phase3Below: r.phase3Below,
+      swipeWarnMs: r.swipeWarnMs ?? 1000,
+      flaskWarnMs: r.flaskWarnMs ?? 1000,
+      flaskCount: r.flaskCount ?? 3,
+      puddleMs: r.puddleMs ?? 3000,
+      refillExposedMs: r.refillExposedMs ?? 2000,
+      summonPerCycle: r.summonPerCycle ?? 1,
+      summonMaxAlive: r.summonMaxAlive ?? 2,
+      weakBase: r.weakBase ?? 3,
+      capWeak: r.capWeak ?? 5,
+      capNormal: r.capNormal ?? 2,
+    }
+  }
+
+  private researcherHooks() {
+    return {
+      floorY: () => LANE_FLOOR_Y,
+      throwFlask: (x: number, y: number, tx: number) => this.throwLabFlask(x, y, tx),
+      summonTubes: (per: number, maxAlive: number) => this.summonResearcherTubes(per, maxAlive),
+      tubeCount: () =>
+        this.enemies.getChildren().filter((o) => {
+          const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string }
+          return e.active && e.getData('researcher-summon') && e.fsm !== 'DEAD'
+        }).length,
+      bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => {
+        this.stage7Events.push({ kind, at: this.time.now })
+        this.onQueenEvent(kind)
+      },
+    }
+  }
+
+  private summonResearcherTubes(per: number, maxAlive: number): number {
+    const live = this.enemies.getChildren().filter((o) => {
+      const e = o as Phaser.Physics.Arcade.Sprite & { fsm?: string }
+      return e.active && e.getData('researcher-summon') && e.fsm !== 'DEAD'
+    }).length
+    const n = Math.min(per, Math.max(0, maxAlive - live))
+    const b = ST.boss!
+    for (let i = 0; i < n; i++) {
+      const x = Phaser.Math.Clamp((this.queen?.x ?? b.arenaX1) - 80 - i * 36, b.arenaX0 + 40, b.arenaX1 - 40)
+      const e = this.addS2Enemy(
+        new TubeSoldier(this, x, this.s2Hooks(), {
+          floorY: () => LANE_FLOOR_Y,
+          throwTube: (cx, cy, tx) => this.throwLabTube(cx, cy, tx),
+        }),
+      )
+      e.setData('researcher-summon', true)
+      e.setFlipX(true)
+      playFx(this, 'enemy-poof', x, LANE_FLOOR_Y - 20)
+      this.stage7Events.push({ kind: 'summon', at: this.time.now })
+    }
+    return n
+  }
+
+  /** Boss flask: sticky puddle uses researcher.puddleMs (default 3000). */
+  private throwLabFlask(fromX: number, fromY: number, targetX: number) {
+    if (this.ended) return
+    const puddleMs = ST.researcher?.puddleMs ?? 3000
+    const landX = Phaser.Math.Clamp(targetX, this.cameras.main.scrollX + 40, this.cameras.main.scrollX + GAME_W - 40)
+    const floor = LANE_FLOOR_Y
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const flask = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    flask.setDepth(DEPTH.FX - 1)
+    enableActorSprite(flask)
+    const body = flask.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(12, 14)
+    flask.setData('lane', 0)
+    flask.setData('dmg', 1)
+    flask.setData('boss', true)
+    flask.setData('labFlask', true)
+    flask.setTint(0xffe080)
+    this.markShot(flask, 0xffd060)
+    this.tweens.add({ targets: flask, angle: 480, duration: 700, ease: 'Linear' })
+    floatText(this, fromX, fromY - 24, '燒瓶！', '#ffe08a', { size: 11, dur: 450 })
+    this.entities.add(flask, 'projectile')
+    const dur = 700
+    this.tweens.add({
+      targets: flask,
+      x: landX,
+      duration: dur,
+      ease: 'Linear',
+      onUpdate: (tw) => {
+        if (!flask.active) return
+        const p = tw.progress
+        flask.y = fromY + (floor - 8 - fromY) * p - Math.sin(p * Math.PI) * 100
+        body.reset(flask.x, flask.y)
+      },
+      onComplete: () => {
+        if (!flask.active) return
+        const hx = flask.x
+        flask.destroy()
+        burst(this, hx, floor - 10, 0xffd060, 14)
+        SFX.potShatter()
+        floatText(this, hx, floor - 48, '啪！', '#ffe08a', { size: 12, dur: 500 })
+        for (const h of [this.boy, this.girl]) {
+          if (!h?.alive) continue
+          if (Math.abs(h.x - hx) < 40 && Math.abs(h.y - floor) < 40) {
+            this.hazardHit(h, { knockX: (Math.sign(h.x - hx) || 1) * 210, knockY: -340, label: '假蜜燒瓶 -1' })
+          }
+        }
+        this.spawnLabSticky(hx, 48, puddleMs)
+      },
+    })
+  }
+
   /** s8-2: tube flask — parabolic, max range 180, dmg 1 + sticky puddle w40 / 1500ms. */
   private throwLabTube(fromX: number, fromY: number, targetX: number) {
     if (this.ended) return
@@ -8674,7 +8773,9 @@ export class GameScene extends Phaser.Scene {
       SFX.boss()
       const q = this.stageNo === 1
         ? new WarriorKing(this, b.arenaX1 - 90, b.arenaX0, b.arenaX1, this.kingHooks())
-        : this.exhibit || this.lab
+        : this.lab
+        ? new ChiefResearcher(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.researcherCfg(), this.researcherHooks())
+        : this.exhibit
         ? new SecurityDirector(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.directorHooks())
         : this.mall
         ? new MallScrubber(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, {
@@ -8688,7 +8789,7 @@ export class GameScene extends Phaser.Scene {
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => (this.exhibit || this.lab ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
+      q.onDefeated = () => (this.lab ? this.queenDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
       // systems-2: 2P both heroes present → boss HP ×1.5 (phase % thresholds unchanged).

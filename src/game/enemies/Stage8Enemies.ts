@@ -3,16 +3,19 @@
  * Numbers locked to the s8-2 ticket — do not retune here.
  * Art: tinted stand-ins until Manus stage8 sheets land (#157).
  *
- *  1. LabDrone     巡邏無人機 — hover → red warn → dive → open → rise
- *  2. TubeSoldier  試管兵     — close → raise tube → parabolic sticky flask
- *  3. FileCabinet  文件櫃怪   — front shield; door warn → ram → open belly
+ *  1. LabDrone         巡邏無人機 — hover → red warn → dive → open → rise
+ *  2. TubeSoldier      試管兵     — close → raise tube → parabolic sticky flask
+ *  3. FileCabinet      文件櫃怪   — front shield; door warn → ram → open belly
+ *  4. ChiefResearcher  主任研究員 — swipe / flasks / refill weak / P2+ tube summons (s8-3)
  */
 import Phaser from 'phaser'
 import { type EnemyHitResult } from './Enemy'
 import { AnimEnemy, type Stage2Hooks } from './Stage2Enemies'
 import { pickTarget, type HeroRef } from '../enemyAi'
 import { actorDepth } from '../engine/depth'
-import { isActorFrozen } from '../fx'
+import { isActorFrozen, floatText } from '../fx'
+import { bossHitDamage } from '../engine/bossDamage'
+import { SFX } from '../audio'
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
@@ -533,6 +536,344 @@ export class FileCabinet extends AnimEnemy {
   override destroy(fromScene?: boolean) {
     this.clearWarn()
     this.doorGfx?.destroy()
+    super.destroy(fromScene)
+  }
+}
+
+
+// ── 主任研究員（s8-3）──────────────────────────────────────────────────
+
+export type ResearcherCfg = {
+  hp: number
+  phase2At: number
+  phase3Below: number
+  swipeWarnMs: number
+  flaskWarnMs: number
+  flaskCount: number
+  puddleMs: number
+  refillExposedMs: number
+  summonPerCycle: number
+  summonMaxAlive: number
+  weakBase: number
+  capWeak: number
+  capNormal: number
+}
+
+export type ResearcherHooks = {
+  floorY: () => number
+  /** Parabolic fake-honey flask → sticky puddle lasting cfg.puddleMs. */
+  throwFlask: (fromX: number, fromY: number, targetX: number) => void
+  /** Spawn up to summonPerCycle tubes; returns how many were spawned. */
+  summonTubes: (per: number, maxAlive: number) => number
+  tubeCount: () => number
+  bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
+}
+
+type Act =
+  | 'intro'
+  | 'stalk'
+  | 'swipeWarn'
+  | 'swipe'
+  | 'flaskWarn'
+  | 'flask'
+  | 'refill'
+
+/**
+ * 主任研究員 — clipboard swipe, 3 sticky flasks, refill weak window.
+ * Phase 2+ summons TubeSoldiers each cycle (ticket numbers from researcher cfg).
+ */
+export class ChiefResearcher extends AnimEnemy {
+  qphase: 1 | 2 | 3 = 1
+  act: Act = 'intro'
+  arenaX0: number
+  arenaX1: number
+  onDefeated?: () => void
+  private t = 0
+  private lastHitAt = 0
+  private flasksThrown = 0
+  private next: 'swipe' | 'flask' = 'swipe'
+  private dir: 1 | -1 = -1
+  private swipeFrom = 0
+  private rh: ResearcherHooks
+  private cfg: ResearcherCfg
+  private board: Phaser.GameObjects.Graphics
+  private warnMark: Phaser.GameObjects.Text | null = null
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    arenaX0: number,
+    arenaX1: number,
+    cfg: ResearcherCfg,
+    rh: ResearcherHooks,
+  ) {
+    super(scene, x, rh.floorY(), 'triboss', { floorY: rh.floorY }, 'idle')
+    this.species = 'researcher'
+    this.kind = 'boss'
+    this.boss = true
+    this.cfg = cfg
+    this.rh = rh
+    this.hp = this.maxHp = cfg.hp
+    this.hurtMs = 160
+    this.arenaX0 = arenaX0
+    this.arenaX1 = arenaX1
+    this.setTint(0xb8d0e8)
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.setSize(44, 56)
+    body.setOffset((this.frame.width - 44) / 2, this.frame.height - 56 - 6)
+    this.board = scene.add.graphics()
+  }
+
+  protected override defaultTint() {
+    return 0xb8d0e8
+  }
+
+  canHurtPlayer() {
+    if (!this.active || this.fsm === 'DEAD') return false
+    if (this.act === 'intro' || this.act === 'refill' || this.act === 'swipeWarn' || this.act === 'flaskWarn') return false
+    if (this.act === 'swipe') return this.contactCd <= 0
+    return this.contactCd <= 0 && this.act === 'stalk'
+  }
+
+  receiveHit(dmg: number, dir: number): EnemyHitResult {
+    const now = this.scene.time.now
+    if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
+    this.lastHitAt = now
+    const weak = this.act === 'refill'
+    const hitDmg = bossHitDamage(dmg, {
+      weak,
+      weakBase: this.cfg.weakBase,
+      capNormal: this.cfg.capNormal,
+      capWeak: this.cfg.capWeak,
+    })
+    const before = { x: this.x, y: this.y }
+    const r = super.receiveHit(hitDmg, dir)
+    this.setPosition(before.x, before.y)
+    this.setVelocity(0, 0)
+    if (this.fsm === 'HURT') this.setFsm('ATTACK')
+    if (!r.killed) this.updatePhase()
+    return { ...r, weak }
+  }
+
+  private updatePhase() {
+    const f = this.hp / this.maxHp
+    const next: 1 | 2 | 3 =
+      f < this.cfg.phase3Below ? 3 : f <= this.cfg.phase2At ? 2 : 1
+    if (next <= this.qphase) return
+    this.qphase = next
+    this.rh.bossEvent(next === 2 ? 'phase2' : 'phase3')
+    floatText(this.scene, this.x, this.y - 70, next === 2 ? '第二段！' : '第三段！', '#ffe08a', { size: 14, dur: 1200 })
+  }
+
+  private go(a: Act) {
+    this.act = a
+    this.t = 0
+    this.flasksThrown = 0
+    this.setVelocity(0, 0)
+    if (a === 'refill') {
+      this.setTint(0xffe060)
+      this.rh.bossEvent('weak')
+    } else if (a === 'swipeWarn' || a === 'flaskWarn') {
+      this.setTint(0xffc080)
+    } else {
+      this.setTint(0xb8d0e8)
+    }
+    this.anim(a === 'swipe' || a === 'swipeWarn' ? 'rain' : a === 'flask' || a === 'flaskWarn' ? 'point' : a === 'refill' ? 'hurt' : 'idle')
+  }
+
+  protected override die(_dir: number) {
+    this.clearWarn()
+    this.board.destroy()
+    this.hp = 0
+    this.act = 'intro'
+    this.boss = false
+    this.setFsm('DEAD')
+    this.setVelocity(0, 0)
+    ;(this.body as Phaser.Physics.Arcade.Body).enable = false
+    this.clearTint()
+    this.anim('defeat')
+    this.rh.bossEvent('defeat')
+    this.scene.time.delayedCall(1800, () => {
+      this.onDefeated?.()
+      if (!this.scene) return
+      this.scene.tweens.add({ targets: this, alpha: 0, duration: 600, onComplete: () => this.destroy() })
+    })
+  }
+
+  tick(dt: number, ctx: Ctx) {
+    if (!this.active || this.fsm === 'DEAD') {
+      this.board.setVisible(false)
+      return
+    }
+    this.contactCd = Math.max(0, this.contactCd - dt)
+    this.t += dt
+    const floor = this.rh.floorY()
+    this.y = floor
+    const tgt = pickTarget(this, ctx.boy, ctx.girl)
+    const dx = tgt.x - this.x
+    const toward = (Math.sign(dx) || -1) as 1 | -1
+    const x0 = this.arenaX0 + 24
+    const x1 = this.arenaX1 - 24
+    const stalkMs = this.qphase === 3 ? 500 : this.qphase === 2 ? 700 : 900
+
+    switch (this.act) {
+      case 'intro':
+        this.setFlipX(dx < 0)
+        this.drawBoard(false)
+        if (this.t > 1100) this.go('stalk')
+        break
+
+      case 'stalk': {
+        this.setFlipX(dx < 0)
+        const dist = Math.abs(dx)
+        // Close in for clipboard swipe; flasks can start from mid-range.
+        if (this.next === 'swipe' && dist > 120) this.setVelocityX(toward * (this.qphase === 3 ? 95 : 70))
+        else if (this.next === 'flask' && dist > 200) this.setVelocityX(toward * 55)
+        else this.setVelocityX(0)
+        this.drawBoard(false)
+        if (this.t >= stalkMs) {
+          // Phase 2+: summon tubes once per cycle before the attack.
+          if (this.qphase >= 2) {
+            this.rh.summonTubes(this.cfg.summonPerCycle, this.cfg.summonMaxAlive)
+          }
+          if (this.next === 'swipe') {
+            this.dir = toward
+            this.go('swipeWarn')
+            this.showWarn('！')
+          } else {
+            this.go('flaskWarn')
+            this.showWarn('瓶！')
+          }
+        }
+        break
+      }
+
+      case 'swipeWarn':
+        this.setVelocity(0, 0)
+        this.setFlipX(this.dir < 0)
+        this.drawBoard(true)
+        this.warnMark?.setPosition(this.x, this.y - 64)
+        if (this.t >= this.cfg.swipeWarnMs) {
+          this.clearWarn()
+          this.swipeFrom = this.x
+          this.hitThis = false
+          this.go('swipe')
+          SFX.siren()
+          floatText(this.scene, this.x, this.y - 56, '紀錄板！', '#ffe08a', { size: 12, dur: 600 })
+        }
+        break
+
+      case 'swipe': {
+        this.setFlipX(this.dir < 0)
+        // Short forward sweep with the clipboard (~110px).
+        this.setVelocityX(this.dir * 260)
+        this.drawBoard(true, true)
+        const traveled = Math.abs(this.x - this.swipeFrom)
+        if (traveled >= 110 || this.t > 500) {
+          this.setVelocity(0, 0)
+          this.next = 'flask'
+          this.go('stalk')
+        }
+        break
+      }
+
+      case 'flaskWarn':
+        this.setVelocity(0, 0)
+        this.setFlipX(dx < 0)
+        this.drawBoard(false, false, true)
+        this.warnMark?.setPosition(this.x, this.y - 64)
+        if (this.t >= this.cfg.flaskWarnMs) {
+          this.clearWarn()
+          this.go('flask')
+        }
+        break
+
+      case 'flask': {
+        this.setVelocity(0, 0)
+        this.setFlipX(dx < 0)
+        this.drawBoard(false, false, true)
+        const gap = 220
+        while (this.flasksThrown < this.cfg.flaskCount && this.t >= 80 + this.flasksThrown * gap) {
+          const i = this.flasksThrown
+          // Spread landings around the player (±40 per flask), clamped to arena.
+          const aim = Phaser.Math.Clamp(tgt.x + (i - 1) * 50, this.arenaX0 + 30, this.arenaX1 - 30)
+          this.rh.throwFlask(this.x + (this.flipX ? -14 : 14), this.y - 40, aim)
+          this.flasksThrown++
+        }
+        if (this.flasksThrown >= this.cfg.flaskCount && this.t >= 80 + this.cfg.flaskCount * gap + 100) {
+          this.next = 'swipe'
+          this.go('refill')
+        }
+        break
+      }
+
+      case 'refill':
+        this.setVelocity(0, 0)
+        this.drawBoard(false)
+        // Glow pulse while bottles are refilled — weak window.
+        {
+          const blink = Math.floor(this.scene.time.now / 120) % 2 === 0
+          this.setTint(blink ? 0xfff0a0 : 0xffd050)
+        }
+        if (this.t >= this.cfg.refillExposedMs) {
+          this.setTint(0xb8d0e8)
+          this.go('stalk')
+        }
+        break
+    }
+    this.x = Phaser.Math.Clamp(this.x, x0, x1)
+    this.setDepth(actorDepth('enemy', this.lane, this.y))
+  }
+
+  private showWarn(label: string) {
+    this.clearWarn()
+    this.warnMark = this.scene.add
+      .text(this.x, this.y - 64, label, {
+        fontSize: '16px',
+        color: '#ffe080',
+        stroke: '#201808',
+        strokeThickness: 3,
+      })
+      .setOrigin(0.5)
+      .setDepth(this.depth + 5)
+  }
+
+  private clearWarn() {
+    this.warnMark?.destroy()
+    this.warnMark = null
+  }
+
+  private drawBoard(raised: boolean, sweeping = false, holdingFlask = false) {
+    const g = this.board
+    g.clear()
+    if (!this.active || !this.visible || this.fsm === 'DEAD') {
+      g.setVisible(false)
+      return
+    }
+    g.setVisible(true)
+    const face = this.flipX ? -1 : 1
+    if (holdingFlask) {
+      const cx = this.x + face * 16
+      const cy = this.y - 44
+      g.fillStyle(0xe8d080, 1).fillRoundedRect(cx - 6, cy - 10, 12, 16, 2)
+      g.fillStyle(0xc060ff, 0.85).fillRect(cx - 4, cy - 2, 8, 6)
+      g.setDepth(this.depth + 2)
+      return
+    }
+    const bx = this.x + face * (sweeping ? 28 : raised ? 18 : 14)
+    const by = this.y - (raised || sweeping ? 36 : 28)
+    const w = sweeping ? 34 : 22
+    const h = sweeping ? 10 : 28
+    g.fillStyle(0xe8d8b0, 1).fillRoundedRect(bx - w / 2, by - h / 2, w, h, 2)
+    g.lineStyle(2, 0x6a5030, 1).strokeRoundedRect(bx - w / 2, by - h / 2, w, h, 2)
+    g.lineStyle(1, 0x8a7050, 1)
+    for (let i = -2; i <= 2; i++) g.lineBetween(bx - w / 2 + 3, by + i * 5, bx + w / 2 - 3, by + i * 5)
+    g.setDepth(this.depth + 2)
+  }
+
+  override destroy(fromScene?: boolean) {
+    this.clearWarn()
+    this.board?.destroy()
     super.destroy(fromScene)
   }
 }
