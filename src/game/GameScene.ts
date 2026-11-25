@@ -15,7 +15,7 @@ import { SFX, playSong, stopBgm, unlockAudio, tickExhibitAmbient, resetExhibitAm
 import { EncounterController, rosterForEncounter, type EncounterDef } from './encounter'
 import { Stage7World, type Stage7Data } from './stage7World'
 import { calcScore, saveScore, loadScores } from './score'
-import { unlockStage, markFriendSaved } from './progress'
+import { unlockStage, markFriendSaved, markC2Cleared } from './progress'
 import { ensureMainRun, getRun, guaranteeC2Stage7Unlock, isSideTrip, puffAway, resumeMain, runTransaction, saveClear, scoreEligible } from './run'
 import { stage7GrowthHook } from './growthHook'
 import { stage7ViewportSlice } from './stage7BackdropLayout'
@@ -39,7 +39,7 @@ import { inCombatView } from './engine/cameraView'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
-import { clawGame, flagRace, memoryGame, pourGame, showTutorial, tiltGame, timingGame } from './minigames'
+import { clawGame, flagRace, memoryGame, pourGame, shakeHoney, showTutorial, tiltGame, timingGame } from './minigames'
 import { goldfishQuiz } from './membershipQuiz'
 import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
@@ -80,7 +80,19 @@ import {
   stage9LinesToRaw,
   stage9Sections,
 } from './stage9Story'
-import { leonMidCutsceneMs, playLeonMidCutscene, stage10BossDialogue } from './stage10Story'
+import {
+  leonMidCutsceneMs,
+  playLeonMidCutscene,
+  playS10Clear,
+  playS10Open,
+  playS10ReunionThenKen,
+  playStage10Action,
+  stage10Beats,
+  stage10BossDialogue,
+  stage10Fragments,
+  stage10LinesToRaw,
+  stage10Sections,
+} from './stage10Story'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
 import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
@@ -378,7 +390,7 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory' | 'claw'; greet: string }
+type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory' | 'claw' | 'shake'; greet: string }
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -606,6 +618,8 @@ export class GameScene extends Phaser.Scene {
   private s9EnterDone = new Set<string>()
   private s9MidDone = new Set<string>()
   private s9ReunionDone = false
+  private s10EnterDone = new Set<string>()
+  private s10MidDone = new Set<string>()
   /** s9-4: 噗噗 parked in C safe zone until S9_CLEAR. */
   private petHoldX: number | null = null
   private petAssistOff = false
@@ -697,6 +711,8 @@ export class GameScene extends Phaser.Scene {
     this.s9EnterDone = new Set()
     this.s9MidDone = new Set()
     this.s9ReunionDone = false
+    this.s10EnterDone = new Set()
+    this.s10MidDone = new Set()
     this.petHoldX = null
     this.petAssistOff = false
     this.memoryDone = false
@@ -1378,12 +1394,7 @@ export class GameScene extends Phaser.Scene {
   private tickStageBeats() {
     const lead = this.leadX()
     const beats: Array<{ x: number; title: string }> = this.rainTower
-      ? [
-          { x: 60, title: '後巷暴雨' },
-          { x: 880, title: '大堂積水' },
-          { x: 2000, title: '升降機' },
-          { x: 3160, title: '上層終端' },
-        ]
+      ? stage10Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.vault
       ? stage9Beats().map((b) => ({ x: b.x, title: b.title }))
       : this.lab
@@ -4020,10 +4031,88 @@ export class GameScene extends Phaser.Scene {
     this.buildGroundTiles()
   }
 
-  /** Stage 10: floodZones + elevatorArena. */
+  /** Stage 10: floodZones + elevatorArena + story/stall. */
   private tickStage10(dt: number) {
+    this.tickStage10Story()
+    this.tickRainShakeStall()
     this.s10world?.update(dt)
     this.tickStage2(dt)
+  }
+
+  /** s10-4: shake-honey rest stall at stallX 1350. */
+  private placeRainShakeStall() {
+    const x = ST.stallX
+    if (x == null) return
+    const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+    const st = this.stall()
+    if (this.textures.exists('cs-cart')) {
+      const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP).setTint(0xe8d090)
+      enablePixelSprite(cart)
+    } else {
+      this.add.rectangle(x + 30, top, 56, 28, 0x8a7040, 1).setOrigin(0.5, 1).setDepth(DEPTH.PROP).setStrokeStyle(2, 0xffe08a)
+    }
+    this.add
+      .text(x + 30, top - 74, st.sign, {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#2a1a10',
+        backgroundColor: '#f7e7c0',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+  }
+
+  private tickRainShakeStall() {
+    if (!this.rainTower || this.coffeeDone || this.storyIntro || !this.started || this.ended || this.bossFight) return
+    const x = ST.stallX
+    if (x == null || this.leadX() < x) return
+    this.coffeeDone = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2500 })
+    SFX.coin()
+    void this.runCoffeeStall()
+  }
+
+  /** s10-4: section enter/mid dialogue. */
+  private tickStage10Story() {
+    if (!this.rainTower || !this.started || this.ended || this.storyIntro || this.bossFight) return
+    const lead = this.leadX()
+    for (const sec of stage10Sections()) {
+      if (!this.s10EnterDone.has(sec.seg) && lead >= sec.enterX) {
+        this.s10EnterDone.add(sec.seg)
+        const lines = stage10LinesToRaw(sec.enter ?? [])
+        playStage10Action(this, sec.actions?.enter, { boy: this.boy, girl: this.girl })
+        if (!lines.length) continue
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, () => {
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        })
+        return
+      }
+      if (!this.s10MidDone.has(sec.seg) && lead >= sec.midX) {
+        this.s10MidDone.add(sec.seg)
+        const lines = stage10LinesToRaw(sec.mid ?? [])
+        playStage10Action(this, sec.actions?.mid, { boy: this.boy, girl: this.girl })
+        if (!lines.length) continue
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, () => {
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        })
+        return
+      }
+    }
   }
 
   /** Safe elev-tagged enemy list — never throw if the group is mid-teardown. */
@@ -5313,6 +5402,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.rainTower) {
+      this.placeRainShakeStall()
       this.s10world = new Stage10World(
         {
           scene: this,
@@ -5796,11 +5886,20 @@ export class GameScene extends Phaser.Scene {
                       tip: '記啱嘅輪數換金幣。',
                     },
                   ]
-                : [
-                    { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
-                    { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
-                    { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
-                  ]
+                : st.game === 'shake'
+                  ? [
+                      {
+                        title: `${st.keeper}：搖勻${st.food}`,
+                        lines: ['左右搖電話（或連撳）', '搖到蜜糖均勻為止。'],
+                        tip: '電腦：連撳空白鍵／攻擊鍵。',
+                      },
+                      { title: '休息', lines: ['搖完歇一歇再行。'], tip: 'Skip 都有回血。' },
+                    ]
+                  : [
+                      { title: `${st.keeper}：攪勻杯${st.food}`, lines: ['用手指喺杯上面打圈，', '攪到個奶泡散晒為止。'], tip: '電腦：方向鍵順時針轉圈（↑→↓←）' },
+                      { title: '見到方糖就撳！', lines: ['攪緊嘅時候會彈出方糖，', '1.5 秒之內撳中就加分。'], tip: '每粒方糖都係一個金幣。' },
+                      { title: '最後吹凍佢', lines: ['對住電話吹氣，杯嘢就凍得快。', '吹唔到？撳住畫面都得。'], tip: `飲完回 1 格血。` },
+                    ]
     const pagesFinal =
       st.game === 'claw'
         ? [
@@ -5868,6 +5967,12 @@ export class GameScene extends Phaser.Scene {
       const mini = clawGame(this)
       this.storyIntro = activeGate = mini
       void mini.done.then((r) => after(r.coins, r.caught * 80))
+      return
+    }
+    if (st.game === 'shake') {
+      const mini = shakeHoney(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then(() => after(4, 120))
       return
     }
     // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
@@ -6431,7 +6536,13 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeTruthFragments() {
-    const list = this.lab ? stage8Fragments() : this.vault ? stage9Fragments() : fragmentsForStage(this.stageNo)
+    const list = this.lab
+      ? stage8Fragments()
+      : this.vault
+        ? stage9Fragments()
+        : this.rainTower
+          ? stage10Fragments()
+          : fragmentsForStage(this.stageNo)
     for (const f of list) {
       const spr = this.truthPickups.create(f.x, LANE_FLOOR_Y - 18, 'c2-truth-scrap') as Phaser.Physics.Arcade.Sprite
       spr.setOrigin(0.5, 1).setDepth(DEPTH.PROP + 3)
@@ -6689,9 +6800,13 @@ export class GameScene extends Phaser.Scene {
       return
     }
 
-    // s10-1: story in s10-4 — tip only for flood + elevator.
+    // s10-4: S10_OPEN (timing gate-light + stage card), then play.
     if (this.rainTower) {
       this.time.delayedCall(0, () => {
+        if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
+      })
+      const handle = playS10Open(this, () => {
+        playSong('exhibit')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -6699,7 +6814,6 @@ export class GameScene extends Phaser.Scene {
         this.pauseReadyAt = this.time.now + 1200
         this.resetPauseKeys()
         this.storyIntro = null
-        playSong('exhibit')
         floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '水位升高會拖慢腳步——升降機入面打兩波！', '#c8e8ff', {
           size: 12,
           rise: 10,
@@ -6711,6 +6825,8 @@ export class GameScene extends Phaser.Scene {
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
         )
       })
+      this.storyIntro = handle
+      this.events.once('shutdown', () => handle.destroy())
       return
     }
 
@@ -7560,6 +7676,14 @@ export class GameScene extends Phaser.Scene {
         )
         return
       }
+      if (this.rainTower) {
+        this.storyIntro = playS10Clear(this, () => {
+          this.storyIntro = null
+          if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+          this.win()
+        })
+        return
+      }
       this.storyIntro = playCutscene(this, this.tower ? (this.perfectEnding() ? 'C11_PERFECT' : 'C11') : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
         this.storyIntro = null
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
@@ -8016,6 +8140,7 @@ export class GameScene extends Phaser.Scene {
       // C2 ST-06 clear must always unlock ST-07 even if the run was bootstrapped oddly.
       if (this.stageNo >= 6) ensureMainRun(this.stageNo, this.registry)
       unlockStage(Math.min(this.stageNo + 1, c3Enabled() ? 10 : 7))
+      if (this.stageNo === 10) markC2Cleared()
     }
     this.saveCurrentClear()
     this.ended = true
@@ -8080,7 +8205,11 @@ export class GameScene extends Phaser.Scene {
       this.resetPauseKeys()
       if (id === 'menu') this.goMenu()
       else if (id === 'credits') this.goCredits()
-      else if (this.stageNo === 7 && !isSideTrip() && !c3Enabled()) this.showFirstReleaseContinued()
+      else if (this.stageNo === 10 && !isSideTrip()) {
+        // s10-4: ending ten panels after clear.
+        this.stopUi()
+        this.scene.start('ending-c2')
+      } else if (this.stageNo === 7 && !isSideTrip() && !c3Enabled()) this.showFirstReleaseContinued()
       else if (this.stageNo === 8 && !isSideTrip()) this.showFirstReleaseContinued()
       else this.goNextStage()
     }
@@ -9935,20 +10064,26 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  /** Stage 10 Leon: postFight then clear. */
+  /** Stage 10 Leon: postFight → reunion → Ken → clear (S10_CLEAR in playOutro). */
   private leonDefeated() {
     if (this.ended) return
     const depth = stage10BossDialogue()
-    const go = () => {
-      this.storyIntro = null
-      this.queenDefeated()
+    const afterTalk = () => {
+      this.storyIntro = playS10ReunionThenKen(
+        this,
+        { boy: this.boy, girl: this.girl },
+        () => {
+          this.storyIntro = null
+          this.queenDefeated()
+        },
+      )
     }
     this.physics.pause()
     for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
     if (depth?.postFight?.length) {
-      this.storyIntro = showStoryLines(this, depth.postFight, go)
+      this.storyIntro = showStoryLines(this, depth.postFight, afterTalk)
     } else {
-      go()
+      afterTalk()
     }
   }
 
