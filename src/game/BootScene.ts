@@ -1,6 +1,7 @@
 import { GAME_W, GAME_H } from './display'
 import Phaser from 'phaser'
 import { createHeroAnims, markHd, preloadHeroAnims, REPLACED_STILLS } from './heroAnims'
+import { createStage8Anims, preloadStage8Art } from './stage8Art'
 import { createFxAnims, preloadFxAnims } from './fxAnims'
 import { registerTiles } from './tiles'
 import { registerWorldArt } from './worldArt'
@@ -395,6 +396,7 @@ export class BootScene extends Phaser.Scene {
     preloadArtOverrides(this)
     preloadPhotoSpot(this)
     preloadHeroAnims(this)
+    preloadStage8Art(this)
     preloadFxAnims(this)
     preloadRound1Map(this)
     preloadCustomConfig(this)
@@ -416,6 +418,7 @@ export class BootScene extends Phaser.Scene {
     this.registry.set('artOverrides', applyArtOverrides(this))
     hardenPhotoTexture(this)
     createHeroAnims(this)
+    createStage8Anims(this)
     for (const key of this.textures.getTextureKeys()) {
       if (
         key.startsWith('friend-') ||

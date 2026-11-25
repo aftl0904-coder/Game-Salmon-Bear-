@@ -1,7 +1,7 @@
 /**
  * Stage 8 · 配方控制中心 enemies (s8-2).
  * Numbers locked to the s8-2 ticket — do not retune here.
- * Art: tinted stand-ins until Manus stage8 sheets land (#157).
+ * Art: Manus stage8 sheets via art-s8 (JSON `frames`); tinted stand-ins if missing.
  *
  *  1. LabDrone         巡邏無人機 — hover → red warn → dive → open → rise
  *  2. TubeSoldier      試管兵     — close → raise tube → parabolic sticky flask
@@ -16,15 +16,28 @@ import { actorDepth } from '../engine/depth'
 import { isActorFrozen, floatText } from '../fx'
 import { bossHitDamage } from '../engine/bossDamage'
 import { SFX } from '../audio'
+import { hasStage8Anim, stage8AnimTex, type Stage8AnimId } from '../stage8Art'
+import type { AnimSetId } from '../heroAnims'
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
-/** Lab-night tints — distinct from stage7 warehouse browns. */
+/** Lab-night tints — only when Manus sheets are missing. */
 const TINT = {
   drone: 0x6ad0ff,
   tube: 0xc8a0ff,
   cabinet: 0xd0b070,
 } as const
+
+function bindStage8Sheet(enemy: AnimEnemy, id: Stage8AnimId, first: string) {
+  if (!hasStage8Anim(enemy.scene, id)) return false
+  enemy.set = id as AnimSetId
+  enemy.setTexture(stage8AnimTex(id), 0)
+  enemy.setOrigin(0.5, 1)
+  enemy.clearTint()
+  ;(enemy as unknown as { animName: string }).animName = ''
+  enemy.anim(first)
+  return true
+}
 
 // ── ticket numbers ─────────────────────────────────────────────────────
 const DRONE_HP = 6
@@ -69,6 +82,7 @@ export class LabDrone extends AnimEnemy {
   private droneDir: 1 | -1 = 1
   private diveTo = { x: 0, y: 0 }
   private lamp: Phaser.GameObjects.Arc | null = null
+  private readonly realArt: boolean
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     const h = Phaser.Math.Between(DRONE_HOVER_MIN, DRONE_HOVER_MAX)
@@ -78,13 +92,16 @@ export class LabDrone extends AnimEnemy {
     this.hp = this.maxHp = DRONE_HP
     this.hoverH = h
     this.homeX = x
-    this.bodyBox(26, 22)
-    this.setTint(TINT.drone)
-    this.lamp = scene.add.circle(x, this.y - 14, 5, 0x204050, 0.9).setDepth(this.depth + 4)
+    this.realArt = bindStage8Sheet(this, 's8drone', 'idle')
+    this.bodyBox(this.realArt ? 36 : 26, this.realArt ? 28 : 22)
+    if (!this.realArt) {
+      this.setTint(TINT.drone)
+      this.lamp = scene.add.circle(x, this.y - 14, 5, 0x204050, 0.9).setDepth(this.depth + 4)
+    }
   }
 
   protected override defaultTint() {
-    return TINT.drone
+    return this.realArt ? 0xffffff : TINT.drone
   }
 
   canHurtPlayer() {
@@ -110,8 +127,8 @@ export class LabDrone extends AnimEnemy {
     this.t += dt
 
     if (this.phase === 'patrol') {
-      this.anim('fly')
-      this.setTint(TINT.drone)
+      this.anim(this.realArt ? 'walk' : 'fly')
+      if (!this.realArt) this.setTint(TINT.drone)
       // Bob + left/right around home.
       if (this.x > this.homeX + DRONE_PATROL_HALF) this.droneDir = -1
       if (this.x < this.homeX - DRONE_PATROL_HALF) this.droneDir = 1
@@ -123,22 +140,22 @@ export class LabDrone extends AnimEnemy {
         this.phase = 'warn'
         this.t = 0
         this.setVelocity(0, 0)
-        this.anim('aim')
+        this.anim(this.realArt ? 'warning' : 'aim')
       }
     } else if (this.phase === 'warn') {
       this.setVelocity(0, 0)
       this.y = hoverY
       this.face(tgt.x - this.x)
       const blink = Math.floor(now / 90) % 2 === 0
-      this.setTint(blink ? 0xff4040 : TINT.drone)
+      if (!this.realArt) this.setTint(blink ? 0xff4040 : TINT.drone)
       this.syncLamp(true, blink)
       if (this.t >= DRONE_WARN_MS) {
-        this.setTint(TINT.drone)
+        if (!this.realArt) this.setTint(TINT.drone)
         this.diveTo = { x: tgt.x, y: floor }
         this.phase = 'dive'
         this.t = 0
         this.hitThis = false
-        this.anim('dive')
+        this.anim(this.realArt ? 'attack' : 'dive')
       }
     } else if (this.phase === 'dive') {
       this.syncLamp(false)
@@ -155,7 +172,7 @@ export class LabDrone extends AnimEnemy {
         this.setVelocity(0, 0)
         this.phase = 'open'
         this.t = 0
-        this.anim('stuck')
+        this.anim(this.realArt ? 'idle' : 'stuck')
       }
     } else if (this.phase === 'open') {
       this.setVelocity(0, 0)
@@ -163,7 +180,7 @@ export class LabDrone extends AnimEnemy {
       if (this.t >= DRONE_OPEN_MS) {
         this.phase = 'rise'
         this.t = 0
-        this.anim('fly')
+        this.anim(this.realArt ? 'walk' : 'fly')
       }
     } else {
       // rise back to patrol height
@@ -209,8 +226,9 @@ export class TubeSoldier extends AnimEnemy {
   private phase: 'walk' | 'warn' | 'cool' = 'walk'
   private t = 0
   private th: TubeHooks
-  private tubeGfx: Phaser.GameObjects.Graphics
+  private tubeGfx: Phaser.GameObjects.Graphics | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
+  private readonly realArt: boolean
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, th: TubeHooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -218,13 +236,16 @@ export class TubeSoldier extends AnimEnemy {
     this.th = th
     this.hp = this.maxHp = TUBE_HP
     this.hurtMs = 220
-    this.bodyBox(28, 44)
-    this.setTint(TINT.tube)
-    this.tubeGfx = scene.add.graphics()
+    this.realArt = bindStage8Sheet(this, 's8tube', 'walk')
+    this.bodyBox(this.realArt ? 32 : 28, this.realArt ? 56 : 44)
+    if (!this.realArt) {
+      this.setTint(TINT.tube)
+      this.tubeGfx = scene.add.graphics()
+    }
   }
 
   protected override defaultTint() {
-    return TINT.tube
+    return this.realArt ? 0xffffff : TINT.tube
   }
 
   canHurtPlayer() {
@@ -241,7 +262,7 @@ export class TubeSoldier extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.tubeGfx.setVisible(false)
+      this.tubeGfx?.setVisible(false)
       this.clearWarn()
       return
     }
@@ -256,6 +277,7 @@ export class TubeSoldier extends AnimEnemy {
       this.think -= dt
       if (this.think <= 0) this.setFsm('CHASE')
       this.setVelocity(0, 0)
+      if (this.realArt) this.anim('hurt')
       this.drawTube(false)
       return
     }
@@ -265,7 +287,7 @@ export class TubeSoldier extends AnimEnemy {
     this.t += dt
 
     if (this.phase === 'walk') {
-      this.anim(Math.abs(dx) < TUBE_RANGE ? 'reach' : 'walk')
+      this.anim(Math.abs(dx) < TUBE_RANGE ? (this.realArt ? 'warning' : 'reach') : 'walk')
       if (Math.abs(dx) <= TUBE_RANGE) {
         this.setVelocity(0, 0)
         if (this.canEngageFromScreen()) {
@@ -279,14 +301,15 @@ export class TubeSoldier extends AnimEnemy {
       this.drawTube(false)
     } else if (this.phase === 'warn') {
       this.setVelocity(0, 0)
-      this.anim('reach')
+      this.anim(this.realArt ? 'warning' : 'reach')
       const blink = Math.floor(now / 100) % 2 === 0
-      this.setTint(blink ? 0xffa0ff : TINT.tube)
+      if (!this.realArt) this.setTint(blink ? 0xffa0ff : TINT.tube)
       this.drawTube(true)
       this.warnMark?.setPosition(this.x, this.y - 58)
       if (this.t >= TUBE_WARN_MS) {
-        this.setTint(TINT.tube)
+        if (!this.realArt) this.setTint(TINT.tube)
         this.clearWarn()
+        if (this.realArt) this.anim('attack')
         const aim = Phaser.Math.Clamp(tgt.x, this.x - TUBE_RANGE, this.x + TUBE_RANGE)
         this.th.throwTube(this.x + (this.flipX ? -12 : 12), this.y - 40, aim)
         this.phase = 'cool'
@@ -329,6 +352,7 @@ export class TubeSoldier extends AnimEnemy {
 
   private drawTube(raised: boolean) {
     const g = this.tubeGfx
+    if (!g) return
     g.clear()
     if (!this.active || !this.visible || this.fsm === 'DEAD') {
       g.setVisible(false)
@@ -347,7 +371,8 @@ export class TubeSoldier extends AnimEnemy {
 
   protected override die(dir: number) {
     this.clearWarn()
-    this.tubeGfx.destroy()
+    this.tubeGfx?.destroy()
+    this.tubeGfx = null
     super.die(dir)
   }
 
@@ -369,21 +394,25 @@ export class FileCabinet extends AnimEnemy {
   private t = 0
   private dir: 1 | -1 = 1
   private chargeFrom = 0
-  private doorGfx: Phaser.GameObjects.Graphics
+  private doorGfx: Phaser.GameObjects.Graphics | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
+  private readonly realArt: boolean
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
     this.species = 's8cabinet'
     this.hp = this.maxHp = CAB_HP
     this.hurtMs = 260
-    this.bodyBox(34, 48)
-    this.setTint(TINT.cabinet)
-    this.doorGfx = scene.add.graphics()
+    this.realArt = bindStage8Sheet(this, 's8cabinet', 'walk')
+    this.bodyBox(this.realArt ? 40 : 34, this.realArt ? 60 : 48)
+    if (!this.realArt) {
+      this.setTint(TINT.cabinet)
+      this.doorGfx = scene.add.graphics()
+    }
   }
 
   protected override defaultTint() {
-    return TINT.cabinet
+    return this.realArt ? 0xffffff : TINT.cabinet
   }
 
   /** Front blocks except during the post-charge open window. */
@@ -406,7 +435,7 @@ export class FileCabinet extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.doorGfx.setVisible(false)
+      this.doorGfx?.setVisible(false)
       this.clearWarn()
       return
     }
@@ -421,6 +450,7 @@ export class FileCabinet extends AnimEnemy {
       this.think -= dt
       if (this.think <= 0) this.setFsm('CHASE')
       this.setVelocity(0, 0)
+      if (this.realArt) this.anim('hurt')
       this.drawDoor()
       return
     }
@@ -430,7 +460,7 @@ export class FileCabinet extends AnimEnemy {
 
     if (this.phase === 'chase') {
       this.setFlipX(dx < 0)
-      this.anim(Math.abs(dx) < 50 ? 'reach' : 'walk')
+      this.anim(Math.abs(dx) < 50 ? (this.realArt ? 'warning' : 'reach') : 'walk')
       this.setVelocityX(Math.abs(dx) < 10 ? 0 : Math.sign(dx) * CAB_WALK)
       if (Math.abs(dx) <= CAB_ENGAGE && Math.abs(dx) > 40 && this.canEngageFromScreen()) {
         this.phase = 'warn'
@@ -443,24 +473,25 @@ export class FileCabinet extends AnimEnemy {
     } else if (this.phase === 'warn') {
       this.setVelocity(0, 0)
       this.setFlipX(this.dir < 0)
-      this.anim('reach')
+      this.anim(this.realArt ? 'warning' : 'reach')
       const blink = Math.floor(now / 90) % 2 === 0
-      this.setTint(blink ? 0xffe080 : TINT.cabinet)
+      if (!this.realArt) this.setTint(blink ? 0xffe080 : TINT.cabinet)
       this.warnMark?.setPosition(this.x, this.y - 60)
       this.drawDoor(true)
       if (this.t >= CAB_WARN_MS) {
-        this.setTint(TINT.cabinet)
+        if (!this.realArt) this.setTint(TINT.cabinet)
         this.clearWarn()
         this.phase = 'charge'
         this.t = 0
         this.chargeFrom = this.x
         this.hitThis = false
         this.setFsm('ATTACK')
-        this.anim('walk')
+        this.anim(this.realArt ? 'attack' : 'walk')
       }
     } else if (this.phase === 'charge') {
       this.setFlipX(this.dir < 0)
       this.setVelocityX(this.dir * CAB_CHARGE_SPEED)
+      if (this.realArt) this.anim('attack')
       this.drawDoor(true)
       const traveled = Math.abs(this.x - this.chargeFrom)
       const body = this.body as Phaser.Physics.Arcade.Body
@@ -471,9 +502,9 @@ export class FileCabinet extends AnimEnemy {
         this.setVelocity(0, 0)
       }
     } else {
-      // open — front is soft
+      // open — front is soft; hold attack end pose on real art
       this.setVelocity(0, 0)
-      this.anim('reach')
+      this.anim(this.realArt ? 'attack' : 'reach')
       this.drawDoor(false, true)
       if (this.t >= CAB_OPEN_MS) {
         this.phase = 'chase'
@@ -503,6 +534,7 @@ export class FileCabinet extends AnimEnemy {
 
   private drawDoor(ajar = false, open = false) {
     const g = this.doorGfx
+    if (!g) return
     g.clear()
     if (!this.active || !this.visible || this.fsm === 'DEAD') {
       g.setVisible(false)
@@ -529,7 +561,8 @@ export class FileCabinet extends AnimEnemy {
 
   protected override die(dir: number) {
     this.clearWarn()
-    this.doorGfx.destroy()
+    this.doorGfx?.destroy()
+    this.doorGfx = null
     super.die(dir)
   }
 
@@ -596,8 +629,9 @@ export class ChiefResearcher extends AnimEnemy {
   private swipeFrom = 0
   private rh: ResearcherHooks
   private cfg: ResearcherCfg
-  private board: Phaser.GameObjects.Graphics
+  private board: Phaser.GameObjects.Graphics | null = null
   private warnMark: Phaser.GameObjects.Text | null = null
+  private readonly realArt: boolean
 
   constructor(
     scene: Phaser.Scene,
@@ -617,15 +651,20 @@ export class ChiefResearcher extends AnimEnemy {
     this.hurtMs = 160
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
-    this.setTint(0xb8d0e8)
+    this.realArt = bindStage8Sheet(this, 's8researcher', 'idle')
+    const bw = this.realArt ? 48 : 44
+    const bh = this.realArt ? 72 : 56
     const body = this.body as Phaser.Physics.Arcade.Body
-    body.setSize(44, 56)
-    body.setOffset((this.frame.width - 44) / 2, this.frame.height - 56 - 6)
-    this.board = scene.add.graphics()
+    body.setSize(bw, bh)
+    body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    if (!this.realArt) {
+      this.setTint(0xb8d0e8)
+      this.board = scene.add.graphics()
+    }
   }
 
   protected override defaultTint() {
-    return 0xb8d0e8
+    return this.realArt ? 0xffffff : 0xb8d0e8
   }
 
   canHurtPlayer() {
@@ -670,20 +709,44 @@ export class ChiefResearcher extends AnimEnemy {
     this.t = 0
     this.flasksThrown = 0
     this.setVelocity(0, 0)
-    if (a === 'refill') {
-      this.setTint(0xffe060)
-      this.rh.bossEvent('weak')
-    } else if (a === 'swipeWarn' || a === 'flaskWarn') {
-      this.setTint(0xffc080)
-    } else {
-      this.setTint(0xb8d0e8)
+    if (!this.realArt) {
+      if (a === 'refill') {
+        this.setTint(0xffe060)
+      } else if (a === 'swipeWarn' || a === 'flaskWarn') {
+        this.setTint(0xffc080)
+      } else {
+        this.setTint(0xb8d0e8)
+      }
     }
-    this.anim(a === 'swipe' || a === 'swipeWarn' ? 'rain' : a === 'flask' || a === 'flaskWarn' ? 'point' : a === 'refill' ? 'hurt' : 'idle')
+    if (a === 'refill') this.rh.bossEvent('weak')
+    if (this.realArt) {
+      const map: Record<Act, string> = {
+        intro: 'idle',
+        stalk: 'idle',
+        swipeWarn: 'board_warning',
+        swipe: 'board_sweep',
+        flaskWarn: 'bottle_warning',
+        flask: 'bottle_throw',
+        refill: 'weakpoint_glow',
+      }
+      this.anim(map[a])
+    } else {
+      this.anim(
+        a === 'swipe' || a === 'swipeWarn'
+          ? 'rain'
+          : a === 'flask' || a === 'flaskWarn'
+            ? 'point'
+            : a === 'refill'
+              ? 'hurt'
+              : 'idle',
+      )
+    }
   }
 
   protected override die(_dir: number) {
     this.clearWarn()
-    this.board.destroy()
+    this.board?.destroy()
+    this.board = null
     this.hp = 0
     this.act = 'intro'
     this.boss = false
@@ -702,7 +765,7 @@ export class ChiefResearcher extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.board.setVisible(false)
+      this.board?.setVisible(false)
       return
     }
     this.contactCd = Math.max(0, this.contactCd - dt)
@@ -811,12 +874,12 @@ export class ChiefResearcher extends AnimEnemy {
         this.setVelocity(0, 0)
         this.drawBoard(false)
         // Glow pulse while bottles are refilled — weak window.
-        {
+        if (!this.realArt) {
           const blink = Math.floor(this.scene.time.now / 120) % 2 === 0
           this.setTint(blink ? 0xfff0a0 : 0xffd050)
         }
         if (this.t >= this.cfg.refillExposedMs) {
-          this.setTint(0xb8d0e8)
+          if (!this.realArt) this.setTint(0xb8d0e8)
           this.go('stalk')
         }
         break
@@ -845,6 +908,7 @@ export class ChiefResearcher extends AnimEnemy {
 
   private drawBoard(raised: boolean, sweeping = false, holdingFlask = false) {
     const g = this.board
+    if (!g) return
     g.clear()
     if (!this.active || !this.visible || this.fsm === 'DEAD') {
       g.setVisible(false)
