@@ -47,6 +47,18 @@ import {
   showStoryLines,
   showStoryStillThen,
 } from './storyDepth'
+import {
+  playPupuMonitor,
+  playS8Clear,
+  playS8Open,
+  playStage8Action,
+  stage8Beats,
+  stage8BossDialogue,
+  stage8Fragments,
+  stage8LinesToRaw,
+  stage8PupuMonitor,
+  stage8Sections,
+} from './stage8Story'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
 import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
@@ -223,6 +235,8 @@ type Stage1 = {
   decor?: { back: Array<{ x: number; kind: string }>; hang?: Array<{ x: number; kind: string }> }
   /** Display-only tip signs (no collision). */
   signs?: Array<{ x: number; text: string }>
+  /** Optional membership / food stall X (stage 8 uses 640, not a checkpoint). */
+  stallX?: number
   /** Floating coin trails (h = height above floor). */
   coins?: Array<{ x: number; h: number }>
   /** Hidden rewards on hard-to-reach perches. */
@@ -534,6 +548,10 @@ export class GameScene extends Phaser.Scene {
   private friendsSaved: string[] = []
   /** The stir-the-coffee / flag-race minigame runs at the first cart of each stage only. */
   private coffeeDone = false
+  /** Stage 8 story: section enter/mid + pupu monitor once-flags. */
+  private s8EnterDone = new Set<string>()
+  private s8MidDone = new Set<string>()
+  private s8PupuDone = false
   /** Stage 7・記貨單 stall before boss (once). */
   private memoryStallX = 4580
   private memoryDone = false
@@ -1262,7 +1280,9 @@ export class GameScene extends Phaser.Scene {
   /** flat → platforms → ambush → altar — one readable story beat each. */
   private tickStageBeats() {
     const lead = this.leadX()
-    const beats: Array<{ x: number; title: string }> = this.exhibit
+    const beats: Array<{ x: number; title: string }> = this.lab
+      ? stage8Beats().map((b) => ({ x: b.x, title: b.title }))
+      : this.exhibit
       ? [{ x: 60, title: '迎賓展示廳' }, { x: 880, title: '分類走廊' }, { x: 2000, title: '訓練表演場' }, { x: 3160, title: '後臺籠舍區' }]
       : this.mall
       ? [
@@ -3739,6 +3759,8 @@ export class GameScene extends Phaser.Scene {
 
   /** Stage 8: pipes + enemies + ChiefResearcher (s8-3). */
   private tickStage8(dt: number) {
+    this.tickStage8Story()
+    this.tickLabMembershipStall()
     this.s8pipes?.update(dt)
     this.tickLabStickyPuddles(dt)
     // Valve smash: one hit per melee swing (reuse attackHitbox hitSet).
@@ -4634,11 +4656,12 @@ export class GameScene extends Phaser.Scene {
     this.placeCheckpoints()
     this.placeMemoryStall()
     for (const c of ST.coins ?? []) this.spawnCoin(c.x, LANE_FLOOR_Y - c.h)
-    if (this.mall || this.exhibit) {
+    if (this.mall || this.exhibit || this.lab) {
       ensureStoryDepthArt(this)
       this.placeTruthFragments()
-      this.placeKenStoryProp()
+      if (!this.lab) this.placeKenStoryProp()
     }
+    if (this.lab) this.placeLabMembershipStall()
 
     // Goemon-style loot holders + ceiling crushers (data/levels/stage1.json).
     this.powerPickups = this.physics.add.group()
@@ -5084,7 +5107,8 @@ export class GameScene extends Phaser.Scene {
     for (const x of this.checkpointXs) {
       const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
       // Mall: first CP is plain save (teach slip first); membership stall = 2nd CP.
-      const isStall = this.mall ? x === this.checkpointXs[1] : x === this.checkpointXs[0]
+      // Lab: membership stall is at ST.stallX (placeLabMembershipStall) — all CPs are plain saves.
+      const isStall = this.lab ? false : this.mall ? x === this.checkpointXs[1] : x === this.checkpointXs[0]
       const st = this.stall()
       if (isStall) {
         if (this.textures.exists('cs-cart')) {
@@ -5288,6 +5312,119 @@ export class GameScene extends Phaser.Scene {
     const mini = flagRace(this)
     this.storyIntro = activeGate = mini
     void mini.done.then((r) => after(r.good * 2, r.good * 120))
+  }
+
+  /** Stage 8 membership quiz at stallX (640) — not a checkpoint. */
+  private placeLabMembershipStall() {
+    const x = ST.stallX
+    if (x == null) return
+    const top = groundTopBelow(x, LANE_FLOOR_Y - 60, 8) ?? LANE_FLOOR_Y
+    const st = this.stall()
+    if (this.textures.exists('cs-cart')) {
+      const cart = this.add.image(x + 30, top + 1, 'cs-cart').setOrigin(0.5, 1).setDepth(DEPTH.PROP)
+      enablePixelSprite(cart)
+    }
+    const keeperKey = this.keeperTex()
+    if (this.textures.exists(keeperKey)) {
+      const mama = this.add.image(x - 8, top + 1, keeperKey).setOrigin(0.5, 1).setDepth(DEPTH.PROP + 1).setFlipX(true)
+      enablePixelSprite(mama)
+      this.tweens.add({ targets: mama, scaleY: { from: 1, to: 1.02 }, duration: 900, yoyo: true, repeat: -1 })
+    }
+    this.add
+      .text(x + 30, top - 74, st.sign, {
+        fontFamily: FONT_UI,
+        fontSize: '11px',
+        color: '#2a1a10',
+        backgroundColor: '#f7e7c0',
+        padding: { x: 3, y: 1 },
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.SIGN)
+  }
+
+  /** Trigger goldfish quiz once when lead crosses stallX. */
+  private tickLabMembershipStall() {
+    if (!this.lab || this.coffeeDone || this.storyIntro || !this.started || this.ended || this.bossFight) return
+    const x = ST.stallX
+    if (x == null || this.leadX() < x) return
+    this.coffeeDone = true
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    floatText(this, x, LANE_FLOOR_Y - 92, `${this.stall().keeper}：${this.stall().greet}`, '#ffe08a', { size: 12, dur: 2500 })
+    SFX.coin()
+    void this.runCoffeeStall()
+  }
+
+  /** Stage 8 section enter/mid dialogue + silent actions; pupu monitor at 2900. */
+  private tickStage8Story() {
+    if (!this.lab || !this.started || this.ended || this.storyIntro || this.bossFight) return
+    const lead = this.leadX()
+    const mon = stage8PupuMonitor()
+    for (const sec of stage8Sections()) {
+      if (!this.s8EnterDone.has(sec.seg) && lead >= sec.enterX) {
+        this.s8EnterDone.add(sec.seg)
+        const lines = stage8LinesToRaw(sec.enter ?? [])
+        playStage8Action(this, sec.actions?.enter, { boy: this.boy, girl: this.girl })
+        if (!lines.length) continue
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, () => {
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        })
+        return
+      }
+      if (!this.s8MidDone.has(sec.seg) && lead >= sec.midX) {
+        this.s8MidDone.add(sec.seg)
+        const lines = stage8LinesToRaw(sec.mid ?? [])
+        playStage8Action(this, sec.actions?.mid, { boy: this.boy, girl: this.girl })
+        const atMonitor = Math.abs(sec.midX - mon.x) < 8
+        if (atMonitor) this.s8PupuDone = true
+        const afterMid = () => {
+          if (atMonitor) {
+            this.storyIntro = playPupuMonitor(this, () => {
+              this.storyIntro = null
+              if (!this.ended) {
+                this.physics.resume()
+                this.resetPauseKeys()
+              }
+            })
+            return
+          }
+          this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+        }
+        if (!lines.length && atMonitor) {
+          this.physics.pause()
+          for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+          afterMid()
+          return
+        }
+        if (!lines.length) continue
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        this.storyIntro = showStoryLines(this, lines, afterMid)
+        return
+      }
+    }
+    if (!this.s8PupuDone && lead >= mon.x) {
+      this.s8PupuDone = true
+      this.physics.pause()
+      for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+      this.storyIntro = playPupuMonitor(this, () => {
+        this.storyIntro = null
+        if (!this.ended) {
+          this.physics.resume()
+          this.resetPauseKeys()
+        }
+      })
+    }
   }
 
   /** Stage 7・Boss 前記貨單攤檔（會員中心金魚眼仍喺 CP2）。 */
@@ -5717,7 +5854,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private placeTruthFragments() {
-    const list = fragmentsForStage(this.stageNo)
+    const list = this.lab ? stage8Fragments() : fragmentsForStage(this.stageNo)
     for (const f of list) {
       const spr = this.truthPickups.create(f.x, LANE_FLOOR_Y - 18, 'c2-truth-scrap') as Phaser.Physics.Arcade.Sprite
       spr.setOrigin(0.5, 1).setDepth(DEPTH.PROP + 3)
@@ -5943,9 +6080,13 @@ export class GameScene extends Phaser.Scene {
     this.girl?.setVelocity(0, 0)
     this.pet?.setVelocity(0, 0)
 
-    // s8-1: stage 8 story lands in s8-4 — skip C1 picnic fallback and start play.
+    // s8-4: S8_OPEN (dialogue + cart tilt + stage card), then play.
     if (this.lab) {
       this.time.delayedCall(0, () => {
+        if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')
+      })
+      const handle = playS8Open(this, () => {
+        playSong('exhibit')
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         if (this.started) return
         this.started = true
@@ -5953,7 +6094,6 @@ export class GameScene extends Phaser.Scene {
         this.pauseReadyAt = this.time.now + 1200
         this.resetPauseKeys()
         this.storyIntro = null
-        playSong('exhibit')
         floatText(this, this.boy.x + 120, LANE_FLOOR_Y - 120, '假蜜管道會噴——打爛閥門就停！', '#dff6ff', { size: 12, rise: 10, dur: 3200 })
         this.emitScore(
           this.mode === '1p'
@@ -5961,6 +6101,8 @@ export class GameScene extends Phaser.Scene {
             : '雙人：←→／Ｓ蹲　Ｇ／．跳　Ｆ／，攻　Ｔ／；絕招　Ｈ／／切換',
         )
       })
+      this.storyIntro = handle
+      this.events.once('shutdown', () => handle.destroy())
       return
     }
 
@@ -6759,6 +6901,14 @@ export class GameScene extends Phaser.Scene {
         this.storyIntro = null
         if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
         this.win()
+        return
+      }
+      if (this.lab) {
+        this.storyIntro = playS8Clear(this, () => {
+          this.storyIntro = null
+          if (this.scene.get('UIScene')) this.scene.setVisible(true, 'UIScene')
+          this.win()
+        })
         return
       }
       this.storyIntro = playCutscene(this, this.tower ? (this.perfectEnding() ? 'C11_PERFECT' : 'C11') : this.depot ? 'C9' : this.market ? 'C6' : this.tree ? 'C4' : 'C2', () => {
@@ -8737,7 +8887,7 @@ export class GameScene extends Phaser.Scene {
     this.showWarning(() => {
       if (this.ended) return
       const afterCard = () => {
-        const depth = bossDepthDialogue(kind)
+        const depth = kind === 'researcher' ? stage8BossDialogue() : bossDepthDialogue(kind)
         if (depth?.preFight?.length) {
           this.storyIntro = showStoryLines(this, depth.preFight, () => this.queenReveal(b), {
             monoDefault: kind === 'mall-scrubber',
@@ -8789,7 +8939,7 @@ export class GameScene extends Phaser.Scene {
           : this.market
             ? new MirrorOwl(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks(), this.owlHooks())
             : new QueenBee(this, b.arenaX1 - 150, b.arenaX0, b.arenaX1, this.s2Hooks())
-      q.onDefeated = () => (this.lab ? this.queenDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
+      q.onDefeated = () => (this.lab ? this.researcherDefeated() : this.exhibit ? this.trainerDefeated() : this.stageNo === 1 ? this.kingDefeated() : this.mall ? this.mallDefeated() : this.queenDefeated())
       this.addS2Enemy(q)
       q.setFlipX(true)
       // systems-2: 2P both heroes present → boss HP ×1.5 (phase % thresholds unchanged).
@@ -8843,6 +8993,7 @@ export class GameScene extends Phaser.Scene {
     const cx = this.cameras.main.scrollX + GAME_W / 2
     if (this.exhibit && kind !== 'defeat') return
     const scrub = this.mall ? bossDepthDialogue('mall-scrubber') : null
+    const researcher = this.lab ? stage8BossDialogue() : null
     if (kind === 'phase2') {
       SFX.boss()
       this.cameras.main.flash(160, 255, 200, 90)
@@ -8852,7 +9003,8 @@ export class GameScene extends Phaser.Scene {
         96,
         this.stageNo === 1
           ? '武者王叫咗兩個伏兵！桶加快——小心佢衝過嚟！'
-          : scrub?.phase2 ??
+          : researcher?.phase2 ??
+            scrub?.phase2 ??
             (this.tower
               ? '大屏幕播舊 Boss 招式——留神！推土機嚟喇！'
               : this.depot
@@ -8917,7 +9069,8 @@ export class GameScene extends Phaser.Scene {
           this.queen.y - 120,
           this.stageNo === 1
             ? '頭盔跌咗！'
-            : scrub?.defeatBanner ??
+            : researcher?.defeatBanner ??
+              scrub?.defeatBanner ??
               (this.tower ? '面具甩咗！' : this.depot ? '披風甩咗！' : this.market ? '鏡面裂咗！' : '皇冠跌咗！'),
           '#ffe08a',
           { size: 18, dur: 1800 },
@@ -8975,6 +9128,23 @@ export class GameScene extends Phaser.Scene {
       this.storyIntro = showStoryLines(this, depth.postFight, afterTalk, { monoDefault: true })
     } else {
       afterTalk()
+    }
+  }
+
+  /** Stage 8 chief researcher: postFight then clear (S8_CLEAR in playOutro). */
+  private researcherDefeated() {
+    if (this.ended) return
+    const depth = stage8BossDialogue()
+    const go = () => {
+      this.storyIntro = null
+      this.queenDefeated()
+    }
+    this.physics.pause()
+    for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+    if (depth?.postFight?.length) {
+      this.storyIntro = showStoryLines(this, depth.postFight, go)
+    } else {
+      go()
     }
   }
 
