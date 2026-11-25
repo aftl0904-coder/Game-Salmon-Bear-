@@ -1,0 +1,290 @@
+[
+  {
+    "mode": "desktop",
+    "id": "jailguard",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 237.69999998807907
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 488.19999998807907
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 10,
+        "fps": 4,
+        "at": 745.8999999910593
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4,
+        "at": 999.0999999940395
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 12,
+        "fps": 8,
+        "at": 1254.3999999910593
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 13,
+        "fps": 8,
+        "at": 1386.2999999970198
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 14,
+        "fps": 8,
+        "at": 1511.5999999940395
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8,
+        "at": 1636.8999999910593
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 10,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 12,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 13,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 257.70000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 131.90000000596046,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "jailguard",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 179.5
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 430.1000000089407
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 10,
+        "fps": 4,
+        "at": 685.8000000119209
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4,
+        "at": 941
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 12,
+        "fps": 8,
+        "at": 1196.2000000029802
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 13,
+        "fps": 8,
+        "at": 1328.7000000029802
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 14,
+        "fps": 8,
+        "at": 1454
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8,
+        "at": 1579.300000011921
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 10,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 12,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 13,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 3,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.6000000089407,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.70000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.19999998807907,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 255.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 132.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.29999999701977,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.30000001192093,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  }
+]

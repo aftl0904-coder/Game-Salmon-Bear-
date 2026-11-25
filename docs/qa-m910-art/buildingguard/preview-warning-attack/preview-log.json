@@ -1,0 +1,256 @@
+[
+  {
+    "mode": "desktop",
+    "id": "buildingguard",
+    "input": "mouse",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 224.80000001192093
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 475.20000000298023
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4,
+        "at": 725.5
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4,
+        "at": 976.7000000029802
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8,
+        "at": 1229.6000000089407
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8,
+        "at": 1361.1000000089407
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8,
+        "at": 1486.300000011921
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.3999999910593,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 250.29999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 251.20000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 252.90000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 131.5,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.20000000298023,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  },
+  {
+    "mode": "mobile-touch",
+    "id": "buildingguard",
+    "input": "touch only",
+    "trace": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4,
+        "at": 170.5
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4,
+        "at": 421
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4,
+        "at": 674.9000000059605
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4,
+        "at": 928.6000000089407
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8,
+        "at": 1181.4000000059605
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8,
+        "at": 1313.4000000059605
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8,
+        "at": 1438.6000000089407
+      }
+    ],
+    "expected": [
+      {
+        "phase": "warning",
+        "slot": 0,
+        "frame": 8,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 1,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 2,
+        "frame": 9,
+        "fps": 4
+      },
+      {
+        "phase": "warning",
+        "slot": 3,
+        "frame": 11,
+        "fps": 4
+      },
+      {
+        "phase": "attack",
+        "slot": 0,
+        "frame": 14,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 1,
+        "frame": 15,
+        "fps": 8
+      },
+      {
+        "phase": "attack",
+        "slot": 2,
+        "frame": 15,
+        "fps": 8
+      }
+    ],
+    "intervals": [
+      {
+        "actualMs": 250.5,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.90000000596046,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 253.70000000298023,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 252.79999999701977,
+        "targetMs": 250
+      },
+      {
+        "actualMs": 132,
+        "targetMs": 125
+      },
+      {
+        "actualMs": 125.20000000298023,
+        "targetMs": 125
+      }
+    ],
+    "passed": true
+  }
+]

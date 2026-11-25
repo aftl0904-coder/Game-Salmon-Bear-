@@ -88,15 +88,37 @@ export class Stage10World {
     this.elev = elev
   }
 
-  destroy() {
+  /**
+   * @param opts.skipTagged — when restarting `play`, the enemies group may already
+   *   be destroyed; skip iterating it (shutdown path clears tagged while groups live).
+   */
+  destroy(opts?: { skipTagged?: boolean }) {
     for (const f of this.floods) {
-      f.water.destroy()
-      f.warn.destroy()
+      try {
+        f.water.destroy()
+      } catch {
+        /* already gone */
+      }
+      try {
+        f.warn.destroy()
+      } catch {
+        /* already gone */
+      }
     }
     this.floods = []
     this.clearBang()
-    this.hooks.destroyTagged()
-    this.hooks.clearCameraBounds()
+    if (!opts?.skipTagged) {
+      try {
+        this.hooks.destroyTagged()
+      } catch {
+        /* enemies group already torn down */
+      }
+    }
+    try {
+      this.hooks.clearCameraBounds()
+    } catch {
+      /* camera gone */
+    }
     setBgmDucked(false)
   }
 
