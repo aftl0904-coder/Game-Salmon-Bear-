@@ -367,9 +367,10 @@ def wire() -> Image.Image:
     return im
 
 
-# ── 4. Wheel, driftwood, wave, pier ─────────────────────────────────────
+# ── 4. Wheel (UI), ferry boat, driftwood, wave, pier ─────────────────────
 
 def wheel_frame(tilt: int) -> Image.Image:
+    """Ship's wheel — kept for UI; not the 渡海小輪 prop."""
     W, H = 24, 24
     im = new(W, H)
     cx, cy, r = 12, 12, 9
@@ -387,6 +388,91 @@ def wheel_frame(tilt: int) -> Image.Image:
             y = int(cy + dist * math.sin(ang))
             if 0 <= x < W and 0 <= y < H and px[x, y][3]:
                 px[x, y] = (70, 48, 28, 255)
+    outline(im)
+    return im
+
+
+def ferry_frame(bob: int) -> Image.Image:
+    """
+    Side-view double-deck harbour ferry (渡海小輪).
+    Width ≈ half of pier (pier=48 → ferry≈24). bob: 0/1 shifts hull up-down.
+    No logos or lettering.
+    """
+    W, H = 26, 22
+    im = new(W, H)
+    d = ImageDraw.Draw(im)
+    yb = 2 - bob  # bob up on frame 1
+    HULL = (70, 110, 160, 255)
+    HULL_D = (40, 70, 110, 255)
+    HULL_L = (120, 160, 200, 255)
+    DECK = (230, 220, 200, 255)
+    CABIN = (240, 244, 248, 255)
+    CABIN_D = (180, 190, 200, 255)
+    RAIL = (90, 90, 100, 255)
+    # hull (boat body)
+    d.polygon(
+        [
+            (2, 14 + yb),
+            (4, 18 + yb),
+            (22, 18 + yb),
+            (24, 14 + yb),
+            (22, 12 + yb),
+            (4, 12 + yb),
+        ],
+        fill=HULL,
+    )
+    px = im.load()
+    for y in range(H):
+        for x in range(W):
+            if px[x, y] != HULL:
+                continue
+            if y >= 16 + yb:
+                px[x, y] = HULL_D
+            elif y <= 13 + yb:
+                px[x, y] = HULL_L
+    # lower deck stripe (waterline accent, not text)
+    for x in range(4, 22):
+        if px[x, 15 + yb][3]:
+            px[x, 15 + yb] = (255, 200, 80, 255)
+    # main deck plate
+    d.rectangle((4, 10 + yb, 21, 12 + yb), fill=DECK)
+    for x in range(5, 21):
+        px[x, 10 + yb] = (255, 240, 210, 255)
+        px[x, 12 + yb] = (180, 160, 130, 255)
+    # lower cabin (deck 1)
+    d.rectangle((6, 6 + yb, 19, 10 + yb), fill=CABIN)
+    # upper cabin (deck 2)
+    d.rectangle((8, 2 + yb, 17, 6 + yb), fill=CABIN)
+    for y in range(2 + yb, 10 + yb):
+        for x in range(6, 20):
+            if px[x, y] == CABIN and x >= 16:
+                px[x, y] = CABIN_D
+            elif px[x, y] == CABIN and y >= 7 + yb:
+                px[x, y] = (220, 226, 232, 255)
+    # windows (dark panes only — no glyphs)
+    for wx in (7, 10, 13, 16):
+        if 0 <= wx < W:
+            px[wx, 8 + yb] = (40, 70, 110, 255)
+            px[wx + 1, 8 + yb] = (60, 100, 140, 255)
+    for wx in (9, 12, 15):
+        px[wx, 4 + yb] = (40, 70, 110, 255)
+        px[wx + 1, 4 + yb] = (60, 100, 140, 255)
+    # railings
+    for x in range(5, 21):
+        px[x, 9 + yb] = RAIL
+    for x in range(8, 18):
+        px[x, 5 + yb] = RAIL
+    # funnel (plain cylinder, no mark)
+    for y in range(0 + yb, 3 + yb):
+        for x in range(14, 17):
+            if 0 <= y < H:
+                px[x, y] = (90, 90, 100, 255) if x == 16 else (140, 140, 150, 255)
+    if 0 <= yb < H:
+        px[14, 0 + yb] = (200, 70, 60, 255)
+        px[15, 0 + yb] = (220, 90, 70, 255)
+    # bow tip highlight
+    if px[23, 13 + yb][3]:
+        px[23, 13 + yb] = (160, 190, 220, 255)
     outline(im)
     return im
 
@@ -683,8 +769,9 @@ def main() -> None:
     save_sheet("bird", [bird_frame(True), bird_frame(False)], {"key": "flap", "label": "拍翼"}, fps=6)
     save_still("wire", wire())
 
-    # 4 wheel / wood / wave / pier
+    # 4 wheel (UI) / ferry boat / wood / wave / pier
     save_sheet("wheel", [wheel_frame(0), wheel_frame(1)], {"key": "wobble", "label": "搖晃"}, fps=5)
+    save_sheet("ferry", [ferry_frame(0), ferry_frame(1)], {"key": "bob", "label": "上下搖晃"}, fps=4)
     save_still("driftwood", driftwood())
     save_sheet("wave", [wave_frame(0), wave_frame(1), wave_frame(2)], {"key": "crash", "label": "大浪"}, fps=5)
     save_still("pier", pier())
