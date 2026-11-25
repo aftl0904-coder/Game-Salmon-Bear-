@@ -1175,7 +1175,8 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "zoom": 2.9
             },
             {
               "id": "robotarm",
@@ -1260,20 +1261,40 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-cagecart.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
-              },
-              "still": true
+              }
             },
             {
               "id": "s7shield",
@@ -1284,20 +1305,40 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-gate.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
-              },
-              "still": true
+              }
             },
             {
               "id": "s7can",
@@ -1308,20 +1349,40 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-feeder.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
-              },
-              "still": true
+              }
             }
           ]
         },
@@ -1385,7 +1446,8 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "zoom": 3.1
             },
             {
               "id": "s8tube",
@@ -1443,7 +1505,8 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "zoom": 3.3
             },
             {
               "id": "s8cabinet",
@@ -1537,7 +1600,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "zoom": 2.5
             }
           ]
         },
@@ -1637,7 +1701,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "zoom": 3.3
             },
             {
               "id": "s9lockbot",
@@ -1731,7 +1796,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "zoom": 2.2
             }
           ]
         },
@@ -1830,7 +1896,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "zoom": 3.1
             }
           ]
         }
@@ -2189,19 +2256,53 @@
             "stage": 6
           },
           "sheet": "/art/c2/scrubber-sheet.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "frameWidth": 112,
+          "frameHeight": 80,
+          "columns": 10,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
+              "count": 2,
+              "fps": 4,
+              "loop": true
+            },
+            "warn": {
+              "label": "預警",
+              "start": 2,
+              "count": 2,
+              "fps": 6,
+              "loop": true
+            },
+            "charge": {
+              "label": "衝刺",
+              "start": 4,
+              "count": 2,
+              "fps": 8,
+              "loop": true
+            },
+            "recover": {
+              "label": "回復",
+              "start": 6,
+              "count": 2,
+              "fps": 4,
+              "loop": true
+            },
+            "spray": {
+              "label": "噴射",
+              "start": 8,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            },
+            "defeated": {
+              "label": "倒地",
+              "start": 9,
               "count": 1,
               "fps": 1,
               "loop": true
             }
-          },
-          "still": true
+          }
         },
         {
           "id": "trainer",
@@ -2212,20 +2313,62 @@
             "type": "stageClear",
             "stage": 7
           },
-          "sheet": "/art/stage7/enemy-whip.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "sheet": "/art/anim/triboss.png",
+          "frameWidth": 172,
+          "frameHeight": 204,
+          "columns": 23,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 6,
               "loop": true
+            },
+            "point": {
+              "label": "point",
+              "start": 4,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "rain": {
+              "label": "rain",
+              "start": 7,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "shield": {
+              "label": "shield",
+              "start": 11,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 15,
+              "count": 2,
+              "fps": 10,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 17,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            },
+            "unmask": {
+              "label": "unmask",
+              "start": 22,
+              "count": 5,
+              "fps": 7,
+              "loop": false
             }
           },
-          "still": true
+          "zoom": 1.7
         },
         {
           "id": "researcher",

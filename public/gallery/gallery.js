@@ -208,12 +208,20 @@ function drawFrame(ctx, img, item, frame, fitW, fitH) {
   const cols = item.columns || Math.max(1, Math.floor(img.width / fw))
   const sx = (frame % cols) * fw
   const sy = Math.floor(frame / cols) * fh
-  const scale = Math.min(fitW / fw, fitH / fh)
+  // Optional zoom: large-pad Manus sheets (c2 / s8–s10) need a boost so the
+  // character fills the card closer to stage 1–4 enemies.
+  const zoom = typeof item.zoom === 'number' && item.zoom > 0 ? item.zoom : 1
+  const scale = Math.min(fitW / fw, fitH / fh) * zoom
   const dw = Math.max(1, Math.floor(fw * scale))
   const dh = Math.max(1, Math.floor(fh * scale))
   ctx.clearRect(0, 0, fitW, fitH)
   ctx.imageSmoothingEnabled = false
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(0, 0, fitW, fitH)
+  ctx.clip()
   ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+  ctx.restore()
 }
 
 function firstFrame(item) {
