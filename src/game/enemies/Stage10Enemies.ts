@@ -216,12 +216,15 @@ export type LeonCfg = {
   weakBase: number
   capWeak: number
   capNormal: number
+  midCutsceneMs: number
 }
 
 export type LeonHooks = {
   floorY: () => number
   summonGuards: (per: number, maxAlive: number) => number
   bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => void
+  /** Phase-2 midCutscene: pause all damage for ms, then resume (full warn on next move). */
+  playMidCutscene: (ms: number, onDone: () => void) => void
 }
 
 type LeonAct =
@@ -234,6 +237,7 @@ type LeonAct =
   | 'shieldBash'
   | 'callWarn'
   | 'call'
+  | 'midHold'
 
 const LEON_TINT = 0xb8a078
 const CHARGE_PX = 160
@@ -242,8 +246,8 @@ const BASH_PX = 90
 const BASH_MS = 300
 
 /**
- * Leon — charge / shield bash / call guards → tired weak window.
- * Numbers from stage10.json `leon`. Art: Manus s10leon.
+ * Leon — charge / shield bash / 1000ms call guards; tired 2000ms weak window.
+ * Phase2 → midCutscene (damage paused). Numbers from stage10.json `leon` (s10-3).
  */
 export class Leon extends AnimEnemy {
   qphase: 1 | 2 | 3 = 1
@@ -294,13 +298,15 @@ export class Leon extends AnimEnemy {
 
   canHurtPlayer() {
     if (!this.active || this.fsm === 'DEAD') return false
-    if (this.act === 'intro' || this.act === 'tired') return false
+    if (this.act === 'intro' || this.act === 'tired' || this.act === 'midHold') return false
     if (this.act === 'chargeWarn' || this.act === 'shieldWarn' || this.act === 'callWarn') return false
     if (this.act === 'charge' || this.act === 'shieldBash') return this.contactCd <= 0
     return this.contactCd <= 0 && this.act === 'stalk'
   }
 
   receiveHit(dmg: number, dir: number): EnemyHitResult {
+    // midCutscene: all damage paused (safety note in stage10-story.json).
+    if (this.act === 'midHold') return { killed: false, hp: this.hp }
     const now = this.scene.time.now
     if (now - this.lastHitAt < 380) return { killed: false, hp: this.hp }
     this.lastHitAt = now
@@ -331,6 +337,15 @@ export class Leon extends AnimEnemy {
       size: 14,
       dur: 1200,
     })
+    if (next === 2) {
+      // Phase2 line already shown via bossEvent; then midCutscene with damage paused.
+      this.go('midHold')
+      this.lh.playMidCutscene(this.cfg.midCutsceneMs, () => {
+        if (!this.active || this.fsm === 'DEAD') return
+        this.next = 'charge'
+        this.go('stalk')
+      })
+    }
   }
 
   private go(a: LeonAct) {
@@ -343,6 +358,9 @@ export class Leon extends AnimEnemy {
     } else if (a === 'chargeWarn' || a === 'shieldWarn' || a === 'callWarn') {
       if (!this.realArt) this.setTint(0xffc080)
       this.showWarn()
+    } else if (a === 'midHold') {
+      if (!this.realArt) this.setTint(LEON_TINT)
+      this.clearWarn()
     } else {
       if (!this.realArt) this.setTint(LEON_TINT)
       this.clearWarn()
@@ -396,6 +414,12 @@ export class Leon extends AnimEnemy {
     const now = this.scene.time.now
     this.contactCd = Math.max(0, this.contactCd - dt)
     if (isActorFrozen(this, now)) return
+    // midCutscene: freeze AI; GameScene owns the timer / damage pause.
+    if (this.act === 'midHold') {
+      this.setVelocity(0, 0)
+      this.y = this.lh.floorY()
+      return
+    }
     this.t += dt
     this.y = this.lh.floorY()
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
@@ -418,9 +442,7 @@ export class Leon extends AnimEnemy {
         else if (this.next !== 'charge' && dist > 200) this.setVelocityX(toward * 55)
         else this.setVelocityX(0)
         if (this.t >= stalkMs) {
-          if (this.qphase >= 2) {
-            this.lh.summonGuards(this.cfg.summonPerCycle, this.cfg.summonMaxAlive)
-          }
+          // Summons only via the 1000ms call-guards move (s10-3).
           if (this.next === 'charge') {
             this.chargeDir = toward
             this.go('chargeWarn')

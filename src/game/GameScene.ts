@@ -80,7 +80,7 @@ import {
   stage9LinesToRaw,
   stage9Sections,
 } from './stage9Story'
-import { stage10BossDialogue } from './stage10Story'
+import { leonMidCutsceneMs, playLeonMidCutscene, stage10BossDialogue } from './stage10Story'
 import { CAMP_FIRE_ANIM, CAMP_FIRE_SHEET } from './artOverrides'
 import { placeHoneyPawTrail } from './honeyPaw'
 import { PHOTO_SPOT_X, playPhotoPolaroid } from './photoSpot'
@@ -9626,6 +9626,7 @@ export class GameScene extends Phaser.Scene {
       weakBase: L.weakBase ?? 3,
       capWeak: L.capWeak ?? 5,
       capNormal: L.capNormal ?? 2,
+      midCutsceneMs: L.midCutsceneMs ?? leonMidCutsceneMs(6000),
     }
   }
 
@@ -9655,6 +9656,25 @@ export class GameScene extends Phaser.Scene {
         return n
       },
       bossEvent: (kind: 'phase2' | 'phase3' | 'weak' | 'defeat') => this.onQueenEvent(kind),
+      playMidCutscene: (ms: number, onDone: () => void) => {
+        // Pause all damage: physics off + storyIntro gates update; Leon.midHold ignores hits.
+        this.physics.pause()
+        for (const h of [this.boy, this.girl]) h?.setVelocity(0, 0)
+        // Freeze summoned guards in place.
+        for (const o of this.enemies.getChildren()) {
+          const e = o as Phaser.Physics.Arcade.Sprite & { getData?: (k: string) => unknown }
+          if (e.active && e.getData?.('leon-summon')) e.setVelocity?.(0, 0)
+        }
+        const handle = playLeonMidCutscene(this, ms, () => {
+          if (this.storyIntro === handle) this.storyIntro = null
+          if (!this.ended) {
+            this.physics.resume()
+            this.resetPauseKeys()
+          }
+          onDone()
+        })
+        this.storyIntro = handle
+      },
     }
   }
 
