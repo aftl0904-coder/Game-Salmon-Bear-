@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "s5",
+      "path": "public/art/stage5/bg-sunset-tower.png",
+      "frameWidth": 640,
+      "frameHeight": 360,
+      "frames": 1,
+      "displayScale": 0.7
+    }
+  ],
+  "captures": [
+    0
+  ]
+}
