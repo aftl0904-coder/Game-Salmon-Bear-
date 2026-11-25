@@ -1175,7 +1175,9 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             },
             {
               "id": "robotarm",
@@ -1249,7 +1251,10 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "badge": "/art/stage7/enemy-whip.png",
+              "tint": "#5a4030",
+              "badgeMode": "corner"
             },
             {
               "id": "s7hop",
@@ -1260,20 +1265,43 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-cagecart.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
               },
-              "still": true
+              "badge": "/art/stage7/enemy-cagecart.png",
+              "tint": "#3a4450",
+              "badgeMode": "corner"
             },
             {
               "id": "s7shield",
@@ -1284,20 +1312,43 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-gate.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
               },
-              "still": true
+              "badge": "/art/stage7/enemy-gate.png",
+              "tint": "#4a5868",
+              "badgeMode": "corner"
             },
             {
               "id": "s7can",
@@ -1308,20 +1359,43 @@
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-feeder.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
+              "sheet": "/art/anim/honeyzombie.png",
+              "frameWidth": 232,
+              "frameHeight": 114,
+              "columns": 13,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
               },
-              "still": true
+              "badge": "/art/stage7/enemy-feeder.png",
+              "tint": "#6a5840",
+              "badgeMode": "corner"
             }
           ]
         },
@@ -1385,7 +1459,9 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             },
             {
               "id": "s8tube",
@@ -1443,7 +1519,9 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             },
             {
               "id": "s8cabinet",
@@ -1537,7 +1615,9 @@
                     23
                   ]
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             }
           ]
         },
@@ -1637,7 +1717,9 @@
                     23
                   ]
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             },
             {
               "id": "s9lockbot",
@@ -1731,7 +1813,9 @@
                     23
                   ]
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             }
           ]
         },
@@ -1830,7 +1914,9 @@
                     23
                   ]
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             }
           ]
         }
@@ -2177,7 +2263,9 @@
               "fps": 7,
               "loop": false
             }
-          }
+          },
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "mall-scrubber",
@@ -2189,19 +2277,34 @@
             "stage": 6
           },
           "sheet": "/art/c2/scrubber-sheet.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "frameWidth": 112,
+          "frameHeight": 80,
+          "columns": 10,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 4,
               "loop": true
+            },
+            "move": {
+              "label": "移動",
+              "start": 4,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "attack": {
+              "label": "攻擊",
+              "start": 8,
+              "count": 2,
+              "fps": 6,
+              "loop": false
             }
           },
-          "still": true
+          "fitContent": true,
+          "fitPad": 0.16
         },
         {
           "id": "trainer",
@@ -2212,20 +2315,70 @@
             "type": "stageClear",
             "stage": 7
           },
-          "sheet": "/art/stage7/enemy-whip.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "sheet": "/art/anim/triboss.png",
+          "frameWidth": 172,
+          "frameHeight": 204,
+          "columns": 23,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 6,
               "loop": true
+            },
+            "point": {
+              "label": "point",
+              "start": 4,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "rain": {
+              "label": "rain",
+              "start": 7,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "shield": {
+              "label": "shield",
+              "start": 11,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 15,
+              "count": 2,
+              "fps": 10,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 17,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            },
+            "unmask": {
+              "label": "unmask",
+              "start": 22,
+              "count": 5,
+              "fps": 7,
+              "loop": false
             }
           },
-          "still": true
+          "tint": "#c98c70",
+          "badge": "/art/stage7/enemy-whip.png",
+          "badgeMode": "corner",
+          "markers": [
+            "whistle",
+            "leash"
+          ],
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "researcher",
@@ -2371,7 +2524,9 @@
                 39
               ]
             }
-          }
+          },
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "warden",
@@ -2542,7 +2697,9 @@
                 47
               ]
             }
-          }
+          },
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "leon",
@@ -2688,7 +2845,9 @@
                 39
               ]
             }
-          }
+          },
+          "fitContent": true,
+          "fitPad": 0.24
         }
       ]
     },
