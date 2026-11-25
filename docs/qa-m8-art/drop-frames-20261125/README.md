@@ -35,5 +35,5 @@
 - `node docs/qa-m8-art/drop-frames-20261125/preview.cjs`：桌面滑鼠、Chromium 模擬手機**只用 touch** 選素材，從真實 JSON 依 `frames` 和 FPS 播放預警→攻擊，記錄每一槽及瀏覽器時間、檢查容許排程誤差後的間隔及末格畫面保持。截圖 `desktop-*`／`mobile-touch-*`、`preview-log.json`、`preview-run.txt`。此為獨立素材預覽，**不是遊戲內動作、碰撞、角色世界位置或真機測試**。
 - `game-mobile/`：現有遊戲第1關控制 smoke test，iPhone 13、Pixel 7 及細 Android 橫向模擬均通過 touch 行走／跳躍／攻擊／換武器／多點觸控／暫停；直向只檢查提示畫面。測試以程式到達遊戲場景，不代表真人完整通關，也不包含未接入的第8關素材。
 - 桌面舊腳本第一輪等 logo 逾時（`game-desktop-first-timeout/`）；第二輪行走、跳、過關及商店後，因瞓覺價錢斷言寫 12、遊戲目前 `SLEEP_COST=6` 而失敗（`game-desktop/`）。按現行設定校正該一項斷言後重跑，行走、跳、過關、商店、睡覺、賭檔、地圖及單車到第5關通過（`game-desktop-current/`）；使用狀態注入到測試點，不代表完整通關。原始測試失敗記錄保留。
-- 第8關尚未接入遊戲。現有通用載入器只認 `start/count`，不會自動讀取新 `frames`，Cursor 接入時須支援有序陣列與重複格，並實測事件、預警、位移、碰撞／hitbox、投射物及實際比例。重複同一格只保持畫面，**不保證世界位置停止或遊戲狀態等待**；主任 `anchorY` 亦非 runtime 自動讀取。
+- 第8關玩法程式已有，本批第8關美術素材尚未接入遊戲。現有通用載入器只認 `start/count`，不會自動讀取新 `frames`，Cursor 接入時須支援有序陣列與重複格，並實測事件、預警、位移、碰撞／hitbox、投射物及實際比例。重複同一格只保持畫面，**不保證世界位置停止或遊戲狀態等待**；主任 `anchorY` 亦非 runtime 自動讀取。
 - 未驗證 Phaser 內載入及場景落地、視覺實際比例、真人或實體手機；Manus 沒有 merge 或 close，#157 後由其他人合併。
