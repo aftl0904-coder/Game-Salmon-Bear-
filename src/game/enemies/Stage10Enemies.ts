@@ -1,6 +1,6 @@
 /**
- * Stage 10 · 暴雨大廈 enemies/boss art (art-s9s10).
- * BuildingGuard AI numbers stay JailGuard stand-in until s10-2 retunes.
+ * Stage 10 · 暴雨大廈 enemies/boss.
+ * BuildingGuard numbers locked to s10-2 ticket — do not retune here.
  * Leon uses data/levels/stage10.json `leon` — art from Manus #173 s10leon sheet.
  */
 import Phaser from 'phaser'
@@ -29,16 +29,16 @@ function bindStage910Sheet(enemy: AnimEnemy, id: Stage910AnimId, first: string) 
 
 const TINT_GUARD = 0x78a0c8
 
-// Stand-in until s10-2 (HP 8 / 160 discover / …).
-const GUARD_HP = 6
-const GUARD_ENGAGE = 140
+// s10-2 ticket numbers
+const GUARD_HP = 8
+const GUARD_ENGAGE = 160
 const GUARD_WARN_MS = 1000
-const GUARD_SWIPE_PX = 60
+const GUARD_SWIPE_PX = 140
 const GUARD_SWIPE_MS = 280
-const GUARD_REST_MS = 900
+const GUARD_REST_MS = 1000
 const GUARD_WALK = 42
 
-/** 大廈保安 — Manus s10buildingguard sheet; AI stand-in until s10-2. */
+/** 大廈保安 — discover 160 → warn 1000ms → dash 140px → rest 1000ms. */
 export class BuildingGuard extends AnimEnemy {
   private phase: 'walk' | 'warn' | 'swipe' | 'rest' = 'walk'
   private t = 0
