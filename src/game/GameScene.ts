@@ -99,6 +99,7 @@ import { TriBoss, TRI_FEATHER_WARNING_MS, TRI_FEATHER_FALL_MS, TRI_FEATHER_TOTAL
 import { GuardZombie, RobotArm, SecurityDirector, type DirectorHooks, type ArmHooks } from './enemies/Stage6Enemies'
 import { ChargeHoneyZombie, HopCage, ShieldKeeper, CanThrower } from './enemies/Stage7Enemies'
 import { LabDrone, TubeSoldier, FileCabinet, ChiefResearcher, type ResearcherCfg } from './enemies/Stage8Enemies'
+import { JailGuard, LockBot, applyChainSlow, LOCK_CHAIN } from './enemies/Stage9Enemies'
 import { MallScrubber } from './enemies/MallScrubber'
 import { Stage6World, ESCALATOR, type Stage6Data } from './stage6World'
 import { ProductZombie } from './enemies/ProductZombie'
@@ -1672,6 +1673,31 @@ export class GameScene extends Phaser.Scene {
   }
 
   /** Sticky feet without Stage2World (stage 8 tube puddles). Same 0.5 mul as queen honey. */
+  /** s9-2 lockbot: linear chain, range 200; hit → half speed 1000ms (stickyUntil). */
+  private throwLockChain(fromX: number, fromY: number, dir: 1 | -1) {
+    if (this.ended) return
+    const key = this.textures.exists('fx-rock') ? 'fx-rock' : 'coin'
+    const shot = this.enemyShots.create(fromX, fromY, key) as Phaser.Physics.Arcade.Sprite
+    shot.setDepth(DEPTH.FX - 1)
+    enableActorSprite(shot)
+    shot.setTint(0xc0d0e0)
+    shot.setDisplaySize(18, 6)
+    const body = shot.body as Phaser.Physics.Arcade.Body
+    body.allowGravity = false
+    body.setSize(16, 6)
+    shot.setVelocity(dir * LOCK_CHAIN.speed, 0)
+    shot.setData('lane', 0)
+    shot.setData('dmg', 0)
+    shot.setData('lockChain', true)
+    shot.setData('life', this.time.now + (LOCK_CHAIN.range / LOCK_CHAIN.speed) * 1000 + 80)
+    this.markShot(shot, 0xb0c0d8)
+    this.entities.add(shot, 'projectile')
+    // Manual collide: reuse enemy-shot overlap; applyChainSlow in onEnemyShot.
+    this.time.delayedCall((LOCK_CHAIN.range / LOCK_CHAIN.speed) * 1000 + 100, () => {
+      if (shot.active) shot.destroy()
+    })
+  }
+
   private stickyFeetMul(h: Hero): number {
     const until = (h.getData('stickyUntil') as number | undefined) ?? 0
     return this.time.now < until ? 0.5 : 1
@@ -6166,6 +6192,12 @@ export class GameScene extends Phaser.Scene {
     if (!shot.active || this.ended || !this.started) return
     const netHits = shot.getData('persistentNet') as Set<Hero> | undefined
     if (netHits?.has(h)) return
+    // s9-2 lockbot chain: slow only (no HP damage), bypass i-frames.
+    if (shot.getData('lockChain')) {
+      applyChainSlow(this, h)
+      shot.destroy()
+      return
+    }
     if (!canTakeDamage(h, this.time.now)) {
       if (!netHits) shot.destroy()
       return
@@ -8233,20 +8265,17 @@ export class GameScene extends Phaser.Scene {
     if (species === 's8cabinet') {
       return this.addS2Enemy(new FileCabinet(this, x, this.s2Hooks())).setFlipX(true)
     }
-    // s9-1: tinted stand-ins until s9-2 behaviours (Manus art later).
+    // s9-2: real behaviours (tinted stand-ins until stage9 art).
     if (species === 's9guard') {
-      const z = new HoneyZombie(this, x, this.s2Hooks())
-      z.species = 's9guard'
-      z.hp = z.maxHp = 6
-      z.setTint(0x90b878)
-      return this.addS2Enemy(z).setFlipX(true)
+      return this.addS2Enemy(new JailGuard(this, x, this.s2Hooks())).setFlipX(true)
     }
     if (species === 's9lockbot') {
-      const z = new ShieldKeeper(this, x, this.s2Hooks())
-      z.species = 's9lockbot'
-      z.hp = z.maxHp = 15
-      z.setTint(0xd08060)
-      return this.addS2Enemy(z).setFlipX(true)
+      return this.addS2Enemy(
+        new LockBot(this, x, this.s2Hooks(), {
+          floorY: () => LANE_FLOOR_Y,
+          throwChain: (fx, fy, dir) => this.throwLockChain(fx, fy, dir),
+        }),
+      ).setFlipX(true)
     }
     if (species === 'honeyzombie') {
       const z = product ? new ProductZombie(this, x, this.s2Hooks()) : new HoneyZombie(this, x, this.s2Hooks())
