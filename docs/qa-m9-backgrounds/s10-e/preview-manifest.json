@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "name": "s10-e",
+      "path": "public/art/stage10/bg-sunrise-rooftop.png",
+      "frameWidth": 640,
+      "frameHeight": 360,
+      "frames": 1,
+      "displayScale": 0.7
+    }
+  ],
+  "captures": [
+    0
+  ]
+}
