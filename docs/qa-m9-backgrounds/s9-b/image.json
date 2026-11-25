@@ -1,0 +1,20 @@
+{
+  "source_name": "B-corridor-raw.png",
+  "source_sha256": "2ea4cf26ccc380c082b10714b285b7d4f19181c2db4126d37d1076e10b99104c",
+  "source_dimensions": [
+    2560,
+    1440
+  ],
+  "source_mode": "RGB",
+  "output": "public/art/stage9/bg-cage-corridor.png",
+  "output_sha256": "592c29dc6e41f6e0ad17c7d0094d948ce0fb2a9e98aacde33e493afa1934ac92",
+  "output_dimensions": [
+    640,
+    360
+  ],
+  "output_mode": "RGB",
+  "visible_colors": 64,
+  "resize": "proportional nearest-neighbor; no crop",
+  "quantization": "median cut, 64 colors, no dithering",
+  "pass": true
+}
