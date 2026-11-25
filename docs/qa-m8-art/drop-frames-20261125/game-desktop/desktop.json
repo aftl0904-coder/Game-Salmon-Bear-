@@ -1,0 +1,5 @@
+{
+  "errors": [],
+  "passed": false,
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n6 !== 12\n\n    at file:///tmp/salmon-m8-art-2611/scripts/qa/stage4-desktop.mjs:25:233"
+}

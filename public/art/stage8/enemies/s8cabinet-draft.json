@@ -4,42 +4,12 @@
   "res": 4,
   "columns": 12,
   "anims": {
-    "idle": {
-      "start": 0,
-      "count": 4,
-      "fps": 4,
-      "loop": true
-    },
-    "walk": {
-      "start": 4,
-      "count": 4,
-      "fps": 6,
-      "loop": true
-    },
-    "warning": {
-      "start": 8,
-      "count": 4,
-      "fps": 4,
-      "loop": false
-    },
-    "attack": {
-      "start": 12,
-      "count": 4,
-      "fps": 8,
-      "loop": false
-    },
-    "hurt": {
-      "start": 16,
-      "count": 4,
-      "fps": 8,
-      "loop": false
-    },
-    "defeat": {
-      "start": 20,
-      "count": 4,
-      "fps": 6,
-      "loop": false
-    }
+    "idle": { "frames": [0, 1, 2, 3], "fps": 4, "loop": true },
+    "walk": { "frames": [4, 5, 6, 7], "fps": 6, "loop": true },
+    "warning": { "frames": [8, 9, 9, 9], "fps": 4, "loop": false },
+    "attack": { "frames": [14, 15, 15, 15], "fps": 8, "loop": false },
+    "hurt": { "frames": [16, 17, 18, 19], "fps": 8, "loop": false },
+    "defeat": { "frames": [20, 21, 22, 23], "fps": 6, "loop": false }
   },
-  "note": "PARTIAL / NOT READY: warning frames 3-4 expose right arm; attack starts with door open and closes gradually. Arm attachment and warning-to-attack forward-lean transition still need art correction. Timing and format unchanged. No runtime integration."
+  "note": "0-based frames are authoritative, including repetitions. Warning: half-open door is held; attack: direct lunge then final pose held (visual only). The 9-to-14 cut is intentional. No runtime integration: consumer must use frames and handle state/attack timing; repeated frames do not stop world movement or guarantee hitbox timing."
 }

@@ -1,0 +1,2 @@
+page.waitForFunction: Timeout 30000ms exceeded.
+    at /tmp/salmon-m8-art-2611/scripts/qa/stage4-desktop.mjs:14:90
