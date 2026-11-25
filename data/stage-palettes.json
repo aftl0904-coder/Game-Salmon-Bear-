@@ -21,8 +21,8 @@
       "name": "夜市暖紅",
       "sky": { "top": "#2a0f1e", "bottom": "#7a2a22" },
       "tint": "#ffb08a",
-      "fog": { "color": "#ff6a3a", "alpha": 0.12 },
-      "light": 0.95
+      "fog": { "color": "#ff7a3a", "alpha": 0.18 },
+      "light": 1.1
     },
     {
       "stage": 4,
@@ -52,9 +52,9 @@
       "stage": 7,
       "name": "深紫夜倉",
       "sky": { "top": "#1e1030", "bottom": "#4a2a5a" },
-      "tint": "#c8a0ff",
-      "fog": { "color": "#ffd27a", "alpha": 0.08 },
-      "light": 0.95
+      "tint": "#b48aff",
+      "fog": { "color": "#6a3a9a", "alpha": 0.22 },
+      "light": 1.05
     },
     {
       "stage": 8,

@@ -4,53 +4,121 @@
     {
       "stage": 1,
       "name": "清晨綠",
-      "file": "docs/qa-palette-1/stage-01.png"
+      "file": "docs/qa-palette-1/stage-01.png",
+      "miss": {
+        "miss": 5,
+        "total": 1956,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 2,
       "name": "午後金黃",
-      "file": "docs/qa-palette-1/stage-02.png"
+      "file": "docs/qa-palette-1/stage-02.png",
+      "miss": {
+        "miss": 4,
+        "total": 1288,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 3,
       "name": "夜市暖紅",
-      "file": "docs/qa-palette-1/stage-03.png"
+      "file": "docs/qa-palette-1/stage-03.png",
+      "miss": {
+        "miss": 4,
+        "total": 1300,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 4,
       "name": "日頭濃霧",
-      "file": "docs/qa-palette-1/stage-04.png"
+      "file": "docs/qa-palette-1/stage-04.png",
+      "miss": {
+        "miss": 4,
+        "total": 1290,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 5,
       "name": "黃昏紫粉",
-      "file": "docs/qa-palette-1/stage-05.png"
+      "file": "docs/qa-palette-1/stage-05.png",
+      "miss": {
+        "miss": 4,
+        "total": 1303,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 6,
       "name": "暖米商場",
-      "file": "docs/qa-palette-1/stage-06.png"
+      "file": "docs/qa-palette-1/stage-06.png",
+      "miss": {
+        "miss": 4,
+        "total": 259,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 7,
       "name": "深紫夜倉",
-      "file": "docs/qa-palette-1/stage-07.png"
+      "file": "docs/qa-palette-1/stage-07.png",
+      "miss": {
+        "miss": 4,
+        "total": 1994,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 8,
       "name": "白薄荷實驗室",
-      "file": "docs/qa-palette-1/stage-08.png"
+      "file": "docs/qa-palette-1/stage-08.png",
+      "miss": {
+        "miss": 4,
+        "total": 1994,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 9,
       "name": "深青鐵鏽",
-      "file": "docs/qa-palette-1/stage-09.png"
+      "file": "docs/qa-palette-1/stage-09.png",
+      "miss": {
+        "miss": 4,
+        "total": 1974,
+        "bg": true,
+        "ground": true
+      }
     },
     {
       "stage": 10,
       "name": "雨灰藍→頂層日出",
-      "file": "docs/qa-palette-1/stage-10.png"
+      "file": "docs/qa-palette-1/stage-10.png",
+      "miss": {
+        "miss": 4,
+        "total": 1973,
+        "bg": true,
+        "ground": true
+      }
     }
   ],
-  "errors": []
+  "errors": [],
+  "texProbe": {
+    "bg-wallpaper": true,
+    "tile-ground-top": true,
+    "coin-cel": true,
+    "s3-market-mid": false,
+    "s7-far-a": false,
+    "boy": false
+  }
 }
