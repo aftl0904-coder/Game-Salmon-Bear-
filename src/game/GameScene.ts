@@ -8069,7 +8069,7 @@ export class GameScene extends Phaser.Scene {
         : this.stageNo === 8
           ? { id: 'next', label: '第9關・地底監禁層 ▶', on: true }
         : this.stageNo === 9
-          ? { id: 'next', label: '待續 ▶', on: true }
+          ? { id: 'next', label: '第10關・頂層控制室 ▶', on: true }
         : this.stageNo > FINAL_STAGE
           ? { id: 'next', label: '第二大陸・下一關　製作中', on: false }
           : { id: 'next', label: `前往第${'一二三四五六'[this.stageNo]}關 ▶`, on: true },
@@ -8241,11 +8241,10 @@ export class GameScene extends Phaser.Scene {
       if (id === 'menu') this.goMenu()
       else if (id === 'credits') this.goCredits()
       else if (this.stageNo === 10 && !isSideTrip()) {
-        // s10-4: ending ten panels after clear.
+        // release-1 / s10-4: ending ten panels after clear.
         this.stopUi()
         this.scene.start('ending-c2')
       } else if (this.stageNo === 7 && !isSideTrip() && !c3Enabled()) this.showFirstReleaseContinued()
-      else if (this.stageNo === 8 && !isSideTrip()) this.showFirstReleaseContinued()
       else this.goNextStage()
     }
     /** Enter / Start: finish the tally first, then run the highlighted button. */

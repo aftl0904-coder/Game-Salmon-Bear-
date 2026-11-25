@@ -1,17 +1,21 @@
-/** Alan confirmed continent 2 is public in the first release.
- * Old ?c2=0/1 browser-test flags no longer hide or unlock content. */
+/**
+ * Continent / stage gates (release-1).
+ * Default ON. Only `?c2=0` / `?c3=0` turns a gate off (test hook).
+ */
+
 export function c2Enabled(): boolean {
-  return true
+  try {
+    return new URLSearchParams(window.location.search).get('c2') !== '0'
+  } catch {
+    return true
+  }
 }
 
-/**
- * Stage 8+ / continent-3 gate. Default off so Christmas release still ends at
- * stage 7 → 待續 → 聖誕番外 → credits. Opt in with `?c3=1`.
- */
+/** Stage 8–10. Default on; `?c3=0` keeps the old stage-7 end for tests. */
 export function c3Enabled(): boolean {
   try {
-    return new URLSearchParams(window.location.search).get('c3') === '1'
+    return new URLSearchParams(window.location.search).get('c3') !== '0'
   } catch {
-    return false
+    return true
   }
 }

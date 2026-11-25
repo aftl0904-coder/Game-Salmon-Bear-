@@ -7,7 +7,7 @@ import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import meta from '../../data/anim/map-bike.json'
 import { markHd } from './heroAnims'
 import versesRaw from '../../data/verses.json'
-import { c2Cleared } from './progress'
+import { c2Cleared, maxStage } from './progress'
 import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
@@ -120,7 +120,8 @@ export class MapScene extends Phaser.Scene {
       this.anims.create({ key: 'map-duo-walk', frames: this.anims.generateFrameNumbers('map-walk-duo', { start: 0, end: 3 }), frameRate: 8, repeat: -1 })
     }
 
-    const maxOpen = Math.min(c3Enabled() ? 10 : 7, Math.max(data.to, data.from))
+    // release-1: hard cap is 10 when c3 is on (else 7); never past farthest unlocked progress.
+    const maxOpen = Math.min(c3Enabled() ? 10 : 7, Math.max(data.to, data.from, maxStage()))
     this.openStages = Object.keys(cm.places)
       .map(Number)
       .filter((i) => i <= maxOpen)

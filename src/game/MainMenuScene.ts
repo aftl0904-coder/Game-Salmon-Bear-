@@ -3,7 +3,7 @@ import Phaser from 'phaser'
 import { unlockAudio, playSong, SFX } from './audio'
 import { mountMuteButton } from './muteButton'
 import { loadScores } from './score'
-import { c2Cleared, maxStage } from './progress'
+import { c2Cleared, maxStage, migrateC3Progress } from './progress'
 import { stageTitle } from './stageNames'
 import { markHd, STORY_RES } from './heroAnims'
 import { c2Enabled, c3Enabled } from './c2Gate'
@@ -81,6 +81,7 @@ export class MainMenuScene extends Phaser.Scene {
     this.shade = {}
     this.registry.set('leavingToMenu', false)
     this.inputReadyAt = this.time.now + 450
+    migrateC3Progress()
     const savedStage = getRun()?.nextStage
     this.stageSel = savedStage && pickableStages().includes(savedStage) ? savedStage : savedStage && savedStage > 7 && !c3Enabled() ? 7 : savedStage && savedStage > 10 && c3Enabled() ? 10 : savedStage && savedStage > 9 && c3Enabled() ? 9 : savedStage && savedStage > 8 && c3Enabled() ? 8 : Math.min(maxStage(), LAST_STAGE)
     this.stageText = null
