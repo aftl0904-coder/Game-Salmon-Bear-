@@ -1,0 +1,91 @@
+{
+  "stages": [
+    {
+      "stage": 1,
+      "name": "清晨綠",
+      "sky": { "top": "#bfe3f2", "bottom": "#e8f4dc" },
+      "tint": null,
+      "fog": null,
+      "light": 1.0
+    },
+    {
+      "stage": 2,
+      "name": "午後金黃",
+      "sky": { "top": "#f6d28a", "bottom": "#fbe9c0" },
+      "tint": null,
+      "fog": null,
+      "light": 1.0
+    },
+    {
+      "stage": 3,
+      "name": "夜市暖紅",
+      "sky": { "top": "#2a0f1e", "bottom": "#7a2a22" },
+      "tint": "#ffb08a",
+      "fog": { "color": "#ff7a3a", "alpha": 0.18 },
+      "light": 1.1
+    },
+    {
+      "stage": 4,
+      "name": "日頭濃霧",
+      "sky": { "top": "#d8e4e2", "bottom": "#eef2ee" },
+      "tint": "#cfe2dc",
+      "fog": { "color": "#ffffff", "alpha": 0.28 },
+      "light": 1.15
+    },
+    {
+      "stage": 5,
+      "name": "黃昏紫粉",
+      "sky": { "top": "#5b3a7a", "bottom": "#f2a07a" },
+      "tint": "#f0b8c8",
+      "fog": { "color": "#ff9a8a", "alpha": 0.12 },
+      "light": 1.05
+    },
+    {
+      "stage": 6,
+      "name": "暖米商場",
+      "sky": { "top": "#f4e3c8", "bottom": "#fff4e2" },
+      "tint": "#fff0d8",
+      "fog": null,
+      "light": 1.1
+    },
+    {
+      "stage": 7,
+      "name": "深紫夜倉",
+      "sky": { "top": "#1e1030", "bottom": "#4a2a5a" },
+      "tint": "#b48aff",
+      "fog": { "color": "#6a3a9a", "alpha": 0.22 },
+      "light": 1.05
+    },
+    {
+      "stage": 8,
+      "name": "白薄荷實驗室",
+      "sky": { "top": "#e8fbf6", "bottom": "#ffffff" },
+      "tint": "#d8fff2",
+      "fog": { "color": "#ffffff", "alpha": 0.15 },
+      "light": 1.25
+    },
+    {
+      "stage": 9,
+      "name": "深青鐵鏽",
+      "sky": { "top": "#0e2a2e", "bottom": "#3a2a1e" },
+      "tint": "#8fd0c8",
+      "fog": { "color": "#c86a3a", "alpha": 0.12 },
+      "light": 0.9
+    },
+    {
+      "stage": 10,
+      "name": "雨灰藍→頂層日出",
+      "sky": { "top": "#4a5a6e", "bottom": "#8a9aaa" },
+      "tint": "#b8c8d8",
+      "fog": { "color": "#ffffff", "alpha": 0.15 },
+      "light": 1.0,
+      "sunrise": {
+        "atX": 4560,
+        "durationMs": 3000,
+        "sky": { "top": "#ff9a7a", "bottom": "#ffe0b0" },
+        "tint": "#ffd8c0",
+        "light": 1.15
+      }
+    }
+  ]
+}
