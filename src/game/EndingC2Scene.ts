@@ -5,8 +5,15 @@ import { c2Cleared } from './progress'
 import { TouchInput } from './touchInput'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 
-type EndingCard = { id: number; title: string; description: string; image: string | null }
-const CARDS: EndingCard[] = endingData
+type EndingLine = { say: string; text: string }
+type EndingCard = {
+  id: number
+  title: string
+  description: string
+  image: string | null
+  lines?: EndingLine[]
+}
+const CARDS: EndingCard[] = endingData as EndingCard[]
 
 /** Only the C2 epilogue: no stage, boss, credits, or progress mutation. */
 export class EndingC2Scene extends Phaser.Scene {
@@ -14,6 +21,7 @@ export class EndingC2Scene extends Phaser.Scene {
   private readyAt = 0
   private titleText!: Phaser.GameObjects.Text
   private descText!: Phaser.GameObjects.Text
+  private lineText!: Phaser.GameObjects.Text
   private countText!: Phaser.GameObjects.Text
   private image?: Phaser.GameObjects.Image
   private previous?: Phaser.GameObjects.Text
@@ -46,9 +54,12 @@ export class EndingC2Scene extends Phaser.Scene {
     this.descText = this.add.text(GAME_W / 2, 158, '', {
       fontFamily: FONT_UI, fontSize: '16px', color: '#fff2d0', align: 'center', wordWrap: { width: 410 }, lineSpacing: 8,
     }).setOrigin(0.5)
-    this.previous = this.button(205, 300, '上一張', () => this.move(-1))
-    this.next = this.button(435, 300, '下一張', () => this.move(1))
-    this.button(GAME_W / 2, 336, '返回選單', () => this.leave(), 128)
+    this.lineText = this.add.text(GAME_W / 2, 278, '', {
+      fontFamily: FONT_UI, fontSize: '13px', color: '#dbc9a2', align: 'center', wordWrap: { width: 460 }, lineSpacing: 4,
+    }).setOrigin(0.5, 0)
+    this.previous = this.button(205, 318, '上一張', () => this.move(-1))
+    this.next = this.button(435, 318, '下一張', () => this.move(1))
+    this.button(GAME_W / 2, 348, '返回選單', () => this.leave(), 128)
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'ArrowLeft') this.move(-1)
       else if (event.key === 'ArrowRight' || event.key === 'Enter' || event.key === ' ' || event.key.toLowerCase() === 'f') this.move(1)
@@ -83,11 +94,13 @@ export class EndingC2Scene extends Phaser.Scene {
     this.image = undefined
     const imageKey = `ending-c2-${card.id}`
     if (card.image && this.textures.exists(imageKey)) {
-      this.image = this.add.image(GAME_W / 2, 182, imageKey).setDisplaySize(300, 169)
+      this.image = this.add.image(GAME_W / 2, 168, imageKey).setDisplaySize(300, 169)
       this.descText.setText('')
     } else {
       this.descText.setText(`圖片待補\n\n${card.description}`)
     }
+    const lines = (card.lines ?? []).map((l) => l.text).filter(Boolean)
+    this.lineText.setText(lines.join('\n'))
     this.previous?.setAlpha(this.index === 0 ? 0.4 : 1)
     this.next?.setText(this.index === CARDS.length - 1 ? '完成' : '下一張')
   }
