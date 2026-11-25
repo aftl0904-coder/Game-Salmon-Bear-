@@ -1,0 +1,522 @@
+{
+  "source_sha256": "260918292475410af03a5531c41efaeaeaedf16ac816f87c044df4a0dde0d3e7",
+  "output_sha256": "27561206fa43c5fe8da10d6026a5ac8e8b60100cbf0b821892826f83627efb4e",
+  "source_size": [
+    1536,
+    2304
+  ],
+  "rows": [
+    [
+      71,
+      348
+    ],
+    [
+      429,
+      717
+    ],
+    [
+      763,
+      1111
+    ],
+    [
+      1214,
+      1482
+    ],
+    [
+      1582,
+      1863
+    ],
+    [
+      1987,
+      2260
+    ]
+  ],
+  "columns": [
+    [
+      40,
+      385
+    ],
+    [
+      426,
+      1519
+    ]
+  ],
+  "cut_method": "transparent row gaps and separated connected figures within each row",
+  "discarded_small_component_pixels": 0,
+  "scale_all_frames": 0.20216606498194944,
+  "target_idle_height": 56.0,
+  "output_size": [
+    4224,
+    704
+  ],
+  "cell_size": [
+    352,
+    352
+  ],
+  "resolution": 4,
+  "logical_cell": [
+    88,
+    88
+  ],
+  "alpha_threshold": 128,
+  "palette_limit": 63,
+  "frames": [
+    {
+      "frame": 0,
+      "source_bbox": [
+        65,
+        71,
+        339,
+        348
+      ],
+      "logical_size": [
+        55,
+        56
+      ],
+      "logical_bbox": [
+        16,
+        28,
+        71,
+        84
+      ]
+    },
+    {
+      "frame": 1,
+      "source_bbox": [
+        463,
+        71,
+        722,
+        348
+      ],
+      "logical_size": [
+        52,
+        56
+      ],
+      "logical_bbox": [
+        18,
+        28,
+        70,
+        84
+      ]
+    },
+    {
+      "frame": 2,
+      "source_bbox": [
+        829,
+        71,
+        1097,
+        348
+      ],
+      "logical_size": [
+        54,
+        56
+      ],
+      "logical_bbox": [
+        17,
+        28,
+        71,
+        84
+      ]
+    },
+    {
+      "frame": 3,
+      "source_bbox": [
+        1224,
+        75,
+        1487,
+        348
+      ],
+      "logical_size": [
+        53,
+        55
+      ],
+      "logical_bbox": [
+        17,
+        29,
+        70,
+        84
+      ]
+    },
+    {
+      "frame": 4,
+      "source_bbox": [
+        55,
+        434,
+        351,
+        711
+      ],
+      "logical_size": [
+        60,
+        56
+      ],
+      "logical_bbox": [
+        14,
+        28,
+        74,
+        84
+      ]
+    },
+    {
+      "frame": 5,
+      "source_bbox": [
+        434,
+        429,
+        733,
+        717
+      ],
+      "logical_size": [
+        60,
+        58
+      ],
+      "logical_bbox": [
+        14,
+        26,
+        74,
+        84
+      ]
+    },
+    {
+      "frame": 6,
+      "source_bbox": [
+        816,
+        429,
+        1127,
+        717
+      ],
+      "logical_size": [
+        63,
+        58
+      ],
+      "logical_bbox": [
+        12,
+        26,
+        75,
+        84
+      ]
+    },
+    {
+      "frame": 7,
+      "source_bbox": [
+        1199,
+        432,
+        1503,
+        714
+      ],
+      "logical_size": [
+        61,
+        57
+      ],
+      "logical_bbox": [
+        13,
+        27,
+        74,
+        84
+      ]
+    },
+    {
+      "frame": 8,
+      "source_bbox": [
+        76,
+        828,
+        375,
+        1111
+      ],
+      "logical_size": [
+        60,
+        57
+      ],
+      "logical_bbox": [
+        14,
+        27,
+        74,
+        84
+      ]
+    },
+    {
+      "frame": 9,
+      "source_bbox": [
+        449,
+        800,
+        753,
+        1111
+      ],
+      "logical_size": [
+        61,
+        63
+      ],
+      "logical_bbox": [
+        13,
+        21,
+        74,
+        84
+      ]
+    },
+    {
+      "frame": 10,
+      "source_bbox": [
+        833,
+        825,
+        1138,
+        1111
+      ],
+      "logical_size": [
+        62,
+        58
+      ],
+      "logical_bbox": [
+        13,
+        26,
+        75,
+        84
+      ]
+    },
+    {
+      "frame": 11,
+      "source_bbox": [
+        1228,
+        763,
+        1503,
+        1111
+      ],
+      "logical_size": [
+        56,
+        70
+      ],
+      "logical_bbox": [
+        16,
+        14,
+        72,
+        84
+      ]
+    },
+    {
+      "frame": 12,
+      "source_bbox": [
+        67,
+        1214,
+        385,
+        1482
+      ],
+      "logical_size": [
+        64,
+        54
+      ],
+      "logical_bbox": [
+        12,
+        30,
+        76,
+        84
+      ]
+    },
+    {
+      "frame": 13,
+      "source_bbox": [
+        426,
+        1218,
+        808,
+        1482
+      ],
+      "logical_size": [
+        77,
+        53
+      ],
+      "logical_bbox": [
+        5,
+        31,
+        82,
+        84
+      ]
+    },
+    {
+      "frame": 14,
+      "source_bbox": [
+        799,
+        1220,
+        1172,
+        1482
+      ],
+      "logical_size": [
+        75,
+        53
+      ],
+      "logical_bbox": [
+        6,
+        31,
+        81,
+        84
+      ]
+    },
+    {
+      "frame": 15,
+      "source_bbox": [
+        1178,
+        1232,
+        1519,
+        1482
+      ],
+      "logical_size": [
+        69,
+        51
+      ],
+      "logical_bbox": [
+        9,
+        33,
+        78,
+        84
+      ]
+    },
+    {
+      "frame": 16,
+      "source_bbox": [
+        99,
+        1582,
+        372,
+        1863
+      ],
+      "logical_size": [
+        55,
+        57
+      ],
+      "logical_bbox": [
+        16,
+        27,
+        71,
+        84
+      ]
+    },
+    {
+      "frame": 17,
+      "source_bbox": [
+        440,
+        1589,
+        703,
+        1863
+      ],
+      "logical_size": [
+        53,
+        55
+      ],
+      "logical_bbox": [
+        17,
+        29,
+        70,
+        84
+      ]
+    },
+    {
+      "frame": 18,
+      "source_bbox": [
+        846,
+        1595,
+        1102,
+        1863
+      ],
+      "logical_size": [
+        52,
+        54
+      ],
+      "logical_bbox": [
+        18,
+        30,
+        70,
+        84
+      ]
+    },
+    {
+      "frame": 19,
+      "source_bbox": [
+        1219,
+        1626,
+        1439,
+        1863
+      ],
+      "logical_size": [
+        44,
+        48
+      ],
+      "logical_bbox": [
+        22,
+        36,
+        66,
+        84
+      ]
+    },
+    {
+      "frame": 20,
+      "source_bbox": [
+        40,
+        1987,
+        355,
+        2260
+      ],
+      "logical_size": [
+        64,
+        55
+      ],
+      "logical_bbox": [
+        12,
+        29,
+        76,
+        84
+      ]
+    },
+    {
+      "frame": 21,
+      "source_bbox": [
+        427,
+        2019,
+        735,
+        2237
+      ],
+      "logical_size": [
+        62,
+        44
+      ],
+      "logical_bbox": [
+        13,
+        40,
+        75,
+        84
+      ]
+    },
+    {
+      "frame": 22,
+      "source_bbox": [
+        792,
+        2064,
+        1124,
+        2252
+      ],
+      "logical_size": [
+        67,
+        38
+      ],
+      "logical_bbox": [
+        10,
+        46,
+        77,
+        84
+      ]
+    },
+    {
+      "frame": 23,
+      "source_bbox": [
+        1163,
+        2085,
+        1517,
+        2250
+      ],
+      "logical_size": [
+        72,
+        33
+      ],
+      "logical_bbox": [
+        8,
+        51,
+        80,
+        84
+      ]
+    }
+  ],
+  "note": "Source is a generated image; all transformations use the same scale. Aligned visible bottoms are image-space only, not world-space or collision proof."
+}

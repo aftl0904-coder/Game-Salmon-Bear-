@@ -1,0 +1,1 @@
+PASS: desktop mouse and simulated mobile touch; sequences read from JSON, all frames and FPS order verified; not game or physical device
