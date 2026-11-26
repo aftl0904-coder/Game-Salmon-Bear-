@@ -12,6 +12,7 @@ import { stageTitle } from './stageNames'
 import { legsBetween, mapForStage, type ContinentMap, type Leg } from './worldMapData'
 import { wrapVerse } from './ui/verseWrap'
 import { getRun, puffAway, iconFor, needsStartChoice, restartWarning, resumeMain, startNewRun, startSideTrip } from './run'
+import { mountTouchControls } from './TouchControls'
 
 const VERSES = versesRaw as unknown as Record<string, { text: string; ref: string }>
 /** How long the verse stays up before the trip starts on its own (any confirm key skips it). */
@@ -109,7 +110,14 @@ export class MapScene extends Phaser.Scene {
     cam.centerOn(320, 180)
     cam.fadeIn(500, 0, 0, 0)
     unlockAudio()
-    playSong('story')
+    try {
+      playSong('story')
+    } catch {
+      /* audio optional on mobile */
+    }
+    // Phone: without pads, TouchInput confirm never fires and tap-anywhere was
+    // ignored while picking — Alan stuck on the map before bike-climb (fix-play-1).
+    mountTouchControls(this)
 
     const worldKey = cm.tex.worldGreen && c2Cleared() && this.textures.exists(cm.tex.worldGreen) ? cm.tex.worldGreen : cm.tex.world
     if (this.textures.exists(worldKey)) this.add.image(0, 0, worldKey).setOrigin(0).setScale(S)
@@ -204,9 +212,14 @@ export class MapScene extends Phaser.Scene {
     kb?.on('keydown-DOWN', down)
     kb?.on('keydown-S', down)
     const pointerConfirm = () => {
-      // Taps on an interactive badge already call confirmPick via its own handler;
-      // this generic pointerdown is for "tap anywhere to confirm/skip" elsewhere.
-      if (!this.picking && !this.startDialog) this.skip()
+      // Taps on an interactive badge already call confirmPick via its own handler.
+      // While picking, tap-anywhere must also confirm (phone has no Enter key).
+      if (this.startDialog) return
+      if (this.picking) {
+        this.confirmPick()
+        return
+      }
+      this.skip()
     }
     this.input.on('pointerdown', pointerConfirm)
     this.events.once('shutdown', () => {
@@ -610,9 +623,30 @@ export class MapScene extends Phaser.Scene {
     const cam = this.cameras.main
     cam.setRotation(0).setZoom(RENDER_SCALE)
     if (d.stageNo) this.registry.set('stageNo', d.stageNo)
-    if (d.next === 'credits') this.scene.start('credits')
-    else if (d.next === 'transit') this.scene.start('transit', { from: d.from, to: d.to })
-    else if (d.next === 'bike') this.scene.start('bike', { to: d.to })
-    else this.scene.start('play')
+    if (d.next === 'credits') {
+      this.scene.start('credits')
+      return
+    }
+    // fix-play-1: transit/bike must never leave the player stuck on the map —
+    // any throw (missing texture, audio, etc.) falls through to play.
+    if (d.next === 'transit') {
+      try {
+        this.scene.start('transit', { from: d.from, to: d.to })
+      } catch (err) {
+        console.warn('[worldmap] transit failed, skipping to play', err)
+        this.scene.start('play')
+      }
+      return
+    }
+    if (d.next === 'bike') {
+      try {
+        this.scene.start('bike', { to: d.to })
+      } catch (err) {
+        console.warn('[worldmap] bike failed, skipping to play', err)
+        this.scene.start('play')
+      }
+      return
+    }
+    this.scene.start('play')
   }
 }

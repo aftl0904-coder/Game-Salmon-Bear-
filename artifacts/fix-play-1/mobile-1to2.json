@@ -1,0 +1,30 @@
+{
+  "iphone13L": {
+    "passed": true,
+    "mapState": {
+      "picking": true,
+      "next": "transit",
+      "from": 1,
+      "to": 2
+    },
+    "scenes": [
+      "play",
+      "UIScene"
+    ],
+    "errors": []
+  },
+  "pixel7L": {
+    "passed": true,
+    "mapState": {
+      "picking": true,
+      "next": "transit",
+      "from": 1,
+      "to": 2
+    },
+    "scenes": [
+      "play",
+      "UIScene"
+    ],
+    "errors": []
+  }
+}

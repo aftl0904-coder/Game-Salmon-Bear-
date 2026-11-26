@@ -4,7 +4,7 @@ import { unlockAudio, SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
-import { CHARMS, rollCharm, setActiveCharm, type CharmDef, type CharmId } from './charms'
+import { CHARMS, rollCharm, rollCharmPair, setActiveCharm, type CharmDef, type CharmId } from './charms'
 import { rememberCharm } from './run'
 import { p2Pad, btn as padBtn } from './gamepadBridge'
 import { isTouchDevice } from './phone'
@@ -13,6 +13,7 @@ import {
   showGradeResult,
   showSegmentBanner,
   TIMING_WINDOWS_MS,
+  type MiniGrade,
 } from './minigameFramework'
 
 /**
@@ -61,6 +62,9 @@ export class GachaScene extends Phaser.Scene {
   private segArmedAt = 0
   private segDeadline = 0
   private pad2Prev = false
+  /** Last skill grade — gold opens pick-1-of-2 charm UI (fix-play-1). */
+  private lastGrade: MiniGrade = 'bronze'
+  private charmPick: { a: CharmDef; b: CharmDef; focus: 0 | 1; labels: Phaser.GameObjects.Text[] } | null = null
 
   constructor() {
     super('gacha')
@@ -245,6 +249,16 @@ export class GachaScene extends Phaser.Scene {
     }
 
     if (!this.pendingConfirm) return
+    if (this.phase === 'charm' && this.charmPick) {
+      if (TouchInput.justPressed('left')) {
+        this.charmPick.focus = 0
+        this.drawCharmPickFocus()
+      }
+      if (TouchInput.justPressed('right')) {
+        this.charmPick.focus = 1
+        this.drawCharmPickFocus()
+      }
+    }
     if (TouchInput.justPressed('start') || TouchInput.justPressed('jump') || TouchInput.justPressed('attack')) {
       if (this.time.now < this.inputReadyAt) return
       const action = this.pendingConfirm
@@ -451,6 +465,7 @@ export class GachaScene extends Phaser.Scene {
     this.skipBtn = null
     this.prompt.setVisible(false)
     const result = gradeResult(this.good, this.total, 'timing', skipped, MEDAL_ID)
+    this.lastGrade = result.skipped ? 'bronze' : result.grade
     await showGradeResult(this, result, { title: '扭蛋' })
     this.beginCharmReveal()
   }
@@ -459,11 +474,121 @@ export class GachaScene extends Phaser.Scene {
     this.phase = 'charm'
     this.scoreTxt?.setVisible(false)
     if (this.machine) this.machine.setAlpha(0.9).setScale(0.78)
+    const forced = this.registry.get('forceCharm') as CharmId | undefined
+    if (forced) {
+      this.spinToCharm(setActiveCharm(forced))
+      return
+    }
+    // Gold: pick one of two random charms. Silver/bronze: single random roll.
+    if (this.lastGrade === 'gold') {
+      this.showGoldCharmPick()
+      return
+    }
+    this.spinToCharm(rollCharm())
+  }
+
+  /** Gold-tier upside: choose between two random charms (no downside vs silver/bronze). */
+  private showGoldCharmPick() {
     const W = GAME_W
     const H = GAME_H
-    const forced = this.registry.get('forceCharm') as CharmId | undefined
-    const charm = forced ? setActiveCharm(forced) : rollCharm()
+    const [a, b] = rollCharmPair()
+    this.charmPick = { a, b, focus: 0, labels: [] }
+    if (this.machine) this.tweens.add({ targets: this.machine, alpha: 0, duration: 280 })
+    this.add
+      .text(W / 2, 48, '金級！揀一個御守', {
+        fontFamily: FONT_TITLE,
+        fontSize: '18px',
+        color: '#ffd76a',
+        stroke: '#2a1408',
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
+    this.add
+      .text(W / 2, 74, '兩個隨機抽出，揀你想要嗰個', {
+        fontFamily: FONT_UI,
+        fontSize: '12px',
+        color: '#c8b090',
+      })
+      .setOrigin(0.5)
+
+    const mkCard = (charm: CharmDef, x: number, idx: 0 | 1) => {
+      const bg = this.add
+        .rectangle(x, H / 2 - 10, 200, 180, 0x2a1a10, 0.95)
+        .setStrokeStyle(2, 0xc8902a)
+        .setInteractive({ useHandCursor: true })
+      if (this.textures.exists(charm.icon)) this.add.image(x, H / 2 - 55, charm.icon).setScale(1.15)
+      const name = this.add
+        .text(x, H / 2 + 8, charm.name, {
+          fontFamily: FONT_TITLE,
+          fontSize: '15px',
+          color: '#ffe08a',
+          stroke: '#2a1408',
+          strokeThickness: 3,
+        })
+        .setOrigin(0.5)
+      this.add
+        .text(x, H / 2 + 48, charm.desc, {
+          fontFamily: FONT_UI,
+          fontSize: '10px',
+          color: '#f0e6d8',
+          align: 'center',
+          wordWrap: { width: 176 },
+        })
+        .setOrigin(0.5)
+      bg.on('pointerdown', () => this.commitCharmPick(idx))
+      this.charmPick!.labels.push(name)
+    }
+    mkCard(a, W / 2 - 118, 0)
+    mkCard(b, W / 2 + 118, 1)
+    this.prompt.setText('撳左邊或右邊揀').setAlpha(1).setY(H - 28).setVisible(true)
+    this.inputReadyAt = this.time.now + 280
+    this.drawCharmPickFocus()
+    this.armConfirm(() => {
+      if (!this.charmPick) return
+      this.commitCharmPick(this.charmPick.focus)
+    })
+    const kb = this.input.keyboard
+    const left = () => {
+      if (!this.charmPick) return
+      this.charmPick.focus = 0
+      this.drawCharmPickFocus()
+    }
+    const right = () => {
+      if (!this.charmPick) return
+      this.charmPick.focus = 1
+      this.drawCharmPickFocus()
+    }
+    kb?.on('keydown-LEFT', left)
+    kb?.on('keydown-A', left)
+    kb?.on('keydown-RIGHT', right)
+    kb?.on('keydown-D', right)
+    this.events.once('shutdown', () => {
+      kb?.off('keydown-LEFT', left)
+      kb?.off('keydown-A', left)
+      kb?.off('keydown-RIGHT', right)
+      kb?.off('keydown-D', right)
+    })
+  }
+
+  private drawCharmPickFocus() {
+    const p = this.charmPick
+    if (!p) return
+    p.labels.forEach((tx, i) => tx.setColor(i === p.focus ? '#ffffff' : '#ffe08a'))
+  }
+
+  private commitCharmPick(idx: 0 | 1) {
+    const p = this.charmPick
+    if (!p || this.phase !== 'charm') return
+    const charm = setActiveCharm((idx === 0 ? p.a : p.b).id)
+    this.charmPick = null
     rememberCharm(charm.id)
+    this.reveal(charm)
+  }
+
+  private spinToCharm(charm: CharmDef) {
+    rememberCharm(charm.id)
+    const W = GAME_W
+    const H = GAME_H
     const finalFrame = Math.max(0, CHARMS.findIndex((c) => c.id === charm.id))
 
     if (this.textures.exists('gacha-capsules')) {

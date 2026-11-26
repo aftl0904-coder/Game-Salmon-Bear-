@@ -1,0 +1,8 @@
+{
+  "track": {
+    "boyY": 26,
+    "petY": 26,
+    "jumping": true
+  },
+  "gacha": "artifacts/fix-play-1/gacha-gold-pick.png"
+}

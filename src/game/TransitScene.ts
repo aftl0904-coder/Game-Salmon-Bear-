@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { GAME_W } from './display'
 import { playSong, SFX, unlockAudio } from './audio'
 import { mountTouchControls } from './TouchControls'
-import { FONT_TITLE, FONT_UI } from './ui/fonts'
+import { FONT_UI } from './ui/fonts'
 import { showTutorial, type RoundResult } from './minigames'
 import { gradeResult, showGradeResult } from './minigameFramework'
 import {
@@ -60,41 +60,54 @@ export class TransitScene extends Phaser.Scene {
   create() {
     this.leaving = false
     this.mini = null
-    unlockAudio()
-    const songKey = `stage${Math.min(10, Math.max(1, this.toStage))}` as 'stage1'
     try {
-      playSong(songKey)
-    } catch {
-      /* song optional */
+      unlockAudio()
+      const songKey = `stage${Math.min(10, Math.max(1, this.toStage))}` as 'stage1'
+      try {
+        playSong(songKey)
+      } catch {
+        /* song optional */
+      }
+      this.cameras.main.setBackgroundColor('#0c0814')
+      this.cameras.main.fadeIn(350, 12, 8, 20)
+
+      const dest = stageTitle(this.toStage) ?? `第${this.toStage}關`
+      // Destination only here — game frame() draws the big transit title (avoids stack with「第 N 段」).
+      this.add
+        .text(GAME_W / 2, 16, `去${dest}`, {
+          fontFamily: FONT_UI,
+          fontSize: '12px',
+          color: '#c8b090',
+        })
+        .setOrigin(0.5)
+
+      const kb = this.input.keyboard
+      const skip = () => this.leave(null, true)
+      kb?.on('keydown-ESC', skip)
+      this.events.once('shutdown', () => kb?.off('keydown-ESC', skip))
+      mountTouchControls(this)
+      void this.run().catch((err) => {
+        console.warn('[transit] run failed, skipping to play', err)
+        this.failSafePlay()
+      })
+    } catch (err) {
+      console.warn('[transit] create failed, skipping to play', err)
+      this.failSafePlay()
     }
-    this.cameras.main.setBackgroundColor('#0c0814')
-    this.cameras.main.fadeIn(350, 12, 8, 20)
+  }
 
-    const meta = TRANSIT_META[this.transitId]
-    const dest = stageTitle(this.toStage) ?? `第${this.toStage}關`
-    this.add
-      .text(GAME_W / 2, 28, meta.name, {
-        fontFamily: FONT_TITLE,
-        fontSize: '18px',
-        color: '#ffe08a',
-        stroke: '#2a1408',
-        strokeThickness: 4,
-      })
-      .setOrigin(0.5)
-    this.add
-      .text(GAME_W / 2, 50, `去${dest}`, {
-        fontFamily: FONT_UI,
-        fontSize: '12px',
-        color: '#c8b090',
-      })
-      .setOrigin(0.5)
-
-    const kb = this.input.keyboard
-    const skip = () => this.leave(null, true)
-    kb?.on('keydown-ESC', skip)
-    this.events.once('shutdown', () => kb?.off('keydown-ESC', skip))
-    mountTouchControls(this)
-    void this.run()
+  /** If the minigame cannot start on phone, never leave the player stranded. */
+  private failSafePlay() {
+    if (this.leaving) return
+    this.leaving = true
+    this.mini?.destroy()
+    this.mini = null
+    this.registry.set('stageNo', this.toStage)
+    try {
+      this.scene.start('play')
+    } catch {
+      /* last resort */
+    }
   }
 
   private async run() {
@@ -105,7 +118,12 @@ export class TransitScene extends Phaser.Scene {
     if (this.leaving || !this.scene.isActive()) return
     if (choice === 'skip') return this.leave(null, true)
 
-    this.mini = startTransitGame(this, this.transitId)
+    try {
+      this.mini = startTransitGame(this, this.transitId)
+    } catch (err) {
+      console.warn('[transit] startTransitGame failed', err)
+      return this.failSafePlay()
+    }
     const r = await this.mini.done
     if (this.leaving || !this.scene.isActive()) return
     this.leave(r, false)

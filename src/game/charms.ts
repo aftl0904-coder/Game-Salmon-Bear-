@@ -62,6 +62,18 @@ export function rollCharm(): CharmDef {
   return pick
 }
 
+/** Two distinct random charms for gold-tier pick-one (fix-play-1). Does not set active. */
+export function rollCharmPair(): [CharmDef, CharmDef] {
+  const a = CHARMS[Math.floor(Math.random() * CHARMS.length)]!
+  let b = a
+  if (CHARMS.length > 1) {
+    while (b.id === a.id) {
+      b = CHARMS[Math.floor(Math.random() * CHARMS.length)]!
+    }
+  }
+  return [a, b]
+}
+
 /** Forces a specific charm active without a random roll (QA/debug only — see GachaScene). */
 export function setActiveCharm(id: CharmId): CharmDef {
   active = id
