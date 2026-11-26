@@ -6150,7 +6150,7 @@ export class GameScene extends Phaser.Scene {
     void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
   }
 
-  /** Stage 8 membership quiz at stallX (640) — not a checkpoint. */
+  /** Stage 8 recipe stall at stallX (640) — not a checkpoint. */
   private placeLabMembershipStall() {
     const x = ST.stallX
     if (x == null) return
@@ -6178,7 +6178,7 @@ export class GameScene extends Phaser.Scene {
       .setDepth(DEPTH.SIGN)
   }
 
-  /** Trigger goldfish quiz once when lead crosses stallX. */
+  /** Trigger stage-8 stall (recipe) once when lead crosses stallX. */
   private tickLabMembershipStall() {
     if (!this.lab || this.coffeeDone || this.storyIntro || !this.started || this.ended || this.bossFight) return
     const x = ST.stallX
@@ -7004,7 +7004,7 @@ export class GameScene extends Phaser.Scene {
       return
     }
 
-    // s8-4: S8_OPEN (dialogue + cart tilt + stage card), then play.
+    // s8-4: S8_OPEN (dialogue + stage card; mini-4 removed embedded tilt), then play.
     if (this.lab) {
       this.time.delayedCall(0, () => {
         if (this.scene.isActive('UIScene') && !this.started) this.scene.setVisible(false, 'UIScene')

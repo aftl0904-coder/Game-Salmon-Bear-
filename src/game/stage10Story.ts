@@ -9,7 +9,6 @@ import { DEPTH } from './engine/depth'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { showStoryLines } from './storyDepth'
-import { timingGame } from './minigames'
 import { playStage8Action } from './stage8Story'
 import type { Player } from './Player'
 
@@ -170,7 +169,7 @@ export function playLeonMidCutscene(
   }
 }
 
-/** S10_OPEN: dialogue + timing (gate-light) + stage card. Skip-able timing. */
+/** S10_OPEN: dialogue + stage card only. mini-4: embedded timing removed — 9→10 transit (合照) owns the minigame. */
 export function playS10Open(scene: Phaser.Scene, onDone: () => void): OpenHandle {
   const steps = PACK.scenes.S10_OPEN?.steps ?? []
   let dead = false
@@ -209,15 +208,8 @@ export function playS10Open(scene: Phaser.Scene, onDone: () => void): OpenHandle
         })
         continue
       }
-      if ('minigame' in s && s.minigame === 'timing') {
-        if (dead) return
-        // Transition skin: gate-light timing (skip = empty result, no HP/coin penalty).
-        const mini = timingGame(scene, '維修閘・等燈亮', '放行', 1)
-        handle = mini
-        await mini.done
-        handle = null
-        continue
-      }
+      // mini-4: ignore any leftover minigame steps in older packs
+      if ('minigame' in s) continue
       if ('card' in s) {
         await new Promise<void>((res) => {
           if (dead) return res()

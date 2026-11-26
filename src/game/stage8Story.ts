@@ -9,7 +9,6 @@ import { DEPTH } from './engine/depth'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { showStoryLines, showStoryStillThen } from './storyDepth'
-import { tiltGame } from './minigames'
 import type { Player } from './Player'
 
 type SayLine = { say: string; text: string }
@@ -119,7 +118,8 @@ export function playStage8Action(
 type OpenHandle = { destroy: () => void }
 
 /**
- * S8_OPEN: dialogue + tilt (cart skin via cs-cart / props/coffee-cart) + stage card.
+ * S8_OPEN: dialogue + stage card only.
+ * mini-4: embedded tilt removed — 7→8 transit (避燈潛入) owns the minigame.
  */
 export function playS8Open(scene: Phaser.Scene, onDone: () => void): OpenHandle {
   const steps = PACK.scenes.S8_OPEN?.steps ?? []
@@ -155,42 +155,8 @@ export function playS8Open(scene: Phaser.Scene, onDone: () => void): OpenHandle 
         })
         continue
       }
-      if ('minigame' in s && s.minigame === 'tilt') {
-        const pre = (s.lines as SayLine[] | undefined) ?? []
-        if (pre.length) {
-          await new Promise<void>((res) => {
-            if (dead) return res()
-            handle = showStoryLines(scene, stage8LinesToRaw(pre), () => {
-              handle = null
-              res()
-            })
-          })
-        }
-        if (dead) return
-        // Cart skin: prefer Manus stage8 cart, else coffee-cart override.
-        const cartKey = scene.textures.exists('s8-prop-cart')
-          ? 's8-prop-cart'
-          : scene.textures.exists('cs-cart')
-            ? 'cs-cart'
-            : scene.textures.exists('props/cart')
-              ? 'props/cart'
-              : null
-        let cart: Phaser.GameObjects.Image | null = null
-        if (cartKey) {
-          cart = scene.add
-            .image(GAME_W / 2, GAME_H / 2 + 40, cartKey)
-            .setScrollFactor(0)
-            .setDepth(DEPTH.UI + 255)
-            .setAlpha(0.35)
-            .setScale(1.4)
-        }
-        const mini = tiltGame(scene, 2)
-        handle = mini
-        await mini.done
-        cart?.destroy()
-        handle = null
-        continue
-      }
+      // mini-4: ignore any leftover minigame steps in older packs
+      if ('minigame' in s) continue
       if ('card' in s) {
         await new Promise<void>((res) => {
           if (dead) return res()
