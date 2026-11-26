@@ -210,18 +210,158 @@ function frameIndex(anim, tick) {
   return frames ? frames[i] : anim.start + i
 }
 
+/** Opaque pixel bbox inside one sheet frame (for fitContent). */
+function frameContentBox(img, sx, sy, fw, fh) {
+  const c = document.createElement('canvas')
+  c.width = fw
+  c.height = fh
+  const x = c.getContext('2d')
+  x.drawImage(img, sx, sy, fw, fh, 0, 0, fw, fh)
+  const d = x.getImageData(0, 0, fw, fh).data
+  let minX = fw
+  let minY = fh
+  let maxX = 0
+  let maxY = 0
+  let found = false
+  for (let y = 0; y < fh; y++) {
+    for (let px = 0; px < fw; px++) {
+      if (d[(y * fw + px) * 4 + 3] > 8) {
+        found = true
+        if (px < minX) minX = px
+        if (y < minY) minY = y
+        if (px > maxX) maxX = px
+        if (y > maxY) maxY = y
+      }
+    }
+  }
+  return found ? { x: minX, y: minY, w: maxX - minX + 1, h: maxY - minY + 1 } : { x: 0, y: 0, w: fw, h: fh }
+}
+
 function drawFrame(ctx, img, item, frame, fitW, fitH) {
   const fw = item.frameWidth
   const fh = item.frameHeight
   const cols = item.columns || Math.max(1, Math.floor(img.width / fw))
   const sx = (frame % cols) * fw
   const sy = Math.floor(frame / cols) * fh
-  const scale = Math.min(fitW / fw, fitH / fh)
-  const dw = Math.max(1, Math.floor(fw * scale))
-  const dh = Math.max(1, Math.floor(fh * scale))
   ctx.clearRect(0, 0, fitW, fitH)
   ctx.imageSmoothingEnabled = false
-  ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(0, 0, fitW, fitH)
+  ctx.clip()
+
+  if (item.fitContent) {
+    // Scale by opaque content so large-pad sheets fill the card without cropping limbs.
+    const box = frameContentBox(img, sx, sy, fw, fh)
+    const pad = typeof item.fitPad === 'number' ? item.fitPad : 0.18
+    const availW = fitW * (1 - 2 * pad)
+    const availH = fitH * (1 - 2 * pad)
+    const scale = Math.min(availW / box.w, availH / box.h)
+    const dw = Math.max(1, Math.floor(box.w * scale))
+    const dh = Math.max(1, Math.floor(box.h * scale))
+    ctx.drawImage(
+      img,
+      sx + box.x,
+      sy + box.y,
+      box.w,
+      box.h,
+      Math.floor((fitW - dw) / 2),
+      Math.floor((fitH - dh) / 2),
+      dw,
+      dh,
+    )
+  } else {
+    // Optional zoom (keep ≤1 unless you accept clipping). Prefer fitContent for Manus pads.
+    const zoom = typeof item.zoom === 'number' && item.zoom > 0 ? item.zoom : 1
+    const scale = Math.min(fitW / fw, fitH / fh) * zoom
+    const dw = Math.max(1, Math.floor(fw * scale))
+    const dh = Math.max(1, Math.floor(fh * scale))
+    ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+  }
+  ctx.restore()
+
+  if (item.tint) applyTint(ctx, fitW, fitH, item.tint)
+}
+
+/** Multiply non-transparent pixels by a Phaser-style hex tint. */
+function applyTint(ctx, w, h, tint) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(String(tint).trim())
+  if (!m) return
+  const hex = parseInt(m[1], 16)
+  const tr = ((hex >> 16) & 255) / 255
+  const tg = ((hex >> 8) & 255) / 255
+  const tb = (hex & 255) / 255
+  const id = ctx.getImageData(0, 0, w, h)
+  const d = id.data
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 8) continue
+    d[i] = Math.min(255, Math.round(d[i] * tr))
+    d[i + 1] = Math.min(255, Math.round(d[i + 1] * tg))
+    d[i + 2] = Math.min(255, Math.round(d[i + 2] * tb))
+  }
+  ctx.putImageData(id, 0, 0)
+}
+
+/** Pixel whistle + leash markers so trainer ≠ △畝大佬 at a glance. */
+function paintMarkers(ctx, item, fitW, fitH) {
+  const marks = item.markers
+  if (!marks || !marks.length) return
+  ctx.imageSmoothingEnabled = false
+  // Left side — keep clear of top-right badge plate.
+  const cx = Math.floor(fitW * 0.18)
+  const cy = Math.floor(fitH * 0.32)
+  if (marks.includes('whistle')) {
+    // silver whistle with cord (readable at card scale)
+    ctx.fillStyle = 'rgba(12,10,18,0.55)'
+    ctx.fillRect(cx - 8, cy - 14, 28, 24)
+    ctx.fillStyle = '#2a2218'
+    ctx.fillRect(cx - 1, cy - 12, 2, 12)
+    ctx.fillStyle = '#e8eef6'
+    ctx.fillRect(cx - 5, cy - 3, 12, 7)
+    ctx.fillStyle = '#9aa3b0'
+    ctx.fillRect(cx + 6, cy, 5, 3)
+    ctx.fillStyle = '#6a7380'
+    ctx.fillRect(cx - 4, cy, 4, 2)
+  }
+  if (marks.includes('leash')) {
+    const lx = Math.floor(fitW * 0.22)
+    const ly = Math.floor(fitH * 0.58)
+    ctx.strokeStyle = '#8a5030'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.moveTo(lx, ly)
+    ctx.quadraticCurveTo(lx + 22, ly + 6, lx + 14, ly + 28)
+    ctx.quadraticCurveTo(lx - 4, ly + 34, lx - 8, ly + 18)
+    ctx.stroke()
+    ctx.fillStyle = '#c47840'
+    ctx.fillRect(lx - 4, ly - 4, 8, 6)
+  }
+}
+
+/** In-game stage-7 / trainer badges drawn on top so lookalikes stay distinct. */
+async function paintBadge(ctx, item, fitW, fitH) {
+  if (!item.badge) return
+  const badge = await loadSheet(item.badge)
+  if (!badge) return
+  ctx.imageSmoothingEnabled = false
+  const mode = item.badgeMode || 'corner'
+  // Keep badges readable but never covering the whole figure.
+  const bw = Math.max(32, Math.floor(fitW * 0.3))
+  const bh = Math.max(32, Math.floor((bw * badge.height) / badge.width))
+  let bx, by
+  if (mode === 'head') {
+    bx = Math.floor((fitW - bw) / 2)
+    by = 2
+  } else {
+    bx = fitW - bw - 4
+    by = 4
+  }
+  ctx.fillStyle = 'rgba(12, 10, 18, 0.82)'
+  ctx.fillRect(bx - 3, by - 3, bw + 6, bh + 6)
+  ctx.strokeStyle = 'rgba(220, 170, 50, 1)'
+  ctx.lineWidth = 2
+  ctx.strokeRect(bx - 3.5, by - 3.5, bw + 7, bh + 7)
+  ctx.drawImage(badge, bx, by, bw, bh)
 }
 
 function firstFrame(item) {
@@ -256,9 +396,12 @@ async function paintCardCanvas(canvas, item, unlocked) {
     const dw = img.width * scale
     const dh = img.height * scale
     ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh)
+    if (item.tint) applyTint(ctx, w, h, item.tint)
   } else {
     drawFrame(ctx, img, item, frame, w, h)
   }
+  paintMarkers(ctx, item, w, h)
+  await paintBadge(ctx, item, w, h)
   if (!unlocked) {
     // Keep alpha so the sprite outline reads as a silhouette against the card.
     const id = ctx.getImageData(0, 0, w, h)
@@ -471,12 +614,17 @@ async function paintModalFrame() {
     const dw = img.width * scale
     const dh = img.height * scale
     ctx.drawImage(img, (canvas.width - dw) / 2, (canvas.height - dh) / 2, dw, dh)
+    if (item.tint) applyTint(ctx, canvas.width, canvas.height, item.tint)
+    paintMarkers(ctx, item, canvas.width, canvas.height)
+    await paintBadge(ctx, item, canvas.width, canvas.height)
     return
   }
   const name = state.modalAnimNames[state.modalAnim]
   const anim = item.anims[name]
   const frame = frameIndex(anim, performance.now() - (state.modalT0 || 0))
   drawFrame(ctx, img, item, frame, canvas.width, canvas.height)
+  paintMarkers(ctx, item, canvas.width, canvas.height)
+  await paintBadge(ctx, item, canvas.width, canvas.height)
 }
 
 function closeModal() {
