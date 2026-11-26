@@ -58,6 +58,7 @@ import {
   type ClawResult,
   type RoundResult,
 } from './minigames'
+import { lanternPickGame, recipeMatchGame, sashimiCutGame } from './stallMinigamesV2'
 import { goldfishQuiz, type GoldfishResult } from './membershipQuiz'
 import { applyGoldHeal, gradeResult, showGradeResult, type GradedResult, type MiniKind } from './minigameFramework'
 import { floorButtonRoom } from './floorButtonRoom'
@@ -409,7 +410,13 @@ const GAMBLE_BET = 20
 /** HP left at the clear card carries into the next stage (otherwise 瞓覺 would be a coin sink). */
 const CARRY_HP_BETWEEN_STAGES = true
 type ClearAction = 'shop' | 'sleep' | 'gamble' | 'next' | 'credits' | 'menu'
-type Stall = { keeper: string; food: string; sign: string; game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory' | 'claw' | 'shake'; greet: string }
+type Stall = {
+  keeper: string
+  food: string
+  sign: string
+  game: 'stir' | 'flag' | 'pour' | 'timing' | 'tilt' | 'goldfish' | 'memory' | 'claw' | 'shake' | 'lantern' | 'sashimi' | 'recipe'
+  greet: string
+}
 const STALLS = (stallsRaw as unknown as { stalls: Record<string, Stall> }).stalls
 type ClearButton = { id: ClearAction; bg: Phaser.GameObjects.Rectangle; tx: Phaser.GameObjects.Text; on: boolean }
 type Mover = { solid: Solid; baseX: number; w: number; range: number; periodMs: number; img: Phaser.GameObjects.TileSprite | null; posts: Phaser.GameObjects.Graphics }
@@ -5875,7 +5882,10 @@ export class GameScene extends Phaser.Scene {
       claw: { id: 'claw', kind: 'aim' },
       shake: { id: 'shake', kind: 'timing' },
       goldfish: { id: 'goldfish', kind: 'puzzle' },
-      timing: { id: 'lantern', kind: 'timing' },
+      timing: { id: 'lantern', kind: 'timing' }, // legacy; stages 3/5 now lantern/sashimi
+      lantern: { id: 'lantern', kind: 'memory' },
+      sashimi: { id: 'sashimi', kind: 'timing' },
+      recipe: { id: 'recipe', kind: 'puzzle' },
     }
     return map[game] ?? null
   }
@@ -6014,7 +6024,34 @@ export class GameScene extends Phaser.Scene {
             },
             { title: '三段限時', lines: ['15／12／10 秒；爪會愈嚟愈晃。'], tip: '略過當銅級；Skip 都有回血。' },
           ]
-        : pages
+        : st.game === 'lantern'
+          ? [
+              {
+                title: `${st.keeper}：夜市揀燈籠`,
+                lines: ['記住邊盞熄咗，', '再逐盞打返著。'],
+                tip: '←→揀燈籠　攻擊打著。',
+              },
+              { title: '三段：4／6／8 盞', lines: ['熄燈愈嚟愈多。', '略過當銅級。'], tip: '記啱換金幣。' },
+            ]
+          : st.game === 'sashimi'
+            ? [
+                {
+                  title: `${st.keeper}：切刺身`,
+                  lines: ['標記到中線就落刀。', '跟拍切，片片啱厚。'],
+                  tip: '攻擊鍵／撳畫面落刀。',
+                },
+                { title: '三段：4／5／6 片', lines: ['愈後面愈密。', '略過當銅級。'], tip: '切啱換金幣。' },
+              ]
+            : st.game === 'recipe'
+              ? [
+                  {
+                    title: `${st.keeper}：配方配對`,
+                    lines: ['將符號放入空位，', '砌返原本配方。'],
+                    tip: '←→揀　攻擊放入；H 提示。',
+                  },
+                  { title: '三段：3／4／5 位', lines: ['提示 2／1／0 次。', '略過當銅級。'], tip: '第8–10關唔用顏色字。' },
+                ]
+              : pages
     const choice = await showTutorial(this, `stall-${st.game}`, pagesFinal)
     if (this.ended || !this.scene.isActive()) return
     const after = (coins: number, pts: number, split?: { boy: number; girl: number }) => {
@@ -6089,7 +6126,25 @@ export class GameScene extends Phaser.Scene {
       void mini.done.then((r) => wrap(r, r.good * 2, 120))
       return
     }
-    // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
+    if (st.game === 'lantern') {
+      const mini = lanternPickGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
+      return
+    }
+    if (st.game === 'sashimi') {
+      const mini = sashimiCutGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
+      return
+    }
+    if (st.game === 'recipe') {
+      const mini = recipeMatchGame(this)
+      this.storyIntro = activeGate = mini
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
+      return
+    }
+    // Stage 1 default: 舉旗大賽（stirCoffee / timingGame 留喺 minigames.ts，唔刪）
     const mini = flagRace(this)
     this.storyIntro = activeGate = mini
     void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
