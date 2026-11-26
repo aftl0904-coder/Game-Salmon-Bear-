@@ -12,6 +12,7 @@ import {
   type TransitId,
 } from './transitMinigames'
 import { stageTitle } from './stageNames'
+import { MAX_HP } from './engine/constants'
 
 /**
  * Transition minigames between stages (mini-3).
@@ -124,10 +125,12 @@ export class TransitScene extends Phaser.Scene {
       : gradeResult(0, 12, meta.kind, true, this.transitId)
 
     const bumpCarryHp = () => {
+      // Gold heal +1, never above base max (+ gear buffer applied later in play).
+      const cap = MAX_HP + 4
       const hp = (this.registry.get('carryHp') as Partial<Record<'boy' | 'girl', number>> | undefined) ?? {}
       const next = { ...hp }
       for (const k of ['boy', 'girl'] as const) {
-        if (typeof next[k] === 'number') next[k] = (next[k] as number) + 1
+        if (typeof next[k] === 'number') next[k] = Math.min(cap, (next[k] as number) + 1)
       }
       this.registry.set('carryHp', next)
     }

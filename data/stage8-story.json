@@ -39,19 +39,12 @@
      "text": "腳印未乾。沿住搵。"
     },
     {
-     "minigame": "tilt",
-     "skin": "cart",
-     "skippable": true,
-     "lines": [
-      {
-       "say": "kibobo",
-       "text": "燈一移開，我哋就行。"
-      },
-      {
-       "say": "lunbo",
-       "text": "扶穩，跟住蜜印行。"
-      }
-     ]
+     "say": "kibobo",
+     "text": "燈一移開，我哋就行。"
+    },
+    {
+     "say": "lunbo",
+     "text": "扶穩，跟住蜜印行。"
     },
     {
      "card": "大陸2・第三關",

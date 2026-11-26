@@ -9,7 +9,6 @@ import { DEPTH } from './engine/depth'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { showStoryLines } from './storyDepth'
-import { pourGame } from './minigames'
 import type { Player } from './Player'
 import { playStage8Action } from './stage8Story'
 
@@ -91,8 +90,8 @@ export function playStage9Action(
 type OpenHandle = { destroy: () => void }
 
 /**
- * S9_OPEN: dialogue + pour (coffee skin) + stage card.
- * Skip-able pour — no HP / coin penalty (ticket).
+ * S9_OPEN: dialogue + stage card only.
+ * mini-4: embedded pour removed — 8→9 transit (端咖啡落樓) owns the minigame.
  */
 export function playS9Open(scene: Phaser.Scene, onDone: () => void): OpenHandle {
   const steps = PACK.scenes.S9_OPEN?.steps ?? []
@@ -133,21 +132,8 @@ export function playS9Open(scene: Phaser.Scene, onDone: () => void): OpenHandle 
         })
         continue
       }
-      if ('minigame' in s && s.minigame === 'pour') {
-        if (dead) return
-        // Coffee pour skin: mug + warm liquid (skip allowed → resolve empty).
-        const mug = scene.add
-          .ellipse(GAME_W / 2, GAME_H / 2 + 36, 120, 70, 0xf4e8d0, 0.55)
-          .setScrollFactor(0)
-          .setDepth(DEPTH.UI + 255)
-          .setStrokeStyle(3, 0x8a6040)
-        const mini = pourGame(scene, 3, { title: '倒杯咖啡・啱啱滿', liquid: 0x6a3a18 })
-        handle = mini
-        await mini.done
-        mug.destroy()
-        handle = null
-        continue
-      }
+      // mini-4: ignore any leftover minigame steps in older packs
+      if ('minigame' in s) continue
       if ('card' in s) {
         await new Promise<void>((res) => {
           if (dead) return res()
