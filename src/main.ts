@@ -13,6 +13,7 @@ import { EndingC2Scene } from './game/EndingC2Scene'
 import { MapScene } from './game/WorldMapScene'
 import { BikeScene } from './game/BikeScene'
 import { ClawScene } from './game/ClawScene'
+import { TransitScene } from './game/TransitScene'
 import { GachaScene } from './game/GachaScene'
 import { installGamepadBridge } from './game/gamepadBridge'
 import { installFullscreen } from './game/phone'
@@ -48,7 +49,7 @@ function bootGame() {
     parent: root,
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: jumpGravity() }, debug: false } },
     input: { gamepad: true, activePointers: 3 },
-    scene: [BootScene, StudioScene, LogoScene, DifficultyScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene, EndingC2Scene, MapScene, BikeScene, ClawScene, GachaScene],
+    scene: [BootScene, StudioScene, LogoScene, DifficultyScene, MenuScene, GameScene, UIScene, PauseScene, CreditsScene, EndingC2Scene, MapScene, BikeScene, ClawScene, TransitScene, GachaScene],
     scale: {
       mode: Phaser.Scale.NONE,
       width: CANVAS_W,

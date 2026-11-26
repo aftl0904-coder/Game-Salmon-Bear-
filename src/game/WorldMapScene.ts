@@ -28,7 +28,7 @@ const VERSE_HOLD_MS = 2600
  * finale→credits roll, re-entering a stage already chosen on the main menu) leave it
  * unset so nothing changes for them.
  */
-export type MapData = { from: number; to: number; next: 'play' | 'bike' | 'credits'; stageNo?: number; pick?: boolean }
+export type MapData = { from: number; to: number; next: 'play' | 'bike' | 'transit' | 'credits'; stageNo?: number; pick?: boolean }
 
 const S = 0.5 // map art is shown at half size (1280×720 → 640×360)
 
@@ -439,9 +439,9 @@ export class MapScene extends Phaser.Scene {
     SFX.powerUp()
     const wasDefault = chosen === this.data_.to
     this.data_.to = chosen
-    // The stage1→2 bike minigame insert only fires on the expected default path —
+    // Transit / bike insert only fires on the expected default path —
     // jumping to a different stage from here skips straight into that stage's "play".
-    if (!wasDefault && this.data_.next === 'bike') this.data_.next = 'play'
+    if (!wasDefault && (this.data_.next === 'bike' || this.data_.next === 'transit')) this.data_.next = 'play'
     this.data_.stageNo = chosen
     this.registry.set('stageNo', chosen)
     this.updateBanner()
@@ -611,7 +611,8 @@ export class MapScene extends Phaser.Scene {
     cam.setRotation(0).setZoom(RENDER_SCALE)
     if (d.stageNo) this.registry.set('stageNo', d.stageNo)
     if (d.next === 'credits') this.scene.start('credits')
-    else if (d.next === 'bike') this.scene.start(d.from === 2 && d.to === 3 ? 'claw' : 'bike', { to: d.to })
+    else if (d.next === 'transit') this.scene.start('transit', { from: d.from, to: d.to })
+    else if (d.next === 'bike') this.scene.start('bike', { to: d.to })
     else this.scene.start('play')
   }
 }

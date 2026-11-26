@@ -10390,10 +10390,12 @@ export class GameScene extends Phaser.Scene {
     // would leave players on the clear card with registry already on the next stage).
     this.registry.set('leavingToMenu', false)
     this.stopUi()
-    // C2 mall → exhibit: auto-travel (no pick). Polish-1 transition-6to7: chase via BikeScene.
-    // Later C2 legs stay direct-to-play until their own transition ships.
+    // mini-3: transit minigames on most legs; 6→7 keeps BikeScene chase.
+    const transitLegs = new Set(['1-2', '2-3', '3-4', '4-5', '5-6', '7-8', '8-9', '9-10'])
+    const leg = `${fromStage}-${toStage}`
+    const nextScene =
+      fromStage === 6 && toStage === 7 ? 'bike' : transitLegs.has(leg) ? 'transit' : 'play'
     const c2Advance = fromStage >= 6 && toStage <= 7
-    const nextScene = fromStage === 6 && toStage === 7 ? 'bike' : fromStage >= 6 ? 'play' : 'bike'
     this.scene.start('worldmap', {
       from: fromStage,
       to: toStage,
