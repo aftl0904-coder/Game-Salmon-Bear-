@@ -1,0 +1,25 @@
+{
+  "note": "紀念章對白全部 ≤20 字；第8–10關唔用顏色字。金級解鎖。",
+  "medals": [
+    { "id": "gacha", "slot": 0, "name": "扭蛋", "blurb": "第一粒扭蛋，揸實佢。", "kind": "timing", "stage": 0 },
+    { "id": "flag", "slot": 1, "name": "舉旗大賽", "blurb": "咖啡媽媽都話你哋夠快！", "kind": "reaction", "stage": 1 },
+    { "id": "bike-climb", "slot": 2, "name": "單車上斜", "blurb": "噗噗坐得穩，一路冇跌過。", "kind": "balance", "stage": 1 },
+    { "id": "pour", "slot": 3, "name": "倒雞蛋仔漿", "blurb": "格格都滿，一滴都冇瀉。", "kind": "timing", "stage": 2 },
+    { "id": "umbrella", "slot": 4, "name": "撐傘送熊下山", "blurb": "夾到第一隻，送俾隔籬。", "kind": "reaction", "stage": 2 },
+    { "id": "lantern", "slot": 5, "name": "夜市揀燈籠", "blurb": "蛋撻出爐，酥皮啱啱好。", "kind": "memory", "stage": 3 },
+    { "id": "kite", "slot": 6, "name": "放風箏過海", "blurb": "條線冇斷，風箏過咗海。", "kind": "reaction", "stage": 3 },
+    { "id": "tilt", "slot": 7, "name": "斜板滾波", "blurb": "波仔落袋，工地都靜咗。", "kind": "balance", "stage": 4 },
+    { "id": "ferry", "slot": 8, "name": "渡海小輪", "blurb": "船頭企穩，對岸到喇。", "kind": "aim", "stage": 4 },
+    { "id": "sashimi", "slot": 9, "name": "切刺身", "blurb": "每片都一樣厚，師傅點頭。", "kind": "timing", "stage": 5 },
+    { "id": "memory-pics", "slot": 10, "name": "砌回憶", "blurb": "野餐嗰日，原來咁開心。", "kind": "memory", "stage": 5 },
+    { "id": "goldfish", "slot": 11, "name": "會員搶答", "blurb": "地產題，難唔到佢。", "kind": "puzzle", "stage": 6 },
+    { "id": "cage-chase", "slot": 12, "name": "追籠車", "blurb": "轆印冇跟甩，前面就係。", "kind": "reaction", "stage": 6 },
+    { "id": "memory", "slot": 13, "name": "記住每個籠", "blurb": "每隻都返到自己個籠。", "kind": "memory", "stage": 7 },
+    { "id": "stealth", "slot": 14, "name": "避燈潛入", "blurb": "燈照唔到我哋。", "kind": "timing", "stage": 7 },
+    { "id": "recipe", "slot": 15, "name": "配方配對", "blurb": "原本嘅配方，冇刪過。", "kind": "puzzle", "stage": 8 },
+    { "id": "coffee-tray", "slot": 16, "name": "端咖啡落樓", "blurb": "兩杯都滿，一滴都冇瀉。", "kind": "balance", "stage": 8 },
+    { "id": "claw", "slot": 17, "name": "舊機夾公仔", "blurb": "你移左右，我移前後。", "kind": "aim", "stage": 9 },
+    { "id": "photo", "slot": 18, "name": "合照", "blurb": "三個人，一張相。", "kind": "reaction", "stage": 9 },
+    { "id": "shake", "slot": 19, "name": "搖蜜糖", "blurb": "搖勻晒，等大家一齊食。", "kind": "timing", "stage": 10 }
+  ]
+}

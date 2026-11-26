@@ -8,7 +8,7 @@ import { SFX, playSong, stopBgm, type SongId } from './audio'
 import { animTex, hasAnimSet, portraitTex, stillTex, type AnimSetId } from './heroAnims'
 import { isPicnicStill, overlayPicnicPaws } from './honeyPaw'
 import { buzz, HAPTIC } from './phone'
-import { shakeHoney, type Mini } from './minigames'
+import { shakeHoney } from './minigames'
 import { galleryMarkStory } from './galleryUnlock'
 
 /**
@@ -156,7 +156,7 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
   // them on cleanup would break the player's own controls.
   const kb = scene.input.keyboard
   let advanceFlag = false
-  let mini: Mini | null = null
+  let mini: { done: Promise<unknown>; destroy: () => void } | null = null
   const ADV = new Set(['f', 'j', 'a', ' ', 'k'])
   const SKIP = new Set(['Enter', 'Escape'])
   const onKey = (ev: KeyboardEvent) => {
@@ -335,8 +335,9 @@ export function playCutscene(scene: Phaser.Scene, id: CutsceneId, onDone: () => 
       await showLine(s.say, s.text, s.face ?? 0)
     } else if ('minigame' in s) {
       dialog.setVisible(false)
-      mini = shakeHoney(scene)
-      await mini.done
+      const honey = shakeHoney(scene)
+      mini = honey
+      await honey.done
       mini = null
       advanceFlag = false
     } else if ('wait' in s) {

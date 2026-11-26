@@ -46,8 +46,20 @@ import { inCombatView } from './engine/cameraView'
 import { difficultyAtkMul, difficultyHpMul, getDifficulty } from './difficulty'
 import { activeCharm, hasPrayCharge, resetPrayCharge, usePrayCharge } from './charms'
 import { buzz, HAPTIC } from './phone'
-import { clawGame, flagRace, memoryGame, pourGame, shakeHoney, showTutorial, tiltGame, timingGame } from './minigames'
-import { goldfishQuiz } from './membershipQuiz'
+import {
+  clawGame,
+  flagRace,
+  memoryGame,
+  pourGame,
+  shakeHoney,
+  showTutorial,
+  tiltGame,
+  timingGame,
+  type ClawResult,
+  type RoundResult,
+} from './minigames'
+import { goldfishQuiz, type GoldfishResult } from './membershipQuiz'
+import { applyGoldHeal, gradeResult, showGradeResult, type GradedResult, type MiniKind } from './minigameFramework'
 import { floorButtonRoom } from './floorButtonRoom'
 import stallsRaw from '../../data/stalls.json'
 import { openShop } from './shop'
@@ -5854,6 +5866,63 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
+  private stallMedal(game: string): { id: string; kind: MiniKind } | null {
+    const map: Record<string, { id: string; kind: MiniKind }> = {
+      pour: { id: 'pour', kind: 'timing' },
+      tilt: { id: 'tilt', kind: 'balance' },
+      flag: { id: 'flag', kind: 'reaction' },
+      memory: { id: 'memory', kind: 'memory' },
+      claw: { id: 'claw', kind: 'aim' },
+      shake: { id: 'shake', kind: 'timing' },
+      goldfish: { id: 'goldfish', kind: 'puzzle' },
+      timing: { id: 'lantern', kind: 'timing' },
+    }
+    return map[game] ?? null
+  }
+
+  private toGraded(
+    r: RoundResult | GoldfishResult | ClawResult,
+    kind: MiniKind,
+    medalId: string,
+    skipped = false,
+  ): GradedResult {
+    const any = r as {
+      good?: number
+      total?: number
+      correct?: number
+      wrong?: number
+      skipped?: boolean | number
+      grade?: GradedResult['grade']
+      medalId?: string
+    }
+    if (any.grade && any.medalId && typeof any.good === 'number' && typeof any.total === 'number') {
+      return {
+        good: any.good,
+        total: any.total,
+        grade: any.grade,
+        medalId: any.medalId,
+        skipped: typeof any.skipped === 'boolean' ? any.skipped : skipped,
+      }
+    }
+    const good = typeof any.correct === 'number' ? any.correct : (any.good ?? 0)
+    const skipCount = typeof any.skipped === 'number' ? any.skipped : 0
+    const total =
+      typeof any.correct === 'number'
+        ? Math.max(1, any.correct + (any.wrong ?? 0) + skipCount)
+        : Math.max(1, any.total ?? 1)
+    return gradeResult(good, total, kind, skipped, medalId)
+  }
+
+  private async stallGradeBanner(graded: GradedResult) {
+    await showGradeResult(this, graded, {
+      onGoldHeal: () => {
+        const healed = applyGoldHeal([this.boy, this.girl], (h) => this.heroMaxHp(h as Hero))
+        for (const p of healed) floatText(this, p.x, p.y - 58, '+1HP', '#6aea6a', { size: 13, dur: 900 })
+        this.emitHealth()
+      },
+    })
+  }
+
   /** The stage's stall: how-to pages, then its own minigame. Skipping still feeds you. */
   private async runCoffeeStall() {
     const st = this.stall()
@@ -5875,8 +5944,8 @@ export class GameScene extends Phaser.Scene {
               tip: '冇人搶會 Skip；超時扣小小幣。',
             },
             {
-              title: '一共七題',
-              lines: ['最後一題最難、獎金最多。'],
+              title: '三段搶答',
+              lines: ['普通題 → 難題 → 地產題。'],
               tip: this.mode === '2p' ? '各人金幣入各自錢包。' : '假對手會同你搶。',
             },
           ]
@@ -5912,13 +5981,13 @@ export class GameScene extends Phaser.Scene {
                 ? [
                     {
                       title: `${st.keeper}：${st.sign}`,
-                      lines: ['記住亮燈次序，再跟住撳返出嚟'],
-                      tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+                      lines: ['記住邊隻入邊個籠，', '再逐籠配對返。'],
+                      tip: '↑蜜　↓蘋　←魚　→花；觸控撳底欄。',
                     },
                     {
-                      title: '一共四輪',
-                      lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
-                      tip: '記啱嘅輪數換金幣。',
+                      title: '三段：4／6／8 籠',
+                      lines: ['睇清楚再配對。', '記啱換金幣。'],
+                      tip: '略過當銅級。',
                     },
                   ]
                 : st.game === 'shake'
@@ -5938,8 +6007,12 @@ export class GameScene extends Phaser.Scene {
     const pagesFinal =
       st.game === 'claw'
         ? [
-            { title: `${st.keeper}：夾公仔`, lines: ['左右郁爪，撳攻擊落爪。', '夾中有價公仔換金幣。'], tip: '時間到就結束；Skip 都有咖啡回血。' },
-            { title: '休息室', lines: ['夾完歇一歇再行。'], tip: '金幣用嚟買裝備。' },
+            {
+              title: `${st.keeper}：舊機夾公仔`,
+              lines: ['←→ 左右　↑↓ 前後深度，', '攻擊鍵落爪。'],
+              tip: '2P：一人左右一人前後。',
+            },
+            { title: '三段限時', lines: ['15／12／10 秒；爪會愈嚟愈晃。'], tip: '略過當銅級；Skip 都有回血。' },
           ]
         : pages
     const choice = await showTutorial(this, `stall-${st.game}`, pagesFinal)
@@ -5963,57 +6036,63 @@ export class GameScene extends Phaser.Scene {
         this.awardStallCoins(coins)
       }
     }
+    const medal = this.stallMedal(st.game)
     if (choice === 'skip') {
+      if (medal) await this.stallGradeBanner(gradeResult(0, 12, medal.kind, true, medal.id))
       after(0, 0)
       return
+    }
+    const wrap = async (r: RoundResult | GoldfishResult, coins: number, pts: number, split?: { boy: number; girl: number }) => {
+      if (medal) await this.stallGradeBanner(this.toGraded(r as RoundResult, medal.kind, medal.id))
+      after(coins, pts, split)
     }
     if (st.game === 'pour') {
       const mini = pourGame(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.good * 2, r.good * 150))
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 150))
       return
     }
     if (st.game === 'timing') {
       const mini = timingGame(this, `${st.keeper}：${st.food}出爐`, '出爐')
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
       return
     }
     if (st.game === 'tilt') {
       const mini = tiltGame(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
       return
     }
     if (st.game === 'goldfish') {
       const mini = goldfishQuiz(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.coins, r.correct * 80, r.purse))
+      void mini.done.then((r) => wrap(r, r.coins, r.correct * 80, r.purse))
       return
     }
     // Fun-1 F15: stage 7 倉務枱・記憶考驗（memoryGame）；第6關搶答唔郁。
     if (st.game === 'memory') {
       const mini = memoryGame(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.good * 2, r.good * 120))
+      void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
       return
     }
     if (st.game === 'claw') {
       const mini = clawGame(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then((r) => after(r.coins, r.caught * 80))
+      void mini.done.then((r) => wrap(r as RoundResult, r.coins, r.caught * 80))
       return
     }
     if (st.game === 'shake') {
       const mini = shakeHoney(this)
       this.storyIntro = activeGate = mini
-      void mini.done.then(() => after(4, 120))
+      void mini.done.then((r) => wrap(r, r.good * 2, 120))
       return
     }
     // Stage 1 default: 舉旗大賽（stirCoffee 留喺 minigames.ts，唔刪）
     const mini = flagRace(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.good * 2, r.good * 120))
+    void mini.done.then((r) => wrap(r, r.good * 2, r.good * 120))
   }
 
   /** Stage 8 membership quiz at stallX (640) — not a checkpoint. */
@@ -6215,13 +6294,18 @@ export class GameScene extends Phaser.Scene {
       }
       if (coins > 0) this.awardStallCoins(coins)
     }
+    const medal = this.stallMedal('memory')
     if (choice === 'skip') {
+      if (medal) await this.stallGradeBanner(gradeResult(0, 12, medal.kind, true, medal.id))
       after(0, 0)
       return
     }
     const mini = memoryGame(this)
     this.storyIntro = activeGate = mini
-    void mini.done.then((r) => after(r.good * 2, r.good * 120))
+    void mini.done.then(async (r) => {
+      if (medal) await this.stallGradeBanner(this.toGraded(r, medal.kind, medal.id))
+      after(r.good * 2, r.good * 120)
+    })
   }
 
   /**

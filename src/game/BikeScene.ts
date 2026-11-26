@@ -5,20 +5,33 @@ import { TouchInput } from './touchInput'
 import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { animTex, hasAnimSet, markHd, type AnimSetId } from './heroAnims'
-import { p2Pad, btn as padBtn } from './gamepadBridge'
+import { p2Pad, btn as padBtn, padDir } from './gamepadBridge'
 import meta from '../../data/anim/map-bike.json'
 import { saveTransitionCoins } from './run'
+import { gradeResult, showGradeResult, showSegmentBanner } from './minigameFramework'
 
 /**
  * 單車追逐 — auto-scrolling ride between any two stages (destination + song come from `to`; art is shared).
  * Jump rocks, logs and cones; ramps launch you; bee swarms fly at jump height (stay low);
  * honey puddles slow you. Coins carry over as continues. No damage — a crash just wobbles.
  *
- * Polish-1 transition-6to7: `to === 7` → 「追籠車」theme (mall alley + stage6 junk props).
- * Temp art until Manus delivers chase plates. Missed chase / skip still enters stage 7.
+ * Minigame v1 · 6→7 「追籠車」：3 段轉線避障（障礙 6／9／12；速 ×1.0／1.2／1.4；預警 0.8s）。
+ * 評級 reaction／medalId cage-chase。2P 共用車線，任一架到終點即成功（唔難過 1P）。
  */
 type Kind = 'rock' | 'log' | 'cone' | 'puddle' | 'ramp' | 'swarm' | 'coin' | 'debris' | 'box' | 'trash' | 'cart'
-type Obj = { kind: Kind; x: number; spr: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image; done: boolean; y: number }
+type Lane = 0 | 1 | 2
+type Obj = {
+  kind: Kind
+  x: number
+  spr: Phaser.GameObjects.Sprite | Phaser.GameObjects.Image
+  done: boolean
+  y: number
+  /** Chase: which road lane the junk sits on. */
+  lane?: Lane
+  /** Chase: obstacle already scored a hit (avoid 2P double-count). */
+  hitLogged?: boolean
+  warn?: Phaser.GameObjects.Ellipse
+}
 type Rider = {
   set: AnimSetId
   spr: Phaser.GameObjects.Sprite
@@ -31,6 +44,7 @@ type Rider = {
   jumpKeys: () => boolean
   /** Mash this to pedal faster (攻擊鍵). */
   pedalKeys: () => boolean
+  lane: Lane
 }
 
 export const DEST_NAMES: Record<number, string> = {
@@ -46,6 +60,13 @@ const LENGTH = 9000
 /** ~40s chase at base speed (35–45s window). */
 const CHASE_LENGTH = 9200
 const G = 1500
+/** Chase lanes (上／中／下). */
+const LANE_YS = [ROAD_Y - 34, ROAD_Y, ROAD_Y + 34] as const
+const CHASE_OBS = [6, 9, 12] as const
+const CHASE_SPEED = [1.0, 1.2, 1.4] as const
+const WARN_S = 0.8
+const JUNK: Kind[] = ['trash', 'debris', 'box', 'cart']
+
 /** Course: [distance, kind] — readable rhythm, harder towards the top of the hill. */
 const COURSE: Array<[number, Kind]> = [
   [700, 'rock'], [780, 'coin'], [1150, 'cone'], [1500, 'log'], [1560, 'coin'], [1620, 'coin'],
@@ -56,20 +77,39 @@ const COURSE: Array<[number, Kind]> = [
   [7000, 'puddle'], [7150, 'log'], [7500, 'ramp'], [7580, 'coin'], [7640, 'coin'], [7700, 'coin'],
   [8000, 'swarm'], [8300, 'rock'], [8420, 'log'],
 ]
-/** Mall-alley chase: stage6 junk only (slow on hit, never HP damage). */
-const CHASE_COURSE: Array<[number, Kind]> = [
-  [500, 'trash'], [720, 'coin'], [980, 'debris'], [1200, 'box'], [1400, 'coin'],
-  [1680, 'cart'], [1900, 'trash'], [2100, 'coin'], [2350, 'debris'], [2600, 'box'],
-  [2850, 'coin'], [3100, 'cart'], [3350, 'trash'], [3600, 'debris'], [3800, 'coin'],
-  [4100, 'box'], [4400, 'cart'], [4650, 'trash'], [4900, 'coin'], [5200, 'debris'],
-  [5500, 'box'], [5750, 'coin'], [6000, 'cart'], [6300, 'trash'], [6600, 'debris'],
-  [6900, 'coin'], [7200, 'box'], [7500, 'cart'], [7800, 'trash'], [8100, 'coin'],
-  [8400, 'debris'], [8700, 'box'],
-]
+
+type ChaseSpawn = { d: number; kind: Kind; lane?: Lane; seg: number }
+
+/** Build 3-seg chase: 6／9／12 junk + coins; lanes alternate for reaction dodge. */
+function buildChaseCourse(): ChaseSpawn[] {
+  const out: ChaseSpawn[] = []
+  const segEnds = [0.34, 0.67, 1].map((p) => Math.floor(CHASE_LENGTH * p))
+  let cursor = 420
+  let junkI = 0
+  for (let seg = 1; seg <= 3; seg++) {
+    const end = segEnds[seg - 1]!
+    const n = CHASE_OBS[seg - 1]!
+    const span = Math.max(400, end - cursor - 200)
+    const step = span / (n + 0.5)
+    for (let i = 0; i < n; i++) {
+      cursor += step
+      const lane = ((junkI + seg) % 3) as Lane
+      out.push({ d: Math.round(cursor), kind: JUNK[junkI % JUNK.length]!, lane, seg })
+      junkI++
+      if (i % 2 === 1 && cursor + 80 < end) {
+        out.push({ d: Math.round(cursor + 80), kind: 'coin', seg })
+      }
+    }
+    cursor = end
+  }
+  return out
+}
+
+/** ≤20 chars each (Claude 定案). */
 const CHASE_LINES = [
   '倫寶：轆印出咗後門。',
-  '琪寶寶：踩快啲，唔好跟甩！',
-  '倫寶：前面……森友展銷中心？',
+  '琪寶寶：轉線避障！',
+  '倫寶：前面就係展銷。',
   '噗噗：噗！',
 ]
 
@@ -98,6 +138,18 @@ export class BikeScene extends Phaser.Scene {
   private toStage = 2
   /** Stage 6→7 cage-truck chase (mall alley). */
   private chase = false
+  private chaseJunkTotal = 0
+  private chaseJunkHit = 0
+  private chaseBaseMul = 1
+  private chaseSeg = 1
+  private sharedLane: Lane = 1
+  private laneCd = 0
+  private chaseCourse: ChaseSpawn[] = []
+  private bannerBusy = false
+  private laneKeys: {
+    up: Phaser.Input.Keyboard.Key[]
+    down: Phaser.Input.Keyboard.Key[]
+  } | null = null
 
   constructor() {
     super('bike')
@@ -115,6 +167,10 @@ export class BikeScene extends Phaser.Scene {
 
   private courseLength() {
     return this.chase ? CHASE_LENGTH : LENGTH
+  }
+
+  private laneY(lane: Lane) {
+    return LANE_YS[lane] ?? ROAD_Y
   }
 
   preload() {
@@ -150,6 +206,14 @@ export class BikeScene extends Phaser.Scene {
     this.mult = 1
     this.speedLines = []
     this.goalImg = null
+    this.chaseJunkTotal = 0
+    this.chaseJunkHit = 0
+    this.chaseBaseMul = 1
+    this.chaseSeg = 1
+    this.sharedLane = 1
+    this.laneCd = 0
+    this.bannerBusy = false
+    this.chaseCourse = this.chase ? buildChaseCourse() : []
     const W = GAME_W
     this.cameras.main.fadeIn(400, this.chase ? 20 : 255, this.chase ? 18 : 250, this.chase ? 28 : 235)
     unlockAudio()
@@ -181,6 +245,10 @@ export class BikeScene extends Phaser.Scene {
         this.mid = this.add.tileSprite(0, ROAD_Y + 4 - Math.min(mh, 120), W, Math.min(mh, 120), midKey).setOrigin(0).setAlpha(0.85)
         this.road = this.add.tileSprite(0, ROAD_Y - 6, W, 52, 'bike-road').setOrigin(0).setTint(0x4a4558)
       }
+      // Lane guides
+      for (const ly of LANE_YS) {
+        this.add.rectangle(W / 2, ly + 4, W, 2, 0xffe08a, 0.12).setDepth(2)
+      }
     } else {
       // Far layer stays put (the honey tree is the goal on the horizon); it grows a little as you near it.
       this.far = this.add.image(W / 2, 360, 'bike-far').setOrigin(0.5, 1)
@@ -208,16 +276,44 @@ export class BikeScene extends Phaser.Scene {
     const a2 = () => A2.some((x) => Phaser.Input.Keyboard.JustDown(x)) || this.padJust(1)
     const add = (set: AnimSetId, x: number, keys: () => boolean, pedal: () => boolean) => {
       const ok = hasAnimSet(this, set)
-      const spr = this.add.sprite(x, ROAD_Y, ok ? animTex(set) : 'art-salmon').setOrigin(0.5, 1).setScale(set === 'kibobo' ? 1.05 : 1.35)
+      const y0 = this.chase ? this.laneY(this.sharedLane) : ROAD_Y
+      const spr = this.add.sprite(x, y0, ok ? animTex(set) : 'art-salmon').setOrigin(0.5, 1).setScale(set === 'kibobo' ? 1.05 : 1.35)
       if (ok) spr.play(`${set}-bike-ride`)
-      const shadow = this.add.ellipse(x, ROAD_Y + 2, 46, 6, 0x1a1008, 0.35)
-      this.riders.push({ set, spr, shadow, x, y: ROAD_Y, vy: 0, air: false, hurtUntil: 0, jumpKeys: keys, pedalKeys: pedal })
+      const shadow = this.add.ellipse(x, y0 + 2, 46, 6, 0x1a1008, 0.35)
+      this.riders.push({
+        set,
+        spr,
+        shadow,
+        x,
+        y: y0,
+        vy: 0,
+        air: false,
+        hurtUntil: 0,
+        jumpKeys: keys,
+        pedalKeys: pedal,
+        lane: this.sharedLane,
+      })
     }
     if (mode === '2p') {
       add('kibobo', 130, p2, a2)
       add('lunbo', 230, p1, a1)
     } else {
       add(solo === 'girl' ? 'kibobo' : 'lunbo', 190, p1, a1)
+    }
+    if (this.chase) {
+      this.laneKeys = {
+        up: [
+          k(Phaser.Input.Keyboard.KeyCodes.UP),
+          k(Phaser.Input.Keyboard.KeyCodes.W),
+          k(Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT),
+        ],
+        down: [
+          k(Phaser.Input.Keyboard.KeyCodes.DOWN),
+          k(Phaser.Input.Keyboard.KeyCodes.S),
+          k(Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE),
+          k(Phaser.Input.Keyboard.KeyCodes.NUMPAD_TWO),
+        ],
+      }
     }
 
     // HUD: progress road to the honey tree + coins.
@@ -237,7 +333,7 @@ export class BikeScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setDepth(51)
     const titleMsg = this.chase
-      ? '追籠車！商場後巷　撞到只會慢\n狂撳 攻擊鍵 踩快啲　終點・展銷側門'
+      ? '追籠車！↑↓轉線避障\n攻擊鍵踩快　預警閃光'
       : '單車追逐！跳過障礙　蜂群要伏低\n狂撳 攻擊鍵 踩快啲，金幣加倍'
     const title = this.add
       .text(W / 2, 130, titleMsg, { fontFamily: FONT_TITLE, fontSize: '16px', color: '#ffd76a', stroke: '#3a1408', strokeThickness: 5 })
@@ -247,7 +343,15 @@ export class BikeScene extends Phaser.Scene {
     if (this.chase) this.playChaseLines()
 
     // Pre-build the course (positions in course distance; drawn as they come on screen).
-    for (const [d, kind] of this.chase ? CHASE_COURSE : COURSE) this.spawn(kind, d)
+    if (this.chase) {
+      for (const s of this.chaseCourse) this.spawn(s.kind, s.d, s.lane)
+      this.bannerBusy = true
+      void showSegmentBanner(this, 1).then(() => {
+        this.bannerBusy = false
+      })
+    } else {
+      for (const [d, kind] of COURSE) this.spawn(kind, d)
+    }
 
     kb.on('keydown-ENTER', this.skipAll, this)
     kb.on('keydown-ESC', this.skipAll, this)
@@ -263,6 +367,12 @@ export class BikeScene extends Phaser.Scene {
     const down = padBtn(p, i)
     const was = !!this.padPrev[i]
     this.padPrev[i] = down
+    return down && !was
+  }
+
+  private padAxisJust(key: string, down: boolean) {
+    const was = !!this.padPrev[key]
+    this.padPrev[key] = down
     return down && !was
   }
 
@@ -297,7 +407,7 @@ export class BikeScene extends Phaser.Scene {
     this.time.delayedCall(400, show)
   }
 
-  private spawn(kind: Kind, d: number) {
+  private spawn(kind: Kind, d: number, lane?: Lane) {
     const chaseKey: Partial<Record<Kind, string>> = {
       debris: 's6-debris',
       box: 's6-boxstack',
@@ -313,13 +423,29 @@ export class BikeScene extends Phaser.Scene {
             ? chaseKey[kind]!
             : `bike-${kind}`
     if (!this.textures.exists(key)) return
-    const y = kind === 'swarm' ? ROAD_Y - 64 : kind === 'coin' ? ROAD_Y - 58 : kind === 'puddle' ? ROAD_Y + 3 : ROAD_Y + 2
+    const isJunk = kind === 'debris' || kind === 'box' || kind === 'trash' || kind === 'cart'
+    if (this.chase && isJunk) this.chaseJunkTotal++
+    const laneY = lane !== undefined ? this.laneY(lane) : ROAD_Y
+    const y =
+      kind === 'swarm'
+        ? ROAD_Y - 64
+        : kind === 'coin'
+          ? laneY - 58
+          : kind === 'puddle'
+            ? ROAD_Y + 3
+            : this.chase && isJunk
+              ? laneY + 2
+              : ROAD_Y + 2
     const spr = this.add.sprite(-100, y, key).setOrigin(0.5, 1).setVisible(false)
     if (kind === 'box') spr.setScale(0.55)
     if (kind === 'debris') spr.setScale(0.9)
     if (kind === 'coin' && this.anims.exists('fxa-coin-spin')) spr.play('fxa-coin-spin')
     if (kind === 'swarm') spr.play('bike-swarm-fly')
-    this.objs.push({ kind, x: d, spr, done: false, y })
+    let warn: Phaser.GameObjects.Ellipse | undefined
+    if (this.chase && isJunk && lane !== undefined) {
+      warn = this.add.ellipse(180, laneY + 2, 52, 14, 0xff8040, 0).setDepth(8)
+    }
+    this.objs.push({ kind, x: d, spr, done: false, y, lane, hitLogged: false, warn })
   }
 
   private skipAll() {
@@ -327,11 +453,58 @@ export class BikeScene extends Phaser.Scene {
     this.finish(true)
   }
 
+  /** Chase: shared lane for 1P/2P — either seat may steer (唔難過 1P). */
+  private tickChaseLane(dt: number) {
+    this.laneCd = Math.max(0, this.laneCd - dt)
+    if (this.laneCd > 0) return
+    const keys = this.laneKeys
+    const keyUp = !!keys?.up.some((x) => Phaser.Input.Keyboard.JustDown(x))
+    const keyDown = !!keys?.down.some((x) => Phaser.Input.Keyboard.JustDown(x))
+    const p2y = padDir(p2Pad(), false)
+    const up =
+      keyUp ||
+      TouchInput.justPressed('up') ||
+      TouchInput.justPressed('jump') ||
+      this.padAxisJust('p2up', p2y < -0.5)
+    const down =
+      keyDown ||
+      TouchInput.justPressed('down') ||
+      TouchInput.justPressed('crouch') ||
+      this.padAxisJust('p2down', p2y > 0.5)
+    let next = this.sharedLane
+    if (up) next = Math.max(0, this.sharedLane - 1) as Lane
+    else if (down) next = Math.min(2, this.sharedLane + 1) as Lane
+    if (next !== this.sharedLane) {
+      this.sharedLane = next
+      this.laneCd = 0.18
+      SFX.blip(520)
+      for (const r of this.riders) {
+        r.lane = this.sharedLane
+        r.air = false
+        r.vy = 0
+      }
+    }
+  }
+
+  private maybeAdvanceSeg(progress: number) {
+    if (!this.chase || this.bannerBusy) return
+    const next = progress < 0.34 ? 1 : progress < 0.67 ? 2 : 3
+    if (next !== this.chaseSeg && next > this.chaseSeg) {
+      this.chaseSeg = next
+      this.chaseBaseMul = CHASE_SPEED[this.chaseSeg - 1] ?? 1
+      this.bannerBusy = true
+      void showSegmentBanner(this, this.chaseSeg as 1 | 2 | 3).then(() => {
+        this.bannerBusy = false
+      })
+    }
+  }
+
   update(_t: number, dtMs: number) {
     if (this.finished) return
     if (TouchInput.justPressed('start')) return this.skipAll()
     const dt = Math.min(dtMs, 50) / 1000
     const now = this.time.now
+    if (this.chase) this.tickChaseLane(dt)
     // Pedalling: each press tops the mash meter up, it bleeds away on its own.
     for (const r of this.riders) {
       if (r.pedalKeys()) {
@@ -342,50 +515,70 @@ export class BikeScene extends Phaser.Scene {
     this.mash = Math.max(0, this.mash - dt * 2.6)
     const boost = Phaser.Math.Clamp(this.mash / 6, 0, 1)
     this.mult = 1 + boost
-    const target = (now < this.slowUntil ? 0.55 : 1) + boost * 0.5
+    const len = this.courseLength()
+    const progress = Math.min(1, this.dist / len)
+    if (this.chase) {
+      this.chaseBaseMul = CHASE_SPEED[this.chaseSeg - 1] ?? 1
+      this.maybeAdvanceSeg(progress)
+    }
+    const target = ((now < this.slowUntil ? 0.55 : 1) + boost * 0.5) * (this.chase ? this.chaseBaseMul : 1)
     this.speedMul += (target - this.speedMul) * Math.min(1, dt * 4)
-    this.multText.setText(boost > 0.05 ? `踩！ ×${this.mult.toFixed(1)}` : '')
+    this.multText.setText(
+      this.chase
+        ? `第${this.chaseSeg}段 ×${this.chaseBaseMul.toFixed(1)}${boost > 0.05 ? ` 踩×${this.mult.toFixed(1)}` : ''}`
+        : boost > 0.05
+          ? `踩！ ×${this.mult.toFixed(1)}`
+          : '',
+    )
     this.multText.setColor(boost > 0.7 ? '#ffd040' : boost > 0.35 ? '#ff9a3a' : '#c88050')
     this.drawSpeedLines(boost)
     const v = SPEED * this.speedMul
-    this.dist += v * dt
-    const len = this.courseLength()
-    const progress = Math.min(1, this.dist / len)
+    if (!this.bannerBusy) this.dist += v * dt
+    const progress2 = Math.min(1, this.dist / len)
     if (this.chase && this.goalImg) {
       // Side door grows as you near the exhibit entrance.
-      this.goalImg.setScale(0.55 + progress * 0.7)
-      this.goalImg.setX(GAME_W - 70 - progress * 30)
-      this.far.setAlpha(0.85 + progress * 0.15)
+      this.goalImg.setScale(0.55 + progress2 * 0.7)
+      this.goalImg.setX(GAME_W - 70 - progress2 * 30)
+      this.far.setAlpha(0.85 + progress2 * 0.15)
     } else {
-      this.far.setScale(1 + progress * 0.18)
+      this.far.setScale(1 + progress2 * 0.18)
     }
     this.mid.tilePositionX += v * dt * (this.chase ? 0.85 : 0.45)
     this.road.tilePositionX += v * dt
-    this.marker.x = 176 + progress * 288
+    this.marker.x = 176 + progress2 * 288
 
     for (const r of this.riders) {
-      if (r.jumpKeys() && !r.air) {
-        r.vy = -470
-        r.air = true
-        SFX.jump()
-        if (this.anims.exists(`${r.set}-bike-jump`)) r.spr.play(`${r.set}-bike-jump`)
-      }
-      if (r.air) {
-        r.vy += G * dt
-        r.y += r.vy * dt
-        if (r.y >= ROAD_Y) {
-          r.y = ROAD_Y
-          r.vy = 0
-          r.air = false
-          SFX.land()
-          if (this.anims.exists(`${r.set}-bike-ride`)) r.spr.play(`${r.set}-bike-ride`)
+      if (this.chase) {
+        // Snap to shared lane (2P cooperative — same difficulty as 1P).
+        r.lane = this.sharedLane
+        const ty = this.laneY(r.lane)
+        r.y += (ty - r.y) * Math.min(1, dt * 14)
+        r.air = false
+        r.vy = 0
+      } else {
+        if (r.jumpKeys() && !r.air) {
+          r.vy = -470
+          r.air = true
+          SFX.jump()
+          if (this.anims.exists(`${r.set}-bike-jump`)) r.spr.play(`${r.set}-bike-jump`)
+        }
+        if (r.air) {
+          r.vy += G * dt
+          r.y += r.vy * dt
+          if (r.y >= ROAD_Y) {
+            r.y = ROAD_Y
+            r.vy = 0
+            r.air = false
+            SFX.land()
+            if (this.anims.exists(`${r.set}-bike-ride`)) r.spr.play(`${r.set}-bike-ride`)
+          }
         }
       }
       const hurt = now < r.hurtUntil
       r.spr.setPosition(r.x, Math.round(r.y)).setAlpha(hurt && Math.floor(now / 80) % 2 ? 0.4 : 1)
       r.spr.setAngle(hurt ? Math.sin(now / 40) * 6 : r.air ? -6 : 0)
       r.spr.anims.timeScale = this.speedMul
-      r.shadow.setPosition(r.x, ROAD_Y + 2).setScale(1.2 * (1 - Math.min(0.6, (ROAD_Y - r.y) / 150)))
+      r.shadow.setPosition(r.x, Math.round(r.y) + 2).setScale(1.2 * (1 - Math.min(0.6, (ROAD_Y - r.y) / 150)))
     }
 
     // Course objects: screen x = rider line + (course distance − travelled).
@@ -396,10 +589,26 @@ export class BikeScene extends Phaser.Scene {
       if (sx < -80) {
         o.done = true
         o.spr.destroy()
+        o.warn?.destroy()
         continue
       }
       o.spr.setVisible(true).setX(sx)
       if (o.kind === 'swarm') o.spr.setY(o.y + Math.sin(now / 160 + o.x) * 4)
+      // 追籠車：障礙預警 0.8 秒（橘閃 + 車線影子）
+      if (this.chase && o.lane !== undefined && (o.kind === 'debris' || o.kind === 'box' || o.kind === 'trash' || o.kind === 'cart')) {
+        const leadX = this.riders[0]?.x ?? 160
+        const eta = (sx - leadX) / Math.max(1, v)
+        if (eta > 0 && eta <= WARN_S) {
+          o.spr.setTint(0xffaa66)
+          if (o.warn) {
+            o.warn.setAlpha(0.35 + 0.35 * Math.sin(now / 80))
+            o.warn.setPosition(leadX + 40, this.laneY(o.lane) + 2)
+          }
+        } else {
+          o.spr.clearTint()
+          o.warn?.setAlpha(0)
+        }
+      }
       for (const r of this.riders) this.collide(r, o, sx)
     }
 
@@ -434,6 +643,7 @@ export class BikeScene extends Phaser.Scene {
         if (dx < 18 && feet - 60 < o.y && feet > o.y - 34) {
           o.done = true
           o.spr.destroy()
+          o.warn?.destroy()
           const got = Math.max(1, Math.round(this.mult))
           this.coins += got
           this.coinText.setText(`◎ ${this.coins}`)
@@ -464,8 +674,15 @@ export class BikeScene extends Phaser.Scene {
       case 'box':
       case 'trash':
       case 'cart':
-        // Chase junk: slow only (same as crash wobble — never HP).
-        if (dx < 20 && feet > ROAD_Y - 22 && now > r.hurtUntil) this.crash(r, '撞到！')
+        // Chase junk: same-lane hit only; slow only (never HP). 2P shared lane → same as 1P.
+        if (this.chase && o.lane !== undefined && r.lane !== o.lane) break
+        if (dx < 20 && feet > (o.lane !== undefined ? this.laneY(o.lane) : ROAD_Y) - 22 && now > r.hurtUntil) {
+          if (this.chase && !o.hitLogged) {
+            o.hitLogged = true
+            this.chaseJunkHit++
+          }
+          this.crash(r, '撞到！')
+        }
         break
       default:
         if (dx < 16 && feet > ROAD_Y - 18 && now > r.hurtUntil) this.crash(r, '撞到！')
@@ -493,20 +710,34 @@ export class BikeScene extends Phaser.Scene {
   }
 
   private finish(skipped: boolean) {
+    if (this.finished) return
     this.finished = true
+    const total = Math.max(1, this.chaseJunkTotal || CHASE_OBS.reduce((a, b) => a + b, 0))
+    const good = skipped ? 0 : Math.max(0, total - this.chaseJunkHit)
+    const graded = this.chase ? gradeResult(good, total, 'reaction', skipped, 'cage-chase') : null
     // Coins collected become extra continues for 蜜樹丘.
     const carry = ((this.registry.get('carryCoins') as number | undefined) ?? 5) + this.coins
     this.registry.set('carryCoins', carry)
     saveTransitionCoins(this.toStage, carry)
     this.registry.set('stageNo', this.toStage)
     const W = GAME_W
+    const goPlay = () => {
+      this.cameras.main.fadeOut(500, 0, 0, 0)
+      this.time.delayedCall(550, () => this.scene.start('play'))
+    }
+    if (graded) {
+      // 2P：共用進度，任一架到終點即成功（略過除外）。
+      if (!skipped) SFX.win()
+      void showGradeResult(this, graded, { title: '追籠車' }).then(goPlay)
+      return
+    }
     if (!skipped) {
       SFX.win()
       const box = this.add.container(W / 2, 150).setDepth(70)
       const bg = this.add.graphics()
       bg.fillStyle(0xc8902a, 1).fillRect(-132, -40, 264, 80)
       bg.fillStyle(0x1c120c, 0.96).fillRect(-130, -38, 260, 76)
-      const arrive = this.chase ? `到咗${this.destName()}側門！` : `到咗${this.destName()}！`
+      const arrive = `到咗${this.destName()}！`
       const a = this.add.text(0, -18, arrive, { fontFamily: FONT_TITLE, fontSize: '18px', color: '#ffd76a' }).setOrigin(0.5)
       const b = this.add
         .text(0, 14, `金幣 ＋${this.coins}　撞到 ${this.crashes} 次${this.crashes === 0 ? '　完美！' : ''}`, {

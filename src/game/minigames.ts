@@ -7,6 +7,13 @@ import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import { floatText } from './fx'
 import { buzz, HAPTIC, isTouchDevice, startMotion, takeShake, tilt, tiltY } from './phone'
+import {
+  gradeResult,
+  showSegmentBanner,
+  TIMING_WINDOWS_MS,
+  type MiniGrade,
+  type MiniKind,
+} from './minigameFramework'
 
 /**
  * Little phone-feel minigames shown as overlays (they never block the story: each has a
@@ -141,65 +148,102 @@ const anyPress = () =>
 
 // ── 搖勻蜂蜜 ─────────────────────────────────────────────────────────────
 
-export function shakeHoney(scene: Phaser.Scene): Mini {
+export function shakeHoney(scene: Phaser.Scene): Mini<RoundResult> {
   const ui = frame(scene, '搖勻啲蜂蜜！')
   const touch = isTouchDevice()
-  ui.hint.setText(touch ? '左右搖電話（或者連撳畫面）' : '連撳 空白鍵／攻擊鍵')
+  ui.hint.setText(touch ? '左右交替跟拍（或連撳）' : '← → 交替跟拍，或連撳攻擊鍵')
   const jarKey = scene.textures.exists('cs-jar-real') ? 'cs-jar-real' : 'coin'
   const jar = scene.add.image(GAME_W / 2, GAME_H / 2 + 30, jarKey).setOrigin(0.5, 0.85).setScale(3)
   ui.root.add(jar)
   void startMotion()
-  let progress = 0
+  const BPM = [80, 100, 120] as const
+  const BEATS_PER_SEG = 4
+  let seg = 1
+  let beat = 0
+  let expectLeft = true
+  let nextBeatAt = 0
   let wobble = 0
   let finished = false
-  let resolve!: () => void
-  const done = new Promise<void>((r) => (resolve = r))
-  const add = (v: number) => {
-    if (finished) return
-    progress = Math.min(1, progress + v)
-    wobble = Math.min(1, wobble + v * 6)
+  const res: RoundResult = { good: 0, total: BPM.length * BEATS_PER_SEG }
+  let resolve!: (r: RoundResult) => void
+  const done = new Promise<RoundResult>((r) => (resolve = r))
+
+  const scheduleBeat = () => {
+    const bpm = BPM[seg - 1] ?? 100
+    nextBeatAt = scene.time.now + 60000 / bpm
   }
-  const onTap = () => {
-    add(1 / 16)
-    SFX.blip(520 + progress * 400)
-    buzz(HAPTIC.click)
+
+  const hit = (left: boolean) => {
+    if (finished) return
+    const window = TIMING_WINDOWS_MS[seg - 1] ?? 200
+    if (scene.time.now < nextBeatAt - window || scene.time.now > nextBeatAt + window) return
+    const ok = left === expectLeft
+    if (ok) {
+      res.good++
+      SFX.coin()
+      buzz(HAPTIC.power)
+    } else {
+      SFX.blip(240)
+    }
+    expectLeft = !expectLeft
+    beat++
+    wobble = 1
+    scheduleBeat()
+    if (beat >= BEATS_PER_SEG) {
+      beat = 0
+      expectLeft = true
+      seg++
+      if (seg > 3) return finish()
+      void showSegmentBanner(scene, seg as 1 | 2 | 3).then(() => scheduleBeat())
+    }
   }
   const onKey = (e: KeyboardEvent) => {
-    if (!e.repeat) onTap()
+    if (e.repeat) return
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') hit(true)
+    if (e.code === 'ArrowRight' || e.code === 'KeyD') hit(false)
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code)) hit(expectLeft)
   }
+  const onTap = (p: Phaser.Input.Pointer) => hit(p.x < GAME_W / 2)
   scene.input.on('pointerdown', onTap)
   scene.input.keyboard?.on('keydown', onKey)
-  const started = scene.time.now
   let lastBuzz = 0
   const tick = () => {
     if (finished) return
     const e = takeShake()
-    if (e > 0) {
-      add(e / 900)
-      if (scene.time.now - lastBuzz > 120) {
-        buzz(12)
-        lastBuzz = scene.time.now
+    if (e > 8 && scene.time.now - lastBuzz > 160) {
+      lastBuzz = scene.time.now
+      const left = tilt() < 0
+      hit(left)
+    }
+    if (TouchInput.justPressed('left')) hit(true)
+    if (TouchInput.justPressed('right')) hit(false)
+  wobble = Math.max(0, wobble - 0.04)
+    jar.setAngle(Math.sin(scene.time.now / 45) * 24 * wobble)
+    ui.bar.width = 216 * (res.good / res.total)
+    if (scene.time.now > nextBeatAt + 450 && beat < BEATS_PER_SEG) {
+      expectLeft = !expectLeft
+      beat++
+      scheduleBeat()
+      if (beat >= BEATS_PER_SEG) {
+        beat = 0
+        expectLeft = true
+        seg++
+        if (seg > 3) return finish()
+        void showSegmentBanner(scene, seg as 1 | 2 | 3).then(() => scheduleBeat())
       }
     }
-    if (anyPress()) onTap()
-    wobble = Math.max(0, wobble - 0.03)
-    jar.setAngle(Math.sin(scene.time.now / 45) * 28 * wobble)
-    ui.bar.width = 216 * progress
-    if (progress >= 1 || scene.time.now - started > 15000) finish()
+    if (scene.time.now > 52000) finish()
   }
   const finish = () => {
+    if (finished) return
     finished = true
     jar.setAngle(0)
     ui.bar.width = 216
-    ui.title.setText(progress >= 1 ? '搖勻咗！好香呀～' : '（幫你搖埋）')
+    ui.title.setText(res.good >= 9 ? '搖勻咗！好香呀～' : '（幫你搖埋）')
     SFX.sparkle()
     buzz(HAPTIC.honey)
-    const glow = scene.add.circle(jar.x, jar.y - 30, 50, 0xffd060, 0.35).setBlendMode(Phaser.BlendModes.ADD)
-    ui.root.addAt(glow, 1)
-    scene.time.delayedCall(900, () => {
-      destroy()
-      resolve()
-    })
+    Object.assign(res, finishRound(res, 'timing', 'shake'))
+    scene.time.delayedCall(700, destroy)
   }
   scene.events.on('update', tick)
   let gone = false
@@ -211,8 +255,9 @@ export function shakeHoney(scene: Phaser.Scene): Mini {
     scene.input.off('pointerdown', onTap)
     scene.input.keyboard?.off('keydown', onKey)
     ui.root.destroy(true)
-    resolve()
+    resolve(res)
   }
+  void showSegmentBanner(scene, 1).then(() => scheduleBeat())
   return { done, destroy }
 }
 
@@ -360,7 +405,18 @@ export function stirCoffee(scene: Phaser.Scene): Mini<CoffeeResult> {
 
 // ── 倒漿：撳住倒，啱啱滿放手 ─────────────────────────────────────────────
 
-export type RoundResult = { good: number; total: number }
+export type RoundResult = {
+  good: number
+  total: number
+  grade?: MiniGrade
+  medalId?: string
+  skipped?: boolean
+}
+
+function finishRound(res: RoundResult, kind: MiniKind, medalId: string): RoundResult {
+  const graded = gradeResult(res.good, res.total, kind, false, medalId)
+  return { ...res, grade: graded.grade, medalId }
+}
 
 /**
  * Hold to pour, let go when the mould is just full (第 2 關・夾餅叔叔).
@@ -384,6 +440,8 @@ export function pourGame(
   const label = scene.add.text(cx, cy - 72, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, jug, label])
 
+  const SEG_TOL = [0.15, 0.1, 0.07] as const
+  const SEG_FLOW = [1.0, 1.3, 1.6] as const
   let fill = 0
   let held = false
   let round = 1
@@ -418,8 +476,8 @@ export function pourGame(
   }
 
   const land = () => {
-    // 0.92–1.0 is the sweet spot; over 1.0 spills.
-    const ok = fill >= 0.9 && fill <= 1.02
+    const tol = SEG_TOL[Math.min(2, round - 1)] ?? 0.1
+    const ok = fill >= 1 - tol && fill <= 1 + tol * 0.5
     if (ok) {
       res.good++
       SFX.coin()
@@ -446,6 +504,7 @@ export function pourGame(
         if (round > rounds) return finish()
         fill = 0
         spilled = false
+        void showSegmentBanner(scene, Math.min(3, round) as 1 | 2 | 3)
         draw()
       }
       return
@@ -457,7 +516,8 @@ export function pourGame(
       land()
     }
     if (held) {
-      fill += dt / 1250
+      const flow = SEG_FLOW[Math.min(2, round - 1)] ?? 1
+      fill += (dt / 1250) * flow
       if (fill > 1.02) spilled = true
       if (fill > 1.3) {
         held = false
@@ -465,7 +525,7 @@ export function pourGame(
       }
     }
     draw()
-    if (scene.time.now - started > 22000) finish()
+    if (scene.time.now - started > 45000) finish()
   }
   let keyDown = false
   const onDown = (e: KeyboardEvent) => {
@@ -493,6 +553,7 @@ export function pourGame(
     finished = true
     ui.title.setText(res.good >= rounds ? '全部啱啱好！' : res.good > 0 ? `整好 ${res.good} 底` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'timing', 'pour'))
     scene.time.delayedCall(800, destroy)
   }
   draw()
@@ -611,6 +672,7 @@ export function timingGame(scene: Phaser.Scene, title: string, verb: string, rou
     ui.bar.width = 216
     ui.title.setText(res.good >= rounds ? '次次都啱！' : res.good > 0 ? `啱咗 ${res.good} 次` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'timing', 'lantern'))
     scene.time.delayedCall(800, destroy)
   }
   newRound()
@@ -662,7 +724,7 @@ export function tiltLayout(round: number, halfW: number, halfH: number, rand: (a
  * avoid the dark pits, which drop the ball and cost the round (第 4 關・開椰青嘅泰國人).
  * Each round the timer gets a little tighter.
  */
-export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
+export function tiltGame(scene: Phaser.Scene, rounds = 3): Mini<RoundResult> {
   const ui = frame(scene, '傾斜個電話，揈個波入窿！')
   const touch = isTouchDevice()
   ui.hint.setText(touch ? '揈郁電話（或者撳住畫面方向）' : '方向鍵／WASD 郁個波，避開黑窿')
@@ -690,7 +752,8 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
   let pits: Pt[] = []
   let settle = 0
   let dropped = false
-  let roundMs = 7000
+  const WRONG_HOLES = [2, 4, 6] as const
+  let roundMs = 12000
   let roundStart = scene.time.now
   const res: RoundResult = { good: 0, total: rounds }
   let resolve!: (r: RoundResult) => void
@@ -699,16 +762,24 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
   let finished = false
 
   const newRound = () => {
-    roundMs = Math.max(3600, 7000 - (round - 1) * 700)
+    roundMs = 12000
     bx = 0
     by = 0
     vx = 0
     vy = 0
     dropped = false
+    const wantPits = WRONG_HOLES[Math.min(2, round - 1)] ?? 4
     const layout = tiltLayout(round, HALF_W, HALF_H)
     hole = layout.hole
-    pits = layout.pits
+    pits = layout.pits.slice()
+    while (pits.length < wantPits) {
+      const extra = tiltLayout(round + pits.length, HALF_W, HALF_H).pits[0]
+      if (extra && pits.every((p) => Math.hypot(p.x - extra.x, p.y - extra.y) > 36)) pits.push(extra)
+      else break
+    }
+    if (pits.length > wantPits) pits.length = wantPits
     roundStart = scene.time.now
+    void showSegmentBanner(scene, Math.min(3, round) as 1 | 2 | 3)
   }
 
   const keys = { up: false, down: false, left: false, right: false }
@@ -851,6 +922,7 @@ export function tiltGame(scene: Phaser.Scene, rounds = 4): Mini<RoundResult> {
     ui.bar.width = 216
     ui.title.setText(res.good >= rounds ? '次次都入咗窿！' : res.good > 0 ? `入咗 ${res.good} 次窿` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'balance', 'tilt'))
     scene.time.delayedCall(800, destroy)
   }
   newRound()
@@ -874,16 +946,20 @@ const FLAG_LABEL: Record<FlagCmd, string> = {
 
 const FLAG_CMDS: FlagCmd[] = ['raise-red', 'lower-red', 'raise-blue', 'lower-blue', 'trap-red', 'trap-blue']
 
-/** Window for round `r` (1-based): 1200ms − 50ms*(r−1), floor 750ms. */
+/** Reaction window for round `r` (1-based); 3 segments × 4 cmds. */
 export function flagWindowMs(round: number): number {
-  return Math.max(750, 1200 - (Math.max(1, round) - 1) * 50)
+  const seg = Math.min(3, Math.ceil(Math.max(1, round) / 4))
+  return [900, 700, 550][seg - 1] ?? 550
 }
+
+const FLAG_GAP_MS = [1200, 900, 700] as const
+const FLAG_FAKE_RATE = [0, 0.2, 0.35] as const
 
 /**
  * 舉旗大賽 — 咖啡媽媽主持紅／藍旗；噗噗旁觀（灰色無力）。1P：←/A 紅、→/D 藍；
  * 觸控左半紅右半藍。2P：暫無專用 mapping，同 1P 鍵。結果 RoundResult。
  */
-export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & {
+export function flagRace(scene: Phaser.Scene, rounds = 12): Mini<RoundResult> & {
   debug: () => {
     round: number
     score: number
@@ -934,7 +1010,8 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
   let windowMs = flagWindowMs(1)
   let windowStart = 0
   let settle = 0
-  let phase: 'show' | 'play' | 'settle' | 'end' = 'show'
+  let gapWait = 0
+  let phase: 'show' | 'play' | 'settle' | 'gap' | 'end' = 'show'
   let pressed = false
   let roundRed0 = false
   let roundBlue0 = false
@@ -996,8 +1073,13 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
       forced = null
       return c
     }
-    // Prefer commands that need a toggle; still allow "already correct" no-op rounds.
-    return FLAG_CMDS[Phaser.Math.Between(0, FLAG_CMDS.length - 1)]!
+    const seg = Math.min(3, Math.ceil(round / 4))
+    const fake = FLAG_FAKE_RATE[seg - 1] ?? 0
+    if (fake > 0 && Math.random() < fake) {
+      return Math.random() < 0.5 ? 'trap-red' : 'trap-blue'
+    }
+    const real = FLAG_CMDS.filter((c) => !c.startsWith('trap'))
+  return real[Phaser.Math.Between(0, real.length - 1)]!
   }
 
   const expectedOk = (): boolean => {
@@ -1011,6 +1093,8 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
   }
 
   const beginRound = () => {
+    const segStart = (Math.ceil(round / 4) - 1) * 4 + 1
+    if (round === segStart && round > 1) void showSegmentBanner(scene, Math.ceil(round / 4) as 1 | 2 | 3)
     cmd = pickCmd()
     windowMs = flagWindowMs(round)
     windowStart = scene.time.now
@@ -1030,17 +1114,16 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
     if (phase !== 'play') return
     const ok = expectedOk()
     if (ok) {
-      score = Math.min(rounds, score + 1)
+      res.good++
       SFX.coin()
       buzz(HAPTIC.power)
       floatText(scene, cx, cy - 80, '+1', '#ffd040', { size: 18, dur: 600 })
     } else {
-      score = Math.max(0, score - 1)
       SFX.blip(220)
       buzz(40)
       floatText(scene, cx, cy - 80, pressed && cmd?.startsWith('trap') ? '中計！' : '唔啱', '#ff8a6a', { size: 16, dur: 600 })
     }
-    res.good = score
+    score = res.good
     phase = 'settle'
     settle = 480
     drawHost()
@@ -1077,8 +1160,15 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
       if (settle <= 0) {
         round++
         if (round > rounds) return finish()
-        beginRound()
+        const seg = Math.min(3, Math.ceil(round / 4))
+        gapWait = FLAG_GAP_MS[seg - 1] ?? 700
+        phase = 'gap'
       }
+      return
+    }
+    if (phase === 'gap') {
+      gapWait -= scene.game.loop.delta
+      if (gapWait <= 0) beginRound()
       return
     }
     if (phase === 'play') {
@@ -1105,24 +1195,24 @@ export function flagRace(scene: Phaser.Scene, rounds = 10): Mini<RoundResult> & 
   const finish = () => {
     finished = true
     phase = 'end'
-    res.good = score
     ui.bar.width = 216
-    ui.title.setText(score >= rounds ? '全程啱晒！' : score > 0 ? `得分 ${score}` : '下次再試過')
+    ui.title.setText(res.good >= 9 ? '全程啱晒！' : res.good > 0 ? `得分 ${res.good}` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'reaction', 'flag'))
     scene.time.delayedCall(800, destroy)
   }
 
   scene.input.keyboard?.on('keydown', onKey)
   scene.input.on('pointerdown', onTap)
   scene.events.on('update', tick)
-  beginRound()
+  void showSegmentBanner(scene, 1).then(() => beginRound())
 
   return {
     done,
     destroy,
     debug: () => ({
       round,
-      score,
+      score: res.good,
       cmd,
       red: redUp,
       blue: blueUp,
@@ -1158,7 +1248,6 @@ export const MEMORY_DIRS: Record<MemoryItem, 'up' | 'down' | 'left' | 'right'> =
   fish: 'left',
   flower: 'right',
 }
-const MEMORY_LENS = [3, 4, 5, 6] as const
 export const MEMORY_LIT_MS = 600
 export const MEMORY_GAP_MS = 200
 
@@ -1177,9 +1266,13 @@ export function memorySequence(len: number, rand: () => number = Math.random): M
   return out
 }
 
+const CAGE_WATCH_MS = [4000, 4000, 3000] as const
+const CAGE_N = [4, 6, 8] as const
+const CAGE_LABEL: Record<MemoryItem, string> = { honey: '蜜', apple: '蘋', fish: '魚', flower: '花' }
+
 /**
- * 記貨單 — 十字四格（蜜／蘋果／魚／花）亮序記憶。4 輪長度 3–6；錯即顯示答案 1s。
- * 1P：方向鍵／WASD／觸控點格。2P：暫同 1P。
+ * 記住每個籠 — 睇動物入籠，再配對返。3 段 4／6／8 籠。
+ * QA：`forceSeq` = 每籠動物（按籠序）。
  */
 export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
   debug: () => {
@@ -1193,145 +1286,105 @@ export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
   forceSeq: (seq: MemoryItem[]) => void
   tapItem: (item: MemoryItem) => void
 } {
-  const ui = frame(scene, '記貨單：記住亮起次序！')
+  const ui = frame(scene, '記住每個籠！')
   const touch = isTouchDevice()
-  ui.hint.setText(touch ? '跟住次序撳四格' : '↑↓←→／WASD 跟次序撳')
+  ui.hint.setText(touch ? '記住邊隻入邊個籠，再撳籠揀動物' : '方向鍵揀動物，↑↓←→ 對應四種')
   const cx = GAME_W / 2
-  const cy = GAME_H / 2 + 16
-  const CELL = 52
-  const GAP = 18
-  const pos: Record<MemoryItem, { x: number; y: number }> = {
-    honey: { x: cx, y: cy - CELL - GAP },
-    apple: { x: cx, y: cy + CELL + GAP },
-    fish: { x: cx - CELL - GAP, y: cy },
-    flower: { x: cx + CELL + GAP, y: cy },
-  }
+  const cy = GAME_H / 2 + 8
   const g = scene.add.graphics()
-  const label = scene.add.text(cx, 108, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a' }).setOrigin(0.5)
-  const answerTxt = scene.add
-    .text(cx, cy + 110, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#8ad0ff', align: 'center' })
-    .setOrigin(0.5)
-  ui.root.add([g, label, answerTxt])
+  const label = scene.add.text(cx, 100, '', { fontFamily: FONT_UI, fontSize: '14px', color: '#ffe08a' }).setOrigin(0.5)
+  const pickHint = scene.add.text(cx, GAME_H - 108, '', { fontFamily: FONT_UI, fontSize: '12px', color: '#8ad0ff' }).setOrigin(0.5)
+  ui.root.add([g, label, pickHint])
 
-  let round = 1
-  let seq: MemoryItem[] = []
+  let seg = 1
+  let cages: MemoryItem[] = []
   let forced: MemoryItem[] | null = null
-  let input: MemoryItem[] = []
-  let lit: MemoryItem | null = null
-  let showI = 0
-  let showT = 0
-  let phase: 'show' | 'input' | 'fail' | 'ok' | 'end' = 'show'
-  let failMs = 0
-  const res: RoundResult = { good: 0, total: 4 }
+  let cageIdx = 0
+  let phase: 'watch' | 'match' | 'pause' | 'end' = 'watch'
+  let phaseT = 0
+  let picks = 0
+  let segGood = 0
+  const res: RoundResult = { good: 0, total: CAGE_N[0]! + CAGE_N[1]! + CAGE_N[2]! }
   let resolve!: (r: RoundResult) => void
   const done = new Promise<RoundResult>((r) => (resolve = r))
   let finished = false
 
-  const drawItem = (item: MemoryItem, x: number, y: number, bright: boolean) => {
-    const a = bright ? 1 : 0.45
-    g.fillStyle(0x1a1210, 1).fillRoundedRect(x - CELL / 2 - 2, y - CELL / 2 - 2, CELL + 4, CELL + 4, 8)
-    g.fillStyle(bright ? 0x3a2a18 : 0x2a1a10, a).fillRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 6)
-    if (item === 'honey') {
-      g.fillStyle(0xe8a020, a).fillRoundedRect(x - 12, y - 8, 24, 22, 4)
-      g.fillStyle(0xc87810, a).fillRect(x - 10, y - 14, 20, 8)
-      g.fillStyle(0xffe080, a * 0.7).fillCircle(x, y + 2, 6)
-    } else if (item === 'apple') {
-      g.fillStyle(0xe03828, a).fillCircle(x, y + 2, 14)
-      g.fillStyle(0x3a8a30, a).fillEllipse(x + 6, y - 12, 10, 6)
-      g.lineStyle(2, 0x5a3a18, a).lineBetween(x, y - 12, x, y - 4)
-    } else if (item === 'fish') {
-      g.fillStyle(0xf07888, a).fillEllipse(x, y + 2, 28, 14)
-      g.fillStyle(0xf07888, a).fillTriangle(x + 14, y + 2, x + 24, y - 8, x + 24, y + 12)
-      g.fillStyle(0x1a1210, a).fillCircle(x - 8, y, 2)
-    } else {
-      g.fillStyle(0xff80b0, a).fillCircle(x, y, 8)
-      g.fillStyle(0xff80b0, a).fillCircle(x - 10, y + 2, 7)
-      g.fillStyle(0xff80b0, a).fillCircle(x + 10, y + 2, 7)
-      g.fillStyle(0xff80b0, a).fillCircle(x - 5, y - 8, 7)
-      g.fillStyle(0xff80b0, a).fillCircle(x + 5, y - 8, 7)
-      g.fillStyle(0xffd060, a).fillCircle(x, y, 4)
+  const cageLayout = (n: number) => {
+    const cols = n <= 4 ? 2 : n <= 6 ? 3 : 4
+    const rows = Math.ceil(n / cols)
+    const out: { x: number; y: number }[] = []
+    const w = Math.min(280, cols * 76)
+    const h = rows * 58
+    const x0 = cx - w / 2 + 38
+    const y0 = cy - h / 2 + 20
+    for (let i = 0; i < n; i++) {
+      const c = i % cols
+      const r = Math.floor(i / cols)
+      out.push({ x: x0 + c * 76, y: y0 + r * 58 })
     }
-    if (bright) g.lineStyle(3, 0xffe08a, 1).strokeRoundedRect(x - CELL / 2, y - CELL / 2, CELL, CELL, 6)
+    return out
+  }
+
+  const miniAnimal = (item: MemoryItem, x: number, y: number, a: number) => {
+    if (item === 'honey') g.fillStyle(0xe8a020, a).fillCircle(x, y, 10)
+    else if (item === 'apple') g.fillStyle(0xe03828, a).fillCircle(x, y, 10)
+    else if (item === 'fish') g.fillStyle(0xf07888, a).fillEllipse(x, y, 16, 8)
+    else g.fillStyle(0xff80b0, a).fillCircle(x, y, 8)
   }
 
   const draw = () => {
     g.clear()
-    // Cross arms
-    g.fillStyle(0x3a2a1a, 0.6).fillRect(cx - 10, cy - CELL - GAP - CELL / 2, 20, (CELL + GAP) * 2 + CELL)
-    g.fillStyle(0x3a2a1a, 0.6).fillRect(cx - CELL - GAP - CELL / 2, cy - 10, (CELL + GAP) * 2 + CELL, 20)
-    for (const item of MEMORY_ITEMS) {
-      const p = pos[item]!
-      drawItem(item, p.x, p.y, lit === item)
+    const n = cages.length
+    const spots = cageLayout(n)
+    const showAnimal = phase === 'watch'
+    for (let i = 0; i < n; i++) {
+      const p = spots[i]!
+      const active = phase === 'match' && i === cageIdx
+      g.fillStyle(0x2a1a10, 1).fillRoundedRect(p.x - 30, p.y - 26, 60, 52, 6)
+      g.lineStyle(2, active ? 0xffe08a : 0xc89060, 1).strokeRoundedRect(p.x - 30, p.y - 26, 60, 52, 6)
+      for (let b = 0; b < 4; b++) g.lineStyle(1, 0x8a7060, 0.8).lineBetween(p.x - 22 + b * 12, p.y - 24, p.x - 22 + b * 12, p.y + 22)
+      if (showAnimal) miniAnimal(cages[i]!, p.x, p.y + 4, 1)
+      else if (i < cageIdx) miniAnimal(cages[i]!, p.x, p.y + 4, 0.55)
+      else if (active) g.fillStyle(0xffe08a, 0.9).fillCircle(p.x, p.y - 30, 9)
     }
-    if (phase === 'fail') {
-      for (const item of seq) {
-        const p = pos[item]!
-        g.lineStyle(2, 0x8ad0ff, 0.9).strokeRoundedRect(p.x - CELL / 2 - 1, p.y - CELL / 2 - 1, CELL + 2, CELL + 2, 6)
+    if (phase === 'match') {
+      for (let i = 0; i < MEMORY_ITEMS.length; i++) {
+        const item = MEMORY_ITEMS[i]!
+        const bx = 100 + i * 110
+        const by = GAME_H - 118
+        g.fillStyle(0x1a2838, 1).fillRoundedRect(bx - 40, by - 18, 80, 36, 6)
+        g.lineStyle(2, 0x8ad0ff, 1).strokeRoundedRect(bx - 40, by - 18, 80, 36, 6)
+        miniAnimal(item, bx - 14, by, 1)
+        g.fillStyle(0xfff6e0, 1)
       }
     }
-    label.setText(`第 ${round} ／ 4　　長度 ${seq.length || MEMORY_LENS[round - 1]}`)
-    ui.bar.width = (216 * (round - 1)) / 4
+    label.setText(`第 ${seg} 段　籠 ${n}`)
+    pickHint.setText(
+      phase === 'match'
+        ? `籠 ${cageIdx + 1}／${n}　↑蜜 ↓蘋 ←魚 →花`
+        : phase === 'watch'
+          ? '記住邊隻入邊個籠…'
+          : '',
+    )
+    ui.bar.width = (216 * (seg - 1)) / 3
   }
 
-  const beginRound = () => {
-    const len = MEMORY_LENS[round - 1]!
-    seq = forced ?? memorySequence(len)
-    forced = null
-    input = []
-    lit = null
-    showI = 0
-    showT = 0
-    phase = 'show'
-    answerTxt.setText('')
-    draw()
-  }
-
-  const onFail = () => {
-    phase = 'fail'
-    failMs = 1000
-    lit = null
-    answerTxt.setText(`答案：${seq.map((s) => ({ honey: '蜜', apple: '蘋果', fish: '魚', flower: '花' })[s]).join(' → ')}`)
-    SFX.blip(200)
-    buzz(40)
-    draw()
-  }
-
-  const onOk = () => {
-    res.good++
-    phase = 'ok'
-    failMs = 500
-    SFX.coin()
-    buzz(HAPTIC.power)
-    floatText(scene, cx, cy - 100, '記啱！', '#ffd040', { size: 16, dur: 600 })
-    draw()
-  }
-
-  const press = (item: MemoryItem) => {
-    if (finished || phase !== 'input') return
-    input.push(item)
-    lit = item
-    draw()
-    const i = input.length - 1
-    if (seq[i] !== item) {
-      onFail()
-      return
+  const beginSeg = () => {
+    const n = CAGE_N[seg - 1] ?? 4
+    if (forced && forced.length >= n) {
+      cages = forced.slice(0, n)
+      forced = null
+    } else {
+      cages = memorySequence(n)
     }
-    SFX.blip(480 + i * 40)
-    if (input.length >= seq.length) onOk()
-    else scene.time.delayedCall(120, () => {
-      if (phase === 'input') {
-        lit = null
-        draw()
-      }
-    })
+    cageIdx = 0
+    picks = 0
+    segGood = 0
+    phase = 'watch'
+    phaseT = 0
+    draw()
   }
 
-  const DIR_ITEM: Record<string, MemoryItem> = {
-    up: 'honey',
-    down: 'apple',
-    left: 'fish',
-    right: 'flower',
-  }
   const KEYMAP: Record<string, MemoryItem> = {
     ArrowUp: 'honey',
     KeyW: 'honey',
@@ -1342,16 +1395,41 @@ export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
     ArrowRight: 'flower',
     KeyD: 'flower',
   }
+  const DIR_ITEM: Record<string, MemoryItem> = { up: 'honey', down: 'apple', left: 'fish', right: 'flower' }
+
+  const pickAnimal = (item: MemoryItem) => {
+    if (finished || phase !== 'match') return
+    picks++
+    if (cages[cageIdx] === item) {
+      segGood++
+      SFX.coin()
+      buzz(HAPTIC.power)
+    } else {
+      SFX.blip(200)
+      buzz(40)
+      floatText(scene, cx, cy - 90, `應該係${CAGE_LABEL[cages[cageIdx]!]}`, '#ff8a6a', { size: 12, dur: 700 })
+    }
+    cageIdx++
+    if (cageIdx >= cages.length) {
+      res.good += segGood
+      phase = 'pause'
+      phaseT = 0
+    }
+    draw()
+  }
+
   const onKey = (e: KeyboardEvent) => {
     if (e.repeat) return
     const it = KEYMAP[e.code]
-    if (it) press(it)
+    if (it) pickAnimal(it)
   }
   const onTap = (p: Phaser.Input.Pointer) => {
-    for (const item of MEMORY_ITEMS) {
-      const c = pos[item]!
-      if (Math.abs(p.x - c.x) <= CELL / 2 + 6 && Math.abs(p.y - c.y) <= CELL / 2 + 6) {
-        press(item)
+    if (phase !== 'match') return
+    for (let i = 0; i < MEMORY_ITEMS.length; i++) {
+      const bx = 100 + i * 110
+      const by = GAME_H - 118
+      if (Math.abs(p.x - bx) <= 40 && Math.abs(p.y - by) <= 20) {
+        pickAnimal(MEMORY_ITEMS[i]!)
         return
       }
     }
@@ -1359,37 +1437,27 @@ export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
 
   const tick = (_t: number, dt: number) => {
     if (finished) return
-    if (phase === 'fail' || phase === 'ok') {
-      failMs -= dt
-      if (failMs <= 0) {
-        round++
-        if (round > 4) return finish()
-        beginRound()
-      }
-      return
-    }
-    if (phase === 'show') {
-      showT += dt
-      if (showI < seq.length) {
-        const on = showT < MEMORY_LIT_MS
-        lit = on ? seq[showI]! : null
-        if (showT >= MEMORY_LIT_MS + MEMORY_GAP_MS) {
-          showI++
-          showT = 0
-          lit = null
-        }
-        draw()
-      } else {
-        phase = 'input'
-        lit = null
-        answerTxt.setText('輪到你！')
+    if (phase === 'watch') {
+      phaseT += dt
+      if (phaseT >= (CAGE_WATCH_MS[seg - 1] ?? 4000)) {
+        phase = 'match'
+        pickHint.setText('揀返每個籠嘅動物')
         draw()
       }
       return
     }
-    if (phase === 'input') {
+    if (phase === 'pause') {
+      phaseT += dt
+      if (phaseT >= 600) {
+        seg++
+        if (seg > 3) return finish()
+        void showSegmentBanner(scene, seg as 1 | 2 | 3).then(() => beginSeg())
+      }
+      return
+    }
+    if (phase === 'match') {
       for (const d of ['up', 'down', 'left', 'right'] as const) {
-        if (TouchInput.justPressed(d)) press(DIR_ITEM[d]!)
+        if (TouchInput.justPressed(d)) pickAnimal(DIR_ITEM[d]!)
       }
     }
   }
@@ -1410,31 +1478,47 @@ export function memoryGame(scene: Phaser.Scene): Mini<RoundResult> & {
     finished = true
     phase = 'end'
     ui.bar.width = 216
-    ui.title.setText(res.good >= 4 ? '全部記住！' : res.good > 0 ? `記啱 ${res.good} 輪` : '下次再試過')
+    ui.title.setText(res.good >= res.total ? '每隻都返到籠！' : res.good > 0 ? `記啱 ${res.good} 個` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'memory', 'memory'))
     scene.time.delayedCall(800, destroy)
   }
 
   scene.input.keyboard?.on('keydown', onKey)
   scene.input.on('pointerdown', onTap)
   scene.events.on('update', tick)
-  beginRound()
+  void showSegmentBanner(scene, 1).then(() => beginSeg())
 
   return {
     done,
     destroy,
-    debug: () => ({ round, seq: seq.slice(), input: input.slice(), phase, lit, good: res.good }),
+    debug: () => ({
+      round: seg,
+      seq: cages.slice(),
+      input: [],
+      phase,
+      lit: null,
+      good: res.good,
+    }),
     forceSeq: (s: MemoryItem[]) => {
       forced = s.slice()
-      if (phase === 'show' || phase === 'input') beginRound()
+      beginSeg()
     },
-    tapItem: (item: MemoryItem) => press(item),
+    tapItem: (item: MemoryItem) => pickAnimal(item),
   }
 }
 
 // ── 夜市抓抓機：左右移動夾爪，揀準時機落爪 ───────────────────────────────
 
-export type ClawResult = { coins: number; caught: number; drops: number }
+export type ClawResult = {
+  coins: number
+  caught: number
+  drops: number
+  good?: number
+  total?: number
+  grade?: MiniGrade
+  medalId?: string
+}
 type PrizeKind = 'lobster' | 'shrimp' | 'boot' | 'can' | 'gold'
 type Prize = { kind: PrizeKind; spr: Phaser.GameObjects.Image; x: number; vx: number; zone: number; value: number }
 
@@ -1446,7 +1530,9 @@ export const CLAW_PRIZES: Record<PrizeKind, { tex: string; value: number; zone: 
   can: { tex: 'claw-can', value: 1, zone: 10, weight: 18, label: '罐頭' },
   gold: { tex: 'claw-lobster', value: 12, zone: 15, weight: 4, label: '金龍蝦' },
 }
-export const CLAW_TIME_MS = 18000
+export const CLAW_TIME_MS = 15000
+const CLAW_SEG_MS = [15000, 12000, 10000] as const
+const CLAW_SHAKE = [0, 8, 16] as const
 const CLAW_X0 = 92
 const CLAW_X1 = 548
 const CLAW_RAIL_Y = 124
@@ -1454,9 +1540,16 @@ const CLAW_BELT_Y = 292
 const CLAW_BOTTOM_Y = 262
 
 export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
-  const ui = frame(scene, '夜市抓抓機', 0.4)
+  const twoP = scene.registry.get('playMode') === '2p'
+  const ui = frame(scene, '舊機夾公仔', 0.4)
   const touch = isTouchDevice()
-  ui.hint.setText(touch ? '左右掣移夾爪，攻擊掣落爪' : '←→ 移動夾爪　攻擊鍵／空白鍵 落爪')
+  ui.hint.setText(
+    twoP
+      ? 'P1：左右　P2：前後深度　攻擊落爪'
+      : touch
+        ? '左右移爪，上下調深度，攻擊落爪'
+        : '←→ 左右　↑↓ 深度　攻擊鍵落爪',
+  )
   for (const k of Object.values(CLAW_PRIZES)) if (scene.textures.exists(k.tex)) markHd(scene.textures.get(k.tex), 2)
 
   const g = scene.add.graphics()
@@ -1487,14 +1580,19 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
 
   let clawX = GAME_W / 2
   let clawY = CLAW_RAIL_Y + 8
+  let depth = 0.5
   let state: 'idle' | 'down' | 'grab' | 'up' = 'idle'
   let stateT = 0
   let carried: Prize | null = null
-  let left = timeMs
+  let seg = 1
+  let left: number = CLAW_SEG_MS[0]!
+  let shakeAmp: number = CLAW_SHAKE[0]!
+  let segCaught = 0
+  const segWins = [false, false, false]
   let finished = false
   let flip = 0
   const armedAt = scene.time.now + 450
-  const res: ClawResult = { coins: 0, caught: 0, drops: 0 }
+  const res: ClawResult = { coins: 0, caught: 0, drops: 0, good: 0, total: 3 }
   let resolve!: (r: ClawResult) => void
   const done = new Promise<ClawResult>((r) => (resolve = r))
   const keys = new Set<string>()
@@ -1532,7 +1630,8 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
   const labelText = () => {
     timeTxt.setText(`${Math.ceil(Math.max(0, left) / 1000)} 秒`)
     coinTxt.setText(`◎ ${res.coins}`)
-    ui.bar.width = 216 * Phaser.Math.Clamp(left / timeMs, 0, 1)
+    const segLen = CLAW_SEG_MS[seg - 1] ?? timeMs
+    ui.bar.width = 216 * Phaser.Math.Clamp(left / segLen, 0, 1)
   }
 
   const resolveGrab = () => {
@@ -1550,6 +1649,7 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
       carried = best
       belt.splice(belt.indexOf(best), 1)
       res.caught++
+      segCaught++
       SFX.coin()
       buzz(HAPTIC.power)
     } else {
@@ -1595,10 +1695,29 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
     if (state === 'idle') {
       const l = keys.has('ArrowLeft') || keys.has('KeyA') || TouchInput.isDown('left')
       const r = keys.has('ArrowRight') || keys.has('KeyD') || TouchInput.isDown('right')
-      clawX = Phaser.Math.Clamp(clawX + ((r ? 1 : 0) - (l ? 1 : 0)) * 190 * (dt / 1000), CLAW_X0, CLAW_X1)
-      clawY = CLAW_RAIL_Y + 8
+      const up = keys.has('ArrowUp') || keys.has('KeyW') || TouchInput.isDown('up')
+      const dn = keys.has('ArrowDown') || keys.has('KeyS') || TouchInput.isDown('down')
+      const lOn = l || TouchInput.isDown('left')
+      const rOn = r || TouchInput.isDown('right')
+      const upOn = up || TouchInput.isDown('up')
+      const dnOn = dn || TouchInput.isDown('down')
+      clawX = Phaser.Math.Clamp(
+        clawX + ((rOn ? 1 : 0) - (lOn ? 1 : 0)) * 190 * (dt / 1000) + (shakeAmp ? (Math.random() - 0.5) * shakeAmp * 0.08 : 0),
+        CLAW_X0,
+        CLAW_X1,
+      )
+      depth = Phaser.Math.Clamp(depth + ((dnOn ? 1 : 0) - (upOn ? 1 : 0)) * (dt / 900), 0.15, 0.95)
+      clawY = CLAW_RAIL_Y + 8 + depth * 18
       if (TouchInput.justPressed('attack') || TouchInput.justPressed('jump')) drop()
-      if (left <= 0) return finish()
+      if (left <= 0) {
+        segWins[seg - 1] = segCaught > 0
+        if (seg >= 3) return finish()
+        seg++
+        void showSegmentBanner(scene, seg as 1 | 2 | 3)
+        left = CLAW_SEG_MS[seg - 1] ?? 10000
+        shakeAmp = CLAW_SHAKE[seg - 1] ?? 16
+        segCaught = 0
+      }
     } else if (state === 'down') {
       clawY = CLAW_RAIL_Y + 8 + (CLAW_BOTTOM_Y - CLAW_RAIL_Y - 8) * Math.min(1, stateT / 430)
       if (stateT >= 430) {
@@ -1626,7 +1745,7 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
   }
   const onKeyDown = (e: KeyboardEvent) => {
     keys.add(e.code)
-    if (['Space', 'KeyF', 'KeyJ', 'KeyK', 'ArrowUp'].includes(e.code) && !e.repeat) drop()
+    if (['Space', 'KeyF', 'KeyJ', 'KeyK'].includes(e.code) && !e.repeat) drop()
   }
   const onKeyUp = (e: KeyboardEvent) => keys.delete(e.code)
   scene.input.keyboard?.on('keydown', onKeyDown)
@@ -1646,6 +1765,12 @@ export function clawGame(scene: Phaser.Scene, timeMs = CLAW_TIME_MS) {
   }
   const finish = () => {
     finished = true
+    segWins[seg - 1] = segWins[seg - 1] || segCaught > 0
+    res.good = segWins.filter(Boolean).length
+    res.total = 3
+    const graded = finishRound({ good: res.good!, total: res.total! }, 'aim', 'claw')
+    res.grade = graded.grade
+    res.medalId = graded.medalId
     ui.bar.width = 0
     timeTxt.setText('時間到！')
     ui.title.setText(res.coins >= 20 ? '大豐收！' : res.caught > 0 ? `夾到 ${res.caught} 隻` : '下次再試過')

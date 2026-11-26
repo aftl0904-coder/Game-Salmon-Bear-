@@ -6,6 +6,7 @@ const GALLERY_KEY = 'sake-kuma-gallery-v1'
 const PROGRESS_KEY = 'sake-kuma-progress-v1'
 const FRIENDS_KEY = 'sake-kuma-friends-v1'
 const C2_KEY = 'sake-kuma-c2-cleared-v1'
+const MEDALS_KEY = 'sake-kuma-medals-v1'
 
 const state = {
   catalog: null,
@@ -43,10 +44,13 @@ function syncUnlocks() {
     bosses: [],
     scenes: [],
     stories: [],
+    medals: [],
   })
+  if (!Array.isArray(g.medals)) g.medals = []
   const max = Number(readJson(PROGRESS_KEY, {}).maxStage) || 1
   const friends = readJson(FRIENDS_KEY, [])
   const c2 = localStorage.getItem(C2_KEY) === '1'
+  const medals = readJson(MEDALS_KEY, [])
 
   const add = (arr, id) => {
     if (id && !arr.includes(id)) arr.push(id)
@@ -55,19 +59,17 @@ function syncUnlocks() {
   // Always-on cast
   ;['lunbo', 'kibobo', 'pupu'].forEach((id) => add(g.heroes, id))
   for (const id of friends) add(g.friends, id)
+  for (const id of Array.isArray(medals) ? medals : []) add(g.medals, id)
 
-  // Stages 1–10: entered / cleared
+  // Stages 1–10: entered / cleared. Stage 10 clear = c2 (maxStage caps at 10).
   for (let st = 1; st <= 10; st++) {
     if (max >= st) add(g.scenes, `scene-${st}`)
-    if (max > st || (st === 10 && max >= 10 && c2) || max > st) {
-      /* cleared when furthest progress passed this stage */
-    }
-    if (max > st) {
+    const cleared = max > st || (st === 10 && c2)
+    if (cleared) {
       add(g.bosses, bossIdForStage(st))
       for (const e of enemiesForStage(st)) add(g.enemies, e.id)
     }
   }
-  // Stage 10 boss if c2 cleared or maxStage already past 10 somehow
   if (c2 || max > 10) add(g.bosses, 'leon')
 
   // Story heuristics from progress + explicit marks
@@ -144,10 +146,12 @@ function isUnlocked(item, unlocks) {
   if (u.type === 'always') return true
   if (u.type === 'friend') return unlocks.friends.includes(u.friendId)
   if (u.type === 'stageClear') {
+    const c2 = localStorage.getItem(C2_KEY) === '1'
     return (
       unlocks.bosses.includes(item.id) ||
       unlocks.enemies.includes(item.id) ||
-      maxStageNow() > u.stage
+      maxStageNow() > u.stage ||
+      (u.stage === 10 && c2)
     )
   }
   if (u.type === 'stageEnter') {
@@ -158,6 +162,10 @@ function isUnlocked(item, unlocks) {
   }
   if (u.type === 'c2Clear') return unlocks.stories.includes(item.id) || localStorage.getItem(C2_KEY) === '1'
   if (u.type === 'story') return unlocks.stories.includes(item.id)
+  if (u.type === 'medal') {
+    const id = u.medalId || item.medalId || String(item.id || '').replace(/^medal-/, '')
+    return (unlocks.medals || []).includes(id) || readJson(MEDALS_KEY, []).includes(id)
+  }
   return unlocks.heroes.includes(item.id)
 }
 
@@ -358,7 +366,7 @@ function render() {
 
 function cardHtml(item, unlocks, tabId) {
   const unlocked = isUnlocked(item, unlocks)
-  const bossLike = !unlocked && (tabId === 'bosses' || tabId === 'scenes' || tabId === 'stories')
+  const bossLike = !unlocked && (tabId === 'bosses' || tabId === 'scenes' || tabId === 'stories' || tabId === 'medals')
   const name = unlocked ? item.name : tabId === 'heroes' || tabId === 'enemies' ? '？？？' : '？'
   const blurb = unlocked ? item.blurb : ''
   if (bossLike) {
