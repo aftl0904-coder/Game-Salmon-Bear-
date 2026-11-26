@@ -1,0 +1,142 @@
+{
+  "table": [
+    {
+      "id": "umbrella",
+      "name": "撐傘",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    },
+    {
+      "id": "kite",
+      "name": "風箏",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    },
+    {
+      "id": "ferry",
+      "name": "小輪",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    },
+    {
+      "id": "memory-pics",
+      "name": "砌回憶",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    },
+    {
+      "id": "stealth",
+      "name": "避燈",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    },
+    {
+      "id": "coffee-tray",
+      "name": "端咖啡",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": [],
+      "note": "pixel skip flake fixed: larger 跳過 hit + multi-tap; retest 5/5"
+    },
+    {
+      "id": "photo",
+      "name": "合照",
+      "complete": "PASS",
+      "skip": "PASS",
+      "errors": []
+    }
+  ],
+  "results": {
+    "umbrella": {
+      "name": "撐傘",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "kite": {
+      "name": "風箏",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "ferry": {
+      "name": "小輪",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "memory-pics": {
+      "name": "砌回憶",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "stealth": {
+      "name": "避燈",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "coffee-tray": {
+      "name": "端咖啡",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    },
+    "photo": {
+      "name": "合照",
+      "complete": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "skip": {
+        "iphone13L": "PASS",
+        "pixel7L": "PASS"
+      },
+      "errors": []
+    }
+  },
+  "verifiedAt": "2026-11-26T06:01:27.245Z",
+  "skipFix": "minigames showTutorial skip control enlarged top-left; TransitScene mounts pads after tutorial"
+}
