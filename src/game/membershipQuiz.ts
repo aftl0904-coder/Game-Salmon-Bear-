@@ -17,8 +17,8 @@ type Q = {
   answerIndex: number
 }
 
-/** quiz-home-1: ban 按揭／買樓／睇樓／供樓 from the pinned first question. */
-const HOME_TOPIC_BAN = ['按揭', '買樓', '睇樓', '供樓'] as const
+/** Claude 定案：唔可以加按揭、買樓、睇樓、供款題（兼禁供樓）. */
+const HOME_TOPIC_BAN = ['按揭', '買樓', '睇樓', '供樓', '供款'] as const
 
 function isHomeTopicBanned(q: Q): boolean {
   const blob = `${q.prompt}\n${q.choices.join('\n')}`
@@ -126,114 +126,43 @@ function pickFromPool(pool: Q[], n: number, seen: Set<string>, exclude: Set<stri
   return ordered.slice(0, Math.min(n, ordered.length))
 }
 
-const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'labour', 'iq'] as const
-
 /**
- * E7 mix — 6 normal: developer 2、hanglung 1、law|hr|labour 1、iq 1、math|mall 1;
- * 1 hard (any category, iq hard ok). Hard slot indices 3–6.
- * Fallback when a bucket is empty: developer → law → others.
- *
- * quiz-home-1: when `pinHomeFirst`, replace slot 0 with a simple developer
- * (地產發展) question; later opens keep the ordinary mix.
+ * Mini-1: 3 segments × 3 — 普通題 → 難題 → 地產題（沿用現有題庫）.
+ * Ban 按揭／買樓／睇樓／供款／供樓 from every segment.
  */
-/** Mini-1: 3 segments × 3 — normal → hard → developer (existing bank). */
 function pickRoundSegments(rng: () => number, opts?: PickRoundOpts): Q[] {
   const seenList = loadSeenIds()
   const seen = new Set(seenList)
   const normals = BANK.questions.filter((q) => q.difficulty !== 'hard' && !isHomeTopicBanned(q))
   const hards = BANK.questions.filter((q) => q.difficulty === 'hard' && !isHomeTopicBanned(q))
-  const devs = normals.filter((q) => q.category === 'developer')
+  const devs = BANK.questions.filter((q) => q.category === 'developer' && !isHomeTopicBanned(q))
   const exclude = new Set<string>(opts?.excludeIds ?? [])
   const seg1 = pickFromPool(normals, 3, seen, exclude, rng)
   for (const q of seg1) exclude.add(q.id)
   const seg2 = pickFromPool(hards.length ? hards : normals, 3, seen, exclude, rng)
   for (const q of seg2) exclude.add(q.id)
-  const seg3 = pickFromPool(devs.length ? devs : normals, 3, seen, exclude, rng)
+  let seg3 = pickFromPool(devs.length ? devs : normals.filter((q) => q.category === 'developer'), 3, seen, exclude, rng)
+  if (opts?.pinHomeFirst) {
+    const home = simpleDeveloperPool()
+    const pinned = pickFromPool(home, 1, seen, new Set(), rng)[0] ?? shuffle(home, rng)[0]
+    if (pinned) {
+      const rest = seg3.filter((q) => q.id !== pinned.id)
+      seg3 = [pinned, ...rest].slice(0, 3)
+      while (seg3.length < 3) {
+        const more = pickFromPool(devs, 1, seen, new Set([...exclude, ...seg3.map((q) => q.id)]), rng)
+        if (!more.length) break
+        seg3.push(more[0]!)
+      }
+    }
+  }
   const out = [...seg1, ...seg2, ...seg3].slice(0, 9)
   saveSeenIds([...seenList, ...out.map((q) => q.id)])
   return out
 }
 
-function pickRound(rng: () => number, opts?: PickRoundOpts): Q[] {
-  const seenList = loadSeenIds()
-  const seen = new Set(seenList)
-  const normals = BANK.questions.filter((q) => q.difficulty !== 'hard')
-  const hards = BANK.questions.filter((q) => q.difficulty === 'hard')
-  const exclude = new Set<string>(opts?.excludeIds ?? [])
-  const six: Q[] = []
-
-  const fill = (cats: string[], n: number) => {
-    const primary = normals.filter((q) => cats.includes(q.category))
-    let got = pickFromPool(primary, n, seen, exclude, rng)
-    if (got.length < n) {
-      for (const cat of FALLBACK_CATS) {
-        if (got.length >= n) break
-        const extra = normals.filter((q) => q.category === cat)
-        const more = pickFromPool(extra, n - got.length, seen, new Set([...exclude, ...got.map((q) => q.id)]), rng)
-        got = got.concat(more)
-      }
-    }
-    for (const q of got.slice(0, n)) {
-      six.push(q)
-      exclude.add(q.id)
-    }
-  }
-
-  fill(['developer'], 2)
-  fill(['hanglung'], 1)
-  fill(['law', 'hr', 'labour'], 1)
-  fill(['iq'], 1)
-  fill(['math', 'mall'], 1)
-
-  while (six.length < 6) {
-    const more = pickFromPool(normals, 1, seen, exclude, rng)
-    if (!more.length) break
-    six.push(more[0]!)
-    exclude.add(more[0]!.id)
-  }
-
-  const devHards = hards.filter((q) => q.category === 'developer' && !exclude.has(q.id))
-  const otherHards = hards.filter((q) => q.category !== 'developer' && !exclude.has(q.id))
-  const useDevHard = rng() < 0.5
-  let hardPool = useDevHard && devHards.length ? devHards : otherHards.length ? otherHards : hards.filter((q) => !exclude.has(q.id))
-  if (!hardPool.length) hardPool = hards
-  const hard = pickFromPool(hardPool, 1, seen, exclude, rng)[0] ?? shuffle(hardPool, rng)[0] ?? six[0]!
-
-  const hardSlot = 3 + Math.floor(rng() * 4) // index 3..6
-  const round = six.slice(0, 6)
-  round.splice(hardSlot, 0, hard)
-  let out = round.slice(0, 7)
-
-  if (opts?.pinHomeFirst) {
-    const homePool = simpleDeveloperPool()
-    const pinned = pickFromPool(homePool, 1, seen, new Set(), rng)[0] ?? shuffle(homePool, rng)[0]
-    if (pinned) {
-      const rest = out.filter((q) => q.id !== pinned.id)
-      out = [pinned, ...rest].slice(0, 7)
-      while (out.length < 7) {
-        const more = pickFromPool(normals, 1, seen, new Set(out.map((q) => q.id)), rng)
-        if (!more.length) break
-        out.push(more[0]!)
-      }
-      out = out.slice(0, 7)
-    }
-  }
-
-  const nextSeen = [...seenList, ...out.map((q) => q.id)]
-  // If bank nearly exhausted, allow reshuffle next time
-  const normalIds = new Set(normals.map((q) => q.id))
-  const unseenNormals = [...normalIds].filter((id) => !nextSeen.includes(id))
-  if (unseenNormals.length < 6) {
-    saveSeenIds(out.map((q) => q.id))
-  } else {
-    saveSeenIds(nextSeen)
-  }
-  return out
-}
-
-/** QA / Playwright: run pickRound without Phaser. */
+/** QA / Playwright: run 3-seg picker without Phaser. */
 export function pickRoundForQa(rng: () => number = Math.random, opts?: PickRoundOpts): Q[] {
-  return pickRound(rng, opts)
+  return pickRoundSegments(rng, opts)
 }
 
 type ShuffledQ = Q & { displayChoices: string[]; correctIndex: number }
@@ -603,7 +532,8 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     clearHardFlash()
     setChoicesVisible(false)
     resetBuzzLooks()
-    progress.setText(`第 ${qi + 1}／${round.length} 題${q.difficulty === 'hard' ? '（難題）' : ''}`)
+    const segLabel = qi < 3 ? '普通題' : qi < 6 ? '難題' : '地產題'
+    progress.setText(`第 ${qi + 1}／${round.length}　${segLabel}`)
     prompt.setText(q.prompt)
     status.setText(twoP ? '左右紅掣搶答！' : '撳右邊紅掣搶答！')
     paintChoices(q)

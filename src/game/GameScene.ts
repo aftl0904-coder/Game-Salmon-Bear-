@@ -5944,8 +5944,8 @@ export class GameScene extends Phaser.Scene {
               tip: '冇人搶會 Skip；超時扣小小幣。',
             },
             {
-              title: '一共七題',
-              lines: ['最後一題最難、獎金最多。'],
+              title: '三段搶答',
+              lines: ['普通題 → 難題 → 地產題。'],
               tip: this.mode === '2p' ? '各人金幣入各自錢包。' : '假對手會同你搶。',
             },
           ]
