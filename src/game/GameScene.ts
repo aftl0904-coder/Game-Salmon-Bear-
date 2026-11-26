@@ -2993,24 +2993,32 @@ export class GameScene extends Phaser.Scene {
     if (this.mode === '2p' && this.girl && Math.abs(followX - this.boy.x) < 56) {
       followX = g.x - g.facing * (PET_FOLLOW_BEHIND + 40)
     }
-    const followY = laneY(g.lane)
+    // fix-play-1: match owner Y while airborne so 噗噗 jumps pits with them (not flat-float).
+    const airborne = !!g.laneJumping || (() => {
+      const b = g.body as Phaser.Physics.Arcade.Body | undefined
+      return !!b && !b.blocked.down && !b.touching.down && Math.abs(b.velocity.y) > 8
+    })()
+    const followY = airborne ? g.y : laneY(g.lane)
     const dx = followX - pet.x
     const dy = followY - pet.y
-    // −20% with cast move pack (was 260 / 360).
+    // −20% with cast move pack (was 260 / 360). Airborne: snap Y faster so jumps read together.
     const speed = this.petJetting ? Math.round(260 * 0.8) : Math.round(360 * 0.8)
     const dist = Math.hypot(dx, dy)
     if (dist > 6) {
       const nx = dx / dist
       const ny = dy / dist
-      const step = Math.min(dist, (speed * this.game.loop.delta) / 1000)
-      pet.setPosition(pet.x + nx * step, pet.y + ny * step)
+      const step = Math.min(dist, ((airborne ? speed * 1.35 : speed) * this.game.loop.delta) / 1000)
+      // Prefer locking Y to the jump arc when owner is in the air.
+      const nextY = airborne ? followY : pet.y + ny * step
+      pet.setPosition(pet.x + nx * step, nextY)
     } else {
       pet.setPosition(followX, followY)
     }
     pet.setVelocity(0, 0)
     if (pet.texture.key === animTex('pupu') && !this.petJetting) {
-      const want = dist > 6 ? 'pupu-walk' : 'pupu-idle'
-      if (pet.anims.currentAnim?.key !== want) pet.anims.play(want)
+      const want = airborne ? 'pupu-jump' : dist > 6 ? 'pupu-walk' : 'pupu-idle'
+      const animKey = this.anims.exists(want) ? want : dist > 6 || airborne ? 'pupu-walk' : 'pupu-idle'
+      if (pet.anims.currentAnim?.key !== animKey) pet.anims.play(animKey)
     }
     pet.setFlipX(g.facing < 0)
     if (!this.petJetting) pet.setScale(this.petScaleForGirl(g))

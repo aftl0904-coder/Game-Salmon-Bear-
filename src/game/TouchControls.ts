@@ -16,7 +16,8 @@ type PadSpec = { btn: TouchBtn; x: number; y: number; label: string; w?: number;
 export function mountTouchControls(scene: Phaser.Scene): Phaser.GameObjects.Container | null {
   if (!isPhonePlay()) return null
 
-  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 80)
+  // Above transit/minigame frames (UI+260) so phone pads stay tappable (fix-play-1).
+  const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 400)
   root.setAlpha(ALPHA)
 
   const mkBtn = (spec: PadSpec) => {

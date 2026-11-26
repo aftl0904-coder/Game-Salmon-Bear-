@@ -92,11 +92,17 @@ export const TRANSIT_META: Record<
   },
 }
 
+/** Big transit title — keep clear of segment line at SEG_LABEL_Y (fix-play-1). */
+const TITLE_Y = 36
+/** 「第 N 段」status line — below title, above playfield. */
+const SEG_LABEL_Y = 112
+
 function frame(scene: Phaser.Scene, title: string, dim = 0.72) {
   const root = scene.add.container(0, 0).setScrollFactor(0).setDepth(DEPTH.UI + 260)
-  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0c0806, dim).setOrigin(0).setInteractive())
+  // Do not setInteractive — a full-screen hit target eats phone pad taps (fix-play-1).
+  root.add(scene.add.rectangle(0, 0, GAME_W, GAME_H, 0x0c0806, dim).setOrigin(0))
   const t = scene.add
-    .text(GAME_W / 2, 76, title, {
+    .text(GAME_W / 2, TITLE_Y, title, {
       fontFamily: FONT_UI,
       fontSize: '18px',
       color: '#ffe08a',
@@ -165,7 +171,7 @@ export function bikeClimbGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '兩架並排，左右交替踩' : isTouchDevice() ? '左右半邊交替踩' : '←→ 交替踩，平衡條唔好跌')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = CLIMB_PER_SEG * 3
@@ -200,7 +206,7 @@ export function bikeClimbGame(scene: Phaser.Scene): Mini<RoundResult> {
     }
     // balance meter
     const mx = GAME_W / 2
-    const my = 128
+    const my = 140
     g.fillStyle(0x2a1a10, 1).fillRect(mx - 60, my, 120, 8)
     g.fillStyle(Math.abs(lean) > 0.7 ? 0xe05050 : 0x50e070, 1).fillRect(mx - 4 + lean * 56, my - 4, 8, 16)
     if (windWarn) {
@@ -336,7 +342,7 @@ export function umbrellaGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '兩人一齊移傘遮熊' : isTouchDevice() ? '左右拖／撳半邊移傘' : '←→ 移傘，遮住雨點')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = UMB_RAIN[0]! + UMB_RAIN[1]! + UMB_RAIN[2]!
@@ -486,7 +492,7 @@ export function kiteGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '兩隻風箏，任一過海就得' : isTouchDevice() ? '上下半邊移風箏' : '↑↓ 移風箏避開海鷗')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = KITE_BIRDS[0]! + KITE_BIRDS[1]! + KITE_BIRDS[2]!
@@ -699,7 +705,7 @@ export function ferryGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '每段換人掌舵' : isTouchDevice() ? '左右移船過閘' : '←→ 轉舵過浮標門')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = FERRY_GATES * 3
@@ -847,7 +853,7 @@ export function memoryPicsGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '輪流擺一張' : isTouchDevice() ? '撳圖放去光標位' : '←→揀，攻擊鍵放')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 100, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = MEM_N[0]! + MEM_N[1]! + MEM_N[2]!
@@ -1034,7 +1040,7 @@ export function stealthGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '燈移開先行；中燈只自己重來' : isTouchDevice() ? '暗位先撳前行' : '暗位撳攻擊鍵前進')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = STEALTH_ROOMS * STEALTH_CROSS
@@ -1185,7 +1191,7 @@ export function coffeeTrayGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '一人一杯，扶穩落樓' : isTouchDevice() ? '左右扶平托盤' : '←→ 扶平，唔好瀉')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = COFFEE_STAIRS[0]! + COFFEE_STAIRS[1]! + COFFEE_STAIRS[2]!
@@ -1350,7 +1356,7 @@ export function photoGame(scene: Phaser.Scene): Mini<RoundResult> {
   const coop = twoP(scene)
   ui.hint.setText(coop ? '各自跟剪影擺姿勢' : isTouchDevice() ? '跟剪影撳方向' : '倒數完前撳啱方向；噗噗自動')
   const g = scene.add.graphics()
-  const label = scene.add.text(GAME_W / 2, 104, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
+  const label = scene.add.text(GAME_W / 2, SEG_LABEL_Y, '', { fontFamily: FONT_UI, fontSize: '13px', color: '#ffe08a' }).setOrigin(0.5)
   ui.root.add([g, label])
 
   const total = PHOTO_POSES[0]! + PHOTO_POSES[1]! + PHOTO_POSES[2]!
