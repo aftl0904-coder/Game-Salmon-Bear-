@@ -18,6 +18,7 @@ import { bossHitDamage } from '../engine/bossDamage'
 import { SFX } from '../audio'
 import { hasStage8Anim, stage8AnimTex, type Stage8AnimId } from '../stage8Art'
 import type { AnimSetId } from '../heroAnims'
+import { applyC2SheetDisplayScale } from '../c2EnemyScale'
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
@@ -93,7 +94,8 @@ export class LabDrone extends AnimEnemy {
     this.hoverH = h
     this.homeX = x
     this.realArt = bindStage8Sheet(this, 's8drone', 'idle')
-    this.bodyBox(this.realArt ? 36 : 26, this.realArt ? 28 : 22)
+    if (this.realArt) applyC2SheetDisplayScale(this, 36, 28)
+    else this.bodyBox(26, 22)
     if (!this.realArt) {
       this.setTint(TINT.drone)
       this.lamp = scene.add.circle(x, this.y - 14, 5, 0x204050, 0.9).setDepth(this.depth + 4)
@@ -237,7 +239,8 @@ export class TubeSoldier extends AnimEnemy {
     this.hp = this.maxHp = TUBE_HP
     this.hurtMs = 220
     this.realArt = bindStage8Sheet(this, 's8tube', 'walk')
-    this.bodyBox(this.realArt ? 32 : 28, this.realArt ? 56 : 44)
+    if (this.realArt) applyC2SheetDisplayScale(this, 32, 56)
+    else this.bodyBox(28, 44)
     if (!this.realArt) {
       this.setTint(TINT.tube)
       this.tubeGfx = scene.add.graphics()
@@ -404,7 +407,8 @@ export class FileCabinet extends AnimEnemy {
     this.hp = this.maxHp = CAB_HP
     this.hurtMs = 260
     this.realArt = bindStage8Sheet(this, 's8cabinet', 'walk')
-    this.bodyBox(this.realArt ? 40 : 34, this.realArt ? 60 : 48)
+    if (this.realArt) applyC2SheetDisplayScale(this, 40, 60)
+    else this.bodyBox(34, 48)
     if (!this.realArt) {
       this.setTint(TINT.cabinet)
       this.doorGfx = scene.add.graphics()
@@ -652,11 +656,15 @@ export class ChiefResearcher extends AnimEnemy {
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
     this.realArt = bindStage8Sheet(this, 's8researcher', 'idle')
-    const bw = this.realArt ? 48 : 44
-    const bh = this.realArt ? 72 : 56
-    const body = this.body as Phaser.Physics.Arcade.Body
-    body.setSize(bw, bh)
-    body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    if (this.realArt) {
+      applyC2SheetDisplayScale(this, 48, 72)
+    } else {
+      const bw = 44
+      const bh = 56
+      const body = this.body as Phaser.Physics.Arcade.Body
+      body.setSize(bw, bh)
+      body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    }
     if (!this.realArt) {
       this.setTint(0xb8d0e8)
       this.board = scene.add.graphics()

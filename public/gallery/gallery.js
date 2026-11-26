@@ -210,18 +210,59 @@ function frameIndex(anim, tick) {
   return frames ? frames[i] : anim.start + i
 }
 
+/** Alpha bbox of a sheet frame (for fit:"content" zoom on padded HD sheets). */
+function frameContentBox(img, sx, sy, fw, fh) {
+  const c = document.createElement('canvas')
+  c.width = fw
+  c.height = fh
+  const x = c.getContext('2d')
+  x.drawImage(img, sx, sy, fw, fh, 0, 0, fw, fh)
+  const data = x.getImageData(0, 0, fw, fh).data
+  let minX = fw
+  let minY = fh
+  let maxX = 0
+  let maxY = 0
+  for (let y = 0; y < fh; y++) {
+    for (let col = 0; col < fw; col++) {
+      if (data[(y * fw + col) * 4 + 3] < 12) continue
+      if (col < minX) minX = col
+      if (col > maxX) maxX = col
+      if (y < minY) minY = y
+      if (y > maxY) maxY = y
+    }
+  }
+  if (maxX < minX) return { x: 0, y: 0, w: fw, h: fh }
+  const pad = Math.max(2, Math.floor(Math.min(fw, fh) * 0.02))
+  const x0 = Math.max(0, minX - pad)
+  const y0 = Math.max(0, minY - pad)
+  const x1 = Math.min(fw - 1, maxX + pad)
+  const y1 = Math.min(fh - 1, maxY + pad)
+  return { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 }
+}
+
 function drawFrame(ctx, img, item, frame, fitW, fitH) {
   const fw = item.frameWidth
   const fh = item.frameHeight
   const cols = item.columns || Math.max(1, Math.floor(img.width / fw))
   const sx = (frame % cols) * fw
   const sy = Math.floor(frame / cols) * fh
-  const scale = Math.min(fitW / fw, fitH / fh)
-  const dw = Math.max(1, Math.floor(fw * scale))
-  const dh = Math.max(1, Math.floor(fh * scale))
+  let srcX = sx
+  let srcY = sy
+  let srcW = fw
+  let srcH = fh
+  if (item.fit === 'content') {
+    const box = frameContentBox(img, sx, sy, fw, fh)
+    srcX = sx + box.x
+    srcY = sy + box.y
+    srcW = box.w
+    srcH = box.h
+  }
+  const scale = Math.min(fitW / srcW, fitH / srcH)
+  const dw = Math.max(1, Math.floor(srcW * scale))
+  const dh = Math.max(1, Math.floor(srcH * scale))
   ctx.clearRect(0, 0, fitW, fitH)
   ctx.imageSmoothingEnabled = false
-  ctx.drawImage(img, sx, sy, fw, fh, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
+  ctx.drawImage(img, srcX, srcY, srcW, srcH, Math.floor((fitW - dw) / 2), Math.floor((fitH - dh) / 2), dw, dh)
 }
 
 function firstFrame(item) {
@@ -467,6 +508,10 @@ async function paintModalFrame() {
   if (item.still) {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.imageSmoothingEnabled = false
+    if (item.fit === 'content') {
+      drawFrame(ctx, img, item, 0, canvas.width, canvas.height)
+      return
+    }
     const scale = Math.min(canvas.width / img.width, canvas.height / img.height)
     const dw = img.width * scale
     const dh = img.height * scale

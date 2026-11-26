@@ -332,6 +332,11 @@ export class BootScene extends Phaser.Scene {
       'enemy-cagecart',
       'enemy-gate',
       'enemy-feeder',
+      // s7-look prop overlays (PIL, art-props-1 style)
+      'prop-speedlines',
+      'prop-cage',
+      'prop-shield',
+      'prop-canbag',
     ]) {
       this.load.image(`s7-${name}`, `/art/stage7/${name}.png`)
     }
