@@ -5981,13 +5981,13 @@ export class GameScene extends Phaser.Scene {
                 ? [
                     {
                       title: `${st.keeper}：${st.sign}`,
-                      lines: ['記住亮燈次序，再跟住撳返出嚟'],
-                      tip: '↑蜜　↓蘋果　←魚　→花；觸控直接撳格。',
+                      lines: ['記住邊隻入邊個籠，', '再逐籠配對返。'],
+                      tip: '↑蜜　↓蘋　←魚　→花；觸控撳底欄。',
                     },
                     {
-                      title: '一共四輪',
-                      lines: ['長度 3、4、5、6。', '撳錯會顯示答案再下一輪。'],
-                      tip: '記啱嘅輪數換金幣。',
+                      title: '三段：4／6／8 籠',
+                      lines: ['睇清楚再配對。', '記啱換金幣。'],
+                      tip: '略過當銅級。',
                     },
                   ]
                 : st.game === 'shake'
@@ -6007,8 +6007,12 @@ export class GameScene extends Phaser.Scene {
     const pagesFinal =
       st.game === 'claw'
         ? [
-            { title: `${st.keeper}：夾公仔`, lines: ['左右郁爪，撳攻擊落爪。', '夾中有價公仔換金幣。'], tip: '時間到就結束；Skip 都有咖啡回血。' },
-            { title: '休息室', lines: ['夾完歇一歇再行。'], tip: '金幣用嚟買裝備。' },
+            {
+              title: `${st.keeper}：舊機夾公仔`,
+              lines: ['←→ 左右　↑↓ 前後深度，', '攻擊鍵落爪。'],
+              tip: '2P：一人左右一人前後。',
+            },
+            { title: '三段限時', lines: ['15／12／10 秒；爪會愈嚟愈晃。'], tip: '略過當銅級；Skip 都有回血。' },
           ]
         : pages
     const choice = await showTutorial(this, `stall-${st.game}`, pagesFinal)

@@ -57,15 +57,22 @@ const COURSE: Array<[number, Kind]> = [
   [7000, 'puddle'], [7150, 'log'], [7500, 'ramp'], [7580, 'coin'], [7640, 'coin'], [7700, 'coin'],
   [8000, 'swarm'], [8300, 'rock'], [8420, 'log'],
 ]
-/** Mall-alley chase: stage6 junk only (slow on hit, never HP damage). */
+/**
+ * Mall-alley chase junk: 3 segments → 6／9／12 obstacles (reaction).
+ * Coins sprinkled between; never HP damage on hit.
+ */
 const CHASE_COURSE: Array<[number, Kind]> = [
-  [500, 'trash'], [720, 'coin'], [980, 'debris'], [1200, 'box'], [1400, 'coin'],
-  [1680, 'cart'], [1900, 'trash'], [2100, 'coin'], [2350, 'debris'], [2600, 'box'],
-  [2850, 'coin'], [3100, 'cart'], [3350, 'trash'], [3600, 'debris'], [3800, 'coin'],
-  [4100, 'box'], [4400, 'cart'], [4650, 'trash'], [4900, 'coin'], [5200, 'debris'],
-  [5500, 'box'], [5750, 'coin'], [6000, 'cart'], [6300, 'trash'], [6600, 'debris'],
-  [6900, 'coin'], [7200, 'box'], [7500, 'cart'], [7800, 'trash'], [8100, 'coin'],
-  [8400, 'debris'], [8700, 'box'],
+  // Seg1 ×1.0 — 6 junk
+  [480, 'trash'], [900, 'debris'], [1200, 'coin'], [1480, 'box'], [1900, 'cart'],
+  [2300, 'trash'], [2600, 'coin'], [2900, 'debris'],
+  // Seg2 ×1.2 — 9 junk
+  [3300, 'box'], [3600, 'cart'], [3850, 'coin'], [4100, 'trash'], [4400, 'debris'],
+  [4700, 'box'], [5000, 'coin'], [5250, 'cart'], [5550, 'trash'], [5800, 'debris'],
+  [6050, 'box'],
+  // Seg3 ×1.4 — 12 junk
+  [6350, 'cart'], [6550, 'trash'], [6750, 'coin'], [6950, 'debris'], [7150, 'box'],
+  [7350, 'cart'], [7550, 'trash'], [7700, 'coin'], [7900, 'debris'], [8100, 'box'],
+  [8300, 'cart'], [8500, 'trash'], [8700, 'debris'], [8900, 'box'],
 ]
 const CHASE_LINES = [
   '倫寶：轆印出咗後門。',
@@ -410,6 +417,16 @@ export class BikeScene extends Phaser.Scene {
       }
       o.spr.setVisible(true).setX(sx)
       if (o.kind === 'swarm') o.spr.setY(o.y + Math.sin(now / 160 + o.x) * 4)
+      // 追籠車：障礙預警 0.8 秒（橘閃）
+      if (
+        this.chase &&
+        (o.kind === 'debris' || o.kind === 'box' || o.kind === 'trash' || o.kind === 'cart')
+      ) {
+        const leadX = this.riders[0]?.x ?? 160
+        const eta = (sx - leadX) / Math.max(1, v)
+        if (eta > 0 && eta <= 0.8) o.spr.setTint(0xffaa66)
+        else o.spr.clearTint()
+      }
       for (const r of this.riders) this.collide(r, o, sx)
     }
 
@@ -507,13 +524,12 @@ export class BikeScene extends Phaser.Scene {
 
   private finish(skipped: boolean) {
     this.finished = true
-  const showChaseGrade = this.chase && !skipped && this.chaseJunkTotal > 0
-    const graded = showChaseGrade
+    const graded = this.chase
       ? gradeResult(
-          Math.max(0, this.chaseJunkTotal - this.chaseJunkHit),
-          this.chaseJunkTotal,
+          skipped ? 0 : Math.max(0, this.chaseJunkTotal - this.chaseJunkHit),
+          Math.max(1, this.chaseJunkTotal),
           'reaction',
-          false,
+          skipped,
           'cage-chase',
         )
       : null

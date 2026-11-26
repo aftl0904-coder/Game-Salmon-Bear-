@@ -672,6 +672,7 @@ export function timingGame(scene: Phaser.Scene, title: string, verb: string, rou
     ui.bar.width = 216
     ui.title.setText(res.good >= rounds ? '次次都啱！' : res.good > 0 ? `啱咗 ${res.good} 次` : '下次再試過')
     SFX.sparkle()
+    Object.assign(res, finishRound(res, 'timing', 'lantern'))
     scene.time.delayedCall(800, destroy)
   }
   newRound()
