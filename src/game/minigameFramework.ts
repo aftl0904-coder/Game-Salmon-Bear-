@@ -174,10 +174,10 @@ export function applyGoldHeal(
   return healed
 }
 
-/** Segment banner between rounds — below transit title (TITLE_Y≈36), not overlapping (fix-play-1). */
+/** Segment flash — mid playfield so it clears transit title + status line (fix-play-1). */
 export function showSegmentBanner(scene: Phaser.Scene, seg: 1 | 2 | 3): Promise<void> {
   const t = scene.add
-    .text(GAME_W / 2, 118, `第 ${seg} 段`, {
+    .text(GAME_W / 2, GAME_H / 2 - 24, `第 ${seg} 段`, {
       fontFamily: FONT_TITLE,
       fontSize: '16px',
       color: '#dff6ff',
