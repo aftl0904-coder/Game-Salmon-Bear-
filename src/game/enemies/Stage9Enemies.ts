@@ -16,6 +16,7 @@ import { bossHitDamage } from '../engine/bossDamage'
 import { DEPTH } from '../engine/depth'
 import { hasStage910Anim, stage910AnimTex, type Stage910AnimId } from '../stage910Art'
 import type { AnimSetId } from '../heroAnims'
+import { applyC2SheetDisplayScale } from '../c2EnemyScale'
 
 function bindStage910Sheet(enemy: AnimEnemy, id: Stage910AnimId, first: string) {
   if (!hasStage910Anim(enemy.scene, id)) return false
@@ -77,7 +78,8 @@ export class JailGuard extends AnimEnemy {
     this.hp = this.maxHp = GUARD_HP
     this.hurtMs = 200
     this.realArt = bindStage910Sheet(this, 's9jailguard', 'walk')
-    this.bodyBox(this.realArt ? 32 : 28, this.realArt ? 56 : 44)
+    if (this.realArt) applyC2SheetDisplayScale(this, 32, 56)
+    else this.bodyBox(28, 44)
     if (!this.realArt) {
       this.setTint(TINT.guard)
       this.baton = scene.add
@@ -243,7 +245,8 @@ export class LockBot extends AnimEnemy {
     this.hp = this.maxHp = LOCK_HP
     this.hurtMs = 220
     this.realArt = bindStage910Sheet(this, 's9lockbot', 'walk')
-    this.bodyBox(this.realArt ? 40 : 36, this.realArt ? 56 : 48)
+    if (this.realArt) applyC2SheetDisplayScale(this, 40, 56)
+    else this.bodyBox(36, 48)
     if (!this.realArt) {
       this.setTint(TINT.lockbot)
       this.arm = scene.add
@@ -485,11 +488,15 @@ export class ChiefWarden extends AnimEnemy {
     this.arenaX0 = arenaX0
     this.arenaX1 = arenaX1
     this.realArt = bindStage910Sheet(this, 's9chief', 'idle')
-    const bw = this.realArt ? 48 : 44
-    const bh = this.realArt ? 72 : 56
-    const body = this.body as Phaser.Physics.Arcade.Body
-    body.setSize(bw, bh)
-    body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    if (this.realArt) {
+      applyC2SheetDisplayScale(this, 48, 72)
+    } else {
+      const bw = 44
+      const bh = 56
+      const body = this.body as Phaser.Physics.Arcade.Body
+      body.setSize(bw, bh)
+      body.setOffset((this.frame.width - bw) / 2, this.frame.height - bh - 6)
+    }
     if (!this.realArt) {
       this.setTint(WARDEN_TINT)
       this.baton = scene.add

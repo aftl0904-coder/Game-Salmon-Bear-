@@ -17,18 +17,25 @@ import { isActorFrozen } from '../fx'
 
 type Ctx = { boy: HeroRef; girl: HeroRef | null; leadX: number; prevLeadX: number }
 
-/** Night-warehouse palette — deliberately not mall blues/creams (D5). */
+/**
+ * s7-look: distinct multiply tints (match scripts/art/gen_s7_look_props.py TINTS).
+ * Same honeyzombie body — colour + one prop overlay separates the four.
+ */
 const C2 = {
-  charge: 0x5a4030,
-  hop: 0x3a4450,
-  shield: 0x4a5868,
-  can: 0x6a5840,
+  charge: 0xc87840,
+  hop: 0x4070b0,
+  shield: 0x889098,
+  can: 0xb09048,
 } as const
 
-function attachBadge(scene: Phaser.Scene, host: Phaser.GameObjects.Sprite, key: string) {
+function attachProp(
+  scene: Phaser.Scene,
+  host: Phaser.GameObjects.Sprite,
+  key: string,
+  depthDelta = 2,
+): Phaser.GameObjects.Image | null {
   if (!scene.textures.exists(key)) return null
-  const img = scene.add.image(host.x, host.y - 20, key).setDepth(host.depth + 2)
-  return img
+  return scene.add.image(host.x, host.y, key).setDepth(host.depth + depthDelta).setOrigin(0.5, 1)
 }
 
 /** Non-charge Stage7 walk speed (shield chase uses its own 16/28). Kept exported for QA/docs. */
@@ -64,14 +71,14 @@ export class ChargeHoneyZombie extends HoneyZombie {
   private dir: 1 | -1 = 1
   private chargeFrom = 0
   private flash: Phaser.GameObjects.Text | null = null
-  private badge: Phaser.GameObjects.Image | null = null
+  private prop: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
     super(scene, x, hooks)
     this.species = 's7charge'
     this.hp = this.maxHp = 9
     this.setTint(C2.charge)
-    this.badge = attachBadge(scene, this, 's7-enemy-whip')
+    this.prop = attachProp(scene, this, 's7-prop-speedlines', -1)
   }
 
   protected override defaultTint() {
@@ -100,6 +107,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
     if (this.getData('leaping')) {
       this.setVelocity(0, 0)
       this.setDepth(actorDepth('enemy', this.lane, this.y))
+      this.syncProp()
       return
     }
     this.y = this.s2.floorY()
@@ -108,6 +116,7 @@ export class ChargeHoneyZombie extends HoneyZombie {
       if (this.think <= 0) this.setFsm('CHASE')
       this.setVelocity(0, 0)
       this.syncFlash()
+      this.syncProp()
       return
     }
     const tgt = pickTarget(this, ctx.boy, ctx.girl)
@@ -178,7 +187,23 @@ export class ChargeHoneyZombie extends HoneyZombie {
       }
     }
     this.setDepth(actorDepth('enemy', this.lane, this.y))
-    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 2).setFlipX(this.flipX)
+    this.syncProp()
+  }
+
+  private syncProp() {
+    if (!this.prop) return
+    const face = this.flipX ? -1 : 1
+    // Speed lines trail behind the body
+    const ox = this.x - face * 28
+    const oy = this.y - 18
+    const charging = this.phase === 'charge'
+    this.prop
+      .setPosition(ox, oy)
+      .setDepth(this.depth - 1)
+      .setFlipX(this.flipX)
+      .setAlpha(charging ? 1 : 0.72)
+      .setScale(charging ? 1.15 : 1, charging ? 1.1 : 1)
+      .setVisible(this.active && this.visible && this.fsm !== 'DEAD')
   }
 
   private syncFlash() {
@@ -189,16 +214,16 @@ export class ChargeHoneyZombie extends HoneyZombie {
   protected override die(dir: number) {
     this.flash?.destroy()
     this.flash = null
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.flash?.destroy()
     this.flash = null
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.destroy(fromScene)
   }
 }
@@ -210,8 +235,7 @@ export class HopCage extends HoneyZombie {
   private phase: 'idle' | 'crouch' | 'hop' = 'idle'
   private t = 0
   private airborne = false
-  private costume: Phaser.GameObjects.Graphics
-  private badge: Phaser.GameObjects.Image | null = null
+  private prop: Phaser.GameObjects.Image | null = null
   private shadow: Phaser.GameObjects.Ellipse | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks) {
@@ -219,9 +243,7 @@ export class HopCage extends HoneyZombie {
     this.species = 's7hop'
     this.hp = this.maxHp = 9
     this.setTint(C2.hop)
-    this.costume = scene.add.graphics()
-    this.drawCage()
-    this.badge = attachBadge(scene, this, 's7-enemy-cagecart')
+    this.prop = attachProp(scene, this, 's7-prop-cage', 2)
     this.t = Phaser.Math.Between(200, 700)
   }
 
@@ -236,17 +258,6 @@ export class HopCage extends HoneyZombie {
 
   canHurtPlayer() {
     return this.active && this.fsm !== 'DEAD' && this.fsm !== 'HURT' && this.airborne && this.contactCd <= 0
-  }
-
-  private drawCage() {
-    const g = this.costume
-    g.clear()
-    g.lineStyle(2, 0x8a8680, 1).strokeRect(-14, -40, 28, 26)
-    g.lineBetween(-14, -31, 14, -31)
-    g.lineBetween(-14, -22, 14, -22)
-    g.lineBetween(-5, -40, -5, -14)
-    g.lineBetween(5, -40, 5, -14)
-    g.fillStyle(0xe8d090, 1).fillRect(-6, -18, 12, 5)
   }
 
   private clearShadow() {
@@ -327,7 +338,7 @@ export class HopCage extends HoneyZombie {
 
   override tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.costume.setVisible(false)
+      this.prop?.setVisible(false)
       this.clearShadow()
       return
     }
@@ -373,18 +384,14 @@ export class HopCage extends HoneyZombie {
   }
 
   private syncCostume() {
-    this.costume
-      .setPosition(this.x, this.y)
-      .setDepth(this.depth + 1)
+    if (!this.prop) return
+    // Cage sits on the head
+    this.prop
+      .setPosition(this.x, this.y - 44)
+      .setDepth(this.depth + 2)
       .setVisible(this.active && this.visible && this.fsm !== 'DEAD')
-      .setScale(this.flipX ? -1 : 1, 1)
-    if (this.badge) {
-      this.badge
-        .setPosition(this.x, this.y - 24)
-        .setDepth(this.depth + 2)
-        .setVisible(this.active && this.visible && this.fsm !== 'DEAD')
-        .setFlipX(this.flipX)
-    }
+      .setFlipX(this.flipX)
+      .setOrigin(0.5, 1)
   }
 
   protected override die(dir: number) {
@@ -392,9 +399,8 @@ export class HopCage extends HoneyZombie {
     hop?.stop()
     this.airborne = false
     this.clearShadow()
-    this.costume.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.die(dir)
   }
 
@@ -402,9 +408,8 @@ export class HopCage extends HoneyZombie {
     const hop = this.getData('hopTween') as Phaser.Tweens.Tween | undefined
     hop?.stop()
     this.clearShadow()
-    this.costume?.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.destroy(fromScene)
   }
 }
@@ -413,8 +418,7 @@ export class HopCage extends HoneyZombie {
 
 /** Front blocks bullets (ding); must jump behind and hit the back. HP 6. E1 turn delay. */
 export class ShieldKeeper extends AnimEnemy {
-  private shieldGfx: Phaser.GameObjects.Graphics
-  private badge: Phaser.GameObjects.Image | null = null
+  private prop: Phaser.GameObjects.Image | null = null
   /** Desired face: flipX true = facing left. */
   private wantFlipX: boolean | null = null
   private turnDelayLeft = 0
@@ -429,8 +433,7 @@ export class ShieldKeeper extends AnimEnemy {
     this.hurtMs = 240
     this.bodyBox(30, 44)
     this.setTint(C2.shield)
-    this.shieldGfx = scene.add.graphics()
-    this.badge = attachBadge(scene, this, 's7-enemy-gate')
+    this.prop = attachProp(scene, this, 's7-prop-shield', 2)
   }
 
   protected override defaultTint() {
@@ -471,7 +474,7 @@ export class ShieldKeeper extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.shieldGfx.setVisible(false)
+      this.prop?.setVisible(false)
       this.clearHint()
       return
     }
@@ -541,39 +544,32 @@ export class ShieldKeeper extends AnimEnemy {
   }
 
   private drawShield() {
-    const g = this.shieldGfx
-    g.clear()
+    if (!this.prop) return
     if (!this.active || !this.visible || this.fsm === 'DEAD') {
-      g.setVisible(false)
+      this.prop.setVisible(false)
       return
     }
-    g.setVisible(true)
     const face = this.flipX ? -1 : 1
-    const sx = this.x + face * 16
-    const sy = this.y - 28
-    // Iron gate plate (warehouse steel, not mall acrylic)
-    g.fillStyle(0x708090, 1).fillRoundedRect(sx - 11, sy - 20, 22, 40, 2)
-    g.lineStyle(2, 0x2a3038, 1).strokeRoundedRect(sx - 11, sy - 20, 22, 40, 2)
-    g.lineStyle(2, 0xa0b0c0, 1).lineBetween(sx - 7, sy - 10, sx + 7, sy - 10)
-    g.lineBetween(sx - 7, sy + 2, sx + 7, sy + 2)
-    g.fillStyle(0xc0a040, 1).fillCircle(sx, sy - 2, 3)
-    g.setDepth(this.depth + 2)
-    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 3).setFlipX(this.flipX)
+    // Large shield held in front of the body
+    this.prop
+      .setVisible(true)
+      .setPosition(this.x + face * 18, this.y - 8)
+      .setDepth(this.depth + 2)
+      .setFlipX(this.flipX)
+      .setOrigin(0.5, 1)
   }
 
   protected override die(dir: number) {
     this.clearHint()
-    this.shieldGfx.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
     this.clearHint()
-    this.shieldGfx?.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.destroy(fromScene)
   }
 }
@@ -590,8 +586,7 @@ export class CanThrower extends AnimEnemy {
   private cd = 900
   private wind = 0
   private ch: CanHooks
-  private canGfx: Phaser.GameObjects.Graphics
-  private badge: Phaser.GameObjects.Image | null = null
+  private prop: Phaser.GameObjects.Image | null = null
 
   constructor(scene: Phaser.Scene, x: number, hooks: Stage2Hooks, ch: CanHooks) {
     super(scene, x, hooks.floorY(), 'honeyzombie', hooks, 'walk')
@@ -601,8 +596,8 @@ export class CanThrower extends AnimEnemy {
     this.hurtMs = 220
     this.bodyBox(28, 44)
     this.setTint(C2.can)
-    this.canGfx = scene.add.graphics()
-    this.badge = attachBadge(scene, this, 's7-enemy-feeder')
+    // Bag of cans on the back (behind body)
+    this.prop = attachProp(scene, this, 's7-prop-canbag', -1)
     this.cd = Phaser.Math.Between(600, 1200)
     this.anims.pause()
   }
@@ -625,7 +620,7 @@ export class CanThrower extends AnimEnemy {
 
   tick(dt: number, ctx: Ctx) {
     if (!this.active || this.fsm === 'DEAD') {
-      this.canGfx.setVisible(false)
+      this.prop?.setVisible(false)
       return
     }
     const now = this.scene.time.now
@@ -670,36 +665,31 @@ export class CanThrower extends AnimEnemy {
   }
 
   private drawCan() {
-    const g = this.canGfx
-    g.clear()
-    if (!this.active || !this.visible || this.fsm === 'DEAD' || this.wind > 0) {
-      g.setVisible(false)
+    if (!this.prop) return
+    if (!this.active || !this.visible || this.fsm === 'DEAD') {
+      this.prop.setVisible(false)
       return
     }
-    g.setVisible(true)
     const face = this.flipX ? -1 : 1
-    const cx = this.x + face * 14
-    const cy = this.y - 34
-    // Feed bucket (olive/warehouse), not mall soda can
-    g.fillStyle(0x8a9060, 1).fillRoundedRect(cx - 8, cy - 10, 16, 14, 2)
-    g.lineStyle(1, 0x303820, 1).strokeRoundedRect(cx - 8, cy - 10, 16, 14, 2)
-    g.fillStyle(0xc0b070, 1).fillEllipse(cx, cy - 10, 16, 5)
-    if (this.badge) this.badge.setPosition(this.x, this.y - 22).setDepth(this.depth + 2).setFlipX(this.flipX)
-    g.fillStyle(0xe8d070, 1).fillRect(cx - 5, cy - 4, 10, 3)
-    g.setDepth(this.depth + 2)
+    // Sack of cans on the back (trail side)
+    this.prop
+      .setVisible(true)
+      .setPosition(this.x - face * 14, this.y - 10)
+      .setDepth(this.depth - 1)
+      .setFlipX(this.flipX)
+      .setOrigin(0.5, 1)
+      .setAlpha(this.wind > 0 ? 0.85 : 1)
   }
 
   protected override die(dir: number) {
-    this.canGfx.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.die(dir)
   }
 
   override destroy(fromScene?: boolean) {
-    this.canGfx?.destroy()
-    this.badge?.destroy()
-    this.badge = null
+    this.prop?.destroy()
+    this.prop = null
     super.destroy(fromScene)
   }
 }
