@@ -1175,7 +1175,9 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
+              },
+              "fitContent": true,
+              "fitPad": 0.28
             },
             {
               "id": "robotarm",
@@ -1210,16 +1212,41 @@
             {
               "id": "s7charge",
               "name": "衝刺蜜殭",
-              "blurb": "預警之後直衝過嚟。",
+              "blurb": "預警之後直衝過嚟。琥珀色＋速度線。",
               "stage": 7,
               "unlock": {
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/anim/honeyzombie.png",
-              "frameWidth": 232,
+              "sheet": "/art/stage7/gallery-s7charge.png",
+              "frameWidth": 141,
               "frameHeight": 114,
-              "columns": 13,
+              "columns": 1,
+              "anims": {
+                "idle": {
+                  "label": "待機",
+                  "start": 0,
+                  "count": 1,
+                  "fps": 1,
+                  "loop": true
+                }
+              },
+              "still": true,
+              "fit": "content"
+            },
+            {
+              "id": "s7hop",
+              "name": "跳籠",
+              "blurb": "蹲低就係要跳。鋼藍＋頭上鐵籠。",
+              "stage": 7,
+              "unlock": {
+                "type": "stageClear",
+                "stage": 7
+              },
+              "sheet": "/art/stage7/gallery-s7hop.png",
+              "frameWidth": 115,
+              "frameHeight": 114,
+              "columns": 1,
               "anims": {
                 "walk": {
                   "label": "行走",
@@ -1249,79 +1276,101 @@
                   "fps": 7,
                   "loop": false
                 }
-              }
-            },
-            {
-              "id": "s7hop",
-              "name": "跳籠",
-              "blurb": "蹲低就係要跳。",
-              "stage": 7,
-              "unlock": {
-                "type": "stageClear",
-                "stage": 7
               },
-              "sheet": "/art/stage7/enemy-cagecart.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
-              "columns": 1,
-              "anims": {
-                "idle": {
-                  "label": "待機",
-                  "start": 0,
-                  "count": 1,
-                  "fps": 1,
-                  "loop": true
-                }
-              },
-              "still": true
+              "still": true,
+              "fit": "content"
             },
             {
               "id": "s7shield",
               "name": "盾兵",
-              "blurb": "正面擋，要繞到後面。",
+              "blurb": "正面擋，要繞到後面。鐵藍＋身前大盾。",
               "stage": 7,
               "unlock": {
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-gate.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
+              "sheet": "/art/stage7/gallery-s7shield.png",
+              "frameWidth": 127,
+              "frameHeight": 114,
               "columns": 1,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
               },
-              "still": true
+              "still": true,
+              "fit": "content"
             },
             {
               "id": "s7can",
               "name": "罐頭兵",
-              "blurb": "喺後面擲罐頭。",
+              "blurb": "喺後面擲罐頭。芥末色＋背囊罐頭。",
               "stage": 7,
               "unlock": {
                 "type": "stageClear",
                 "stage": 7
               },
-              "sheet": "/art/stage7/enemy-feeder.png",
-              "frameWidth": 64,
-              "frameHeight": 64,
+              "sheet": "/art/stage7/gallery-s7can.png",
+              "frameWidth": 127,
+              "frameHeight": 114,
               "columns": 1,
               "anims": {
-                "idle": {
-                  "label": "待機",
+                "walk": {
+                  "label": "行走",
                   "start": 0,
-                  "count": 1,
-                  "fps": 1,
+                  "count": 4,
+                  "fps": 5,
                   "loop": true
+                },
+                "reach": {
+                  "label": "reach",
+                  "start": 4,
+                  "count": 3,
+                  "fps": 6,
+                  "loop": false
+                },
+                "hit": {
+                  "label": "受傷",
+                  "start": 7,
+                  "count": 2,
+                  "fps": 10,
+                  "loop": false
+                },
+                "die": {
+                  "label": "倒地",
+                  "start": 9,
+                  "count": 4,
+                  "fps": 7,
+                  "loop": false
                 }
               },
-              "still": true
+              "still": true,
+              "fit": "content"
             }
           ]
         },
@@ -1385,7 +1434,8 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "fit": "content"
             },
             {
               "id": "s8tube",
@@ -1443,7 +1493,8 @@
                   "fps": 6,
                   "loop": false
                 }
-              }
+              },
+              "fit": "content"
             },
             {
               "id": "s8cabinet",
@@ -1537,7 +1588,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "fit": "content"
             }
           ]
         },
@@ -1637,7 +1689,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "fit": "content"
             },
             {
               "id": "s9lockbot",
@@ -1731,7 +1784,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "fit": "content"
             }
           ]
         },
@@ -1830,7 +1884,8 @@
                     23
                   ]
                 }
-              }
+              },
+              "fit": "content"
             }
           ]
         }
@@ -2177,7 +2232,9 @@
               "fps": 7,
               "loop": false
             }
-          }
+          },
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "mall-scrubber",
@@ -2189,19 +2246,34 @@
             "stage": 6
           },
           "sheet": "/art/c2/scrubber-sheet.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "frameWidth": 112,
+          "frameHeight": 80,
+          "columns": 10,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 4,
               "loop": true
+            },
+            "move": {
+              "label": "移動",
+              "start": 4,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "attack": {
+              "label": "攻擊",
+              "start": 8,
+              "count": 2,
+              "fps": 6,
+              "loop": false
             }
           },
-          "still": true
+          "fitContent": true,
+          "fitPad": 0.16
         },
         {
           "id": "trainer",
@@ -2212,20 +2284,70 @@
             "type": "stageClear",
             "stage": 7
           },
-          "sheet": "/art/stage7/enemy-whip.png",
-          "frameWidth": 64,
-          "frameHeight": 64,
-          "columns": 1,
+          "sheet": "/art/anim/triboss.png",
+          "frameWidth": 172,
+          "frameHeight": 204,
+          "columns": 23,
           "anims": {
             "idle": {
               "label": "待機",
               "start": 0,
-              "count": 1,
-              "fps": 1,
+              "count": 4,
+              "fps": 6,
               "loop": true
+            },
+            "point": {
+              "label": "point",
+              "start": 4,
+              "count": 3,
+              "fps": 8,
+              "loop": false
+            },
+            "rain": {
+              "label": "rain",
+              "start": 7,
+              "count": 4,
+              "fps": 6,
+              "loop": true
+            },
+            "shield": {
+              "label": "shield",
+              "start": 11,
+              "count": 4,
+              "fps": 8,
+              "loop": true
+            },
+            "hurt": {
+              "label": "受傷",
+              "start": 15,
+              "count": 2,
+              "fps": 10,
+              "loop": false
+            },
+            "defeat": {
+              "label": "倒地",
+              "start": 17,
+              "count": 5,
+              "fps": 6,
+              "loop": false
+            },
+            "unmask": {
+              "label": "unmask",
+              "start": 22,
+              "count": 5,
+              "fps": 7,
+              "loop": false
             }
           },
-          "still": true
+          "tint": "#c98c70",
+          "badge": "/art/stage7/enemy-whip.png",
+          "badgeMode": "corner",
+          "markers": [
+            "whistle",
+            "leash"
+          ],
+          "fitContent": true,
+          "fitPad": 0.24
         },
         {
           "id": "researcher",
@@ -2371,7 +2493,8 @@
                 39
               ]
             }
-          }
+          },
+          "fit": "content"
         },
         {
           "id": "warden",
@@ -2542,7 +2665,8 @@
                 47
               ]
             }
-          }
+          },
+          "fit": "content"
         },
         {
           "id": "leon",
@@ -2688,7 +2812,8 @@
                 39
               ]
             }
-          }
+          },
+          "fit": "content"
         }
       ]
     },
