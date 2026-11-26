@@ -129,16 +129,27 @@ export function showTutorial(scene: Phaser.Scene, id: string, pages: Page[]): Pr
     scene.input.on('pointerdown', onTap)
     scene.input.keyboard?.on('keydown', onKey)
     scene.events.on('update', tick)
-    // A skip button so a phone player never has to find a key.
-    const skipBtn = scene.add
-      .text(GAME_W - 54, GAME_H - 48, '跳過 ▶▶', { fontFamily: FONT_UI, fontSize: '11px', color: '#e0b86a', backgroundColor: '#2a1a10', padding: { x: 6, y: 3 } })
-      .setOrigin(0.5)
+    // Skip control — top-left, large hit target, clear of phone pads (fix-play-1).
+    const skipBg = scene.add
+      .rectangle(64, 32, 100, 36, 0x2a1a10, 0.95)
+      .setStrokeStyle(2, 0xc8902a)
+      .setDepth(DEPTH.UI + 500)
       .setInteractive({ useHandCursor: true })
-    skipBtn.on('pointerdown', (_p: Phaser.Input.Pointer, _x: number, _y: number, ev: Phaser.Types.Input.EventData) => {
+    const skipBtn = scene.add
+      .text(64, 32, '跳過 ▶▶', {
+        fontFamily: FONT_UI,
+        fontSize: '13px',
+        color: '#e0b86a',
+      })
+      .setOrigin(0.5)
+      .setDepth(DEPTH.UI + 501)
+    const doSkip = (_p: Phaser.Input.Pointer, _x: number, _y: number, ev?: Phaser.Types.Input.EventData) => {
       ev?.stopPropagation?.()
       end('skip')
-    })
-    root.add(skipBtn)
+    }
+    skipBg.on('pointerdown', doSkip)
+    skipBtn.setInteractive({ useHandCursor: true }).on('pointerdown', doSkip)
+    root.add([skipBg, skipBtn])
     draw()
   })
 }

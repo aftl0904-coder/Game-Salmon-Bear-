@@ -85,7 +85,6 @@ export class TransitScene extends Phaser.Scene {
       const skip = () => this.leave(null, true)
       kb?.on('keydown-ESC', skip)
       this.events.once('shutdown', () => kb?.off('keydown-ESC', skip))
-      mountTouchControls(this)
       void this.run().catch((err) => {
         console.warn('[transit] run failed, skipping to play', err)
         this.failSafePlay()
@@ -117,6 +116,9 @@ export class TransitScene extends Phaser.Scene {
     ])
     if (this.leaving || !this.scene.isActive()) return
     if (choice === 'skip') return this.leave(null, true)
+
+    // Pads after tutorial — keeps 「跳過」tappable on phone (fix-play-1 transit7).
+    mountTouchControls(this)
 
     try {
       this.mini = startTransitGame(this, this.transitId)
