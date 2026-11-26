@@ -3668,6 +3668,492 @@
           "still": true
         }
       ]
+    },
+    {
+      "id": "medals",
+      "label": "紀念章",
+      "items": [
+        {
+          "id": "medal-gacha",
+          "name": "扭蛋",
+          "blurb": "第一粒扭蛋，揸實佢。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "gacha"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "gacha"
+        },
+        {
+          "id": "medal-flag",
+          "name": "舉旗大賽",
+          "blurb": "咖啡媽媽都話你哋夠快！",
+          "unlock": {
+            "type": "medal",
+            "medalId": "flag"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "flag"
+        },
+        {
+          "id": "medal-bike-climb",
+          "name": "單車上斜",
+          "blurb": "噗噗坐得穩，一路冇跌過。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "bike-climb"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "bike-climb"
+        },
+        {
+          "id": "medal-pour",
+          "name": "倒雞蛋仔漿",
+          "blurb": "格格都滿，一滴都冇瀉。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "pour"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "pour"
+        },
+        {
+          "id": "medal-umbrella",
+          "name": "撐傘送熊下山",
+          "blurb": "夾到第一隻，送俾隔籬。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "umbrella"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "umbrella"
+        },
+        {
+          "id": "medal-lantern",
+          "name": "夜市揀燈籠",
+          "blurb": "蛋撻出爐，酥皮啱啱好。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "lantern"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "lantern"
+        },
+        {
+          "id": "medal-kite",
+          "name": "放風箏過海",
+          "blurb": "條線冇斷，風箏過咗海。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "kite"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "kite"
+        },
+        {
+          "id": "medal-tilt",
+          "name": "斜板滾波",
+          "blurb": "波仔落袋，工地都靜咗。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "tilt"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "tilt"
+        },
+        {
+          "id": "medal-ferry",
+          "name": "渡海小輪",
+          "blurb": "船頭企穩，對岸到喇。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "ferry"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "ferry"
+        },
+        {
+          "id": "medal-sashimi",
+          "name": "切刺身",
+          "blurb": "每片都一樣厚，師傅點頭。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "sashimi"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "sashimi"
+        },
+        {
+          "id": "medal-memory-pics",
+          "name": "砌回憶",
+          "blurb": "野餐嗰日，原來咁開心。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "memory-pics"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "memory-pics"
+        },
+        {
+          "id": "medal-goldfish",
+          "name": "會員搶答",
+          "blurb": "地產題，難唔到佢。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "goldfish"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "goldfish"
+        },
+        {
+          "id": "medal-cage-chase",
+          "name": "追籠車",
+          "blurb": "轆印冇跟甩，前面就係。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "cage-chase"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "cage-chase"
+        },
+        {
+          "id": "medal-memory",
+          "name": "記住每個籠",
+          "blurb": "每隻都返到自己個籠。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "memory"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "memory"
+        },
+        {
+          "id": "medal-stealth",
+          "name": "避燈潛入",
+          "blurb": "燈照唔到我哋。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "stealth"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "stealth"
+        },
+        {
+          "id": "medal-recipe",
+          "name": "配方配對",
+          "blurb": "原本嘅配方，冇刪過。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "recipe"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "recipe"
+        },
+        {
+          "id": "medal-coffee-tray",
+          "name": "端咖啡落樓",
+          "blurb": "兩杯都滿，一滴都冇瀉。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "coffee-tray"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "coffee-tray"
+        },
+        {
+          "id": "medal-claw",
+          "name": "舊機夾公仔",
+          "blurb": "你移左右，我移前後。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "claw"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "claw"
+        },
+        {
+          "id": "medal-photo",
+          "name": "合照",
+          "blurb": "三個人，一張相。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "photo"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "photo"
+        },
+        {
+          "id": "medal-shake",
+          "name": "搖蜜糖",
+          "blurb": "搖勻晒，等大家一齊食。",
+          "unlock": {
+            "type": "medal",
+            "medalId": "shake"
+          },
+          "sheet": "/art/minigames/badge-base.png",
+          "frameWidth": 32,
+          "frameHeight": 32,
+          "columns": 1,
+          "still": true,
+          "anims": {
+            "idle": {
+              "label": "紀念章",
+              "start": 0,
+              "count": 1,
+              "fps": 1,
+              "loop": true
+            }
+          },
+          "medalId": "shake"
+        }
+      ]
     }
   ]
 }

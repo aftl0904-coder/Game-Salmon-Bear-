@@ -11,6 +11,7 @@ type GallerySave = {
   bosses: string[]
   scenes: string[]
   stories: string[]
+  medals: string[]
 }
 
 function read(): GallerySave {
@@ -23,9 +24,10 @@ function read(): GallerySave {
       bosses: Array.isArray(raw.bosses) ? raw.bosses : [],
       scenes: Array.isArray(raw.scenes) ? raw.scenes : [],
       stories: Array.isArray(raw.stories) ? raw.stories : [],
+      medals: Array.isArray(raw.medals) ? raw.medals : [],
     }
   } catch {
-    return { heroes: [], friends: [], enemies: [], bosses: [], scenes: [], stories: [] }
+    return { heroes: [], friends: [], enemies: [], bosses: [], scenes: [], stories: [], medals: [] }
   }
 }
 
@@ -91,5 +93,12 @@ export function galleryMarkEnemy(id: string) {
 export function galleryMarkC2Ending() {
   const g = read()
   for (let i = 1; i <= 10; i++) add(g.stories, `ending-c2-${String(i).padStart(2, '0')}`)
+  write(g)
+}
+
+/** Gold-tier minigame medal (durable; also mirrored in sake-kuma-medals-v1). */
+export function galleryMarkMedal(id: string) {
+  const g = read()
+  add(g.medals, id)
   write(g)
 }

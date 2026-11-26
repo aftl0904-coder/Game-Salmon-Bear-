@@ -5,6 +5,7 @@ import { FONT_UI, FONT_TITLE } from './ui/fonts'
 import { SFX } from './audio'
 import { TouchInput } from './touchInput'
 import type { Mini } from './minigames'
+import { gradeResult, showSegmentBanner, type MiniGrade } from './minigameFramework'
 import quizRaw from '../../data/quiz-mall.json'
 
 type Q = {
@@ -72,6 +73,10 @@ export type GoldfishResult = {
   correct: number
   wrong: number
   skipped: number
+  good: number
+  total: number
+  grade?: MiniGrade
+  medalId?: string
   /** 2P: per-purse deltas (already floored at 0 net for shared `coins`). */
   purse?: { boy: number; girl: number }
 }
@@ -131,6 +136,24 @@ const FALLBACK_CATS = ['developer', 'law', 'hanglung', 'math', 'mall', 'hr', 'la
  * quiz-home-1: when `pinHomeFirst`, replace slot 0 with a simple developer
  * (地產發展) question; later opens keep the ordinary mix.
  */
+/** Mini-1: 3 segments × 3 — normal → hard → developer (existing bank). */
+function pickRoundSegments(rng: () => number, opts?: PickRoundOpts): Q[] {
+  const seenList = loadSeenIds()
+  const seen = new Set(seenList)
+  const normals = BANK.questions.filter((q) => q.difficulty !== 'hard' && !isHomeTopicBanned(q))
+  const hards = BANK.questions.filter((q) => q.difficulty === 'hard' && !isHomeTopicBanned(q))
+  const devs = normals.filter((q) => q.category === 'developer')
+  const exclude = new Set<string>(opts?.excludeIds ?? [])
+  const seg1 = pickFromPool(normals, 3, seen, exclude, rng)
+  for (const q of seg1) exclude.add(q.id)
+  const seg2 = pickFromPool(hards.length ? hards : normals, 3, seen, exclude, rng)
+  for (const q of seg2) exclude.add(q.id)
+  const seg3 = pickFromPool(devs.length ? devs : normals, 3, seen, exclude, rng)
+  const out = [...seg1, ...seg2, ...seg3].slice(0, 9)
+  saveSeenIds([...seenList, ...out.map((q) => q.id)])
+  return out
+}
+
 function pickRound(rng: () => number, opts?: PickRoundOpts): Q[] {
   const seenList = loadSeenIds()
   const seen = new Set(seenList)
@@ -291,7 +314,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     stageNo === 8
       ? ((scene.registry.get('runQuizIdsStage6') as string[] | undefined) ?? []).filter((id) => typeof id === 'string')
       : undefined
-  const picked = pickRound(rng, { pinHomeFirst, excludeIds })
+  const picked = pickRoundSegments(rng, { pinHomeFirst, excludeIds })
   if (stageNo === 6) scene.registry.set('runQuizIdsStage6', picked.map((q) => q.id))
   const round = shuffleRoundChoices(picked, rng)
   const scoring = BANK.scoring
@@ -436,13 +459,21 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
     paintCursor()
   }
 
-  const resultNow = (): GoldfishResult => ({
-    coins,
-    correct,
-    wrong,
-    skipped,
-    purse: twoP ? { ...purse } : undefined,
-  })
+  const resultNow = (): GoldfishResult => {
+    const total = round.length
+    const graded = gradeResult(correct, total, 'puzzle', false, 'goldfish')
+    return {
+      coins,
+      correct,
+      wrong,
+      skipped,
+      good: correct,
+      total,
+      grade: graded.grade,
+      medalId: graded.medalId,
+      purse: twoP ? { ...purse } : undefined,
+    }
+  }
 
   const finish = (r: GoldfishResult) => {
     if (killed) return
@@ -562,6 +593,7 @@ export function goldfishQuiz(scene: Phaser.Scene): Mini<GoldfishResult> {
       }, 50)
       return
     }
+    if (qi === 0 || qi === 3 || qi === 6) void showSegmentBanner(scene, (Math.floor(qi / 3) + 1) as 1 | 2 | 3)
     const q = round[qi]!
     phase = 'buzz'
     answering = null

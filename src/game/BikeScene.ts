@@ -8,6 +8,7 @@ import { animTex, hasAnimSet, markHd, type AnimSetId } from './heroAnims'
 import { p2Pad, btn as padBtn } from './gamepadBridge'
 import meta from '../../data/anim/map-bike.json'
 import { saveTransitionCoins } from './run'
+import { gradeResult, showGradeResult } from './minigameFramework'
 
 /**
  * 單車追逐 — auto-scrolling ride between any two stages (destination + song come from `to`; art is shared).
@@ -98,6 +99,9 @@ export class BikeScene extends Phaser.Scene {
   private toStage = 2
   /** Stage 6→7 cage-truck chase (mall alley). */
   private chase = false
+  private chaseJunkTotal = 0
+  private chaseJunkHit = 0
+  private chaseBaseMul = 1
 
   constructor() {
     super('bike')
@@ -313,6 +317,7 @@ export class BikeScene extends Phaser.Scene {
             ? chaseKey[kind]!
             : `bike-${kind}`
     if (!this.textures.exists(key)) return
+    if (this.chase && (kind === 'debris' || kind === 'box' || kind === 'trash' || kind === 'cart')) this.chaseJunkTotal++
     const y = kind === 'swarm' ? ROAD_Y - 64 : kind === 'coin' ? ROAD_Y - 58 : kind === 'puddle' ? ROAD_Y + 3 : ROAD_Y + 2
     const spr = this.add.sprite(-100, y, key).setOrigin(0.5, 1).setVisible(false)
     if (kind === 'box') spr.setScale(0.55)
@@ -342,26 +347,31 @@ export class BikeScene extends Phaser.Scene {
     this.mash = Math.max(0, this.mash - dt * 2.6)
     const boost = Phaser.Math.Clamp(this.mash / 6, 0, 1)
     this.mult = 1 + boost
-    const target = (now < this.slowUntil ? 0.55 : 1) + boost * 0.5
+    const len = this.courseLength()
+    const progress = Math.min(1, this.dist / len)
+    if (this.chase) {
+      const seg = progress < 0.34 ? 1 : progress < 0.67 ? 2 : 3
+      this.chaseBaseMul = [1, 1.2, 1.4][seg - 1] ?? 1
+    }
+    const target = ((now < this.slowUntil ? 0.55 : 1) + boost * 0.5) * (this.chase ? this.chaseBaseMul : 1)
     this.speedMul += (target - this.speedMul) * Math.min(1, dt * 4)
     this.multText.setText(boost > 0.05 ? `踩！ ×${this.mult.toFixed(1)}` : '')
     this.multText.setColor(boost > 0.7 ? '#ffd040' : boost > 0.35 ? '#ff9a3a' : '#c88050')
     this.drawSpeedLines(boost)
     const v = SPEED * this.speedMul
     this.dist += v * dt
-    const len = this.courseLength()
-    const progress = Math.min(1, this.dist / len)
+    const progress2 = Math.min(1, this.dist / len)
     if (this.chase && this.goalImg) {
       // Side door grows as you near the exhibit entrance.
-      this.goalImg.setScale(0.55 + progress * 0.7)
-      this.goalImg.setX(GAME_W - 70 - progress * 30)
-      this.far.setAlpha(0.85 + progress * 0.15)
+      this.goalImg.setScale(0.55 + progress2 * 0.7)
+      this.goalImg.setX(GAME_W - 70 - progress2 * 30)
+      this.far.setAlpha(0.85 + progress2 * 0.15)
     } else {
-      this.far.setScale(1 + progress * 0.18)
+      this.far.setScale(1 + progress2 * 0.18)
     }
     this.mid.tilePositionX += v * dt * (this.chase ? 0.85 : 0.45)
     this.road.tilePositionX += v * dt
-    this.marker.x = 176 + progress * 288
+    this.marker.x = 176 + progress2 * 288
 
     for (const r of this.riders) {
       if (r.jumpKeys() && !r.air) {
@@ -465,7 +475,10 @@ export class BikeScene extends Phaser.Scene {
       case 'trash':
       case 'cart':
         // Chase junk: slow only (same as crash wobble — never HP).
-        if (dx < 20 && feet > ROAD_Y - 22 && now > r.hurtUntil) this.crash(r, '撞到！')
+        if (dx < 20 && feet > ROAD_Y - 22 && now > r.hurtUntil) {
+          if (this.chase) this.chaseJunkHit++
+          this.crash(r, '撞到！')
+        }
         break
       default:
         if (dx < 16 && feet > ROAD_Y - 18 && now > r.hurtUntil) this.crash(r, '撞到！')
@@ -494,12 +507,29 @@ export class BikeScene extends Phaser.Scene {
 
   private finish(skipped: boolean) {
     this.finished = true
+  const showChaseGrade = this.chase && !skipped && this.chaseJunkTotal > 0
+    const graded = showChaseGrade
+      ? gradeResult(
+          Math.max(0, this.chaseJunkTotal - this.chaseJunkHit),
+          this.chaseJunkTotal,
+          'reaction',
+          false,
+          'cage-chase',
+        )
+      : null
     // Coins collected become extra continues for 蜜樹丘.
     const carry = ((this.registry.get('carryCoins') as number | undefined) ?? 5) + this.coins
     this.registry.set('carryCoins', carry)
     saveTransitionCoins(this.toStage, carry)
     this.registry.set('stageNo', this.toStage)
     const W = GAME_W
+    const goPlay = () => {
+      this.cameras.main.fadeOut(500, 0, 0, 0)
+      this.time.delayedCall(650, () => this.scene.start('play'))
+    }
+    if (graded) {
+      void showGradeResult(this, graded).then(goPlay)
+    }
     if (!skipped) {
       SFX.win()
       const box = this.add.container(W / 2, 150).setDepth(70)
@@ -517,7 +547,9 @@ export class BikeScene extends Phaser.Scene {
         .setOrigin(0.5)
       box.add([bg, a, b])
     }
-    this.time.delayedCall(skipped ? 100 : 2400, () => this.cameras.main.fadeOut(500, 0, 0, 0))
-    this.time.delayedCall(skipped ? 650 : 2950, () => this.scene.start('play'))
+    if (!graded) {
+      this.time.delayedCall(skipped ? 100 : 2400, () => this.cameras.main.fadeOut(500, 0, 0, 0))
+      this.time.delayedCall(skipped ? 650 : 2950, () => this.scene.start('play'))
+    }
   }
 }

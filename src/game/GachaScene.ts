@@ -6,6 +6,7 @@ import { mountTouchControls } from './TouchControls'
 import { FONT_TITLE, FONT_UI } from './ui/fonts'
 import { CHARMS, rollCharm, setActiveCharm, type CharmDef, type CharmId } from './charms'
 import { rememberCharm } from './run'
+import { gradeResult, showGradeResult, showSegmentBanner, TIMING_WINDOWS_MS } from './minigameFramework'
 
 /**
  * 扭蛋機: one random charm per run, drawn right before stage 1 starts
@@ -83,6 +84,69 @@ export class GachaScene extends Phaser.Scene {
   }
 
   private spin() {
+    unlockAudio()
+    void this.wheelSkill().then(() => this.spinCharm())
+  }
+
+  /** 3-segment stop-the-wheel before the charm roll. */
+  private async wheelSkill(): Promise<void> {
+    const SPEEDS = [90, 150, 220] as const
+    const ZONES = [60, 40, 25] as const
+    const W = GAME_W
+    const cx = W / 2
+    const cy = GAME_H / 2 - 20
+    const g = this.add.graphics().setDepth(48)
+    const tip = this.add
+      .text(cx, cy + 92, '撳一下停喺綠區', { fontFamily: FONT_UI, fontSize: '12px', color: '#ffe08a' })
+      .setOrigin(0.5)
+      .setDepth(49)
+    let good = 0
+    for (let seg = 0; seg < 3; seg++) {
+      await showSegmentBanner(this, (seg + 1) as 1 | 2 | 3)
+      const dps = (SPEEDS[seg]! * Math.PI) / 180
+      const zoneRad = (ZONES[seg]! * Math.PI) / 180
+      let angle = 0
+      const ok = await new Promise<boolean>((resolve) => {
+        let gone = false
+        const end = (hit: boolean) => {
+          if (gone) return
+          gone = true
+          this.events.off('update', tick)
+          this.input.off('pointerdown', press)
+          this.input.keyboard?.off('keydown', press)
+          resolve(hit)
+        }
+        const press = () => {
+          const target = 0
+          const diff = Math.abs(Phaser.Math.Angle.ShortestBetween(angle, target))
+          const slack = zoneRad * 0.5 + (TIMING_WINDOWS_MS[seg]! / 1000) * dps
+          end(diff <= slack + zoneRad * 0.5)
+        }
+        const tick = () => {
+          const dt = this.game.loop.delta / 1000
+          angle += dps * dt
+          g.clear()
+          g.lineStyle(3, 0x4a3a28, 1).strokeCircle(cx, cy, 74)
+          g.fillStyle(0x3a8a40, 0.45)
+          g.beginPath()
+          g.arc(cx, cy, 72, -Math.PI / 2 - zoneRad / 2, -Math.PI / 2 + zoneRad / 2, false)
+          g.fillPath()
+          g.lineStyle(5, 0xffe08a, 1).lineBetween(cx, cy, cx + Math.cos(angle - Math.PI / 2) * 72, cy + Math.sin(angle - Math.PI / 2) * 72)
+        }
+        this.events.on('update', tick)
+        this.input.once('pointerdown', press)
+        this.input.keyboard?.once('keydown', press)
+        tick()
+        this.time.delayedCall(12000, () => end(false))
+      })
+      if (ok) good++
+    }
+    g.destroy()
+    tip.destroy()
+    await showGradeResult(this, gradeResult(good, 3, 'timing', false, 'gacha'))
+  }
+
+  private spinCharm() {
     unlockAudio()
     // iOS 13+: DeviceMotion needs a permission request fired directly inside a
     // user-gesture handler — this tap is the one guaranteed gesture everyone
